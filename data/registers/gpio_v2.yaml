@@ -1,0 +1,316 @@
+---
+block/GPIO:
+  description: General-purpose I/Os
+  items:
+    - name: MODER
+      description: GPIO port mode register
+      byte_offset: 0
+      reset_value: 2818572288
+      fieldset: MODER
+    - name: OTYPER
+      description: GPIO port output type register
+      byte_offset: 4
+      reset_value: 0
+      fieldset: OTYPER
+    - name: OSPEEDR
+      description: GPIO port output speed register
+      byte_offset: 8
+      reset_value: 0
+      fieldset: OSPEEDR
+    - name: PUPDR
+      description: GPIO port pull-up/pull-down register
+      byte_offset: 12
+      reset_value: 1677721600
+      fieldset: PUPDR
+    - name: IDR
+      description: GPIO port input data register
+      byte_offset: 16
+      reset_value: 0
+      access: Read
+      fieldset: IDR
+    - name: ODR
+      description: GPIO port output data register
+      byte_offset: 20
+      reset_value: 0
+      fieldset: ODR
+    - name: BSRR
+      description: GPIO port bit set/reset register
+      byte_offset: 24
+      reset_value: 0
+      access: Write
+      fieldset: BSRR
+    - name: LCKR
+      description: GPIO port configuration lock register
+      byte_offset: 28
+      reset_value: 0
+      fieldset: LCKR
+    - name: AFR
+      description: GPIO alternate function register (low, high)
+      byte_offset: 32
+      reset_value: 0
+      array:
+        len: 2
+        stride: 4
+      fieldset: AFR
+fieldset/AFR:
+  description: GPIO alternate function register
+  fields:
+    - name: AFR
+      description: Alternate function selection for port x bit y (y = 0..15)
+      bit_offset: 0
+      bit_size: 4
+      array:
+        len: 8
+        stride: 4
+      enum: AFR
+fieldset/BSRR:
+  description: GPIO port bit set/reset register
+  fields:
+    - name: BR
+      description: Port x set bit y (y= 0..15)
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 16
+        stride: 1
+      enum_write: BRW
+    - name: BS
+      description: Port x set bit y (y= 0..15)
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 16
+        stride: 1
+      enum_write: BSW
+fieldset/IDR:
+  description: GPIO port input data register
+  fields:
+    - name: IDR
+      description: Port input data (y = 0..15)
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 16
+        stride: 1
+      enum: IDR
+fieldset/LCKR:
+  description: GPIO port configuration lock register
+  fields:
+    - name: LCKK
+      description: Port x lock bit y (y= 0..15)
+      bit_offset: 16
+      bit_size: 1
+      enum: LCKK
+    - name: LCK
+      description: Port x lock bit y (y= 0..15)
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 16
+        stride: 1
+      enum: LCK
+fieldset/MODER:
+  description: GPIO port mode register
+  fields:
+    - name: MODER
+      description: Port x configuration bits (y = 0..15)
+      bit_offset: 0
+      bit_size: 2
+      array:
+        len: 16
+        stride: 2
+      enum: MODER
+fieldset/ODR:
+  description: GPIO port output data register
+  fields:
+    - name: ODR
+      description: Port output data (y = 0..15)
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 16
+        stride: 1
+      enum: ODR
+fieldset/OSPEEDR:
+  description: GPIO port output speed register
+  fields:
+    - name: OSPEEDR
+      description: Port x configuration bits (y = 0..15)
+      bit_offset: 0
+      bit_size: 2
+      array:
+        len: 16
+        stride: 2
+      enum: OSPEEDR
+fieldset/OTYPER:
+  description: GPIO port output type register
+  fields:
+    - name: OT
+      description: Port x configuration bits (y = 0..15)
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 16
+        stride: 1
+      enum: OT
+fieldset/PUPDR:
+  description: GPIO port pull-up/pull-down register
+  fields:
+    - name: PUPDR
+      description: Port x configuration bits (y = 0..15)
+      bit_offset: 0
+      bit_size: 2
+      array:
+        len: 16
+        stride: 2
+      enum: PUPDR
+enum/AFR:
+  bit_size: 4
+  variants:
+    - name: AF0
+      description: AF0
+      value: 0
+    - name: AF1
+      description: AF1
+      value: 1
+    - name: AF2
+      description: AF2
+      value: 2
+    - name: AF3
+      description: AF3
+      value: 3
+    - name: AF4
+      description: AF4
+      value: 4
+    - name: AF5
+      description: AF5
+      value: 5
+    - name: AF6
+      description: AF6
+      value: 6
+    - name: AF7
+      description: AF7
+      value: 7
+    - name: AF8
+      description: AF8
+      value: 8
+    - name: AF9
+      description: AF9
+      value: 9
+    - name: AF10
+      description: AF10
+      value: 10
+    - name: AF11
+      description: AF11
+      value: 11
+    - name: AF12
+      description: AF12
+      value: 12
+    - name: AF13
+      description: AF13
+      value: 13
+    - name: AF14
+      description: AF14
+      value: 14
+    - name: AF15
+      description: AF15
+      value: 15
+enum/BRW:
+  bit_size: 1
+  variants:
+    - name: Reset
+      description: Resets the corresponding ODRx bit
+      value: 1
+enum/BSW:
+  bit_size: 1
+  variants:
+    - name: Set
+      description: Sets the corresponding ODRx bit
+      value: 1
+enum/IDR:
+  bit_size: 1
+  variants:
+    - name: High
+      description: Input is logic high
+      value: 1
+    - name: Low
+      description: Input is logic low
+      value: 0
+enum/LCK:
+  bit_size: 1
+  variants:
+    - name: Unlocked
+      description: Port configuration not locked
+      value: 0
+    - name: Locked
+      description: Port configuration locked
+      value: 1
+enum/LCKK:
+  bit_size: 1
+  variants:
+    - name: NotActive
+      description: Port configuration lock key not active
+      value: 0
+    - name: Active
+      description: Port configuration lock key active
+      value: 1
+enum/MODER:
+  bit_size: 2
+  variants:
+    - name: Input
+      description: Input mode (reset state)
+      value: 0
+    - name: Output
+      description: General purpose output mode
+      value: 1
+    - name: Alternate
+      description: Alternate function mode
+      value: 2
+    - name: Analog
+      description: Analog mode
+      value: 3
+enum/ODR:
+  bit_size: 1
+  variants:
+    - name: High
+      description: Set output to logic high
+      value: 1
+    - name: Low
+      description: Set output to logic low
+      value: 0
+enum/OSPEEDR:
+  bit_size: 2
+  variants:
+    - name: LowSpeed
+      description: Low speed
+      value: 0
+    - name: MediumSpeed
+      description: Medium speed
+      value: 1
+    - name: HighSpeed
+      description: High speed
+      value: 2
+    - name: VeryHighSpeed
+      description: Very high speed
+      value: 3
+enum/OT:
+  bit_size: 1
+  variants:
+    - name: PushPull
+      description: Output push-pull (reset state)
+      value: 0
+    - name: OpenDrain
+      description: Output open-drain
+      value: 1
+enum/PUPDR:
+  bit_size: 2
+  variants:
+    - name: Floating
+      description: "No pull-up, pull-down"
+      value: 0
+    - name: PullUp
+      description: Pull-up
+      value: 1
+    - name: PullDown
+      description: Pull-down
+      value: 2
