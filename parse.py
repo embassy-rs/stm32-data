@@ -1,6 +1,8 @@
 import xmltodict
 import yaml
 import re
+import json
+import os
 from collections import OrderedDict
 from glob import glob
 
@@ -30,30 +32,35 @@ def children(x, key):
         return r
     return [r]
 
-headers = []
 headers_parsed = {}
+header_map = {}
+with open('header_map.yaml', 'r') as f:
+    y = yaml.load(f, Loader=yaml.SafeLoader)
+    for header, chips in y.items():
+        for chip in chips.split(','):
+            header_map[chip.strip().lower()] = header.lower()
 
 def find_header(model):
-    r = ''
-    for x in re.findall('(\\([^)]+\\)|.)', model):
-        r += '['+''.join(re.findall('[0-9A-Z]', x))+'x]'
+    #for a, b in header_map:
+    #    model = re.sub(a, b, model, flags=re.IGNORECASE)
+    model = model.lower()
+
+    # g0xx-n doesn't seem to have special headers...????
+    model = re.sub('^(stm32g0.*)-n$', '\\1', model)
+
+    # if it's in the map, just go
+    if r := header_map.get(model):
+        return r
+
+    # if not, find it by regex, taking `x` meaning `anything`
     res = []
-    for h in headers:
-        m = re.match(r, h+'xxxxxxx', re.IGNORECASE)
-        if m:
+    for h in headers_parsed.keys():
+        if re.match('^' + h.replace('x', '.') + '$', model):
             res.append(h)
 
-    if len(res) == 2:
-        res.sort()
-        if res[0].endswith('xd') and res[1].endswith('xdx'):
-            if model.endswith('X'):
-                res = [res[1]]
-            else:
-                res = [res[0]]
-
-    assert len(res) < 2
     if len(res) == 0:
         return None
+    assert len(res) == 1
     return res[0]
 
 def paren_ok(val):
@@ -108,7 +115,7 @@ def parse_header(f):
             continue
         accum = ''
 
-        if m := re.match('([a-zA-Z0-9_]+)_IRQn += (\d+),? +/\\*!< (.*) \\*/', l):
+        if m := re.match('([a-zA-Z0-9_]+)_IRQn += (\\d+),? +/\\*!< (.*) \\*/', l):
             irqs[m.group(1)] = int(m.group(2))
 
         if m := re.match('#define +([0-9A-Za-z_]+)\\(', l):
@@ -164,6 +171,8 @@ FAKE_PERIPHERALS = [
     'LWIP',
     'USB_HOST',
     'USB_DEVICE',
+    'GUI_INTERFACE',
+    'TRACER_EMB',
 ]
 
 perimap = [
@@ -194,50 +203,86 @@ def match_peri(peri):
     return None
 
 def parse_headers():
+    os.makedirs('sources/headers_parsed', exist_ok=True)
+    print('loading headers...')
     for f in glob('sources/headers/*.h'):
         #if 'stm32f4' not in f: continue
-        print(f)
         ff = f.removeprefix('sources/headers/')
         ff = ff.removesuffix('.h')
-        headers.append(ff)
-        headers_parsed[ff] = parse_header(f)
+
+        try:
+            with open('sources/headers_parsed/{}.json'.format(ff), 'r') as j:
+                res = json.load(j)
+        except:
+            print(f)
+            res = parse_header(f)
+            with open('sources/headers_parsed/{}.json'.format(ff), 'w') as j:
+                json.dump(res, j)
+
+        headers_parsed[ff] = res
+
+def chip_name_from_package_name(x):
+    name_map = [
+        ('(STM32L1....).x([AX])', '\\1-\\2'),
+        ('(STM32G0....).x(N)', '\\1-\\2'),
+        ('(STM32F412..).xP', '\\1'),
+        ('(STM32L4....).xP', '\\1'),
+        ('(STM32WB....).x[AE]', '\\1'),
+        ('(STM32G0....).xN', '\\1'),
+        ('(STM32L5....).x[PQ]', '\\1'),
+        ('(STM32L0....).xS', '\\1'),
+        ('(STM32H7....).xQ', '\\1'),
+        ('(STM32......).x', '\\1'),
+    ]
+
+    for a, b in name_map:
+        r, n = re.subn('^'+a+'$', b, x)
+        if n != 0:
+            return r
+    raise Exception("bad name: {}".format(x))
 
 def parse_chips():
-    peris_by_family = {}
-    peris_by_chip = {}
-    peris_by_line = {}
+    os.makedirs('data/chips', exist_ok=True)
 
-    def put_peri(peris, peri, chip):
-        if peri not in peris:
-            peris[peri] = set()
-        peris[peri].add(chip)
+    chips = {}
 
-    for f in glob('sources/mcu/STM32*.xml'):
+    for f in sorted(glob('sources/mcu/STM32*.xml')):
         if 'STM32MP' in f: continue
-        #if 'STM32F4' not in f: continue
-
         print(f)
 
         r = xmltodict.parse(open(f, 'rb'))['Mcu']
 
-        names = expand_name(r['@RefName'])
-        rams = r['Ram']
-        flashs = r['Flash']
-        if type(rams) != list: rams = [rams]*len(names)
-        if type(flashs) != list: flashs = [flashs]*len(names)
-        for i,name in enumerate(names):
-            flash = int(flashs[i])
-            ram = int(rams[i])
-            line = r['@Line']
-            family = r['@Family']
-
-            gpio_version = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version'].removesuffix('_gpio_v1_0')
+        package_names = expand_name(r['@RefName'])
+        package_rams = r['Ram']
+        package_flashs = r['Flash']
+        if type(package_rams) != list: package_rams = [package_rams]*len(package_names)
+        if type(package_flashs) != list: package_flashs = [package_flashs]*len(package_names)
+        for package_i, package_name in enumerate(package_names):
+            chip_name = chip_name_from_package_name(package_name)
+            flash = int(package_flashs[package_i])
+            ram = int(package_rams[package_i])
+            gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version'].removesuffix('_gpio_v1_0')
             
-            h = find_header(name)
-            if h is None: continue
-            h = headers_parsed[h]
+            if chip_name not in chips:
+                chips[chip_name] = OrderedDict({
+                    'name': chip_name,
+                    'flash': flash,
+                    'ram': ram,
+                    'gpio_af': gpio_af,
+                    'packages': [],
+                    'peripherals': {},
+                    #'peripherals': peris,
+                    #'interrupts': h['interrupts'],
+                })
 
-            peris = {}
+            chips[chip_name]['packages'].append(OrderedDict({
+                'name': package_name,
+                'package': r['@Package'],
+            }))
+
+            # Some packages have some peripehrals removed because the package had to
+            # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
+            peris = chips[chip_name]['peripherals']
             for ip in r['IP']:
                 pname = ip['@InstanceName']
                 pkind = ip['@Name']+':'+ip['@Version']
@@ -245,44 +290,40 @@ def parse_chips():
 
                 if pname == 'SYS': pname = 'SYSCFG'
                 if pname in FAKE_PERIPHERALS: continue
+                peris[pname] = pkind
 
-                put_peri(peris_by_family, pkind, family.removeprefix('STM32'))
-                put_peri(peris_by_line, pkind, line.removeprefix('STM32'))
-                put_peri(peris_by_chip, pkind, name.removeprefix('STM32'))
 
-                addr = h['defines'].get(pname)
-                if addr is None: continue
+    with open('chip_names.yaml', 'w') as f:
+        f.write(yaml.dump(list(chips.keys())))
 
-                p = {}
-                p['kind'] = pkind
-                p['addr'] = addr
-                if block := match_peri(pname+':'+pkind):
-                    p['block'] = block
-                peris[pname] = p
-            
-            interrupts = h['interrupts']
+    for chip_name, chip in chips.items():
+        h = find_header(chip_name)
+        if h is None:
+            raise Exception("missing header for {}".format(chip_name))
+        h = headers_parsed[h]
 
-            chip = OrderedDict({
-                'name': name,
-                'flash': flash,
-                'ram': ram,
-                'gpio_af': gpio_version,
-                'peripherals': peris,
-                'interrupts': interrupts,
+        chip['interrupts'] = h['interrupts']
+
+        peris = {}
+        for pname, pkind in chip['peripherals'].items():
+            addr = h['defines'].get(pname)
+            if addr is None: continue
+
+            p = OrderedDict({
+                'name': pname,
+                'addr': addr,
+                'kind': pkind,
             })
-
-            with open('data/chips/'+name+'.yaml', 'w') as f:
-                f.write(yaml.dump(chip))
-
-    peris_by_family = {k: ', '.join(sorted(v)) for k, v in peris_by_family.items()}
-    peris_by_line = {k: ', '.join(sorted(v)) for k, v in peris_by_line.items()}
-    peris_by_chip = {k: ', '.join(sorted(v)) for k, v in peris_by_chip.items()}
-    with open('tmp/peris_by_family.yaml', 'w') as f: f.write(yaml.dump(peris_by_family, width=240))
-    with open('tmp/peris_by_line.yaml', 'w') as f: f.write(yaml.dump(peris_by_line, width=240))
-    with open('tmp/peris_by_chip.yaml', 'w') as f: f.write(yaml.dump(peris_by_chip, width=240))
-
+            if block := match_peri(pname+':'+pkind):
+                p['block'] = block
+            peris[pname] = p
+        chip['peripherals'] = peris
+            
+        with open('data/chips/'+chip_name+'.yaml', 'w') as f:
+            f.write(yaml.dump(chip))
 
 def parse_gpio_af():
+    os.makedirs('data/gpio_af', exist_ok=True)
     for f in glob('sources/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
         if 'STM32F1' in f: continue
 
