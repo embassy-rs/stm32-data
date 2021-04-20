@@ -45,9 +45,6 @@ def find_header(model):
     #    model = re.sub(a, b, model, flags=re.IGNORECASE)
     model = model.lower()
 
-    # g0xx-n doesn't seem to have special headers...????
-    model = re.sub('^(stm32g0.*)-n$', '\\1', model)
-
     # if it's in the map, just go
     if r := header_map.get(model):
         return r
@@ -224,7 +221,7 @@ def parse_headers():
 def chip_name_from_package_name(x):
     name_map = [
         ('(STM32L1....).x([AX])', '\\1-\\2'),
-        ('(STM32G0....).x(N)', '\\1-\\2'),
+        ('(STM32G0....).xN', '\\1'),
         ('(STM32F412..).xP', '\\1'),
         ('(STM32L4....).xP', '\\1'),
         ('(STM32WB....).x[AE]', '\\1'),
@@ -291,10 +288,6 @@ def parse_chips():
                 if pname == 'SYS': pname = 'SYSCFG'
                 if pname in FAKE_PERIPHERALS: continue
                 peris[pname] = pkind
-
-
-    with open('chip_names.yaml', 'w') as f:
-        f.write(yaml.dump(list(chips.keys())))
 
     for chip_name, chip in chips.items():
         h = find_header(chip_name)
