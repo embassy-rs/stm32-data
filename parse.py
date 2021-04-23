@@ -243,7 +243,7 @@ def parse_chips():
 
     chips = {}
 
-    for f in sorted(glob('sources/mcu/STM32*.xml')):
+    for f in sorted(glob('sources/cubedb/mcu/STM32*.xml')):
         if 'STM32MP' in f: continue
         print(f)
 
@@ -317,10 +317,10 @@ def parse_chips():
 
 def parse_gpio_af():
     os.makedirs('data/gpio_af', exist_ok=True)
-    for f in glob('sources/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
+    for f in glob('sources/cubedb/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
         if 'STM32F1' in f: continue
 
-        ff = f.removeprefix('sources/mcu/IP/GPIO-')
+        ff = f.removeprefix('sources/cubedb/mcu/IP/GPIO-')
         ff = ff.removesuffix('_gpio_v1_0_Modes.xml')
         print(ff)
 
