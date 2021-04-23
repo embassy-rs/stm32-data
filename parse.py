@@ -309,6 +309,21 @@ def parse_chips():
             if block := match_peri(pname+':'+pkind):
                 p['block'] = block
             peris[pname] = p
+        
+        # Handle GPIO specially.
+        for p in range(20):
+            port = 'GPIO' + chr(ord('A')+p)
+            if addr := h['defines'].get(port + '_BASE'):
+                block = 'gpio_v2/GPIO'
+                if 'STM32F1' in chip_name:
+                    block = 'gpio_v1/GPIO'
+
+                p = OrderedDict({
+                    'addr': addr,
+                    'block': block,
+                })
+                peris[port] = p
+
         chip['peripherals'] = peris
             
         with open('data/chips/'+chip_name+'.yaml', 'w') as f:
