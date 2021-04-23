@@ -303,7 +303,6 @@ def parse_chips():
             if addr is None: continue
 
             p = OrderedDict({
-                'name': pname,
                 'addr': addr,
                 'kind': pkind,
             })
