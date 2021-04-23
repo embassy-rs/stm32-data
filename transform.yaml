@@ -1,0 +1,31 @@
+transforms:
+  - MergeEnums:
+      from: CCMR\d_Input_CC\dS
+      to: CCMR_Input_CCS
+      check: Layout
+
+  # Remove digits from enum names
+  - MergeEnums:
+      from: ([^\d]*)[\d]*([^\d]*)[\d]*([^\d]*)[\d]*
+      to: $1$2$3
+      skip_unmergeable: true
+
+  - MakeFieldArray:
+      fieldsets: .*
+      from: ([A-Z]+)\d+
+      to: $1
+      allow_cursed: true
+  - MakeRegisterArray:
+      blocks: .*
+      from: ([A-Z]+)\d+
+      to: $1
+  - MergeEnums:
+      from: '[HL](IFCR|ISR)_(.*)'
+      to: $2
+  - MergeFieldsets:
+      from: '[HL](IFCR|ISR)'
+      to: $1
+  - MakeRegisterArray:
+      blocks: .*
+      from: '[HL](IFCR|ISR)'
+      to: $1
