@@ -303,7 +303,7 @@ def parse_chips():
             if addr is None: continue
 
             p = OrderedDict({
-                'addr': addr,
+                'address': addr,
                 'kind': pkind,
             })
             if block := match_peri(pname+':'+pkind):
@@ -319,7 +319,7 @@ def parse_chips():
                     block = 'gpio_v1/GPIO'
 
                 p = OrderedDict({
-                    'addr': addr,
+                    'address': addr,
                     'block': block,
                 })
                 peris[port] = p
