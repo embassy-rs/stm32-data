@@ -195,6 +195,8 @@ perimap = [
     ('.*RNG:rng1_v2_0', 'rng_v1/RNG'),
     ('.*RNG:rng1_v2_1', 'rng_v1/RNG'),
     ('.*RNG:rng1_v3_1', 'rng_v1/RNG'),
+    ('.*SYS:STM32F4.*', 'syscfg_f4/SYSCFG'),
+    ('.*SYS:STM32L4.*', 'syscfg_l4/SYSCFG'),
 ]
 
 def match_peri(peri):
