@@ -15,16 +15,27 @@ transforms:
       from: ([A-Z]+)\d+
       to: $1
       allow_cursed: true
+  - MakeFieldArray:
+      fieldsets: .*
+      from: P\d+WP
+      to: PWP 
+#  - MakeRegisterArray:
+#      blocks: .*
+#      from: ([A-Z]+)\d+
+#      to: $1
   - MakeRegisterArray:
       blocks: .*
-      from: ([A-Z]+)\d+
-      to: $1
+      from: EXTICR\d+
+      to: EXTICR 
   - MergeEnums:
       from: '[HL](IFCR|ISR)_(.*)'
       to: $2
   - MergeFieldsets:
       from: '[HL](IFCR|ISR)'
       to: $1
+  - MergeFieldsets:
+      from: EXTICR\d 
+      to: EXTICR 
   - MakeRegisterArray:
       blocks: .*
       from: '[HL](IFCR|ISR)'
