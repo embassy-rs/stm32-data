@@ -328,6 +328,14 @@ def parse_chips():
                 })
                 peris[port] = p
 
+        # EXTI is not in the cubedb XMLs
+        if addr := h['defines'].get('EXTI_BASE'):
+            peris['EXTI'] = OrderedDict({
+                'address': addr,
+                'kind': 'EXTI',
+                'block': 'exti/EXTI',
+            })
+
         chip['peripherals'] = peris
             
         with open('data/chips/'+chip_name+'.yaml', 'w') as f:
