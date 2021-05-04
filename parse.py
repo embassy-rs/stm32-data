@@ -191,10 +191,12 @@ perimap = [
     #('.*:USART:sci3_v1_2', 'usart_v3/USART'),
     #('.*:USART:sci3_v2_0', 'usart_v3/USART'),
     #('.*:USART:sci3_v2_1', 'usart_v3/USART'),
-    ('.*RNG:rng1_v1_1', 'rng_v1/RNG'),
-    ('.*RNG:rng1_v2_0', 'rng_v1/RNG'),
-    ('.*RNG:rng1_v2_1', 'rng_v1/RNG'),
-    ('.*RNG:rng1_v3_1', 'rng_v1/RNG'),
+    ('.*:RNG:rng1_v1_1', 'rng_v1/RNG'),
+    ('.*:RNG:rng1_v2_0', 'rng_v1/RNG'),
+    ('.*:RNG:rng1_v2_1', 'rng_v1/RNG'),
+    ('.*:RNG:rng1_v3_1', 'rng_v1/RNG'),
+    ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
+    ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
 ]
 
 def match_peri(peri):
@@ -310,7 +312,7 @@ def parse_chips():
                 'address': addr,
                 'kind': pkind,
             })
-            if block := match_peri(pname+':'+pkind):
+            if block := match_peri(chip_name+':'+pname+':'+pkind):
                 p['block'] = block
             peris[pname] = p
         
