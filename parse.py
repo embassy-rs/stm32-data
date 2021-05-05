@@ -255,7 +255,7 @@ def parse_chips():
 
         r = xmltodict.parse(open(f, 'rb'))['Mcu']
 
-        package_names = expand_name(r['@RefName'])
+        package_names = expand_name(r['@RefName']) 
         package_rams = r['Ram']
         package_flashs = r['Flash']
         if type(package_rams) != list: package_rams = [package_rams]*len(package_names)
@@ -269,6 +269,9 @@ def parse_chips():
             if chip_name not in chips:
                 chips[chip_name] = OrderedDict({
                     'name': chip_name,
+                    'family': r['@Family'],
+                    'line': r['@Line'],
+                    'core': r['Core'],
                     'flash': flash,
                     'ram': ram,
                     'gpio_af': gpio_af,
