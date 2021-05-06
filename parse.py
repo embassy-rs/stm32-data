@@ -338,7 +338,7 @@ def parse_chips():
             peris['EXTI'] = OrderedDict({
                 'address': addr,
                 'kind': 'EXTI',
-                'block': 'exti/EXTI',
+                'block': 'exti_v1/EXTI',
             })
 
         chip['peripherals'] = peris
