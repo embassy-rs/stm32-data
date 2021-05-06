@@ -23,26 +23,14 @@ block/SDMMC:
       byte_offset: 16
       access: Read
       fieldset: RESPCMDR
-    - name: RESP1R
+    - name: RESPR
       description: "The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received response."
+      array:
+        len: 4
+        stride: 4
       byte_offset: 20
       access: Read
       fieldset: RESP1R
-    - name: RESP2R
-      description: "The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received response."
-      byte_offset: 24
-      access: Read
-      fieldset: RESP2R
-    - name: RESP3R
-      description: "The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received response."
-      byte_offset: 28
-      access: Read
-      fieldset: RESP3R
-    - name: RESP4R
-      description: "The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received response."
-      byte_offset: 32
-      access: Read
-      fieldset: RESP4R
     - name: DTIMER
       description: "The SDMMC_DTIMER register contains the data timeout period, in card bus clock periods. A counter loads the value from the SDMMC_DTIMER register, and starts decrementing when the data path state machine (DPSM) enters the Wait_R or Busy state. If the timer reaches 0 while the DPSM is in either of these states, the timeout status flag is set."
       byte_offset: 36
@@ -367,23 +355,17 @@ fieldset/ID:
 fieldset/IDMABASE0R:
   description: The SDMMC_IDMABASE0R register contains the memory buffer base address in single buffer configuration and the buffer 0 base address in double buffer configuration.
   fields:
-    - name: IDMABASE
+    - name: IDMABASE0
       description: "Buffer 0 memory base address bits [31:2], shall be word aligned (bit [1:0] are always 0 and read only). This register can be written by firmware when DPSM is inactive (DPSMACT = 0), and can dynamically be written by firmware when DPSM active (DPSMACT = 1) and memory buffer 0 is inactive (IDMABACT = 1)."
       bit_offset: 0
       bit_size: 32
-      array:
-        len: 1
-        stride: 0
 fieldset/IDMABASE1R:
   description: The SDMMC_IDMABASE1R register contains the double buffer configuration second buffer memory base address.
   fields:
-    - name: IDMABASE
+    - name: IDMABASE1
       description: "Buffer 1 memory base address, shall be word aligned (bit [1:0] are always 0 and read only). This register can be written by firmware when DPSM is inactive (DPSMACT = 0), and can dynamically be written by firmware when DPSM active (DPSMACT = 1) and memory buffer 1 is inactive (IDMABACT = 0)."
       bit_offset: 0
       bit_size: 32
-      array:
-        len: 1
-        stride: 0
 fieldset/IDMABSIZER:
   description: The SDMMC_IDMABSIZER register contains the buffers size when in double buffer configuration.
   fields:
@@ -523,43 +505,31 @@ fieldset/POWER:
 fieldset/RESP1R:
   description: "The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received response."
   fields:
-    - name: CARDSTATUS
+    - name: CARDSTATUS1
       description: see Table 432
       bit_offset: 0
       bit_size: 32
-      array:
-        len: 1
-        stride: 0
 fieldset/RESP2R:
   description: "The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received response."
   fields:
-    - name: CARDSTATUS
+    - name: CARDSTATUS2
       description: see Table404.
       bit_offset: 0
       bit_size: 32
-      array:
-        len: 1
-        stride: 0
 fieldset/RESP3R:
   description: "The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received response."
   fields:
-    - name: CARDSTATUS
+    - name: CARDSTATUS3
       description: see Table404.
       bit_offset: 0
       bit_size: 32
-      array:
-        len: 1
-        stride: 0
 fieldset/RESP4R:
   description: "The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received response."
   fields:
-    - name: CARDSTATUS
+    - name: CARDSTATUS4
       description: see Table404.
       bit_offset: 0
       bit_size: 32
-      array:
-        len: 1
-        stride: 0
 fieldset/RESPCMDR:
   description: SDMMC command response register
   fields:
@@ -650,13 +620,10 @@ fieldset/STAR:
       description: "Receive FIFO empty This is a hardware status flag only, does not generate an interrupt. This bit is cleared when one FIFO location becomes full."
       bit_offset: 19
       bit_size: 1
-    - name: BUSYD
+    - name: BUSYD0
       description: "Inverted value of SDMMC_D0 line (Busy), sampled at the end of a CMD response and a second time 2 SDMMC_CK cycles after the CMD response. This bit is reset to not busy when the SDMMCD0 line changes from busy to not busy. This bit does not signal busy due to data transfer. This is a hardware status flag only, it does not generate an interrupt."
       bit_offset: 20
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: BUSYD0END
       description: end of SDMMC_D0 Busy following a CMD response detected. This indicates only end of busy following a CMD response. This bit does not signal busy due to data transfer. Interrupt flag is cleared by writing corresponding interrupt clear bit in SDMMC_ICR.
       bit_offset: 21
