@@ -35,6 +35,8 @@ for f in `ls $query`; do
         echo FAIL
     else
         rm regs/$peri/$f.yaml.out
+        # succeeded with transform, splat out a non-transformed for comparison
+        RUST_LOG=info ../../../svd2rust/target/release/svd4rust extract-peripheral --svd sources/svd/stm32$f.svd --peripheral $peri > regs/$peri/$f-original.yaml 2> /dev/null
         echo OK
     fi
 done
