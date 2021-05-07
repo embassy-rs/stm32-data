@@ -77,11 +77,11 @@ fieldset/CR1:
       bit_offset: 10
       bit_size: 1
       enum: RXONLY
-    - name: CRCL
-      description: CRC length
+    - name: DFF
+      description: Data frame format
       bit_offset: 11
       bit_size: 1
-      enum: CRCL
+      enum: DFF
     - name: CRCNEXT
       description: CRC transfer next
       bit_offset: 12
@@ -116,10 +116,6 @@ fieldset/CR2:
       description: SS output enable
       bit_offset: 2
       bit_size: 1
-    - name: NSSP
-      description: NSS pulse management
-      bit_offset: 3
-      bit_size: 1
     - name: FRF
       description: Frame format
       bit_offset: 4
@@ -137,26 +133,6 @@ fieldset/CR2:
       description: Tx buffer empty interrupt enable
       bit_offset: 7
       bit_size: 1
-    - name: DS
-      description: Data size
-      bit_offset: 8
-      bit_size: 4
-      enum: DS
-    - name: FRXTH
-      description: FIFO reception threshold
-      bit_offset: 12
-      bit_size: 1
-      enum: FRXTH
-    - name: LDMA_RX
-      description: Last DMA transfer for reception
-      bit_offset: 13
-      bit_size: 1
-      enum: LDMA_RX
-    - name: LDMA_TX
-      description: Last DMA transfer for transmission
-      bit_offset: 14
-      bit_size: 1
-      enum: LDMA_TX
 fieldset/CRCPR:
   description: CRC polynomial register
   fields:
@@ -206,20 +182,10 @@ fieldset/SR:
       bit_offset: 7
       bit_size: 1
     - name: FRE
-      description: Frame format error
+      description: TI frame format error
       bit_offset: 8
       bit_size: 1
       enum_read: FRER
-    - name: FRLVL
-      description: FIFO reception level
-      bit_offset: 9
-      bit_size: 2
-      enum_read: FRLVLR
-    - name: FTLVL
-      description: FIFO Transmission Level
-      bit_offset: 11
-      bit_size: 2
-      enum_read: FTLVLR
 fieldset/TXCRCR:
   description: TX CRC register
   fields:
@@ -290,15 +256,6 @@ enum/CPOL:
     - name: IdleHigh
       description: CK to 1 when idle
       value: 1
-enum/CRCL:
-  bit_size: 1
-  variants:
-    - name: EightBit
-      description: 8-bit CRC length
-      value: 0
-    - name: SixteenBit
-      description: 16-bit CRC length
-      value: 1
 enum/CRCNEXT:
   bit_size: 1
   variants:
@@ -308,48 +265,15 @@ enum/CRCNEXT:
     - name: CRC
       description: Next transmit value is from Tx CRC register
       value: 1
-enum/DS:
-  bit_size: 4
+enum/DFF:
+  bit_size: 1
   variants:
-    - name: FourBit
-      description: 4-bit
-      value: 3
-    - name: FiveBit
-      description: 5-bit
-      value: 4
-    - name: SixBit
-      description: 6-bit
-      value: 5
-    - name: SevenBit
-      description: 7-bit
-      value: 6
     - name: EightBit
-      description: 8-bit
-      value: 7
-    - name: NineBit
-      description: 9-bit
-      value: 8
-    - name: TenBit
-      description: 10-bit
-      value: 9
-    - name: ElevenBit
-      description: 11-bit
-      value: 10
-    - name: TwelveBit
-      description: 12-bit
-      value: 11
-    - name: ThirteenBit
-      description: 13-bit
-      value: 12
-    - name: FourteenBit
-      description: 14-bit
-      value: 13
-    - name: FifteenBit
-      description: 15-bit
-      value: 14
+      description: 8-bit data frame format is selected for transmission/reception
+      value: 0
     - name: SixteenBit
-      description: 16-bit
-      value: 15
+      description: 16-bit data frame format is selected for transmission/reception
+      value: 1
 enum/FRER:
   bit_size: 1
   variants:
@@ -368,63 +292,21 @@ enum/FRF:
     - name: TI
       description: SPI TI mode
       value: 1
-enum/FRLVLR:
+enum/ISCFG:
   bit_size: 2
   variants:
-    - name: Empty
-      description: Rx FIFO Empty
+    - name: SlaveTx
+      description: Slave - transmit
       value: 0
-    - name: Quarter
-      description: Rx 1/4 FIFO
+    - name: SlaveRx
+      description: Slave - receive
       value: 1
-    - name: Half
-      description: Rx 1/2 FIFO
+    - name: MasterTx
+      description: Master - transmit
       value: 2
-    - name: Full
-      description: Rx FIFO full
+    - name: MasterRx
+      description: Master - receive
       value: 3
-enum/FRXTH:
-  bit_size: 1
-  variants:
-    - name: Half
-      description: RXNE event is generated if the FIFO level is greater than or equal to 1/2 (16-bit)
-      value: 0
-    - name: Quarter
-      description: RXNE event is generated if the FIFO level is greater than or equal to 1/4 (8-bit)
-      value: 1
-enum/FTLVLR:
-  bit_size: 2
-  variants:
-    - name: Empty
-      description: Tx FIFO Empty
-      value: 0
-    - name: Quarter
-      description: Tx 1/4 FIFO
-      value: 1
-    - name: Half
-      description: Tx 1/2 FIFO
-      value: 2
-    - name: Full
-      description: Tx FIFO full
-      value: 3
-enum/LDMA_RX:
-  bit_size: 1
-  variants:
-    - name: Even
-      description: Number of data to transfer for receive is even
-      value: 0
-    - name: Odd
-      description: Number of data to transfer for receive is odd
-      value: 1
-enum/LDMA_TX:
-  bit_size: 1
-  variants:
-    - name: Even
-      description: Number of data to transfer for transmit is even
-      value: 0
-    - name: Odd
-      description: Number of data to transfer for transmit is odd
-      value: 1
 enum/LSBFIRST:
   bit_size: 1
   variants:
