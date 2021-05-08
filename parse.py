@@ -7,6 +7,20 @@ from collections import OrderedDict
 from glob import glob
 
 
+def removeprefix(value: str, prefix: str, /) -> str:
+    if value.startswith(prefix):
+        return value[len(prefix):]
+    else:
+        return value[:]
+
+
+def removesuffix(value: str, suffix: str, /) -> str:
+    if value.endswith(suffix):
+        return value[:-len(suffix)]
+    else:
+        return value[:]
+
+
 def represent_ordereddict(dumper, data):
     value = []
 
@@ -233,8 +247,8 @@ def parse_headers():
     print('loading headers...')
     for f in glob('sources/headers/*.h'):
         # if 'stm32f4' not in f: continue
-        ff = f.removeprefix('sources/headers/')
-        ff = ff.removesuffix('.h')
+        ff = removeprefix(f, 'sources/headers/')
+        ff = removesuffix(ff, '.h')
 
         try:
             with open('sources/headers_parsed/{}.json'.format(ff), 'r') as j:
@@ -292,7 +306,8 @@ def parse_chips():
             chip_name = chip_name_from_package_name(package_name)
             flash = int(package_flashs[package_i])
             ram = int(package_rams[package_i])
-            gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version'].removesuffix('_gpio_v1_0')
+            gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version']
+            gpio_af = removesuffix(gpio_af, '_gpio_v1_0')
 
             if chip_name not in chips:
                 chips[chip_name] = OrderedDict({
@@ -320,7 +335,7 @@ def parse_chips():
             for ip in r['IP']:
                 pname = ip['@InstanceName']
                 pkind = ip['@Name']+':'+ip['@Version']
-                pkind = pkind.removesuffix('_Cube')
+                pkind = removesuffix(pkind, '_Cube')
 
                 if pname == 'SYS':
                     pname = 'SYSCFG'
@@ -384,8 +399,8 @@ def parse_gpio_af():
         if 'STM32F1' in f:
             continue
 
-        ff = f.removeprefix('sources/cubedb/mcu/IP/GPIO-')
-        ff = ff.removesuffix('_gpio_v1_0_Modes.xml')
+        ff = removeprefix(f, 'sources/cubedb/mcu/IP/GPIO-')
+        ff = removesuffix(ff, '_gpio_v1_0_Modes.xml')
         print(ff)
 
         pins = {}
@@ -404,14 +419,15 @@ def parse_gpio_af():
             pin_name = pin_name.split(' ')[0]
             pin_name = pin_name.split('_')[0]
             pin_name = pin_name.split('(')[0]
-            pin_name = pin_name.removesuffix('OSC32')
-            pin_name = pin_name.removesuffix('BOOT0')
+            pin_name = removesuffix(pin_name, 'OSC32')
+            pin_name = removesuffix(pin_name, 'BOOT0')
 
             # Extract AFs
             afs = {}
             for signal in children(pin, 'PinSignal'):
                 func = signal['@Name']
-                afn = int(signal['SpecificParameter']['PossibleValue'].split('_')[1].removeprefix('AF'))
+                afn = signal['SpecificParameter']['PossibleValue'].split('_')[1]
+                afn = int(removeprefix(afn, 'AF'))
                 afs[func] = afn
 
             pins[pin_name] = afs
