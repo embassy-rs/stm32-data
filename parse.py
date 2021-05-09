@@ -211,8 +211,8 @@ perimap = [
     ('UART:sci2_v1_2', 'usart_v1/UART'),
     ('UART:sci2_v1_2_F1', 'usart_v1/UART'),
     ('UART:sci2_v2_1', 'usart_v2/UART'),
-    #('UART:sci2_v3_0', 'usart_v3/UART'),
-    #('UART:sci2_v3_1', 'usart_v3/UART'),
+    # ('UART:sci2_v3_0', 'usart_v3/UART'),
+    # ('UART:sci2_v3_1', 'usart_v3/UART'),
 
     ('.*:USART:sci2_v1_1', 'usart_v1/USART'),
     ('.*:USART:sci2_v1_2_F1', 'usart_v1/USART'),
@@ -222,9 +222,9 @@ perimap = [
     ('.*:USART:sci2_v2_2', 'usart_v2/USART'),
     ('.*:USART:sci3_v1_0', 'usart_v2/USART'),
     ('.*:USART:sci3_v1_1', 'usart_v2/USART'),
-    #('.*:USART:sci3_v1_2', 'usart_v3/USART'),
-    #('.*:USART:sci3_v2_0', 'usart_v3/USART'),
-    #('.*:USART:sci3_v2_1', 'usart_v3/USART'),
+    # ('.*:USART:sci3_v1_2', 'usart_v3/USART'),
+    # ('.*:USART:sci3_v2_0', 'usart_v3/USART'),
+    # ('.*:USART:sci3_v2_1', 'usart_v3/USART'),
     ('.*:RNG:rng1_v1_1', 'rng_v1/RNG'),
     ('.*:RNG:rng1_v2_0', 'rng_v1/RNG'),
     ('.*:RNG:rng1_v2_1', 'rng_v1/RNG'),
@@ -371,7 +371,7 @@ def parse_chips():
             port = 'GPIO' + chr(ord('A')+p)
             if addr := h['defines'].get(port + '_BASE'):
                 block = 'gpio_v2/GPIO'
-                if 'STM32F1' in chip_name:
+                if chip['family'] == 'STM32F1':
                     block = 'gpio_v1/GPIO'
 
                 p = OrderedDict({
@@ -379,6 +379,18 @@ def parse_chips():
                     'block': block,
                 })
                 peris[port] = p
+        # Handle DMA specially.
+        for dma in ('DMA1', "DMA2"):
+            if addr := h['defines'].get(dma + '_BASE'):
+                block = 'dma_v1/DMA'
+                if chip['family'] in ('STM32F4', 'STM32F7', 'STM32H7'):
+                    block = 'dma_v2/DMA'
+
+                p = OrderedDict({
+                    'address': addr,
+                    'block': block,
+                })
+                peris[dma] = p
 
         # EXTI is not in the cubedb XMLs
         if addr := h['defines'].get('EXTI_BASE'):
