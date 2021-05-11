@@ -229,6 +229,7 @@ perimap = [
     ('.*:RNG:rng1_v2_0', 'rng_v1/RNG'),
     ('.*:RNG:rng1_v2_1', 'rng_v1/RNG'),
     ('.*:RNG:rng1_v3_1', 'rng_v1/RNG'),
+    ('.*:SPI:spi2s1_v3_3', 'spi_v2/SPI'),
     ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32H7.*:SYS:.*', 'syscfg_h7/SYSCFG'),
