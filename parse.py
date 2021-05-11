@@ -311,6 +311,10 @@ def parse_chips():
             gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version']
             gpio_af = removesuffix(gpio_af, '_gpio_v1_0')
 
+            rcc = next(filter(lambda x: x['@Name'] == 'RCC', r['IP']))['@Version']
+            rcc = removesuffix(rcc, '-rcc_v1_0')
+            rcc = removesuffix(rcc, '_rcc_v1_0')
+
             if chip_name not in chips:
                 chips[chip_name] = OrderedDict({
                     'name': chip_name,
@@ -320,6 +324,7 @@ def parse_chips():
                     'flash': flash,
                     'ram': ram,
                     'gpio_af': gpio_af,
+                    'rcc': rcc, # temporarily stashing it here
                     'packages': [],
                     'peripherals': {},
                     # 'peripherals': peris,
@@ -346,6 +351,8 @@ def parse_chips():
                 peris[pname] = pkind
 
     for chip_name, chip in chips.items():
+        rcc = chip['rcc']
+        del chip['rcc']
         h = find_header(chip_name)
         if h is None:
             raise Exception("missing header for {}".format(chip_name))
@@ -363,6 +370,12 @@ def parse_chips():
                 'address': addr,
                 'kind': pkind,
             })
+
+            if pname in clocks[rcc]:
+                p['clock'] = clocks[rcc][pname]
+            #else:
+                #print( f'peri {pname} -> no clock')
+
             if block := match_peri(chip_name+':'+pname+':'+pkind):
                 p['block'] = block
             peris[pname] = p
@@ -449,7 +462,27 @@ def parse_gpio_af():
         with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
             f.write(yaml.dump(pins))
 
+clocks = {}
+
+def parse_clocks():
+    for f in glob('sources/cubedb/mcu/IP/RCC-*rcc_v1_0_Modes.xml'):
+        ff = removeprefix(f, 'sources/cubedb/mcu/IP/RCC-')
+        ff = removesuffix(ff, '_rcc_v1_0_Modes.xml')
+        ff = removesuffix(ff, '-rcc_v1_0_Modes.xml')
+        chip_clocks = {}
+        r = xmltodict.parse(open(f, 'rb'))
+        for ref in r['IP']['RefParameter']:
+            name = ref['@Name']
+            if name.startswith("APB") and name.endswith("Freq_Value") and not name.endswith("TimFreq_Value") and '@IP' in ref:
+                name = removesuffix(name, "Freq_Value")
+                peripherals = ref['@IP']
+                peripherals = peripherals.split(",")
+                for p in peripherals:
+                    chip_clocks[p] = name
+        clocks[ff] = chip_clocks
+
 
 parse_gpio_af()
 parse_headers()
+parse_clocks()
 parse_chips()
