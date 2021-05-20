@@ -422,6 +422,13 @@ def parse_chips():
                 'block': 'exti_v1/EXTI',
             })
 
+        # FLASH is not in the cubedb XMLs
+        if addr := h['defines'].get('FLASH_R_BASE'):
+            peris['FLASH'] = OrderedDict({
+                'address': addr,
+                'kind': 'FLASH:' + chip_name[:7] + '_flash_v1_0',
+            })
+
         chip['peripherals'] = peris
 
         with open('data/chips/'+chip_name+'.yaml', 'w') as f:
