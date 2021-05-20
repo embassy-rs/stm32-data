@@ -425,10 +425,14 @@ def parse_chips():
 
         # FLASH is not in the cubedb XMLs
         if addr := h['defines'].get('FLASH_R_BASE'):
-            peris['FLASH'] = OrderedDict({
+            kind = 'FLASH:' + chip_name[:7] + '_flash_v1_0'
+            flash_peri = OrderedDict({
                 'address': addr,
-                'kind': 'FLASH:' + chip_name[:7] + '_flash_v1_0',
+                'kind': kind,
             })
+            if block := match_peri(kind):
+                flash_peri['block'] = block
+            peris['FLASH'] = flash_peri
 
         chip['peripherals'] = peris
 
