@@ -243,6 +243,7 @@ perimap = [
     ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
+    ('.*:STM32H7_dbgmcu_v1_0', 'dbgmcu_h7/DBGMCU'),
 ]
 
 
@@ -433,6 +434,17 @@ def parse_chips():
             if block := match_peri(kind):
                 flash_peri['block'] = block
             peris['FLASH'] = flash_peri
+
+        # DBGMCU is not in the cubedb XMLs
+        if addr := h['defines'].get('DBGMCU_BASE'):
+            kind = 'DBGMCU:' + chip_name[:7] + '_dbgmcu_v1_0'
+            dbg_peri = OrderedDict({
+                'address': addr,
+                'kind': kind,
+            })
+            if block := match_peri(kind):
+                dbg_peri['block'] = block
+            peris['DBGMCU'] = dbg_peri
 
         chip['peripherals'] = peris
 
