@@ -1,0 +1,588 @@
+---
+block/I2C1:
+  description: I2C
+  items:
+    - name: CR1
+      description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+      byte_offset: 0
+      fieldset: CR1
+    - name: CR2
+      description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+      byte_offset: 4
+      fieldset: CR2
+    - name: OAR1
+      description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+      byte_offset: 8
+      fieldset: OAR1
+    - name: OAR2
+      description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+      byte_offset: 12
+      fieldset: OAR2
+    - name: TIMINGR
+      description: "Access: No wait states"
+      byte_offset: 16
+      fieldset: TIMINGR
+    - name: TIMEOUTR
+      description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+      byte_offset: 20
+      fieldset: TIMEOUTR
+    - name: ISR
+      description: "Access: No wait states"
+      byte_offset: 24
+      fieldset: ISR
+    - name: ICR
+      description: "Access: No wait states"
+      byte_offset: 28
+      access: Write
+      fieldset: ICR
+    - name: PECR
+      description: "Access: No wait states"
+      byte_offset: 32
+      access: Read
+      fieldset: PECR
+    - name: RXDR
+      description: "Access: No wait states"
+      byte_offset: 36
+      access: Read
+      fieldset: RXDR
+    - name: TXDR
+      description: "Access: No wait states"
+      byte_offset: 40
+      fieldset: TXDR
+fieldset/CR1:
+  description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+  fields:
+    - name: PE
+      description: "Peripheral enable Note: When PE=0, the I2C SCL and SDA lines are released. Internal state machines and status bits are put back to their reset value. When cleared, PE must be kept low for at least 3 APB clock cycles."
+      bit_offset: 0
+      bit_size: 1
+    - name: TXIE
+      description: TX Interrupt enable
+      bit_offset: 1
+      bit_size: 1
+    - name: RXIE
+      description: RX Interrupt enable
+      bit_offset: 2
+      bit_size: 1
+    - name: ADDRIE
+      description: Address match Interrupt enable (slave only)
+      bit_offset: 3
+      bit_size: 1
+    - name: NACKIE
+      description: Not acknowledge received Interrupt enable
+      bit_offset: 4
+      bit_size: 1
+    - name: STOPIE
+      description: STOP detection Interrupt enable
+      bit_offset: 5
+      bit_size: 1
+    - name: TCIE
+      description: "Transfer Complete interrupt enable Note: Any of these events will generate an interrupt: Transfer Complete (TC) Transfer Complete Reload (TCR)"
+      bit_offset: 6
+      bit_size: 1
+    - name: ERRIE
+      description: "Error interrupts enable Note: Any of these errors generate an interrupt: Arbitration Loss (ARLO) Bus Error detection (BERR) Overrun/Underrun (OVR) Timeout detection (TIMEOUT) PEC error detection (PECERR) Alert pin event detection (ALERT)"
+      bit_offset: 7
+      bit_size: 1
+    - name: DNF
+      description: "Digital noise filter These bits are used to configure the digital noise filter on SDA and SCL input. The digital filter will filter spikes with a length of up to DNF[3:0] * tI2CCLK ... Note: If the analog filter is also enabled, the digital filter is added to the analog filter. This filter can only be programmed when the I2C is disabled (PE = 0)."
+      bit_offset: 8
+      bit_size: 4
+      enum: DNF
+    - name: ANFOFF
+      description: "Analog noise filter OFF Note: This bit can only be programmed when the I2C is disabled (PE = 0)."
+      bit_offset: 12
+      bit_size: 1
+    - name: TXDMAEN
+      description: DMA transmission requests enable
+      bit_offset: 14
+      bit_size: 1
+    - name: RXDMAEN
+      description: DMA reception requests enable
+      bit_offset: 15
+      bit_size: 1
+    - name: SBC
+      description: Slave byte control This bit is used to enable hardware byte control in slave mode.
+      bit_offset: 16
+      bit_size: 1
+    - name: NOSTRETCH
+      description: "Clock stretching disable This bit is used to disable clock stretching in slave mode. It must be kept cleared in master mode. Note: This bit can only be programmed when the I2C is disabled (PE = 0)."
+      bit_offset: 17
+      bit_size: 1
+    - name: WUPEN
+      description: "Wakeup from Stop mode enable Note: If the Wakeup from Stop mode feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation. Note: WUPEN can be set only when DNF = 0000"
+      bit_offset: 18
+      bit_size: 1
+    - name: GCEN
+      description: General call enable
+      bit_offset: 19
+      bit_size: 1
+    - name: SMBHEN
+      description: "SMBus Host address enable Note: If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 20
+      bit_size: 1
+    - name: SMBDEN
+      description: "SMBus Device Default address enable Note: If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 21
+      bit_size: 1
+    - name: ALERTEN
+      description: "SMBus alert enable Device mode (SMBHEN=0): Host mode (SMBHEN=1): Note: When ALERTEN=0, the SMBA pin can be used as a standard GPIO. If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 22
+      bit_size: 1
+    - name: PECEN
+      description: "PEC enable Note: If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 23
+      bit_size: 1
+fieldset/CR2:
+  description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+  fields:
+    - name: SADD
+      description: "Slave address bit 0 (master mode) In 7-bit addressing mode (ADD10 = 0): This bit is dont care In 10-bit addressing mode (ADD10 = 1): This bit should be written with bit 0 of the slave address to be sent Note: Changing these bits when the START bit is set is not allowed."
+      bit_offset: 0
+      bit_size: 10
+    - name: RD_WRN
+      description: "Transfer direction (master mode) Note: Changing this bit when the START bit is set is not allowed."
+      bit_offset: 10
+      bit_size: 1
+      enum: RD_WRN
+    - name: ADD10
+      description: "10-bit addressing mode (master mode) Note: Changing this bit when the START bit is set is not allowed."
+      bit_offset: 11
+      bit_size: 1
+      enum: ADD
+    - name: HEAD10R
+      description: "10-bit address header only read direction (master receiver mode) Note: Changing this bit when the START bit is set is not allowed."
+      bit_offset: 12
+      bit_size: 1
+      enum: HEADR
+    - name: START
+      description: "Start generation This bit is set by software, and cleared by hardware after the Start followed by the address sequence is sent, by an arbitration loss, by a timeout error detection, or when PE = 0. It can also be cleared by software by writing 1 to the ADDRCF bit in the I2C_ICR register. If the I2C is already in master mode with AUTOEND = 0, setting this bit generates a Repeated Start condition when RELOAD=0, after the end of the NBYTES transfer. Otherwise setting this bit will generate a START condition once the bus is free. Note: Writing 0 to this bit has no effect. The START bit can be set even if the bus is BUSY or I2C is in slave mode. This bit has no effect when RELOAD is set."
+      bit_offset: 13
+      bit_size: 1
+      enum: START
+    - name: STOP
+      description: "Stop generation (master mode) The bit is set by software, cleared by hardware when a Stop condition is detected, or when PE = 0. In Master Mode: Note: Writing 0 to this bit has no effect."
+      bit_offset: 14
+      bit_size: 1
+      enum: STOP
+    - name: NACK
+      description: "NACK generation (slave mode) The bit is set by software, cleared by hardware when the NACK is sent, or when a STOP condition or an Address matched is received, or when PE=0. Note: Writing 0 to this bit has no effect. This bit is used in slave mode only: in master receiver mode, NACK is automatically generated after last byte preceding STOP or RESTART condition, whatever the NACK bit value. When an overrun occurs in slave receiver NOSTRETCH mode, a NACK is automatically generated whatever the NACK bit value. When hardware PEC checking is enabled (PECBYTE=1), the PEC acknowledge value does not depend on the NACK value."
+      bit_offset: 15
+      bit_size: 1
+      enum: NACK
+    - name: NBYTES
+      description: "Number of bytes The number of bytes to be transmitted/received is programmed there. This field is dont care in slave mode with SBC=0. Note: Changing these bits when the START bit is set is not allowed."
+      bit_offset: 16
+      bit_size: 8
+    - name: RELOAD
+      description: NBYTES reload mode This bit is set and cleared by software.
+      bit_offset: 24
+      bit_size: 1
+      enum: RELOAD
+    - name: AUTOEND
+      description: "Automatic end mode (master mode) This bit is set and cleared by software. Note: This bit has no effect in slave mode or when the RELOAD bit is set."
+      bit_offset: 25
+      bit_size: 1
+      enum: AUTOEND
+    - name: PECBYTE
+      description: "Packet error checking byte This bit is set by software, and cleared by hardware when the PEC is transferred, or when a STOP condition or an Address matched is received, also when PE=0. Note: Writing 0 to this bit has no effect. This bit has no effect when RELOAD is set. This bit has no effect is slave mode when SBC=0. If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 26
+      bit_size: 1
+      enum: PECBYTE
+fieldset/ICR:
+  description: "Access: No wait states"
+  fields:
+    - name: ADDRCF
+      description: Address matched flag clear Writing 1 to this bit clears the ADDR flag in the I2C_ISR register. Writing 1 to this bit also clears the START bit in the I2C_CR2 register.
+      bit_offset: 3
+      bit_size: 1
+    - name: NACKCF
+      description: Not Acknowledge flag clear Writing 1 to this bit clears the ACKF flag in I2C_ISR register.
+      bit_offset: 4
+      bit_size: 1
+    - name: STOPCF
+      description: Stop detection flag clear Writing 1 to this bit clears the STOPF flag in the I2C_ISR register.
+      bit_offset: 5
+      bit_size: 1
+    - name: BERRCF
+      description: Bus error flag clear Writing 1 to this bit clears the BERRF flag in the I2C_ISR register.
+      bit_offset: 8
+      bit_size: 1
+    - name: ARLOCF
+      description: Arbitration Lost flag clear Writing 1 to this bit clears the ARLO flag in the I2C_ISR register.
+      bit_offset: 9
+      bit_size: 1
+    - name: OVRCF
+      description: Overrun/Underrun flag clear Writing 1 to this bit clears the OVR flag in the I2C_ISR register.
+      bit_offset: 10
+      bit_size: 1
+    - name: PECCF
+      description: "PEC Error flag clear Writing 1 to this bit clears the PECERR flag in the I2C_ISR register. Note: If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 11
+      bit_size: 1
+    - name: TIMOUTCF
+      description: "Timeout detection flag clear Writing 1 to this bit clears the TIMEOUT flag in the I2C_ISR register. Note: If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 12
+      bit_size: 1
+    - name: ALERTCF
+      description: "Alert flag clear Writing 1 to this bit clears the ALERT flag in the I2C_ISR register. Note: If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 13
+      bit_size: 1
+fieldset/ISR:
+  description: "Access: No wait states"
+  fields:
+    - name: TXE
+      description: "Transmit data register empty (transmitters) This bit is set by hardware when the I2C_TXDR register is empty. It is cleared when the next data to be sent is written in the I2C_TXDR register. This bit can be written to 1 by software in order to flush the transmit data register I2C_TXDR. Note: This bit is set by hardware when PE=0."
+      bit_offset: 0
+      bit_size: 1
+    - name: TXIS
+      description: "Transmit interrupt status (transmitters) This bit is set by hardware when the I2C_TXDR register is empty and the data to be transmitted must be written in the I2C_TXDR register. It is cleared when the next data to be sent is written in the I2C_TXDR register. This bit can be written to 1 by software when NOSTRETCH=1 only, in order to generate a TXIS event (interrupt if TXIE=1 or DMA request if TXDMAEN=1). Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 1
+      bit_size: 1
+    - name: RXNE
+      description: "Receive data register not empty (receivers) This bit is set by hardware when the received data is copied into the I2C_RXDR register, and is ready to be read. It is cleared when I2C_RXDR is read. Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 2
+      bit_size: 1
+    - name: ADDR
+      description: "Address matched (slave mode) This bit is set by hardware as soon as the received slave address matched with one of the enabled slave addresses. It is cleared by software by setting ADDRCF bit. Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 3
+      bit_size: 1
+    - name: NACKF
+      description: "Not Acknowledge received flag This flag is set by hardware when a NACK is received after a byte transmission. It is cleared by software by setting the NACKCF bit. Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 4
+      bit_size: 1
+    - name: STOPF
+      description: "Stop detection flag This flag is set by hardware when a Stop condition is detected on the bus and the peripheral is involved in this transfer: either as a master, provided that the STOP condition is generated by the peripheral. or as a slave, provided that the peripheral has been addressed previously during this transfer. It is cleared by software by setting the STOPCF bit. Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 5
+      bit_size: 1
+    - name: TC
+      description: "Transfer Complete (master mode) This flag is set by hardware when RELOAD=0, AUTOEND=0 and NBYTES data have been transferred. It is cleared by software when START bit or STOP bit is set. Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 6
+      bit_size: 1
+    - name: TCR
+      description: "Transfer Complete Reload This flag is set by hardware when RELOAD=1 and NBYTES data have been transferred. It is cleared by software when NBYTES is written to a non-zero value. Note: This bit is cleared by hardware when PE=0. This flag is only for master mode, or for slave mode when the SBC bit is set."
+      bit_offset: 7
+      bit_size: 1
+    - name: BERR
+      description: "Bus error This flag is set by hardware when a misplaced Start or Stop condition is detected whereas the peripheral is involved in the transfer. The flag is not set during the address phase in slave mode. It is cleared by software by setting BERRCF bit. Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 8
+      bit_size: 1
+    - name: ARLO
+      description: "Arbitration lost This flag is set by hardware in case of arbitration loss. It is cleared by software by setting the ARLOCF bit. Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 9
+      bit_size: 1
+    - name: OVR
+      description: "Overrun/Underrun (slave mode) This flag is set by hardware in slave mode with NOSTRETCH=1, when an overrun/underrun error occurs. It is cleared by software by setting the OVRCF bit. Note: This bit is cleared by hardware when PE=0."
+      bit_offset: 10
+      bit_size: 1
+    - name: PECERR
+      description: "PEC Error in reception This flag is set by hardware when the received PEC does not match with the PEC register content. A NACK is automatically sent after the wrong PEC reception. It is cleared by software by setting the PECCF bit. Note: This bit is cleared by hardware when PE=0. If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 11
+      bit_size: 1
+      enum: PECERR
+    - name: TIMEOUT
+      description: "Timeout or tLOW detection flag This flag is set by hardware when a timeout or extended clock timeout occurred. It is cleared by software by setting the TIMEOUTCF bit. Note: This bit is cleared by hardware when PE=0. If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 12
+      bit_size: 1
+    - name: ALERT
+      description: "SMBus alert This flag is set by hardware when SMBHEN=1 (SMBus host configuration), ALERTEN=1 and a SMBALERT event (falling edge) is detected on SMBA pin. It is cleared by software by setting the ALERTCF bit. Note: This bit is cleared by hardware when PE=0. If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0. Please refer to Section25.3: I2C implementation."
+      bit_offset: 13
+      bit_size: 1
+    - name: BUSY
+      description: "Bus busy This flag indicates that a communication is in progress on the bus. It is set by hardware when a START condition is detected. It is cleared by hardware when a Stop condition is detected, or when PE=0."
+      bit_offset: 15
+      bit_size: 1
+    - name: DIR
+      description: Transfer direction (Slave mode) This flag is updated when an address match event occurs (ADDR=1).
+      bit_offset: 16
+      bit_size: 1
+      enum: DIR
+    - name: ADDCODE
+      description: "Address match code (Slave mode) These bits are updated with the received address when an address match event occurs (ADDR = 1). In the case of a 10-bit address, ADDCODE provides the 10-bit header followed by the 2 MSBs of the address."
+      bit_offset: 17
+      bit_size: 7
+fieldset/OAR1:
+  description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+  fields:
+    - name: OA1
+      description: "Interface address 7-bit addressing mode: dont care 10-bit addressing mode: bits 9:8 of address Note: These bits can be written only when OA1EN=0. OA1[7:1]: Interface address Bits 7:1 of address Note: These bits can be written only when OA1EN=0. OA1[0]: Interface address 7-bit addressing mode: dont care 10-bit addressing mode: bit 0 of address Note: This bit can be written only when OA1EN=0."
+      bit_offset: 0
+      bit_size: 10
+    - name: OA1MODE
+      description: "Own Address 1 10-bit mode Note: This bit can be written only when OA1EN=0."
+      bit_offset: 10
+      bit_size: 1
+      enum: OAMODE
+    - name: OA1EN
+      description: Own Address 1 enable
+      bit_offset: 15
+      bit_size: 1
+fieldset/OAR2:
+  description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+  fields:
+    - name: OA2
+      description: "Interface address bits 7:1 of address Note: These bits can be written only when OA2EN=0."
+      bit_offset: 1
+      bit_size: 7
+    - name: OA2MSK
+      description: "Own Address 2 masks Note: These bits can be written only when OA2EN=0. As soon as OA2MSK is not equal to 0, the reserved I2C addresses (0b0000xxx and 0b1111xxx) are not acknowledged even if the comparison matches."
+      bit_offset: 8
+      bit_size: 3
+      enum: OAMSK
+    - name: OA2EN
+      description: Own Address 2 enable
+      bit_offset: 15
+      bit_size: 1
+fieldset/PECR:
+  description: "Access: No wait states"
+  fields:
+    - name: PEC
+      description: Packet error checking register This field contains the internal PEC when PECEN=1. The PEC is cleared by hardware when PE=0.
+      bit_offset: 0
+      bit_size: 8
+fieldset/RXDR:
+  description: "Access: No wait states"
+  fields:
+    - name: RXDATA
+      description: 8-bit receive data Data byte received from the I2C bus.
+      bit_offset: 0
+      bit_size: 8
+fieldset/TIMEOUTR:
+  description: "Access: No wait states, except if a write access occurs while a write access to this register is ongoing. In this case, wait states are inserted in the second write access until the previous one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK."
+  fields:
+    - name: TIMEOUTA
+      description: "Bus Timeout A This field is used to configure: The SCL low timeout condition tTIMEOUT when TIDLE=0 tTIMEOUT= (TIMEOUTA+1) x 2048 x tI2CCLK The bus idle condition (both SCL and SDA high) when TIDLE=1 tIDLE= (TIMEOUTA+1) x 4 x tI2CCLK Note: These bits can be written only when TIMOUTEN=0."
+      bit_offset: 0
+      bit_size: 12
+    - name: TIDLE
+      description: "Idle clock timeout detection Note: This bit can be written only when TIMOUTEN=0."
+      bit_offset: 12
+      bit_size: 1
+    - name: TIMOUTEN
+      description: Clock timeout enable
+      bit_offset: 15
+      bit_size: 1
+    - name: TIMEOUTB
+      description: "Bus timeout B This field is used to configure the cumulative clock extension timeout: In master mode, the master cumulative clock low extend time (tLOW:MEXT) is detected In slave mode, the slave cumulative clock low extend time (tLOW:SEXT) is detected tLOW:EXT= (TIMEOUTB+1) x 2048 x tI2CCLK Note: These bits can be written only when TEXTEN=0."
+      bit_offset: 16
+      bit_size: 12
+    - name: TEXTEN
+      description: Extended clock timeout enable
+      bit_offset: 31
+      bit_size: 1
+fieldset/TIMINGR:
+  description: "Access: No wait states"
+  fields:
+    - name: SCLL
+      description: "SCL low period (master mode) This field is used to generate the SCL low period in master mode. tSCLL = (SCLL+1) x tPRESC Note: SCLL is also used to generate tBUF and tSU:STA timings."
+      bit_offset: 0
+      bit_size: 8
+    - name: SCLH
+      description: "SCL high period (master mode) This field is used to generate the SCL high period in master mode. tSCLH = (SCLH+1) x tPRESC Note: SCLH is also used to generate tSU:STO and tHD:STA timing."
+      bit_offset: 8
+      bit_size: 8
+    - name: SDADEL
+      description: "Data hold time This field is used to generate the delay tSDADEL between SCL falling edge and SDA edge. In master mode and in slave mode with NOSTRETCH = 0, the SCL line is stretched low during tSDADEL. tSDADEL= SDADEL x tPRESC Note: SDADEL is used to generate tHD:DAT timing."
+      bit_offset: 16
+      bit_size: 4
+    - name: SCLDEL
+      description: "Data setup time This field is used to generate a delay tSCLDEL between SDA edge and SCL rising edge. In master mode and in slave mode with NOSTRETCH = 0, the SCL line is stretched low during tSCLDEL. tSCLDEL = (SCLDEL+1) x tPRESC Note: tSCLDEL is used to generate tSU:DAT timing."
+      bit_offset: 20
+      bit_size: 4
+    - name: PRESC
+      description: Timing prescaler This field is used to prescale I2CCLK in order to generate the clock period tPRESC used for data setup and hold counters (refer to I2C timings on page9) and for SCL high and low level counters (refer to I2C master initialization on page24). tPRESC = (PRESC+1) x tI2CCLK
+      bit_offset: 28
+      bit_size: 4
+fieldset/TXDR:
+  description: "Access: No wait states"
+  fields:
+    - name: TXDATA
+      description: "8-bit transmit data Data byte to be transmitted to the I2C bus. Note: These bits can be written only when TXE=1."
+      bit_offset: 0
+      bit_size: 8
+enum/ADD:
+  bit_size: 1
+  variants:
+    - name: Bit7
+      description: The master operates in 7-bit addressing mode
+      value: 0
+    - name: Bit10
+      description: The master operates in 10-bit addressing mode
+      value: 1
+enum/AUTOEND:
+  bit_size: 1
+  variants:
+    - name: Software
+      description: "Software end mode: TC flag is set when NBYTES data are transferred, stretching SCL low"
+      value: 0
+    - name: Automatic
+      description: "Automatic end mode: a STOP condition is automatically sent when NBYTES data are transferred"
+      value: 1
+enum/DIR:
+  bit_size: 1
+  variants:
+    - name: Write
+      description: "Write transfer, slave enters receiver mode"
+      value: 0
+    - name: Read
+      description: "Read transfer, slave enters transmitter mode"
+      value: 1
+enum/DNF:
+  bit_size: 4
+  variants:
+    - name: NoFilter
+      description: Digital filter disabled
+      value: 0
+    - name: Filter1
+      description: Digital filter enabled and filtering capability up to 1 tI2CCLK
+      value: 1
+    - name: Filter2
+      description: Digital filter enabled and filtering capability up to 2 tI2CCLK
+      value: 2
+    - name: Filter3
+      description: Digital filter enabled and filtering capability up to 3 tI2CCLK
+      value: 3
+    - name: Filter4
+      description: Digital filter enabled and filtering capability up to 4 tI2CCLK
+      value: 4
+    - name: Filter5
+      description: Digital filter enabled and filtering capability up to 5 tI2CCLK
+      value: 5
+    - name: Filter6
+      description: Digital filter enabled and filtering capability up to 6 tI2CCLK
+      value: 6
+    - name: Filter7
+      description: Digital filter enabled and filtering capability up to 7 tI2CCLK
+      value: 7
+    - name: Filter8
+      description: Digital filter enabled and filtering capability up to 8 tI2CCLK
+      value: 8
+    - name: Filter9
+      description: Digital filter enabled and filtering capability up to 9 tI2CCLK
+      value: 9
+    - name: Filter10
+      description: Digital filter enabled and filtering capability up to 10 tI2CCLK
+      value: 10
+    - name: Filter11
+      description: Digital filter enabled and filtering capability up to 11 tI2CCLK
+      value: 11
+    - name: Filter12
+      description: Digital filter enabled and filtering capability up to 12 tI2CCLK
+      value: 12
+    - name: Filter13
+      description: Digital filter enabled and filtering capability up to 13 tI2CCLK
+      value: 13
+    - name: Filter14
+      description: Digital filter enabled and filtering capability up to 14 tI2CCLK
+      value: 14
+    - name: Filter15
+      description: Digital filter enabled and filtering capability up to 15 tI2CCLK
+      value: 15
+enum/HEADR:
+  bit_size: 1
+  variants:
+    - name: Complete
+      description: The master sends the complete 10 bit slave address read sequence
+      value: 0
+    - name: Partial
+      description: "The master only sends the 1st 7 bits of the 10 bit address, followed by Read direction"
+      value: 1
+enum/NACK:
+  bit_size: 1
+  variants:
+    - name: Ack
+      description: an ACK is sent after current received byte
+      value: 0
+    - name: Nack
+      description: a NACK is sent after current received byte
+      value: 1
+enum/OAMODE:
+  bit_size: 1
+  variants:
+    - name: Bit7
+      description: Own address 1 is a 7-bit address
+      value: 0
+    - name: Bit10
+      description: Own address 1 is a 10-bit address
+      value: 1
+enum/OAMSK:
+  bit_size: 3
+  variants:
+    - name: NoMask
+      description: No mask
+      value: 0
+    - name: Mask1
+      description: "OA2[1] is masked and don’t care. Only OA2[7:2] are compared"
+      value: 1
+    - name: Mask2
+      description: "OA2[2:1] are masked and don’t care. Only OA2[7:3] are compared"
+      value: 2
+    - name: Mask3
+      description: "OA2[3:1] are masked and don’t care. Only OA2[7:4] are compared"
+      value: 3
+    - name: Mask4
+      description: "OA2[4:1] are masked and don’t care. Only OA2[7:5] are compared"
+      value: 4
+    - name: Mask5
+      description: "OA2[5:1] are masked and don’t care. Only OA2[7:6] are compared"
+      value: 5
+    - name: Mask6
+      description: "OA2[6:1] are masked and don’t care. Only OA2[7] is compared."
+      value: 6
+    - name: Mask7
+      description: "OA2[7:1] are masked and don’t care. No comparison is done, and all (except reserved) 7-bit received addresses are acknowledged"
+      value: 7
+enum/PECBYTE:
+  bit_size: 1
+  variants:
+    - name: NoPec
+      description: No PEC transfer
+      value: 0
+    - name: Pec
+      description: PEC transmission/reception is requested
+      value: 1
+enum/PECERR:
+  bit_size: 1
+  variants:
+    - name: Match
+      description: Received PEC does match with PEC register
+      value: 0
+    - name: NoMatch
+      description: Received PEC does not match with PEC register
+      value: 1
+enum/RD_WRN:
+  bit_size: 1
+  variants:
+    - name: Write
+      description: Master requests a write transfer
+      value: 0
+    - name: Read
+      description: Master requests a read transfer
+      value: 1
+enum/RELOAD:
+  bit_size: 1
+  variants:
+    - name: Completed
+      description: The transfer is completed after the NBYTES data transfer (STOP or RESTART will follow)
+      value: 0
+    - name: NotCompleted
+      description: The transfer is not completed after the NBYTES data transfer (NBYTES will be reloaded)
+      value: 1
+enum/START:
+  bit_size: 1
+  variants:
+    - name: NoStart
+      description: No Start generation
+      value: 0
+    - name: Start
+      description: Restart/Start generation
+      value: 1
+enum/STOP:
+  bit_size: 1
+  variants:
+    - name: NoStop
+      description: No Stop generation
+      value: 0
+    - name: Stop
+      description: Stop generation after current byte transfer
+      value: 1
