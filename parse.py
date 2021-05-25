@@ -233,6 +233,7 @@ perimap = [
     ('.*:SPI:spi2s1_v3_3', 'spi_v2/SPI'),
     ('.*:SPI:spi2s2_v1_1', 'spi_v3/SPI'),
     ('.*:SPI:spi2s2_v1_0', 'spi_v3/SPI'),
+    ('.*:I2C:i2c1_v1_5', 'i2c_v1/I2C'),
     ('.*:I2C:i2c2_v1_1F7', 'i2c_v2/I2C'),
     ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),

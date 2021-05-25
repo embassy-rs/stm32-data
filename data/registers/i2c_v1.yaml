@@ -1,0 +1,449 @@
+---
+block/I2C:
+  description: Inter-integrated circuit
+  items:
+    - name: CR1
+      description: Control register 1
+      byte_offset: 0
+      fieldset: CR1
+    - name: CR2
+      description: Control register 2
+      byte_offset: 4
+      fieldset: CR2
+    - name: OAR1
+      description: Own address register 1
+      byte_offset: 8
+      fieldset: OAR1
+    - name: OAR2
+      description: Own address register 2
+      byte_offset: 12
+      fieldset: OAR2
+    - name: DR
+      description: Data register
+      byte_offset: 16
+      fieldset: DR
+    - name: SR1
+      description: Status register 1
+      byte_offset: 20
+      fieldset: SR1
+    - name: SR2
+      description: Status register 2
+      byte_offset: 24
+      access: Read
+      fieldset: SR2
+    - name: CCR
+      description: Clock control register
+      byte_offset: 28
+      fieldset: CCR
+    - name: TRISE
+      description: TRISE register
+      byte_offset: 32
+      fieldset: TRISE
+    - name: FLTR
+      description: FLTR register
+      byte_offset: 36
+      fieldset: FLTR
+fieldset/CCR:
+  description: Clock control register
+  fields:
+    - name: CCR
+      description: Clock control register in Fast/Standard mode (Master mode)
+      bit_offset: 0
+      bit_size: 12
+    - name: DUTY
+      description: Fast mode duty cycle
+      bit_offset: 14
+      bit_size: 1
+      enum: DUTY
+    - name: F_S
+      description: I2C master mode selection
+      bit_offset: 15
+      bit_size: 1
+      enum: F_S
+fieldset/CR1:
+  description: Control register 1
+  fields:
+    - name: PE
+      description: Peripheral enable
+      bit_offset: 0
+      bit_size: 1
+    - name: SMBUS
+      description: SMBus mode
+      bit_offset: 1
+      bit_size: 1
+      enum: SMBUS
+    - name: SMBTYPE
+      description: SMBus type
+      bit_offset: 3
+      bit_size: 1
+      enum: SMBTYPE
+    - name: ENARP
+      description: ARP enable
+      bit_offset: 4
+      bit_size: 1
+    - name: ENPEC
+      description: PEC enable
+      bit_offset: 5
+      bit_size: 1
+    - name: ENGC
+      description: General call enable
+      bit_offset: 6
+      bit_size: 1
+    - name: NOSTRETCH
+      description: Clock stretching disable (Slave mode)
+      bit_offset: 7
+      bit_size: 1
+    - name: START
+      description: Start generation
+      bit_offset: 8
+      bit_size: 1
+      enum: START
+    - name: STOP
+      description: Stop generation
+      bit_offset: 9
+      bit_size: 1
+      enum: STOP
+    - name: ACK
+      description: Acknowledge enable
+      bit_offset: 10
+      bit_size: 1
+    - name: POS
+      description: Acknowledge/PEC Position (for data reception)
+      bit_offset: 11
+      bit_size: 1
+      enum: POS
+    - name: PEC
+      description: Packet error checking
+      bit_offset: 12
+      bit_size: 1
+    - name: ALERT
+      description: SMBus alert
+      bit_offset: 13
+      bit_size: 1
+      enum: ALERT
+    - name: SWRST
+      description: Software reset
+      bit_offset: 15
+      bit_size: 1
+fieldset/CR2:
+  description: Control register 2
+  fields:
+    - name: FREQ
+      description: Peripheral clock frequency
+      bit_offset: 0
+      bit_size: 6
+    - name: ITERREN
+      description: Error interrupt enable
+      bit_offset: 8
+      bit_size: 1
+    - name: ITEVTEN
+      description: Event interrupt enable
+      bit_offset: 9
+      bit_size: 1
+    - name: ITBUFEN
+      description: Buffer interrupt enable
+      bit_offset: 10
+      bit_size: 1
+    - name: DMAEN
+      description: DMA requests enable
+      bit_offset: 11
+      bit_size: 1
+    - name: LAST
+      description: DMA last transfer
+      bit_offset: 12
+      bit_size: 1
+fieldset/DR:
+  description: Data register
+  fields:
+    - name: DR
+      description: 8-bit data register
+      bit_offset: 0
+      bit_size: 8
+fieldset/FLTR:
+  description: FLTR register
+  fields:
+    - name: DNF
+      description: Digital noise filter
+      bit_offset: 0
+      bit_size: 4
+      enum: DNF
+    - name: ANOFF
+      description: Analog noise filter
+      bit_offset: 4
+      bit_size: 1
+fieldset/OAR1:
+  description: Own address register 1
+  fields:
+    - name: ADD
+      description: Interface address
+      bit_offset: 0
+      bit_size: 10
+    - name: ADDMODE
+      description: Addressing mode (slave mode)
+      bit_offset: 15
+      bit_size: 1
+      enum: ADDMODE
+fieldset/OAR2:
+  description: Own address register 2
+  fields:
+    - name: ENDUAL
+      description: Dual addressing mode enable
+      bit_offset: 0
+      bit_size: 1
+      enum: ENDUAL
+    - name: ADD2
+      description: Interface address
+      bit_offset: 1
+      bit_size: 7
+fieldset/SR1:
+  description: Status register 1
+  fields:
+    - name: SB
+      description: Start bit (Master mode)
+      bit_offset: 0
+      bit_size: 1
+      enum: SB
+    - name: ADDR
+      description: Address sent (master mode)/matched (slave mode)
+      bit_offset: 1
+      bit_size: 1
+    - name: BTF
+      description: Byte transfer finished
+      bit_offset: 2
+      bit_size: 1
+    - name: ADD10
+      description: 10-bit header sent (Master mode)
+      bit_offset: 3
+      bit_size: 1
+    - name: STOPF
+      description: Stop detection (slave mode)
+      bit_offset: 4
+      bit_size: 1
+    - name: RxNE
+      description: Data register not empty (receivers)
+      bit_offset: 6
+      bit_size: 1
+    - name: TxE
+      description: Data register empty (transmitters)
+      bit_offset: 7
+      bit_size: 1
+    - name: BERR
+      description: Bus error
+      bit_offset: 8
+      bit_size: 1
+    - name: ARLO
+      description: Arbitration lost (master mode)
+      bit_offset: 9
+      bit_size: 1
+    - name: AF
+      description: Acknowledge failure
+      bit_offset: 10
+      bit_size: 1
+    - name: OVR
+      description: Overrun/Underrun
+      bit_offset: 11
+      bit_size: 1
+    - name: PECERR
+      description: PEC Error in reception
+      bit_offset: 12
+      bit_size: 1
+    - name: TIMEOUT
+      description: Timeout or Tlow error
+      bit_offset: 14
+      bit_size: 1
+    - name: SMBALERT
+      description: SMBus alert
+      bit_offset: 15
+      bit_size: 1
+fieldset/SR2:
+  description: Status register 2
+  fields:
+    - name: MSL
+      description: Master/slave
+      bit_offset: 0
+      bit_size: 1
+    - name: BUSY
+      description: Bus busy
+      bit_offset: 1
+      bit_size: 1
+    - name: TRA
+      description: Transmitter/receiver
+      bit_offset: 2
+      bit_size: 1
+    - name: GENCALL
+      description: General call address (Slave mode)
+      bit_offset: 4
+      bit_size: 1
+    - name: SMBDEFAULT
+      description: SMBus device default address (Slave mode)
+      bit_offset: 5
+      bit_size: 1
+    - name: SMBHOST
+      description: SMBus host header (Slave mode)
+      bit_offset: 6
+      bit_size: 1
+    - name: DUALF
+      description: Dual flag (Slave mode)
+      bit_offset: 7
+      bit_size: 1
+    - name: PEC
+      description: acket error checking register
+      bit_offset: 8
+      bit_size: 8
+fieldset/TRISE:
+  description: TRISE register
+  fields:
+    - name: TRISE
+      description: Maximum rise time in Fast/Standard mode (Master mode)
+      bit_offset: 0
+      bit_size: 6
+enum/ADDMODE:
+  bit_size: 1
+  variants:
+    - name: ADD7
+      description: 7-bit slave address
+      value: 0
+    - name: ADD10
+      description: 10-bit slave address
+      value: 1
+enum/ALERT:
+  bit_size: 1
+  variants:
+    - name: Release
+      description: SMBA pin released high
+      value: 0
+    - name: Drive
+      description: SMBA pin driven low
+      value: 1
+enum/DNF:
+  bit_size: 4
+  variants:
+    - name: NoFilter
+      description: Digital filter disabled
+      value: 0
+    - name: Filter1
+      description: Digital filter enabled and filtering capability up to 1 tI2CCLK
+      value: 1
+    - name: Filter2
+      description: Digital filter enabled and filtering capability up to 2 tI2CCLK
+      value: 2
+    - name: Filter3
+      description: Digital filter enabled and filtering capability up to 3 tI2CCLK
+      value: 3
+    - name: Filter4
+      description: Digital filter enabled and filtering capability up to 4 tI2CCLK
+      value: 4
+    - name: Filter5
+      description: Digital filter enabled and filtering capability up to 5 tI2CCLK
+      value: 5
+    - name: Filter6
+      description: Digital filter enabled and filtering capability up to 6 tI2CCLK
+      value: 6
+    - name: Filter7
+      description: Digital filter enabled and filtering capability up to 7 tI2CCLK
+      value: 7
+    - name: Filter8
+      description: Digital filter enabled and filtering capability up to 8 tI2CCLK
+      value: 8
+    - name: Filter9
+      description: Digital filter enabled and filtering capability up to 9 tI2CCLK
+      value: 9
+    - name: Filter10
+      description: Digital filter enabled and filtering capability up to 10 tI2CCLK
+      value: 10
+    - name: Filter11
+      description: Digital filter enabled and filtering capability up to 11 tI2CCLK
+      value: 11
+    - name: Filter12
+      description: Digital filter enabled and filtering capability up to 12 tI2CCLK
+      value: 12
+    - name: Filter13
+      description: Digital filter enabled and filtering capability up to 13 tI2CCLK
+      value: 13
+    - name: Filter14
+      description: Digital filter enabled and filtering capability up to 14 tI2CCLK
+      value: 14
+    - name: Filter15
+      description: Digital filter enabled and filtering capability up to 15 tI2CCLK
+      value: 15
+enum/DUTY:
+  bit_size: 1
+  variants:
+    - name: Duty2_1
+      description: Duty cycle t_low/t_high = 2/1
+      value: 0
+    - name: Duty16_9
+      description: Duty cycle t_low/t_high = 16/9
+      value: 1
+enum/ENDUAL:
+  bit_size: 1
+  variants:
+    - name: Single
+      description: Single addressing mode
+      value: 0
+    - name: Dual
+      description: Dual addressing mode
+      value: 1
+enum/F_S:
+  bit_size: 1
+  variants:
+    - name: Standard
+      description: Standard mode I2C
+      value: 0
+    - name: Fast
+      description: Fast mode I2C
+      value: 1
+enum/POS:
+  bit_size: 1
+  variants:
+    - name: Current
+      description: ACK bit controls the (N)ACK of the current byte being received
+      value: 0
+    - name: Next
+      description: ACK bit controls the (N)ACK of the next byte to be received
+      value: 1
+enum/SB:
+  bit_size: 1
+  variants:
+    - name: NoStart
+      description: No Start condition
+      value: 0
+    - name: Start
+      description: Start condition generated
+      value: 1
+enum/SMBTYPE:
+  bit_size: 1
+  variants:
+    - name: Device
+      description: SMBus Device
+      value: 0
+    - name: Host
+      description: SMBus Host
+      value: 1
+enum/SMBUS:
+  bit_size: 1
+  variants:
+    - name: I2C
+      description: I2C Mode
+      value: 0
+    - name: SMBus
+      description: SMBus
+      value: 1
+enum/START:
+  bit_size: 1
+  variants:
+    - name: NoStart
+      description: No Start generation
+      value: 0
+    - name: Start
+      description: "In master mode: repeated start generation, in slave mode: start generation when bus is free"
+      value: 1
+enum/STOP:
+  bit_size: 1
+  variants:
+    - name: NoStop
+      description: No Stop generation
+      value: 0
+    - name: Stop
+      description: "In master mode: stop generation after current byte/start, in slave mode: release SCL and SDA after current byte"
+      value: 1
