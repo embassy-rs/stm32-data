@@ -331,12 +331,17 @@ def parse_chips():
             rcc = removesuffix(rcc, '-rcc_v1_0')
             rcc = removesuffix(rcc, '_rcc_v1_0')
 
+            core = r['Core']
+            # multicores have a list here. Just keep the first, to not break the schema.
+            if isinstance(core, list):
+                core = core[0]
+
             if chip_name not in chips:
                 chips[chip_name] = OrderedDict({
                     'name': chip_name,
                     'family': r['@Family'],
                     'line': r['@Line'],
-                    'core': r['Core'],
+                    'core': core,
                     'flash': flash,
                     'ram': ram,
                     'gpio_af': gpio_af,
