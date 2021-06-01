@@ -348,6 +348,7 @@ def parse_chips():
                     'rcc': rcc,  # temporarily stashing it here
                     'packages': [],
                     'peripherals': {},
+                    'pins': {},
                     # 'peripherals': peris,
                     # 'interrupts': h['interrupts'],
                 })
@@ -371,9 +372,35 @@ def parse_chips():
                     continue
                 peris[pname] = pkind
 
+            pins = chips[chip_name]['pins']
+            for pin in r['Pin']:
+                pname = pin['@Name']
+                #print("##", pname);
+                signals = []
+                if 'Signal' in pin:
+                    if type(pin['Signal']) is list:
+                        for signal in pin['Signal']:
+                            #print("** ", signal)
+                            signal_name = signal['@Name']
+                            #print(signal_name)
+                            signals.append(signal_name)
+                    else:
+                        #print("** ", pin['Signal']['@Name'])
+                        signal_name = pin['Signal']['@Name']
+                        signals.append(signal_name)
+                    pins[pname] = signals
+                 
+
+
+
     for chip_name, chip in chips.items():
         rcc = chip['rcc']
         del chip['rcc']
+
+        # shuffle pin assignments
+        pins = chip['pins']
+        del chip['pins']
+
         h = find_header(chip_name)
         if h is None:
             raise Exception("missing header for {}".format(chip_name))
@@ -399,7 +426,16 @@ def parse_chips():
 
             if block := match_peri(chip_name+':'+pname+':'+pkind):
                 p['block'] = block
+
+            if block is not None and block.startswith("dac_"):
+                for pin in pins:
+                    if pname + "_OUT1" in pins[pin]:
+                        p['dac_out1'] = pin
+                    if pname + "_OUT2" in pins[pin]:
+                        p['dac_out2'] = pin
+
             peris[pname] = p
+
 
         # Handle GPIO specially.
         for p in range(20):
