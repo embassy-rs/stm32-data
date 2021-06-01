@@ -237,6 +237,7 @@ perimap = [
     ('.*:I2C:i2c1_v1_5', 'i2c_v1/I2C'),
     ('.*:I2C:i2c2_v1_1F7', 'i2c_v2/I2C'),
     ('.*:DAC:dacif_v2_0', 'dac_v2/DAC'),
+    ('.*:ADC:aditf5_v2_0', 'adc_v3/ADC'),
     ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
@@ -433,6 +434,15 @@ def parse_chips():
                         p['dac_out1'] = pin
                     if pname + "_OUT2" in pins[pin]:
                         p['dac_out2'] = pin
+
+            if block is not None and block.startswith("adc_"):
+                channels = {}
+                for pin in pins:
+                    for signal in pins[pin]:
+                        m = re.match(pname + "_IN([0-9]+)", signal)
+                        if m: 
+                            channels[int(m[1])] = pin
+                p['adc_channels'] = channels            
 
             peris[pname] = p
 
