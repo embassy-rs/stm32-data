@@ -259,6 +259,13 @@ def match_peri(peri):
             return block
     return None
 
+def find_af(gpio_af, peri_name, pin_name, signal_name):
+     if gpio_af in af:
+         if pin_name in af[gpio_af]:
+             if peri_name + '_' + signal_name in af[gpio_af][pin_name]:
+                 return af[gpio_af][pin_name][peri_name + '_' + signal_name]
+     return None
+              
 
 def parse_headers():
     os.makedirs('sources/headers_parsed', exist_ok=True)
@@ -361,6 +368,7 @@ def parse_chips():
             # Some packages have some peripehrals removed because the package had to
             # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
             peris = chips[chip_name]['peripherals']
+            pins = chips[chip_name]['pins']
             for ip in r['IP']:
                 pname = ip['@InstanceName']
                 pkind = ip['@Name']+':'+ip['@Version']
@@ -371,35 +379,45 @@ def parse_chips():
                 if pname in FAKE_PERIPHERALS:
                     continue
                 peris[pname] = pkind
+                pins[pname] = []
 
-            pins = chips[chip_name]['pins']
             for pin in r['Pin']:
-                pname = pin['@Name']
-                #print("##", pname);
-                signals = []
+                pin_name = pin['@Name']
+                pin_name = pin_name.split(' ', 1)[0]
+                pin_name = pin_name.split('-', 1)[0]
                 if 'Signal' in pin:
-                    if type(pin['Signal']) is list:
-                        for signal in pin['Signal']:
-                            #print("** ", signal)
-                            signal_name = signal['@Name']
-                            #print(signal_name)
-                            signals.append(signal_name)
+                    signals = []
+                    if not type(pin['Signal']) is list:
+                        signals.append( pin['Signal'] )
                     else:
-                        #print("** ", pin['Signal']['@Name'])
-                        signal_name = pin['Signal']['@Name']
-                        signals.append(signal_name)
-                    pins[pname] = signals
-                 
-
+                        signals = pin['Signal']
+ 
+                    for signal in signals:
+                        signal_name = signal['@Name']
+                        parts = signal_name.split('_', 1)
+                        if len(parts) == 1:
+                            continue
+                        peri_name = parts[0]
+                        signal_name = parts[1]
+                        if signal_name.startswith("EXTI"):
+                            continue
+                        if not peri_name in pins:
+                            pins[peri_name] = []
+                        entry = OrderedDict({ 
+                            'pin': pin_name, 
+                            'signal': signal_name, 
+                        }) 
+                        af_num = find_af(gpio_af, peri_name, pin_name, signal_name)
+                        if af_num is not None: 
+                            entry['af'] = af_num
+               
+                        pins[peri_name].append( entry )
 
 
     for chip_name, chip in chips.items():
+        print(f'* processing chip {chip_name}')
         rcc = chip['rcc']
         del chip['rcc']
-
-        # shuffle pin assignments
-        pins = chip['pins']
-        del chip['pins']
 
         h = find_header(chip_name)
         if h is None:
@@ -427,12 +445,18 @@ def parse_chips():
             if block := match_peri(chip_name+':'+pname+':'+pkind):
                 p['block'] = block
 
-            if block is not None and block.startswith("dac_"):
-                for pin in pins:
-                    if pname + "_OUT1" in pins[pin]:
-                        p['dac_out1'] = pin
-                    if pname + "_OUT2" in pins[pin]:
-                        p['dac_out2'] = pin
+            #if block is not None and block.startswith("dac_"):
+                #peri_pins = []
+                #dac_out_pins = find_signal_pins(chip, pname + "_OUT([0-9]+)")
+                #for (out_pin, m) in dac_out_pins:
+                    #peri_pins.append( OrderedDict({ 
+                        #"pin": out_pin,
+                        #"function": "Ch" + m[1],
+                    #}) )
+
+            if pname in chip['pins']:
+                if len(chip['pins'][pname]) > 0:
+                    p['pins'] = chip['pins'][pname]
 
             peris[pname] = p
 
@@ -505,9 +529,14 @@ def parse_chips():
             peris['CRS'] = crs_peri
         chip['peripherals'] = peris
 
+        # remove all pins from the root of the chip before emitting.
+        del chip['pins']
+
         with open('data/chips/'+chip_name+'.yaml', 'w') as f:
             f.write(yaml.dump(chip))
 
+
+af = {}
 
 def parse_gpio_af():
     os.makedirs('data/gpio_af', exist_ok=True)
@@ -551,9 +580,9 @@ def parse_gpio_af():
         with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
             f.write(yaml.dump(pins))
 
+        af[ff] = pins
 
 clocks = {}
-
 
 def parse_clocks():
     for f in glob('sources/cubedb/mcu/IP/RCC-*rcc_v1_0_Modes.xml'):
