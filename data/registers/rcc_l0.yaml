@@ -136,15 +136,6 @@ enum/CSSLSEF:
   - description: Failure detected on LSE clock failure
     name: Failure
     value: 1
-enum/CSSLSEON:
-  bit_size: 1
-  variants:
-  - description: Oscillator OFF
-    name: 'Off'
-    value: 0
-  - description: Oscillator ON
-    name: 'On'
-    value: 1
 enum/DBGRSTW:
   bit_size: 1
   variants:
@@ -293,6 +284,15 @@ enum/LPUARTSEL:
     name: LSE
     value: 3
 enum/LPWRRSTFR:
+  bit_size: 1
+  variants:
+  - description: No reset has occured
+    name: NoReset
+    value: 0
+  - description: A reset has occured
+    name: Reset
+    value: 1
+enum/LPWRSTFR:
   bit_size: 1
   variants:
   - description: No reset has occured
@@ -466,15 +466,6 @@ enum/PLLMUL:
   - description: PLL clock entry x 48
     name: Mul48
     value: 8
-enum/PLLON:
-  bit_size: 1
-  variants:
-  - description: Clock disabled
-    name: Disabled
-    value: 0
-  - description: Clock enabled
-    name: Enabled
-    value: 1
 enum/PLLRDYR:
   bit_size: 1
   variants:
@@ -1295,12 +1286,10 @@ fieldset/CR:
   - bit_offset: 0
     bit_size: 1
     description: 16 MHz high-speed internal clock enable
-    enum: PLLON
     name: HSI16ON
   - bit_offset: 1
     bit_size: 1
     description: High-speed internal clock enable bit for some IP kernels
-    enum: PLLON
     name: HSI16KERON
   - bit_offset: 2
     bit_size: 1
@@ -1323,7 +1312,6 @@ fieldset/CR:
   - bit_offset: 8
     bit_size: 1
     description: MSI clock enable bit
-    enum: PLLON
     name: MSION
   - bit_offset: 9
     bit_size: 1
@@ -1333,7 +1321,6 @@ fieldset/CR:
   - bit_offset: 16
     bit_size: 1
     description: HSE clock enable bit
-    enum: PLLON
     name: HSEON
   - bit_offset: 17
     bit_size: 1
@@ -1348,7 +1335,6 @@ fieldset/CR:
   - bit_offset: 19
     bit_size: 1
     description: Clock security system on HSE enable bit
-    enum: PLLON
     name: CSSHSEON
   - bit_offset: 20
     bit_size: 2
@@ -1358,7 +1344,6 @@ fieldset/CR:
   - bit_offset: 24
     bit_size: 1
     description: PLL enable bit
-    enum: PLLON
     name: PLLON
   - bit_offset: 25
     bit_size: 1
@@ -1390,7 +1375,6 @@ fieldset/CSR:
   - bit_offset: 0
     bit_size: 1
     description: Internal low-speed oscillator enable
-    enum: CSSLSEON
     name: LSION
   - bit_offset: 1
     bit_size: 1
@@ -1400,7 +1384,6 @@ fieldset/CSR:
   - bit_offset: 8
     bit_size: 1
     description: External low-speed oscillator enable bit
-    enum: CSSLSEON
     name: LSEON
   - bit_offset: 9
     bit_size: 1
@@ -1420,7 +1403,6 @@ fieldset/CSR:
   - bit_offset: 13
     bit_size: 1
     description: CSSLSEON
-    enum: CSSLSEON
     name: CSSLSEON
   - bit_offset: 14
     bit_size: 1
@@ -1486,11 +1468,11 @@ fieldset/CSR:
     description: Low-power reset flag
     enum_read: LPWRRSTFR
     name: LPWRRSTF
-  - bit_offset: 24
+  - bit_offset: 31
     bit_size: 1
-    description: Remove reset flag
-    enum_write: RMVFW
-    name: RMVF
+    description: Low-power reset flag
+    enum_read: LPWRSTFR
+    name: LPWRSTF
 fieldset/ICSCR:
   description: Internal clock sources calibration register
   fields:
