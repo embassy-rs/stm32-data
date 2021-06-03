@@ -13,43 +13,38 @@ def item_key(a):
 def field_key(a):
     return int(a["bit_offset"])
 
-def block_items(origin, new):
-    newarr=[]
-    sorted(origin, key=item_key)
-    sorted(new, key=item_key)
+def merge_block(origin, new):
+    for newval in new:
+        found = False
+        for val in origin:
+            if val["name"] == newval["name"] and val["byte_offset"] == newval["byte_offset"]:
+                found = True
+        if not found:
+            origin.append(newval)
 
-    for val in origin:
-        for newval in new:
-            if val["name"] == newval["name"] and val["byte_offset"] == newval["byte_offset"] and val["fieldset"] == newval["fieldset"]:
-                newarr.append(newval)
-                    
-    return newarr
-
-def reg_fields(origin, new):
-    newarr=[]
-    sorted(origin, key=field_key)
-    sorted(new, key=field_key)
-    for val in origin:
-        for newval in new:
+def merge_fields(origin, new):
+    for newval in new:
+        found = False
+        for val in origin:
             if val["name"] == newval["name"] and val["bit_offset"] == newval["bit_offset"]:
-                newarr.append(newval)
-    return newarr
+                found = True
+        if not found:
+            origin.append(newval)
 
 def merge_dicts(origin, new):
-    merged={}
-    for k, v in origin.items():
-        if k in new:
+    for k, v in new.items():
+        if k in origin:
             if type(v) is dict:
-                merged[k] = merge_dicts(v, new[k])
+                merge_dicts(origin[k], v)
             elif type(v) is list:
                 if k == "items":
-                    merged[k] = block_items(v, new[k])
+                    merge_block(origin[k], v)
                 if k == "fields":
-                    merged[k] = reg_fields(v, new[k])
+                    merge_fields(origin[k], v)
             else:
-                merged[k] = v
-    return merged
-        
+                origin[k] = v
+        else:
+            origin[k] = v
 
 first=True
 reg_map={}
@@ -57,10 +52,7 @@ for regfile in sys.argv[1:]:
     print("Loading", regfile)
     with open(regfile, 'r') as f:
         y = yaml.load(f, Loader=yaml.SafeLoader)
-        if not reg_map:
-            reg_map = y
-        else:
-            reg_map = merge_dicts(reg_map, y)
+        merge_dicts(reg_map, y)
 
 
 with open('regs_merged.yaml', 'w') as f:
