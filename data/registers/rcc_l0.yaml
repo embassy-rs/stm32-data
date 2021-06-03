@@ -675,34 +675,42 @@ fieldset/CIER:
       description: LSI ready interrupt flag
       bit_offset: 0
       bit_size: 1
+      enum: HSIRDYIE
     - name: LSERDYIE
       description: LSE ready interrupt flag
       bit_offset: 1
       bit_size: 1
+      enum: HSIRDYIE
     - name: HSI16RDYIE
       description: HSI16 ready interrupt flag
       bit_offset: 2
       bit_size: 1
+      enum: HSIRDYIE
     - name: HSERDYIE
       description: HSE ready interrupt flag
       bit_offset: 3
       bit_size: 1
+      enum: HSIRDYIE
     - name: PLLRDYIE
       description: PLL ready interrupt flag
       bit_offset: 4
       bit_size: 1
+      enum: HSIRDYIE
     - name: MSIRDYIE
       description: MSI ready interrupt flag
       bit_offset: 5
       bit_size: 1
+      enum: HSIRDYIE
     - name: HSI48RDYIE
       description: HSI48 ready interrupt flag
       bit_offset: 6
       bit_size: 1
+      enum: HSIRDYIE
     - name: CSSLSE
       description: LSE CSS interrupt flag
       bit_offset: 7
       bit_size: 1
+      enum: CSSLSE
 fieldset/CIFR:
   description: Clock interrupt flag register
   fields:
@@ -758,10 +766,12 @@ fieldset/CR:
       description: 16 MHz high-speed internal clock enable
       bit_offset: 0
       bit_size: 1
+      enum: PLLON
     - name: HSI16KERON
       description: High-speed internal clock enable bit for some IP kernels
       bit_offset: 1
       bit_size: 1
+      enum: PLLON
     - name: HSI16RDYF
       description: Internal high-speed clock ready flag
       bit_offset: 2
@@ -784,6 +794,7 @@ fieldset/CR:
       description: MSI clock enable bit
       bit_offset: 8
       bit_size: 1
+      enum: PLLON
     - name: MSIRDY
       description: MSI clock ready flag
       bit_offset: 9
@@ -793,6 +804,7 @@ fieldset/CR:
       description: HSE clock enable bit
       bit_offset: 16
       bit_size: 1
+      enum: PLLON
     - name: HSERDY
       description: HSE clock ready flag
       bit_offset: 17
@@ -807,6 +819,7 @@ fieldset/CR:
       description: Clock security system on HSE enable bit
       bit_offset: 19
       bit_size: 1
+      enum: PLLON
     - name: RTCPRE
       description: TC/LCD prescaler
       bit_offset: 20
@@ -816,6 +829,7 @@ fieldset/CR:
       description: PLL enable bit
       bit_offset: 24
       bit_size: 1
+      enum: PLLON
     - name: PLLRDY
       description: PLL clock ready flag
       bit_offset: 25
@@ -847,6 +861,7 @@ fieldset/CSR:
       description: Internal low-speed oscillator enable
       bit_offset: 0
       bit_size: 1
+      enum: CSSLSEON
     - name: LSIRDY
       description: Internal low-speed oscillator ready bit
       bit_offset: 1
@@ -856,6 +871,7 @@ fieldset/CSR:
       description: External low-speed oscillator enable bit
       bit_offset: 8
       bit_size: 1
+      enum: CSSLSEON
     - name: LSERDY
       description: External low-speed oscillator ready bit
       bit_offset: 9
@@ -875,6 +891,7 @@ fieldset/CSR:
       description: CSSLSEON
       bit_offset: 13
       bit_size: 1
+      enum: CSSLSEON
     - name: CSSLSED
       description: CSS on LSE failure detection flag
       bit_offset: 14
@@ -992,32 +1009,26 @@ fieldset/IOPRSTR:
       description: I/O port A reset
       bit_offset: 0
       bit_size: 1
-      enum: IOPHRST
     - name: IOPBRST
       description: I/O port B reset
       bit_offset: 1
       bit_size: 1
-      enum: IOPHRST
     - name: IOPCRST
       description: I/O port A reset
       bit_offset: 2
       bit_size: 1
-      enum: IOPHRST
     - name: IOPDRST
       description: I/O port D reset
       bit_offset: 3
       bit_size: 1
-      enum: IOPHRST
     - name: IOPERST
       description: I/O port E reset
       bit_offset: 4
       bit_size: 1
-      enum: IOPHRST
     - name: IOPHRST
       description: I/O port H reset
       bit_offset: 7
       bit_size: 1
-      enum: IOPHRST
 fieldset/IOPSMEN:
   description: GPIO clock enable in sleep mode register
   fields:
@@ -1066,6 +1077,15 @@ enum/CSSHSEF:
     - name: Clock
       description: Clock security interrupt caused by HSE clock failure
       value: 1
+enum/CSSLSE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: LSE CSS interrupt disabled
+      value: 0
+    - name: Enabled
+      description: LSE CSS interrupt enabled
+      value: 1
 enum/CSSLSED:
   bit_size: 1
   variants:
@@ -1083,6 +1103,15 @@ enum/CSSLSEF:
       value: 0
     - name: Failure
       description: Failure detected on LSE clock failure
+      value: 1
+enum/CSSLSEON:
+  bit_size: 1
+  variants:
+    - name: "Off"
+      description: Oscillator OFF
+      value: 0
+    - name: "On"
+      description: Oscillator ON
       value: 1
 enum/DBGRSTW:
   bit_size: 1
@@ -1165,6 +1194,15 @@ enum/HSIDIVFR:
     - name: Div4
       description: 16 MHz HSI clock divided by 4
       value: 1
+enum/HSIRDYIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Ready interrupt disabled
+      value: 0
+    - name: Enabled
+      description: Ready interrupt enabled
+      value: 1
 enum/ICSEL:
   bit_size: 2
   variants:
@@ -1177,12 +1215,6 @@ enum/ICSEL:
     - name: HSI16
       description: HSI16 clock selected as peripheral clock
       value: 2
-enum/IOPHRST:
-  bit_size: 1
-  variants:
-    - name: Reset
-      description: Reset I/O port
-      value: 1
 enum/LPTIMRSTW:
   bit_size: 1
   variants:
@@ -1375,6 +1407,15 @@ enum/PLLMUL:
     - name: Mul48
       description: PLL clock entry x 48
       value: 8
+enum/PLLON:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Clock disabled
+      value: 0
+    - name: Enabled
+      description: Clock enabled
+      value: 1
 enum/PLLRDYR:
   bit_size: 1
   variants:
