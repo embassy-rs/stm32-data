@@ -5,11 +5,23 @@ block/RCC:
     description: clock control register
     fieldset: CR
     name: CR
+  - byte_offset: 4
+    description: RCC HSI configuration register
+    fieldset: HSICFGR
+    name: HSICFGR
+  - byte_offset: 4
+    description: RCC Internal Clock Source Calibration Register
+    fieldset: ICSCR
+    name: ICSCR
   - access: Read
     byte_offset: 8
     description: RCC Clock Recovery RC Register
     fieldset: CRRCR
     name: CRRCR
+  - byte_offset: 12
+    description: RCC CSI configuration register
+    fieldset: CSICFGR
+    name: CSICFGR
   - byte_offset: 16
     description: RCC Clock Configuration Register
     fieldset: CFGR
@@ -58,6 +70,22 @@ block/RCC:
     description: RCC PLL3 Fractional Divider Register
     fieldset: PLL3FRACR
     name: PLL3FRACR
+  - byte_offset: 76
+    description: RCC Domain 1 Kernel Clock Configuration Register
+    fieldset: D1CCIPR
+    name: D1CCIPR
+  - byte_offset: 80
+    description: RCC Domain 2 Kernel Clock Configuration Register
+    fieldset: D2CCIP1R
+    name: D2CCIP1R
+  - byte_offset: 84
+    description: RCC Domain 2 Kernel Clock Configuration Register
+    fieldset: D2CCIP2R
+    name: D2CCIP2R
+  - byte_offset: 88
+    description: RCC Domain 3 Kernel Clock Configuration Register
+    fieldset: D3CCIPR
+    name: D3CCIPR
   - byte_offset: 96
     description: RCC Clock Source Interrupt Enable Register
     fieldset: CIER
@@ -116,117 +144,1240 @@ block/RCC:
     fieldset: APB4RSTR
     name: APB4RSTR
   - byte_offset: 160
-    description: Global Control Register
+    description: RCC Global Control Register
     fieldset: GCR
     name: GCR
   - byte_offset: 168
     description: RCC D3 Autonomous mode Register
     fieldset: D3AMR
     name: D3AMR
+  - byte_offset: 208
+    description: RCC Reset Status Register
+    fieldset: RSR
+    name: RSR
+  - byte_offset: 212
+    description: RCC AHB3 Clock Register
+    fieldset: AHB3ENR
+    name: AHB3ENR
+  - byte_offset: 216
+    description: RCC AHB1 Clock Register
+    fieldset: AHB1ENR
+    name: AHB1ENR
+  - byte_offset: 220
+    description: RCC AHB2 Clock Register
+    fieldset: AHB2ENR
+    name: AHB2ENR
+  - byte_offset: 224
+    description: RCC AHB4 Clock Register
+    fieldset: AHB4ENR
+    name: AHB4ENR
+  - byte_offset: 228
+    description: RCC APB3 Clock Register
+    fieldset: APB3ENR
+    name: APB3ENR
+  - byte_offset: 232
+    description: RCC APB1 Clock Register
+    fieldset: APB1LENR
+    name: APB1LENR
+  - byte_offset: 236
+    description: RCC APB1 Clock Register
+    fieldset: APB1HENR
+    name: APB1HENR
+  - byte_offset: 240
+    description: RCC APB2 Clock Register
+    fieldset: APB2ENR
+    name: APB2ENR
+  - byte_offset: 244
+    description: RCC APB4 Clock Register
+    fieldset: APB4ENR
+    name: APB4ENR
+  - byte_offset: 252
+    description: RCC AHB3 Sleep Clock Register
+    fieldset: AHB3LPENR
+    name: AHB3LPENR
+  - byte_offset: 256
+    description: RCC AHB1 Sleep Clock Register
+    fieldset: AHB1LPENR
+    name: AHB1LPENR
+  - byte_offset: 260
+    description: RCC AHB2 Sleep Clock Register
+    fieldset: AHB2LPENR
+    name: AHB2LPENR
+  - byte_offset: 264
+    description: RCC AHB4 Sleep Clock Register
+    fieldset: AHB4LPENR
+    name: AHB4LPENR
+  - byte_offset: 268
+    description: RCC APB3 Sleep Clock Register
+    fieldset: APB3LPENR
+    name: APB3LPENR
+  - byte_offset: 272
+    description: RCC APB1 Low Sleep Clock Register
+    fieldset: APB1LLPENR
+    name: APB1LLPENR
+  - byte_offset: 276
+    description: RCC APB1 High Sleep Clock Register
+    fieldset: APB1HLPENR
+    name: APB1HLPENR
+  - byte_offset: 280
+    description: RCC APB2 Sleep Clock Register
+    fieldset: APB2LPENR
+    name: APB2LPENR
+  - byte_offset: 284
+    description: RCC APB4 Sleep Clock Register
+    fieldset: APB4LPENR
+    name: APB4LPENR
   - byte_offset: 304
     description: RCC Reset Status Register
     fieldset: C1_RSR
     name: C1_RSR
+  - byte_offset: 308
+    description: RCC AHB3 Clock Register
+    fieldset: C1_AHB3ENR
+    name: C1_AHB3ENR
+  - byte_offset: 312
+    description: RCC AHB1 Clock Register
+    fieldset: C1_AHB1ENR
+    name: C1_AHB1ENR
+  - byte_offset: 316
+    description: RCC AHB2 Clock Register
+    fieldset: C1_AHB2ENR
+    name: C1_AHB2ENR
+  - byte_offset: 320
+    description: RCC AHB4 Clock Register
+    fieldset: C1_AHB4ENR
+    name: C1_AHB4ENR
+  - byte_offset: 324
+    description: RCC APB3 Clock Register
+    fieldset: C1_APB3ENR
+    name: C1_APB3ENR
+  - byte_offset: 328
+    description: RCC APB1 Clock Register
+    fieldset: C1_APB1LENR
+    name: C1_APB1LENR
+  - byte_offset: 332
+    description: RCC APB1 Clock Register
+    fieldset: C1_APB1HENR
+    name: C1_APB1HENR
+  - byte_offset: 336
+    description: RCC APB2 Clock Register
+    fieldset: C1_APB2ENR
+    name: C1_APB2ENR
+  - byte_offset: 340
+    description: RCC APB4 Clock Register
+    fieldset: C1_APB4ENR
+    name: C1_APB4ENR
+  - byte_offset: 348
+    description: RCC AHB3 Sleep Clock Register
+    fieldset: C1_AHB3LPENR
+    name: C1_AHB3LPENR
+  - byte_offset: 352
+    description: RCC AHB1 Sleep Clock Register
+    fieldset: C1_AHB1LPENR
+    name: C1_AHB1LPENR
+  - byte_offset: 356
+    description: RCC AHB2 Sleep Clock Register
+    fieldset: C1_AHB2LPENR
+    name: C1_AHB2LPENR
+  - byte_offset: 360
+    description: RCC AHB4 Sleep Clock Register
+    fieldset: C1_AHB4LPENR
+    name: C1_AHB4LPENR
+  - byte_offset: 364
+    description: RCC APB3 Sleep Clock Register
+    fieldset: C1_APB3LPENR
+    name: C1_APB3LPENR
+  - byte_offset: 368
+    description: RCC APB1 Low Sleep Clock Register
+    fieldset: C1_APB1LLPENR
+    name: C1_APB1LLPENR
+  - byte_offset: 372
+    description: RCC APB1 High Sleep Clock Register
+    fieldset: C1_APB1HLPENR
+    name: C1_APB1HLPENR
+  - byte_offset: 376
+    description: RCC APB2 Sleep Clock Register
+    fieldset: C1_APB2LPENR
+    name: C1_APB2LPENR
+  - byte_offset: 380
+    description: RCC APB4 Sleep Clock Register
+    fieldset: C1_APB4LPENR
+    name: C1_APB4LPENR
+  - byte_offset: 76
+    description: RCC Domain 1 Kernel Clock Configuration Register
+    fieldset: CDCCIPR
+    name: CDCCIPR
+  - byte_offset: 80
+    description: RCC Domain 2 Kernel Clock Configuration Register
+    fieldset: CDCCIP1R
+    name: CDCCIP1R
+  - byte_offset: 84
+    description: RCC Domain 2 Kernel Clock Configuration Register
+    fieldset: CDCCIP2R
+    name: CDCCIP2R
+  - byte_offset: 88
+    description: RCC Domain 3 Kernel Clock Configuration Register
+    fieldset: SRDCCIPR
+    name: SRDCCIPR
+  - byte_offset: 308
+    description: RCC AHB3 Clock Register
+    fieldset: AHB3ENR
+    name: AHB3ENR
+  - byte_offset: 312
+    description: RCC AHB1 Clock Register
+    fieldset: AHB1ENR
+    name: AHB1ENR
+  - byte_offset: 316
+    description: RCC AHB2 Clock Register
+    fieldset: AHB2ENR
+    name: AHB2ENR
+  - byte_offset: 320
+    description: RCC AHB4 Clock Register
+    fieldset: AHB4ENR
+    name: AHB4ENR
+  - byte_offset: 324
+    description: RCC APB3 Clock Register
+    fieldset: APB3ENR
+    name: APB3ENR
+  - byte_offset: 328
+    description: RCC APB1 Clock Register
+    fieldset: APB1LENR
+    name: APB1LENR
+  - byte_offset: 332
+    description: RCC APB1 Clock Register
+    fieldset: APB1HENR
+    name: APB1HENR
+  - byte_offset: 336
+    description: RCC APB2 Clock Register
+    fieldset: APB2ENR
+    name: APB2ENR
+  - byte_offset: 340
+    description: RCC APB4 Clock Register
+    fieldset: APB4ENR
+    name: APB4ENR
+  - byte_offset: 348
+    description: RCC AHB3 Sleep Clock Register
+    fieldset: AHB3LPENR
+    name: AHB3LPENR
+  - byte_offset: 352
+    description: RCC AHB1 Sleep Clock Register
+    fieldset: AHB1LPENR
+    name: AHB1LPENR
+  - byte_offset: 356
+    description: RCC AHB2 Sleep Clock Register
+    fieldset: AHB2LPENR
+    name: AHB2LPENR
+  - byte_offset: 360
+    description: RCC AHB4 Sleep Clock Register
+    fieldset: AHB4LPENR
+    name: AHB4LPENR
+  - byte_offset: 364
+    description: RCC APB3 Sleep Clock Register
+    fieldset: APB3LPENR
+    name: APB3LPENR
+  - byte_offset: 368
+    description: RCC APB1 Low Sleep Clock Register
+    fieldset: APB1LLPENR
+    name: APB1LLPENR
+  - byte_offset: 372
+    description: RCC APB1 High Sleep Clock Register
+    fieldset: APB1HLPENR
+    name: APB1HLPENR
+  - byte_offset: 376
+    description: RCC APB2 Sleep Clock Register
+    fieldset: APB2LPENR
+    name: APB2LPENR
+  - byte_offset: 380
+    description: RCC APB4 Sleep Clock Register
+    fieldset: APB4LPENR
+    name: APB4LPENR
 enum/ADCSEL:
   bit_size: 2
+  variants:
+  - description: pll2_p selected as peripheral clock
+    name: PLL2_P
+    value: 0
+  - description: pll3_r selected as peripheral clock
+    name: PLL3_R
+    value: 1
+  - description: PER selected as peripheral clock
+    name: PER
+    value: 2
 enum/CECSEL:
   bit_size: 2
+  variants:
+  - description: LSE selected as peripheral clock
+    name: LSE
+    value: 0
+  - description: LSI selected as peripheral clock
+    name: LSI
+    value: 1
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 2
 enum/CKPERSEL:
   bit_size: 2
+  variants:
+  - description: HSI selected as peripheral clock
+    name: HSI
+    value: 0
+  - description: CSI selected as peripheral clock
+    name: CSI
+    value: 1
+  - description: HSE selected as peripheral clock
+    name: HSE
+    value: 2
+enum/CPURSTFR:
+  bit_size: 1
+  variants:
+  - description: No reset occoured for block
+    name: NoResetOccoured
+    value: 0
+  - description: Reset occoured for block
+    name: ResetOccourred
+    value: 1
+enum/C_RSR_CPURSTFR:
+  bit_size: 1
+  variants:
+  - description: No reset occoured for block
+    name: NoResetOccoured
+    value: 0
+  - description: Reset occoured for block
+    name: ResetOccourred
+    value: 1
+enum/C_RSR_RMVF:
+  bit_size: 1
+  variants:
+  - description: Not clearing the the reset flags
+    name: NotActive
+    value: 0
+  - description: Clear the reset flags
+    name: Clear
+    value: 1
 enum/DFSDMSEL:
   bit_size: 1
+  variants:
+  - description: rcc_pclk2 selected as peripheral clock
+    name: RCC_PCLK2
+    value: 0
+  - description: System clock selected as peripheral clock
+    name: SYS
+    value: 1
 enum/DIVP:
   bit_size: 7
+  variants:
+  - description: pll_p_ck = vco_ck
+    name: Div1
+    value: 0
+  - description: pll_p_ck = vco_ck / 2
+    name: Div2
+    value: 1
+  - description: pll_p_ck = vco_ck / 4
+    name: Div4
+    value: 3
+  - description: pll_p_ck = vco_ck / 6
+    name: Div6
+    value: 5
+  - description: pll_p_ck = vco_ck / 8
+    name: Div8
+    value: 7
+  - description: pll_p_ck = vco_ck / 10
+    name: Div10
+    value: 9
+  - description: pll_p_ck = vco_ck / 12
+    name: Div12
+    value: 11
+  - description: pll_p_ck = vco_ck / 14
+    name: Div14
+    value: 13
+  - description: pll_p_ck = vco_ck / 16
+    name: Div16
+    value: 15
+  - description: pll_p_ck = vco_ck / 18
+    name: Div18
+    value: 17
+  - description: pll_p_ck = vco_ck / 20
+    name: Div20
+    value: 19
+  - description: pll_p_ck = vco_ck / 22
+    name: Div22
+    value: 21
+  - description: pll_p_ck = vco_ck / 24
+    name: Div24
+    value: 23
+  - description: pll_p_ck = vco_ck / 26
+    name: Div26
+    value: 25
+  - description: pll_p_ck = vco_ck / 28
+    name: Div28
+    value: 27
+  - description: pll_p_ck = vco_ck / 30
+    name: Div30
+    value: 29
+  - description: pll_p_ck = vco_ck / 32
+    name: Div32
+    value: 31
+  - description: pll_p_ck = vco_ck / 34
+    name: Div34
+    value: 33
+  - description: pll_p_ck = vco_ck / 36
+    name: Div36
+    value: 35
+  - description: pll_p_ck = vco_ck / 38
+    name: Div38
+    value: 37
+  - description: pll_p_ck = vco_ck / 40
+    name: Div40
+    value: 39
+  - description: pll_p_ck = vco_ck / 42
+    name: Div42
+    value: 41
+  - description: pll_p_ck = vco_ck / 44
+    name: Div44
+    value: 43
+  - description: pll_p_ck = vco_ck / 46
+    name: Div46
+    value: 45
+  - description: pll_p_ck = vco_ck / 48
+    name: Div48
+    value: 47
+  - description: pll_p_ck = vco_ck / 50
+    name: Div50
+    value: 49
+  - description: pll_p_ck = vco_ck / 52
+    name: Div52
+    value: 51
+  - description: pll_p_ck = vco_ck / 54
+    name: Div54
+    value: 53
+  - description: pll_p_ck = vco_ck / 56
+    name: Div56
+    value: 55
+  - description: pll_p_ck = vco_ck / 58
+    name: Div58
+    value: 57
+  - description: pll_p_ck = vco_ck / 60
+    name: Div60
+    value: 59
+  - description: pll_p_ck = vco_ck / 62
+    name: Div62
+    value: 61
+  - description: pll_p_ck = vco_ck / 64
+    name: Div64
+    value: 63
+  - description: pll_p_ck = vco_ck / 66
+    name: Div66
+    value: 65
+  - description: pll_p_ck = vco_ck / 68
+    name: Div68
+    value: 67
+  - description: pll_p_ck = vco_ck / 70
+    name: Div70
+    value: 69
+  - description: pll_p_ck = vco_ck / 72
+    name: Div72
+    value: 71
+  - description: pll_p_ck = vco_ck / 74
+    name: Div74
+    value: 73
+  - description: pll_p_ck = vco_ck / 76
+    name: Div76
+    value: 75
+  - description: pll_p_ck = vco_ck / 78
+    name: Div78
+    value: 77
+  - description: pll_p_ck = vco_ck / 80
+    name: Div80
+    value: 79
+  - description: pll_p_ck = vco_ck / 82
+    name: Div82
+    value: 81
+  - description: pll_p_ck = vco_ck / 84
+    name: Div84
+    value: 83
+  - description: pll_p_ck = vco_ck / 86
+    name: Div86
+    value: 85
+  - description: pll_p_ck = vco_ck / 88
+    name: Div88
+    value: 87
+  - description: pll_p_ck = vco_ck / 90
+    name: Div90
+    value: 89
+  - description: pll_p_ck = vco_ck / 92
+    name: Div92
+    value: 91
+  - description: pll_p_ck = vco_ck / 94
+    name: Div94
+    value: 93
+  - description: pll_p_ck = vco_ck / 96
+    name: Div96
+    value: 95
+  - description: pll_p_ck = vco_ck / 98
+    name: Div98
+    value: 97
+  - description: pll_p_ck = vco_ck / 100
+    name: Div100
+    value: 99
+  - description: pll_p_ck = vco_ck / 102
+    name: Div102
+    value: 101
+  - description: pll_p_ck = vco_ck / 104
+    name: Div104
+    value: 103
+  - description: pll_p_ck = vco_ck / 106
+    name: Div106
+    value: 105
+  - description: pll_p_ck = vco_ck / 108
+    name: Div108
+    value: 107
+  - description: pll_p_ck = vco_ck / 110
+    name: Div110
+    value: 109
+  - description: pll_p_ck = vco_ck / 112
+    name: Div112
+    value: 111
+  - description: pll_p_ck = vco_ck / 114
+    name: Div114
+    value: 113
+  - description: pll_p_ck = vco_ck / 116
+    name: Div116
+    value: 115
+  - description: pll_p_ck = vco_ck / 118
+    name: Div118
+    value: 117
+  - description: pll_p_ck = vco_ck / 120
+    name: Div120
+    value: 119
+  - description: pll_p_ck = vco_ck / 122
+    name: Div122
+    value: 121
+  - description: pll_p_ck = vco_ck / 124
+    name: Div124
+    value: 123
+  - description: pll_p_ck = vco_ck / 126
+    name: Div126
+    value: 125
+  - description: pll_p_ck = vco_ck / 128
+    name: Div128
+    value: 127
 enum/DPPRE:
   bit_size: 3
+  variants:
+  - description: rcc_hclk not divided
+    name: Div1
+    value: 0
+  - description: rcc_hclk divided by 2
+    name: Div2
+    value: 4
+  - description: rcc_hclk divided by 4
+    name: Div4
+    value: 5
+  - description: rcc_hclk divided by 8
+    name: Div8
+    value: 6
+  - description: rcc_hclk divided by 16
+    name: Div16
+    value: 7
 enum/FDCANSEL:
   bit_size: 2
+  variants:
+  - description: HSE selected as peripheral clock
+    name: HSE
+    value: 0
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 1
+  - description: pll2_q selected as peripheral clock
+    name: PLL2_Q
+    value: 2
 enum/FMCSEL:
   bit_size: 2
+  variants:
+  - description: rcc_hclk3 selected as peripheral clock
+    name: RCC_HCLK3
+    value: 0
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 1
+  - description: pll2_r selected as peripheral clock
+    name: PLL2_R
+    value: 2
+  - description: PER selected as peripheral clock
+    name: PER
+    value: 3
 enum/HPRE:
   bit_size: 4
+  variants:
+  - description: sys_ck not divided
+    name: Div1
+    value: 0
+  - description: sys_ck divided by 2
+    name: Div2
+    value: 8
+  - description: sys_ck divided by 4
+    name: Div4
+    value: 9
+  - description: sys_ck divided by 8
+    name: Div8
+    value: 10
+  - description: sys_ck divided by 16
+    name: Div16
+    value: 11
+  - description: sys_ck divided by 64
+    name: Div64
+    value: 12
+  - description: sys_ck divided by 128
+    name: Div128
+    value: 13
+  - description: sys_ck divided by 256
+    name: Div256
+    value: 14
+  - description: sys_ck divided by 512
+    name: Div512
+    value: 15
 enum/HRTIMSEL:
   bit_size: 1
+  variants:
+  - description: The HRTIM prescaler clock source is the same as other timers (rcc_timy_ker_ck)
+    name: TIMY_KER
+    value: 0
+  - description: The HRTIM prescaler clock source is the CPU clock (c_ck)
+    name: C_CK
+    value: 1
 enum/HSEBYP:
   bit_size: 1
+  variants:
+  - description: HSE crystal oscillator not bypassed
+    name: NotBypassed
+    value: 0
+  - description: HSE crystal oscillator bypassed with external clock
+    name: Bypassed
+    value: 1
 enum/HSIDIV:
   bit_size: 2
+  variants:
+  - description: No division
+    name: Div1
+    value: 0
+  - description: Division by 2
+    name: Div2
+    value: 1
+  - description: Division by 4
+    name: Div4
+    value: 2
+  - description: Division by 8
+    name: Div8
+    value: 3
 enum/HSIDIVFR:
   bit_size: 1
+  variants:
+  - description: New HSIDIV ratio has not yet propagated to hsi_ck
+    name: NotPropagated
+    value: 0
+  - description: HSIDIV ratio has propagated to hsi_ck
+    name: Propagated
+    value: 1
 enum/HSION:
   bit_size: 1
+  variants:
+  - description: Clock Off
+    name: 'Off'
+    value: 0
+  - description: Clock On
+    name: 'On'
+    value: 1
 enum/HSIRDYR:
   bit_size: 1
+  variants:
+  - description: Clock not ready
+    name: NotReady
+    value: 0
+  - description: Clock ready
+    name: Ready
+    value: 1
 enum/I2C123SEL:
   bit_size: 2
+  variants:
+  - description: rcc_pclk1 selected as peripheral clock
+    name: RCC_PCLK1
+    value: 0
+  - description: pll3_r selected as peripheral clock
+    name: PLL3_R
+    value: 1
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 2
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 3
 enum/I2C4SEL:
   bit_size: 2
+  variants:
+  - description: rcc_pclk4 selected as peripheral clock
+    name: RCC_PCLK4
+    value: 0
+  - description: pll3_r selected as peripheral clock
+    name: PLL3_R
+    value: 1
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 2
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 3
 enum/LPTIM1SEL:
   bit_size: 3
+  variants:
+  - description: rcc_pclk1 selected as peripheral clock
+    name: RCC_PCLK1
+    value: 0
+  - description: pll2_p selected as peripheral clock
+    name: PLL2_P
+    value: 1
+  - description: pll3_r selected as peripheral clock
+    name: PLL3_R
+    value: 2
+  - description: LSE selected as peripheral clock
+    name: LSE
+    value: 3
+  - description: LSI selected as peripheral clock
+    name: LSI
+    value: 4
+  - description: PER selected as peripheral clock
+    name: PER
+    value: 5
 enum/LPTIM2SEL:
   bit_size: 3
+  variants:
+  - description: rcc_pclk4 selected as peripheral clock
+    name: RCC_PCLK4
+    value: 0
+  - description: pll2_p selected as peripheral clock
+    name: PLL2_P
+    value: 1
+  - description: pll3_r selected as peripheral clock
+    name: PLL3_R
+    value: 2
+  - description: LSE selected as peripheral clock
+    name: LSE
+    value: 3
+  - description: LSI selected as peripheral clock
+    name: LSI
+    value: 4
+  - description: PER selected as peripheral clock
+    name: PER
+    value: 5
 enum/LPUARTSEL:
   bit_size: 3
+  variants:
+  - description: rcc_pclk_d3 selected as peripheral clock
+    name: RCC_PCLK_D3
+    value: 0
+  - description: pll2_q selected as peripheral clock
+    name: PLL2_Q
+    value: 1
+  - description: pll3_q selected as peripheral clock
+    name: PLL3_Q
+    value: 2
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 3
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 4
+  - description: LSE selected as peripheral clock
+    name: LSE
+    value: 5
 enum/LSEBYP:
   bit_size: 1
+  variants:
+  - description: LSE crystal oscillator not bypassed
+    name: NotBypassed
+    value: 0
+  - description: LSE crystal oscillator bypassed with external clock
+    name: Bypassed
+    value: 1
 enum/LSECSSDR:
   bit_size: 1
+  variants:
+  - description: No failure detected on 32 kHz oscillator
+    name: NoFailure
+    value: 0
+  - description: Failure detected on 32 kHz oscillator
+    name: Failure
+    value: 1
 enum/LSECSSON:
   bit_size: 1
+  variants:
+  - description: Clock security system on 32 kHz oscillator off
+    name: SecurityOff
+    value: 0
+  - description: Clock security system on 32 kHz oscillator on
+    name: SecurityOn
+    value: 1
 enum/LSEDRV:
   bit_size: 2
+  variants:
+  - description: Lowest LSE oscillator driving capability
+    name: Lowest
+    value: 0
+  - description: Medium low LSE oscillator driving capability
+    name: MediumLow
+    value: 1
+  - description: Medium high LSE oscillator driving capability
+    name: MediumHigh
+    value: 2
+  - description: Highest LSE oscillator driving capability
+    name: Highest
+    value: 3
 enum/LSEON:
   bit_size: 1
+  variants:
+  - description: LSE oscillator Off
+    name: 'Off'
+    value: 0
+  - description: LSE oscillator On
+    name: 'On'
+    value: 1
 enum/LSERDYR:
   bit_size: 1
+  variants:
+  - description: LSE oscillator not ready
+    name: NotReady
+    value: 0
+  - description: LSE oscillator ready
+    name: Ready
+    value: 1
 enum/LSION:
   bit_size: 1
+  variants:
+  - description: LSI oscillator Off
+    name: 'Off'
+    value: 0
+  - description: LSI oscillator On
+    name: 'On'
+    value: 1
 enum/LSIRDYC:
   bit_size: 1
+  variants:
+  - description: Clear interrupt flag
+    name: Clear
+    value: 1
 enum/LSIRDYIE:
   bit_size: 1
+  variants:
+  - description: Interrupt disabled
+    name: Disabled
+    value: 0
+  - description: Interrupt enabled
+    name: Enabled
+    value: 1
 enum/LSIRDYR:
   bit_size: 1
+  variants:
+  - description: LSI oscillator not ready
+    name: NotReady
+    value: 0
+  - description: LSI oscillator ready
+    name: Ready
+    value: 1
 enum/MCO1:
   bit_size: 3
+  variants:
+  - description: HSI selected for micro-controller clock output
+    name: HSI
+    value: 0
+  - description: LSE selected for micro-controller clock output
+    name: LSE
+    value: 1
+  - description: HSE selected for micro-controller clock output
+    name: HSE
+    value: 2
+  - description: pll1_q selected for micro-controller clock output
+    name: PLL1_Q
+    value: 3
+  - description: HSI48 selected for micro-controller clock output
+    name: HSI48
+    value: 4
 enum/MCO2:
   bit_size: 3
+  variants:
+  - description: System clock selected for micro-controller clock output
+    name: SYSCLK
+    value: 0
+  - description: pll2_p selected for micro-controller clock output
+    name: PLL2_P
+    value: 1
+  - description: HSE selected for micro-controller clock output
+    name: HSE
+    value: 2
+  - description: pll1_p selected for micro-controller clock output
+    name: PLL1_P
+    value: 3
+  - description: CSI selected for micro-controller clock output
+    name: CSI
+    value: 4
+  - description: LSI selected for micro-controller clock output
+    name: LSI
+    value: 5
 enum/PLLRGE:
   bit_size: 2
+  variants:
+  - description: Frequency is between 1 and 2 MHz
+    name: Range1
+    value: 0
+  - description: Frequency is between 2 and 4 MHz
+    name: Range2
+    value: 1
+  - description: Frequency is between 4 and 8 MHz
+    name: Range4
+    value: 2
+  - description: Frequency is between 8 and 16 MHz
+    name: Range8
+    value: 3
 enum/PLLSRC:
   bit_size: 2
+  variants:
+  - description: HSI selected as PLL clock
+    name: HSI
+    value: 0
+  - description: CSI selected as PLL clock
+    name: CSI
+    value: 1
+  - description: HSE selected as PLL clock
+    name: HSE
+    value: 2
+  - description: No clock sent to DIVMx dividers and PLLs
+    name: None
+    value: 3
 enum/PLLVCOSEL:
   bit_size: 1
+  variants:
+  - description: VCO frequency range 192 to 836 MHz
+    name: WideVCO
+    value: 0
+  - description: VCO frequency range 150 to 420 MHz
+    name: MediumVCO
+    value: 1
+enum/RMVF:
+  bit_size: 1
+  variants:
+  - description: Not clearing the the reset flags
+    name: NotActive
+    value: 0
+  - description: Clear the reset flags
+    name: Clear
+    value: 1
 enum/RNGSEL:
   bit_size: 2
+  variants:
+  - description: HSI48 selected as peripheral clock
+    name: HSI48
+    value: 0
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 1
+  - description: LSE selected as peripheral clock
+    name: LSE
+    value: 2
+  - description: LSI selected as peripheral clock
+    name: LSI
+    value: 3
+enum/RSR_CPURSTFR:
+  bit_size: 1
+  variants:
+  - description: No reset occoured for block
+    name: NoResetOccoured
+    value: 0
+  - description: Reset occoured for block
+    name: ResetOccourred
+    value: 1
+enum/RSR_RMVF:
+  bit_size: 1
+  variants:
+  - description: Not clearing the the reset flags
+    name: NotActive
+    value: 0
+  - description: Clear the reset flags
+    name: Clear
+    value: 1
 enum/RTCSEL:
   bit_size: 2
+  variants:
+  - description: No clock
+    name: NoClock
+    value: 0
+  - description: LSE oscillator clock used as RTC clock
+    name: LSE
+    value: 1
+  - description: LSI oscillator clock used as RTC clock
+    name: LSI
+    value: 2
+  - description: HSE oscillator clock divided by a prescaler used as RTC clock
+    name: HSE
+    value: 3
 enum/SAIASEL:
   bit_size: 3
+  variants:
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 0
+  - description: pll2_p selected as peripheral clock
+    name: PLL2_P
+    value: 1
+  - description: pll3_p selected as peripheral clock
+    name: PLL3_P
+    value: 2
+  - description: i2s_ckin selected as peripheral clock
+    name: I2S_CKIN
+    value: 3
+  - description: PER selected as peripheral clock
+    name: PER
+    value: 4
 enum/SAISEL:
   bit_size: 3
+  variants:
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 0
+  - description: pll2_p selected as peripheral clock
+    name: PLL2_P
+    value: 1
+  - description: pll3_p selected as peripheral clock
+    name: PLL3_P
+    value: 2
+  - description: I2S_CKIN selected as peripheral clock
+    name: I2S_CKIN
+    value: 3
+  - description: PER selected as peripheral clock
+    name: PER
+    value: 4
 enum/SDMMCSEL:
   bit_size: 1
+  variants:
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 0
+  - description: pll2_r selected as peripheral clock
+    name: PLL2_R
+    value: 1
+enum/SPDIFRXSEL:
+  bit_size: 2
+  variants:
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 0
+  - description: pll2_r selected as peripheral clock
+    name: PLL2_R
+    value: 1
+  - description: pll3_r selected as peripheral clock
+    name: PLL3_R
+    value: 2
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 3
+enum/SPDIFSEL:
+  bit_size: 2
+  variants:
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 0
+  - description: pll2_r selected as peripheral clock
+    name: PLL2_R
+    value: 1
+  - description: pll3_r selected as peripheral clock
+    name: PLL3_R
+    value: 2
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 3
 enum/SPI45SEL:
   bit_size: 3
+  variants:
+  - description: APB clock selected as peripheral clock
+    name: APB
+    value: 0
+  - description: pll2_q selected as peripheral clock
+    name: PLL2_Q
+    value: 1
+  - description: pll3_q selected as peripheral clock
+    name: PLL3_Q
+    value: 2
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 3
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 4
+  - description: HSE selected as peripheral clock
+    name: HSE
+    value: 5
 enum/SPI6SEL:
   bit_size: 3
+  variants:
+  - description: rcc_pclk4 selected as peripheral clock
+    name: RCC_PCLK4
+    value: 0
+  - description: pll2_q selected as peripheral clock
+    name: PLL2_Q
+    value: 1
+  - description: pll3_q selected as peripheral clock
+    name: PLL3_Q
+    value: 2
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 3
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 4
+  - description: HSE selected as peripheral clock
+    name: HSE
+    value: 5
 enum/STOPWUCK:
   bit_size: 1
+  variants:
+  - description: HSI selected as wake up clock from system Stop
+    name: HSI
+    value: 0
+  - description: CSI selected as wake up clock from system Stop
+    name: CSI
+    value: 1
 enum/SW:
   bit_size: 3
+  variants:
+  - description: HSI selected as system clock
+    name: HSI
+    value: 0
+  - description: CSI selected as system clock
+    name: CSI
+    value: 1
+  - description: HSE selected as system clock
+    name: HSE
+    value: 2
+  - description: PLL1 selected as system clock
+    name: PLL1
+    value: 3
 enum/SWPSEL:
   bit_size: 1
+  variants:
+  - description: pclk selected as peripheral clock
+    name: PCLK
+    value: 0
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 1
 enum/SWSR:
   bit_size: 3
+  variants:
+  - description: HSI oscillator used as system clock
+    name: HSI
+    value: 0
+  - description: CSI oscillator used as system clock
+    name: CSI
+    value: 1
+  - description: HSE oscillator used as system clock
+    name: HSE
+    value: 2
+  - description: PLL1 used as system clock
+    name: PLL1
+    value: 3
 enum/TIMPRE:
   bit_size: 1
+  variants:
+  - description: Timer kernel clock equal to 2x pclk by default
+    name: DefaultX2
+    value: 0
+  - description: Timer kernel clock equal to 4x pclk by default
+    name: DefaultX4
+    value: 1
+enum/USART16910SEL:
+  bit_size: 3
+  variants:
+  - description: rcc_pclk2 selected as peripheral clock
+    name: RCC_PCLK2
+    value: 0
+  - description: pll2_q selected as peripheral clock
+    name: PLL2_Q
+    value: 1
+  - description: pll3_q selected as peripheral clock
+    name: PLL3_Q
+    value: 2
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 3
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 4
+  - description: LSE selected as peripheral clock
+    name: LSE
+    value: 5
+enum/USART16SEL:
+  bit_size: 3
+  variants:
+  - description: rcc_pclk2 selected as peripheral clock
+    name: RCC_PCLK2
+    value: 0
+  - description: pll2_q selected as peripheral clock
+    name: PLL2_Q
+    value: 1
+  - description: pll3_q selected as peripheral clock
+    name: PLL3_Q
+    value: 2
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 3
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 4
+  - description: LSE selected as peripheral clock
+    name: LSE
+    value: 5
 enum/USART234578SEL:
   bit_size: 3
+  variants:
+  - description: rcc_pclk1 selected as peripheral clock
+    name: RCC_PCLK1
+    value: 0
+  - description: pll2_q selected as peripheral clock
+    name: PLL2_Q
+    value: 1
+  - description: pll3_q selected as peripheral clock
+    name: PLL3_Q
+    value: 2
+  - description: hsi_ker selected as peripheral clock
+    name: HSI_KER
+    value: 3
+  - description: csi_ker selected as peripheral clock
+    name: CSI_KER
+    value: 4
+  - description: LSE selected as peripheral clock
+    name: LSE
+    value: 5
 enum/USBSEL:
   bit_size: 2
+  variants:
+  - description: Disable the kernel clock
+    name: DISABLE
+    value: 0
+  - description: pll1_q selected as peripheral clock
+    name: PLL1_Q
+    value: 1
+  - description: pll3_q selected as peripheral clock
+    name: PLL3_Q
+    value: 2
+  - description: HSI48 selected as peripheral clock
+    name: HSI48
+    value: 3
 enum/WWRSC:
   bit_size: 1
+  variants:
+  - description: Clear WWDG1 scope control
+    name: Clear
+    value: 0
+  - description: Set WWDG1 scope control
+    name: Set
+    value: 1
 fieldset/AHB1ENR:
   description: RCC AHB1 Clock Register
   fields:
@@ -254,6 +1405,10 @@ fieldset/AHB1ENR:
     bit_size: 1
     description: Ethernet Reception Clock Enable
     name: ETH1RXEN
+  - bit_offset: 18
+    bit_size: 1
+    description: ' Enable USB_PHY2 clocks '
+    name: USB2OTGHSULPIEN
   - bit_offset: 25
     bit_size: 1
     description: USB1OTG Peripheral Clocks Enable
@@ -262,6 +1417,18 @@ fieldset/AHB1ENR:
     bit_size: 1
     description: USB_PHY1 Clocks Enable
     name: USB1ULPIEN
+  - bit_offset: 27
+    bit_size: 1
+    description: USB2OTG Peripheral Clocks Enable
+    name: USB2OTGEN
+  - bit_offset: 28
+    bit_size: 1
+    description: USB_PHY2 Clocks Enable
+    name: USB2ULPIEN
+  - bit_offset: 14
+    bit_size: 1
+    description: ART Clock Enable
+    name: ARTEN
 fieldset/AHB1LPENR:
   description: RCC AHB1 Sleep Clock Register
   fields:
@@ -293,6 +1460,30 @@ fieldset/AHB1LPENR:
     bit_size: 1
     description: USB1OTG peripheral clock enable during CSleep mode
     name: USB1OTGLPEN
+  - bit_offset: 26
+    bit_size: 1
+    description: USB_PHY1 clock enable during CSleep mode
+    name: USB1OTGHSULPILPEN
+  - bit_offset: 27
+    bit_size: 1
+    description: USB2OTG peripheral clock enable during CSleep mode
+    name: USB2OTGLPEN
+  - bit_offset: 28
+    bit_size: 1
+    description: USB_PHY2 clocks enable during CSleep mode
+    name: USB2OTGHSULPILPEN
+  - bit_offset: 14
+    bit_size: 1
+    description: ART Clock Enable During CSleep Mode
+    name: ARTLPEN
+  - bit_offset: 26
+    bit_size: 1
+    description: USB_PHY1 clock enable during CSleep mode
+    name: USB1ULPILPEN
+  - bit_offset: 28
+    bit_size: 1
+    description: USB_PHY2 clocks enable during CSleep mode
+    name: USB2ULPILPEN
 fieldset/AHB1RSTR:
   description: RCC AHB1 Peripheral Reset Register
   fields:
@@ -320,6 +1511,10 @@ fieldset/AHB1RSTR:
     bit_size: 1
     description: USB2OTG block reset
     name: USB2OTGRST
+  - bit_offset: 14
+    bit_size: 1
+    description: ART block reset
+    name: ARTRST
 fieldset/AHB2ENR:
   description: RCC AHB2 Clock Register
   fields:
@@ -440,6 +1635,22 @@ fieldset/AHB3ENR:
     bit_size: 1
     description: SDMMC1 and SDMMC1 Delay Clock Enable
     name: SDMMC1EN
+  - bit_offset: 28
+    bit_size: 1
+    description: D1 DTCM1 block enable
+    name: DTCM1EN
+  - bit_offset: 29
+    bit_size: 1
+    description: D1 DTCM2 block enable
+    name: DTCM2EN
+  - bit_offset: 30
+    bit_size: 1
+    description: D1 ITCM block enable
+    name: ITCM1EN
+  - bit_offset: 31
+    bit_size: 1
+    description: AXISRAM block enable
+    name: AXISRAMEN
 fieldset/AHB3LPENR:
   description: RCC AHB3 Sleep Clock Register
   fields:
@@ -455,6 +1666,10 @@ fieldset/AHB3LPENR:
     bit_size: 1
     description: JPGDEC Clock Enable During CSleep Mode
     name: JPGDECLPEN
+  - bit_offset: 8
+    bit_size: 1
+    description: FLITF Clock Enable During CSleep Mode
+    name: FLASHLPEN
   - bit_offset: 12
     bit_size: 1
     description: FMC Peripheral Clocks Enable During CSleep Mode
@@ -483,6 +1698,14 @@ fieldset/AHB3LPENR:
     bit_size: 1
     description: AXISRAM Block Clock Enable During CSleep mode
     name: AXISRAMLPEN
+  - bit_offset: 8
+    bit_size: 1
+    description: FLITF Clock Enable During CSleep Mode
+    name: FLITFLPEN
+  - bit_offset: 8
+    bit_size: 1
+    description: Flash interface clock enable during csleep mode
+    name: FLASHPREN
 fieldset/AHB3RSTR:
   description: RCC AHB3 Reset Register
   fields:
@@ -867,6 +2090,10 @@ fieldset/APB1LENR:
     bit_size: 1
     description: HDMI-CEC peripheral clock enable
     name: CECEN
+  - bit_offset: 29
+    bit_size: 1
+    description: DAC1&2 peripheral clock enable
+    name: DAC12EN
   - bit_offset: 30
     bit_size: 1
     description: UART7 Peripheral Clocks Enable
@@ -875,6 +2102,14 @@ fieldset/APB1LENR:
     bit_size: 1
     description: UART8 Peripheral Clocks Enable
     name: UART8EN
+  - bit_offset: 11
+    bit_size: 1
+    description: WWDG2 peripheral clock enable
+    name: WWDG2EN
+  - bit_offset: 29
+    bit_size: 1
+    description: DAC1 (containing two converters) peripheral clock enable
+    name: DAC1EN
 fieldset/APB1LLPENR:
   description: RCC APB1 Low Sleep Clock Register
   fields:
@@ -962,6 +2197,10 @@ fieldset/APB1LLPENR:
     bit_size: 1
     description: HDMI-CEC Peripheral Clocks Enable During CSleep Mode
     name: CECLPEN
+  - bit_offset: 29
+    bit_size: 1
+    description: DAC1/2 peripheral clock enable during CSleep mode
+    name: DAC12LPEN
   - bit_offset: 30
     bit_size: 1
     description: UART7 Peripheral Clocks Enable During CSleep Mode
@@ -970,6 +2209,15 @@ fieldset/APB1LLPENR:
     bit_size: 1
     description: UART8 Peripheral Clocks Enable During CSleep Mode
     name: UART8LPEN
+  - bit_offset: 11
+    bit_size: 1
+    description: WWDG2 peripheral Clocks Enable During CSleep Mode
+    name: WWDG2LPEN
+  - bit_offset: 29
+    bit_size: 1
+    description: DAC1 (containing two converters) peripheral clock enable during CSleep
+      mode
+    name: DAC1LPEN
 fieldset/APB1LRSTR:
   description: RCC APB1 Peripheral Reset Register
   fields:
@@ -1057,6 +2305,10 @@ fieldset/APB1LRSTR:
     bit_size: 1
     description: HDMI-CEC block reset
     name: CECRST
+  - bit_offset: 29
+    bit_size: 1
+    description: DAC1 and 2 Blocks Reset
+    name: DAC12RST
   - bit_offset: 30
     bit_size: 1
     description: UART7 block reset
@@ -1065,6 +2317,10 @@ fieldset/APB1LRSTR:
     bit_size: 1
     description: UART8 block reset
     name: UART8RST
+  - bit_offset: 29
+    bit_size: 1
+    description: DAC1 (containing two converters) reset
+    name: DAC1RST
 fieldset/APB2ENR:
   description: RCC APB2 Clock Register
   fields:
@@ -1265,6 +2521,10 @@ fieldset/APB3ENR:
     bit_size: 1
     description: WWDG1 Clock Enable
     name: WWDG1EN
+  - bit_offset: 4
+    bit_size: 1
+    description: DSI Peripheral clocks enable
+    name: DSIEN
 fieldset/APB3LPENR:
   description: RCC APB3 Sleep Clock Register
   fields:
@@ -1276,6 +2536,10 @@ fieldset/APB3LPENR:
     bit_size: 1
     description: WWDG1 Clock Enable During CSleep Mode
     name: WWDG1LPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: DSI Peripheral Clock Enable During CSleep Mode
+    name: DSILPEN
 fieldset/APB3RSTR:
   description: RCC APB3 Peripheral Reset Register
   fields:
@@ -1283,6 +2547,10 @@ fieldset/APB3RSTR:
     bit_size: 1
     description: LTDC block reset
     name: LTDCRST
+  - bit_offset: 4
+    bit_size: 1
+    description: DSI block reset
+    name: DSIRST
 fieldset/APB4ENR:
   description: RCC APB4 Clock Register
   fields:
@@ -1310,6 +2578,14 @@ fieldset/APB4ENR:
     bit_size: 1
     description: LPTIM3 Peripheral Clocks Enable
     name: LPTIM3EN
+  - bit_offset: 11
+    bit_size: 1
+    description: LPTIM4 Peripheral Clocks Enable
+    name: LPTIM4EN
+  - bit_offset: 12
+    bit_size: 1
+    description: LPTIM5 Peripheral Clocks Enable
+    name: LPTIM5EN
   - bit_offset: 14
     bit_size: 1
     description: COMP1/2 peripheral clock enable
@@ -1326,6 +2602,10 @@ fieldset/APB4ENR:
     bit_size: 1
     description: SAI4 Peripheral Clocks Enable
     name: SAI4EN
+  - bit_offset: 13
+    bit_size: 1
+    description: DAC2 (containing one converter) peripheral clock enable
+    name: DAC2EN
 fieldset/APB4LPENR:
   description: RCC APB4 Sleep Clock Register
   fields:
@@ -1353,6 +2633,14 @@ fieldset/APB4LPENR:
     bit_size: 1
     description: LPTIM3 Peripheral Clocks Enable During CSleep Mode
     name: LPTIM3LPEN
+  - bit_offset: 11
+    bit_size: 1
+    description: LPTIM4 Peripheral Clocks Enable During CSleep Mode
+    name: LPTIM4LPEN
+  - bit_offset: 12
+    bit_size: 1
+    description: LPTIM5 Peripheral Clocks Enable During CSleep Mode
+    name: LPTIM5LPEN
   - bit_offset: 14
     bit_size: 1
     description: COMP1/2 peripheral clock enable during CSleep mode
@@ -1369,6 +2657,11 @@ fieldset/APB4LPENR:
     bit_size: 1
     description: SAI4 Peripheral Clocks Enable During CSleep Mode
     name: SAI4LPEN
+  - bit_offset: 13
+    bit_size: 1
+    description: DAC2 (containing one converter) peripheral clock enable during CSleep
+      mode
+    name: DAC2LPEN
 fieldset/APB4RSTR:
   description: RCC APB4 Peripheral Reset Register
   fields:
@@ -1396,6 +2689,14 @@ fieldset/APB4RSTR:
     bit_size: 1
     description: LPTIM3 block reset
     name: LPTIM3RST
+  - bit_offset: 11
+    bit_size: 1
+    description: LPTIM4 block reset
+    name: LPTIM4RST
+  - bit_offset: 12
+    bit_size: 1
+    description: LPTIM5 block reset
+    name: LPTIM5RST
   - bit_offset: 14
     bit_size: 1
     description: COMP12 Blocks Reset
@@ -1408,6 +2709,10 @@ fieldset/APB4RSTR:
     bit_size: 1
     description: SAI4 block reset
     name: SAI4RST
+  - bit_offset: 13
+    bit_size: 1
+    description: DAC2 (containing one converter) reset
+    name: DAC2RST
 fieldset/BDCR:
   description: RCC Backup Domain Control Register
   fields:
@@ -1454,64 +2759,1055 @@ fieldset/BDCR:
     bit_size: 1
     description: VSwitch domain software reset
     name: BDRST
+fieldset/C1_AHB1ENR:
+  description: RCC AHB1 Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: DMA1 Clock Enable
+    name: DMA1EN
+  - bit_offset: 1
+    bit_size: 1
+    description: DMA2 Clock Enable
+    name: DMA2EN
+  - bit_offset: 5
+    bit_size: 1
+    description: ADC1/2 Peripheral Clocks Enable
+    name: ADC12EN
+  - bit_offset: 15
+    bit_size: 1
+    description: Ethernet MAC bus interface Clock Enable
+    name: ETH1MACEN
+  - bit_offset: 16
+    bit_size: 1
+    description: Ethernet Transmission Clock Enable
+    name: ETH1TXEN
+  - bit_offset: 17
+    bit_size: 1
+    description: Ethernet Reception Clock Enable
+    name: ETH1RXEN
+  - bit_offset: 25
+    bit_size: 1
+    description: USB1OTG Peripheral Clocks Enable
+    name: USB1OTGEN
+  - bit_offset: 26
+    bit_size: 1
+    description: USB_PHY1 Clocks Enable
+    name: USB1ULPIEN
+  - bit_offset: 27
+    bit_size: 1
+    description: USB2OTG Peripheral Clocks Enable
+    name: USB2OTGEN
+  - bit_offset: 28
+    bit_size: 1
+    description: USB_PHY2 Clocks Enable
+    name: USB2ULPIEN
+  - bit_offset: 14
+    bit_size: 1
+    description: ART Clock Enable
+    name: ARTEN
+fieldset/C1_AHB1LPENR:
+  description: RCC AHB1 Sleep Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: DMA1 Clock Enable During CSleep Mode
+    name: DMA1LPEN
+  - bit_offset: 1
+    bit_size: 1
+    description: DMA2 Clock Enable During CSleep Mode
+    name: DMA2LPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: ADC1/2 Peripheral Clocks Enable During CSleep Mode
+    name: ADC12LPEN
+  - bit_offset: 15
+    bit_size: 1
+    description: Ethernet MAC bus interface Clock Enable During CSleep Mode
+    name: ETH1MACLPEN
+  - bit_offset: 16
+    bit_size: 1
+    description: Ethernet Transmission Clock Enable During CSleep Mode
+    name: ETH1TXLPEN
+  - bit_offset: 17
+    bit_size: 1
+    description: Ethernet Reception Clock Enable During CSleep Mode
+    name: ETH1RXLPEN
+  - bit_offset: 25
+    bit_size: 1
+    description: USB1OTG peripheral clock enable during CSleep mode
+    name: USB1OTGLPEN
+  - bit_offset: 26
+    bit_size: 1
+    description: USB_PHY1 clock enable during CSleep mode
+    name: USB1ULPILPEN
+  - bit_offset: 27
+    bit_size: 1
+    description: USB2OTG peripheral clock enable during CSleep mode
+    name: USB2OTGLPEN
+  - bit_offset: 28
+    bit_size: 1
+    description: USB_PHY2 clocks enable during CSleep mode
+    name: USB2ULPILPEN
+  - bit_offset: 14
+    bit_size: 1
+    description: ART Clock Enable During CSleep Mode
+    name: ARTLPEN
+fieldset/C1_AHB2ENR:
+  description: RCC AHB2 Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: DCMI peripheral clock
+    name: DCMIEN
+  - bit_offset: 4
+    bit_size: 1
+    description: CRYPT peripheral clock enable
+    name: CRYPTEN
+  - bit_offset: 5
+    bit_size: 1
+    description: HASH peripheral clock enable
+    name: HASHEN
+  - bit_offset: 6
+    bit_size: 1
+    description: RNG peripheral clocks enable
+    name: RNGEN
+  - bit_offset: 9
+    bit_size: 1
+    description: SDMMC2 and SDMMC2 delay clock enable
+    name: SDMMC2EN
+  - bit_offset: 29
+    bit_size: 1
+    description: SRAM1 block enable
+    name: SRAM1EN
+  - bit_offset: 30
+    bit_size: 1
+    description: SRAM2 block enable
+    name: SRAM2EN
+  - bit_offset: 31
+    bit_size: 1
+    description: SRAM3 block enable
+    name: SRAM3EN
+fieldset/C1_AHB2LPENR:
+  description: RCC AHB2 Sleep Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: DCMI peripheral clock enable during csleep mode
+    name: DCMILPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: CRYPT peripheral clock enable during CSleep mode
+    name: CRYPTLPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: HASH peripheral clock enable during CSleep mode
+    name: HASHLPEN
+  - bit_offset: 6
+    bit_size: 1
+    description: RNG peripheral clock enable during CSleep mode
+    name: RNGLPEN
+  - bit_offset: 9
+    bit_size: 1
+    description: SDMMC2 and SDMMC2 Delay Clock Enable During CSleep Mode
+    name: SDMMC2LPEN
+  - bit_offset: 29
+    bit_size: 1
+    description: SRAM1 Clock Enable During CSleep Mode
+    name: SRAM1LPEN
+  - bit_offset: 30
+    bit_size: 1
+    description: SRAM2 Clock Enable During CSleep Mode
+    name: SRAM2LPEN
+  - bit_offset: 31
+    bit_size: 1
+    description: SRAM3 Clock Enable During CSleep Mode
+    name: SRAM3LPEN
+fieldset/C1_AHB3ENR:
+  description: RCC AHB3 Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: MDMA Peripheral Clock Enable
+    name: MDMAEN
+  - bit_offset: 4
+    bit_size: 1
+    description: DMA2D Peripheral Clock Enable
+    name: DMA2DEN
+  - bit_offset: 5
+    bit_size: 1
+    description: JPGDEC Peripheral Clock Enable
+    name: JPGDECEN
+  - bit_offset: 12
+    bit_size: 1
+    description: FMC Peripheral Clocks Enable
+    name: FMCEN
+  - bit_offset: 14
+    bit_size: 1
+    description: QUADSPI and QUADSPI Delay Clock Enable
+    name: QSPIEN
+  - bit_offset: 16
+    bit_size: 1
+    description: SDMMC1 and SDMMC1 Delay Clock Enable
+    name: SDMMC1EN
+fieldset/C1_AHB3LPENR:
+  description: RCC AHB3 Sleep Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: MDMA Clock Enable During CSleep Mode
+    name: MDMALPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: DMA2D Clock Enable During CSleep Mode
+    name: DMA2DLPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: JPGDEC Clock Enable During CSleep Mode
+    name: JPGDECLPEN
+  - bit_offset: 8
+    bit_size: 1
+    description: Flash interface clock enable during csleep mode
+    name: FLASHPREN
+  - bit_offset: 12
+    bit_size: 1
+    description: FMC Peripheral Clocks Enable During CSleep Mode
+    name: FMCLPEN
+  - bit_offset: 14
+    bit_size: 1
+    description: QUADSPI and QUADSPI Delay Clock Enable During CSleep Mode
+    name: QSPILPEN
+  - bit_offset: 16
+    bit_size: 1
+    description: SDMMC1 and SDMMC1 Delay Clock Enable During CSleep Mode
+    name: SDMMC1LPEN
+  - bit_offset: 28
+    bit_size: 1
+    description: D1DTCM1 Block Clock Enable During CSleep mode
+    name: D1DTCM1LPEN
+  - bit_offset: 29
+    bit_size: 1
+    description: D1 DTCM2 Block Clock Enable During CSleep mode
+    name: DTCM2LPEN
+  - bit_offset: 30
+    bit_size: 1
+    description: D1ITCM Block Clock Enable During CSleep mode
+    name: ITCMLPEN
+  - bit_offset: 31
+    bit_size: 1
+    description: AXISRAM Block Clock Enable During CSleep mode
+    name: AXISRAMLPEN
+fieldset/C1_AHB4ENR:
+  description: RCC AHB4 Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOAEN
+  - bit_offset: 1
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOBEN
+  - bit_offset: 2
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOCEN
+  - bit_offset: 3
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIODEN
+  - bit_offset: 4
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOEEN
+  - bit_offset: 5
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOFEN
+  - bit_offset: 6
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOGEN
+  - bit_offset: 7
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOHEN
+  - bit_offset: 8
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOIEN
+  - bit_offset: 9
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOJEN
+  - bit_offset: 10
+    bit_size: 1
+    description: 0GPIO peripheral clock enable
+    name: GPIOKEN
+  - bit_offset: 19
+    bit_size: 1
+    description: CRC peripheral clock enable
+    name: CRCEN
+  - bit_offset: 21
+    bit_size: 1
+    description: BDMA and DMAMUX2 Clock Enable
+    name: BDMAEN
+  - bit_offset: 24
+    bit_size: 1
+    description: ADC3 Peripheral Clocks Enable
+    name: ADC3EN
+  - bit_offset: 25
+    bit_size: 1
+    description: HSEM peripheral clock enable
+    name: HSEMEN
+  - bit_offset: 28
+    bit_size: 1
+    description: Backup RAM Clock Enable
+    name: BKPRAMEN
+fieldset/C1_AHB4LPENR:
+  description: RCC AHB4 Sleep Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOALPEN
+  - bit_offset: 1
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOBLPEN
+  - bit_offset: 2
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOCLPEN
+  - bit_offset: 3
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIODLPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOELPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOFLPEN
+  - bit_offset: 6
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOGLPEN
+  - bit_offset: 7
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOHLPEN
+  - bit_offset: 8
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOILPEN
+  - bit_offset: 9
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOJLPEN
+  - bit_offset: 10
+    bit_size: 1
+    description: GPIO peripheral clock enable during CSleep mode
+    name: GPIOKLPEN
+  - bit_offset: 19
+    bit_size: 1
+    description: CRC peripheral clock enable during CSleep mode
+    name: CRCLPEN
+  - bit_offset: 21
+    bit_size: 1
+    description: BDMA Clock Enable During CSleep Mode
+    name: BDMALPEN
+  - bit_offset: 24
+    bit_size: 1
+    description: ADC3 Peripheral Clocks Enable During CSleep Mode
+    name: ADC3LPEN
+  - bit_offset: 28
+    bit_size: 1
+    description: Backup RAM Clock Enable During CSleep Mode
+    name: BKPRAMLPEN
+  - bit_offset: 29
+    bit_size: 1
+    description: SRAM4 Clock Enable During CSleep Mode
+    name: SRAM4LPEN
+fieldset/C1_APB1HENR:
+  description: RCC APB1 Clock Register
+  fields:
+  - bit_offset: 1
+    bit_size: 1
+    description: Clock Recovery System peripheral clock enable
+    name: CRSEN
+  - bit_offset: 2
+    bit_size: 1
+    description: SWPMI Peripheral Clocks Enable
+    name: SWPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: OPAMP peripheral clock enable
+    name: OPAMPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: MDIOS peripheral clock enable
+    name: MDIOSEN
+  - bit_offset: 8
+    bit_size: 1
+    description: FDCAN Peripheral Clocks Enable
+    name: FDCANEN
+fieldset/C1_APB1HLPENR:
+  description: RCC APB1 High Sleep Clock Register
+  fields:
+  - bit_offset: 1
+    bit_size: 1
+    description: Clock Recovery System peripheral clock enable during CSleep mode
+    name: CRSLPEN
+  - bit_offset: 2
+    bit_size: 1
+    description: SWPMI Peripheral Clocks Enable During CSleep Mode
+    name: SWPLPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: OPAMP peripheral clock enable during CSleep mode
+    name: OPAMPLPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: MDIOS peripheral clock enable during CSleep mode
+    name: MDIOSLPEN
+  - bit_offset: 8
+    bit_size: 1
+    description: FDCAN Peripheral Clocks Enable During CSleep Mode
+    name: FDCANLPEN
+fieldset/C1_APB1LENR:
+  description: RCC APB1 Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM2EN
+  - bit_offset: 1
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM3EN
+  - bit_offset: 2
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM4EN
+  - bit_offset: 3
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM5EN
+  - bit_offset: 4
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM6EN
+  - bit_offset: 5
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM7EN
+  - bit_offset: 6
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM12EN
+  - bit_offset: 7
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM13EN
+  - bit_offset: 8
+    bit_size: 1
+    description: TIM peripheral clock enable
+    name: TIM14EN
+  - bit_offset: 9
+    bit_size: 1
+    description: LPTIM1 Peripheral Clocks Enable
+    name: LPTIM1EN
+  - bit_offset: 14
+    bit_size: 1
+    description: SPI2 Peripheral Clocks Enable
+    name: SPI2EN
+  - bit_offset: 15
+    bit_size: 1
+    description: SPI3 Peripheral Clocks Enable
+    name: SPI3EN
+  - bit_offset: 16
+    bit_size: 1
+    description: SPDIFRX Peripheral Clocks Enable
+    name: SPDIFRXEN
+  - bit_offset: 17
+    bit_size: 1
+    description: USART2 Peripheral Clocks Enable
+    name: USART2EN
+  - bit_offset: 18
+    bit_size: 1
+    description: USART3 Peripheral Clocks Enable
+    name: USART3EN
+  - bit_offset: 19
+    bit_size: 1
+    description: UART4 Peripheral Clocks Enable
+    name: UART4EN
+  - bit_offset: 20
+    bit_size: 1
+    description: UART5 Peripheral Clocks Enable
+    name: UART5EN
+  - bit_offset: 21
+    bit_size: 1
+    description: I2C1 Peripheral Clocks Enable
+    name: I2C1EN
+  - bit_offset: 22
+    bit_size: 1
+    description: I2C2 Peripheral Clocks Enable
+    name: I2C2EN
+  - bit_offset: 23
+    bit_size: 1
+    description: I2C3 Peripheral Clocks Enable
+    name: I2C3EN
+  - bit_offset: 27
+    bit_size: 1
+    description: HDMI-CEC peripheral clock enable
+    name: CECEN
+  - bit_offset: 29
+    bit_size: 1
+    description: DAC1&2 peripheral clock enable
+    name: DAC12EN
+  - bit_offset: 30
+    bit_size: 1
+    description: UART7 Peripheral Clocks Enable
+    name: UART7EN
+  - bit_offset: 31
+    bit_size: 1
+    description: UART8 Peripheral Clocks Enable
+    name: UART8EN
+  - bit_offset: 11
+    bit_size: 1
+    description: WWDG2 peripheral clock enable
+    name: WWDG2EN
+fieldset/C1_APB1LLPENR:
+  description: RCC APB1 Low Sleep Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: TIM2 peripheral clock enable during CSleep mode
+    name: TIM2LPEN
+  - bit_offset: 1
+    bit_size: 1
+    description: TIM3 peripheral clock enable during CSleep mode
+    name: TIM3LPEN
+  - bit_offset: 2
+    bit_size: 1
+    description: TIM4 peripheral clock enable during CSleep mode
+    name: TIM4LPEN
+  - bit_offset: 3
+    bit_size: 1
+    description: TIM5 peripheral clock enable during CSleep mode
+    name: TIM5LPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: TIM6 peripheral clock enable during CSleep mode
+    name: TIM6LPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: TIM7 peripheral clock enable during CSleep mode
+    name: TIM7LPEN
+  - bit_offset: 6
+    bit_size: 1
+    description: TIM12 peripheral clock enable during CSleep mode
+    name: TIM12LPEN
+  - bit_offset: 7
+    bit_size: 1
+    description: TIM13 peripheral clock enable during CSleep mode
+    name: TIM13LPEN
+  - bit_offset: 8
+    bit_size: 1
+    description: TIM14 peripheral clock enable during CSleep mode
+    name: TIM14LPEN
+  - bit_offset: 9
+    bit_size: 1
+    description: LPTIM1 Peripheral Clocks Enable During CSleep Mode
+    name: LPTIM1LPEN
+  - bit_offset: 14
+    bit_size: 1
+    description: SPI2 Peripheral Clocks Enable During CSleep Mode
+    name: SPI2LPEN
+  - bit_offset: 15
+    bit_size: 1
+    description: SPI3 Peripheral Clocks Enable During CSleep Mode
+    name: SPI3LPEN
+  - bit_offset: 16
+    bit_size: 1
+    description: SPDIFRX Peripheral Clocks Enable During CSleep Mode
+    name: SPDIFRXLPEN
+  - bit_offset: 17
+    bit_size: 1
+    description: USART2 Peripheral Clocks Enable During CSleep Mode
+    name: USART2LPEN
+  - bit_offset: 18
+    bit_size: 1
+    description: USART3 Peripheral Clocks Enable During CSleep Mode
+    name: USART3LPEN
+  - bit_offset: 19
+    bit_size: 1
+    description: UART4 Peripheral Clocks Enable During CSleep Mode
+    name: UART4LPEN
+  - bit_offset: 20
+    bit_size: 1
+    description: UART5 Peripheral Clocks Enable During CSleep Mode
+    name: UART5LPEN
+  - bit_offset: 21
+    bit_size: 1
+    description: I2C1 Peripheral Clocks Enable During CSleep Mode
+    name: I2C1LPEN
+  - bit_offset: 22
+    bit_size: 1
+    description: I2C2 Peripheral Clocks Enable During CSleep Mode
+    name: I2C2LPEN
+  - bit_offset: 23
+    bit_size: 1
+    description: I2C3 Peripheral Clocks Enable During CSleep Mode
+    name: I2C3LPEN
+  - bit_offset: 27
+    bit_size: 1
+    description: HDMI-CEC Peripheral Clocks Enable During CSleep Mode
+    name: CECLPEN
+  - bit_offset: 29
+    bit_size: 1
+    description: DAC1/2 peripheral clock enable during CSleep mode
+    name: DAC12LPEN
+  - bit_offset: 30
+    bit_size: 1
+    description: UART7 Peripheral Clocks Enable During CSleep Mode
+    name: UART7LPEN
+  - bit_offset: 31
+    bit_size: 1
+    description: UART8 Peripheral Clocks Enable During CSleep Mode
+    name: UART8LPEN
+  - bit_offset: 11
+    bit_size: 1
+    description: WWDG2 peripheral Clocks Enable During CSleep Mode
+    name: WWDG2LPEN
+fieldset/C1_APB2ENR:
+  description: RCC APB2 Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: TIM1 peripheral clock enable
+    name: TIM1EN
+  - bit_offset: 1
+    bit_size: 1
+    description: TIM8 peripheral clock enable
+    name: TIM8EN
+  - bit_offset: 4
+    bit_size: 1
+    description: USART1 Peripheral Clocks Enable
+    name: USART1EN
+  - bit_offset: 5
+    bit_size: 1
+    description: USART6 Peripheral Clocks Enable
+    name: USART6EN
+  - bit_offset: 12
+    bit_size: 1
+    description: SPI1 Peripheral Clocks Enable
+    name: SPI1EN
+  - bit_offset: 13
+    bit_size: 1
+    description: SPI4 Peripheral Clocks Enable
+    name: SPI4EN
+  - bit_offset: 16
+    bit_size: 1
+    description: TIM15 peripheral clock enable
+    name: TIM15EN
+  - bit_offset: 17
+    bit_size: 1
+    description: TIM16 peripheral clock enable
+    name: TIM16EN
+  - bit_offset: 18
+    bit_size: 1
+    description: TIM17 peripheral clock enable
+    name: TIM17EN
+  - bit_offset: 20
+    bit_size: 1
+    description: SPI5 Peripheral Clocks Enable
+    name: SPI5EN
+  - bit_offset: 22
+    bit_size: 1
+    description: SAI1 Peripheral Clocks Enable
+    name: SAI1EN
+  - bit_offset: 23
+    bit_size: 1
+    description: SAI2 Peripheral Clocks Enable
+    name: SAI2EN
+  - bit_offset: 24
+    bit_size: 1
+    description: SAI3 Peripheral Clocks Enable
+    name: SAI3EN
+  - bit_offset: 28
+    bit_size: 1
+    description: DFSDM1 Peripheral Clocks Enable
+    name: DFSDM1EN
+  - bit_offset: 29
+    bit_size: 1
+    description: HRTIM peripheral clock enable
+    name: HRTIMEN
+fieldset/C1_APB2LPENR:
+  description: RCC APB2 Sleep Clock Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: TIM1 peripheral clock enable during CSleep mode
+    name: TIM1LPEN
+  - bit_offset: 1
+    bit_size: 1
+    description: TIM8 peripheral clock enable during CSleep mode
+    name: TIM8LPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: USART1 Peripheral Clocks Enable During CSleep Mode
+    name: USART1LPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: USART6 Peripheral Clocks Enable During CSleep Mode
+    name: USART6LPEN
+  - bit_offset: 12
+    bit_size: 1
+    description: SPI1 Peripheral Clocks Enable During CSleep Mode
+    name: SPI1LPEN
+  - bit_offset: 13
+    bit_size: 1
+    description: SPI4 Peripheral Clocks Enable During CSleep Mode
+    name: SPI4LPEN
+  - bit_offset: 16
+    bit_size: 1
+    description: TIM15 peripheral clock enable during CSleep mode
+    name: TIM15LPEN
+  - bit_offset: 17
+    bit_size: 1
+    description: TIM16 peripheral clock enable during CSleep mode
+    name: TIM16LPEN
+  - bit_offset: 18
+    bit_size: 1
+    description: TIM17 peripheral clock enable during CSleep mode
+    name: TIM17LPEN
+  - bit_offset: 20
+    bit_size: 1
+    description: SPI5 Peripheral Clocks Enable During CSleep Mode
+    name: SPI5LPEN
+  - bit_offset: 22
+    bit_size: 1
+    description: SAI1 Peripheral Clocks Enable During CSleep Mode
+    name: SAI1LPEN
+  - bit_offset: 23
+    bit_size: 1
+    description: SAI2 Peripheral Clocks Enable During CSleep Mode
+    name: SAI2LPEN
+  - bit_offset: 24
+    bit_size: 1
+    description: SAI3 Peripheral Clocks Enable During CSleep Mode
+    name: SAI3LPEN
+  - bit_offset: 28
+    bit_size: 1
+    description: DFSDM1 Peripheral Clocks Enable During CSleep Mode
+    name: DFSDM1LPEN
+  - bit_offset: 29
+    bit_size: 1
+    description: HRTIM peripheral clock enable during CSleep mode
+    name: HRTIMLPEN
+fieldset/C1_APB3ENR:
+  description: RCC APB3 Clock Register
+  fields:
+  - bit_offset: 3
+    bit_size: 1
+    description: LTDC peripheral clock enable
+    name: LTDCEN
+  - bit_offset: 6
+    bit_size: 1
+    description: WWDG1 Clock Enable
+    name: WWDG1EN
+  - bit_offset: 4
+    bit_size: 1
+    description: DSI Peripheral clocks enable
+    name: DSIEN
+fieldset/C1_APB3LPENR:
+  description: RCC APB3 Sleep Clock Register
+  fields:
+  - bit_offset: 3
+    bit_size: 1
+    description: LTDC peripheral clock enable during CSleep mode
+    name: LTDCLPEN
+  - bit_offset: 6
+    bit_size: 1
+    description: WWDG1 Clock Enable During CSleep Mode
+    name: WWDG1LPEN
+  - bit_offset: 4
+    bit_size: 1
+    description: DSI Peripheral Clock Enable During CSleep Mode
+    name: DSILPEN
+fieldset/C1_APB4ENR:
+  description: RCC APB4 Clock Register
+  fields:
+  - bit_offset: 1
+    bit_size: 1
+    description: SYSCFG peripheral clock enable
+    name: SYSCFGEN
+  - bit_offset: 3
+    bit_size: 1
+    description: LPUART1 Peripheral Clocks Enable
+    name: LPUART1EN
+  - bit_offset: 5
+    bit_size: 1
+    description: SPI6 Peripheral Clocks Enable
+    name: SPI6EN
+  - bit_offset: 7
+    bit_size: 1
+    description: I2C4 Peripheral Clocks Enable
+    name: I2C4EN
+  - bit_offset: 9
+    bit_size: 1
+    description: LPTIM2 Peripheral Clocks Enable
+    name: LPTIM2EN
+  - bit_offset: 10
+    bit_size: 1
+    description: LPTIM3 Peripheral Clocks Enable
+    name: LPTIM3EN
+  - bit_offset: 11
+    bit_size: 1
+    description: LPTIM4 Peripheral Clocks Enable
+    name: LPTIM4EN
+  - bit_offset: 12
+    bit_size: 1
+    description: LPTIM5 Peripheral Clocks Enable
+    name: LPTIM5EN
+  - bit_offset: 14
+    bit_size: 1
+    description: COMP1/2 peripheral clock enable
+    name: COMP12EN
+  - bit_offset: 15
+    bit_size: 1
+    description: VREF peripheral clock enable
+    name: VREFEN
+  - bit_offset: 16
+    bit_size: 1
+    description: RTC APB Clock Enable
+    name: RTCAPBEN
+  - bit_offset: 21
+    bit_size: 1
+    description: SAI4 Peripheral Clocks Enable
+    name: SAI4EN
+fieldset/C1_APB4LPENR:
+  description: RCC APB4 Sleep Clock Register
+  fields:
+  - bit_offset: 1
+    bit_size: 1
+    description: SYSCFG peripheral clock enable during CSleep mode
+    name: SYSCFGLPEN
+  - bit_offset: 3
+    bit_size: 1
+    description: LPUART1 Peripheral Clocks Enable During CSleep Mode
+    name: LPUART1LPEN
+  - bit_offset: 5
+    bit_size: 1
+    description: SPI6 Peripheral Clocks Enable During CSleep Mode
+    name: SPI6LPEN
+  - bit_offset: 7
+    bit_size: 1
+    description: I2C4 Peripheral Clocks Enable During CSleep Mode
+    name: I2C4LPEN
+  - bit_offset: 9
+    bit_size: 1
+    description: LPTIM2 Peripheral Clocks Enable During CSleep Mode
+    name: LPTIM2LPEN
+  - bit_offset: 10
+    bit_size: 1
+    description: LPTIM3 Peripheral Clocks Enable During CSleep Mode
+    name: LPTIM3LPEN
+  - bit_offset: 11
+    bit_size: 1
+    description: LPTIM4 Peripheral Clocks Enable During CSleep Mode
+    name: LPTIM4LPEN
+  - bit_offset: 12
+    bit_size: 1
+    description: LPTIM5 Peripheral Clocks Enable During CSleep Mode
+    name: LPTIM5LPEN
+  - bit_offset: 14
+    bit_size: 1
+    description: COMP1/2 peripheral clock enable during CSleep mode
+    name: COMP12LPEN
+  - bit_offset: 15
+    bit_size: 1
+    description: VREF peripheral clock enable during CSleep mode
+    name: VREFLPEN
+  - bit_offset: 16
+    bit_size: 1
+    description: RTC APB Clock Enable During CSleep Mode
+    name: RTCAPBLPEN
+  - bit_offset: 21
+    bit_size: 1
+    description: SAI4 Peripheral Clocks Enable During CSleep Mode
+    name: SAI4LPEN
 fieldset/C1_RSR:
   description: RCC Reset Status Register
   fields:
   - bit_offset: 16
     bit_size: 1
     description: Remove reset flag
-    enum: RMVF
+    enum: C_RSR_RMVF
     name: RMVF
   - bit_offset: 17
     bit_size: 1
     description: CPU reset flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: CPURSTF
   - bit_offset: 19
     bit_size: 1
     description: D1 domain power switch reset flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: D1RSTF
   - bit_offset: 20
     bit_size: 1
     description: D2 domain power switch reset flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: D2RSTF
   - bit_offset: 21
     bit_size: 1
     description: BOR reset flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: BORRSTF
   - bit_offset: 22
     bit_size: 1
     description: Pin reset flag (NRST)
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: PINRSTF
   - bit_offset: 23
     bit_size: 1
     description: POR/PDR reset flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: PORRSTF
   - bit_offset: 24
     bit_size: 1
     description: System reset from CPU reset flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: SFTRSTF
   - bit_offset: 26
     bit_size: 1
     description: Independent Watchdog reset flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: IWDG1RSTF
   - bit_offset: 28
     bit_size: 1
     description: Window Watchdog reset flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: WWDG1RSTF
   - bit_offset: 30
     bit_size: 1
     description: Reset due to illegal D1 DStandby or CPU CStop flag
-    enum_read: CPURSTFR
+    enum_read: C_RSR_CPURSTFR
     name: LPWRRSTF
+fieldset/CDCCIP1R:
+  description: RCC Domain 2 Kernel Clock Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: SAI1 and DFSDM1 kernel Aclk clock source selection
+    enum: SAISEL
+    name: SAI1SEL
+  - bit_offset: 6
+    bit_size: 3
+    description: SAI2 kernel clock source A source selection
+    enum: SAIASEL
+    name: SAI2ASEL
+  - bit_offset: 9
+    bit_size: 3
+    description: SAI2 kernel clock source B source selection
+    enum: SAIASEL
+    name: SAI2BSEL
+  - bit_offset: 12
+    bit_size: 3
+    description: SPI/I2S1,2 and 3 kernel clock source selection
+    enum: SAISEL
+    name: SPI123SEL
+  - bit_offset: 16
+    bit_size: 3
+    description: SPI4 and 5 kernel clock source selection
+    enum: SPI45SEL
+    name: SPI45SEL
+  - bit_offset: 20
+    bit_size: 2
+    description: SPDIFRX kernel clock source selection
+    enum: SPDIFRXSEL
+    name: SPDIFRXSEL
+  - bit_offset: 24
+    bit_size: 1
+    description: DFSDM1 kernel Clk clock source selection
+    enum: DFSDMSEL
+    name: DFSDM1SEL
+  - bit_offset: 28
+    bit_size: 2
+    description: FDCAN kernel clock source selection
+    enum: FDCANSEL
+    name: FDCANSEL
+  - bit_offset: 31
+    bit_size: 1
+    description: SWPMI kernel clock source selection
+    enum: SWPSEL
+    name: SWPSEL
+fieldset/CDCCIP2R:
+  description: RCC Domain 2 Kernel Clock Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: USART2/3, UART4,5, 7/8 (APB1) kernel clock source selection
+    enum: USART234578SEL
+    name: USART234578SEL
+  - bit_offset: 3
+    bit_size: 3
+    description: USART1, 6, 9 and 10 kernel clock source selection
+    enum: USART16910SEL
+    name: USART16910SEL
+  - bit_offset: 8
+    bit_size: 2
+    description: RNG kernel clock source selection
+    enum: RNGSEL
+    name: RNGSEL
+  - bit_offset: 12
+    bit_size: 2
+    description: I2C1,2,3 kernel clock source selection
+    enum: I2C123SEL
+    name: I2C123SEL
+  - bit_offset: 20
+    bit_size: 2
+    description: USBOTG 1 and 2 kernel clock source selection
+    enum: USBSEL
+    name: USBSEL
+  - bit_offset: 22
+    bit_size: 2
+    description: HDMI-CEC kernel clock source selection
+    enum: CECSEL
+    name: CECSEL
+  - bit_offset: 28
+    bit_size: 3
+    description: LPTIM1 kernel clock source selection
+    enum: LPTIM1SEL
+    name: LPTIM1SEL
+fieldset/CDCCIPR:
+  description: RCC Domain 1 Kernel Clock Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 2
+    description: FMC kernel clock source selection
+    enum: FMCSEL
+    name: FMCSEL
+  - bit_offset: 4
+    bit_size: 2
+    description: OCTOSPI kernel clock source selection
+    enum: FMCSEL
+    name: OCTOSPISEL
+  - bit_offset: 16
+    bit_size: 1
+    description: SDMMC kernel clock source selection
+    enum: SDMMCSEL
+    name: SDMMCSEL
+  - bit_offset: 28
+    bit_size: 2
+    description: per_ck clock source selection
+    enum: CKPERSEL
+    name: CKPERSEL
 fieldset/CFGR:
   description: RCC Clock Configuration Register
   fields:
@@ -1842,6 +4138,17 @@ fieldset/CRRCR:
     bit_size: 10
     description: Internal RC 48 MHz clock calibration
     name: HSI48CAL
+fieldset/CSICFGR:
+  description: RCC CSI configuration register
+  fields:
+  - bit_offset: 0
+    bit_size: 9
+    description: CSI clock calibration
+    name: CSICAL
+  - bit_offset: 24
+    bit_size: 6
+    description: CSI clock trimming
+    name: CSITRIM
 fieldset/CSR:
   description: RCC Clock Control and Status Register
   fields:
@@ -1855,6 +4162,33 @@ fieldset/CSR:
     description: LSI oscillator ready
     enum_read: LSIRDYR
     name: LSIRDY
+fieldset/D1CCIPR:
+  description: RCC Domain 1 Kernel Clock Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 2
+    description: FMC kernel clock source selection
+    enum: FMCSEL
+    name: FMCSEL
+  - bit_offset: 4
+    bit_size: 2
+    description: QUADSPI kernel clock source selection
+    enum: FMCSEL
+    name: QSPISEL
+  - bit_offset: 16
+    bit_size: 1
+    description: SDMMC kernel clock source selection
+    enum: SDMMCSEL
+    name: SDMMCSEL
+  - bit_offset: 28
+    bit_size: 2
+    description: per_ck clock source selection
+    enum: CKPERSEL
+    name: CKPERSEL
+  - bit_offset: 8
+    bit_size: 1
+    description: kernel clock source selection
+    name: DSISEL
 fieldset/D1CFGR:
   description: RCC Domain 1 Clock Configuration Register
   fields:
@@ -1873,6 +4207,87 @@ fieldset/D1CFGR:
     description: D1 domain Core prescaler
     enum: HPRE
     name: D1CPRE
+fieldset/D2CCIP1R:
+  description: RCC Domain 2 Kernel Clock Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: SAI1 and DFSDM1 kernel Aclk clock source selection
+    enum: SAISEL
+    name: SAI1SEL
+  - bit_offset: 6
+    bit_size: 3
+    description: SAI2 and SAI3 kernel clock source selection
+    enum: SAISEL
+    name: SAI23SEL
+  - bit_offset: 12
+    bit_size: 3
+    description: SPI/I2S1,2 and 3 kernel clock source selection
+    enum: SAISEL
+    name: SPI123SEL
+  - bit_offset: 16
+    bit_size: 3
+    description: SPI4 and 5 kernel clock source selection
+    enum: SPI45SEL
+    name: SPI45SEL
+  - bit_offset: 20
+    bit_size: 2
+    description: SPDIFRX kernel clock source selection
+    enum: SPDIFSEL
+    name: SPDIFSEL
+  - bit_offset: 24
+    bit_size: 1
+    description: DFSDM1 kernel Clk clock source selection
+    enum: DFSDMSEL
+    name: DFSDM1SEL
+  - bit_offset: 28
+    bit_size: 2
+    description: FDCAN kernel clock source selection
+    enum: FDCANSEL
+    name: FDCANSEL
+  - bit_offset: 31
+    bit_size: 1
+    description: SWPMI kernel clock source selection
+    enum: SWPSEL
+    name: SWPSEL
+fieldset/D2CCIP2R:
+  description: RCC Domain 2 Kernel Clock Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: USART2/3, UART4,5, 7/8 (APB1) kernel clock source selection
+    enum: USART234578SEL
+    name: USART234578SEL
+  - bit_offset: 3
+    bit_size: 3
+    description: USART1 and 6 kernel clock source selection
+    enum: USART16SEL
+    name: USART16SEL
+  - bit_offset: 8
+    bit_size: 2
+    description: RNG kernel clock source selection
+    enum: RNGSEL
+    name: RNGSEL
+  - bit_offset: 12
+    bit_size: 2
+    description: I2C1,2,3 kernel clock source selection
+    enum: I2C123SEL
+    name: I2C123SEL
+  - bit_offset: 20
+    bit_size: 2
+    description: USBOTG 1 and 2 kernel clock source selection
+    enum: USBSEL
+    name: USBSEL
+  - bit_offset: 22
+    bit_size: 2
+    description: HDMI-CEC kernel clock source selection
+    enum: CECSEL
+    name: CECSEL
+  - bit_offset: 28
+    bit_size: 3
+    description: LPTIM1 kernel clock source selection
+    enum: LPTIM1SEL
+    name: LPTIM1SEL
 fieldset/D2CFGR:
   description: RCC Domain 2 Clock Configuration Register
   fields:
@@ -1913,6 +4328,14 @@ fieldset/D3AMR:
     bit_size: 1
     description: LPTIM3 Autonomous mode enable
     name: LPTIM3AMEN
+  - bit_offset: 11
+    bit_size: 1
+    description: LPTIM4 Autonomous mode enable
+    name: LPTIM4AMEN
+  - bit_offset: 12
+    bit_size: 1
+    description: LPTIM5 Autonomous mode enable
+    name: LPTIM5AMEN
   - bit_offset: 14
     bit_size: 1
     description: COMP12 Autonomous mode enable
@@ -1937,10 +4360,65 @@ fieldset/D3AMR:
     bit_size: 1
     description: ADC3 Autonomous mode enable
     name: ADC3AMEN
+  - bit_offset: 28
+    bit_size: 1
+    description: Backup RAM Autonomous mode enable
+    name: BKPRAMAMEN
   - bit_offset: 29
     bit_size: 1
     description: SRAM4 Autonomous mode enable
     name: SRAM4AMEN
+  - bit_offset: 28
+    bit_size: 1
+    description: Backup RAM Autonomous mode enable
+    name: BKPSRAMAMEN
+  - bit_offset: 13
+    bit_size: 1
+    description: DAC2 (containing one converter) Autonomous mode enable
+    name: DAC2AMEN
+fieldset/D3CCIPR:
+  description: RCC Domain 3 Kernel Clock Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: LPUART1 kernel clock source selection
+    enum: LPUARTSEL
+    name: LPUART1SEL
+  - bit_offset: 8
+    bit_size: 2
+    description: I2C4 kernel clock source selection
+    enum: I2C4SEL
+    name: I2C4SEL
+  - bit_offset: 10
+    bit_size: 3
+    description: LPTIM2 kernel clock source selection
+    enum: LPTIM2SEL
+    name: LPTIM2SEL
+  - bit_offset: 13
+    bit_size: 3
+    description: LPTIM3,4,5 kernel clock source selection
+    enum: LPTIM2SEL
+    name: LPTIM345SEL
+  - bit_offset: 16
+    bit_size: 2
+    description: SAR ADC kernel clock source selection
+    enum: ADCSEL
+    name: ADCSEL
+  - bit_offset: 21
+    bit_size: 3
+    description: Sub-Block A of SAI4 kernel clock source selection
+    enum: SAIASEL
+    name: SAI4ASEL
+  - bit_offset: 24
+    bit_size: 3
+    description: Sub-Block B of SAI4 kernel clock source selection
+    enum: SAIASEL
+    name: SAI4BSEL
+  - bit_offset: 28
+    bit_size: 3
+    description: SPI6 kernel clock source selection
+    enum: SPI6SEL
+    name: SPI6SEL
 fieldset/D3CFGR:
   description: RCC Domain 3 Clock Configuration Register
   fields:
@@ -1950,13 +4428,55 @@ fieldset/D3CFGR:
     enum: DPPRE
     name: D3PPRE
 fieldset/GCR:
-  description: RCC Global Control Register
+  description: Global Control Register
   fields:
   - bit_offset: 0
     bit_size: 1
     description: WWDG1 reset scope control
     enum: WWRSC
     name: WW1RSC
+  - bit_offset: 1
+    bit_size: 1
+    description: WWDG2 reset scope control
+    name: WW2RSC
+  - bit_offset: 2
+    bit_size: 1
+    description: Force allow CPU1 to boot
+    name: BOOT_C1
+  - bit_offset: 3
+    bit_size: 1
+    description: Force allow CPU2 to boot
+    name: BOOT_C2
+fieldset/HSICFGR:
+  description: RCC HSI configuration register
+  fields:
+  - bit_offset: 0
+    bit_size: 12
+    description: HSI clock calibration
+    name: HSICAL
+  - bit_offset: 24
+    bit_size: 7
+    description: HSI clock trimming
+    name: HSITRIM
+fieldset/ICSCR:
+  description: RCC Internal Clock Source Calibration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 12
+    description: HSI clock calibration
+    name: HSICAL
+  - bit_offset: 12
+    bit_size: 6
+    description: HSI clock trimming
+    name: HSITRIM
+  - bit_offset: 18
+    bit_size: 8
+    description: CSI clock calibration
+    name: CSICAL
+  - bit_offset: 26
+    bit_size: 5
+    description: CSI clock trimming
+    name: CSITRIM
 fieldset/PLL1DIVR:
   description: RCC PLL1 Dividers Configuration Register
   fields:
@@ -2177,3 +4697,97 @@ fieldset/PLLCKSELR:
     bit_size: 6
     description: Prescaler for PLL1
     name: DIVM
+fieldset/RSR:
+  description: RCC Reset Status Register
+  fields:
+  - bit_offset: 16
+    bit_size: 1
+    description: Remove reset flag
+    enum: RSR_RMVF
+    name: RMVF
+  - bit_offset: 17
+    bit_size: 1
+    description: CPU reset flag
+    enum_read: RSR_CPURSTFR
+    name: CPURSTF
+  - bit_offset: 19
+    bit_size: 1
+    description: D1 domain power switch reset flag
+    enum_read: RSR_CPURSTFR
+    name: D1RSTF
+  - bit_offset: 20
+    bit_size: 1
+    description: D2 domain power switch reset flag
+    enum_read: RSR_CPURSTFR
+    name: D2RSTF
+  - bit_offset: 21
+    bit_size: 1
+    description: BOR reset flag
+    enum_read: RSR_CPURSTFR
+    name: BORRSTF
+  - bit_offset: 22
+    bit_size: 1
+    description: Pin reset flag (NRST)
+    enum_read: RSR_CPURSTFR
+    name: PINRSTF
+  - bit_offset: 23
+    bit_size: 1
+    description: POR/PDR reset flag
+    enum_read: RSR_CPURSTFR
+    name: PORRSTF
+  - bit_offset: 24
+    bit_size: 1
+    description: System reset from CPU reset flag
+    enum_read: RSR_CPURSTFR
+    name: SFTRSTF
+  - bit_offset: 26
+    bit_size: 1
+    description: Independent Watchdog reset flag
+    enum_read: RSR_CPURSTFR
+    name: IWDG1RSTF
+  - bit_offset: 28
+    bit_size: 1
+    description: Window Watchdog reset flag
+    enum_read: RSR_CPURSTFR
+    name: WWDG1RSTF
+  - bit_offset: 30
+    bit_size: 1
+    description: Reset due to illegal D1 DStandby or CPU CStop flag
+    enum_read: RSR_CPURSTFR
+    name: LPWRRSTF
+fieldset/SRDCCIPR:
+  description: RCC Domain 3 Kernel Clock Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: LPUART1 kernel clock source selection
+    enum: LPUARTSEL
+    name: LPUART1SEL
+  - bit_offset: 8
+    bit_size: 2
+    description: I2C4 kernel clock source selection
+    enum: I2C4SEL
+    name: I2C4SEL
+  - bit_offset: 10
+    bit_size: 3
+    description: LPTIM2 kernel clock source selection
+    enum: LPTIM2SEL
+    name: LPTIM2SEL
+  - bit_offset: 13
+    bit_size: 3
+    description: LPTIM3,4,5 kernel clock source selection
+    name: LPTIM3SEL
+  - bit_offset: 16
+    bit_size: 2
+    description: SAR ADC kernel clock source selection
+    enum: ADCSEL
+    name: ADCSEL
+  - bit_offset: 27
+    bit_size: 1
+    description: DFSDM2 kernel clock source selection
+    name: DFSDM2SEL
+  - bit_offset: 28
+    bit_size: 3
+    description: SPI6 kernel clock source selection
+    enum: SPI6SEL
+    name: SPI6SEL
