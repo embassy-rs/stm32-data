@@ -1,4 +1,5 @@
 transforms:
+
   - MergeEnums:
       from: CCMR\d_Input_CC\dS
       to: CCMR_Input_CCS
@@ -10,11 +11,11 @@ transforms:
       to: $1$2$3
       skip_unmergeable: true
 
-  - MakeFieldArray:
-      fieldsets: .*
-      from: ([A-Z]+)\d+
-      to: $1
-      allow_cursed: true
+      #- MakeFieldArray:
+      #    fieldsets: .*
+      #    from: ([A-Z]+)\d([A-Z]*)
+      #    to: $1$2
+      #    allow_cursed: true
   - MakeFieldArray:
       fieldsets: .*
       from: P\d+WP
@@ -49,3 +50,15 @@ transforms:
   - DeleteEnums:
       from: '.*ON'
       bit_size: 1
+  - MakeRegisterArray:
+      blocks: .*
+      from: PLL\d+(.*)
+      to: PLL$1
+  - MakeFieldArray:
+      fieldsets: .*
+      from: PLL\d+(.*)
+      to: PLL$1
+  - MakeFieldArray:
+      fieldsets: (PLLCFGR|PLLCKSELR)
+      from: DIV([A-Z]+)\d+([A-Z]*)
+      to: DIV$1$2
