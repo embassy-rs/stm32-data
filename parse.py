@@ -242,14 +242,24 @@ perimap = [
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
     ('STM32H7.*:SYS:.*', 'syscfg_h7/SYSCFG'),
     ('STM32L0.*:RCC:.*', 'rcc_l0/RCC'),
+    ('STM32L4.*:RCC:.*', 'rcc_l4/RCC'),
+    ('STM32F4.*:RCC:.*', 'rcc_f4/RCC'),
+    ('.*:STM32H7AB_rcc_v1_0', 'rcc_h7ab/RCC'),
+    ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
     ('.*:STM32L0_dbgmcu_v1_0', 'dbg_l0/DBG'),
     ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
-    ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
     ('.*:STM32H7_dbgmcu_v1_0', 'dbgmcu_h7/DBGMCU'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
+]
+
+rng_clock_map = [
+    ('STM32L0.*:RNG:.*', 'AHB'),
+    ('STM32L4.*:RNG:.*', 'AHB2'),
+    ('STM32F4.*:RNG:.*', 'AHB2'),
+    ('STM32H7.*:RNG:.*', 'AHB2'),
 ]
 
 
@@ -266,6 +276,11 @@ def find_af(gpio_af, peri_name, pin_name, signal_name):
                  return af[gpio_af][pin_name][peri_name + '_' + signal_name]
      return None
               
+def match_rng_clock(rcc):
+    for r, clock in rng_clock_map:
+        if re.match(r, rcc):
+            return clock
+    return None
 
 def parse_headers():
     os.makedirs('sources/headers_parsed', exist_ok=True)
@@ -458,6 +473,11 @@ def parse_chips():
                 if len(chip['pins'][pname]) > 0:
                     p['pins'] = chip['pins'][pname]
 
+            # RNG Clock definitions are not easily determined, so lookup in mapping
+            if block is not None and block.startswith("rng_"):
+                if (clock := match_rng_clock(chip_name+':'+pname+':'+pkind)) != None:
+                    p['clock'] = clock
+
             peris[pname] = p
 
 
@@ -599,6 +619,7 @@ def parse_clocks():
                 peripherals = peripherals.split(",")
                 for p in peripherals:
                     chip_clocks[p] = name
+
         clocks[ff] = chip_clocks
 
 
