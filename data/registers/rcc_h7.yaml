@@ -46,30 +46,20 @@ block/RCC:
     description: RCC PLLs Configuration Register
     fieldset: PLLCFGR
     name: PLLCFGR
-  - byte_offset: 48
+  - array:
+      len: 3
+      stride: 8
+    byte_offset: 48
     description: RCC PLL1 Dividers Configuration Register
     fieldset: PLL1DIVR
-    name: PLL1DIVR
-  - byte_offset: 52
+    name: PLLDIVR
+  - array:
+      len: 3
+      stride: 8
+    byte_offset: 52
     description: RCC PLL1 Fractional Divider Register
     fieldset: PLL1FRACR
-    name: PLL1FRACR
-  - byte_offset: 56
-    description: RCC PLL2 Dividers Configuration Register
-    fieldset: PLL2DIVR
-    name: PLL2DIVR
-  - byte_offset: 60
-    description: RCC PLL2 Fractional Divider Register
-    fieldset: PLL2FRACR
-    name: PLL2FRACR
-  - byte_offset: 64
-    description: RCC PLL3 Dividers Configuration Register
-    fieldset: PLL3DIVR
-    name: PLL3DIVR
-  - byte_offset: 68
-    description: RCC PLL3 Fractional Divider Register
-    fieldset: PLL3FRACR
-    name: PLL3FRACR
+    name: PLLFRACR
   - byte_offset: 76
     description: RCC Domain 1 Kernel Clock Configuration Register
     fieldset: D1CCIPR
@@ -3530,18 +3520,20 @@ fieldset/CFGR:
     bit_size: 4
     description: MCO1 prescaler
     name: MCO1PRE
-  - array:
-      len: 2
-      stride: 7
-    bit_offset: 22
+  - bit_offset: 22
     bit_size: 3
     description: Micro-controller clock output 1
     enum: MCO1
-    name: MCO
+    name: MCO1
   - bit_offset: 25
     bit_size: 4
     description: MCO2 prescaler
     name: MCO2PRE
+  - bit_offset: 29
+    bit_size: 3
+    description: Micro-controller clock output 2
+    enum: MCO2
+    name: MCO2
 fieldset/CICR:
   description: RCC Clock Source Interrupt Clear Register
   fields:
@@ -3574,21 +3566,14 @@ fieldset/CICR:
     description: RC48 ready Interrupt Clear
     enum: LSIRDYC
     name: HSI48RDYC
-  - bit_offset: 6
+  - array:
+      len: 3
+      stride: 1
+    bit_offset: 6
     bit_size: 1
     description: PLL1 ready Interrupt Clear
     enum: LSIRDYC
-    name: PLL1RDYC
-  - bit_offset: 7
-    bit_size: 1
-    description: PLL2 ready Interrupt Clear
-    enum: LSIRDYC
-    name: PLL2RDYC
-  - bit_offset: 8
-    bit_size: 1
-    description: PLL3 ready Interrupt Clear
-    enum: LSIRDYC
-    name: PLL3RDYC
+    name: PLLRDYC
   - bit_offset: 9
     bit_size: 1
     description: LSE clock security system Interrupt Clear
@@ -3632,21 +3617,14 @@ fieldset/CIER:
     description: RC48 ready Interrupt Enable
     enum: LSIRDYIE
     name: HSI48RDYIE
-  - bit_offset: 6
+  - array:
+      len: 3
+      stride: 1
+    bit_offset: 6
     bit_size: 1
     description: PLL1 ready Interrupt Enable
     enum: LSIRDYIE
-    name: PLL1RDYIE
-  - bit_offset: 7
-    bit_size: 1
-    description: PLL2 ready Interrupt Enable
-    enum: LSIRDYIE
-    name: PLL2RDYIE
-  - bit_offset: 8
-    bit_size: 1
-    description: PLL3 ready Interrupt Enable
-    enum: LSIRDYIE
-    name: PLL3RDYIE
+    name: PLLRDYIE
   - bit_offset: 9
     bit_size: 1
     description: LSE clock security system Interrupt Enable
@@ -3679,18 +3657,13 @@ fieldset/CIFR:
     bit_size: 1
     description: RC48 ready Interrupt Flag
     name: HSI48RDYF
-  - bit_offset: 6
+  - array:
+      len: 3
+      stride: 1
+    bit_offset: 6
     bit_size: 1
     description: PLL1 ready Interrupt Flag
-    name: PLL1RDYF
-  - bit_offset: 7
-    bit_size: 1
-    description: PLL2 ready Interrupt Flag
-    name: PLL2RDYF
-  - bit_offset: 8
-    bit_size: 1
-    description: PLL3 ready Interrupt Flag
-    name: PLL3RDYF
+    name: PLLRDYF
   - bit_offset: 9
     bit_size: 1
     description: LSE clock security system Interrupt Flag
@@ -3775,33 +3748,21 @@ fieldset/CR:
     bit_size: 1
     description: HSE Clock Security System enable
     name: HSECSSON
-  - bit_offset: 24
+  - array:
+      len: 3
+      stride: 2
+    bit_offset: 24
     bit_size: 1
     description: PLL1 enable
-    name: PLL1ON
-  - bit_offset: 25
+    name: PLLON
+  - array:
+      len: 3
+      stride: 2
+    bit_offset: 25
     bit_size: 1
     description: PLL1 clock ready flag
     enum_read: HSIRDYR
-    name: PLL1RDY
-  - bit_offset: 26
-    bit_size: 1
-    description: PLL2 enable
-    name: PLL2ON
-  - bit_offset: 27
-    bit_size: 1
-    description: PLL2 clock ready flag
-    enum_read: HSIRDYR
-    name: PLL2RDY
-  - bit_offset: 28
-    bit_size: 1
-    description: PLL3 enable
-    name: PLL3ON
-  - bit_offset: 29
-    bit_size: 1
-    description: PLL3 clock ready flag
-    enum_read: HSIRDYR
-    name: PLL3RDY
+    name: PLLRDY
 fieldset/CRRCR:
   description: RCC Clock Recovery RC Register
   fields:
@@ -4146,208 +4107,129 @@ fieldset/ICSCR:
 fieldset/PLL1DIVR:
   description: RCC PLL1 Dividers Configuration Register
   fields:
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 0
+  - bit_offset: 0
     bit_size: 9
     description: Multiplication factor for PLL1 VCO
-    name: DIVN
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 9
+    name: DIVN1
+  - bit_offset: 9
     bit_size: 7
     description: PLL1 DIVP division factor
     enum: DIVP
-    name: DIVP
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 16
+    name: DIVP1
+  - bit_offset: 16
     bit_size: 7
     description: PLL1 DIVQ division factor
-    name: DIVQ
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 24
+    name: DIVQ1
+  - bit_offset: 24
     bit_size: 7
     description: PLL1 DIVR division factor
-    name: DIVR
+    name: DIVR1
 fieldset/PLL1FRACR:
   description: RCC PLL1 Fractional Divider Register
   fields:
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 3
+  - bit_offset: 3
     bit_size: 13
     description: Fractional part of the multiplication factor for PLL1 VCO
-    name: FRACN
+    name: FRACN1
 fieldset/PLL2DIVR:
   description: RCC PLL2 Dividers Configuration Register
   fields:
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 0
+  - bit_offset: 0
     bit_size: 9
     description: Multiplication factor for PLL1 VCO
-    name: DIVN
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 9
+    name: DIVN2
+  - bit_offset: 9
     bit_size: 7
     description: PLL1 DIVP division factor
-    name: DIVP
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 16
+    name: DIVP2
+  - bit_offset: 16
     bit_size: 7
     description: PLL1 DIVQ division factor
-    name: DIVQ
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 24
+    name: DIVQ2
+  - bit_offset: 24
     bit_size: 7
     description: PLL1 DIVR division factor
-    name: DIVR
+    name: DIVR2
 fieldset/PLL2FRACR:
   description: RCC PLL2 Fractional Divider Register
   fields:
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 3
+  - bit_offset: 3
     bit_size: 13
     description: Fractional part of the multiplication factor for PLL VCO
-    name: FRACN
+    name: FRACN2
 fieldset/PLL3DIVR:
   description: RCC PLL3 Dividers Configuration Register
   fields:
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 0
+  - bit_offset: 0
     bit_size: 9
     description: Multiplication factor for PLL1 VCO
-    name: DIVN
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 9
+    name: DIVN3
+  - bit_offset: 9
     bit_size: 7
     description: PLL DIVP division factor
-    name: DIVP
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 16
+    name: DIVP3
+  - bit_offset: 16
     bit_size: 7
     description: PLL DIVQ division factor
-    name: DIVQ
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 24
+    name: DIVQ3
+  - bit_offset: 24
     bit_size: 7
     description: PLL DIVR division factor
-    name: DIVR
+    name: DIVR3
 fieldset/PLL3FRACR:
   description: RCC PLL3 Fractional Divider Register
   fields:
-  - array:
-      len: 1
-      stride: 0
-    bit_offset: 3
+  - bit_offset: 3
     bit_size: 13
     description: Fractional part of the multiplication factor for PLL3 VCO
-    name: FRACN
+    name: FRACN3
 fieldset/PLLCFGR:
   description: RCC PLLs Configuration Register
   fields:
-  - bit_offset: 0
+  - array:
+      len: 3
+      stride: 4
+    bit_offset: 0
     bit_size: 1
     description: PLL1 fractional latch enable
-    name: PLL1FRACEN
-  - bit_offset: 1
+    name: PLLFRACEN
+  - array:
+      len: 3
+      stride: 4
+    bit_offset: 1
     bit_size: 1
     description: PLL1 VCO selection
     enum: PLLVCOSEL
-    name: PLL1VCOSEL
-  - bit_offset: 2
+    name: PLLVCOSEL
+  - array:
+      len: 3
+      stride: 4
+    bit_offset: 2
     bit_size: 2
     description: PLL1 input frequency range
     enum: PLLRGE
-    name: PLL1RGE
-  - bit_offset: 4
-    bit_size: 1
-    description: PLL2 fractional latch enable
-    name: PLL2FRACEN
-  - bit_offset: 5
-    bit_size: 1
-    description: PLL2 VCO selection
-    enum: PLLVCOSEL
-    name: PLL2VCOSEL
-  - bit_offset: 6
-    bit_size: 2
-    description: PLL2 input frequency range
-    enum: PLLRGE
-    name: PLL2RGE
-  - bit_offset: 8
-    bit_size: 1
-    description: PLL3 fractional latch enable
-    name: PLL3FRACEN
-  - bit_offset: 9
-    bit_size: 1
-    description: PLL3 VCO selection
-    enum: PLLVCOSEL
-    name: PLL3VCOSEL
-  - bit_offset: 10
-    bit_size: 2
-    description: PLL3 input frequency range
-    enum: PLLRGE
-    name: PLL3RGE
-  - bit_offset: 16
+    name: PLLRGE
+  - array:
+      len: 3
+      stride: 3
+    bit_offset: 16
     bit_size: 1
     description: PLL1 DIVP divider output enable
-    name: DIVP1EN
-  - bit_offset: 17
+    name: DIVPEN
+  - array:
+      len: 3
+      stride: 3
+    bit_offset: 17
     bit_size: 1
     description: PLL1 DIVQ divider output enable
-    name: DIVQ1EN
-  - bit_offset: 18
+    name: DIVQEN
+  - array:
+      len: 3
+      stride: 3
+    bit_offset: 18
     bit_size: 1
     description: PLL1 DIVR divider output enable
-    name: DIVR1EN
-  - bit_offset: 19
-    bit_size: 1
-    description: PLL2 DIVP divider output enable
-    name: DIVP2EN
-  - bit_offset: 20
-    bit_size: 1
-    description: PLL2 DIVQ divider output enable
-    name: DIVQ2EN
-  - bit_offset: 21
-    bit_size: 1
-    description: PLL2 DIVR divider output enable
-    name: DIVR2EN
-  - bit_offset: 22
-    bit_size: 1
-    description: PLL3 DIVP divider output enable
-    name: DIVP3EN
-  - bit_offset: 23
-    bit_size: 1
-    description: PLL3 DIVQ divider output enable
-    name: DIVQ3EN
-  - bit_offset: 24
-    bit_size: 1
-    description: PLL3 DIVR divider output enable
-    name: DIVR3EN
+    name: DIVREN
 fieldset/PLLCKSELR:
   description: RCC PLLs Clock Source Selection Register
   fields:
