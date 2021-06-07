@@ -21,6 +21,7 @@ def merge_block(origin, new):
                 found = True
         if not found:
             origin.append(newval)
+    origin.sort(key=item_key)
 
 def merge_fields(origin, new):
     for newval in new:
@@ -30,6 +31,7 @@ def merge_fields(origin, new):
                 found = True
         if not found:
             origin.append(newval)
+    origin.sort(key=field_key)
 
 def merge_dicts(origin, new):
     for k, v in new.items():
