@@ -454,6 +454,8 @@ def parse_chips():
 
             if pname in clocks[rcc]:
                 p['clock'] = clocks[rcc][pname]
+            elif chip['family'] == 'STM32H7' and pname == "SPI6":
+                p['clock'] = "APB4"
             # else:
                 #print( f'peri {pname} -> no clock')
 
