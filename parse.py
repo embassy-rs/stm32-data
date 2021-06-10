@@ -245,7 +245,7 @@ perimap = [
     ('STM32L0.*:RCC:.*', 'rcc_l0/RCC'),
     ('STM32L4.*:RCC:.*', 'rcc_l4/RCC'),
     ('STM32F4.*:RCC:.*', 'rcc_f4/RCC'),
-    ('.*:STM32H7AB_rcc_v1_0', 'rcc_h7ab/RCC'),
+    ('.*:STM32H7AB_rcc_v1_0', ''),  # rcc_h7ab/RCC
     ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
     ('.*:STM32L0_dbgmcu_v1_0', 'dbg_l0/DBG'),
     ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
@@ -267,21 +267,26 @@ rng_clock_map = [
 def match_peri(peri):
     for r, block in perimap:
         if re.match(r, peri):
+            if block == '':
+                return None
             return block
     return None
 
+
 def find_af(gpio_af, peri_name, pin_name, signal_name):
-     if gpio_af in af:
-         if pin_name in af[gpio_af]:
-             if peri_name + '_' + signal_name in af[gpio_af][pin_name]:
-                 return af[gpio_af][pin_name][peri_name + '_' + signal_name]
-     return None
-              
+    if gpio_af in af:
+        if pin_name in af[gpio_af]:
+            if peri_name + '_' + signal_name in af[gpio_af][pin_name]:
+                return af[gpio_af][pin_name][peri_name + '_' + signal_name]
+    return None
+
+
 def match_rng_clock(rcc):
     for r, clock in rng_clock_map:
         if re.match(r, rcc):
             return clock
     return None
+
 
 def parse_headers():
     os.makedirs('sources/headers_parsed', exist_ok=True)
@@ -404,10 +409,10 @@ def parse_chips():
                 if 'Signal' in pin:
                     signals = []
                     if not type(pin['Signal']) is list:
-                        signals.append( pin['Signal'] )
+                        signals.append(pin['Signal'])
                     else:
                         signals = pin['Signal']
- 
+
                     for signal in signals:
                         signal_name = signal['@Name']
                         parts = signal_name.split('_', 1)
@@ -419,16 +424,15 @@ def parse_chips():
                             continue
                         if not peri_name in pins:
                             pins[peri_name] = []
-                        entry = OrderedDict({ 
-                            'pin': pin_name, 
-                            'signal': signal_name, 
-                        }) 
+                        entry = OrderedDict({
+                            'pin': pin_name,
+                            'signal': signal_name,
+                        })
                         af_num = find_af(gpio_af, peri_name, pin_name, signal_name)
-                        if af_num is not None: 
+                        if af_num is not None:
                             entry['af'] = af_num
-               
-                        pins[peri_name].append( entry )
 
+                        pins[peri_name].append(entry)
 
     for chip_name, chip in chips.items():
         print(f'* processing chip {chip_name}')
@@ -457,20 +461,9 @@ def parse_chips():
                 p['clock'] = clocks[rcc][pname]
             elif chip['family'] == 'STM32H7' and pname == "SPI6":
                 p['clock'] = "APB4"
-            # else:
-                #print( f'peri {pname} -> no clock')
 
             if block := match_peri(chip_name+':'+pname+':'+pkind):
                 p['block'] = block
-
-            #if block is not None and block.startswith("dac_"):
-                #peri_pins = []
-                #dac_out_pins = find_signal_pins(chip, pname + "_OUT([0-9]+)")
-                #for (out_pin, m) in dac_out_pins:
-                    #peri_pins.append( OrderedDict({ 
-                        #"pin": out_pin,
-                        #"function": "Ch" + m[1],
-                    #}) )
 
             if pname in chip['pins']:
                 if len(chip['pins'][pname]) > 0:
@@ -482,7 +475,6 @@ def parse_chips():
                     p['clock'] = clock
 
             peris[pname] = p
-
 
         # Handle GPIO specially.
         for p in range(20):
@@ -561,6 +553,7 @@ def parse_chips():
 
 af = {}
 
+
 def parse_gpio_af():
     os.makedirs('data/gpio_af', exist_ok=True)
     for f in glob('sources/cubedb/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
@@ -605,7 +598,9 @@ def parse_gpio_af():
 
         af[ff] = pins
 
+
 clocks = {}
+
 
 def parse_clocks():
     for f in glob('sources/cubedb/mcu/IP/RCC-*rcc_v1_0_Modes.xml'):
