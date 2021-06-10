@@ -490,7 +490,6 @@ def parse_chips():
             with open(family_extra) as extra_f:
                 extra = yaml.load(extra_f, Loader=yaml.SafeLoader)
                 for (extra_name, extra_p) in extra['peripherals'].items():
-                    print(f'adding {extra_name}')
                     peris[extra_name] = extra_p
 
         # Handle GPIO specially.
