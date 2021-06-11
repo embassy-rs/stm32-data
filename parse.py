@@ -238,6 +238,8 @@ perimap = [
     ('.*:I2C:i2c2_v1_1F7', 'i2c_v2/I2C'),
     ('.*:DAC:dacif_v2_0', 'dac_v2/DAC'),
     ('.*:DAC:dacif_v3_0', 'dac_v2/DAC'),
+    ('.*:ADC:aditf5_v2_0', 'adc_v3/ADC'),
+    ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
     ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
@@ -360,6 +362,8 @@ def parse_chips():
             rcc = removesuffix(rcc, '_rcc_v1_0')
 
             core = r['Core']
+            family = r['@Family']
+
             # multicores have a list here. Just keep the first, to not break the schema.
             if isinstance(core, list):
                 core = core[0]
@@ -367,7 +371,7 @@ def parse_chips():
             if chip_name not in chips:
                 chips[chip_name] = OrderedDict({
                     'name': chip_name,
-                    'family': r['@Family'],
+                    'family': family,
                     'line': r['@Line'],
                     'core': core,
                     'flash': flash,
@@ -386,10 +390,12 @@ def parse_chips():
                 'package': r['@Package'],
             }))
 
+
             # Some packages have some peripehrals removed because the package had to
             # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
             peris = chips[chip_name]['peripherals']
             pins = chips[chip_name]['pins']
+
             for ip in r['IP']:
                 pname = ip['@InstanceName']
                 pkind = ip['@Name']+':'+ip['@Version']
@@ -399,6 +405,9 @@ def parse_chips():
                     pname = 'SYSCFG'
                 if pname in FAKE_PERIPHERALS:
                     continue
+                if pname.startswith('ADC'):
+                    if not pname + '_COMMON' in peris:
+                        peris[pname + '_COMMON'] = ip['@Name'] + '_COMMON:'+removesuffix(ip['@Version'], '_Cube')
                 peris[pname] = pkind
                 pins[pname] = []
 
@@ -475,6 +484,13 @@ def parse_chips():
                     p['clock'] = clock
 
             peris[pname] = p
+
+        family_extra = "data/extra/family/" + chip['family'] + ".yaml";
+        if os.path.exists(family_extra) :
+            with open(family_extra) as extra_f:
+                extra = yaml.load(extra_f, Loader=yaml.SafeLoader)
+                for (extra_name, extra_p) in extra['peripherals'].items():
+                    peris[extra_name] = extra_p
 
         # Handle GPIO specially.
         for p in range(20):
