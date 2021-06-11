@@ -242,11 +242,13 @@ perimap = [
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
     ('STM32H7.*:SYS:.*', 'syscfg_h7/SYSCFG'),
+    ('STM32WB55.*:SYS:.*', 'syscfg_wb55/SYSCFG'),
     ('STM32L0.*:RCC:.*', 'rcc_l0/RCC'),
     ('STM32L4.*:RCC:.*', 'rcc_l4/RCC'),
     ('STM32F4.*:RCC:.*', 'rcc_f4/RCC'),
     ('.*:STM32H7AB_rcc_v1_0', ''),  # rcc_h7ab/RCC
     ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
+    ('.*:STM32W_rcc_v1_0', 'rcc_wb55/RCC'),
     ('.*:STM32L0_dbgmcu_v1_0', 'dbg_l0/DBG'),
     ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
@@ -261,6 +263,7 @@ rng_clock_map = [
     ('STM32L4.*:RNG:.*', 'AHB2'),
     ('STM32F4.*:RNG:.*', 'AHB2'),
     ('STM32H7.*:RNG:.*', 'AHB2'),
+    ('STM32WB55.*:RNG:.*', 'AHB3')
 ]
 
 
