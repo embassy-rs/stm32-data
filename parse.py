@@ -258,6 +258,7 @@ perimap = [
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
     ('.*:STM32H7_dbgmcu_v1_0', 'dbgmcu_h7/DBGMCU'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
+    ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
 ]
 
 rng_clock_map = [
