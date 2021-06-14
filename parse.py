@@ -410,8 +410,9 @@ def parse_chips():
                 if pname in FAKE_PERIPHERALS:
                     continue
                 if pname.startswith('ADC'):
-                    if not pname + '_COMMON' in peris:
-                        peris[pname + '_COMMON'] = ip['@Name'] + '_COMMON:'+removesuffix(ip['@Version'], '_Cube')
+                    if not 'ADC_COMMON' in peris:
+                        print(f'adding ADC_COMMON')
+                        peris['ADC_COMMON'] = 'ADC_COMMON:'+removesuffix(ip['@Version'], '_Cube')
                 peris[pname] = pkind
                 pins[pname] = []
 
@@ -462,6 +463,13 @@ def parse_chips():
         peris = {}
         for pname, pkind in chip['peripherals'].items():
             addr = h['defines'].get(pname)
+            if addr is None:
+                if pname == 'ADC_COMMON':
+                    addr = h['defines'].get('ADC1_COMMON')
+                    if addr is None:
+                        addr = h['defines'].get('ADC12_COMMON')
+                        if addr is None:
+                            addr = h['defines'].get('ADC123_COMMON')
             if addr is None:
                 continue
 
