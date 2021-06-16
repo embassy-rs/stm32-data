@@ -310,16 +310,17 @@ perimap = [
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
     ('STM32H7.*:SYS:.*', 'syscfg_h7/SYSCFG'),
     ('STM32WB55.*:SYS:.*', 'syscfg_wb55/SYSCFG'),
-    ('STM32WL55.*:SYS:.*', 'syscfg_wl55/SYSCFG'),
+    ('STM32WL.*:SYS:.*', 'syscfg_wl5x/SYSCFG'),
     ('STM32L0.*:RCC:.*', 'rcc_l0/RCC'),
     ('STM32L4.*:RCC:.*', 'rcc_l4/RCC'),
     ('STM32F4.*:RCC:.*', 'rcc_f4/RCC'),
-    ('STM32WL.*:RCC:.*', 'rcc_wl55/RCC'),
+    ('STM32WL.*:RCC:.*', 'rcc_wl5x/RCC'),
     ('.*:STM32H7AB_rcc_v1_0', ''),  # rcc_h7ab/RCC
     ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
     ('.*:STM32W_rcc_v1_0', 'rcc_wb55/RCC'),
     ('.*:STM32L0_dbgmcu_v1_0', 'dbg_l0/DBG'),
     ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
+    ('.*:STM32WL_dbgmcu_v1_0', 'dbgmcu_wl5x/DBGMCU'),
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
@@ -334,7 +335,7 @@ rng_clock_map = [
     ('STM32F4.*:RNG:.*', 'AHB2'),
     ('STM32H7.*:RNG:.*', 'AHB2'),
     ('STM32WB55.*:RNG:.*', 'AHB3'),
-    ('STM32WL55.*:RNG:.*', 'AHB3')
+    ('STM32WL5.*:RNG:.*', 'AHB3')
 ]
 
 def match_peri(peri):
