@@ -13,6 +13,12 @@ def removeprefix(value: str, prefix: str, /) -> str:
     else:
         return value[:]
 
+def corename(d):
+    if m := re.match('.*Cortex-M(\d+)(\+?)', d):
+        name = "cm" + str(m.group(1))
+        if m.group(2) == "+":
+            name += "p"
+        return name
 
 def removesuffix(value: str, suffix: str, /) -> str:
     if value.endswith(suffix):
@@ -134,6 +140,8 @@ def parse_value(val, defines):
 def parse_header(f):
     irqs = {}
     defines = {}
+    cores = []
+    cur_core = 'all'
 
     accum = ''
     for l in open(f, 'r', encoding='utf-8', errors='ignore'):
@@ -144,11 +152,54 @@ def parse_header(f):
             continue
         accum = ''
 
+        # Scoped by a single core
+        if m:= re.match('.*if defined.*CORE_CM(\\d+)(PLUS)?.*', l):
+            cur_core = "cm" + str(m.group(1))
+            if m.group(2) != None:
+                cur_core += "p"
+            #print("Cur core is ", cur_core, "matched", l)
+            found = False
+            for core in cores:
+                if core == cur_core:
+                    found = True
+            if not found:
+                cores.append(cur_core)
+            #print("Switching to core", cur_core, "for", f)
+        elif m:= re.match('.*else.*', l):
+            cur_core = "all"
+            if m:= re.match('.*else.*CORE_CM(\\d+)(PLUS)?.*', l):
+                cur_core = "cm" + str(m.group(1))
+                if m.group(2) != None:
+                    cur_core += "p"
+                #print("Cur core is ", cur_core, "matched", l)
+            elif len(cores) > 1:
+                # Pick the second core assuming we've already parsed one
+                cur_core = cores[1]
+
+            found = False
+            for core in cores:
+                if core == cur_core:
+                    found = True
+            if not found:
+                cores.append(cur_core)
+            #print("Switching to core", cur_core, "for", f)
+        elif m:= re.match('.*endif.*', l):
+            #print("Switching to common core for", f)
+            cur_core = "all"
+
+
+        if cur_core not in irqs:
+            #print("Registering new core", cur_core)
+            irqs[cur_core] = {}
+        if cur_core not in defines:
+            defines[cur_core] = {}
+
         if m := re.match('([a-zA-Z0-9_]+)_IRQn += (\\d+),? +/\\*!< (.*) \\*/', l):
-            irqs[m.group(1)] = int(m.group(2))
+            #print("Found irq for", cur_core)
+            irqs[cur_core][m.group(1)] = int(m.group(2))
 
         if m := re.match('#define +([0-9A-Za-z_]+)\\(', l):
-            defines[m.group(1)] = -1
+            defines[cur_core][m.group(1)] = -1
         if m := re.match('#define +([0-9A-Za-z_]+) +(.*)', l):
             name = m.group(1)
             val = m.group(2)
@@ -156,10 +207,23 @@ def parse_header(f):
             if name == 'FLASH_SIZE':
                 continue
             val = val.split('/*')[0].strip()
-            val = parse_value(val, defines)
-            defines[name] = val
+            val = parse_value(val, defines[cur_core])
+            #print("Found define for", cur_core)
+            defines[cur_core][name] = val
+
+    #print("Found", len(cores), "cores for", f)
+    #print("Found", len(irqs['all']), "shared interrupts for", f)
+
+    if len(cores) == 0:
+        cores.append("all")
+
+    for core in cores:
+        if core != "all":
+            irqs[core].update(irqs['all'])
+            defines[core].update(defines['all'])
 
     return {
+        'cores': cores,
         'interrupts': irqs,
         'defines': defines,
     }
@@ -240,14 +304,17 @@ perimap = [
     ('.*:DAC:dacif_v3_0', 'dac_v2/DAC'),
     ('.*:ADC:aditf5_v2_0', 'adc_v3/ADC'),
     ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
+    ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
     ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
     ('STM32H7.*:SYS:.*', 'syscfg_h7/SYSCFG'),
     ('STM32WB55.*:SYS:.*', 'syscfg_wb55/SYSCFG'),
+    ('STM32WL55.*:SYS:.*', 'syscfg_wl55/SYSCFG'),
     ('STM32L0.*:RCC:.*', 'rcc_l0/RCC'),
     ('STM32L4.*:RCC:.*', 'rcc_l4/RCC'),
     ('STM32F4.*:RCC:.*', 'rcc_f4/RCC'),
+    ('STM32WL.*:RCC:.*', 'rcc_wl55/RCC'),
     ('.*:STM32H7AB_rcc_v1_0', ''),  # rcc_h7ab/RCC
     ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
     ('.*:STM32W_rcc_v1_0', 'rcc_wb55/RCC'),
@@ -266,9 +333,9 @@ rng_clock_map = [
     ('STM32L4.*:RNG:.*', 'AHB2'),
     ('STM32F4.*:RNG:.*', 'AHB2'),
     ('STM32H7.*:RNG:.*', 'AHB2'),
-    ('STM32WB55.*:RNG:.*', 'AHB3')
+    ('STM32WB55.*:RNG:.*', 'AHB3'),
+    ('STM32WL55.*:RNG:.*', 'AHB3')
 ]
-
 
 def match_peri(peri):
     for r, block in perimap:
@@ -368,16 +435,28 @@ def parse_chips():
             core = r['Core']
             family = r['@Family']
 
-            # multicores have a list here. Just keep the first, to not break the schema.
+            cores = []
             if isinstance(core, list):
-                core = core[0]
+                for core in core:
+                    cores.append(OrderedDict(
+                        {
+                            'name': corename(core),
+                            'peripherals': {},
+                        }))
+            else:
+                cores.append(OrderedDict(
+                    {
+                        'name': corename(core),
+                        'peripherals': {},
+                    }))
+                    
 
             if chip_name not in chips:
                 chips[chip_name] = OrderedDict({
                     'name': chip_name,
                     'family': family,
                     'line': r['@Line'],
-                    'core': core,
+                    'cores': cores,
                     'flash': flash,
                     'ram': ram,
                     'gpio_af': gpio_af,
@@ -411,7 +490,6 @@ def parse_chips():
                     continue
                 if pname.startswith('ADC'):
                     if not 'ADC_COMMON' in peris:
-                        print(f'adding ADC_COMMON')
                         peris['ADC_COMMON'] = 'ADC_COMMON:'+removesuffix(ip['@Version'], '_Cube')
                 peris[pname] = pkind
                 pins[pname] = []
@@ -458,122 +536,138 @@ def parse_chips():
             raise Exception("missing header for {}".format(chip_name))
         h = headers_parsed[h]
 
-        chip['interrupts'] = h['interrupts']
+        # print("Got", len(chip['cores']), "cores")
+        for core in chip['cores']:
+            core_name = core['name']
+            if not core_name in h['interrupts'] or not core_name in h['defines']:
+                core_name = 'all'
+            #print("Defining for core", core_name)
 
-        peris = {}
-        for pname, pkind in chip['peripherals'].items():
-            addr = h['defines'].get(pname)
-            if addr is None:
-                if pname == 'ADC_COMMON':
-                    addr = h['defines'].get('ADC1_COMMON')
-                    if addr is None:
-                        addr = h['defines'].get('ADC12_COMMON')
+            # Gather all interrupts and defines for this core
+            interrupts = h['interrupts'][core_name]
+            defines = h['defines'][core_name]
+
+            core['interrupts'] = interrupts
+    #        print("INterrupts for", core, ":", interrupts)
+            #print("Defines for", core, ":", defines)
+
+            peris = {}
+            for pname, pkind in chip['peripherals'].items():
+                addr = defines.get(pname)
+                if addr is None:
+                    if pname == 'ADC_COMMON':
+                        addr = defines.get('ADC_COMMON')
                         if addr is None:
-                            addr = h['defines'].get('ADC123_COMMON')
-            if addr is None:
-                continue
-
-            p = OrderedDict({
-                'address': addr,
-                'kind': pkind,
-            })
-
-            if pname in clocks[rcc]:
-                p['clock'] = clocks[rcc][pname]
-            elif chip['family'] == 'STM32H7' and pname == "SPI6":
-                p['clock'] = "APB4"
-
-            if block := match_peri(chip_name+':'+pname+':'+pkind):
-                p['block'] = block
-
-            if pname in chip['pins']:
-                if len(chip['pins'][pname]) > 0:
-                    p['pins'] = chip['pins'][pname]
-
-            # RNG Clock definitions are not easily determined, so lookup in mapping
-            if block is not None and block.startswith("rng_"):
-                if (clock := match_rng_clock(chip_name+':'+pname+':'+pkind)) != None:
-                    p['clock'] = clock
-
-            peris[pname] = p
-
-        family_extra = "data/extra/family/" + chip['family'] + ".yaml";
-        if os.path.exists(family_extra) :
-            with open(family_extra) as extra_f:
-                extra = yaml.load(extra_f, Loader=yaml.SafeLoader)
-                for (extra_name, extra_p) in extra['peripherals'].items():
-                    peris[extra_name] = extra_p
-
-        # Handle GPIO specially.
-        for p in range(20):
-            port = 'GPIO' + chr(ord('A')+p)
-            if addr := h['defines'].get(port + '_BASE'):
-                block = 'gpio_v2/GPIO'
-                if chip['family'] == 'STM32F1':
-                    block = 'gpio_v1/GPIO'
+                            addr = defines.get('ADC1_COMMON')
+                            if addr is None:
+                                addr = defines.get('ADC12_COMMON')
+                                if addr is None:
+                                    addr = defines.get('ADC123_COMMON')
+                if addr is None:
+                    continue
 
                 p = OrderedDict({
                     'address': addr,
-                    'block': block,
+                    'kind': pkind,
                 })
-                peris[port] = p
-        # Handle DMA specially.
-        for dma in ('DMA1', "DMA2"):
-            if addr := h['defines'].get(dma + '_BASE'):
-                block = 'dma_v1/DMA'
-                if chip['family'] in ('STM32F4', 'STM32F7', 'STM32H7'):
-                    block = 'dma_v2/DMA'
 
-                p = OrderedDict({
+                if pname in clocks[rcc]:
+                    p['clock'] = clocks[rcc][pname]
+                elif chip['family'] == 'STM32H7' and pname == "SPI6":
+                    p['clock'] = "APB4"
+
+                if block := match_peri(chip_name+':'+pname+':'+pkind):
+                    p['block'] = block
+
+                if pname in chip['pins']:
+                    if len(chip['pins'][pname]) > 0:
+                        p['pins'] = chip['pins'][pname]
+
+                # RNG Clock definitions are not easily determined, so lookup in mapping
+                if block is not None and block.startswith("rng_"):
+                    if (clock := match_rng_clock(chip_name+':'+pname+':'+pkind)) != None:
+                        p['clock'] = clock
+
+                peris[pname] = p
+
+            family_extra = "data/extra/family/" + chip['family'] + ".yaml";
+            if os.path.exists(family_extra) :
+                with open(family_extra) as extra_f:
+                    extra = yaml.load(extra_f, Loader=yaml.SafeLoader)
+                    for (extra_name, extra_p) in extra['peripherals'].items():
+                        peris[extra_name] = extra_p
+
+            # Handle GPIO specially.
+            for p in range(20):
+                port = 'GPIO' + chr(ord('A')+p)
+                if addr := defines.get(port + '_BASE'):
+                    block = 'gpio_v2/GPIO'
+                    if chip['family'] == 'STM32F1':
+                        block = 'gpio_v1/GPIO'
+
+                    p = OrderedDict({
+                        'address': addr,
+                        'block': block,
+                    })
+                    peris[port] = p
+            # Handle DMA specially.
+            for dma in ('DMA1', "DMA2"):
+                if addr := defines.get(dma + '_BASE'):
+                    block = 'dma_v1/DMA'
+                    if chip['family'] in ('STM32F4', 'STM32F7', 'STM32H7'):
+                        block = 'dma_v2/DMA'
+
+                    p = OrderedDict({
+                        'address': addr,
+                        'block': block,
+                    })
+                    peris[dma] = p
+
+            # EXTI is not in the cubedb XMLs
+            if addr := defines.get('EXTI_BASE'):
+                peris['EXTI'] = OrderedDict({
                     'address': addr,
-                    'block': block,
+                    'kind': 'EXTI',
+                    'block': 'exti_v1/EXTI',
                 })
-                peris[dma] = p
 
-        # EXTI is not in the cubedb XMLs
-        if addr := h['defines'].get('EXTI_BASE'):
-            peris['EXTI'] = OrderedDict({
-                'address': addr,
-                'kind': 'EXTI',
-                'block': 'exti_v1/EXTI',
-            })
+            # FLASH is not in the cubedb XMLs
+            if addr := defines.get('FLASH_R_BASE'):
+                kind = 'FLASH:' + chip_name[:7] + '_flash_v1_0'
+                flash_peri = OrderedDict({
+                    'address': addr,
+                    'kind': kind,
+                })
+                if block := match_peri(kind):
+                    flash_peri['block'] = block
+                peris['FLASH'] = flash_peri
 
-        # FLASH is not in the cubedb XMLs
-        if addr := h['defines'].get('FLASH_R_BASE'):
-            kind = 'FLASH:' + chip_name[:7] + '_flash_v1_0'
-            flash_peri = OrderedDict({
-                'address': addr,
-                'kind': kind,
-            })
-            if block := match_peri(kind):
-                flash_peri['block'] = block
-            peris['FLASH'] = flash_peri
+            # DBGMCU is not in the cubedb XMLs
+            if addr := defines.get('DBGMCU_BASE'):
+                kind = 'DBGMCU:' + chip_name[:7] + '_dbgmcu_v1_0'
+                dbg_peri = OrderedDict({
+                    'address': addr,
+                    'kind': kind,
+                })
+                if block := match_peri(kind):
+                    dbg_peri['block'] = block
+                peris['DBGMCU'] = dbg_peri
 
-        # DBGMCU is not in the cubedb XMLs
-        if addr := h['defines'].get('DBGMCU_BASE'):
-            kind = 'DBGMCU:' + chip_name[:7] + '_dbgmcu_v1_0'
-            dbg_peri = OrderedDict({
-                'address': addr,
-                'kind': kind,
-            })
-            if block := match_peri(kind):
-                dbg_peri['block'] = block
-            peris['DBGMCU'] = dbg_peri
-
-        # CRS is not in the cubedb XMLs
-        if addr := h['defines'].get('CRS_BASE'):
-            kind = 'CRS:' + chip_name[:7] + '_crs_v1_0'
-            crs_peri = OrderedDict({
-                'address': addr,
-                'kind': kind,
-            })
-            if block := match_peri(kind):
-                crs_peri['block'] = block
-            peris['CRS'] = crs_peri
-        chip['peripherals'] = peris
+            # CRS is not in the cubedb XMLs
+            if addr := defines.get('CRS_BASE'):
+                kind = 'CRS:' + chip_name[:7] + '_crs_v1_0'
+                crs_peri = OrderedDict({
+                    'address': addr,
+                    'kind': kind,
+                })
+                if block := match_peri(kind):
+                    crs_peri['block'] = block
+                peris['CRS'] = crs_peri
+            core['peripherals'] = peris
 
         # remove all pins from the root of the chip before emitting.
         del chip['pins']
+        del chip['peripherals']
 
         with open('data/chips/'+chip_name+'.yaml', 'w') as f:
             f.write(yaml.dump(chip))
