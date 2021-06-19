@@ -1,5 +1,10 @@
 import xmltodict
 import yaml
+try:
+    from yaml import CSafeLoader as SafeLoader
+except ImportError:
+    from yaml import SafeLoader
+
 import re
 import json
 import os
@@ -66,7 +71,7 @@ def children(x, key):
 headers_parsed = {}
 header_map = {}
 with open('header_map.yaml', 'r') as f:
-    y = yaml.load(f, Loader=yaml.SafeLoader)
+    y = yaml.load(f, Loader=SafeLoader)
     for header, chips in y.items():
         for chip in chips.split(','):
             header_map[chip.strip().lower()] = header.lower()
@@ -556,6 +561,7 @@ def parse_chips():
             #print("Defining for core", core_name)
 
             # Gather all interrupts and defines for this core
+
             interrupts = h['interrupts'][core_name]
             defines = h['defines'][core_name]
 
@@ -605,7 +611,7 @@ def parse_chips():
             family_extra = "data/extra/family/" + chip['family'] + ".yaml"
             if os.path.exists(family_extra):
                 with open(family_extra) as extra_f:
-                    extra = yaml.load(extra_f, Loader=yaml.SafeLoader)
+                    extra = yaml.load(extra_f, Loader=SafeLoader)
                     for (extra_name, extra_p) in extra['peripherals'].items():
                         peris[extra_name] = extra_p
 
@@ -637,10 +643,15 @@ def parse_chips():
 
             # EXTI is not in the cubedb XMLs
             if addr := defines.get('EXTI_BASE'):
+                if chip_name.startswith("STM32WB55"):
+                    block = 'exti_wb55/EXTI'
+                else:
+                    block = 'exti_v1/EXTI'
+
                 peris['EXTI'] = OrderedDict({
                     'address': addr,
                     'kind': 'EXTI',
-                    'block': 'exti_v1/EXTI',
+                    'block': block,
                 })
 
             # FLASH is not in the cubedb XMLs
@@ -675,6 +686,7 @@ def parse_chips():
                 if block := match_peri(kind):
                     crs_peri['block'] = block
                 peris['CRS'] = crs_peri
+
             core['peripherals'] = peris
 
         # remove all pins from the root of the chip before emitting.
