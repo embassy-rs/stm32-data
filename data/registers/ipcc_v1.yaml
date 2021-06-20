@@ -1,0 +1,202 @@
+---
+block/IPCC:
+  description: IPCC
+  items:
+    - name: C1CR
+      description: Control register CPU1
+      byte_offset: 0
+      fieldset: C1CR
+    - name: C1MR
+      description: Mask register CPU1
+      byte_offset: 4
+      fieldset: C1MR
+    - name: C1SCR
+      description: Status Set or Clear register CPU1
+      byte_offset: 8
+      access: Write
+      fieldset: C1SCR
+    - name: C1TO2SR
+      description: CPU1 to CPU2 status register
+      byte_offset: 12
+      access: Read
+      fieldset: C1TO2SR
+    - name: C2CR
+      description: Control register CPU2
+      byte_offset: 16
+      fieldset: C2CR
+    - name: C2MR
+      description: Mask register CPU2
+      byte_offset: 20
+      fieldset: C2MR
+    - name: C2SCR
+      description: Status Set or Clear register CPU2
+      byte_offset: 24
+      access: Write
+      fieldset: C2SCR
+    - name: C2TOC1SR
+      description: CPU2 to CPU1 status register
+      byte_offset: 28
+      access: Read
+      fieldset: C2TOC1SR
+    - name: HWCFGR
+      description: IPCC Hardware configuration register
+      byte_offset: 1008
+      access: Read
+      fieldset: HWCFGR
+    - name: VERR
+      description: IPCC version register
+      byte_offset: 1012
+      access: Read
+      fieldset: VERR
+    - name: IPIDR
+      description: IPCC indentification register
+      byte_offset: 1016
+      access: Read
+      fieldset: IPIDR
+    - name: SIDR
+      description: IPCC size indentification register
+      byte_offset: 1020
+      access: Read
+      fieldset: SIDR
+fieldset/C1CR:
+  description: Control register CPU1
+  fields:
+    - name: RXOIE
+      description: processor 1 Receive channel occupied interrupt enable
+      bit_offset: 0
+      bit_size: 1
+    - name: TXFIE
+      description: processor 1 Transmit channel free interrupt enable
+      bit_offset: 16
+      bit_size: 1
+fieldset/C1MR:
+  description: Mask register CPU1
+  fields:
+    - name: CHOM
+      description: processor 1 Receive channel x occupied interrupt enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+    - name: CHFM
+      description: processor 1 Transmit channel x free interrupt mask
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+fieldset/C1SCR:
+  description: Status Set or Clear register CPU1
+  fields:
+    - name: CHC
+      description: processor 1 Receive channel x status clear
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+    - name: CHS
+      description: processor 1 Transmit channel x status set
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+fieldset/C1TO2SR:
+  description: CPU1 to CPU2 status register
+  fields:
+    - name: CHF
+      description: processor 1 transmit to process 2 Receive channel x status flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+fieldset/C2CR:
+  description: Control register CPU2
+  fields:
+    - name: RXOIE
+      description: processor 2 Receive channel occupied interrupt enable
+      bit_offset: 0
+      bit_size: 1
+    - name: TXFIE
+      description: processor 2 Transmit channel free interrupt enable
+      bit_offset: 16
+      bit_size: 1
+fieldset/C2MR:
+  description: Mask register CPU2
+  fields:
+    - name: CHOM
+      description: processor 2 Receive channel x occupied interrupt enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+    - name: CHFM
+      description: processor 2 Transmit channel 1 free interrupt mask
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+fieldset/C2SCR:
+  description: Status Set or Clear register CPU2
+  fields:
+    - name: CHC
+      description: processor 2 Receive channel x status clear
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+    - name: CHS
+      description: processor 2 Transmit channel 1 status set
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+fieldset/C2TOC1SR:
+  description: CPU2 to CPU1 status register
+  fields:
+    - name: CHF
+      description: processor 2 transmit to process 1 Receive channel x status flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+fieldset/HWCFGR:
+  description: IPCC Hardware configuration register
+  fields:
+    - name: CHANNELS
+      description: "Number of channels per CPU supported by the IP, range 1 to 16"
+      bit_offset: 0
+      bit_size: 8
+fieldset/IPIDR:
+  description: IPCC indentification register
+  fields:
+    - name: IPID
+      description: Identification Code
+      bit_offset: 0
+      bit_size: 32
+fieldset/SIDR:
+  description: IPCC size indentification register
+  fields:
+    - name: SID
+      description: Size Identification Code
+      bit_offset: 0
+      bit_size: 32
+fieldset/VERR:
+  description: IPCC version register
+  fields:
+    - name: MINREV
+      description: Minor Revision
+      bit_offset: 0
+      bit_size: 4
+    - name: MAJREV
+      description: Major Revision
+      bit_offset: 4
+      bit_size: 4
