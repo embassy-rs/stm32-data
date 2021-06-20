@@ -13,12 +13,14 @@ def removeprefix(value: str, prefix: str, /) -> str:
     else:
         return value[:]
 
+
 def corename(d):
     if m := re.match('.*Cortex-M(\d+)(\+?)', d):
         name = "cm" + str(m.group(1))
         if m.group(2) == "+":
             name += "p"
         return name
+
 
 def removesuffix(value: str, suffix: str, /) -> str:
     if value.endswith(suffix):
@@ -153,7 +155,7 @@ def parse_header(f):
         accum = ''
 
         # Scoped by a single core
-        if m:= re.match('.*if defined.*CORE_CM(\\d+)(PLUS)?.*', l):
+        if m := re.match('.*if defined.*CORE_CM(\\d+)(PLUS)?.*', l):
             cur_core = "cm" + str(m.group(1))
             if m.group(2) != None:
                 cur_core += "p"
@@ -165,9 +167,9 @@ def parse_header(f):
             if not found:
                 cores.append(cur_core)
             #print("Switching to core", cur_core, "for", f)
-        elif m:= re.match('.*else.*', l):
+        elif m := re.match('.*else.*', l):
             cur_core = "all"
-            if m:= re.match('.*else.*CORE_CM(\\d+)(PLUS)?.*', l):
+            if m := re.match('.*else.*CORE_CM(\\d+)(PLUS)?.*', l):
                 cur_core = "cm" + str(m.group(1))
                 if m.group(2) != None:
                     cur_core += "p"
@@ -183,10 +185,9 @@ def parse_header(f):
             if not found:
                 cores.append(cur_core)
             #print("Switching to core", cur_core, "for", f)
-        elif m:= re.match('.*endif.*', l):
+        elif m := re.match('.*endif.*', l):
             #print("Switching to common core for", f)
             cur_core = "all"
-
 
         if cur_core not in irqs:
             #print("Registering new core", cur_core)
@@ -318,15 +319,26 @@ perimap = [
     ('.*:STM32H7AB_rcc_v1_0', ''),  # rcc_h7ab/RCC
     ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
     ('.*:STM32W_rcc_v1_0', 'rcc_wb55/RCC'),
-    ('.*:STM32L0_dbgmcu_v1_0', 'dbg_l0/DBG'),
     ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
-    ('.*:STM32WL_dbgmcu_v1_0', 'dbgmcu_wl5x/DBGMCU'),
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
-    ('.*:STM32H7_dbgmcu_v1_0', 'dbgmcu_h7/DBGMCU'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
     ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
+
+    ('.*:STM32F0_dbgmcu_v1_0', 'dbgmcu_f0/DBGMCU'),
+    ('.*:STM32F1_dbgmcu_v1_0', 'dbgmcu_f1/DBGMCU'),
+    ('.*:STM32F2_dbgmcu_v1_0', 'dbgmcu_f2/DBGMCU'),
+    ('.*:STM32F3_dbgmcu_v1_0', 'dbgmcu_f3/DBGMCU'),
+    ('.*:STM32F4_dbgmcu_v1_0', 'dbgmcu_f4/DBGMCU'),
+    ('.*:STM32F7_dbgmcu_v1_0', 'dbgmcu_f7/DBGMCU'),
+    ('.*:STM32G0_dbgmcu_v1_0', 'dbgmcu_g0/DBGMCU'),
+    ('.*:STM32G4_dbgmcu_v1_0', 'dbgmcu_g4/DBGMCU'),
+    ('.*:STM32H7_dbgmcu_v1_0', 'dbgmcu_h7/DBGMCU'),
+    ('.*:STM32L0_dbgmcu_v1_0', 'dbgmcu_l0/DBGMCU'),
+    ('.*:STM32L4_dbgmcu_v1_0', 'dbgmcu_l4/DBGMCU'),
+    ('.*:STM32WB_dbgmcu_v1_0', 'dbgmcu_wb/DBGMCU'),
+    ('.*:STM32WL_dbgmcu_v1_0', 'dbgmcu_wl/DBGMCU'),
 ]
 
 rng_clock_map = [
@@ -337,6 +349,7 @@ rng_clock_map = [
     ('STM32WB55.*:RNG:.*', 'AHB3'),
     ('STM32WL5.*:RNG:.*', 'AHB3')
 ]
+
 
 def match_peri(peri):
     for r, block in perimap:
@@ -450,7 +463,6 @@ def parse_chips():
                         'name': corename(core),
                         'peripherals': {},
                     }))
-                    
 
             if chip_name not in chips:
                 chips[chip_name] = OrderedDict({
@@ -473,7 +485,6 @@ def parse_chips():
                 'name': package_name,
                 'package': r['@Package'],
             }))
-
 
             # Some packages have some peripehrals removed because the package had to
             # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
@@ -591,8 +602,8 @@ def parse_chips():
 
                 peris[pname] = p
 
-            family_extra = "data/extra/family/" + chip['family'] + ".yaml";
-            if os.path.exists(family_extra) :
+            family_extra = "data/extra/family/" + chip['family'] + ".yaml"
+            if os.path.exists(family_extra):
                 with open(family_extra) as extra_f:
                     extra = yaml.load(extra_f, Loader=yaml.SafeLoader)
                     for (extra_name, extra_p) in extra['peripherals'].items():
@@ -644,7 +655,7 @@ def parse_chips():
                 peris['FLASH'] = flash_peri
 
             # DBGMCU is not in the cubedb XMLs
-            if addr := defines.get('DBGMCU_BASE'):
+            if addr := defines.get('DBGMCU_BASE') or defines.get('DBG_BASE'):
                 kind = 'DBGMCU:' + chip_name[:7] + '_dbgmcu_v1_0'
                 dbg_peri = OrderedDict({
                     'address': addr,
