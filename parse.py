@@ -344,6 +344,8 @@ perimap = [
     ('.*:STM32L4_dbgmcu_v1_0', 'dbgmcu_l4/DBGMCU'),
     ('.*:STM32WB_dbgmcu_v1_0', 'dbgmcu_wb/DBGMCU'),
     ('.*:STM32WL_dbgmcu_v1_0', 'dbgmcu_wl/DBGMCU'),
+
+    ('.*:IPCC:v1_0', 'ipcc_v1/IPCC'),
 ]
 
 rng_clock_map = [
