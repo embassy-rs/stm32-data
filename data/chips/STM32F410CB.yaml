@@ -1,6 +1,8 @@
 name: STM32F410CB
 family: STM32F4
 line: STM32F410
+flash: 128
+ram: 32
 cores:
 - name: cm4
   peripherals:
@@ -28,6 +30,9 @@ cores:
         signal: IN8
       - pin: PB1
         signal: IN9
+      dma_channels:
+        ADC1:
+        - DMA2_4
     ADC_COMMON:
       address: 0x40012300
       kind: ADC_COMMON:aditf2_v1_1
@@ -76,6 +81,11 @@ cores:
       - pin: PB3
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_7
     GPIOA:
       address: 0x40020000
       block: gpio_v2/GPIO
@@ -109,6 +119,11 @@ cores:
       - pin: PB9
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_7
     I2C2:
       address: 0x40005800
       kind: I2C:i2c1_v1_5
@@ -127,6 +142,11 @@ cores:
       - pin: PB9
         signal: SDA
         af: 9
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_7
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v1_1
@@ -208,6 +228,11 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 5
+      dma_channels:
+        RX:
+        - DMA2_2
+        TX:
+        - DMA2_5
     SPI2:
       address: 0x40003800
       kind: SPI:spi2s1_v2_4
@@ -231,6 +256,11 @@ cores:
       - pin: PB9
         signal: NSS
         af: 5
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_4
     SPI5:
       address: 0x40015000
       kind: SPI:spi2s1_v2_4
@@ -251,6 +281,11 @@ cores:
       - pin: PB8
         signal: MOSI
         af: 6
+      dma_channels:
+        RX:
+        - DMA2_5
+        TX:
+        - DMA2_6
     SYSCFG:
       address: 0x40013800
       kind: SYS:STM32F410_sys_v1_0
@@ -299,6 +334,21 @@ cores:
       - pin: PA12
         signal: ETR
         af: 1
+      dma_channels:
+        CH1:
+        - DMA2_6
+        CH2:
+        - DMA2_6
+        CH3:
+        - DMA2_6
+        CH4:
+        - DMA2_4
+        COM:
+        - DMA2_4
+        TRIG:
+        - DMA2_4
+        UP:
+        - DMA2_5
     TIM11:
       address: 0x40014800
       kind: TIM1_8:gptimer2_v2_x
@@ -327,10 +377,26 @@ cores:
       - pin: PB12
         signal: CH1
         af: 2
+      dma_channels:
+        CH1:
+        - DMA1_2
+        CH2:
+        - DMA1_4
+        CH3:
+        - DMA1_0
+        CH4:
+        - DMA1_3
+        TRIG:
+        - DMA1_3
+        UP:
+        - DMA1_6
     TIM6:
       address: 0x40001000
       kind: TIM6_7:gptimer2_v2_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA1_1
     TIM9:
       address: 0x40014000
       kind: TIM1_8:gptimer2_v2_x
@@ -375,6 +441,11 @@ cores:
       - pin: PB7
         signal: RX
         af: 7
+      dma_channels:
+        RX:
+        - DMA2_5
+        TX:
+        - DMA2_7
     USART2:
       address: 0x40004400
       kind: USART:sci2_v1_2
@@ -396,6 +467,11 @@ cores:
       - pin: PA4
         signal: CK
         af: 7
+      dma_channels:
+        RX:
+        - DMA1_7
+        TX:
+        - DMA1_6
     USART6:
       address: 0x40011400
       kind: USART:sci2_v1_2
@@ -408,6 +484,11 @@ cores:
       - pin: PA12
         signal: RX
         af: 8
+      dma_channels:
+        RX:
+        - DMA2_2
+        TX:
+        - DMA2_7
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
@@ -464,9 +545,55 @@ cores:
     USART2: 38
     USART6: 71
     WWDG: 0
-flash: 128
-ram: 32
-gpio_af: STM32F410
+  dma_channels:
+    DMA1_0:
+      dma: DMA1
+      channel: 0
+    DMA1_1:
+      dma: DMA1
+      channel: 1
+    DMA1_2:
+      dma: DMA1
+      channel: 2
+    DMA1_3:
+      dma: DMA1
+      channel: 3
+    DMA1_4:
+      dma: DMA1
+      channel: 4
+    DMA1_5:
+      dma: DMA1
+      channel: 5
+    DMA1_6:
+      dma: DMA1
+      channel: 6
+    DMA1_7:
+      dma: DMA1
+      channel: 7
+    DMA2_0:
+      dma: DMA2
+      channel: 0
+    DMA2_1:
+      dma: DMA2
+      channel: 1
+    DMA2_2:
+      dma: DMA2
+      channel: 2
+    DMA2_3:
+      dma: DMA2
+      channel: 3
+    DMA2_4:
+      dma: DMA2
+      channel: 4
+    DMA2_5:
+      dma: DMA2
+      channel: 5
+    DMA2_6:
+      dma: DMA2
+      channel: 6
+    DMA2_7:
+      dma: DMA2
+      channel: 7
 packages:
 - name: STM32F410CBTx
   package: LQFP48

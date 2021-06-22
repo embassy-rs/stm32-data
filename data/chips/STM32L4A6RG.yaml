@@ -1,6 +1,8 @@
 name: STM32L4A6RG
 family: STM32L4
 line: STM32L4x6
+flash: 1024
+ram: 320
 cores:
 - name: cm4
   peripherals:
@@ -39,6 +41,9 @@ cores:
         signal: IN15
       - pin: PB1
         signal: IN16
+      dma_channels:
+        ADC1:
+        - DMA2_3
     ADC2:
       address: 0x50040100
       kind: ADC:aditf5_v2_0
@@ -74,6 +79,9 @@ cores:
         signal: IN15
       - pin: PB1
         signal: IN16
+      dma_channels:
+        ADC2:
+        - DMA2_4
     ADC3:
       address: 0x50040200
       kind: ADC:aditf5_v2_0
@@ -87,6 +95,9 @@ cores:
         signal: IN3
       - pin: PC3
         signal: IN4
+      dma_channels:
+        ADC3:
+        - DMA2_5
     ADC_COMMON:
       address: 0x50040300
       kind: ADC_COMMON:aditf5_v2_0
@@ -94,6 +105,11 @@ cores:
     AES:
       address: 0x50060000
       kind: AES:aes2_v1_1
+      dma_channels:
+        IN:
+        - DMA2_5
+        OUT:
+        - DMA2_3
     CAN1:
       address: 0x40006400
       kind: CAN:bxcan1_v1_1
@@ -234,6 +250,9 @@ cores:
       - pin: PB9
         signal: D7
         af: 10
+      dma_channels:
+        DCMI:
+        - DMA2_6
     DMA1:
       address: 0x40020000
       block: dma_v1/DMA
@@ -280,6 +299,9 @@ cores:
     HASH:
       address: 0x50060400
       kind: HASH:hash1_v2_2
+      dma_channels:
+        IN:
+        - DMA2_7
     I2C1:
       address: 0x40005400
       kind: I2C:i2c2_v1_1
@@ -306,6 +328,11 @@ cores:
       - pin: PB9
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA2_6
+        TX:
+        - DMA2_7
     I2C2:
       address: 0x40005800
       kind: I2C:i2c2_v1_1
@@ -326,6 +353,11 @@ cores:
       - pin: PB14
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     I2C3:
       address: 0x40005c00
       kind: I2C:i2c2_v1_1
@@ -349,6 +381,11 @@ cores:
       - pin: PB4
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_2
     I2C4:
       address: 0x40008400
       kind: I2C:i2c2_v1_1
@@ -375,6 +412,11 @@ cores:
       - pin: PB7
         signal: SDA
         af: 5
+      dma_channels:
+        RX:
+        - DMA2_1
+        TX:
+        - DMA2_2
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v2_0
@@ -667,6 +709,9 @@ cores:
       - pin: PC11
         signal: BK2_NCS
         af: 5
+      dma_channels:
+        QUADSPI:
+        - DMA2_7
     RCC:
       address: 0x40021000
       kind: RCC:STM32L4x6_rcc_v1_0
@@ -771,6 +816,11 @@ cores:
       - pin: PB9
         signal: FS_A
         af: 13
+      dma_channels:
+        A:
+        - DMA2_6
+        B:
+        - DMA2_7
     SAI2:
       address: 0x40015800
       kind: SAI:sai1_v1_2
@@ -811,6 +861,11 @@ cores:
       - pin: PC12
         signal: SD_B
         af: 13
+      dma_channels:
+        A:
+        - DMA2_3
+        B:
+        - DMA2_4
     SDMMC1:
       address: 0x40012800
       kind: SDMMC:sdmmc_v1_3
@@ -842,6 +897,13 @@ cores:
       - pin: PB9
         signal: D5
         af: 12
+      dma_channels:
+        RX:
+        - DMA2_5
+        SDMMC1:
+        - DMA2_5
+        TX:
+        - DMA2_5
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_3
@@ -884,6 +946,11 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 5
+      dma_channels:
+        RX:
+        - DMA2_3
+        TX:
+        - DMA2_4
     SPI2:
       address: 0x40003800
       kind: SPI:spi2s1_v3_3
@@ -920,6 +987,11 @@ cores:
       - pin: PB9
         signal: NSS
         af: 5
+      dma_channels:
+        RX:
+        - DMA1_4
+        TX:
+        - DMA1_5
     SPI3:
       address: 0x40003c00
       kind: SPI:spi2s1_v3_3
@@ -950,6 +1022,11 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 6
+      dma_channels:
+        RX:
+        - DMA2_1
+        TX:
+        - DMA2_2
     SWPMI1:
       address: 0x40008800
       kind: SWPMI:swp1_v1_0
@@ -1039,6 +1116,21 @@ cores:
       - pin: PA12
         signal: ETR
         af: 1
+      dma_channels:
+        CH1:
+        - DMA1_2
+        CH2:
+        - DMA1_3
+        CH3:
+        - DMA1_7
+        CH4:
+        - DMA1_4
+        COM:
+        - DMA1_4
+        TRIG:
+        - DMA1_4
+        UP:
+        - DMA1_6
     TIM15:
       address: 0x40014000
       kind: TIM1_8L4:gptimer2_v3_x
@@ -1068,6 +1160,15 @@ cores:
       - pin: PA9
         signal: BKIN
         af: 14
+      dma_channels:
+        CH1:
+        - DMA1_5
+        COM:
+        - DMA1_5
+        TRIG:
+        - DMA1_5
+        UP:
+        - DMA1_5
     TIM16:
       address: 0x40014400
       kind: TIM1_8L4:gptimer2_v3_x
@@ -1085,6 +1186,11 @@ cores:
       - pin: PB8
         signal: CH1
         af: 14
+      dma_channels:
+        CH1:
+        - DMA1_6
+        UP:
+        - DMA1_6
     TIM17:
       address: 0x40014800
       kind: TIM1_8L4:gptimer2_v3_x
@@ -1105,6 +1211,11 @@ cores:
       - pin: PB9
         signal: CH1
         af: 14
+      dma_channels:
+        CH1:
+        - DMA1_7
+        UP:
+        - DMA1_7
     TIM2:
       address: 0x40000000
       kind: TIM1_8L4:gptimer2_v3_x
@@ -1146,6 +1257,17 @@ cores:
       - pin: PB3
         signal: CH2
         af: 1
+      dma_channels:
+        CH1:
+        - DMA1_5
+        CH2:
+        - DMA1_7
+        CH3:
+        - DMA1_1
+        CH4:
+        - DMA1_7
+        UP:
+        - DMA1_2
     TIM3:
       address: 0x40000400
       kind: TIM1_8L4:gptimer2_v3_x
@@ -1181,6 +1303,17 @@ cores:
       - pin: PB5
         signal: CH2
         af: 2
+      dma_channels:
+        CH1:
+        - DMA1_6
+        CH3:
+        - DMA1_2
+        CH4:
+        - DMA1_3
+        TRIG:
+        - DMA1_6
+        UP:
+        - DMA1_3
     TIM4:
       address: 0x40000800
       kind: TIM1_8L4:gptimer2_v3_x
@@ -1198,6 +1331,15 @@ cores:
       - pin: PB9
         signal: CH4
         af: 2
+      dma_channels:
+        CH1:
+        - DMA1_1
+        CH2:
+        - DMA1_4
+        CH3:
+        - DMA1_5
+        UP:
+        - DMA1_7
     TIM5:
       address: 0x40000c00
       kind: TIM1_8L4:gptimer2_v3_x
@@ -1215,14 +1357,35 @@ cores:
       - pin: PA3
         signal: CH4
         af: 2
+      dma_channels:
+        CH1:
+        - DMA2_5
+        CH2:
+        - DMA2_4
+        CH3:
+        - DMA2_2
+        CH4:
+        - DMA2_1
+        COM:
+        - DMA2_1
+        TRIG:
+        - DMA2_1
+        UP:
+        - DMA2_2
     TIM6:
       address: 0x40001000
       kind: TIM6_7L4:gptimer2_v3_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA2_4
     TIM7:
       address: 0x40001400
       kind: TIM6_7L4:gptimer2_v3_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA2_5
     TIM8:
       address: 0x40013400
       kind: TIM1_8L4:gptimer2_v3_x
@@ -1285,6 +1448,21 @@ cores:
       - pin: PB7
         signal: BKIN_COMP1
         af: 13
+      dma_channels:
+        CH1:
+        - DMA2_6
+        CH2:
+        - DMA2_7
+        CH3:
+        - DMA2_1
+        CH4:
+        - DMA2_2
+        COM:
+        - DMA2_2
+        TRIG:
+        - DMA2_2
+        UP:
+        - DMA2_1
     TSC:
       address: 0x40024000
       kind: TSC:tsc1_v1_0
@@ -1366,6 +1544,11 @@ cores:
       - pin: PB7
         signal: CTS
         af: 8
+      dma_channels:
+        RX:
+        - DMA2_5
+        TX:
+        - DMA2_3
     UART5:
       address: 0x40005000
       kind: UART:sci2_v2_1
@@ -1383,6 +1566,11 @@ cores:
       - pin: PB5
         signal: CTS
         af: 8
+      dma_channels:
+        RX:
+        - DMA2_2
+        TX:
+        - DMA2_1
     USART1:
       address: 0x40013800
       kind: USART:sci3_v1_1
@@ -1425,6 +1613,11 @@ cores:
       - pin: PB7
         signal: RX
         af: 7
+      dma_channels:
+        RX:
+        - DMA2_7
+        TX:
+        - DMA2_6
     USART2:
       address: 0x40004400
       kind: USART:sci3_v1_1
@@ -1452,6 +1645,11 @@ cores:
       - pin: PA15
         signal: RX
         af: 3
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     USART3:
       address: 0x40004800
       kind: USART:sci3_v1_1
@@ -1506,6 +1704,11 @@ cores:
       - pin: PC12
         signal: CK
         af: 7
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_2
     USB_OTG_FS:
       address: 0x50000000
       kind: USB_OTG_FS:otgfs1_v2_4
@@ -1608,9 +1811,49 @@ cores:
     USART2: 38
     USART3: 39
     WWDG: 0
-flash: 1024
-ram: 320
-gpio_af: STM32L49x
+  dma_channels:
+    DMA1_1:
+      dma: DMA1
+      channel: 1
+    DMA1_2:
+      dma: DMA1
+      channel: 2
+    DMA1_3:
+      dma: DMA1
+      channel: 3
+    DMA1_4:
+      dma: DMA1
+      channel: 4
+    DMA1_5:
+      dma: DMA1
+      channel: 5
+    DMA1_6:
+      dma: DMA1
+      channel: 6
+    DMA1_7:
+      dma: DMA1
+      channel: 7
+    DMA2_1:
+      dma: DMA2
+      channel: 1
+    DMA2_2:
+      dma: DMA2
+      channel: 2
+    DMA2_3:
+      dma: DMA2
+      channel: 3
+    DMA2_4:
+      dma: DMA2
+      channel: 4
+    DMA2_5:
+      dma: DMA2
+      channel: 5
+    DMA2_6:
+      dma: DMA2
+      channel: 6
+    DMA2_7:
+      dma: DMA2
+      channel: 7
 packages:
 - name: STM32L4A6RGTx
   package: LQFP64

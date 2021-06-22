@@ -1,6 +1,8 @@
 name: STM32F103ZG
 family: STM32F1
 line: STM32F103
+flash: 1024
+ram: 96
 cores:
 - name: cm3
   peripherals:
@@ -40,6 +42,9 @@ cores:
         signal: IN8
       - pin: PB1
         signal: IN9
+      dma_channels:
+        ADC1:
+        - DMA1_1
     ADC2:
       address: 0x40012800
       kind: ADC:aditf_v2_5F1
@@ -106,6 +111,9 @@ cores:
         signal: IN2
       - pin: PA3
         signal: IN3
+      dma_channels:
+        ADC3:
+        - DMA2_5
     ADC_COMMON:
       address: 0x40012400
       kind: ADC_COMMON:aditf_v2_5F1
@@ -118,6 +126,11 @@ cores:
         signal: OUT1
       - pin: PA5
         signal: OUT2
+      dma_channels:
+        CH1:
+        - DMA2_3
+        CH2:
+        - DMA2_4
     DBGMCU:
       address: 0xe0042000
       kind: DBGMCU:STM32F1_dbgmcu_v1_0
@@ -172,6 +185,11 @@ cores:
         signal: SCL
       - pin: PB9
         signal: SDA
+      dma_channels:
+        RX:
+        - DMA1_7
+        TX:
+        - DMA1_6
     I2C2:
       address: 0x40005800
       kind: I2C:i2c1_v1_5
@@ -184,6 +202,11 @@ cores:
         signal: SDA
       - pin: PB12
         signal: SMBA
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v1_1
@@ -234,6 +257,9 @@ cores:
         signal: D4
       - pin: PB9
         signal: D5
+      dma_channels:
+        SDIO:
+        - DMA2_4
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v1_0
@@ -255,6 +281,11 @@ cores:
         signal: MISO
       - pin: PB5
         signal: MOSI
+      dma_channels:
+        RX:
+        - DMA1_2
+        TX:
+        - DMA1_3
     SPI2:
       address: 0x40003800
       kind: SPI:spi2s1_v1_0
@@ -268,6 +299,11 @@ cores:
         signal: MISO
       - pin: PB15
         signal: MOSI
+      dma_channels:
+        RX:
+        - DMA1_4
+        TX:
+        - DMA1_5
     SPI3:
       address: 0x40003c00
       kind: SPI:spi2s1_v1_0
@@ -281,6 +317,11 @@ cores:
         signal: MISO
       - pin: PB5
         signal: MOSI
+      dma_channels:
+        RX:
+        - DMA2_1
+        TX:
+        - DMA2_2
     TIM1:
       address: 0x40012c00
       kind: TIM1_8F1:gptimer2_v1_x
@@ -330,6 +371,21 @@ cores:
         signal: CH4
       - pin: PA12
         signal: ETR
+      dma_channels:
+        CH1:
+        - DMA1_2
+        CH2:
+        - DMA1_3
+        CH3:
+        - DMA1_6
+        CH4:
+        - DMA1_4
+        COM:
+        - DMA1_4
+        TRIG:
+        - DMA1_4
+        UP:
+        - DMA1_5
     TIM10:
       address: 0x40015000
       kind: TIM1_8F1:gptimer2_v1_x
@@ -400,6 +456,17 @@ cores:
         signal: ETR
       - pin: PB3
         signal: CH2
+      dma_channels:
+        CH1:
+        - DMA1_5
+        CH2:
+        - DMA1_7
+        CH3:
+        - DMA1_1
+        CH4:
+        - DMA1_7
+        UP:
+        - DMA1_2
     TIM3:
       address: 0x40000400
       kind: TIM1_8F1:gptimer2_v1_x
@@ -427,6 +494,17 @@ cores:
         signal: CH1
       - pin: PB5
         signal: CH2
+      dma_channels:
+        CH1:
+        - DMA1_6
+        CH3:
+        - DMA1_2
+        CH4:
+        - DMA1_3
+        TRIG:
+        - DMA1_6
+        UP:
+        - DMA1_3
     TIM4:
       address: 0x40000800
       kind: TIM1_8F1:gptimer2_v1_x
@@ -450,6 +528,15 @@ cores:
         signal: CH4
       - pin: PE0
         signal: ETR
+      dma_channels:
+        CH1:
+        - DMA1_1
+        CH2:
+        - DMA1_4
+        CH3:
+        - DMA1_5
+        UP:
+        - DMA1_7
     TIM5:
       address: 0x40000c00
       kind: TIM1_8F1:gptimer2_v1_x
@@ -463,14 +550,33 @@ cores:
         signal: CH3
       - pin: PA3
         signal: CH4
+      dma_channels:
+        CH1:
+        - DMA2_5
+        CH2:
+        - DMA2_4
+        CH3:
+        - DMA2_2
+        CH4:
+        - DMA2_1
+        TRIG:
+        - DMA2_1
+        UP:
+        - DMA2_2
     TIM6:
       address: 0x40001000
       kind: TIM6_7F1:gptimer2_v1_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA2_3
     TIM7:
       address: 0x40001400
       kind: TIM6_7F1:gptimer2_v1_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA2_4
     TIM8:
       address: 0x40013400
       kind: TIM1_8F1:gptimer2_v1_x
@@ -494,6 +600,21 @@ cores:
         signal: CH3
       - pin: PC9
         signal: CH4
+      dma_channels:
+        CH1:
+        - DMA2_3
+        CH2:
+        - DMA2_5
+        CH3:
+        - DMA2_1
+        CH4:
+        - DMA2_2
+        COM:
+        - DMA2_2
+        TRIG:
+        - DMA2_2
+        UP:
+        - DMA2_1
     TIM9:
       address: 0x40014c00
       kind: TIM1_8F1:gptimer2_v1_x
@@ -516,6 +637,11 @@ cores:
         signal: TX
       - pin: PC11
         signal: RX
+      dma_channels:
+        RX:
+        - DMA2_3
+        TX:
+        - DMA2_5
     UART5:
       address: 0x40005000
       kind: UART:sci2_v1_1
@@ -545,6 +671,11 @@ cores:
         signal: TX
       - pin: PB7
         signal: RX
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     USART2:
       address: 0x40004400
       kind: USART:sci2_v1_1
@@ -571,6 +702,11 @@ cores:
         signal: RX
       - pin: PD7
         signal: CK
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     USART3:
       address: 0x40004800
       kind: USART:sci2_v1_1
@@ -603,6 +739,11 @@ cores:
         signal: RX
       - pin: PC12
         signal: CK
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_2
     USB:
       address: 0x40005c00
       kind: USB:usb1_v1_1
@@ -676,9 +817,43 @@ cores:
     USB_HP_CAN1_TX: 19
     USB_LP_CAN1_RX0: 20
     WWDG: 0
-flash: 1024
-ram: 96
-gpio_af: STM32F103xF
+  dma_channels:
+    DMA1_1:
+      dma: DMA1
+      channel: 1
+    DMA1_2:
+      dma: DMA1
+      channel: 2
+    DMA1_3:
+      dma: DMA1
+      channel: 3
+    DMA1_4:
+      dma: DMA1
+      channel: 4
+    DMA1_5:
+      dma: DMA1
+      channel: 5
+    DMA1_6:
+      dma: DMA1
+      channel: 6
+    DMA1_7:
+      dma: DMA1
+      channel: 7
+    DMA2_1:
+      dma: DMA2
+      channel: 1
+    DMA2_2:
+      dma: DMA2
+      channel: 2
+    DMA2_3:
+      dma: DMA2
+      channel: 3
+    DMA2_4:
+      dma: DMA2
+      channel: 4
+    DMA2_5:
+      dma: DMA2
+      channel: 5
 packages:
 - name: STM32F103ZGHx
   package: LFBGA144

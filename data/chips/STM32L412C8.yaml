@@ -1,6 +1,8 @@
 name: STM32L412C8
 family: STM32L4
 line: STM32L4x2
+flash: 64
+ram: 40
 cores:
 - name: cm4
   peripherals:
@@ -29,6 +31,9 @@ cores:
         signal: IN15
       - pin: PB1
         signal: IN16
+      dma_channels:
+        ADC1:
+        - DMA2_3
     ADC2:
       address: 0x50040100
       kind: ADC:aditf5_v2_0
@@ -50,6 +55,9 @@ cores:
         signal: IN15
       - pin: PB1
         signal: IN16
+      dma_channels:
+        ADC2:
+        - DMA2_4
     ADC_COMMON:
       address: 0x50040300
       kind: ADC_COMMON:aditf5_v2_0
@@ -152,6 +160,11 @@ cores:
       - pin: PB9
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA2_6
+        TX:
+        - DMA2_7
     I2C2:
       address: 0x40005800
       kind: I2C:i2c2_v1_1
@@ -172,6 +185,11 @@ cores:
       - pin: PB14
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     I2C3:
       address: 0x40005c00
       kind: I2C:i2c2_v1_1
@@ -186,6 +204,11 @@ cores:
       - pin: PB4
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_2
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v2_0
@@ -299,6 +322,9 @@ cores:
       - pin: PB11
         signal: BK1_NCS
         af: 10
+      dma_channels:
+        QUADSPI:
+        - DMA2_7
     RCC:
       address: 0x40021000
       kind: RCC:STM32L4x2_rcc_v1_0
@@ -380,6 +406,11 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 5
+      dma_channels:
+        RX:
+        - DMA2_3
+        TX:
+        - DMA2_4
     SPI2:
       address: 0x40003800
       kind: SPI:spi2s1_v3_1
@@ -404,6 +435,11 @@ cores:
       - pin: PB9
         signal: NSS
         af: 5
+      dma_channels:
+        RX:
+        - DMA1_4
+        TX:
+        - DMA1_5
     SYSCFG:
       address: 0x40010000
       kind: SYS:STM32L47x_sys_v1_0
@@ -458,6 +494,21 @@ cores:
       - pin: PA12
         signal: ETR
         af: 1
+      dma_channels:
+        CH1:
+        - DMA1_2
+        CH2:
+        - DMA1_3
+        CH3:
+        - DMA1_7
+        CH4:
+        - DMA1_4
+        COM:
+        - DMA1_4
+        TRIG:
+        - DMA1_4
+        UP:
+        - DMA1_6
     TIM15:
       address: 0x40014000
       kind: TIM1_8L4:gptimer2_v3_x
@@ -487,6 +538,15 @@ cores:
       - pin: PA9
         signal: BKIN
         af: 14
+      dma_channels:
+        CH1:
+        - DMA1_5
+        COM:
+        - DMA1_5
+        TRIG:
+        - DMA1_5
+        UP:
+        - DMA1_5
     TIM16:
       address: 0x40014400
       kind: TIM1_8L4:gptimer2_v3_x
@@ -504,6 +564,11 @@ cores:
       - pin: PB8
         signal: CH1
         af: 14
+      dma_channels:
+        CH1:
+        - DMA1_6
+        UP:
+        - DMA1_6
     TIM2:
       address: 0x40000000
       kind: TIM1_8L4:gptimer2_v3_x
@@ -545,10 +610,24 @@ cores:
       - pin: PB3
         signal: CH2
         af: 1
+      dma_channels:
+        CH1:
+        - DMA1_5
+        CH2:
+        - DMA1_7
+        CH3:
+        - DMA1_1
+        CH4:
+        - DMA1_7
+        UP:
+        - DMA1_2
     TIM6:
       address: 0x40001000
       kind: TIM6_7L4:gptimer2_v3_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA2_4
     TSC:
       address: 0x40024000
       kind: TSC:tsc1_v1_0
@@ -622,6 +701,11 @@ cores:
       - pin: PB7
         signal: RX
         af: 7
+      dma_channels:
+        RX:
+        - DMA2_7
+        TX:
+        - DMA2_6
     USART2:
       address: 0x40004400
       kind: USART:sci3_v1_1
@@ -649,6 +733,11 @@ cores:
       - pin: PA15
         signal: RX
         af: 3
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     USART3:
       address: 0x40004800
       kind: USART:sci3_v1_1
@@ -691,6 +780,11 @@ cores:
       - pin: PA15
         signal: RTS
         af: 7
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_2
     USB:
       address: 0x40006800
       kind: USB:usb1_v2_1
@@ -768,9 +862,49 @@ cores:
     USART3: 39
     USB: 67
     WWDG: 0
-flash: 64
-ram: 40
-gpio_af: STM32L41x
+  dma_channels:
+    DMA1_1:
+      dma: DMA1
+      channel: 1
+    DMA1_2:
+      dma: DMA1
+      channel: 2
+    DMA1_3:
+      dma: DMA1
+      channel: 3
+    DMA1_4:
+      dma: DMA1
+      channel: 4
+    DMA1_5:
+      dma: DMA1
+      channel: 5
+    DMA1_6:
+      dma: DMA1
+      channel: 6
+    DMA1_7:
+      dma: DMA1
+      channel: 7
+    DMA2_1:
+      dma: DMA2
+      channel: 1
+    DMA2_2:
+      dma: DMA2
+      channel: 2
+    DMA2_3:
+      dma: DMA2
+      channel: 3
+    DMA2_4:
+      dma: DMA2
+      channel: 4
+    DMA2_5:
+      dma: DMA2
+      channel: 5
+    DMA2_6:
+      dma: DMA2
+      channel: 6
+    DMA2_7:
+      dma: DMA2
+      channel: 7
 packages:
 - name: STM32L412C8Tx
   package: LQFP48

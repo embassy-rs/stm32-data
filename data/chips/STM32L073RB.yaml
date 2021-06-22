@@ -1,6 +1,8 @@
 name: STM32L073RB
 family: STM32L0
 line: STM32L0x3
+flash: 128
+ram: 20
 cores:
 - name: cm0p
   peripherals:
@@ -40,6 +42,9 @@ cores:
         signal: IN8
       - pin: PB1
         signal: IN9
+      dma_channels:
+        ADC:
+        - DMA1_2
     ADC_COMMON:
       address: 0x40012708
       kind: ADC_COMMON:aditf4_v2_0
@@ -107,6 +112,11 @@ cores:
         signal: OUT1
       - pin: PA5
         signal: OUT2
+      dma_channels:
+        CH1:
+        - DMA1_2
+        CH2:
+        - DMA1_4
     DBGMCU:
       address: 0x40015800
       kind: DBGMCU:STM32L0_dbgmcu_v1_0
@@ -165,6 +175,11 @@ cores:
       - pin: PB9
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_7
+        TX:
+        - DMA1_6
     I2C2:
       address: 0x40005800
       kind: I2C:i2c2_v1_1
@@ -182,6 +197,11 @@ cores:
       - pin: PB14
         signal: SDA
         af: 5
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     I2C3:
       address: 0x40007800
       kind: I2C:i2c2_v1_1
@@ -208,6 +228,11 @@ cores:
       - pin: PB4
         signal: SDA
         af: 7
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v2_0
@@ -445,6 +470,11 @@ cores:
       - pin: PD2
         signal: RTS
         af: 0
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     RCC:
       address: 0x40021000
       kind: RCC:STM32L051_rcc_v1_0
@@ -531,6 +561,11 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 0
+      dma_channels:
+        RX:
+        - DMA1_2
+        TX:
+        - DMA1_3
     SPI2:
       address: 0x40003800
       kind: SPI:spi2s1_v3_1
@@ -561,6 +596,11 @@ cores:
       - pin: PB9
         signal: NSS
         af: 5
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     SYSCFG:
       address: 0x40010000
       kind: SYS:STM32L071_sys_v1_0
@@ -606,6 +646,17 @@ cores:
       - pin: PB3
         signal: CH2
         af: 2
+      dma_channels:
+        CH1:
+        - DMA1_5
+        CH2:
+        - DMA1_7
+        CH3:
+        - DMA1_1
+        CH4:
+        - DMA1_7
+        UP:
+        - DMA1_2
     TIM21:
       address: 0x40010800
       kind: TIM1_8L0:gptimer2_v2_x
@@ -696,14 +747,31 @@ cores:
       - pin: PB5
         signal: CH2
         af: 4
+      dma_channels:
+        CH1:
+        - DMA1_5
+        CH3:
+        - DMA1_2
+        CH4:
+        - DMA1_3
+        TRIG:
+        - DMA1_6
+        UP:
+        - DMA1_3
     TIM6:
       address: 0x40001000
       kind: TIM6_7L0:gptimer2_v2_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA1_2
     TIM7:
       address: 0x40001400
       kind: TIM6_7L0:gptimer2_v2_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA1_4
     TSC:
       address: 0x40024000
       kind: TSC:tsc1_v1_0
@@ -852,6 +920,11 @@ cores:
       - pin: PB7
         signal: RX
         af: 0
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     USART2:
       address: 0x40004400
       kind: USART:sci3_v1_1
@@ -882,6 +955,11 @@ cores:
       - pin: PA15
         signal: RX
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     USART4:
       address: 0x40004c00
       kind: USART:sci3_v1_1
@@ -912,6 +990,11 @@ cores:
       - pin: PB7
         signal: CTS
         af: 6
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     USART5:
       address: 0x40005000
       kind: USART:sci3_v1_1
@@ -939,6 +1022,11 @@ cores:
       - pin: PB5
         signal: RTS
         af: 6
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     USB:
       address: 0
       kind: USB:usb1_v2_0
@@ -988,9 +1076,28 @@ cores:
     USART4_5: 14
     USB: 31
     WWDG: 0
-flash: 128
-ram: 20
-gpio_af: STM32L071
+  dma_channels:
+    DMA1_1:
+      dma: DMA1
+      channel: 1
+    DMA1_2:
+      dma: DMA1
+      channel: 2
+    DMA1_3:
+      dma: DMA1
+      channel: 3
+    DMA1_4:
+      dma: DMA1
+      channel: 4
+    DMA1_5:
+      dma: DMA1
+      channel: 5
+    DMA1_6:
+      dma: DMA1
+      channel: 6
+    DMA1_7:
+      dma: DMA1
+      channel: 7
 packages:
 - name: STM32L073RBHx
   package: TFBGA64
