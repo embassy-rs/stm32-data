@@ -1,6 +1,8 @@
 name: STM32G081EB
 family: STM32G0
 line: STM32G0x1
+flash: 128
+ram: 36
 cores:
 - name: cm0p
   peripherals:
@@ -28,12 +30,17 @@ cores:
         signal: IN5
       - pin: PA2
         signal: IN2
+      dma_requests:
+        ADC1: 5
     ADC_COMMON:
       address: 0x40012708
       kind: ADC_COMMON:aditf4_v3_0
     AES:
       address: 0x40026000
       kind: AES:aes3_v1_0_G0
+      dma_requests:
+        IN: 6
+        OUT: 7
     COMP1:
       address: 0x40010200
       kind: COMP:TSMC90_OrcaZERO
@@ -90,6 +97,9 @@ cores:
         signal: OUT1
       - pin: PA5
         signal: OUT2
+      dma_requests:
+        CH1: 8
+        CH2: 9
     DBGMCU:
       address: 0x40015800
       kind: DBGMCU:STM32G0_dbgmcu_v1_0
@@ -145,6 +155,9 @@ cores:
       - pin: PA1
         signal: SMBA
         af: 6
+      dma_requests:
+        RX: 10
+        TX: 11
     I2C2:
       address: 0x40005800
       kind: I2C:i2c2_v1_1
@@ -156,6 +169,9 @@ cores:
       - pin: PA11
         signal: SCL
         af: 6
+      dma_requests:
+        RX: 12
+        TX: 13
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v2_0
@@ -216,6 +232,9 @@ cores:
       - pin: PA2
         signal: TX
         af: 6
+      dma_requests:
+        RX: 14
+        TX: 15
     RCC:
       address: 0x40021000
       kind: RCC:STM32G05_rcc_v1_0
@@ -300,6 +319,9 @@ cores:
       - pin: PA2
         signal: MOSI
         af: 0
+      dma_requests:
+        RX: 16
+        TX: 17
     SPI2:
       address: 0x40003800
       kind: SPI:spi2s1_v3_3
@@ -333,6 +355,9 @@ cores:
       - pin: PA4
         signal: MOSI
         af: 1
+      dma_requests:
+        RX: 18
+        TX: 19
     SYSCFG:
       address: 0x40010000
       kind: SYS:STM32G07x_sys_v1_0
@@ -377,6 +402,13 @@ cores:
       - pin: PB0
         signal: CH2N
         af: 2
+      dma_requests:
+        CH1: 20
+        CH2: 21
+        CH3: 22
+        CH4: 23
+        TRIG: 24
+        UP: 25
     TIM14:
       address: 0x40002000
       kind: TIM1_8G0:gptimer2_v3_x
@@ -414,6 +446,11 @@ cores:
       - pin: PA2
         signal: CH1
         af: 5
+      dma_requests:
+        CH1: 40
+        CH2: 41
+        TRIG: 42
+        UP: 43
     TIM16:
       address: 0x40014400
       kind: TIM1_8G0:gptimer2_v3_x
@@ -431,6 +468,10 @@ cores:
       - pin: PA6
         signal: CH1
         af: 5
+      dma_requests:
+        CH1: 44
+        TRIG: 45
+        UP: 46
     TIM17:
       address: 0x40014800
       kind: TIM1_8G0:gptimer2_v3_x
@@ -445,6 +486,10 @@ cores:
       - pin: PA7
         signal: CH1
         af: 5
+      dma_requests:
+        CH1: 47
+        TRIG: 48
+        UP: 49
     TIM2:
       address: 0x40000000
       kind: TIM1_8G0:gptimer2_v3_x
@@ -477,6 +522,13 @@ cores:
       - pin: PA2
         signal: CH3
         af: 2
+      dma_requests:
+        CH1: 26
+        CH2: 27
+        CH3: 28
+        CH4: 29
+        TRIG: 30
+        UP: 31
     TIM3:
       address: 0x40000400
       kind: TIM1_8G0:gptimer2_v3_x
@@ -497,14 +549,25 @@ cores:
       - pin: PB0
         signal: CH3
         af: 1
+      dma_requests:
+        CH1: 32
+        CH2: 33
+        CH3: 34
+        CH4: 35
+        TRIG: 36
+        UP: 37
     TIM6:
       address: 0x40001000
       kind: TIM6_7G0:gptimer2_v3_x
       block: timer_v1/TIM_GP16
+      dma_requests:
+        UP: 38
     TIM7:
       address: 0x40001400
       kind: TIM6_7G0:gptimer2_v3_x
       block: timer_v1/TIM_GP16
+      dma_requests:
+        UP: 39
     USART1:
       address: 0x40013800
       kind: USART:sci3_v2_1
@@ -537,6 +600,9 @@ cores:
       - pin: PA9
         signal: TX
         af: 1
+      dma_requests:
+        RX: 50
+        TX: 51
     USART2:
       address: 0x40004400
       kind: USART:sci3_v2_1
@@ -569,6 +635,9 @@ cores:
       - pin: PA2
         signal: TX
         af: 1
+      dma_requests:
+        RX: 52
+        TX: 53
     USART3:
       address: 0x40004800
       kind: USART:sci3_v2_1
@@ -607,6 +676,9 @@ cores:
       - pin: PA5
         signal: TX
         af: 4
+      dma_requests:
+        RX: 54
+        TX: 55
     USART4:
       address: 0x40004c00
       kind: USART:sci3_v2_1
@@ -633,6 +705,9 @@ cores:
       - pin: PA1
         signal: RX
         af: 4
+      dma_requests:
+        RX: 56
+        TX: 57
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v2_0
@@ -670,9 +745,28 @@ cores:
     USART2: 28
     USART3_4_LPUART1: 29
     WWDG: 0
-flash: 128
-ram: 36
-gpio_af: STM32G07x
+  dma_channels:
+    DMA1_1:
+      dma: DMA1
+      channel: 1
+    DMA1_2:
+      dma: DMA1
+      channel: 2
+    DMA1_3:
+      dma: DMA1
+      channel: 3
+    DMA1_4:
+      dma: DMA1
+      channel: 4
+    DMA1_5:
+      dma: DMA1
+      channel: 5
+    DMA1_6:
+      dma: DMA1
+      channel: 6
+    DMA1_7:
+      dma: DMA1
+      channel: 7
 packages:
 - name: STM32G081EBYx
   package: WLCSP25

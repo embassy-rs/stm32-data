@@ -1,6 +1,8 @@
 name: STM32F302C8
 family: STM32F3
 line: STM32F302
+flash: 64
+ram: 16
 cores:
 - name: cm4
   peripherals:
@@ -30,6 +32,9 @@ cores:
         signal: IN5
       - pin: PA1
         signal: IN2
+      dma_channels:
+        ADC1:
+        - DMA1_1
     ADC_COMMON:
       address: 0x50000300
       kind: ADC_COMMON:aditf5_v1_1
@@ -101,6 +106,9 @@ cores:
       pins:
       - pin: PA4
         signal: OUT1
+      dma_channels:
+        CH1:
+        - DMA1_3
     DBGMCU:
       address: 0xe0042000
       kind: DBGMCU:STM32F3_dbgmcu_v1_0
@@ -156,6 +164,11 @@ cores:
       - pin: PB7
         signal: SDA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_7
+        TX:
+        - DMA1_6
     I2C2:
       address: 0x40005800
       kind: I2C:i2c2_v1_1
@@ -179,6 +192,11 @@ cores:
       - pin: PB12
         signal: SMBA
         af: 4
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     I2C3:
       address: 0x40007800
       kind: I2C:i2c2_v1_1
@@ -193,6 +211,11 @@ cores:
       - pin: PA9
         signal: SMBA
         af: 2
+      dma_channels:
+        RX:
+        - DMA1_2
+        TX:
+        - DMA1_1
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v2_0
@@ -282,6 +305,11 @@ cores:
       - pin: PB13
         signal: SCK
         af: 5
+      dma_channels:
+        RX:
+        - DMA1_4
+        TX:
+        - DMA1_5
     SPI3:
       address: 0x40003c00
       kind: SPI:spi2s1_v3_0
@@ -302,6 +330,11 @@ cores:
       - pin: PA4
         signal: NSS
         af: 6
+      dma_channels:
+        RX:
+        - DMA1_2
+        TX:
+        - DMA1_3
     SYSCFG:
       address: 0x40010000
       kind: SYS:STM32F303_sys_v1_0
@@ -373,6 +406,21 @@ cores:
       - pin: PB0
         signal: CH2N
         af: 6
+      dma_channels:
+        CH1:
+        - DMA1_2
+        CH2:
+        - DMA1_3
+        CH3:
+        - DMA1_6
+        CH4:
+        - DMA1_4
+        COM:
+        - DMA1_4
+        TRIG:
+        - DMA1_4
+        UP:
+        - DMA1_5
     TIM15:
       address: 0x40014000
       kind: TIM1_8F3:gptimer2_v3_x
@@ -399,6 +447,15 @@ cores:
       - pin: PA1
         signal: CH1N
         af: 9
+      dma_channels:
+        CH1:
+        - DMA1_5
+        COM:
+        - DMA1_5
+        TRIG:
+        - DMA1_5
+        UP:
+        - DMA1_5
     TIM16:
       address: 0x40014400
       kind: TIM1_8F3:gptimer2_v3_x
@@ -425,6 +482,11 @@ cores:
       - pin: PA6
         signal: CH1
         af: 1
+      dma_channels:
+        CH1:
+        - DMA1_6
+        UP:
+        - DMA1_6
     TIM17:
       address: 0x40014800
       kind: TIM1_8F3:gptimer2_v3_x
@@ -448,6 +510,11 @@ cores:
       - pin: PA7
         signal: CH1
         af: 1
+      dma_channels:
+        CH1:
+        - DMA1_7
+        UP:
+        - DMA1_7
     TIM2:
       address: 0x40000000
       kind: TIM1_8F3:gptimer2_v3_x
@@ -495,10 +562,24 @@ cores:
       - pin: PA1
         signal: CH2
         af: 1
+      dma_channels:
+        CH1:
+        - DMA1_5
+        CH2:
+        - DMA1_7
+        CH3:
+        - DMA1_1
+        CH4:
+        - DMA1_7
+        UP:
+        - DMA1_2
     TIM6:
       address: 0x40001000
       kind: TIM6_7F3:gptimer2_v3_x
       block: timer_v1/TIM_GP16
+      dma_channels:
+        UP:
+        - DMA1_3
     TSC:
       address: 0x40024000
       kind: TSC:tsc1_v1_0
@@ -610,6 +691,11 @@ cores:
       - pin: PB7
         signal: RX
         af: 7
+      dma_channels:
+        RX:
+        - DMA1_5
+        TX:
+        - DMA1_4
     USART2:
       address: 0x40004400
       kind: USART:sci2_v2_0
@@ -649,6 +735,11 @@ cores:
       - pin: PA1
         signal: RTS
         af: 7
+      dma_channels:
+        RX:
+        - DMA1_6
+        TX:
+        - DMA1_7
     USART3:
       address: 0x40004800
       kind: USART:sci2_v2_0
@@ -682,6 +773,11 @@ cores:
       - pin: PB11
         signal: RX
         af: 7
+      dma_channels:
+        RX:
+        - DMA1_3
+        TX:
+        - DMA1_2
     USB:
       address: 0x40005c00
       kind: USB:usb1_v2_0_STM32F302
@@ -745,9 +841,28 @@ cores:
     USB_LP: 75
     USB_LP_CAN_RX0: 20
     WWDG: 0
-flash: 64
-ram: 16
-gpio_af: STM32F302
+  dma_channels:
+    DMA1_1:
+      dma: DMA1
+      channel: 1
+    DMA1_2:
+      dma: DMA1
+      channel: 2
+    DMA1_3:
+      dma: DMA1
+      channel: 3
+    DMA1_4:
+      dma: DMA1
+      channel: 4
+    DMA1_5:
+      dma: DMA1
+      channel: 5
+    DMA1_6:
+      dma: DMA1
+      channel: 6
+    DMA1_7:
+      dma: DMA1
+      channel: 7
 packages:
 - name: STM32F302C8Tx
   package: LQFP48
