@@ -442,6 +442,8 @@ def parse_chips():
             gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version']
             gpio_af = removesuffix(gpio_af, '_gpio_v1_0')
 
+            dma = next(filter(lambda x: x['@Name'] == 'DMA', r['IP']))['@Version']
+
             rcc = next(filter(lambda x: x['@Name'] == 'RCC', r['IP']))['@Version']
             rcc = removesuffix(rcc, '-rcc_v1_0')
             rcc = removesuffix(rcc, '_rcc_v1_0')
@@ -469,16 +471,14 @@ def parse_chips():
                     'name': chip_name,
                     'family': family,
                     'line': r['@Line'],
-                    'cores': cores,
                     'flash': flash,
                     'ram': ram,
-                    'gpio_af': gpio_af,
+                    'cores': cores,
                     'rcc': rcc,  # temporarily stashing it here
+                    'dma': dma,  # temporarily stashing it here
                     'packages': [],
                     'peripherals': {},
                     'pins': {},
-                    # 'peripherals': peris,
-                    # 'interrupts': h['interrupts'],
                 })
 
             chips[chip_name]['packages'].append(OrderedDict({
@@ -543,6 +543,9 @@ def parse_chips():
         rcc = chip['rcc']
         del chip['rcc']
 
+        chip_dma = chip['dma']
+        del chip['dma']
+
         h = find_header(chip_name)
         if h is None:
             raise Exception("missing header for {}".format(chip_name))
@@ -560,6 +563,8 @@ def parse_chips():
             defines = h['defines'][core_name]
 
             core['interrupts'] = interrupts
+            if chip_dma in dma_channels:
+                core['dma_channels'] = dma_channels[chip_dma]['channels']
     #        print("INterrupts for", core, ":", interrupts)
             #print("Defines for", core, ":", defines)
 
@@ -599,6 +604,12 @@ def parse_chips():
                 if block is not None and block.startswith("rng_"):
                     if (clock := match_rng_clock(chip_name+':'+pname+':'+pkind)) != None:
                         p['clock'] = clock
+
+                if pname in dma_channels[chip_dma]['peripherals']:
+                    if 'channels' in dma_channels[chip_dma]['peripherals'][pname]:
+                        p['dma_channels'] = dma_channels[chip_dma]['peripherals'][pname]['channels']
+                    if 'requests' in dma_channels[chip_dma]['peripherals'][pname]:
+                        p['dma_requests'] = dma_channels[chip_dma]['peripherals'][pname]['requests']
 
                 peris[pname] = p
 
@@ -689,14 +700,13 @@ af = {}
 
 
 def parse_gpio_af():
-    os.makedirs('data/gpio_af', exist_ok=True)
+    #os.makedirs('data/gpio_af', exist_ok=True)
     for f in glob('sources/cubedb/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
         if 'STM32F1' in f:
             continue
 
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/GPIO-')
         ff = removesuffix(ff, '_gpio_v1_0_Modes.xml')
-        print(ff)
 
         pins = {}
 
@@ -727,14 +737,102 @@ def parse_gpio_af():
 
             pins[pin_name] = afs
 
-        with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
-            f.write(yaml.dump(pins))
+        #with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
+            #f.write(yaml.dump(pins))
 
         af[ff] = pins
 
+dma_channels = {}
+
+def parse_dma():
+
+    for f in glob('sources/cubedb/mcu/IP/DMA-*Modes.xml'):
+        ff = removeprefix(f, 'sources/cubedb/mcu/IP/DMA-')
+        ff = removesuffix(ff, '_Modes.xml')
+
+        r = xmltodict.parse(open(f, 'rb'),  force_list={'Mode'})
+
+        chip_dma = {
+            'channels': {},
+            'peripherals': {},
+        }
+
+        for dma in r['IP']['ModeLogicOperator']['Mode']:
+            dma_peri_name = dma['@Name']
+            if ' Context' in dma_peri_name:
+                continue
+            channels = dma['ModeLogicOperator']['Mode']
+            if len(channels) == 1:
+                requests = next(filter(lambda x: x['@Name'] == 'Request', r['IP']['RefParameter']))
+                request_num = 0
+                for request in requests['PossibleValue']:
+                    target_name = request['@Comment']
+                    parts = target_name.split('_')
+                    target_peri_name = parts[0]
+                    if len(parts) < 2:
+                        event = target_peri_name
+                    else:
+                        event = target_name.split('_')[1]
+                    if target_name != 'MEMTOMEM':
+                        if target_peri_name not in chip_dma['peripherals']:
+                            chip_dma['peripherals'][target_peri_name] = {}
+                        peri_dma = chip_dma['peripherals'][target_peri_name]
+                        if 'requests' not in peri_dma:
+                            peri_dma['requests'] = {}
+                        if event not in peri_dma['requests']:
+                            peri_dma['requests'][event] = request_num
+                        #event_dma = peri_dma['requests'][event]
+                        #event_dma.append( OrderedDict( {
+                            #'channel': 'DMAMUX',
+                            #'request': request_num
+                        #} ))
+                    request_num += 1
+                for n in dma_peri_name.split(","):
+                    n = n.strip();
+                    if result := re.match( '.*' + n + '_Channel\[(\d+)-(\d+)\]', channels[0]['@Name'] ):
+                        low = int(result.group(1))
+                        high = int(result.group(2))
+                        for i in range(low,high+1):
+                            chip_dma['channels'][n+'_'+str(i)] = OrderedDict( {
+                                'dma': n,
+                                'channel': i,
+                            })
+            else:
+                for channel in channels:
+                    channel_name = channel['@Name']
+                    channel_name = removeprefix(channel_name, dma_peri_name + '_')
+                    channel_name = removeprefix(channel_name, "Channel")
+                    channel_name = removeprefix(channel_name, "Stream")
+                    chip_dma['channels'][dma_peri_name + '_' + channel_name] =  OrderedDict( {
+                        'dma': dma_peri_name,
+                        'channel': int(channel_name),
+                    })
+                    for target in channel['ModeLogicOperator']['Mode']:
+                        target_name = target['@Name']
+                        parts = target_name.split(':')
+                        target_name = parts[0]
+                        parts = target_name.split('_')
+                        target_peri_name = parts[0]
+                        if len(parts) < 2:
+                            target_events = [ target_peri_name ]
+                        else:
+                            target_events = target_name.split('_')[1].split('/')
+                        if target_name != 'MEMTOMEM':
+                            if target_peri_name not in chip_dma['peripherals']:
+                                chip_dma['peripherals'][target_peri_name] = {}
+                            peri_dma = chip_dma['peripherals'][target_peri_name]
+                            for event in target_events:
+                                if ':' in event:
+                                    event = event.split(':')[0]
+                                if 'channels' not in peri_dma:
+                                    peri_dma['channels'] = {}
+                                if event not in peri_dma:
+                                    peri_dma['channels'][event] = []
+                                event_dma = peri_dma['channels'][event]
+                                event_dma.append( dma_peri_name + '_' + channel_name )
+        dma_channels[ff] = chip_dma
 
 clocks = {}
-
 
 def parse_clocks():
     for f in glob('sources/cubedb/mcu/IP/RCC-*rcc_v1_0_Modes.xml'):
@@ -755,6 +853,7 @@ def parse_clocks():
         clocks[ff] = chip_clocks
 
 
+parse_dma()
 parse_gpio_af()
 parse_headers()
 parse_clocks()
