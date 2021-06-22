@@ -311,6 +311,7 @@ perimap = [
     ('.*:ADC:aditf5_v2_0', 'adc_v3/ADC'),
     ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
+    ('STM32F0.*:SYS:.*', 'syscfg_f0/SYSCFG'),
     ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
@@ -321,6 +322,8 @@ perimap = [
     ('STM32L4.*:RCC:.*', 'rcc_l4/RCC'),
     ('STM32F4.*:RCC:.*', 'rcc_f4/RCC'),
     ('STM32WL.*:RCC:.*', 'rcc_wl5x/RCC'),
+    ('STM32F0.0.*:RCC:.*', 'rcc_f0x0/RCC'),
+    ('STM32F0.*:RCC:.*', 'rcc_f0/RCC'),
     ('.*:STM32H7AB_rcc_v1_0', ''),  # rcc_h7ab/RCC
     ('.*:STM32H7_rcc_v1_0', 'rcc_h7/RCC'),
     ('.*:STM32W_rcc_v1_0', 'rcc_wb55/RCC'),
@@ -328,6 +331,7 @@ perimap = [
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
+    ('.*:STM32F0_flash_v1_0', 'flash_f0/FLASH'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
     ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
 
