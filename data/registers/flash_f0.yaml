@@ -1,0 +1,463 @@
+---
+block/FLASH:
+  description: Flash
+  items:
+    - name: ACR
+      description: Flash access control register
+      byte_offset: 0
+      fieldset: ACR
+    - name: KEYR
+      description: Flash key register
+      byte_offset: 4
+      access: Write
+      fieldset: KEYR
+    - name: OPTKEYR
+      description: Flash option key register
+      byte_offset: 8
+      access: Write
+      fieldset: OPTKEYR
+    - name: SR
+      description: Flash status register
+      byte_offset: 12
+      fieldset: SR
+    - name: CR
+      description: Flash control register
+      byte_offset: 16
+      fieldset: CR
+    - name: AR
+      description: Flash address register
+      byte_offset: 20
+      access: Write
+      fieldset: AR
+    - name: OBR
+      description: Option byte register
+      byte_offset: 28
+      access: Read
+      fieldset: OBR
+    - name: WRPR
+      description: Write protection register
+      byte_offset: 32
+      access: Read
+      fieldset: WRPR
+fieldset/ACR:
+  description: Flash access control register
+  fields:
+    - name: LATENCY
+      description: LATENCY
+      bit_offset: 0
+      bit_size: 3
+      enum: LATENCY
+    - name: PRFTBE
+      description: PRFTBE
+      bit_offset: 4
+      bit_size: 1
+      enum: PRFTBE
+    - name: PRFTBS
+      description: PRFTBS
+      bit_offset: 5
+      bit_size: 1
+      enum_read: PRFTBSR
+fieldset/AR:
+  description: Flash address register
+  fields:
+    - name: FAR
+      description: Flash address
+      bit_offset: 0
+      bit_size: 32
+fieldset/CR:
+  description: Flash control register
+  fields:
+    - name: PG
+      description: Programming
+      bit_offset: 0
+      bit_size: 1
+      enum: PG
+    - name: PER
+      description: Page erase
+      bit_offset: 1
+      bit_size: 1
+      enum: PER
+    - name: MER
+      description: Mass erase
+      bit_offset: 2
+      bit_size: 1
+      enum: MER
+    - name: OPTPG
+      description: Option byte programming
+      bit_offset: 4
+      bit_size: 1
+      enum: OPTPG
+    - name: OPTER
+      description: Option byte erase
+      bit_offset: 5
+      bit_size: 1
+      enum: OPTER
+    - name: STRT
+      description: Start
+      bit_offset: 6
+      bit_size: 1
+      enum: STRT
+    - name: LOCK
+      description: Lock
+      bit_offset: 7
+      bit_size: 1
+      enum: LOCK
+    - name: OPTWRE
+      description: Option bytes write enable
+      bit_offset: 9
+      bit_size: 1
+      enum: OPTWRE
+    - name: ERRIE
+      description: Error interrupt enable
+      bit_offset: 10
+      bit_size: 1
+      enum: ERRIE
+    - name: EOPIE
+      description: End of operation interrupt enable
+      bit_offset: 12
+      bit_size: 1
+      enum: EOPIE
+    - name: FORCE_OPTLOAD
+      description: Force option byte loading
+      bit_offset: 13
+      bit_size: 1
+      enum: FORCE_OPTLOAD
+fieldset/KEYR:
+  description: Flash key register
+  fields:
+    - name: FKEYR
+      description: Flash Key
+      bit_offset: 0
+      bit_size: 32
+fieldset/OBR:
+  description: Option byte register
+  fields:
+    - name: OPTERR
+      description: Option byte error
+      bit_offset: 0
+      bit_size: 1
+      enum: OPTERR
+    - name: RDPRT
+      description: Read protection level status
+      bit_offset: 1
+      bit_size: 2
+      enum: RDPRT
+    - name: WDG_SW
+      description: WDG_SW
+      bit_offset: 8
+      bit_size: 1
+      enum: WDG_SW
+    - name: nRST_STOP
+      description: nRST_STOP
+      bit_offset: 9
+      bit_size: 1
+      enum: nRST_STOP
+    - name: nRST_STDBY
+      description: nRST_STDBY
+      bit_offset: 10
+      bit_size: 1
+      enum: nRST_STDBY
+    - name: nBOOT0
+      description: nBOOT0
+      bit_offset: 11
+      bit_size: 1
+      enum: nBOOT0
+    - name: nBOOT1
+      description: BOOT1
+      bit_offset: 12
+      bit_size: 1
+      enum: nBOOT1
+    - name: VDDA_MONITOR
+      description: VDDA_MONITOR
+      bit_offset: 13
+      bit_size: 1
+      enum: VDDA_MONITOR
+    - name: RAM_PARITY_CHECK
+      description: RAM_PARITY_CHECK
+      bit_offset: 14
+      bit_size: 1
+      enum: RAM_PARITY_CHECK
+    - name: BOOT_SEL
+      description: BOOT_SEL
+      bit_offset: 15
+      bit_size: 1
+      enum: BOOT_SEL
+    - name: Data0
+      description: Data0
+      bit_offset: 16
+      bit_size: 8
+    - name: Data1
+      description: Data1
+      bit_offset: 24
+      bit_size: 8
+fieldset/OPTKEYR:
+  description: Flash option key register
+  fields:
+    - name: OPTKEYR
+      description: Option byte key
+      bit_offset: 0
+      bit_size: 32
+fieldset/SR:
+  description: Flash status register
+  fields:
+    - name: BSY
+      description: Busy
+      bit_offset: 0
+      bit_size: 1
+      enum_read: BSYR
+    - name: PGERR
+      description: Programming error
+      bit_offset: 2
+      bit_size: 1
+      enum: PGERR
+    - name: WRPRT
+      description: Write protection error
+      bit_offset: 4
+      bit_size: 1
+      enum: WRPRT
+    - name: EOP
+      description: End of operation
+      bit_offset: 5
+      bit_size: 1
+      enum: EOP
+fieldset/WRPR:
+  description: Write protection register
+  fields:
+    - name: WRP
+      description: Write protect
+      bit_offset: 0
+      bit_size: 32
+enum/BOOT_SEL:
+  bit_size: 1
+  variants:
+    - name: nBOOT0
+      description: BOOT0 signal is defined by nBOOT0 option bit
+      value: 0
+    - name: BOOT0
+      description: BOOT0 signal is defined by BOOT0 pin value (legacy mode)
+      value: 1
+enum/BSYR:
+  bit_size: 1
+  variants:
+    - name: Inactive
+      description: No write/erase operation is in progress
+      value: 0
+    - name: Active
+      description: A write/erase operation is in progress
+      value: 1
+enum/EOP:
+  bit_size: 1
+  variants:
+    - name: NoEvent
+      description: No EOP operation occurred
+      value: 0
+    - name: Event
+      description: An EOP event occurred
+      value: 1
+enum/EOPIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: End of operation interrupt disabled
+      value: 0
+    - name: Enabled
+      description: End of operation interrupt enabled
+      value: 1
+enum/ERRIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Error interrupt generation disabled
+      value: 0
+    - name: Enabled
+      description: Error interrupt generation enabled
+      value: 1
+enum/FORCE_OPTLOAD:
+  bit_size: 1
+  variants:
+    - name: Inactive
+      description: Force option byte loading inactive
+      value: 0
+    - name: Active
+      description: Force option byte loading active
+      value: 1
+enum/LATENCY:
+  bit_size: 3
+  variants:
+    - name: WS0
+      description: 0 wait states
+      value: 0
+    - name: WS1
+      description: 1 wait state
+      value: 1
+enum/LOCK:
+  bit_size: 1
+  variants:
+    - name: Unlocked
+      description: FLASH_CR register is unlocked
+      value: 0
+    - name: Locked
+      description: FLASH_CR register is locked
+      value: 1
+enum/MER:
+  bit_size: 1
+  variants:
+    - name: MassErase
+      description: Erase activated for all user sectors
+      value: 1
+enum/OPTER:
+  bit_size: 1
+  variants:
+    - name: OptionByteErase
+      description: Erase option byte activated
+      value: 1
+enum/OPTERR:
+  bit_size: 1
+  variants:
+    - name: OptionByteError
+      description: The loaded option byte and its complement do not match
+      value: 1
+enum/OPTPG:
+  bit_size: 1
+  variants:
+    - name: OptionByteProgramming
+      description: Program option byte activated
+      value: 1
+enum/OPTWRE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Option byte write disabled
+      value: 0
+    - name: Enabled
+      description: Option byte write enabled
+      value: 1
+enum/PER:
+  bit_size: 1
+  variants:
+    - name: PageErase
+      description: Erase activated for selected page
+      value: 1
+enum/PG:
+  bit_size: 1
+  variants:
+    - name: Program
+      description: Flash programming activated
+      value: 1
+enum/PGERR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: No programming error occurred
+      value: 0
+    - name: Error
+      description: A programming error occurred
+      value: 1
+enum/PRFTBE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Prefetch is disabled
+      value: 0
+    - name: Enabled
+      description: Prefetch is enabled
+      value: 1
+enum/PRFTBSR:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Prefetch buffer is disabled
+      value: 0
+    - name: Enabled
+      description: Prefetch buffer is enabled
+      value: 1
+enum/RAM_PARITY_CHECK:
+  bit_size: 1
+  variants:
+    - name: Enabled
+      description: RAM parity check enabled
+      value: 0
+    - name: Disabled
+      description: RAM parity check disabled
+      value: 1
+enum/RDPRT:
+  bit_size: 2
+  variants:
+    - name: Level0
+      description: Level 0
+      value: 0
+    - name: Level1
+      description: Level 1
+      value: 1
+    - name: Level2
+      description: Level 2
+      value: 3
+enum/STRT:
+  bit_size: 1
+  variants:
+    - name: Start
+      description: Trigger an erase operation
+      value: 1
+enum/VDDA_MONITOR:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: VDDA power supply supervisor disabled
+      value: 0
+    - name: Enabled
+      description: VDDA power supply supervisor enabled
+      value: 1
+enum/WDG_SW:
+  bit_size: 1
+  variants:
+    - name: Hardware
+      description: Hardware watchdog
+      value: 0
+    - name: Software
+      description: Software watchdog
+      value: 1
+enum/WRPRT:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: No write protection error occurred
+      value: 0
+    - name: Error
+      description: A write protection error occurred
+      value: 1
+enum/nBOOT0:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: "When BOOT_SEL is cleared, select the device boot mode"
+      value: 0
+    - name: Enabled
+      description: "When BOOT_SEL is cleared, select the device boot mode"
+      value: 1
+enum/nBOOT1:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: "Together with BOOT0, select the device boot mode"
+      value: 0
+    - name: Enabled
+      description: "Together with BOOT0, select the device boot mode"
+      value: 1
+enum/nRST_STDBY:
+  bit_size: 1
+  variants:
+    - name: Reset
+      description: Reset generated when entering Standby mode
+      value: 0
+    - name: NoReset
+      description: No reset generated
+      value: 1
+enum/nRST_STOP:
+  bit_size: 1
+  variants:
+    - name: Reset
+      description: Reset generated when entering Stop mode
+      value: 0
+    - name: NoReset
+      description: No reset generated
+      value: 1
