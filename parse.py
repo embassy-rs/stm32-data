@@ -311,6 +311,7 @@ perimap = [
     ('.*:ADC:aditf5_v2_0', 'adc_v3/ADC'),
     ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
+    ('STM32F0.*:SYS:.*', 'syscfg_f0/SYSCFG'),
     ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
