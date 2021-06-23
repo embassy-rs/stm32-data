@@ -351,6 +351,13 @@ perimap = [
 
     ('.*:IPCC:v1_0', 'ipcc_v1/IPCC'),
     ('.*:DMAMUX:v1', 'dmamux_v1/DMAMUX'),
+
+    ('.*:BDMA:DMA', 'bdma_v1/DMA'),
+    ('STM32L4[PQRS].*:.*:DMA', 'bdma_v1/DMA'),  # L4+
+    ('STM32L[04].*:.*:DMA', 'bdma_v2/DMA'),  # L0, L4 non-plus (since plus is handled above)
+    ('STM32F[247].*:.*:DMA', 'dma_v2/DMA'),
+    ('STM32H7.*:.*:DMA', 'dma_v1/DMA'),
+    ('.*:DMA', 'bdma_v1/DMA'),
 ]
 
 rng_clock_map = [
@@ -365,7 +372,7 @@ rng_clock_map = [
 
 def match_peri(peri):
     for r, block in perimap:
-        if re.match(r, peri):
+        if re.match('^'+r+'$', peri):
             if block == '':
                 return None
             return block
@@ -650,14 +657,12 @@ def parse_chips():
             # Handle DMA specially.
             for dma in ('DMA1', 'DMA2', 'BDMA'):
                 if addr := defines.get(dma + '_BASE'):
-                    block = 'bdma_v1/DMA'
-                    if dma != 'BDMA' and chip['family'] in ('STM32F4', 'STM32F7', 'STM32H7'):
-                        block = 'dma_v1/DMA'
-
                     p = OrderedDict({
                         'address': addr,
-                        'block': block,
                     })
+                    if block := match_peri(chip_name+':'+dma+':DMA'):
+                        p['block'] = block
+
                     peris[dma] = p
 
             # DMAMUX is not in the cubedb XMLs
