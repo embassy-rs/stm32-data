@@ -673,7 +673,7 @@ def parse_chips():
                         'address': addr,
                         'kind': kind,
                     })
-                    if block := match_peri(kind):
+                    if block := match_peri(chip_name+':'+dma+':'+kind):
                         dbg_peri['block'] = block
                     peris[dma] = dbg_peri
 
