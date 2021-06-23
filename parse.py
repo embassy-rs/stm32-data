@@ -646,12 +646,13 @@ def parse_chips():
                         'block': block,
                     })
                     peris[port] = p
+
             # Handle DMA specially.
-            for dma in ('DMA1', "DMA2"):
+            for dma in ('DMA1', 'DMA2', 'BDMA'):
                 if addr := defines.get(dma + '_BASE'):
-                    block = 'dma_v1/DMA'
-                    if chip['family'] in ('STM32F4', 'STM32F7', 'STM32H7'):
-                        block = 'dma_v2/DMA'
+                    block = 'bdma_v1/DMA'
+                    if dma != 'BDMA' and chip['family'] in ('STM32F4', 'STM32F7', 'STM32H7'):
+                        block = 'dma_v1/DMA'
 
                     p = OrderedDict({
                         'address': addr,
