@@ -393,6 +393,45 @@ def match_rng_clock(rcc):
             return clock
     return None
 
+all_mcu_files = {}
+per_mcu_files = {}
+
+def parse_documentations():
+    print("linking files and documents")
+    with open('sources/mcufinder/files.json', 'r') as j:
+        files = json.load(j)
+        for file in files['Files']:
+            file_id = file['id_file']
+            if file_id not in all_mcu_files:
+                all_mcu_files[file_id] = OrderedDict( {
+                    'name': file['name'],
+                    'title': file['title'],
+                    'url': file['URL'],
+                    'type': file['type'],
+                } )
+
+    with open('sources/mcufinder/mcus.json', 'r') as j:
+        mcus = json.load(j);
+        for mcu in mcus['MCUs']:
+            rpn = mcu['RPN']
+            if rpn not in per_mcu_files:
+                per_mcu_files[rpn] = []
+            for file in mcu['files']:
+                per_mcu_files[rpn].append(file['file_id'])
+
+def documents_for(chip_name, type):
+    docs = []
+    for id in per_mcu_files[chip_name]:
+        if id in all_mcu_files:
+            file = all_mcu_files[id]
+            if file['type'] == type:
+                docs.append( OrderedDict({
+                    'title': file['title'],
+                    'name': file['name'],
+                    'url': file['url'],
+                }))
+
+    return docs
 
 def parse_headers():
     os.makedirs('sources/headers_parsed', exist_ok=True)
@@ -490,20 +529,30 @@ def parse_chips():
                     'name': chip_name,
                     'family': family,
                     'line': r['@Line'],
+                    'packages': [],
+                    'datasheet': None,
+                    'reference-manual': None,
                     'flash': flash,
                     'ram': ram,
                     'cores': cores,
-                    'rcc': rcc,  # temporarily stashing it here
-                    'dma': dma,  # temporarily stashing it here
-                    'packages': [],
                     'peripherals': {},
                     'pins': {},
+                    'application-notes': [],
+                    'rcc': rcc,  # temporarily stashing it here
+                    'dma': dma,  # temporarily stashing it here
                 })
 
             chips[chip_name]['packages'].append(OrderedDict({
                 'name': package_name,
                 'package': r['@Package'],
             }))
+
+            if chip_name in per_mcu_files:
+                if len(ds := documents_for(chip_name, 'Datasheet')) >= 1:
+                    chips[chip_name]['datasheet'] = ds[0]
+                if len(rm := documents_for(chip_name, 'Reference manual')) >= 1:
+                    chips[chip_name]['reference-manual'] = rm[0]
+                chips[chip_name]['application-notes'] = documents_for(chip_name, 'Application note')
 
             # Some packages have some peripehrals removed because the package had to
             # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
@@ -730,7 +779,7 @@ def parse_chips():
         del chip['peripherals']
 
         with open('data/chips/'+chip_name+'.yaml', 'w') as f:
-            f.write(yaml.dump(chip))
+            f.write(yaml.dump(chip, width=500))
 
 
 af = {}
@@ -894,6 +943,7 @@ def parse_clocks():
         clocks[ff] = chip_clocks
 
 
+parse_documentations()
 parse_dma()
 parse_gpio_af()
 parse_headers()
