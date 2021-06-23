@@ -350,6 +350,7 @@ perimap = [
     ('.*:STM32WL_dbgmcu_v1_0', 'dbgmcu_wl/DBGMCU'),
 
     ('.*:IPCC:v1_0', 'ipcc_v1/IPCC'),
+    ('.*:DMAMUX:v1', 'dmamux_v1/DMAMUX'),
 ]
 
 rng_clock_map = [
@@ -658,6 +659,18 @@ def parse_chips():
                     })
                     peris[dma] = p
 
+            # DMAMUX is not in the cubedb XMLs
+            for dma in ('DMAMUX', 'DMAMUX1', "DMAMUX2"):
+                if addr := defines.get(dma+'_BASE'):
+                    kind = 'DMAMUX:v1'
+                    dbg_peri = OrderedDict({
+                        'address': addr,
+                        'kind': kind,
+                    })
+                    if block := match_peri(kind):
+                        dbg_peri['block'] = block
+                    peris[dma] = dbg_peri
+
             # EXTI is not in the cubedb XMLs
             if addr := defines.get('EXTI_BASE'):
                 if chip_name.startswith("STM32WB55"):
@@ -755,12 +768,14 @@ def parse_gpio_af():
 
             pins[pin_name] = afs
 
-        #with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
-            #f.write(yaml.dump(pins))
+        # with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
+            # f.write(yaml.dump(pins))
 
         af[ff] = pins
 
+
 dma_channels = {}
+
 
 def parse_dma():
 
@@ -800,18 +815,18 @@ def parse_dma():
                         if event not in peri_dma['requests']:
                             peri_dma['requests'][event] = request_num
                         #event_dma = peri_dma['requests'][event]
-                        #event_dma.append( OrderedDict( {
-                            #'channel': 'DMAMUX',
-                            #'request': request_num
-                        #} ))
+                        # event_dma.append( OrderedDict( {
+                            # 'channel': 'DMAMUX',
+                            # 'request': request_num
+                        # } ))
                     request_num += 1
                 for n in dma_peri_name.split(","):
-                    n = n.strip();
-                    if result := re.match( '.*' + n + '_Channel\[(\d+)-(\d+)\]', channels[0]['@Name'] ):
+                    n = n.strip()
+                    if result := re.match('.*' + n + '_Channel\[(\d+)-(\d+)\]', channels[0]['@Name']):
                         low = int(result.group(1))
                         high = int(result.group(2))
-                        for i in range(low,high+1):
-                            chip_dma['channels'][n+'_'+str(i)] = OrderedDict( {
+                        for i in range(low, high+1):
+                            chip_dma['channels'][n+'_'+str(i)] = OrderedDict({
                                 'dma': n,
                                 'channel': i,
                             })
@@ -821,7 +836,7 @@ def parse_dma():
                     channel_name = removeprefix(channel_name, dma_peri_name + '_')
                     channel_name = removeprefix(channel_name, "Channel")
                     channel_name = removeprefix(channel_name, "Stream")
-                    chip_dma['channels'][dma_peri_name + '_' + channel_name] =  OrderedDict( {
+                    chip_dma['channels'][dma_peri_name + '_' + channel_name] = OrderedDict({
                         'dma': dma_peri_name,
                         'channel': int(channel_name),
                     })
@@ -832,7 +847,7 @@ def parse_dma():
                         parts = target_name.split('_')
                         target_peri_name = parts[0]
                         if len(parts) < 2:
-                            target_events = [ target_peri_name ]
+                            target_events = [target_peri_name]
                         else:
                             target_events = target_name.split('_')[1].split('/')
                         if target_name != 'MEMTOMEM':
@@ -847,10 +862,12 @@ def parse_dma():
                                 if event not in peri_dma:
                                     peri_dma['channels'][event] = []
                                 event_dma = peri_dma['channels'][event]
-                                event_dma.append( dma_peri_name + '_' + channel_name )
+                                event_dma.append(dma_peri_name + '_' + channel_name)
         dma_channels[ff] = chip_dma
 
+
 clocks = {}
+
 
 def parse_clocks():
     for f in glob('sources/cubedb/mcu/IP/RCC-*rcc_v1_0_Modes.xml'):
