@@ -23,6 +23,15 @@ These are the data sources currently used.
 - STM32Cube database: describes all MCUs, with useful stuff like GPIO AF mappings, DMA stream mappings, pinouts...
 - stm32-rs SVDs: register blocks. YAMLs are extracted and manually cleaned up.
 
+## Install pre-requisites
+
+In order to run the generator, you will need to install the following tools:
+
+* `wget`
+* `git`
+* `jq`
+* `svd` – `pip3 install svdtools` 
+
 ## Generating the YAMLs
 
 - Run `./d download_all`
