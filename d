@@ -3,6 +3,12 @@
 set -e
 cd $(dirname $0)
 
+die() { echo "$*" 1>&2; exit 1; }
+
+for i in jq wget svd git; do
+    command -v "$i" &>/dev/null || die "Missing the command line tool '$i'"
+done
+
 case "$1" in
     download_all)
         ./d download_mcufinder
