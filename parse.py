@@ -838,7 +838,7 @@ def parse_dma():
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/DMA-')
         ff = removesuffix(ff, '_Modes.xml')
 
-        r = xmltodict.parse(open(f, 'rb'),  force_list={'Mode'})
+        r = xmltodict.parse(open(f, 'rb'),  force_list={'Mode', 'RefMode'})
 
         chip_dma = {
             'channels': {},
@@ -886,6 +886,18 @@ def parse_dma():
                                 'channel': i,
                             })
             else:
+                # see if we can scrape out requests
+                requests = {}
+
+                request_blocks = filter(lambda x: x['@BaseMode'] == 'DMA_Request', r['IP']['RefMode'])
+                for block in request_blocks:
+                    name = block['@Name']
+                    request_num = next(filter(lambda x: x['@Name'] == 'Channel', block['Parameter']), None)
+                    if request_num is not None:
+                        request_num = request_num['PossibleValue']
+                        request_num = removeprefix(request_num, "DMA_CHANNEL_")
+                        requests[name] = int(request_num)
+
                 for channel in channels:
                     channel_name = channel['@Name']
                     channel_name = removeprefix(channel_name, dma_peri_name + '_')
@@ -897,6 +909,7 @@ def parse_dma():
                     })
                     for target in channel['ModeLogicOperator']['Mode']:
                         target_name = target['@Name']
+                        original_target_name = target_name
                         parts = target_name.split(':')
                         target_name = parts[0]
                         parts = target_name.split('_')
@@ -914,10 +927,15 @@ def parse_dma():
                                     event = event.split(':')[0]
                                 if 'channels' not in peri_dma:
                                     peri_dma['channels'] = {}
-                                if event not in peri_dma:
+                                if event not in peri_dma['channels']:
                                     peri_dma['channels'][event] = []
                                 event_dma = peri_dma['channels'][event]
-                                event_dma.append(dma_peri_name + '_' + channel_name)
+                                entry = OrderedDict({
+                                    'channel': dma_peri_name + '_' + channel_name,
+                                } )
+                                if original_target_name in requests:
+                                    entry['request'] = requests[original_target_name]
+                                event_dma.append( entry )
         dma_channels[ff] = chip_dma
 
 
