@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import xmltodict
 import yaml
 try:
@@ -305,6 +307,7 @@ perimap = [
     ('.*:SPI:spi2s2_v1_1', 'spi_v3/SPI'),
     ('.*:SPI:spi2s2_v1_0', 'spi_v3/SPI'),
     ('.*:I2C:i2c1_v1_5', 'i2c_v1/I2C'),
+    ('.*:I2C:i2c2_v1_1', 'i2c_v2/I2C'),
     ('.*:I2C:i2c2_v1_1F7', 'i2c_v2/I2C'),
     ('.*:DAC:dacif_v2_0', 'dac_v2/DAC'),
     ('.*:DAC:dacif_v3_0', 'dac_v2/DAC'),
