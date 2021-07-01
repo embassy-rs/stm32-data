@@ -507,8 +507,11 @@ def parse_chips():
             dma = next(filter(lambda x: x['@Name'] == 'DMA', r['IP']))['@Version']
 
             rcc = next(filter(lambda x: x['@Name'] == 'RCC', r['IP']))['@Version']
+            print("RCC ", rcc);
+
             rcc = removesuffix(rcc, '-rcc_v1_0')
             rcc = removesuffix(rcc, '_rcc_v1_0')
+
 
             core = r['Core']
             family = r['@Family']
@@ -665,6 +668,8 @@ def parse_chips():
                     p['clock'] = clocks[rcc][pname]
                 elif chip['family'] == 'STM32H7' and pname == "SPI6":
                     p['clock'] = "APB4"
+                elif chip['family'] == 'STM32H7' and pname.startswith('UART'):
+                    p['clock'] = "APB1"
 
                 if block := match_peri(chip_name+':'+pname+':'+pkind):
                     p['block'] = block
