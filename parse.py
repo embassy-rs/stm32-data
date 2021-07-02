@@ -915,11 +915,14 @@ def parse_dma():
                         request_num = removeprefix(request_num, "DMA_CHANNEL_")
                         requests[name] = int(request_num)
 
+                channel_names = []
                 for channel in channels:
                     channel_name = channel['@Name']
                     channel_name = removeprefix(channel_name, dma_peri_name + '_')
                     channel_name = removeprefix(channel_name, "Channel")
                     channel_name = removeprefix(channel_name, "Stream")
+
+                    channel_names.append(channel_name)
                     chip_dma['channels'][dma_peri_name + '_' + channel_name] = OrderedDict({
                         'dma': dma_peri_name,
                         'channel': int(channel_name),
@@ -953,6 +956,12 @@ def parse_dma():
                                 if original_target_name in requests:
                                     entry['request'] = requests[original_target_name]
                                 event_dma.append(entry)
+
+                # Make sure all channels numbers start at 0
+                if min(map(int, channel_names)) != 0:
+                    for name in channel_names:
+                        chip_dma['channels'][dma_peri_name + '_' + name]['channel'] -= 1
+
         dma_channels[ff] = chip_dma
 
 
