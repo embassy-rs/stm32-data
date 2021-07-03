@@ -297,7 +297,7 @@ perimap = [
     ('.*:USART:sci3_v1_2', 'usart_v3/USART'),
     ('.*:USART:sci3_v2_0', 'usart_v3/USART'),
     ('.*:USART:sci3_v2_1', 'usart_v3/USART'),
-    ('.*:UART:sci2_v3_0', 'usart_v3/USART' ),
+    ('.*:UART:sci2_v3_0', 'usart_v3/USART'),
     ('.*:RNG:rng1_v1_1', 'rng_v1/RNG'),
     ('.*:RNG:rng1_v2_0', 'rng_v1/RNG'),
     ('.*:RNG:rng1_v2_1', 'rng_v1/RNG'),
@@ -397,8 +397,10 @@ def match_rng_clock(rcc):
             return clock
     return None
 
+
 all_mcu_files = {}
 per_mcu_files = {}
+
 
 def parse_documentations():
     print("linking files and documents")
@@ -407,15 +409,15 @@ def parse_documentations():
         for file in files['Files']:
             file_id = file['id_file']
             if file_id not in all_mcu_files:
-                all_mcu_files[file_id] = OrderedDict( {
+                all_mcu_files[file_id] = OrderedDict({
                     'name': file['name'],
                     'title': file['title'],
                     'url': file['URL'],
                     'type': file['type'],
-                } )
+                })
 
     with open('sources/mcufinder/mcus.json', 'r') as j:
-        mcus = json.load(j);
+        mcus = json.load(j)
         for mcu in mcus['MCUs']:
             rpn = mcu['RPN']
             if rpn not in per_mcu_files:
@@ -423,19 +425,21 @@ def parse_documentations():
             for file in mcu['files']:
                 per_mcu_files[rpn].append(file['file_id'])
 
+
 def documents_for(chip_name, type):
     docs = []
     for id in per_mcu_files[chip_name]:
         if id in all_mcu_files:
             file = all_mcu_files[id]
             if file['type'] == type:
-                docs.append( OrderedDict({
+                docs.append(OrderedDict({
                     'title': file['title'],
                     'name': file['name'],
                     'url': file['url'],
                 }))
 
     return docs
+
 
 def parse_headers():
     os.makedirs('sources/headers_parsed', exist_ok=True)
@@ -510,7 +514,6 @@ def parse_chips():
 
             rcc = removesuffix(rcc, '-rcc_v1_0')
             rcc = removesuffix(rcc, '_rcc_v1_0')
-
 
             core = r['Core']
             family = r['@Family']
@@ -673,6 +676,8 @@ def parse_chips():
                     p['clock'] = "APB4"
                 elif chip['family'] == 'STM32H7' and pname.startswith('I2C'):
                     p['clock'] = "APB1"
+                elif chip['family'] == 'STM32F0' and pname == 'USART1':
+                    p['clock'] = "APB2"
 
                 if block := match_peri(chip_name+':'+pname+':'+pkind):
                     p['block'] = block
@@ -944,10 +949,10 @@ def parse_dma():
                                 event_dma = peri_dma['channels'][event]
                                 entry = OrderedDict({
                                     'channel': dma_peri_name + '_' + channel_name,
-                                } )
+                                })
                                 if original_target_name in requests:
                                     entry['request'] = requests[original_target_name]
-                                event_dma.append( entry )
+                                event_dma.append(entry)
         dma_channels[ff] = chip_dma
 
 
