@@ -364,16 +364,6 @@ perimap = [
     ('.*:DMA', 'bdma_v1/DMA'),
 ]
 
-rng_clock_map = [
-    ('STM32L0.*:RNG:.*', 'AHB'),
-    ('STM32L4.*:RNG:.*', 'AHB2'),
-    ('STM32F4.*:RNG:.*', 'AHB2'),
-    ('STM32H7.*:RNG:.*', 'AHB2'),
-    ('STM32WB55.*:RNG:.*', 'AHB3'),
-    ('STM32WL5.*:RNG:.*', 'AHB3')
-]
-
-
 def match_peri(peri):
     for r, block in perimap:
         if re.match('^'+r+'$', peri):
@@ -388,13 +378,6 @@ def find_af(gpio_af, peri_name, pin_name, signal_name):
         if pin_name in af[gpio_af]:
             if peri_name + '_' + signal_name in af[gpio_af][pin_name]:
                 return af[gpio_af][pin_name][peri_name + '_' + signal_name]
-    return None
-
-
-def match_rng_clock(rcc):
-    for r, clock in rng_clock_map:
-        if re.match(r, rcc):
-            return clock
     return None
 
 
@@ -668,16 +651,6 @@ def parse_chips():
 
                 if pname in clocks[rcc]:
                     p['clock'] = clocks[rcc][pname]
-                elif chip['family'] == 'STM32H7' and pname == "SPI6":
-                    p['clock'] = "APB4"
-                elif chip['family'] == 'STM32H7' and pname.startswith('UART'):
-                    p['clock'] = "APB1"
-                elif chip['family'] == 'STM32H7' and pname == "I2C4":
-                    p['clock'] = "APB4"
-                elif chip['family'] == 'STM32H7' and pname.startswith('I2C'):
-                    p['clock'] = "APB1"
-                elif chip['family'] == 'STM32F0' and pname == 'USART1':
-                    p['clock'] = "APB2"
 
                 if block := match_peri(chip_name+':'+pname+':'+pkind):
                     p['block'] = block
@@ -685,11 +658,6 @@ def parse_chips():
                 if pname in chip['pins']:
                     if len(chip['pins'][pname]) > 0:
                         p['pins'] = chip['pins'][pname]
-
-                # RNG Clock definitions are not easily determined, so lookup in mapping
-                if block is not None and block.startswith("rng_"):
-                    if (clock := match_rng_clock(chip_name+':'+pname+':'+pkind)) != None:
-                        p['clock'] = clock
 
                 if pname in dma_channels[chip_dma]['peripherals']:
                     if 'channels' in dma_channels[chip_dma]['peripherals'][pname]:
@@ -743,6 +711,7 @@ def parse_chips():
                         dbg_peri['block'] = block
                     peris[dma] = dbg_peri
 
+
             # EXTI is not in the cubedb XMLs
             if addr := defines.get('EXTI_BASE'):
                 if chip_name.startswith("STM32WB55"):
@@ -790,6 +759,14 @@ def parse_chips():
                 peris['CRS'] = crs_peri
 
             core['peripherals'] = peris
+
+            if 'block' in core['peripherals']['RCC']:
+                rcc_block = core['peripherals']['RCC']['block']
+
+                for (name, body) in core['peripherals'].items():
+                    if 'clock' not in body:
+                        if (peri_clock := match_peri_clock(rcc_block, name)) is not None:
+                            core['peripherals'][name]['clock'] = peri_clock
 
         # remove all pins from the root of the chip before emitting.
         del chip['pins']
@@ -967,7 +944,6 @@ def parse_dma():
 
 clocks = {}
 
-
 def parse_clocks():
     for f in glob('sources/cubedb/mcu/IP/RCC-*rcc_v1_0_Modes.xml'):
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/RCC-')
@@ -986,7 +962,37 @@ def parse_clocks():
 
         clocks[ff] = chip_clocks
 
+peripheral_to_clock = {}
 
+def parse_rcc_regs():
+    print("parsing RCC registers")
+    for f in glob('data/registers/rcc_*'):
+        ff = removeprefix(f, 'data/registers/rcc_')
+        ff = removesuffix(ff, '.yaml')
+        family_clocks = {}
+        with open(f, 'r') as yaml_file:
+            y = yaml.load(yaml_file, Loader=SafeLoader)
+            for (key, body) in y.items():
+                if key.startswith("fieldset/A") and key.endswith("ENR"):
+                    clock = removesuffix(key, "ENR")
+                    clock = removeprefix(clock, "fieldset/")
+                    for field in body['fields']:
+                        if field['name'].endswith('EN'):
+                            peri = removesuffix(field['name'], 'EN')
+                            family_clocks[peri] = clock
+        peripheral_to_clock['rcc_' + ff + '/RCC'] = family_clocks
+
+def match_peri_clock(rcc_block, peri_name):
+    if rcc_block in peripheral_to_clock:
+        family_clocks = peripheral_to_clock[rcc_block]
+        if peri_name in family_clocks:
+            return family_clocks[peri_name]
+        #print("found no clock for ", peri_name)
+        if peri_name.endswith("1"):
+            return match_peri_clock(rcc_block, removesuffix(peri_name, "1"))
+        return None
+
+parse_rcc_regs()
 parse_documentations()
 parse_dma()
 parse_gpio_af()
