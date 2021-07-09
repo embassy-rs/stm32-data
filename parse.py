@@ -976,6 +976,8 @@ def parse_rcc_regs():
                 if key.startswith("fieldset/A") and key.endswith("ENR"):
                     clock = removesuffix(key, "ENR")
                     clock = removeprefix(clock, "fieldset/")
+                    clock = removesuffix(clock, "L")
+                    clock = removesuffix(clock, "H")
                     for field in body['fields']:
                         if field['name'].endswith('EN'):
                             peri = removesuffix(field['name'], 'EN')
