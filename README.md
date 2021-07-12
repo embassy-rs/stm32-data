@@ -10,7 +10,7 @@ families, including:
 - :heavy_check_mark: Interrupts
 - :heavy_check_mark: GPIO AlternateFunction mappings (except F1)
 - :construction: Register blocks for all peripherals
-- :x: DMA stream mappings
+- :construction: DMA stream mappings
 - :x: Per-package pinouts
 - :heavy_check_mark: Links to applicable reference manuals, datasheets, appnotes PDFs.
 
