@@ -841,7 +841,6 @@ dma_channels = {}
 
 def parse_dma():
     for f in glob('sources/cubedb/mcu/IP/*DMA-*Modes.xml'):
-        print("---> ", f)
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/')
         if not ( ff.startswith('B') or ff.startswith( 'D' ) ):
             continue
@@ -887,20 +886,15 @@ def parse_dma():
                         # } ))
                     request_num += 1
                 for n in dma_peri_name.split(","):
-                    print("search channels for :: ", dma_peri_name)
                     n = n.strip()
-                    print("n = ", n)
                     if result := re.match('.*' + n + '_(Channel|Stream)\[(\d+)-(\d+)\]', channels[0]['@Name']):
                         low = int(result.group(2))
                         high = int(result.group(3))
-                        print(low, " - ", high)
                         for i in range(low, high+1):
                             chip_dma['channels'][n+'_'+str(i)] = OrderedDict({
                                 'dma': n,
                                 'channel': i,
                             })
-                    else:
-                        print("none found")
 
             else:
                 # see if we can scrape out requests
