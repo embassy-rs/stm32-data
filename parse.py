@@ -491,7 +491,15 @@ def parse_chips():
             gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version']
             gpio_af = removesuffix(gpio_af, '_gpio_v1_0')
 
-            dma = next(filter(lambda x: x['@Name'] == 'DMA', r['IP']))['@Version']
+            dma = next(filter(lambda x: x['@Name'] == 'DMA', r['IP']), None)
+            bdma = next(filter(lambda x: x['@Name'] == 'BDMA', r['IP']), None)
+
+            if dma is not None:
+                dma = dma['@Version']
+            if bdma is not None:
+                bdma = bdma['@Version']
+            #dma = next(filter(lambda x: x['@Name'] == 'DMA', r['IP']), None)['@Version']
+            #bdma = next(filter(lambda x: x['@Name'] == 'BDMA', r['IP']), None)['@Version']
 
             rcc = next(filter(lambda x: x['@Name'] == 'RCC', r['IP']))['@Version']
 
@@ -532,6 +540,7 @@ def parse_chips():
                     'application-notes': [],
                     'rcc': rcc,  # temporarily stashing it here
                     'dma': dma,  # temporarily stashing it here
+                    'bdma': bdma,  # temporarily stashing it here
                 })
 
             chips[chip_name]['packages'].append(OrderedDict({
@@ -606,6 +615,9 @@ def parse_chips():
         chip_dma = chip['dma']
         del chip['dma']
 
+        chip_bdma = chip['bdma']
+        del chip['bdma']
+
         h = find_header(chip_name)
         if h is None:
             raise Exception("missing header for {}".format(chip_name))
@@ -624,8 +636,11 @@ def parse_chips():
             defines = h['defines'][core_name]
 
             core['interrupts'] = interrupts
+            core['dma_channels'] = {}
             if chip_dma in dma_channels:
-                core['dma_channels'] = dma_channels[chip_dma]['channels']
+                core['dma_channels'].update(dma_channels[chip_dma]['channels'])
+            if chip_bdma in dma_channels:
+                core['dma_channels'].update(dma_channels[chip_bdma]['channels'])
     #        print("INterrupts for", core, ":", interrupts)
             #print("Defines for", core, ":", defines)
 
@@ -634,8 +649,6 @@ def parse_chips():
                 addr = defines.get(pname)
                 if addr is None:
                     if pname == 'ADC_COMMON':
-                        addr = defines.get('ADC_COMMON')
-                        if addr is None:
                             addr = defines.get('ADC1_COMMON')
                             if addr is None:
                                 addr = defines.get('ADC12_COMMON')
@@ -828,6 +841,7 @@ dma_channels = {}
 
 def parse_dma():
     for f in glob('sources/cubedb/mcu/IP/*DMA-*Modes.xml'):
+        print("---> ", f)
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/')
         if not ( ff.startswith('B') or ff.startswith( 'D' ) ):
             continue
@@ -873,15 +887,20 @@ def parse_dma():
                         # } ))
                     request_num += 1
                 for n in dma_peri_name.split(","):
+                    print("search channels for :: ", dma_peri_name)
                     n = n.strip()
+                    print("n = ", n)
                     if result := re.match('.*' + n + '_(Channel|Stream)\[(\d+)-(\d+)\]', channels[0]['@Name']):
                         low = int(result.group(2))
                         high = int(result.group(3))
+                        print(low, " - ", high)
                         for i in range(low, high+1):
                             chip_dma['channels'][n+'_'+str(i)] = OrderedDict({
                                 'dma': n,
                                 'channel': i,
                             })
+                    else:
+                        print("none found")
 
             else:
                 # see if we can scrape out requests
