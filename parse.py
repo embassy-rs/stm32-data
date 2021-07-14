@@ -903,10 +903,12 @@ def parse_dma():
                 request_blocks = filter(lambda x: x['@BaseMode'] == 'DMA_Request', r['IP']['RefMode'])
                 for block in request_blocks:
                     name = block['@Name']
-                    request_num = next(filter(lambda x: x['@Name'] == 'Channel', block['Parameter']), None)
+                    # Depending on the chip, the naming is "Channel" or "Request"...
+                    request_num = next(filter(lambda x: x['@Name'] in ('Channel', 'Request'), block['Parameter']), None)
                     if request_num is not None:
                         request_num = request_num['PossibleValue']
                         request_num = removeprefix(request_num, "DMA_CHANNEL_")
+                        request_num = removeprefix(request_num, "DMA_REQUEST_")
                         requests[name] = int(request_num)
 
                 channel_names = []
