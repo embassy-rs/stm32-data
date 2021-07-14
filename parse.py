@@ -359,6 +359,8 @@ perimap = [
     ('.*:BDMA:DMA', 'bdma_v1/DMA'),
     ('STM32L4[PQRS].*:.*:DMA', 'bdma_v1/DMA'),  # L4+
     ('STM32L[04].*:.*:DMA', 'bdma_v2/DMA'),  # L0, L4 non-plus (since plus is handled above)
+    ('STM32F030.C.*:.*:DMA', 'bdma_v2/DMA'),  # Weird F0
+    ('STM32F09.*:.*:DMA', 'bdma_v2/DMA'),  # Weird F0
     ('STM32F[247].*:.*:DMA', 'dma_v2/DMA'),
     ('STM32H7.*:.*:DMA', 'dma_v1/DMA'),
     ('.*:DMA', 'bdma_v1/DMA'),
