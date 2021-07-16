@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import xmltodict
 import yaml
 try:
@@ -444,6 +445,7 @@ dma_request_headers_parsed = {}
 
 def adjust_dma_requests(chip_name, pname, requests):
     adjusted = {}
+    adjusted.update( requests )
 
     if (dma_request_header := find_dma_request_header(chip_name)) is not None:
         for (request, original) in requests.items():
@@ -473,12 +475,11 @@ def adjust_dma_requests(chip_name, pname, requests):
                     define = dmamux_request_header['defines']['all'].get(define_name)
 
             if define is not None:
-                adjusted[request] = define
+                adjusted[request]['request'] = define
             else:
-                adjusted[request] = original
-        return adjusted
-    else:
-        return requests
+                adjusted[request]['request'] = original['request']
+
+    return adjusted
 
 def find_dma_request_header(chip_name):
     target = chip_name.lower()
@@ -558,6 +559,9 @@ def parse_chips():
     for f in sorted(glob('sources/cubedb/mcu/STM32*.xml')):
         if 'STM32MP' in f:
             continue
+        if len(sys.argv) > 1:
+            if not sys.argv[1] in f:
+                continue
         print(f)
 
         r = xmltodict.parse(open(f, 'rb'))['Mcu']
@@ -693,6 +697,9 @@ def parse_chips():
                         pins[peri_name].append(entry)
 
     for chip_name, chip in chips.items():
+        if len(sys.argv) > 1:
+            if not chip_name.startswith(sys.argv[1]):
+                continue
         print(f'* processing chip {chip_name}')
         rcc = chip['rcc']
         del chip['rcc']
@@ -762,6 +769,11 @@ def parse_chips():
                         p['dma_channels'] = dma_channels[chip_dma]['peripherals'][pname]['channels']
                     if 'requests' in dma_channels[chip_dma]['peripherals'][pname]:
                         p['dma_requests'] = adjust_dma_requests(chip_name, pname, dma_channels[chip_dma]['peripherals'][pname]['requests'])
+                if chip_bdma is not None and pname in dma_channels[chip_bdma]['peripherals']:
+                    if 'channels' in dma_channels[chip_bdma]['peripherals'][pname]:
+                        p['dma_channels'] = dma_channels[chip_bdma]['peripherals'][pname]['channels']
+                    if 'requests' in dma_channels[chip_bdma]['peripherals'][pname]:
+                        p['dma_requests'] = adjust_dma_requests(chip_name, pname, dma_channels[chip_bdma]['peripherals'][pname]['requests'])
 
                 peris[pname] = p
 
@@ -923,12 +935,14 @@ def parse_gpio_af():
 
 dma_channels = {}
 
-
 def parse_dma():
     for f in glob('sources/cubedb/mcu/IP/*DMA-*Modes.xml'):
+        is_explicitly_bdma = False
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/')
         if not ( ff.startswith('B') or ff.startswith( 'D' ) ):
             continue
+        if ff.startswith("BDMA"):
+            is_explicitly_bdma = True
         ff = removeprefix(ff, 'DMA-')
         ff = removeprefix(ff, 'BDMA-')
         ff = removesuffix(ff, '_Modes.xml')
@@ -963,7 +977,17 @@ def parse_dma():
                         if 'requests' not in peri_dma:
                             peri_dma['requests'] = {}
                         if event not in peri_dma['requests']:
-                            peri_dma['requests'][event] = request_num
+                            if is_explicitly_bdma:
+                                peri_dma['requests'][event] = {
+                                    "dmamux": "DMAMUX2",
+                                    "request": request_num,
+                                }
+                            else:
+                                #peri_dma['requests'][event] = request_num
+                                peri_dma['requests'][event] = {
+                                    "dmamux": "DMAMUX1",
+                                    "request": request_num,
+                                }
                     request_num += 1
                 for n in dma_peri_name.split(","):
                     n = n.strip()
@@ -1039,7 +1063,6 @@ def parse_dma():
                         chip_dma['channels'][dma_peri_name + '_' + name]['channel'] -= 1
 
         dma_channels[ff] = chip_dma
-
 
 clocks = {}
 
