@@ -440,6 +440,94 @@ def parse_headers():
 
         headers_parsed[ff] = res
 
+dma_request_headers_parsed = {}
+
+def adjust_dma_requests(chip_name, pname, requests):
+    adjusted = {}
+
+    if (dma_request_header := find_dma_request_header(chip_name)) is not None:
+        for (request, original) in requests.items():
+            define_name = 'DMA_REQUEST_' + pname
+            if pname != request:
+                define_name += '_' + request
+            define = dma_request_header['defines']['all'].get(define_name)
+            if define is None:
+                if request == 'RD':
+                    define_name = 'DMA_REQUEST_' + pname + '_READ'
+                if request == 'WR':
+                    define_name = 'DMA_REQUEST_' + pname + '_WRITE'
+            define = dma_request_header['defines']['all'].get(define_name)
+
+            if define == 0:
+                # check the _ll maybe
+                if (dmamux_request_header := find_dmamux_request_header(chip_name)) is not None:
+                    define_name = 'LL_DMAMUX_REQ_' + pname
+                    if pname != request:
+                        define_name += '_' + request
+                    define = dmamux_request_header['defines']['all'].get(define_name)
+                    if define is None:
+                        if request == 'RD':
+                            define_name = 'LL_DMAMUX_REQ_' + pname + '_READ'
+                        if request == 'WR':
+                            define_name = 'LL_DMAMUX_REQ_' + pname + '_WRITE'
+                    define = dmamux_request_header['defines']['all'].get(define_name)
+
+            if define is not None:
+                adjusted[request] = define
+            else:
+                adjusted[request] = original
+        return adjusted
+    else:
+        return requests
+
+def find_dma_request_header(chip_name):
+    target = chip_name.lower()
+    for (name, headers) in dma_request_headers_parsed.items():
+        if target.startswith(name):
+            return headers
+    return None
+
+def find_dmamux_request_header(chip_name):
+    target = chip_name.lower()
+    for (name, headers) in dma_request_headers_parsed.items():
+        if name.endswith("_ll") and target.startswith(removesuffix(name, '_ll')):
+            return headers
+    return None
+
+
+def parse_dma_request_headers():
+    os.makedirs('sources/dma_headers_parsed', exist_ok=True)
+    print("loading dma request headers...")
+    for f in glob('./sources/git/*/Drivers/*/Inc/*_hal_dma.h'):
+        last_slash = f.rfind('/')
+        ff = f[last_slash + 1:]
+        ff = removesuffix(ff, "xx_hal_dma.h")
+
+        try:
+            with open('sources/dma_headers_parsed/{}.json'.format(ff), 'r') as j:
+                res = json.load(j)
+        except:
+            res = parse_header(f)
+            with open('sources/dma_headers_parsed/{}.json'.format(ff), 'w') as j:
+                json.dump(res, j)
+
+        dma_request_headers_parsed[ff] = res
+
+    for f in glob('./sources/git/*/Drivers/*/Inc/*_ll_dma.h'):
+        last_slash = f.rfind('/')
+        ff = f[last_slash + 1:]
+        ff = removesuffix(ff, "xx_ll_dma.h")
+
+        try:
+            with open('sources/dma_headers_parsed/{}.json'.format(ff), 'r') as j:
+                res = json.load(j)
+        except:
+            res = parse_header(f)
+            with open('sources/dma_headers_parsed/{}.json'.format(ff), 'w') as j:
+                json.dump(res, j)
+
+        dma_request_headers_parsed[ff + '_ll'] = res
+
 
 def chip_name_from_package_name(x):
     name_map = [
@@ -673,7 +761,7 @@ def parse_chips():
                     if 'channels' in dma_channels[chip_dma]['peripherals'][pname]:
                         p['dma_channels'] = dma_channels[chip_dma]['peripherals'][pname]['channels']
                     if 'requests' in dma_channels[chip_dma]['peripherals'][pname]:
-                        p['dma_requests'] = dma_channels[chip_dma]['peripherals'][pname]['requests']
+                        p['dma_requests'] = adjust_dma_requests(chip_name, pname, dma_channels[chip_dma]['peripherals'][pname]['requests'])
 
                 peris[pname] = p
 
@@ -876,11 +964,6 @@ def parse_dma():
                             peri_dma['requests'] = {}
                         if event not in peri_dma['requests']:
                             peri_dma['requests'][event] = request_num
-                        #event_dma = peri_dma['requests'][event]
-                        # event_dma.append( OrderedDict( {
-                            # 'channel': 'DMAMUX',
-                            # 'request': request_num
-                        # } ))
                     request_num += 1
                 for n in dma_peri_name.split(","):
                     n = n.strip()
@@ -1010,6 +1093,7 @@ def match_peri_clock(rcc_block, peri_name):
             return match_peri_clock(rcc_block, removesuffix(peri_name, "1"))
         return None
 
+parse_dma_request_headers()
 parse_rcc_regs()
 parse_documentations()
 parse_dma()
