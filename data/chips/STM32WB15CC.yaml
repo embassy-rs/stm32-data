@@ -42,17 +42,23 @@ cores:
         signal: IN3
       - pin: PA4
         signal: IN9
-      dma_requests:
-        ADC1: 5
+      dma_channels:
+        ADC1:
+        - dmamux: DMAMUX1
+          request: 5
     ADC_COMMON:
       address: 0x40012700
       kind: ADC_COMMON:aditf5_v2_1
     AES2:
       address: 0x58001800
       kind: AES:aes3_v1_0_WB
-      dma_requests:
-        IN: 39
-        OUT: 40
+      dma_channels:
+        IN:
+        - dmamux: DMAMUX1
+          request: 39
+        OUT:
+        - dmamux: DMAMUX1
+          request: 40
     COMP1:
       address: 0x40010200
       kind: COMP:TSMC90_Dory
@@ -138,9 +144,13 @@ cores:
       - pin: PA1
         signal: SMBA
         af: 4
-      dma_requests:
-        RX: 10
-        TX: 11
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 10
+        TX:
+        - dmamux: DMAMUX1
+          request: 11
     IPCC:
       address: 0x58000c00
       kind: IPCC:v1_0
@@ -211,9 +221,13 @@ cores:
       - pin: PA6
         signal: CTS
         af: 8
-      dma_requests:
-        RX: 16
-        TX: 17
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 16
+        TX:
+        - dmamux: DMAMUX1
+          request: 17
     PKA:
       address: 0x58002000
       kind: PKA:pka32_v1_0
@@ -301,9 +315,13 @@ cores:
       - pin: PA4
         signal: NSS
         af: 5
-      dma_requests:
-        RX: 6
-        TX: 7
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 6
+        TX:
+        - dmamux: DMAMUX1
+          request: 7
     SYSCFG:
       address: 0x40010000
       kind: SYS:STM32WB55_sys_v1_0
@@ -346,14 +364,28 @@ cores:
       - pin: PA8
         signal: CH1
         af: 1
-      dma_requests:
-        CH1: 21
-        CH2: 22
-        CH3: 23
-        CH4: 24
-        COM: 27
-        TRIG: 26
-        UP: 25
+      dma_channels:
+        CH1:
+        - dmamux: DMAMUX1
+          request: 21
+        CH2:
+        - dmamux: DMAMUX1
+          request: 22
+        CH3:
+        - dmamux: DMAMUX1
+          request: 23
+        CH4:
+        - dmamux: DMAMUX1
+          request: 24
+        COM:
+        - dmamux: DMAMUX1
+          request: 27
+        TRIG:
+        - dmamux: DMAMUX1
+          request: 26
+        UP:
+        - dmamux: DMAMUX1
+          request: 25
     TIM2:
       address: 0x40000000
       kind: TIM1_8WB5:gptimer2_v3_x
@@ -380,12 +412,22 @@ cores:
       - pin: PA1
         signal: CH2
         af: 1
-      dma_requests:
-        CH1: 28
-        CH2: 29
-        CH3: 30
-        CH4: 31
-        UP: 32
+      dma_channels:
+        CH1:
+        - dmamux: DMAMUX1
+          request: 28
+        CH2:
+        - dmamux: DMAMUX1
+          request: 29
+        CH3:
+        - dmamux: DMAMUX1
+          request: 30
+        CH4:
+        - dmamux: DMAMUX1
+          request: 31
+        UP:
+        - dmamux: DMAMUX1
+          request: 32
     TSC:
       address: 0x40024000
       kind: TSC:tsc1_v1_0
@@ -453,9 +495,13 @@ cores:
       - pin: PA8
         signal: CK
         af: 7
-      dma_requests:
-        RX: 14
-        TX: 15
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 14
+        TX:
+        - dmamux: DMAMUX1
+          request: 15
     VREFINTCAL:
       address: 0x1fff75aa
       block: vrefintcal_v1/VREFINTCAL
@@ -510,48 +556,41 @@ cores:
     USART1: 36
     WWDG: 0
   dma_channels:
-    DMA1_1:
+    DMA1_CH0:
+      dma: DMA1
+      channel: 0
+      dmamux: DMAMUX1
+      dmamux_channel: 0
+    DMA1_CH1:
       dma: DMA1
       channel: 1
-    DMA1_2:
+      dmamux: DMAMUX1
+      dmamux_channel: 1
+    DMA1_CH2:
       dma: DMA1
       channel: 2
-    DMA1_3:
+      dmamux: DMAMUX1
+      dmamux_channel: 2
+    DMA1_CH3:
       dma: DMA1
       channel: 3
-    DMA1_4:
+      dmamux: DMAMUX1
+      dmamux_channel: 3
+    DMA1_CH4:
       dma: DMA1
       channel: 4
-    DMA1_5:
+      dmamux: DMAMUX1
+      dmamux_channel: 4
+    DMA1_CH5:
       dma: DMA1
       channel: 5
-    DMA1_6:
+      dmamux: DMAMUX1
+      dmamux_channel: 5
+    DMA1_CH6:
       dma: DMA1
       channel: 6
-    DMA1_7:
-      dma: DMA1
-      channel: 7
-    DMA2_1:
-      dma: DMA2
-      channel: 1
-    DMA2_2:
-      dma: DMA2
-      channel: 2
-    DMA2_3:
-      dma: DMA2
-      channel: 3
-    DMA2_4:
-      dma: DMA2
-      channel: 4
-    DMA2_5:
-      dma: DMA2
-      channel: 5
-    DMA2_6:
-      dma: DMA2
-      channel: 6
-    DMA2_7:
-      dma: DMA2
-      channel: 7
+      dmamux: DMAMUX1
+      dmamux_channel: 6
 application-notes:
 - title: Electrostatic discharge sensitivity measurement
   name: CD00004125

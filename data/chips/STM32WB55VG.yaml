@@ -56,9 +56,11 @@ cores:
         signal: IN10
       - pin: PA4
         signal: IN9
-      dma_requests:
-        ADC1: 5
       clock: AHB2
+      dma_channels:
+        ADC1:
+        - dmamux: DMAMUX1
+          request: 5
     ADC_COMMON:
       address: 0x50040300
       kind: ADC_COMMON:aditf5_v2_0
@@ -66,17 +68,25 @@ cores:
     AES1:
       address: 0x50060000
       kind: AES:aes3_v1_0_WB
-      dma_requests:
-        IN: 37
-        OUT: 38
       clock: AHB2
+      dma_channels:
+        IN:
+        - dmamux: DMAMUX1
+          request: 37
+        OUT:
+        - dmamux: DMAMUX1
+          request: 38
     AES2:
       address: 0x58001800
       kind: AES:aes3_v1_0_WB
-      dma_requests:
-        IN: 39
-        OUT: 40
       clock: AHB3
+      dma_channels:
+        IN:
+        - dmamux: DMAMUX1
+          request: 39
+        OUT:
+        - dmamux: DMAMUX1
+          request: 40
     COMP1:
       address: 0x40010200
       kind: COMP:TSMC90_Dory
@@ -223,9 +233,13 @@ cores:
       - pin: PA9
         signal: SCL
         af: 4
-      dma_requests:
-        RX: 10
-        TX: 11
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 10
+        TX:
+        - dmamux: DMAMUX1
+          request: 11
     I2C3:
       address: 0x40005c00
       kind: I2C:i2c2_v1_1
@@ -262,9 +276,13 @@ cores:
       - pin: PB2
         signal: SMBA
         af: 4
-      dma_requests:
-        RX: 12
-        TX: 13
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 12
+        TX:
+        - dmamux: DMAMUX1
+          request: 13
     IPCC:
       address: 0x58000c00
       kind: IPCC:v1_0
@@ -565,9 +583,13 @@ cores:
       - pin: PB10
         signal: RX
         af: 8
-      dma_requests:
-        RX: 16
-        TX: 17
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 16
+        TX:
+        - dmamux: DMAMUX1
+          request: 17
     PKA:
       address: 0x58002000
       kind: PKA:pka32_v1_0
@@ -615,8 +637,10 @@ cores:
       - pin: PB10
         signal: CLK
         af: 10
-      dma_requests:
-        QUADSPI: 20
+      dma_channels:
+        QUADSPI:
+        - dmamux: DMAMUX1
+          request: 20
     RCC:
       address: 0x58000000
       kind: RCC:STM32W_rcc_v1_0
@@ -785,9 +809,13 @@ cores:
       - pin: PA4
         signal: FS_B
         af: 13
-      dma_requests:
-        A: 18
-        B: 19
+      dma_channels:
+        A:
+        - dmamux: DMAMUX1
+          request: 18
+        B:
+        - dmamux: DMAMUX1
+          request: 19
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_1
@@ -830,9 +858,13 @@ cores:
       - pin: PA4
         signal: NSS
         af: 5
-      dma_requests:
-        RX: 6
-        TX: 7
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 6
+        TX:
+        - dmamux: DMAMUX1
+          request: 7
     SPI2:
       address: 0x40003800
       kind: SPI:spi2s1_v3_5
@@ -883,9 +915,13 @@ cores:
       - pin: PA9
         signal: SCK
         af: 5
-      dma_requests:
-        RX: 8
-        TX: 9
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 8
+        TX:
+        - dmamux: DMAMUX1
+          request: 9
     SYSCFG:
       address: 0x40010000
       kind: SYS:STM32WB55_sys_v1_0
@@ -956,15 +992,29 @@ cores:
       - pin: PA9
         signal: CH2
         af: 1
-      dma_requests:
-        CH1: 21
-        CH2: 22
-        CH3: 23
-        CH4: 24
-        COM: 27
-        TRIG: 26
-        UP: 25
       clock: APB2
+      dma_channels:
+        CH1:
+        - dmamux: DMAMUX1
+          request: 21
+        CH2:
+        - dmamux: DMAMUX1
+          request: 22
+        CH3:
+        - dmamux: DMAMUX1
+          request: 23
+        CH4:
+        - dmamux: DMAMUX1
+          request: 24
+        COM:
+        - dmamux: DMAMUX1
+          request: 27
+        TRIG:
+        - dmamux: DMAMUX1
+          request: 26
+        UP:
+        - dmamux: DMAMUX1
+          request: 25
     TIM16:
       address: 0x40014400
       kind: TIM1_8WB5:gptimer2_v3_x
@@ -985,10 +1035,14 @@ cores:
       - pin: PA6
         signal: CH1
         af: 14
-      dma_requests:
-        CH1: 33
-        UP: 34
       clock: APB2
+      dma_channels:
+        CH1:
+        - dmamux: DMAMUX1
+          request: 33
+        UP:
+        - dmamux: DMAMUX1
+          request: 34
     TIM17:
       address: 0x40014800
       kind: TIM1_8WB5:gptimer2_v3_x
@@ -1012,10 +1066,14 @@ cores:
       - pin: PA7
         signal: CH1
         af: 14
-      dma_requests:
-        CH1: 35
-        UP: 36
       clock: APB2
+      dma_channels:
+        CH1:
+        - dmamux: DMAMUX1
+          request: 35
+        UP:
+        - dmamux: DMAMUX1
+          request: 36
     TIM2:
       address: 0x40000000
       kind: TIM1_8WB5:gptimer2_v3_x
@@ -1057,12 +1115,22 @@ cores:
       - pin: PA5
         signal: ETR
         af: 2
-      dma_requests:
-        CH1: 28
-        CH2: 29
-        CH3: 30
-        CH4: 31
-        UP: 32
+      dma_channels:
+        CH1:
+        - dmamux: DMAMUX1
+          request: 28
+        CH2:
+        - dmamux: DMAMUX1
+          request: 29
+        CH3:
+        - dmamux: DMAMUX1
+          request: 30
+        CH4:
+        - dmamux: DMAMUX1
+          request: 31
+        UP:
+        - dmamux: DMAMUX1
+          request: 32
     TSC:
       address: 0x40024000
       kind: TSC:tsc1_v1_0
@@ -1206,9 +1274,13 @@ cores:
       - pin: PA9
         signal: TX
         af: 7
-      dma_requests:
-        RX: 14
-        TX: 15
+      dma_channels:
+        RX:
+        - dmamux: DMAMUX1
+          request: 14
+        TX:
+        - dmamux: DMAMUX1
+          request: 15
     USB:
       address: 0x40006800
       kind: USB:usb1_v2_1
@@ -1297,48 +1369,76 @@ cores:
     USB_LP: 20
     WWDG: 0
   dma_channels:
-    DMA1_1:
+    DMA1_CH0:
+      dma: DMA1
+      channel: 0
+      dmamux: DMAMUX1
+      dmamux_channel: 0
+    DMA1_CH1:
       dma: DMA1
       channel: 1
-    DMA1_2:
+      dmamux: DMAMUX1
+      dmamux_channel: 1
+    DMA1_CH2:
       dma: DMA1
       channel: 2
-    DMA1_3:
+      dmamux: DMAMUX1
+      dmamux_channel: 2
+    DMA1_CH3:
       dma: DMA1
       channel: 3
-    DMA1_4:
+      dmamux: DMAMUX1
+      dmamux_channel: 3
+    DMA1_CH4:
       dma: DMA1
       channel: 4
-    DMA1_5:
+      dmamux: DMAMUX1
+      dmamux_channel: 4
+    DMA1_CH5:
       dma: DMA1
       channel: 5
-    DMA1_6:
+      dmamux: DMAMUX1
+      dmamux_channel: 5
+    DMA1_CH6:
       dma: DMA1
       channel: 6
-    DMA1_7:
-      dma: DMA1
-      channel: 7
-    DMA2_1:
+      dmamux: DMAMUX1
+      dmamux_channel: 6
+    DMA2_CH0:
+      dma: DMA2
+      channel: 0
+      dmamux: DMAMUX1
+      dmamux_channel: 7
+    DMA2_CH1:
       dma: DMA2
       channel: 1
-    DMA2_2:
+      dmamux: DMAMUX1
+      dmamux_channel: 8
+    DMA2_CH2:
       dma: DMA2
       channel: 2
-    DMA2_3:
+      dmamux: DMAMUX1
+      dmamux_channel: 9
+    DMA2_CH3:
       dma: DMA2
       channel: 3
-    DMA2_4:
+      dmamux: DMAMUX1
+      dmamux_channel: 10
+    DMA2_CH4:
       dma: DMA2
       channel: 4
-    DMA2_5:
+      dmamux: DMAMUX1
+      dmamux_channel: 11
+    DMA2_CH5:
       dma: DMA2
       channel: 5
-    DMA2_6:
+      dmamux: DMAMUX1
+      dmamux_channel: 12
+    DMA2_CH6:
       dma: DMA2
       channel: 6
-    DMA2_7:
-      dma: DMA2
-      channel: 7
+      dmamux: DMAMUX1
+      dmamux_channel: 13
 application-notes:
 - title: STM32 microcontroller system memory boot mode
   name: CD00167594
