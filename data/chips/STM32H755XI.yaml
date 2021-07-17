@@ -81,8 +81,9 @@ cores:
         signal: INN5
       - pin: PB0
         signal: INP9
-      dma_requests:
-        ADC1: &id002
+      dma_channels:
+        ADC1:
+        - &id002
           dmamux: DMAMUX1
           request: 9
     ADC2:
@@ -143,8 +144,9 @@ cores:
         signal: INN5
       - pin: PB0
         signal: INP9
-      dma_requests:
-        ADC2: &id004
+      dma_channels:
+        ADC2:
+        - &id004
           dmamux: DMAMUX1
           request: 10
     ADC3:
@@ -205,11 +207,15 @@ cores:
         signal: INP0
       - pin: PC3_C
         signal: INP1
-      dma_requests:
-        ADC3: &id006
-          dmamux: DMAMUX2
-          request: 115
       clock: AHB4
+      dma_channels:
+        ADC3:
+        - &id006
+          dmamux: DMAMUX2
+          request: 17
+        - &id007
+          dmamux: DMAMUX1
+          request: 115
     ADC_COMMON:
       address: 0x40022300
       kind: ADC_COMMON:aditf5_v3_0
@@ -220,7 +226,7 @@ cores:
     COMP1:
       address: 0x5800380c
       kind: COMP:TSMC90_H7
-      pins: &id007
+      pins: &id008
       - pin: PB2
         signal: INP
       - pin: PE12
@@ -238,7 +244,7 @@ cores:
     COMP2:
       address: 0x58003810
       kind: COMP:TSMC90_H7
-      pins: &id008
+      pins: &id009
       - pin: PE10
         signal: INM
       - pin: PE9
@@ -260,27 +266,31 @@ cores:
     CRYP:
       address: 0x48021000
       kind: CRYP:cryp1_v2_0_H7
-      dma_requests:
-        IN: &id009
+      dma_channels:
+        IN:
+        - &id010
           dmamux: DMAMUX1
           request: 76
-        OUT: &id010
+        OUT:
+        - &id011
           dmamux: DMAMUX1
           request: 77
     DAC1:
       address: 0x40007400
       kind: DAC:dacif_v3_0
       block: dac_v2/DAC
-      pins: &id011
+      pins: &id012
       - pin: PA5
         signal: OUT2
       - pin: PA4
         signal: OUT1
-      dma_requests:
-        CH1: &id012
+      dma_channels:
+        CH1:
+        - &id013
           dmamux: DMAMUX1
           request: 67
-        CH2: &id013
+        CH2:
+        - &id014
           dmamux: DMAMUX1
           request: 68
     DBGMCU:
@@ -290,7 +300,7 @@ cores:
     DCMI:
       address: 0x48020000
       kind: DCMI:cci_v2_0
-      pins: &id014
+      pins: &id015
       - pin: PI6
         signal: D6
         af: 13
@@ -438,11 +448,12 @@ cores:
       - pin: PH7
         signal: D9
         af: 13
-      dma_requests:
-        DCMI: &id015
+      clock: AHB2
+      dma_channels:
+        PSSI:
+        - &id016
           dmamux: DMAMUX1
           request: 75
-      clock: AHB2
     DMA1:
       address: 0x40020000
       block: dma_v1/DMA
@@ -467,7 +478,7 @@ cores:
       address: 0x40028000
       kind: ETH:ethermac110_v3_0
       block: eth_v2/ETH
-      pins: &id016
+      pins: &id017
       - pin: PB5
         signal: PPS_OUT
         af: 11
@@ -565,7 +576,7 @@ cores:
     FDCAN1:
       address: 0x4000a000
       kind: FDCAN:fdcan1_v1_0
-      pins: &id017
+      pins: &id018
       - pin: PH14
         signal: RX
         af: 9
@@ -597,7 +608,7 @@ cores:
     FDCAN2:
       address: 0x4000a400
       kind: FDCAN:fdcan1_v1_0
-      pins: &id018
+      pins: &id019
       - pin: PB5
         signal: RX
         af: 9
@@ -661,16 +672,17 @@ cores:
     HASH:
       address: 0x48021400
       kind: HASH:hash1_v2_0
-      dma_requests:
-        IN: &id019
+      clock: AHB2
+      dma_channels:
+        IN:
+        - &id020
           dmamux: DMAMUX1
           request: 78
-      clock: AHB2
     I2C1:
       address: 0x40005400
       kind: I2C:i2c2_v1_1F7
       block: i2c_v2/I2C
-      pins: &id020
+      pins: &id021
       - pin: PB5
         signal: SMBA
         af: 4
@@ -686,19 +698,21 @@ cores:
       - pin: PB8
         signal: SCL
         af: 4
-      dma_requests:
-        RX: &id021
+      clock: APB1
+      dma_channels:
+        RX:
+        - &id022
           dmamux: DMAMUX1
           request: 33
-        TX: &id022
+        TX:
+        - &id023
           dmamux: DMAMUX1
           request: 34
-      clock: APB1
     I2C2:
       address: 0x40005800
       kind: I2C:i2c2_v1_1F7
       block: i2c_v2/I2C
-      pins: &id023
+      pins: &id024
       - pin: PF2
         signal: SMBA
         af: 4
@@ -726,19 +740,21 @@ cores:
       - pin: PB12
         signal: SMBA
         af: 4
-      dma_requests:
-        RX: &id024
+      clock: APB1
+      dma_channels:
+        RX:
+        - &id025
           dmamux: DMAMUX1
           request: 35
-        TX: &id025
+        TX:
+        - &id026
           dmamux: DMAMUX1
           request: 36
-      clock: APB1
     I2C3:
       address: 0x40005c00
       kind: I2C:i2c2_v1_1F7
       block: i2c_v2/I2C
-      pins: &id026
+      pins: &id027
       - pin: PA9
         signal: SMBA
         af: 4
@@ -757,19 +773,21 @@ cores:
       - pin: PH7
         signal: SCL
         af: 4
-      dma_requests:
-        RX: &id027
+      clock: APB1
+      dma_channels:
+        RX:
+        - &id028
           dmamux: DMAMUX1
           request: 73
-        TX: &id028
+        TX:
+        - &id029
           dmamux: DMAMUX1
           request: 74
-      clock: APB1
     I2C4:
       address: 0x58001c00
       kind: I2C:i2c2_v1_1F7
       block: i2c_v2/I2C
-      pins: &id029
+      pins: &id030
       - pin: PB5
         signal: SMBA
         af: 6
@@ -815,14 +833,16 @@ cores:
       - pin: PD13
         signal: SDA
         af: 4
-      dma_requests:
-        RX: &id030
+      clock: APB4
+      dma_channels:
+        RX:
+        - &id031
           dmamux: DMAMUX2
           request: 13
-        TX: &id031
+        TX:
+        - &id032
           dmamux: DMAMUX2
           request: 14
-      clock: APB4
     IWDG1:
       address: 0x58004800
       kind: IWDG:iwdg1_v2_0
@@ -835,7 +855,7 @@ cores:
     LPTIM1:
       address: 0x40002400
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: &id032
+      pins: &id033
       - pin: PE1
         signal: IN2
         af: 1
@@ -867,7 +887,7 @@ cores:
     LPTIM2:
       address: 0x58002400
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: &id033
+      pins: &id034
       - pin: PE0
         signal: ETR
         af: 4
@@ -890,14 +910,14 @@ cores:
     LPTIM3:
       address: 0x58002800
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: &id034
+      pins: &id035
       - pin: PA1
         signal: OUT
       clock: APB4
     LPTIM4:
       address: 0x58002c00
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: &id035
+      pins: &id036
       - pin: PA2
         signal: OUT
         af: 3
@@ -905,7 +925,7 @@ cores:
     LPTIM5:
       address: 0x58003000
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: &id036
+      pins: &id037
       - pin: PA3
         signal: OUT
         af: 3
@@ -913,7 +933,7 @@ cores:
     LPUART1:
       address: 0x58000c00
       kind: LPUART:sci3_v1_3
-      pins: &id037
+      pins: &id038
       - pin: PB6
         signal: TX
         af: 8
@@ -935,18 +955,20 @@ cores:
       - pin: PA11
         signal: CTS
         af: 3
-      dma_requests:
-        RX: &id038
+      clock: APB4
+      dma_channels:
+        RX:
+        - &id039
           dmamux: DMAMUX2
           request: 9
-        TX: &id039
+        TX:
+        - &id040
           dmamux: DMAMUX2
           request: 10
-      clock: APB4
     LTDC:
       address: 0x50001000
       kind: LTDC:lcdtft2_v1_0
-      pins: &id040
+      pins: &id041
       - pin: PI6
         signal: B6
         af: 14
@@ -1263,7 +1285,7 @@ cores:
       address: 0x40009400
       kind: MDIOS:mdios1_v1_0
       clock: APB1
-      pins: &id041
+      pins: &id042
       - pin: PA10
         signal: MDIO
         af: 11
@@ -1283,7 +1305,7 @@ cores:
     OPAMP1:
       address: 0x40009000
       kind: OPAMP:cmosM40_opamp_v1_0
-      pins: &id042
+      pins: &id043
       - pin: PA7
         signal: VINM
       - pin: PA7
@@ -1300,7 +1322,7 @@ cores:
     OPAMP2:
       address: 0x40009010
       kind: OPAMP:cmosM40_opamp_v1_0
-      pins: &id043
+      pins: &id044
       - pin: PE9
         signal: VINP
       - pin: PE8
@@ -1317,7 +1339,7 @@ cores:
       address: 0x58024800
       kind: PWR:STM32H7_pwr_v1_0
       block: pwr_h7smps/PWR
-      pins: &id044
+      pins: &id045
       - pin: PB7
         signal: PVD_IN
       - pin: PC13
@@ -1335,7 +1357,7 @@ cores:
     QUADSPI:
       address: 0x52005000
       kind: QUADSPI:quadspi1_v1_0
-      pins: &id045
+      pins: &id046
       - pin: PG9
         signal: BK2_IO2
         af: 9
@@ -1414,7 +1436,7 @@ cores:
       address: 0x58024400
       kind: RCC:STM32H7_rcc_v1_0
       block: rcc_h7/RCC
-      pins: &id046
+      pins: &id047
       - pin: PC15
         signal: OSC32_OUT
       - pin: PC14
@@ -1437,7 +1459,7 @@ cores:
     RTC:
       address: 0x58004000
       kind: RTC:rtc2_v2_7
-      pins: &id047
+      pins: &id048
       - pin: PC13
         signal: OUT_ALARM
       - pin: PC13
@@ -1462,7 +1484,7 @@ cores:
     SAI1:
       address: 0x40015800
       kind: SAI:sai1_H7
-      pins: &id048
+      pins: &id049
       - pin: PD6
         signal: D1
         af: 2
@@ -1529,18 +1551,20 @@ cores:
       - pin: PC5
         signal: D3
         af: 2
-      dma_requests:
-        A: &id049
+      clock: APB2
+      dma_channels:
+        A:
+        - &id050
           dmamux: DMAMUX1
           request: 87
-        B: &id050
+        B:
+        - &id051
           dmamux: DMAMUX1
           request: 88
-      clock: APB2
     SAI2:
       address: 0x40015c00
       kind: SAI:sai1_H7
-      pins: &id051
+      pins: &id052
       - pin: PI6
         signal: SD_A
         af: 10
@@ -1608,18 +1632,20 @@ cores:
       - pin: PE14
         signal: MCLK_B
         af: 10
-      dma_requests:
-        A: &id052
+      clock: APB2
+      dma_channels:
+        A:
+        - &id053
           dmamux: DMAMUX1
           request: 89
-        B: &id053
+        B:
+        - &id054
           dmamux: DMAMUX1
           request: 90
-      clock: APB2
     SAI3:
       address: 0x40016000
       kind: SAI:sai1_H7
-      pins: &id054
+      pins: &id055
       - pin: PD4
         signal: FS_A
         af: 6
@@ -1644,18 +1670,20 @@ cores:
       - pin: PD8
         signal: SCK_B
         af: 6
-      dma_requests:
-        A: &id055
+      clock: APB2
+      dma_channels:
+        A:
+        - &id056
           dmamux: DMAMUX1
           request: 113
-        B: &id056
+        B:
+        - &id057
           dmamux: DMAMUX1
           request: 114
-      clock: APB2
     SAI4:
       address: 0x58005400
       kind: SAI:sai1_H7
-      pins: &id057
+      pins: &id058
       - pin: PD6
         signal: D1
         af: 10
@@ -1719,19 +1747,21 @@ cores:
       - pin: PC5
         signal: D3
         af: 10
-      dma_requests:
-        A: &id058
+      clock: APB4
+      dma_channels:
+        A:
+        - &id059
           dmamux: DMAMUX2
           request: 15
-        B: &id059
+        B:
+        - &id060
           dmamux: DMAMUX2
           request: 16
-      clock: APB4
     SDMMC1:
       address: 0x52007000
       kind: SDMMC:sdmmc2_v1_0
       block: sdmmc_v2/SDMMC
-      pins: &id060
+      pins: &id061
       - pin: PC10
         signal: D2
         af: 12
@@ -1779,7 +1809,7 @@ cores:
       address: 0x48022400
       kind: SDMMC:sdmmc2_v1_0
       block: sdmmc_v2/SDMMC
-      pins: &id061
+      pins: &id062
       - pin: PB4
         signal: D3
         af: 9
@@ -1824,7 +1854,7 @@ cores:
       kind: SPI:spi2s2_v1_0
       clock: APB2
       block: spi_v3/SPI
-      pins: &id062
+      pins: &id063
       - pin: PB5
         signal: MOSI
         af: 5
@@ -1861,11 +1891,13 @@ cores:
       - pin: PA4
         signal: NSS
         af: 5
-      dma_requests:
-        RX: &id063
+      dma_channels:
+        RX:
+        - &id064
           dmamux: DMAMUX1
           request: 37
-        TX: &id064
+        TX:
+        - &id065
           dmamux: DMAMUX1
           request: 38
     SPI2:
@@ -1873,7 +1905,7 @@ cores:
       kind: SPI:spi2s2_v1_0
       clock: APB1
       block: spi_v3/SPI
-      pins: &id065
+      pins: &id066
       - pin: PI1
         signal: SCK
         af: 5
@@ -1928,11 +1960,13 @@ cores:
       - pin: PB14
         signal: MISO
         af: 5
-      dma_requests:
-        RX: &id066
+      dma_channels:
+        RX:
+        - &id067
           dmamux: DMAMUX1
           request: 39
-        TX: &id067
+        TX:
+        - &id068
           dmamux: DMAMUX1
           request: 40
     SPI3:
@@ -1940,7 +1974,7 @@ cores:
       kind: SPI:spi2s2_v1_0
       clock: APB1
       block: spi_v3/SPI
-      pins: &id068
+      pins: &id069
       - pin: PB5
         signal: MOSI
         af: 7
@@ -1971,11 +2005,13 @@ cores:
       - pin: PA4
         signal: NSS
         af: 6
-      dma_requests:
-        RX: &id069
+      dma_channels:
+        RX:
+        - &id070
           dmamux: DMAMUX1
           request: 61
-        TX: &id070
+        TX:
+        - &id071
           dmamux: DMAMUX1
           request: 62
     SPI4:
@@ -1983,7 +2019,7 @@ cores:
       kind: SPI:spi2s2_v1_0
       clock: APB2
       block: spi_v3/SPI
-      pins: &id071
+      pins: &id072
       - pin: PE2
         signal: SCK
         af: 5
@@ -2008,11 +2044,13 @@ cores:
       - pin: PE14
         signal: MOSI
         af: 5
-      dma_requests:
-        RX: &id072
+      dma_channels:
+        RX:
+        - &id073
           dmamux: DMAMUX1
           request: 83
-        TX: &id073
+        TX:
+        - &id074
           dmamux: DMAMUX1
           request: 84
     SPI5:
@@ -2020,7 +2058,7 @@ cores:
       kind: SPI:spi2s2_v1_0
       clock: APB2
       block: spi_v3/SPI
-      pins: &id074
+      pins: &id075
       - pin: PK0
         signal: SCK
         af: 5
@@ -2057,18 +2095,20 @@ cores:
       - pin: PH7
         signal: MISO
         af: 5
-      dma_requests:
-        RX: &id075
+      dma_channels:
+        RX:
+        - &id076
           dmamux: DMAMUX1
           request: 85
-        TX: &id076
+        TX:
+        - &id077
           dmamux: DMAMUX1
           request: 86
     SPI6:
       address: 0x58001400
       kind: SPI:spi2s2_v1_0
       block: spi_v3/SPI
-      pins: &id077
+      pins: &id078
       - pin: PB5
         signal: MOSI
         af: 8
@@ -2105,19 +2145,21 @@ cores:
       - pin: PA4
         signal: NSS
         af: 8
-      dma_requests:
-        RX: &id078
+      clock: APB4
+      dma_channels:
+        RX:
+        - &id079
           dmamux: DMAMUX2
           request: 11
-        TX: &id079
+        TX:
+        - &id080
           dmamux: DMAMUX2
           request: 12
-      clock: APB4
     SWPMI1:
       address: 0x40008800
       kind: SWPMI:swp1_v1_0
       clock: APB1
-      pins: &id080
+      pins: &id081
       - pin: PC8
         signal: RX
         af: 11
@@ -2138,7 +2180,7 @@ cores:
       address: 0x40010000
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id081
+      pins: &id082
       - pin: PA10
         signal: CH3
         af: 1
@@ -2271,34 +2313,41 @@ cores:
       - pin: PB14
         signal: CH2N
         af: 1
-      dma_requests:
-        CH1: &id082
+      clock: APB2
+      dma_channels:
+        CH1:
+        - &id083
           dmamux: DMAMUX1
           request: 11
-        CH2: &id083
+        CH2:
+        - &id084
           dmamux: DMAMUX1
           request: 12
-        CH3: &id084
+        CH3:
+        - &id085
           dmamux: DMAMUX1
           request: 13
-        CH4: &id085
+        CH4:
+        - &id086
           dmamux: DMAMUX1
           request: 14
-        COM: &id086
+        COM:
+        - &id087
           dmamux: DMAMUX1
           request: 17
-        TRIG: &id087
+        TRIG:
+        - &id088
           dmamux: DMAMUX1
           request: 16
-        UP: &id088
+        UP:
+        - &id089
           dmamux: DMAMUX1
           request: 15
-      clock: APB2
     TIM12:
       address: 0x40001800
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id089
+      pins: &id090
       - pin: PH9
         signal: CH2
         af: 2
@@ -2316,7 +2365,7 @@ cores:
       address: 0x40001c00
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id090
+      pins: &id091
       - pin: PF8
         signal: CH1
         af: 9
@@ -2328,7 +2377,7 @@ cores:
       address: 0x40002000
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id091
+      pins: &id092
       - pin: PF9
         signal: CH1
         af: 9
@@ -2340,7 +2389,7 @@ cores:
       address: 0x40014000
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id092
+      pins: &id093
       - pin: PE5
         signal: CH1
         af: 4
@@ -2363,25 +2412,29 @@ cores:
       - pin: PA3
         signal: CH2
         af: 4
-      dma_requests:
-        CH1: &id093
+      clock: APB2
+      dma_channels:
+        CH1:
+        - &id094
           dmamux: DMAMUX1
           request: 105
-        COM: &id094
+        COM:
+        - &id095
           dmamux: DMAMUX1
           request: 108
-        TRIG: &id095
+        TRIG:
+        - &id096
           dmamux: DMAMUX1
           request: 107
-        UP: &id096
+        UP:
+        - &id097
           dmamux: DMAMUX1
           request: 106
-      clock: APB2
     TIM16:
       address: 0x40014400
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id097
+      pins: &id098
       - pin: PB6
         signal: CH1N
         af: 1
@@ -2400,19 +2453,21 @@ cores:
       - pin: PF10
         signal: BKIN
         af: 1
-      dma_requests:
-        CH1: &id098
+      clock: APB2
+      dma_channels:
+        CH1:
+        - &id099
           dmamux: DMAMUX1
           request: 109
-        UP: &id099
+        UP:
+        - &id100
           dmamux: DMAMUX1
           request: 110
-      clock: APB2
     TIM17:
       address: 0x40014800
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id100
+      pins: &id101
       - pin: PB5
         signal: BKIN
         af: 1
@@ -2431,19 +2486,21 @@ cores:
       - pin: PF9
         signal: CH1N
         af: 1
-      dma_requests:
-        CH1: &id101
+      clock: APB2
+      dma_channels:
+        CH1:
+        - &id102
           dmamux: DMAMUX1
           request: 111
-        UP: &id102
+        UP:
+        - &id103
           dmamux: DMAMUX1
           request: 112
-      clock: APB2
     TIM2:
       address: 0x40000000
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id103
+      pins: &id104
       - pin: PA15
         signal: CH1
         af: 1
@@ -2477,28 +2534,33 @@ cores:
       - pin: PA3
         signal: CH4
         af: 1
-      dma_requests:
-        CH1: &id104
+      clock: APB1
+      dma_channels:
+        CH1:
+        - &id105
           dmamux: DMAMUX1
           request: 18
-        CH2: &id105
+        CH2:
+        - &id106
           dmamux: DMAMUX1
           request: 19
-        CH3: &id106
+        CH3:
+        - &id107
           dmamux: DMAMUX1
           request: 20
-        CH4: &id107
+        CH4:
+        - &id108
           dmamux: DMAMUX1
           request: 21
-        UP: &id108
+        UP:
+        - &id109
           dmamux: DMAMUX1
           request: 22
-      clock: APB1
     TIM3:
       address: 0x40000400
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id109
+      pins: &id110
       - pin: PB5
         signal: CH2
         af: 2
@@ -2532,31 +2594,37 @@ cores:
       - pin: PB0
         signal: CH3
         af: 2
-      dma_requests:
-        CH1: &id110
+      clock: APB1
+      dma_channels:
+        CH1:
+        - &id111
           dmamux: DMAMUX1
           request: 23
-        CH2: &id111
+        CH2:
+        - &id112
           dmamux: DMAMUX1
           request: 24
-        CH3: &id112
+        CH3:
+        - &id113
           dmamux: DMAMUX1
           request: 25
-        CH4: &id113
+        CH4:
+        - &id114
           dmamux: DMAMUX1
           request: 26
-        TRIG: &id114
+        TRIG:
+        - &id115
           dmamux: DMAMUX1
           request: 28
-        UP: &id115
+        UP:
+        - &id116
           dmamux: DMAMUX1
           request: 27
-      clock: APB1
     TIM4:
       address: 0x40000800
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id116
+      pins: &id117
       - pin: PB6
         signal: CH1
         af: 2
@@ -2584,25 +2652,29 @@ cores:
       - pin: PD13
         signal: CH2
         af: 2
-      dma_requests:
-        CH1: &id117
+      clock: APB1
+      dma_channels:
+        CH1:
+        - &id118
           dmamux: DMAMUX1
           request: 29
-        CH2: &id118
+        CH2:
+        - &id119
           dmamux: DMAMUX1
           request: 30
-        CH3: &id119
+        CH3:
+        - &id120
           dmamux: DMAMUX1
           request: 31
-        UP: &id120
+        UP:
+        - &id121
           dmamux: DMAMUX1
           request: 32
-      clock: APB1
     TIM5:
       address: 0x40000c00
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id121
+      pins: &id122
       - pin: PI0
         signal: CH4
         af: 2
@@ -2631,49 +2703,57 @@ cores:
       - pin: PA4
         signal: ETR
         af: 2
-      dma_requests:
-        CH1: &id122
+      clock: APB1
+      dma_channels:
+        CH1:
+        - &id123
           dmamux: DMAMUX1
           request: 55
-        CH2: &id123
+        CH2:
+        - &id124
           dmamux: DMAMUX1
           request: 56
-        CH3: &id124
+        CH3:
+        - &id125
           dmamux: DMAMUX1
           request: 57
-        CH4: &id125
+        CH4:
+        - &id126
           dmamux: DMAMUX1
           request: 58
-        TRIG: &id126
+        TRIG:
+        - &id127
           dmamux: DMAMUX1
           request: 60
-        UP: &id127
+        UP:
+        - &id128
           dmamux: DMAMUX1
           request: 59
-      clock: APB1
     TIM6:
       address: 0x40001000
       kind: TIM6_7H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      dma_requests:
-        UP: &id128
+      clock: APB1
+      dma_channels:
+        UP:
+        - &id129
           dmamux: DMAMUX1
           request: 69
-      clock: APB1
     TIM7:
       address: 0x40001400
       kind: TIM6_7H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      dma_requests:
-        UP: &id129
+      clock: APB1
+      dma_channels:
+        UP:
+        - &id130
           dmamux: DMAMUX1
           request: 70
-      clock: APB1
     TIM8:
       address: 0x40010400
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: &id130
+      pins: &id131
       - pin: PI6
         signal: CH2
         af: 3
@@ -2820,35 +2900,42 @@ cores:
       - pin: PB14
         signal: CH2N
         af: 3
-      dma_requests:
-        CH1: &id131
+      clock: APB2
+      dma_channels:
+        CH1:
+        - &id132
           dmamux: DMAMUX1
           request: 47
-        CH2: &id132
+        CH2:
+        - &id133
           dmamux: DMAMUX1
           request: 48
-        CH3: &id133
+        CH3:
+        - &id134
           dmamux: DMAMUX1
           request: 49
-        CH4: &id134
+        CH4:
+        - &id135
           dmamux: DMAMUX1
           request: 50
-        COM: &id135
+        COM:
+        - &id136
           dmamux: DMAMUX1
           request: 53
-        TRIG: &id136
+        TRIG:
+        - &id137
           dmamux: DMAMUX1
           request: 52
-        UP: &id137
+        UP:
+        - &id138
           dmamux: DMAMUX1
           request: 51
-      clock: APB2
     UART4:
       address: 0x40004c00
       kind: UART:sci2_v3_0
       clock: APB1
       block: usart_v2/USART
-      pins: &id138
+      pins: &id139
       - pin: PC10
         signal: TX
         af: 8
@@ -2904,11 +2991,13 @@ cores:
       - pin: PB14
         signal: RTS
         af: 8
-      dma_requests:
-        RX: &id139
+      dma_channels:
+        RX:
+        - &id140
           dmamux: DMAMUX1
           request: 63
-        TX: &id140
+        TX:
+        - &id141
           dmamux: DMAMUX1
           request: 64
     UART5:
@@ -2916,7 +3005,7 @@ cores:
       kind: UART:sci2_v3_0
       clock: APB1
       block: usart_v2/USART
-      pins: &id141
+      pins: &id142
       - pin: PB5
         signal: RX
         af: 14
@@ -2944,18 +3033,20 @@ cores:
       - pin: PB13
         signal: TX
         af: 14
-      dma_requests:
-        RX: &id142
+      dma_channels:
+        RX:
+        - &id143
           dmamux: DMAMUX1
           request: 65
-        TX: &id143
+        TX:
+        - &id144
           dmamux: DMAMUX1
           request: 66
     UART7:
       address: 0x40007800
       kind: UART:sci2_v3_0
       block: usart_v2/USART
-      pins: &id144
+      pins: &id145
       - pin: PA15
         signal: TX
         af: 11
@@ -2998,19 +3089,21 @@ cores:
       - pin: PE7
         signal: RX
         af: 7
-      dma_requests:
-        RX: &id145
+      clock: APB1
+      dma_channels:
+        RX:
+        - &id146
           dmamux: DMAMUX1
           request: 79
-        TX: &id146
+        TX:
+        - &id147
           dmamux: DMAMUX1
           request: 80
-      clock: APB1
     UART8:
       address: 0x40007c00
       kind: UART:sci2_v3_0
       block: usart_v2/USART
-      pins: &id147
+      pins: &id148
       - pin: PE1
         signal: TX
         af: 8
@@ -3032,20 +3125,22 @@ cores:
       - pin: PD14
         signal: CTS
         af: 8
-      dma_requests:
-        RX: &id148
+      clock: APB1
+      dma_channels:
+        RX:
+        - &id149
           dmamux: DMAMUX1
           request: 81
-        TX: &id149
+        TX:
+        - &id150
           dmamux: DMAMUX1
           request: 82
-      clock: APB1
     USART1:
       address: 0x40011000
       kind: USART:sci3_v2_0
       clock: APB2
       block: usart_v2/USART
-      pins: &id150
+      pins: &id151
       - pin: PB6
         signal: TX
         af: 7
@@ -3079,11 +3174,13 @@ cores:
       - pin: PB14
         signal: TX
         af: 4
-      dma_requests:
-        RX: &id151
+      dma_channels:
+        RX:
+        - &id152
           dmamux: DMAMUX1
           request: 41
-        TX: &id152
+        TX:
+        - &id153
           dmamux: DMAMUX1
           request: 42
     USART2:
@@ -3091,7 +3188,7 @@ cores:
       kind: USART:sci3_v2_0
       clock: APB1
       block: usart_v2/USART
-      pins: &id153
+      pins: &id154
       - pin: PD5
         signal: TX
         af: 7
@@ -3130,11 +3227,13 @@ cores:
       - pin: PA4
         signal: CK
         af: 7
-      dma_requests:
-        RX: &id154
+      dma_channels:
+        RX:
+        - &id155
           dmamux: DMAMUX1
           request: 43
-        TX: &id155
+        TX:
+        - &id156
           dmamux: DMAMUX1
           request: 44
     USART3:
@@ -3142,7 +3241,7 @@ cores:
       kind: USART:sci3_v2_0
       clock: APB1
       block: usart_v2/USART
-      pins: &id156
+      pins: &id157
       - pin: PC10
         signal: TX
         af: 7
@@ -3194,11 +3293,13 @@ cores:
       - pin: PD8
         signal: TX
         af: 7
-      dma_requests:
-        RX: &id157
+      dma_channels:
+        RX:
+        - &id158
           dmamux: DMAMUX1
           request: 45
-        TX: &id158
+        TX:
+        - &id159
           dmamux: DMAMUX1
           request: 46
     USART6:
@@ -3206,7 +3307,7 @@ cores:
       kind: USART:sci3_v2_0
       clock: APB2
       block: usart_v2/USART
-      pins: &id159
+      pins: &id160
       - pin: PG9
         signal: RX
         af: 7
@@ -3249,11 +3350,13 @@ cores:
       - pin: PG7
         signal: CK
         af: 7
-      dma_requests:
-        RX: &id160
+      dma_channels:
+        RX:
+        - &id161
           dmamux: DMAMUX1
           request: 71
-        TX: &id161
+        TX:
+        - &id162
           dmamux: DMAMUX1
           request: 72
     USB_OTG_FS:
@@ -3265,7 +3368,7 @@ cores:
     VREFBUF:
       address: 0x58003c00
       kind: VREFBUF:STM32H7_vrefbuf_v1_0
-      pins: &id162
+      pins: &id163
       - pin: VREF+
         signal: OUT
     WWDG1:
@@ -3415,99 +3518,151 @@ cores:
     WAKEUP_PIN: 149
     WWDG: 0
   dma_channels:
-    BDMA_0:
+    BDMA_CH0:
       dma: BDMA
       channel: 0
-    BDMA_1:
+      dmamux: DMAMUX2
+      dmamux_channel: 0
+    BDMA_CH1:
       dma: BDMA
       channel: 1
-    BDMA_2:
+      dmamux: DMAMUX2
+      dmamux_channel: 1
+    BDMA_CH2:
       dma: BDMA
       channel: 2
-    BDMA_3:
+      dmamux: DMAMUX2
+      dmamux_channel: 2
+    BDMA_CH3:
       dma: BDMA
       channel: 3
-    BDMA_4:
+      dmamux: DMAMUX2
+      dmamux_channel: 3
+    BDMA_CH4:
       dma: BDMA
       channel: 4
-    BDMA_5:
+      dmamux: DMAMUX2
+      dmamux_channel: 4
+    BDMA_CH5:
       dma: BDMA
       channel: 5
-    BDMA_6:
+      dmamux: DMAMUX2
+      dmamux_channel: 5
+    BDMA_CH6:
       dma: BDMA
       channel: 6
-    BDMA_7:
+      dmamux: DMAMUX2
+      dmamux_channel: 6
+    BDMA_CH7:
       dma: BDMA
       channel: 7
-    DMA1_0:
+      dmamux: DMAMUX2
+      dmamux_channel: 7
+    DMA1_CH0:
       dma: DMA1
       channel: 0
-    DMA1_1:
+      dmamux: DMAMUX1
+      dmamux_channel: 0
+    DMA1_CH1:
       dma: DMA1
       channel: 1
-    DMA1_2:
+      dmamux: DMAMUX1
+      dmamux_channel: 1
+    DMA1_CH2:
       dma: DMA1
       channel: 2
-    DMA1_3:
+      dmamux: DMAMUX1
+      dmamux_channel: 2
+    DMA1_CH3:
       dma: DMA1
       channel: 3
-    DMA1_4:
+      dmamux: DMAMUX1
+      dmamux_channel: 3
+    DMA1_CH4:
       dma: DMA1
       channel: 4
-    DMA1_5:
+      dmamux: DMAMUX1
+      dmamux_channel: 4
+    DMA1_CH5:
       dma: DMA1
       channel: 5
-    DMA1_6:
+      dmamux: DMAMUX1
+      dmamux_channel: 5
+    DMA1_CH6:
       dma: DMA1
       channel: 6
-    DMA1_7:
+      dmamux: DMAMUX1
+      dmamux_channel: 6
+    DMA1_CH7:
       dma: DMA1
       channel: 7
-    DMA2_0:
+      dmamux: DMAMUX1
+      dmamux_channel: 7
+    DMA2_CH0:
       dma: DMA2
       channel: 0
-    DMA2_1:
+      dmamux: DMAMUX1
+      dmamux_channel: 8
+    DMA2_CH1:
       dma: DMA2
       channel: 1
-    DMA2_2:
+      dmamux: DMAMUX1
+      dmamux_channel: 9
+    DMA2_CH2:
       dma: DMA2
       channel: 2
-    DMA2_3:
+      dmamux: DMAMUX1
+      dmamux_channel: 10
+    DMA2_CH3:
       dma: DMA2
       channel: 3
-    DMA2_4:
+      dmamux: DMAMUX1
+      dmamux_channel: 11
+    DMA2_CH4:
       dma: DMA2
       channel: 4
-    DMA2_5:
+      dmamux: DMAMUX1
+      dmamux_channel: 12
+    DMA2_CH5:
       dma: DMA2
       channel: 5
-    DMA2_6:
+      dmamux: DMAMUX1
+      dmamux_channel: 13
+    DMA2_CH6:
       dma: DMA2
       channel: 6
-    DMA2_7:
+      dmamux: DMAMUX1
+      dmamux_channel: 14
+    DMA2_CH7:
       dma: DMA2
       channel: 7
+      dmamux: DMAMUX1
+      dmamux_channel: 15
 - name: cm4
   peripherals:
     ADC1:
       address: 0x40022000
       kind: ADC:aditf5_v3_0
       pins: *id001
-      dma_requests:
-        ADC1: *id002
+      dma_channels:
+        ADC1:
+        - *id002
     ADC2:
       address: 0x40022100
       kind: ADC:aditf5_v3_0
       pins: *id003
-      dma_requests:
-        ADC2: *id004
+      dma_channels:
+        ADC2:
+        - *id004
     ADC3:
       address: 0x58026000
       kind: ADC:aditf5_v3_0
       pins: *id005
-      dma_requests:
-        ADC3: *id006
       clock: AHB4
+      dma_channels:
+        ADC3:
+        - *id006
+        - *id007
     ADC_COMMON:
       address: 0x40022300
       kind: ADC_COMMON:aditf5_v3_0
@@ -3518,11 +3673,11 @@ cores:
     COMP1:
       address: 0x5800380c
       kind: COMP:TSMC90_H7
-      pins: *id007
+      pins: *id008
     COMP2:
       address: 0x58003810
       kind: COMP:TSMC90_H7
-      pins: *id008
+      pins: *id009
     CRS:
       address: 0x40008400
       kind: CRS:STM32H7_crs_v1_0
@@ -3530,17 +3685,21 @@ cores:
     CRYP:
       address: 0x48021000
       kind: CRYP:cryp1_v2_0_H7
-      dma_requests:
-        IN: *id009
-        OUT: *id010
+      dma_channels:
+        IN:
+        - *id010
+        OUT:
+        - *id011
     DAC1:
       address: 0x40007400
       kind: DAC:dacif_v3_0
       block: dac_v2/DAC
-      pins: *id011
-      dma_requests:
-        CH1: *id012
-        CH2: *id013
+      pins: *id012
+      dma_channels:
+        CH1:
+        - *id013
+        CH2:
+        - *id014
     DBGMCU:
       address: 0x5c001000
       kind: DBGMCU:STM32H7_dbgmcu_v1_0
@@ -3548,10 +3707,11 @@ cores:
     DCMI:
       address: 0x48020000
       kind: DCMI:cci_v2_0
-      pins: *id014
-      dma_requests:
-        DCMI: *id015
+      pins: *id015
       clock: AHB2
+      dma_channels:
+        PSSI:
+        - *id016
     DMA1:
       address: 0x40020000
       block: dma_v1/DMA
@@ -3576,7 +3736,7 @@ cores:
       address: 0x40028000
       kind: ETH:ethermac110_v3_0
       block: eth_v2/ETH
-      pins: *id016
+      pins: *id017
     EXTI:
       address: 0x58000000
       kind: EXTI
@@ -3584,12 +3744,12 @@ cores:
     FDCAN1:
       address: 0x4000a000
       kind: FDCAN:fdcan1_v1_0
-      pins: *id017
+      pins: *id018
       clock: APB1
     FDCAN2:
       address: 0x4000a400
       kind: FDCAN:fdcan1_v1_0
-      pins: *id018
+      pins: *id019
     FLASH:
       address: 0x52002000
       kind: FLASH:STM32H7_flash_v1_0
@@ -3641,45 +3801,54 @@ cores:
     HASH:
       address: 0x48021400
       kind: HASH:hash1_v2_0
-      dma_requests:
-        IN: *id019
       clock: AHB2
+      dma_channels:
+        IN:
+        - *id020
     I2C1:
       address: 0x40005400
       kind: I2C:i2c2_v1_1F7
       block: i2c_v2/I2C
-      pins: *id020
-      dma_requests:
-        RX: *id021
-        TX: *id022
+      pins: *id021
       clock: APB1
+      dma_channels:
+        RX:
+        - *id022
+        TX:
+        - *id023
     I2C2:
       address: 0x40005800
       kind: I2C:i2c2_v1_1F7
       block: i2c_v2/I2C
-      pins: *id023
-      dma_requests:
-        RX: *id024
-        TX: *id025
+      pins: *id024
       clock: APB1
+      dma_channels:
+        RX:
+        - *id025
+        TX:
+        - *id026
     I2C3:
       address: 0x40005c00
       kind: I2C:i2c2_v1_1F7
       block: i2c_v2/I2C
-      pins: *id026
-      dma_requests:
-        RX: *id027
-        TX: *id028
+      pins: *id027
       clock: APB1
+      dma_channels:
+        RX:
+        - *id028
+        TX:
+        - *id029
     I2C4:
       address: 0x58001c00
       kind: I2C:i2c2_v1_1F7
       block: i2c_v2/I2C
-      pins: *id029
-      dma_requests:
-        RX: *id030
-        TX: *id031
+      pins: *id030
       clock: APB4
+      dma_channels:
+        RX:
+        - *id031
+        TX:
+        - *id032
     IWDG1:
       address: 0x58004800
       kind: IWDG:iwdg1_v2_0
@@ -3692,46 +3861,48 @@ cores:
     LPTIM1:
       address: 0x40002400
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: *id032
+      pins: *id033
       clock: APB1
     LPTIM2:
       address: 0x58002400
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: *id033
+      pins: *id034
       clock: APB4
     LPTIM3:
       address: 0x58002800
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: *id034
+      pins: *id035
       clock: APB4
     LPTIM4:
       address: 0x58002c00
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: *id035
+      pins: *id036
       clock: APB4
     LPTIM5:
       address: 0x58003000
       kind: LPTIM:H7xx_lptimer1_v1_1
-      pins: *id036
+      pins: *id037
       clock: APB4
     LPUART1:
       address: 0x58000c00
       kind: LPUART:sci3_v1_3
-      pins: *id037
-      dma_requests:
-        RX: *id038
-        TX: *id039
+      pins: *id038
       clock: APB4
+      dma_channels:
+        RX:
+        - *id039
+        TX:
+        - *id040
     LTDC:
       address: 0x50001000
       kind: LTDC:lcdtft2_v1_0
-      pins: *id040
+      pins: *id041
       clock: APB3
     MDIOS:
       address: 0x40009400
       kind: MDIOS:mdios1_v1_0
       clock: APB1
-      pins: *id041
+      pins: *id042
     MDMA:
       address: 0x52000000
       kind: MDMA:STM32H753_mdma1_v1_0
@@ -3739,26 +3910,26 @@ cores:
     OPAMP1:
       address: 0x40009000
       kind: OPAMP:cmosM40_opamp_v1_0
-      pins: *id042
+      pins: *id043
       clock: APB1
     OPAMP2:
       address: 0x40009010
       kind: OPAMP:cmosM40_opamp_v1_0
-      pins: *id043
+      pins: *id044
     PWR:
       address: 0x58024800
       kind: PWR:STM32H7_pwr_v1_0
       block: pwr_h7smps/PWR
-      pins: *id044
+      pins: *id045
     QUADSPI:
       address: 0x52005000
       kind: QUADSPI:quadspi1_v1_0
-      pins: *id045
+      pins: *id046
     RCC:
       address: 0x58024400
       kind: RCC:STM32H7_rcc_v1_0
       block: rcc_h7/RCC
-      pins: *id046
+      pins: *id047
     RNG:
       address: 0x48021800
       kind: RNG:rng1_v2_0
@@ -3767,110 +3938,130 @@ cores:
     RTC:
       address: 0x58004000
       kind: RTC:rtc2_v2_7
-      pins: *id047
+      pins: *id048
     SAI1:
       address: 0x40015800
       kind: SAI:sai1_H7
-      pins: *id048
-      dma_requests:
-        A: *id049
-        B: *id050
+      pins: *id049
       clock: APB2
+      dma_channels:
+        A:
+        - *id050
+        B:
+        - *id051
     SAI2:
       address: 0x40015c00
       kind: SAI:sai1_H7
-      pins: *id051
-      dma_requests:
-        A: *id052
-        B: *id053
+      pins: *id052
       clock: APB2
+      dma_channels:
+        A:
+        - *id053
+        B:
+        - *id054
     SAI3:
       address: 0x40016000
       kind: SAI:sai1_H7
-      pins: *id054
-      dma_requests:
-        A: *id055
-        B: *id056
+      pins: *id055
       clock: APB2
+      dma_channels:
+        A:
+        - *id056
+        B:
+        - *id057
     SAI4:
       address: 0x58005400
       kind: SAI:sai1_H7
-      pins: *id057
-      dma_requests:
-        A: *id058
-        B: *id059
+      pins: *id058
       clock: APB4
+      dma_channels:
+        A:
+        - *id059
+        B:
+        - *id060
     SDMMC1:
       address: 0x52007000
       kind: SDMMC:sdmmc2_v1_0
       block: sdmmc_v2/SDMMC
-      pins: *id060
+      pins: *id061
       clock: AHB3
     SDMMC2:
       address: 0x48022400
       kind: SDMMC:sdmmc2_v1_0
       block: sdmmc_v2/SDMMC
-      pins: *id061
+      pins: *id062
       clock: AHB2
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s2_v1_0
       clock: APB2
       block: spi_v3/SPI
-      pins: *id062
-      dma_requests:
-        RX: *id063
-        TX: *id064
+      pins: *id063
+      dma_channels:
+        RX:
+        - *id064
+        TX:
+        - *id065
     SPI2:
       address: 0x40003800
       kind: SPI:spi2s2_v1_0
       clock: APB1
       block: spi_v3/SPI
-      pins: *id065
-      dma_requests:
-        RX: *id066
-        TX: *id067
+      pins: *id066
+      dma_channels:
+        RX:
+        - *id067
+        TX:
+        - *id068
     SPI3:
       address: 0x40003c00
       kind: SPI:spi2s2_v1_0
       clock: APB1
       block: spi_v3/SPI
-      pins: *id068
-      dma_requests:
-        RX: *id069
-        TX: *id070
+      pins: *id069
+      dma_channels:
+        RX:
+        - *id070
+        TX:
+        - *id071
     SPI4:
       address: 0x40013400
       kind: SPI:spi2s2_v1_0
       clock: APB2
       block: spi_v3/SPI
-      pins: *id071
-      dma_requests:
-        RX: *id072
-        TX: *id073
+      pins: *id072
+      dma_channels:
+        RX:
+        - *id073
+        TX:
+        - *id074
     SPI5:
       address: 0x40015000
       kind: SPI:spi2s2_v1_0
       clock: APB2
       block: spi_v3/SPI
-      pins: *id074
-      dma_requests:
-        RX: *id075
-        TX: *id076
+      pins: *id075
+      dma_channels:
+        RX:
+        - *id076
+        TX:
+        - *id077
     SPI6:
       address: 0x58001400
       kind: SPI:spi2s2_v1_0
       block: spi_v3/SPI
-      pins: *id077
-      dma_requests:
-        RX: *id078
-        TX: *id079
+      pins: *id078
       clock: APB4
+      dma_channels:
+        RX:
+        - *id079
+        TX:
+        - *id080
     SWPMI1:
       address: 0x40008800
       kind: SWPMI:swp1_v1_0
       clock: APB1
-      pins: *id080
+      pins: *id081
     SYSCFG:
       address: 0x58000400
       kind: SYS:STM32H7_sys_v1_0
@@ -3880,212 +4071,273 @@ cores:
       address: 0x40010000
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id081
-      dma_requests:
-        CH1: *id082
-        CH2: *id083
-        CH3: *id084
-        CH4: *id085
-        COM: *id086
-        TRIG: *id087
-        UP: *id088
+      pins: *id082
       clock: APB2
+      dma_channels:
+        CH1:
+        - *id083
+        CH2:
+        - *id084
+        CH3:
+        - *id085
+        CH4:
+        - *id086
+        COM:
+        - *id087
+        TRIG:
+        - *id088
+        UP:
+        - *id089
     TIM12:
       address: 0x40001800
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id089
+      pins: *id090
       clock: APB1
     TIM13:
       address: 0x40001c00
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id090
+      pins: *id091
       clock: APB1
     TIM14:
       address: 0x40002000
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id091
+      pins: *id092
       clock: APB1
     TIM15:
       address: 0x40014000
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id092
-      dma_requests:
-        CH1: *id093
-        COM: *id094
-        TRIG: *id095
-        UP: *id096
+      pins: *id093
       clock: APB2
+      dma_channels:
+        CH1:
+        - *id094
+        COM:
+        - *id095
+        TRIG:
+        - *id096
+        UP:
+        - *id097
     TIM16:
       address: 0x40014400
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id097
-      dma_requests:
-        CH1: *id098
-        UP: *id099
+      pins: *id098
       clock: APB2
+      dma_channels:
+        CH1:
+        - *id099
+        UP:
+        - *id100
     TIM17:
       address: 0x40014800
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id100
-      dma_requests:
-        CH1: *id101
-        UP: *id102
+      pins: *id101
       clock: APB2
+      dma_channels:
+        CH1:
+        - *id102
+        UP:
+        - *id103
     TIM2:
       address: 0x40000000
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id103
-      dma_requests:
-        CH1: *id104
-        CH2: *id105
-        CH3: *id106
-        CH4: *id107
-        UP: *id108
+      pins: *id104
       clock: APB1
+      dma_channels:
+        CH1:
+        - *id105
+        CH2:
+        - *id106
+        CH3:
+        - *id107
+        CH4:
+        - *id108
+        UP:
+        - *id109
     TIM3:
       address: 0x40000400
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id109
-      dma_requests:
-        CH1: *id110
-        CH2: *id111
-        CH3: *id112
-        CH4: *id113
-        TRIG: *id114
-        UP: *id115
+      pins: *id110
       clock: APB1
+      dma_channels:
+        CH1:
+        - *id111
+        CH2:
+        - *id112
+        CH3:
+        - *id113
+        CH4:
+        - *id114
+        TRIG:
+        - *id115
+        UP:
+        - *id116
     TIM4:
       address: 0x40000800
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id116
-      dma_requests:
-        CH1: *id117
-        CH2: *id118
-        CH3: *id119
-        UP: *id120
+      pins: *id117
       clock: APB1
+      dma_channels:
+        CH1:
+        - *id118
+        CH2:
+        - *id119
+        CH3:
+        - *id120
+        UP:
+        - *id121
     TIM5:
       address: 0x40000c00
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id121
-      dma_requests:
-        CH1: *id122
-        CH2: *id123
-        CH3: *id124
-        CH4: *id125
-        TRIG: *id126
-        UP: *id127
+      pins: *id122
       clock: APB1
+      dma_channels:
+        CH1:
+        - *id123
+        CH2:
+        - *id124
+        CH3:
+        - *id125
+        CH4:
+        - *id126
+        TRIG:
+        - *id127
+        UP:
+        - *id128
     TIM6:
       address: 0x40001000
       kind: TIM6_7H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      dma_requests:
-        UP: *id128
       clock: APB1
+      dma_channels:
+        UP:
+        - *id129
     TIM7:
       address: 0x40001400
       kind: TIM6_7H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      dma_requests:
-        UP: *id129
       clock: APB1
+      dma_channels:
+        UP:
+        - *id130
     TIM8:
       address: 0x40010400
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      pins: *id130
-      dma_requests:
-        CH1: *id131
-        CH2: *id132
-        CH3: *id133
-        CH4: *id134
-        COM: *id135
-        TRIG: *id136
-        UP: *id137
+      pins: *id131
       clock: APB2
+      dma_channels:
+        CH1:
+        - *id132
+        CH2:
+        - *id133
+        CH3:
+        - *id134
+        CH4:
+        - *id135
+        COM:
+        - *id136
+        TRIG:
+        - *id137
+        UP:
+        - *id138
     UART4:
       address: 0x40004c00
       kind: UART:sci2_v3_0
       clock: APB1
       block: usart_v2/USART
-      pins: *id138
-      dma_requests:
-        RX: *id139
-        TX: *id140
+      pins: *id139
+      dma_channels:
+        RX:
+        - *id140
+        TX:
+        - *id141
     UART5:
       address: 0x40005000
       kind: UART:sci2_v3_0
       clock: APB1
       block: usart_v2/USART
-      pins: *id141
-      dma_requests:
-        RX: *id142
-        TX: *id143
+      pins: *id142
+      dma_channels:
+        RX:
+        - *id143
+        TX:
+        - *id144
     UART7:
       address: 0x40007800
       kind: UART:sci2_v3_0
       block: usart_v2/USART
-      pins: *id144
-      dma_requests:
-        RX: *id145
-        TX: *id146
+      pins: *id145
       clock: APB1
+      dma_channels:
+        RX:
+        - *id146
+        TX:
+        - *id147
     UART8:
       address: 0x40007c00
       kind: UART:sci2_v3_0
       block: usart_v2/USART
-      pins: *id147
-      dma_requests:
-        RX: *id148
-        TX: *id149
+      pins: *id148
       clock: APB1
+      dma_channels:
+        RX:
+        - *id149
+        TX:
+        - *id150
     USART1:
       address: 0x40011000
       kind: USART:sci3_v2_0
       clock: APB2
       block: usart_v2/USART
-      pins: *id150
-      dma_requests:
-        RX: *id151
-        TX: *id152
+      pins: *id151
+      dma_channels:
+        RX:
+        - *id152
+        TX:
+        - *id153
     USART2:
       address: 0x40004400
       kind: USART:sci3_v2_0
       clock: APB1
       block: usart_v2/USART
-      pins: *id153
-      dma_requests:
-        RX: *id154
-        TX: *id155
+      pins: *id154
+      dma_channels:
+        RX:
+        - *id155
+        TX:
+        - *id156
     USART3:
       address: 0x40004800
       kind: USART:sci3_v2_0
       clock: APB1
       block: usart_v2/USART
-      pins: *id156
-      dma_requests:
-        RX: *id157
-        TX: *id158
+      pins: *id157
+      dma_channels:
+        RX:
+        - *id158
+        TX:
+        - *id159
     USART6:
       address: 0x40011400
       kind: USART:sci3_v2_0
       clock: APB2
       block: usart_v2/USART
-      pins: *id159
-      dma_requests:
-        RX: *id160
-        TX: *id161
+      pins: *id160
+      dma_channels:
+        RX:
+        - *id161
+        TX:
+        - *id162
     USB_OTG_FS:
       address: 0x40080000
       kind: USB_OTG_FS:otgfs1_v2_4
@@ -4095,7 +4347,7 @@ cores:
     VREFBUF:
       address: 0x58003c00
       kind: VREFBUF:STM32H7_vrefbuf_v1_0
-      pins: *id162
+      pins: *id163
     WWDG1:
       address: 0x50003000
       kind: WWDG:wwdg1_v2_0
@@ -4243,78 +4495,126 @@ cores:
     WAKEUP_PIN: 149
     WWDG: 0
   dma_channels:
-    BDMA_0:
+    BDMA_CH0:
       dma: BDMA
       channel: 0
-    BDMA_1:
+      dmamux: DMAMUX2
+      dmamux_channel: 0
+    BDMA_CH1:
       dma: BDMA
       channel: 1
-    BDMA_2:
+      dmamux: DMAMUX2
+      dmamux_channel: 1
+    BDMA_CH2:
       dma: BDMA
       channel: 2
-    BDMA_3:
+      dmamux: DMAMUX2
+      dmamux_channel: 2
+    BDMA_CH3:
       dma: BDMA
       channel: 3
-    BDMA_4:
+      dmamux: DMAMUX2
+      dmamux_channel: 3
+    BDMA_CH4:
       dma: BDMA
       channel: 4
-    BDMA_5:
+      dmamux: DMAMUX2
+      dmamux_channel: 4
+    BDMA_CH5:
       dma: BDMA
       channel: 5
-    BDMA_6:
+      dmamux: DMAMUX2
+      dmamux_channel: 5
+    BDMA_CH6:
       dma: BDMA
       channel: 6
-    BDMA_7:
+      dmamux: DMAMUX2
+      dmamux_channel: 6
+    BDMA_CH7:
       dma: BDMA
       channel: 7
-    DMA1_0:
+      dmamux: DMAMUX2
+      dmamux_channel: 7
+    DMA1_CH0:
       dma: DMA1
       channel: 0
-    DMA1_1:
+      dmamux: DMAMUX1
+      dmamux_channel: 0
+    DMA1_CH1:
       dma: DMA1
       channel: 1
-    DMA1_2:
+      dmamux: DMAMUX1
+      dmamux_channel: 1
+    DMA1_CH2:
       dma: DMA1
       channel: 2
-    DMA1_3:
+      dmamux: DMAMUX1
+      dmamux_channel: 2
+    DMA1_CH3:
       dma: DMA1
       channel: 3
-    DMA1_4:
+      dmamux: DMAMUX1
+      dmamux_channel: 3
+    DMA1_CH4:
       dma: DMA1
       channel: 4
-    DMA1_5:
+      dmamux: DMAMUX1
+      dmamux_channel: 4
+    DMA1_CH5:
       dma: DMA1
       channel: 5
-    DMA1_6:
+      dmamux: DMAMUX1
+      dmamux_channel: 5
+    DMA1_CH6:
       dma: DMA1
       channel: 6
-    DMA1_7:
+      dmamux: DMAMUX1
+      dmamux_channel: 6
+    DMA1_CH7:
       dma: DMA1
       channel: 7
-    DMA2_0:
+      dmamux: DMAMUX1
+      dmamux_channel: 7
+    DMA2_CH0:
       dma: DMA2
       channel: 0
-    DMA2_1:
+      dmamux: DMAMUX1
+      dmamux_channel: 8
+    DMA2_CH1:
       dma: DMA2
       channel: 1
-    DMA2_2:
+      dmamux: DMAMUX1
+      dmamux_channel: 9
+    DMA2_CH2:
       dma: DMA2
       channel: 2
-    DMA2_3:
+      dmamux: DMAMUX1
+      dmamux_channel: 10
+    DMA2_CH3:
       dma: DMA2
       channel: 3
-    DMA2_4:
+      dmamux: DMAMUX1
+      dmamux_channel: 11
+    DMA2_CH4:
       dma: DMA2
       channel: 4
-    DMA2_5:
+      dmamux: DMAMUX1
+      dmamux_channel: 12
+    DMA2_CH5:
       dma: DMA2
       channel: 5
-    DMA2_6:
+      dmamux: DMAMUX1
+      dmamux_channel: 13
+    DMA2_CH6:
       dma: DMA2
       channel: 6
-    DMA2_7:
+      dmamux: DMAMUX1
+      dmamux_channel: 14
+    DMA2_CH7:
       dma: DMA2
       channel: 7
+      dmamux: DMAMUX1
+      dmamux_channel: 15
 application-notes:
 - title: STM32 microcontroller system memory boot mode
   name: CD00167594
