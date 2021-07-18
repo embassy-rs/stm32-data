@@ -205,7 +205,14 @@ def parse_header(f):
 
         if m := re.match('([a-zA-Z0-9_]+)_IRQn += (\\d+),? +/\\*!< (.*) \\*/', l):
             #print("Found irq for", cur_core)
-            irqs[cur_core][m.group(1)] = int(m.group(2))
+            irq_name = m.group(1)
+
+            # Make I2C more compatible between chips that have just one irq or one for event and
+            # other for errors
+            if irq_name.startswith('I2C'):
+                irq_name = removesuffix(irq_name, '_EV')
+
+            irqs[cur_core][irq_name] = int(m.group(2))
 
         if m := re.match('#define +([0-9A-Za-z_]+)\\(', l):
             defines[cur_core][m.group(1)] = -1
@@ -362,6 +369,7 @@ perimap = [
     ('.*:DMA', 'bdma_v1/DMA'),
 ]
 
+
 def match_peri(peri):
     for r, block in perimap:
         if re.match('^'+r+'$', peri):
@@ -440,6 +448,7 @@ def parse_headers():
                 json.dump(res, j)
 
         headers_parsed[ff] = res
+
 
 def chip_name_from_package_name(x):
     name_map = [
@@ -639,17 +648,17 @@ def parse_chips():
             defines = h['defines'][core_name]
 
             core['interrupts'] = interrupts
-           
+
             peris = {}
             for pname, pkind in chip['peripherals'].items():
                 addr = defines.get(pname)
                 if addr is None:
                     if pname == 'ADC_COMMON':
-                            addr = defines.get('ADC1_COMMON')
+                        addr = defines.get('ADC1_COMMON')
+                        if addr is None:
+                            addr = defines.get('ADC12_COMMON')
                             if addr is None:
-                                addr = defines.get('ADC12_COMMON')
-                                if addr is None:
-                                    addr = defines.get('ADC123_COMMON')
+                                addr = defines.get('ADC123_COMMON')
                 if addr is None:
                     continue
 
@@ -714,7 +723,6 @@ def parse_chips():
                         dbg_peri['block'] = block
                     peris[dma] = dbg_peri
 
-
             # EXTI is not in the cubedb XMLs
             if addr := defines.get('EXTI_BASE'):
                 if chip_name.startswith("STM32WB55"):
@@ -771,7 +779,6 @@ def parse_chips():
                         if (peri_clock := match_peri_clock(rcc_block, name)) is not None:
                             core['peripherals'][name]['clock'] = peri_clock
 
-
             # Process DMA channels
             chs = {}
             if chip_dma in dma_channels:
@@ -791,7 +798,7 @@ def parse_chips():
             # Process peripheral - DMA channel associations
             for pname, p in peris.items():
                 if (peri_chs := dma_channels[chip_dma]['peripherals'].get(pname)) is not None:
-                    
+
                     p['dma_channels'] = {
                         req: [
                             ch
@@ -800,7 +807,6 @@ def parse_chips():
                         ]
                         for req, req_chs in peri_chs.items()
                     }
-
 
         # remove all pins from the root of the chip before emitting.
         del chip['pins']
@@ -859,11 +865,12 @@ def parse_gpio_af():
 
 dma_channels = {}
 
+
 def parse_dma():
     for f in glob('sources/cubedb/mcu/IP/*DMA-*Modes.xml'):
         is_explicitly_bdma = False
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/')
-        if not ( ff.startswith('B') or ff.startswith( 'D' ) ):
+        if not (ff.startswith('B') or ff.startswith('D')):
             continue
         if ff.startswith("BDMA"):
             is_explicitly_bdma = True
@@ -887,8 +894,10 @@ def parse_dma():
                 # ========== CHIP WITH DMAMUX
 
                 dmamux_file = ff[5:7]
-                if ff.startswith('STM32L4P'): dmamux_file = 'L4PQ'
-                if ff.startswith('STM32L4S'): dmamux_file = 'L4RS'
+                if ff.startswith('STM32L4P'):
+                    dmamux_file = 'L4PQ'
+                if ff.startswith('STM32L4S'):
+                    dmamux_file = 'L4RS'
                 for mf in glob('data/dmamux/{}_*.yaml'.format(dmamux_file)):
                     with open(mf, 'r') as yaml_file:
                         y = yaml.load(yaml_file, Loader=SafeLoader)
@@ -914,7 +923,8 @@ def parse_dma():
                         })
 
                 dmamux = 'DMAMUX1'
-                if is_explicitly_bdma: dmamux = 'DMAMUX2'
+                if is_explicitly_bdma:
+                    dmamux = 'DMAMUX2'
 
                 dmamux_channel = 0
                 for n in dma_peri_name.split(","):
@@ -998,7 +1008,9 @@ def parse_dma():
 
         dma_channels[ff] = chip_dma
 
+
 clocks = {}
+
 
 def parse_clocks():
     for f in glob('sources/cubedb/mcu/IP/RCC-*rcc_v1_0_Modes.xml'):
@@ -1018,7 +1030,9 @@ def parse_clocks():
 
         clocks[ff] = chip_clocks
 
+
 peripheral_to_clock = {}
+
 
 def parse_rcc_regs():
     print("parsing RCC registers")
@@ -1040,6 +1054,7 @@ def parse_rcc_regs():
                             family_clocks[peri] = clock
         peripheral_to_clock['rcc_' + ff + '/RCC'] = family_clocks
 
+
 def match_peri_clock(rcc_block, peri_name):
     if rcc_block in peripheral_to_clock:
         family_clocks = peripheral_to_clock[rcc_block]
@@ -1049,6 +1064,7 @@ def match_peri_clock(rcc_block, peri_name):
         if peri_name.endswith("1"):
             return match_peri_clock(rcc_block, removesuffix(peri_name, "1"))
         return None
+
 
 parse_rcc_regs()
 parse_documentations()
