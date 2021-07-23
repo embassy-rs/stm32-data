@@ -1,6 +1,7 @@
 name: STM32L052T6
 family: STM32L0
 line: STM32L0x2
+die: DIE417
 packages:
 - name: STM32L052T6Yx
   package: WLCSP36
@@ -41,6 +42,8 @@ cores:
         signal: IN3
       - pin: PA1
         signal: IN1
+      interrupts:
+      - ADC1_COMP
       clock: APB2
       dma_channels:
         ADC:
@@ -72,6 +75,8 @@ cores:
         signal: INM
       - pin: PA1
         signal: INP
+      interrupts:
+      - ADC1_COMP
     COMP2:
       address: 0x4001001c
       kind: COMP:advmu_pvm_v1_0
@@ -103,6 +108,8 @@ cores:
         signal: INM
       - pin: PA3
         signal: INP
+      interrupts:
+      - ADC1_COMP
     CRS:
       address: 0x40006c00
       kind: CRS:STM32L0_crs_v1_0
@@ -114,6 +121,8 @@ cores:
       pins:
       - pin: PA4
         signal: OUT1
+      interrupts:
+      - TIM6_DAC
       clock: APB1
       dma_channels:
         CH1:
@@ -167,6 +176,8 @@ cores:
       - pin: PB5
         signal: SMBA
         af: 3
+      interrupts:
+      - I2C1
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -190,6 +201,8 @@ cores:
       - pin: PB10
         signal: SCL
         af: 6
+      interrupts:
+      - I2C2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -216,6 +229,8 @@ cores:
       - pin: PB2
         signal: OUT
         af: 2
+      interrupts:
+      - LPTIM1
       clock: APB1
     LPUART1:
       address: 0x40004800
@@ -236,6 +251,8 @@ cores:
       - pin: PA6
         signal: CTS
         af: 4
+      interrupts:
+      - RNG_LPUART1
       clock: APB1
       dma_channels:
         RX:
@@ -263,10 +280,14 @@ cores:
       - pin: PA8
         signal: MCO
         af: 0
+      interrupts:
+      - RCC_CRS
     RNG:
       address: 0x40025000
       kind: RNG:rng1_v1_1
       block: rng_v1/RNG
+      interrupts:
+      - RNG_LPUART1
       clock: AHB
     RTC:
       address: 0x40002800
@@ -274,6 +295,8 @@ cores:
       pins:
       - pin: PA0
         signal: TAMP2
+      interrupts:
+      - RTC
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_1
@@ -310,6 +333,8 @@ cores:
       - pin: PA5
         signal: SCK
         af: 0
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -363,6 +388,8 @@ cores:
       - pin: PA1
         signal: CH2
         af: 2
+      interrupts:
+      - TIM2
       clock: APB1
       dma_channels:
         CH1:
@@ -398,6 +425,8 @@ cores:
       - pin: PA1
         signal: ETR
         af: 5
+      interrupts:
+      - TIM21
       clock: APB2
     TIM22:
       address: 0x40011400
@@ -419,11 +448,15 @@ cores:
       - pin: PA7
         signal: CH2
         af: 5
+      interrupts:
+      - TIM22
       clock: APB2
     TIM6:
       address: 0x40001000
       kind: TIM6_7L0:gptimer2_v2_x
       block: timer_v1/TIM_GP16
+      interrupts:
+      - TIM6_DAC
       clock: APB1
       dma_channels:
         UP:
@@ -499,6 +532,8 @@ cores:
       - pin: PA1
         signal: G1_IO2
         af: 3
+      interrupts:
+      - TSC
     USART1:
       address: 0x40013800
       kind: USART:sci3_v1_1
@@ -529,6 +564,8 @@ cores:
       - pin: PA8
         signal: CK
         af: 4
+      interrupts:
+      - USART1
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -570,6 +607,8 @@ cores:
       - pin: PA1
         signal: RTS
         af: 4
+      interrupts:
+      - USART2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -592,10 +631,14 @@ cores:
         signal: DP
       - pin: PA11
         signal: DM
+      interrupts:
+      - USB
       clock: APB1
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
+      interrupts:
+      - WWDG
       clock: APB1
   interrupts:
     ADC1_COMP: 12

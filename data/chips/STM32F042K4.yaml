@@ -1,6 +1,7 @@
 name: STM32F042K4
 family: STM32F0
 line: STM32F0x2
+die: DIE445
 packages:
 - name: STM32F042K4Tx
   package: LQFP32
@@ -43,6 +44,8 @@ cores:
         signal: IN8
       - pin: PB1
         signal: IN9
+      interrupts:
+      - ADC1
       clock: APB2
       dma_channels:
         ADC:
@@ -65,6 +68,8 @@ cores:
       - pin: PB8
         signal: RX
         af: 4
+      interrupts:
+      - CEC_CAN
     CRS:
       address: 0x40006c00
       kind: CRS:STM32F0_crs_v1_0
@@ -134,6 +139,8 @@ cores:
       - pin: PB8
         signal: SCL
         af: 1
+      interrupts:
+      - I2C1
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -154,12 +161,16 @@ cores:
       - pin: PA8
         signal: MCO
         af: 0
+      interrupts:
+      - RCC_CRS
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_4
       pins:
       - pin: PA0
         signal: TAMP2
+      interrupts:
+      - RTC
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_0
@@ -189,6 +200,8 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 0
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -231,6 +244,9 @@ cores:
       - pin: PA12
         signal: ETR
         af: 2
+      interrupts:
+      - TIM1_BRK_UP_TRG_COM
+      - TIM1_CC
       clock: APB2
       dma_channels:
         CH1:
@@ -261,6 +277,8 @@ cores:
       - pin: PB1
         signal: CH1
         af: 0
+      interrupts:
+      - TIM14
       clock: APB1
     TIM16:
       address: 0x40014400
@@ -279,6 +297,8 @@ cores:
       - pin: PB8
         signal: CH1
         af: 2
+      interrupts:
+      - TIM16
       clock: APB2
       dma_channels:
         CH1:
@@ -304,6 +324,8 @@ cores:
       - pin: PB7
         signal: CH1N
         af: 2
+      interrupts:
+      - TIM17
       clock: APB2
       dma_channels:
         CH1:
@@ -347,6 +369,8 @@ cores:
       - pin: PB3
         signal: CH2
         af: 2
+      interrupts:
+      - TIM2
       clock: APB1
       dma_channels:
         CH1:
@@ -382,6 +406,8 @@ cores:
       - pin: PB5
         signal: CH2
         af: 1
+      interrupts:
+      - TIM3
       clock: APB1
       dma_channels:
         CH1:
@@ -458,6 +484,8 @@ cores:
       - pin: PB8
         signal: SYNC
         af: 3
+      interrupts:
+      - TSC
       clock: AHB
     USART1:
       address: 0x40013800
@@ -488,6 +516,9 @@ cores:
       - pin: PB7
         signal: RX
         af: 0
+      interrupts:
+      - USART1
+      - USART1
       clock: APB2
       dma_channels:
         RX:
@@ -526,6 +557,8 @@ cores:
       - pin: PA15
         signal: RX
         af: 1
+      interrupts:
+      - USART2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -549,10 +582,14 @@ cores:
       - pin: PA15
         signal: NOE
         af: 5
+      interrupts:
+      - USB
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
       clock: APB1
+      interrupts:
+      - WWDG
   interrupts:
     ADC1: 12
     CEC_CAN: 30

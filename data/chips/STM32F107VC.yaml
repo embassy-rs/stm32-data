@@ -1,6 +1,7 @@
 name: STM32F107VC
 family: STM32F1
 line: STM32F105/107
+die: DIE418
 packages:
 - name: STM32F107VCTx
   package: LQFP100
@@ -55,6 +56,8 @@ cores:
         signal: IN7
       - pin: PB1
         signal: IN9
+      interrupts:
+      - ADC1_2
       dma_channels:
         ADC1:
         - channel: DMA1_CH1
@@ -94,6 +97,8 @@ cores:
         signal: IN7
       - pin: PB1
         signal: IN9
+      interrupts:
+      - ADC1_2
     ADC_COMMON:
       address: 0x40012400
       kind: ADC_COMMON:aditf_v2_5F1
@@ -114,6 +119,11 @@ cores:
         signal: RX
       - pin: PD1
         signal: TX
+      interrupts:
+      - CAN1_TX
+      - CAN1_RX0
+      - CAN1_RX1
+      - CAN1_SCE
     CAN2:
       address: 0x40006800
       kind: CAN:bxcan1_v1_1_F1
@@ -127,6 +137,11 @@ cores:
         signal: TX
       - pin: PB12
         signal: RX
+      interrupts:
+      - CAN2_TX
+      - CAN2_RX0
+      - CAN2_RX1
+      - CAN2_SCE
     DAC:
       address: 0x40007400
       kind: DAC:dacif_v1_1F1
@@ -206,6 +221,9 @@ cores:
         signal: RX_DV
       - pin: PD12
         signal: RXD3
+      interrupts:
+      - ETH
+      - ETH_WKUP
     EXTI:
       address: 0x40010400
       kind: EXTI
@@ -243,6 +261,9 @@ cores:
         signal: SCL
       - pin: PB5
         signal: SMBA
+      interrupts:
+      - I2C1_EV
+      - I2C1_ER
       dma_channels:
         RX:
         - channel: DMA1_CH7
@@ -265,6 +286,8 @@ cores:
         signal: OSC_OUT
       - pin: PA8
         signal: MCO
+      interrupts:
+      - RCC
     RTC:
       address: 0x40002800
       kind: RTC:rtc1_v1_1
@@ -273,6 +296,10 @@ cores:
         signal: OUT
       - pin: PC13
         signal: TAMPER
+      interrupts:
+      - TAMPER
+      - RTC
+      - RTC_Alarm
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v1_2
@@ -294,6 +321,8 @@ cores:
         signal: MISO
       - pin: PA7
         signal: MOSI
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -312,6 +341,8 @@ cores:
         signal: SCK
       - pin: PB12
         signal: NSS
+      interrupts:
+      - SPI2
       dma_channels:
         RX:
         - channel: DMA1_CH4
@@ -338,6 +369,8 @@ cores:
         signal: MOSI
       - pin: PA4
         signal: NSS
+      interrupts:
+      - SPI3
       dma_channels:
         RX:
         - channel: DMA2_CH1
@@ -392,6 +425,11 @@ cores:
         signal: CH3
       - pin: PB12
         signal: BKIN
+      interrupts:
+      - TIM1_BRK
+      - TIM1_UP
+      - TIM1_TRG_COM
+      - TIM1_CC
       dma_channels:
         CH1:
         - channel: DMA1_CH2
@@ -432,6 +470,8 @@ cores:
         signal: CH4
       - pin: PB11
         signal: CH4
+      interrupts:
+      - TIM2
       dma_channels:
         CH1:
         - channel: DMA1_CH5
@@ -470,6 +510,8 @@ cores:
         signal: CH2
       - pin: PB1
         signal: CH4
+      interrupts:
+      - TIM3
       dma_channels:
         CH1:
         - channel: DMA1_CH6
@@ -504,6 +546,8 @@ cores:
         signal: CH2
       - pin: PD12
         signal: CH1
+      interrupts:
+      - TIM4
       dma_channels:
         CH1:
         - channel: DMA1_CH1
@@ -526,6 +570,8 @@ cores:
         signal: CH3
       - pin: PA3
         signal: CH4
+      interrupts:
+      - TIM5
       dma_channels:
         CH1:
         - channel: DMA2_CH5
@@ -543,6 +589,8 @@ cores:
       address: 0x40001000
       kind: TIM6_7F1:gptimer2_v1_x
       block: timer_v1/TIM_GP16
+      interrupts:
+      - TIM6
       dma_channels:
         UP:
         - channel: DMA2_CH3
@@ -550,6 +598,8 @@ cores:
       address: 0x40001400
       kind: TIM6_7F1:gptimer2_v1_x
       block: timer_v1/TIM_GP16
+      interrupts:
+      - TIM7
       dma_channels:
         UP:
         - channel: DMA2_CH4
@@ -562,6 +612,8 @@ cores:
         signal: RX
       - pin: PC10
         signal: TX
+      interrupts:
+      - UART4
       dma_channels:
         RX:
         - channel: DMA2_CH3
@@ -576,6 +628,8 @@ cores:
         signal: RX
       - pin: PC12
         signal: TX
+      interrupts:
+      - UART5
     USART1:
       address: 0x40013800
       kind: USART:sci2_v1_1
@@ -596,6 +650,8 @@ cores:
         signal: CK
       - pin: PA10
         signal: RX
+      interrupts:
+      - USART1
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -627,6 +683,8 @@ cores:
         signal: TX
       - pin: PA3
         signal: RX
+      interrupts:
+      - USART2
       dma_channels:
         RX:
         - channel: DMA1_CH6
@@ -664,6 +722,8 @@ cores:
         signal: TX
       - pin: PD12
         signal: RTS
+      interrupts:
+      - USART3
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -672,10 +732,15 @@ cores:
     USB_OTG_FS:
       address: 0x50000000
       kind: USB_OTG_FS:otgfs1_v1_0
+      interrupts:
+      - OTG_FS_WKUP
+      - OTG_FS
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
       clock: APB1
+      interrupts:
+      - WWDG
   interrupts:
     ADC1_2: 18
     CAN1_RX0: 20

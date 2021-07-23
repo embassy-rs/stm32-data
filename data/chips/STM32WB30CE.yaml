@@ -1,6 +1,7 @@
 name: STM32WB30CE
 family: STM32WB
 line: STM32WBx0 Value Line
+die: DIE495
 packages:
 - name: STM32WB30CEUxA
   package: UFQFPN48
@@ -42,6 +43,8 @@ cores:
         signal: IN15
       - pin: PA9
         signal: IN16
+      interrupts:
+      - ADC1
       clock: AHB2
       dma_channels:
         ADC1:
@@ -54,6 +57,8 @@ cores:
     AES2:
       address: 0x58001800
       kind: AES:aes3_v1_0_WB
+      interrupts:
+      - AES2
       clock: AHB3
       dma_channels:
         IN:
@@ -102,6 +107,8 @@ cores:
     HSEM:
       address: 0x58001400
       kind: HSEM:hsem1_v1_0
+      interrupts:
+      - HSEM
       clock: AHB3
     I2C1:
       address: 0x40005400
@@ -136,6 +143,9 @@ cores:
       - pin: PB7
         signal: SDA
         af: 4
+      interrupts:
+      - I2C1_EV
+      - I2C1_ER
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -147,6 +157,9 @@ cores:
       address: 0x58000c00
       kind: IPCC:v1_0
       block: ipcc_v1/IPCC
+      interrupts:
+      - IPCC_C1_RX
+      - IPCC_C1_TX
       clock: AHB3
     IWDG:
       address: 0x40003000
@@ -172,6 +185,8 @@ cores:
       - pin: PB7
         signal: IN2
         af: 1
+      interrupts:
+      - LPTIM1
     LPTIM2:
       address: 0x40009400
       kind: LPTIM:WB5_lptimer1_v1_0
@@ -189,9 +204,13 @@ cores:
       - pin: PB1
         signal: IN1
         af: 14
+      interrupts:
+      - LPTIM2
     PKA:
       address: 0x58002000
       kind: PKA:pka32_v1_0
+      interrupts:
+      - PKA
       clock: AHB3
     RCC:
       address: 0x58000000
@@ -221,10 +240,14 @@ cores:
       - pin: PB6
         signal: MCO
         af: 0
+      interrupts:
+      - RCC
     RNG:
       address: 0x58001000
       kind: RNG:rng1_v1_1
       block: rng_v1/RNG
+      interrupts:
+      - RNG
       clock: AHB3
     RTC:
       address: 0x40002800
@@ -234,6 +257,10 @@ cores:
         signal: TAMP2
       - pin: PB2
         signal: OUT2
+      interrupts:
+      - TAMP_STAMP_LSECSS
+      - RTC_WKUP
+      - RTC_Alarm
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_5
@@ -275,6 +302,8 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 5
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -324,6 +353,11 @@ cores:
       - pin: PB7
         signal: BKIN
         af: 3
+      interrupts:
+      - TIM1_BRK
+      - TIM1_UP_TIM16
+      - TIM1_TRG_COM_TIM17
+      - TIM1_CC
       clock: APB2
       dma_channels:
         CH1:
@@ -360,6 +394,8 @@ cores:
         signal: BKIN
       - pin: PB6
         signal: CH1N
+      interrupts:
+      - TIM1_UP_TIM16
       clock: APB2
       dma_channels:
         CH1:
@@ -383,6 +419,8 @@ cores:
         signal: BKIN
       - pin: PB7
         signal: CH1N
+      interrupts:
+      - TIM1_TRG_COM_TIM17
       clock: APB2
       dma_channels:
         CH1:
@@ -426,6 +464,8 @@ cores:
       - pin: PB3
         signal: CH2
         af: 1
+      interrupts:
+      - TIM2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -490,6 +530,8 @@ cores:
       - pin: PB7
         signal: RX
         af: 7
+      interrupts:
+      - USART1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -504,6 +546,8 @@ cores:
       address: 0x40002c00
       kind: WWDG:wwdg1_v2_0
       clock: APB1
+      interrupts:
+      - WWDG
   interrupts:
     ADC1: 18
     AES2: 52

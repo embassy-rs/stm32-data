@@ -1,6 +1,7 @@
 name: STM32F401VE
 family: STM32F4
 line: STM32F401
+die: DIE433
 packages:
 - name: STM32F401VEHx
   package: UFBGA100
@@ -55,6 +56,8 @@ cores:
         signal: IN8
       - pin: PB1
         signal: IN9
+      interrupts:
+      - ADC
       clock: APB2
       dma_channels:
         ADC1:
@@ -129,6 +132,9 @@ cores:
       - pin: PB9
         signal: SDA
         af: 4
+      interrupts:
+      - I2C1_EV
+      - I2C1_ER
       dma_channels:
         RX:
         - channel: DMA1_CH0
@@ -155,6 +161,9 @@ cores:
       - pin: PB3
         signal: SDA
         af: 9
+      interrupts:
+      - I2C2_EV
+      - I2C2_ER
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -182,6 +191,9 @@ cores:
       - pin: PB4
         signal: SDA
         af: 9
+      interrupts:
+      - I2C3_EV
+      - I2C3_ER
       dma_channels:
         RX:
         - channel: DMA1_CH1
@@ -215,6 +227,8 @@ cores:
       - pin: PA8
         signal: MCO_1
         af: 0
+      interrupts:
+      - RCC
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_3
@@ -224,6 +238,10 @@ cores:
       - pin: PB15
         signal: REFIN
         af: 0
+      interrupts:
+      - TAMP_STAMP
+      - RTC_WKUP
+      - RTC_Alarm
     SDIO:
       address: 0x40012c00
       kind: SDIO:sdmmc_v1_2
@@ -259,6 +277,8 @@ cores:
       - pin: PB9
         signal: D5
         af: 12
+      interrupts:
+      - SDIO
       dma_channels:
         RX:
         - channel: DMA2_CH3
@@ -305,6 +325,8 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 5
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - channel: DMA2_CH0
@@ -349,6 +371,8 @@ cores:
       - pin: PB9
         signal: NSS
         af: 5
+      interrupts:
+      - SPI2
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -389,6 +413,8 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 6
+      interrupts:
+      - SPI3
       dma_channels:
         RX:
         - channel: DMA1_CH0
@@ -430,6 +456,8 @@ cores:
       - pin: PE14
         signal: MOSI
         af: 5
+      interrupts:
+      - SPI4
       dma_channels:
         RX:
         - channel: DMA2_CH0
@@ -517,6 +545,11 @@ cores:
       - pin: PA12
         signal: ETR
         af: 1
+      interrupts:
+      - TIM1_BRK_TIM9
+      - TIM1_UP_TIM10
+      - TIM1_TRG_COM_TIM11
+      - TIM1_CC
       clock: APB2
       dma_channels:
         CH1:
@@ -558,6 +591,8 @@ cores:
       - pin: PB8
         signal: CH1
         af: 3
+      interrupts:
+      - TIM1_UP_TIM10
       clock: APB2
     TIM11:
       address: 0x40014800
@@ -567,6 +602,8 @@ cores:
       - pin: PB9
         signal: CH1
         af: 3
+      interrupts:
+      - TIM1_TRG_COM_TIM11
       clock: APB2
     TIM2:
       address: 0x40000000
@@ -606,6 +643,8 @@ cores:
       - pin: PB3
         signal: CH2
         af: 1
+      interrupts:
+      - TIM2
       clock: APB1
       dma_channels:
         CH1:
@@ -665,6 +704,8 @@ cores:
       - pin: PB5
         signal: CH2
         af: 2
+      interrupts:
+      - TIM3
       clock: APB1
       dma_channels:
         CH1:
@@ -717,6 +758,8 @@ cores:
       - pin: PE0
         signal: ETR
         af: 2
+      interrupts:
+      - TIM4
       clock: APB1
       dma_channels:
         CH1:
@@ -748,6 +791,8 @@ cores:
       - pin: PA3
         signal: CH4
         af: 2
+      interrupts:
+      - TIM5
       clock: APB1
       dma_channels:
         CH1:
@@ -791,6 +836,8 @@ cores:
       - pin: PA3
         signal: CH2
         af: 3
+      interrupts:
+      - TIM1_BRK_TIM9
       clock: APB2
     USART1:
       address: 0x40011000
@@ -819,6 +866,8 @@ cores:
       - pin: PB7
         signal: RX
         af: 7
+      interrupts:
+      - USART1
       dma_channels:
         RX:
         - channel: DMA2_CH2
@@ -864,6 +913,8 @@ cores:
       - pin: PD7
         signal: CK
         af: 7
+      interrupts:
+      - USART2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -892,6 +943,8 @@ cores:
       - pin: PA12
         signal: RX
         af: 8
+      interrupts:
+      - USART6
       dma_channels:
         RX:
         - channel: DMA2_CH1
@@ -906,9 +959,14 @@ cores:
     USB_OTG_FS:
       address: 0x50000000
       kind: USB_OTG_FS:otgfs1_v1_2
+      interrupts:
+      - OTG_FS_WKUP
+      - OTG_FS
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
+      interrupts:
+      - WWDG
       clock: APB1
   interrupts:
     ADC: 18

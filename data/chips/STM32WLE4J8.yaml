@@ -1,6 +1,7 @@
 name: STM32WLE4J8
 family: STM32WL
 line: STM32WLEx
+die: DIE497
 packages:
 - name: STM32WLE4J8Ix
   package: UFBGA73
@@ -39,6 +40,8 @@ cores:
         signal: IN4
       - pin: PB1
         signal: IN5
+      interrupts:
+      - ADC
       clock: APB2
       dma_channels:
         ADC:
@@ -51,6 +54,8 @@ cores:
     AES:
       address: 0x58001800
       kind: AES:aes3_v1_0_WL
+      interrupts:
+      - AES
       clock: AHB3
       dma_channels:
         IN:
@@ -84,6 +89,8 @@ cores:
       - pin: PB10
         signal: OUT
         af: 12
+      interrupts:
+      - COMP
     COMP2:
       address: 0x40010204
       kind: COMP:TSMC90_WLxx
@@ -114,12 +121,16 @@ cores:
       - pin: PA7
         signal: OUT
         af: 12
+      interrupts:
+      - COMP
     DAC:
       address: 0x40007400
       kind: DAC:WL_dacif_v3_0
       pins:
       - pin: PA10
         signal: OUT1
+      interrupts:
+      - DAC
       dma_channels:
         OUT1:
         - dmamux: DMAMUX1
@@ -164,6 +175,8 @@ cores:
     HSEM:
       address: 0x58001400
       kind: HSEM:hsem1_v1_0
+      interrupts:
+      - HSEM
       clock: AHB3
     I2C1:
       address: 0x40005400
@@ -198,6 +211,9 @@ cores:
       - pin: PA1
         signal: SMBA
         af: 4
+      interrupts:
+      - I2C1_EV
+      - I2C1_ER
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -228,6 +244,9 @@ cores:
       - pin: PA6
         signal: SMBA
         af: 4
+      interrupts:
+      - I2C2_EV
+      - I2C2_ER
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -274,6 +293,9 @@ cores:
       - pin: PB10
         signal: SCL
         af: 4
+      interrupts:
+      - I2C3_EV
+      - I2C3_ER
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -320,6 +342,8 @@ cores:
       - pin: PA4
         signal: OUT
         af: 1
+      interrupts:
+      - LPTIM1
     LPTIM2:
       address: 0x40009400
       kind: LPTIM:WL5_lptimer1_v2_1
@@ -343,6 +367,8 @@ cores:
       - pin: PA8
         signal: OUT
         af: 14
+      interrupts:
+      - LPTIM2
     LPTIM3:
       address: 0x40009800
       kind: LPTIM:WL5_lptimer1_v2_1
@@ -356,6 +382,8 @@ cores:
       - pin: PA1
         signal: OUT
         af: 3
+      interrupts:
+      - LPTIM3
     LPUART1:
       address: 0x40008000
       kind: LPUART:sci3_v1_3
@@ -396,6 +424,8 @@ cores:
       - pin: PB10
         signal: RX
         af: 8
+      interrupts:
+      - LPUART1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -406,6 +436,8 @@ cores:
     PKA:
       address: 0x58002000
       kind: PKA:pka32_v1_0
+      interrupts:
+      - PKA
       clock: AHB3
     PWR:
       address: 0x58000400
@@ -438,10 +470,14 @@ cores:
       - pin: PA8
         signal: MCO
         af: 0
+      interrupts:
+      - RCC
     RNG:
       address: 0x58001000
       kind: RNG:rng1_v3_1
       block: rng_v1/RNG
+      interrupts:
+      - RNG
       clock: AHB3
     RTC:
       address: 0x40002800
@@ -462,6 +498,10 @@ cores:
         signal: TAMP_IN2
       - pin: PA4
         signal: OUT2
+      interrupts:
+      - TAMP_STAMP_LSECSS_SSRU
+      - RTC_WKUP
+      - RTC_Alarm
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_5
@@ -503,6 +543,8 @@ cores:
       - pin: PA5
         signal: SCK
         af: 5
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -557,6 +599,8 @@ cores:
       - pin: PA8
         signal: SCK
         af: 5
+      interrupts:
+      - SPI2
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -619,6 +663,11 @@ cores:
       - pin: PA8
         signal: CH1
         af: 1
+      interrupts:
+      - TIM1_BRK
+      - TIM1_UP
+      - TIM1_TRG_COM
+      - TIM1_CC
       clock: APB2
       dma_channels:
         CH1:
@@ -659,6 +708,8 @@ cores:
       - pin: PA6
         signal: CH1
         af: 14
+      interrupts:
+      - TIM16
       clock: APB2
       dma_channels:
         CH1:
@@ -687,6 +738,8 @@ cores:
       - pin: PA7
         signal: CH1
         af: 14
+      interrupts:
+      - TIM17
       clock: APB2
       dma_channels:
         CH1:
@@ -736,6 +789,8 @@ cores:
       - pin: PA5
         signal: ETR
         af: 2
+      interrupts:
+      - TIM2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -800,6 +855,8 @@ cores:
       - pin: PA8
         signal: CK
         af: 7
+      interrupts:
+      - USART1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -833,6 +890,8 @@ cores:
       - pin: PA4
         signal: CK
         af: 7
+      interrupts:
+      - USART2
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -850,6 +909,8 @@ cores:
       address: 0x40002c00
       kind: WWDG:wwdg1_v2_0
       clock: APB1
+      interrupts:
+      - WWDG
   interrupts:
     ADC: 18
     AES: 51

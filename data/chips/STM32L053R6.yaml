@@ -1,6 +1,7 @@
 name: STM32L053R6
 family: STM32L0
 line: STM32L0x3
+die: DIE417
 packages:
 - name: STM32L053R6Hx
   package: TFBGA64
@@ -55,6 +56,8 @@ cores:
         signal: IN8
       - pin: PB1
         signal: IN9
+      interrupts:
+      - ADC1_COMP
       clock: APB2
       dma_channels:
         ADC:
@@ -86,6 +89,8 @@ cores:
       - pin: PA11
         signal: OUT
         af: 7
+      interrupts:
+      - ADC1_COMP
     COMP2:
       address: 0x4001001c
       kind: COMP:advmu_pvm_v1_0
@@ -117,6 +122,8 @@ cores:
         signal: INP
       - pin: PB7
         signal: INP
+      interrupts:
+      - ADC1_COMP
     CRS:
       address: 0x40006c00
       kind: CRS:STM32L0_crs_v1_0
@@ -128,6 +135,8 @@ cores:
       pins:
       - pin: PA4
         signal: OUT1
+      interrupts:
+      - TIM6_DAC
       clock: APB1
       dma_channels:
         CH1:
@@ -184,6 +193,8 @@ cores:
       - pin: PB9
         signal: SDA
         af: 4
+      interrupts:
+      - I2C1
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -213,6 +224,8 @@ cores:
       - pin: PB14
         signal: SDA
         af: 5
+      interrupts:
+      - I2C2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -353,6 +366,8 @@ cores:
       - pin: PB9
         signal: COM3
         af: 1
+      interrupts:
+      - LCD
     LPTIM1:
       address: 0x40007c00
       kind: LPTIM:lptimer1_v1_0
@@ -381,6 +396,8 @@ cores:
       - pin: PB7
         signal: IN2
         af: 2
+      interrupts:
+      - LPTIM1
       clock: APB1
     LPUART1:
       address: 0x40004800
@@ -434,6 +451,8 @@ cores:
       - pin: PD2
         signal: RTS
         af: 0
+      interrupts:
+      - RNG_LPUART1
       clock: APB1
       dma_channels:
         RX:
@@ -465,10 +484,14 @@ cores:
       - pin: PA9
         signal: MCO
         af: 0
+      interrupts:
+      - RCC_CRS
     RNG:
       address: 0x40025000
       kind: RNG:rng1_v1_1
       block: rng_v1/RNG
+      interrupts:
+      - RNG_LPUART1
       clock: AHB
     RTC:
       address: 0x40002800
@@ -493,6 +516,8 @@ cores:
       - pin: PB15
         signal: REFIN
         af: 2
+      interrupts:
+      - RTC
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_1
@@ -529,6 +554,8 @@ cores:
       - pin: PB5
         signal: MOSI
         af: 0
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -566,6 +593,8 @@ cores:
       - pin: PB9
         signal: NSS
         af: 5
+      interrupts:
+      - SPI2
       dma_channels:
         RX:
         - channel: DMA1_CH4
@@ -623,6 +652,8 @@ cores:
       - pin: PB3
         signal: CH2
         af: 2
+      interrupts:
+      - TIM2
       clock: APB1
       dma_channels:
         CH1:
@@ -667,6 +698,8 @@ cores:
       - pin: PC9
         signal: ETR
         af: 0
+      interrupts:
+      - TIM21
       clock: APB2
     TIM22:
       address: 0x40011400
@@ -697,11 +730,15 @@ cores:
       - pin: PB5
         signal: CH2
         af: 4
+      interrupts:
+      - TIM22
       clock: APB2
     TIM6:
       address: 0x40001000
       kind: TIM6_7L0:gptimer2_v2_x
       block: timer_v1/TIM_GP16
+      interrupts:
+      - TIM6_DAC
       clock: APB1
       dma_channels:
         UP:
@@ -813,6 +850,8 @@ cores:
       - pin: PB8
         signal: SYNC
         af: 3
+      interrupts:
+      - TSC
     USART1:
       address: 0x40013800
       kind: USART:sci3_v1_1
@@ -843,6 +882,8 @@ cores:
       - pin: PB7
         signal: RX
         af: 0
+      interrupts:
+      - USART1
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -884,6 +925,8 @@ cores:
       - pin: PA15
         signal: RX
         af: 4
+      interrupts:
+      - USART2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -909,10 +952,14 @@ cores:
       - pin: PA13
         signal: NOE
         af: 2
+      interrupts:
+      - USB
       clock: APB1
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
+      interrupts:
+      - WWDG
       clock: APB1
   interrupts:
     ADC1_COMP: 12

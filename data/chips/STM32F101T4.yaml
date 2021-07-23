@@ -1,6 +1,7 @@
 name: STM32F101T4
 family: STM32F1
 line: STM32F101
+die: DIE412
 packages:
 - name: STM32F101T4Ux
   package: VFQFPN36
@@ -41,6 +42,8 @@ cores:
         signal: IN8
       - pin: PB1
         signal: IN9
+      interrupts:
+      - ADC1
       dma_channels:
         ADC1:
         - channel: DMA1_CH1
@@ -85,6 +88,9 @@ cores:
         signal: SCL
       - pin: PB7
         signal: SDA
+      interrupts:
+      - I2C1_EV
+      - I2C1_ER
       dma_channels:
         RX:
         - channel: DMA1_CH7
@@ -103,9 +109,15 @@ cores:
         signal: OSC_OUT
       - pin: PA8
         signal: MCO
+      interrupts:
+      - RCC
     RTC:
       address: 0x40002800
       kind: RTC:rtc1_v1_1
+      interrupts:
+      - TAMPER
+      - RTC
+      - RTC_Alarm
     SPI1:
       address: 0x40013000
       kind: SPI:spi2_v1_4
@@ -127,6 +139,8 @@ cores:
         signal: MISO
       - pin: PB5
         signal: MOSI
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -153,6 +167,8 @@ cores:
         signal: ETR
       - pin: PB3
         signal: CH2
+      interrupts:
+      - TIM2
       dma_channels:
         CH1:
         - channel: DMA1_CH5
@@ -181,6 +197,8 @@ cores:
         signal: CH1
       - pin: PB5
         signal: CH2
+      interrupts:
+      - TIM3
       dma_channels:
         CH1:
         - channel: DMA1_CH6
@@ -212,6 +230,8 @@ cores:
         signal: TX
       - pin: PB7
         signal: RX
+      interrupts:
+      - USART1
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -233,6 +253,8 @@ cores:
         signal: RX
       - pin: PA4
         signal: CK
+      interrupts:
+      - USART2
       dma_channels:
         RX:
         - channel: DMA1_CH6
@@ -242,6 +264,8 @@ cores:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
       clock: APB1
+      interrupts:
+      - WWDG
   interrupts:
     ADC1: 18
     DMA1_Channel1: 11

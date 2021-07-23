@@ -1,6 +1,7 @@
 name: STM32F410T8
 family: STM32F4
 line: STM32F410
+die: DIE458
 packages:
 - name: STM32F410T8Yx
   package: WLCSP36
@@ -29,6 +30,8 @@ cores:
         signal: IN5
       - pin: PA3
         signal: IN3
+      interrupts:
+      - ADC
       clock: APB2
       dma_channels:
         ADC1:
@@ -45,6 +48,8 @@ cores:
       pins:
       - pin: PA5
         signal: OUT1
+      interrupts:
+      - TIM6_DAC
       clock: APB1
     DBGMCU:
       address: 0xe0042000
@@ -78,6 +83,9 @@ cores:
       - pin: PB10
         signal: SCL
         af: 9
+      interrupts:
+      - FMPI2C1_EV
+      - FMPI2C1_ER
       clock: APB1
       dma_channels:
         RX:
@@ -124,6 +132,9 @@ cores:
       - pin: PB7
         signal: SDA
         af: 4
+      interrupts:
+      - I2C1_EV
+      - I2C1_ER
       dma_channels:
         RX:
         - channel: DMA1_CH0
@@ -152,6 +163,9 @@ cores:
       - pin: PB10
         signal: SCL
         af: 4
+      interrupts:
+      - I2C2_EV
+      - I2C2_ER
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -183,6 +197,8 @@ cores:
       - pin: PB2
         signal: OUT
         af: 1
+      interrupts:
+      - LPTIM1
       clock: APB1
     RCC:
       address: 0x40023800
@@ -200,10 +216,14 @@ cores:
         af: 0
       - pin: PH1
         signal: OSC_OUT
+      interrupts:
+      - RCC
     RNG:
       address: 0x40080000
       kind: RNG:rng1_v1_1
       block: rng_v1/RNG
+      interrupts:
+      - RNG
       clock: AHB2
     RTC:
       address: 0x40002800
@@ -211,6 +231,10 @@ cores:
       pins:
       - pin: PC13
         signal: AF1
+      interrupts:
+      - TAMP_STAMP
+      - RTC_WKUP
+      - RTC_Alarm
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v2_4
@@ -231,6 +255,8 @@ cores:
       - pin: PA5
         signal: SCK
         af: 5
+      interrupts:
+      - SPI1
       dma_channels:
         RX:
         - channel: DMA2_CH0
@@ -263,6 +289,11 @@ cores:
       - pin: PB12
         signal: BKIN
         af: 1
+      interrupts:
+      - TIM1_BRK_TIM9
+      - TIM1_UP
+      - TIM1_TRG_COM_TIM11
+      - TIM1_CC
       clock: APB2
       dma_channels:
         CH1:
@@ -300,6 +331,8 @@ cores:
       address: 0x40014800
       kind: TIM1_8:gptimer2_v2_x
       block: timer_v1/TIM_GP16
+      interrupts:
+      - TIM1_TRG_COM_TIM11
       clock: APB2
     TIM5:
       address: 0x40000c00
@@ -318,6 +351,8 @@ cores:
       - pin: PA3
         signal: CH4
         af: 2
+      interrupts:
+      - TIM5
       clock: APB1
       dma_channels:
         CH1:
@@ -348,6 +383,8 @@ cores:
       address: 0x40001000
       kind: TIM6_7:gptimer2_v2_x
       block: timer_v1/TIM_GP16
+      interrupts:
+      - TIM6_DAC
       clock: APB1
       dma_channels:
         UP:
@@ -364,6 +401,8 @@ cores:
       - pin: PA3
         signal: CH2
         af: 3
+      interrupts:
+      - TIM1_BRK_TIM9
       clock: APB2
     USART1:
       address: 0x40011000
@@ -389,6 +428,8 @@ cores:
       - pin: PA12
         signal: RTS
         af: 7
+      interrupts:
+      - USART1
       dma_channels:
         RX:
         - channel: DMA2_CH2
@@ -413,6 +454,8 @@ cores:
       - pin: PA3
         signal: RX
         af: 7
+      interrupts:
+      - USART2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -425,6 +468,8 @@ cores:
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
+      interrupts:
+      - WWDG
       clock: APB1
   interrupts:
     ADC: 18
