@@ -1,6 +1,7 @@
 name: STM32WB10CC
 family: STM32WB
 line: STM32WBx0 Value Line
+die: DIE494
 packages:
 - name: STM32WB10CCUx
   package: UFQFPN48
@@ -38,6 +39,8 @@ cores:
         signal: IN3
       - pin: PA9
         signal: IN4
+      interrupts:
+        GLOBAL: ADC1
       dma_channels:
         ADC1:
         - dmamux: DMAMUX1
@@ -48,6 +51,8 @@ cores:
     AES2:
       address: 0x58001800
       kind: AES:aes3_v1_0_WB
+      interrupts:
+        GLOBAL: AES2
       dma_channels:
         IN:
         - dmamux: DMAMUX1
@@ -62,6 +67,14 @@ cores:
     DMA1:
       address: 0x40020000
       block: bdma_v1/DMA
+      interrupts:
+        DMA1_Channel1: DMA1_Channel1
+        DMA1_Channel2: DMA1_Channel2
+        DMA1_Channel3: DMA1_Channel3
+        DMA1_Channel4: DMA1_Channel4
+        DMA1_Channel5: DMA1_Channel5
+        DMA1_Channel6: DMA1_Channel6
+        DMA1_Channel7: DMA1_Channel7
     DMAMUX1:
       address: 0x40020800
       kind: DMAMUX:v1
@@ -88,6 +101,8 @@ cores:
     HSEM:
       address: 0x58001400
       kind: HSEM:hsem1_v1_0
+      interrupts:
+        GLOBAL: HSEM
     I2C1:
       address: 0x40005400
       kind: I2C:i2c2_v1_1
@@ -121,6 +136,9 @@ cores:
       - pin: PB7
         signal: SDA
         af: 4
+      interrupts:
+        ER: I2C1_ER
+        EV: I2C1_EV
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -132,6 +150,7 @@ cores:
       address: 0x58000c00
       kind: IPCC:v1_0
       block: ipcc_v1/IPCC
+      interrupts: {}
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v2_0
@@ -156,6 +175,8 @@ cores:
       - pin: PB7
         signal: IN2
         af: 1
+      interrupts:
+        GLOBAL: LPTIM1
     LPTIM2:
       address: 0x40009400
       kind: LPTIM:WB5_lptimer1_v1_0
@@ -173,9 +194,13 @@ cores:
       - pin: PB1
         signal: IN1
         af: 14
+      interrupts:
+        GLOBAL: LPTIM2
     PKA:
       address: 0x58002000
       kind: PKA:pka32_v1_0
+      interrupts:
+        GLOBAL: PKA
     RCC:
       address: 0x58000000
       kind: RCC:STM32WB1_rcc_v1_0
@@ -203,10 +228,14 @@ cores:
       - pin: PB6
         signal: MCO
         af: 0
+      interrupts:
+        GLOBAL: RCC
     RNG:
       address: 0x58001000
       kind: RNG:rng1_v2_0
       block: rng_v1/RNG
+      interrupts:
+        GLOBAL: RNG
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_6
@@ -216,6 +245,8 @@ cores:
       - pin: PB2
         signal: OUT
         af: 0
+      interrupts:
+        GLOBAL: TAMP_STAMP_LSECSS
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_5
@@ -269,6 +300,8 @@ cores:
       - pin: PB6
         signal: NSS
         af: 5
+      interrupts:
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -321,6 +354,11 @@ cores:
       - pin: PB7
         signal: CH3
         af: 12
+      interrupts:
+        BRK: TIM1_BRK
+        COM: TIM1_TRG_COM
+        TRG: TIM1_TRG_COM
+        UP: TIM1_UP
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -378,6 +416,11 @@ cores:
       - pin: PB3
         signal: CH2
         af: 1
+      interrupts:
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -422,6 +465,8 @@ cores:
       - pin: PB7
         signal: G2_IO4
         af: 9
+      interrupts:
+        GLOBAL: TSC
     USART1:
       address: 0x40013800
       kind: USART:sci3_v2_1
@@ -470,6 +515,8 @@ cores:
       - pin: PB7
         signal: RX
         af: 7
+      interrupts:
+        GLOBAL: USART1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -484,6 +531,8 @@ cores:
       address: 0x40002c00
       kind: WWDG:wwdg1_v2_0
       clock: APB1
+      interrupts:
+        GLOBAL: WWDG
   interrupts:
     ADC1: 18
     AES2: 52

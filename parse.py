@@ -480,6 +480,7 @@ def parse_chips():
         package_names = expand_name(r['@RefName'])
         package_rams = r['Ram']
         package_flashs = r['Flash']
+        die = r['Die']
         if type(package_rams) != list:
             package_rams = [package_rams]*len(package_names)
         if type(package_flashs) != list:
@@ -493,13 +494,17 @@ def parse_chips():
 
             dma = next(filter(lambda x: x['@Name'] == 'DMA', r['IP']), None)
             bdma = next(filter(lambda x: x['@Name'] == 'BDMA', r['IP']), None)
+            nvic = next(filter(lambda x: x['@Name'] == 'NVIC', r['IP']), None)
+
+            if nvic is None:
+                nvic = next(filter(lambda x: x['@Name'] == 'NVIC1', r['IP']), None)
+
+            nvic = nvic['@Version']
 
             if dma is not None:
                 dma = dma['@Version']
             if bdma is not None:
                 bdma = bdma['@Version']
-            #dma = next(filter(lambda x: x['@Name'] == 'DMA', r['IP']), None)['@Version']
-            #bdma = next(filter(lambda x: x['@Name'] == 'BDMA', r['IP']), None)['@Version']
 
             rcc = next(filter(lambda x: x['@Name'] == 'RCC', r['IP']))['@Version']
 
@@ -529,6 +534,7 @@ def parse_chips():
                     'name': chip_name,
                     'family': family,
                     'line': r['@Line'],
+                    'die': die,
                     'packages': [],
                     'datasheet': None,
                     'reference-manual': None,
@@ -541,6 +547,7 @@ def parse_chips():
                     'rcc': rcc,  # temporarily stashing it here
                     'dma': dma,  # temporarily stashing it here
                     'bdma': bdma,  # temporarily stashing it here
+                    'nvic': nvic # temporarily stashing it here
                 })
 
             chips[chip_name]['packages'].append(OrderedDict({
@@ -621,6 +628,9 @@ def parse_chips():
         chip_bdma = chip['bdma']
         del chip['bdma']
 
+        chip_nvic = chip['nvic']
+        del chip['nvic']
+
         h = find_header(chip_name)
         if h is None:
             raise Exception("missing header for {}".format(chip_name))
@@ -668,6 +678,11 @@ def parse_chips():
                     if len(chip['pins'][pname]) > 0:
                         p['pins'] = chip['pins'][pname]
 
+                if chip_nvic in chip_interrupts:
+                    if pname in chip_interrupts[chip_nvic]:
+                        # filter by available, because some are conditioned on <Die>
+                        p['interrupts'] = filter_interrupts( chip_interrupts[chip_nvic][pname], interrupts)
+
                 peris[pname] = p
 
             family_extra = "data/extra/family/" + chip['family'] + ".yaml"
@@ -699,6 +714,11 @@ def parse_chips():
                     })
                     if block := match_peri(chip_name+':'+dma+':DMA'):
                         p['block'] = block
+
+                    if chip_nvic in chip_interrupts:
+                        if dma in chip_interrupts[chip_nvic]:
+                            # filter by available, because some are conditioned on <Die>
+                            p['interrupts'] = filter_interrupts( chip_interrupts[chip_nvic][dma], interrupts)
 
                     peris[dma] = p
 
@@ -1050,6 +1070,102 @@ def match_peri_clock(rcc_block, peri_name):
             return match_peri_clock(rcc_block, removesuffix(peri_name, "1"))
         return None
 
+chip_interrupts = {}
+
+def parse_interrupts():
+    print("parsing interrupts")
+    for f in glob('sources/cubedb/mcu/IP/NVIC-*_Modes.xml'):
+        ff = removeprefix(f, 'sources/cubedb/mcu/IP/NVIC-')
+        ff = removesuffix(ff, '_Modes.xml')
+        chip_irqs = {}
+        r = xmltodict.parse(open(f, 'rb'))
+        irqs = next(filter(lambda x: x['@Name'] == 'IRQn', r['IP']['RefParameter']))
+        for irq in irqs['PossibleValue']:
+            value = irq['@Value']
+            parts = value.split(':')
+            irq_name = removesuffix(parts[0], "_IRQn")
+            peri_names = parts[2].split(',')
+            if len(peri_names) == 1 and peri_names[0] == '':
+                continue
+            elif len(peri_names) == 1 and ( peri_names[0] == 'DMA' or peri_names[0].startswith("DMAL")):
+                peri_names = [ parts[3] ]
+            split = split_interrupts(peri_names, irq_name)
+            for p in peri_names:
+                if p not in chip_irqs:
+                    chip_irqs[p] = {}
+                merge_peri_irq_signals(chip_irqs[p], split[p])
+        chip_interrupts[ff] = chip_irqs
+
+def merge_peri_irq_signals(peri_irqs, additional):
+    for key, value in additional.items():
+        if key not in peri_irqs:
+            peri_irqs[key] = []
+        peri_irqs[key].append(value)
+
+
+def split_interrupts(peri_names, irq_name):
+    split = {}
+    for p in peri_names:
+        split[p] = remap_interrupt_signals(p, irq_name)
+
+    return split
+
+irq_signals_map = {
+    'I2C': [ 'ER', 'EV'],
+    'TIM': [ 'BRK', 'UP', 'TRG', 'COM'],
+    'HRTIM': ['Master', 'TIMA', 'TIMB', 'TIMC', 'TIMD', 'TIME', 'TIMF' ]
+}
+
+def remap_interrupt_signals(peri_name, irq_name):
+    if peri_name == irq_name:
+        return expand_all_irq_signals(peri_name, irq_name)
+    if (peri_name.startswith('DMA') or peri_name.startswith('BDMA')) and irq_name.startswith(peri_name):
+        return { irq_name: irq_name }
+    if peri_name in irq_name:
+        signals = {}
+        start = irq_name.index(peri_name)
+        regexp = re.compile('(_[^_]+)');
+        if match := regexp.findall(irq_name, start):
+            for m in match:
+                signal = removeprefix(m, '_').strip()
+                if is_valid_irq_signal(peri_name, signal):
+                    signals[signal] = irq_name
+        else:
+            signals = expand_all_irq_signals(peri_name, irq_name)
+        return signals
+    else:
+        return { 'GLOBAL': irq_name }
+
+def is_valid_irq_signal(peri_name, signal):
+    for prefix, signals in irq_signals_map.items():
+        if peri_name.startswith(prefix):
+            return signal in signals
+    return False
+
+def expand_all_irq_signals(peri_name, irq_name):
+    expanded = {}
+    for prefix, signals in irq_signals_map.items():
+        if peri_name.startswith(prefix):
+            for s in  irq_signals_map[prefix]:
+                expanded[s] = irq_name
+            return expanded
+
+    return {'GLOBAL': irq_name }
+
+def filter_interrupts(peri_irqs, all_irqs):
+    filtered = {}
+
+    for signal, irqs in peri_irqs.items():
+        for irq in all_irqs:
+            if irq in irqs:
+                filtered[signal] = irq
+                break
+
+    return filtered
+
+
+
+parse_interrupts()
 parse_rcc_regs()
 parse_documentations()
 parse_dma()

@@ -1,6 +1,7 @@
 name: STM32F102C8
 family: STM32F1
 line: STM32F102
+die: DIE410
 packages:
 - name: STM32F102C8Tx
   package: LQFP48
@@ -41,6 +42,8 @@ cores:
         signal: IN8
       - pin: PB1
         signal: IN9
+      interrupts:
+        GLOBAL: ADC1
       dma_channels:
         ADC1:
         - channel: DMA1_CH1
@@ -54,6 +57,14 @@ cores:
     DMA1:
       address: 0x40020000
       block: bdma_v1/DMA
+      interrupts:
+        DMA1_Channel1: DMA1_Channel1
+        DMA1_Channel2: DMA1_Channel2
+        DMA1_Channel3: DMA1_Channel3
+        DMA1_Channel4: DMA1_Channel4
+        DMA1_Channel5: DMA1_Channel5
+        DMA1_Channel6: DMA1_Channel6
+        DMA1_Channel7: DMA1_Channel7
     EXTI:
       address: 0x40010400
       kind: EXTI
@@ -89,6 +100,9 @@ cores:
         signal: SCL
       - pin: PB9
         signal: SDA
+      interrupts:
+        ER: I2C1_ER
+        EV: I2C1_EV
       dma_channels:
         RX:
         - channel: DMA1_CH7
@@ -106,6 +120,9 @@ cores:
         signal: SDA
       - pin: PB12
         signal: SMBA
+      interrupts:
+        ER: I2C2_ER
+        EV: I2C2_EV
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -128,6 +145,8 @@ cores:
         signal: OSC_OUT
       - pin: PA8
         signal: MCO
+      interrupts:
+        GLOBAL: RCC
     RTC:
       address: 0x40002800
       kind: RTC:rtc1_v1_1
@@ -136,6 +155,8 @@ cores:
         signal: OUT
       - pin: PC13
         signal: TAMPER
+      interrupts:
+        GLOBAL: TAMPER
     SPI1:
       address: 0x40013000
       kind: SPI:spi2_v1_4
@@ -157,6 +178,8 @@ cores:
         signal: MISO
       - pin: PB5
         signal: MOSI
+      interrupts:
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -175,6 +198,8 @@ cores:
         signal: MISO
       - pin: PB15
         signal: MOSI
+      interrupts:
+        GLOBAL: SPI2
       dma_channels:
         RX:
         - channel: DMA1_CH4
@@ -205,6 +230,11 @@ cores:
         signal: ETR
       - pin: PB3
         signal: CH2
+      interrupts:
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       dma_channels:
         CH1:
         - channel: DMA1_CH5
@@ -233,6 +263,11 @@ cores:
         signal: CH1
       - pin: PB5
         signal: CH2
+      interrupts:
+        BRK: TIM3
+        COM: TIM3
+        TRG: TIM3
+        UP: TIM3
       dma_channels:
         CH1:
         - channel: DMA1_CH6
@@ -257,6 +292,11 @@ cores:
         signal: CH3
       - pin: PB9
         signal: CH4
+      interrupts:
+        BRK: TIM4
+        COM: TIM4
+        TRG: TIM4
+        UP: TIM4
       dma_channels:
         CH1:
         - channel: DMA1_CH1
@@ -286,6 +326,8 @@ cores:
         signal: TX
       - pin: PB7
         signal: RX
+      interrupts:
+        GLOBAL: USART1
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -307,6 +349,8 @@ cores:
         signal: RX
       - pin: PA4
         signal: CK
+      interrupts:
+        GLOBAL: USART2
       dma_channels:
         RX:
         - channel: DMA1_CH6
@@ -328,6 +372,8 @@ cores:
         signal: CTS
       - pin: PB14
         signal: RTS
+      interrupts:
+        GLOBAL: USART3
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -341,10 +387,14 @@ cores:
         signal: DM
       - pin: PA12
         signal: DP
+      interrupts:
+        GLOBAL: USBWakeUp
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
       clock: APB1
+      interrupts:
+        GLOBAL: WWDG
   interrupts:
     ADC1: 18
     DMA1_Channel1: 11

@@ -1,6 +1,7 @@
 name: STM32F048T6
 family: STM32F0
 line: STM32F0x8
+die: DIE445
 packages:
 - name: STM32F048T6Yx
   package: WLCSP36
@@ -41,6 +42,8 @@ cores:
         signal: IN3
       - pin: PA0
         signal: IN0
+      interrupts:
+        GLOBAL: ADC1
       clock: APB2
       dma_channels:
         ADC:
@@ -61,6 +64,10 @@ cores:
     DMA1:
       address: 0x40020000
       block: bdma_v1/DMA
+      interrupts:
+        DMA1_Channel1: DMA1_Channel1
+        DMA1_Channel2_3: DMA1_Channel2_3
+        DMA1_Channel4_5: DMA1_Channel4_5
       clock: AHB
     EXTI:
       address: 0x40010400
@@ -118,6 +125,9 @@ cores:
       - pin: PB5
         signal: SMBA
         af: 3
+      interrupts:
+        ER: I2C1
+        EV: I2C1
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -142,6 +152,7 @@ cores:
       - pin: PA8
         signal: MCO
         af: 0
+      interrupts: {}
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_4
@@ -156,6 +167,8 @@ cores:
         signal: TS
       - pin: PA0
         signal: TAMP2
+      interrupts:
+        GLOBAL: RTC
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_0
@@ -185,6 +198,8 @@ cores:
       - pin: PA7
         signal: MOSI
         af: 0
+      interrupts:
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -227,6 +242,11 @@ cores:
       - pin: PA7
         signal: CH1N
         af: 2
+      interrupts:
+        BRK: TIM1_BRK_UP_TRG_COM
+        COM: TIM1_BRK_UP_TRG_COM
+        TRG: TIM1_BRK_UP_TRG_COM
+        UP: TIM1_BRK_UP_TRG_COM
       clock: APB2
       dma_channels:
         CH1:
@@ -257,6 +277,11 @@ cores:
       - pin: PA7
         signal: CH1
         af: 4
+      interrupts:
+        BRK: TIM14
+        COM: TIM14
+        TRG: TIM14
+        UP: TIM14
       clock: APB1
     TIM16:
       address: 0x40014400
@@ -275,6 +300,11 @@ cores:
       - pin: PB5
         signal: BKIN
         af: 2
+      interrupts:
+        BRK: TIM16
+        COM: TIM16
+        TRG: TIM16
+        UP: TIM16
       clock: APB2
       dma_channels:
         CH1:
@@ -300,6 +330,11 @@ cores:
       - pin: PA7
         signal: CH1
         af: 5
+      interrupts:
+        BRK: TIM17
+        COM: TIM17
+        TRG: TIM17
+        UP: TIM17
       clock: APB2
       dma_channels:
         CH1:
@@ -343,6 +378,11 @@ cores:
       - pin: PA0
         signal: ETR
         af: 2
+      interrupts:
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       clock: APB1
       dma_channels:
         CH1:
@@ -378,6 +418,11 @@ cores:
       - pin: PA7
         signal: CH2
         af: 1
+      interrupts:
+        BRK: TIM3
+        COM: TIM3
+        TRG: TIM3
+        UP: TIM3
       clock: APB1
       dma_channels:
         CH1:
@@ -451,6 +496,8 @@ cores:
       - pin: PA0
         signal: G1_IO1
         af: 3
+      interrupts:
+        GLOBAL: TSC
       clock: AHB
     USART1:
       address: 0x40013800
@@ -481,6 +528,8 @@ cores:
       - pin: PA8
         signal: CK
         af: 1
+      interrupts:
+        GLOBAL: USART1
       clock: APB2
       dma_channels:
         RX:
@@ -519,6 +568,8 @@ cores:
       - pin: PA0
         signal: CTS
         af: 1
+      interrupts:
+        GLOBAL: USART2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -542,10 +593,14 @@ cores:
       - pin: PA4
         signal: NOE
         af: 2
+      interrupts:
+        GLOBAL: USB
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
       clock: APB1
+      interrupts:
+        GLOBAL: WWDG
   interrupts:
     ADC1: 12
     CEC_CAN: 30

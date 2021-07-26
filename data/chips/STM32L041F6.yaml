@@ -1,6 +1,7 @@
 name: STM32L041F6
 family: STM32L0
 line: STM32L0x1
+die: DIE425
 packages:
 - name: STM32L041F6Px
   package: TSSOP20
@@ -39,6 +40,7 @@ cores:
         signal: IN7
       - pin: PB1
         signal: IN9
+      interrupts: {}
       clock: APB2
       dma_channels:
         ADC:
@@ -52,6 +54,7 @@ cores:
     AES:
       address: 0x40026000
       kind: AES:aes1_v1_0
+      interrupts: {}
       dma_channels:
         IN:
         - channel: DMA1_CH1
@@ -81,6 +84,8 @@ cores:
       - pin: PA6
         signal: OUT
         af: 7
+      interrupts:
+        GLOBAL: ADC1_COMP
     COMP2:
       address: 0x4001001c
       kind: COMP:advmu_pvm_v1_0
@@ -99,6 +104,8 @@ cores:
       - pin: PA7
         signal: OUT
         af: 7
+      interrupts:
+        GLOBAL: ADC1_COMP
     DBGMCU:
       address: 0x40015800
       kind: DBGMCU:STM32L0_dbgmcu_v1_0
@@ -106,6 +113,10 @@ cores:
     DMA1:
       address: 0x40020000
       block: bdma_v2/DMA
+      interrupts:
+        DMA1_Channel1: DMA1_Channel1
+        DMA1_Channel2_3: DMA1_Channel2_3
+        DMA1_Channel4_5_6_7: DMA1_Channel4_5_6_7
       clock: AHB
     EXTI:
       address: 0x40010400
@@ -144,6 +155,9 @@ cores:
       - pin: PA14
         signal: SMBA
         af: 3
+      interrupts:
+        ER: I2C1
+        EV: I2C1
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -186,6 +200,8 @@ cores:
       - pin: PA14
         signal: OUT
         af: 1
+      interrupts:
+        GLOBAL: LPTIM1
       clock: APB1
     LPUART1:
       address: 0x40004800
@@ -212,6 +228,7 @@ cores:
       - pin: PA14
         signal: TX
         af: 6
+      interrupts: {}
       clock: APB1
       dma_channels:
         RX:
@@ -238,6 +255,8 @@ cores:
       - pin: PA9
         signal: MCO
         af: 0
+      interrupts:
+        GLOBAL: RCC
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_4
@@ -252,6 +271,8 @@ cores:
         signal: TAMP3
       - pin: PA2
         signal: TS
+      interrupts:
+        GLOBAL: RTC
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_1
@@ -273,6 +294,8 @@ cores:
       - pin: PB1
         signal: MOSI
         af: 1
+      interrupts:
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -314,6 +337,11 @@ cores:
       - pin: PB1
         signal: CH4
         af: 5
+      interrupts:
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       clock: APB1
       dma_channels:
         CH1:
@@ -349,6 +377,11 @@ cores:
       - pin: PA3
         signal: CH2
         af: 0
+      interrupts:
+        BRK: TIM21
+        COM: TIM21
+        TRG: TIM21
+        UP: TIM21
       clock: APB2
     TIM22:
       address: 0x40011400
@@ -370,6 +403,11 @@ cores:
       - pin: PA10
         signal: CH2
         af: 5
+      interrupts:
+        BRK: TIM22
+        COM: TIM22
+        TRG: TIM22
+        UP: TIM22
       clock: APB2
     USART2:
       address: 0x40004400
@@ -410,6 +448,8 @@ cores:
       - pin: PA14
         signal: TX
         af: 4
+      interrupts:
+        GLOBAL: USART2
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -424,6 +464,8 @@ cores:
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
+      interrupts:
+        GLOBAL: WWDG
       clock: APB1
   interrupts:
     ADC1_COMP: 12

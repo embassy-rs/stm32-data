@@ -1,6 +1,7 @@
 name: STM32L011F3
 family: STM32L0
 line: STM32L0x1
+die: DIE457
 packages:
 - name: STM32L011F3Px
   package: TSSOP20
@@ -37,6 +38,7 @@ cores:
         signal: IN7
       - pin: PB1
         signal: IN9
+      interrupts: {}
       clock: APB2
       dma_channels:
         ADC:
@@ -76,6 +78,8 @@ cores:
       - pin: PA13
         signal: OUT
         af: 7
+      interrupts:
+        GLOBAL: ADC1_COMP
     COMP2:
       address: 0x4001001c
       kind: COMP:advmu_pvm_v1_0
@@ -99,6 +103,8 @@ cores:
         signal: INP
       - pin: PB7
         signal: INP
+      interrupts:
+        GLOBAL: ADC1_COMP
     DBGMCU:
       address: 0x40015800
       kind: DBGMCU:STM32L0_dbgmcu_v1_0
@@ -106,6 +112,10 @@ cores:
     DMA1:
       address: 0x40020000
       block: bdma_v2/DMA
+      interrupts:
+        DMA1_Channel1: DMA1_Channel1
+        DMA1_Channel2_3: DMA1_Channel2_3
+        DMA1_Channel4_5: DMA1_Channel4_5
       clock: AHB
     EXTI:
       address: 0x40010400
@@ -153,6 +163,9 @@ cores:
       - pin: PB7
         signal: SDA
         af: 1
+      interrupts:
+        ER: I2C1
+        EV: I2C1
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -210,6 +223,8 @@ cores:
       - pin: PB7
         signal: IN2
         af: 2
+      interrupts:
+        GLOBAL: LPTIM1
       clock: APB1
     LPUART1:
       address: 0x40004800
@@ -245,6 +260,8 @@ cores:
       - pin: PB7
         signal: RX
         af: 6
+      interrupts:
+        GLOBAL: LPUART1
       clock: APB1
       dma_channels:
         RX:
@@ -271,6 +288,8 @@ cores:
       - pin: PA9
         signal: MCO
         af: 0
+      interrupts:
+        GLOBAL: RCC
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_4
@@ -280,6 +299,8 @@ cores:
       - pin: PA10
         signal: REFIN
         af: 2
+      interrupts:
+        GLOBAL: RTC
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_1
@@ -307,6 +328,8 @@ cores:
       - pin: PA14
         signal: MISO
         af: 5
+      interrupts:
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -358,6 +381,11 @@ cores:
       - pin: PB7
         signal: CH4
         af: 5
+      interrupts:
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       clock: APB1
       dma_channels:
         CH1:
@@ -392,6 +420,11 @@ cores:
       - pin: PA10
         signal: CH1
         af: 0
+      interrupts:
+        BRK: TIM21
+        COM: TIM21
+        TRG: TIM21
+        UP: TIM21
       clock: APB2
     USART2:
       address: 0x40004400
@@ -435,6 +468,8 @@ cores:
       - pin: PB7
         signal: RX
         af: 0
+      interrupts:
+        GLOBAL: USART2
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -449,6 +484,8 @@ cores:
     WWDG:
       address: 0x40002c00
       kind: WWDG:wwdg1_v1_0
+      interrupts:
+        GLOBAL: WWDG
       clock: APB1
   interrupts:
     ADC1_COMP: 12
