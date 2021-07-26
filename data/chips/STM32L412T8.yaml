@@ -43,8 +43,7 @@ cores:
         signal: IN9
       - pin: PA3
         signal: IN8
-      interrupts:
-      - ADC1_2
+      interrupts: {}
       clock: AHB2
       dma_channels:
         ADC1:
@@ -74,7 +73,7 @@ cores:
       - pin: PA3
         signal: IN8
       interrupts:
-      - ADC1_2
+        GLOBAL: ADC1_2
       dma_channels:
         ADC2:
         - channel: DMA1_CH2
@@ -117,7 +116,7 @@ cores:
       - pin: PA4
         signal: INM
       interrupts:
-      - COMP
+        GLOBAL: COMP
     CRS:
       address: 0x40006000
       kind: CRS:STM32L4_crs_v1_0
@@ -192,8 +191,8 @@ cores:
         signal: SMBA
         af: 4
       interrupts:
-      - I2C1_EV
-      - I2C1_ER
+        ER: I2C1_ER
+        EV: I2C1_EV
       dma_channels:
         RX:
         - channel: DMA1_CH7
@@ -221,8 +220,8 @@ cores:
         signal: SCL
         af: 4
       interrupts:
-      - I2C3_EV
-      - I2C3_ER
+        ER: I2C3_ER
+        EV: I2C3_EV
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -254,7 +253,7 @@ cores:
         signal: OUT
         af: 1
       interrupts:
-      - LPTIM1
+        GLOBAL: LPTIM1
     LPTIM2:
       address: 0x40009400
       kind: LPTIM:L41_lptimer1_v1_0
@@ -273,7 +272,7 @@ cores:
         signal: OUT
         af: 14
       interrupts:
-      - LPTIM2
+        GLOBAL: LPTIM2
     LPUART1:
       address: 0x40008000
       kind: LPUART:sci3_v1_1
@@ -298,7 +297,7 @@ cores:
         signal: RX
         af: 8
       interrupts:
-      - LPUART1
+        GLOBAL: LPUART1
     OPAMP1:
       address: 0x40007800
       kind: OPAMP:tsmc018_ull_opamp_v1_0_L4
@@ -335,7 +334,7 @@ cores:
         signal: CLK
         af: 10
       interrupts:
-      - QUADSPI
+        GLOBAL: QUADSPI
       dma_channels:
         QUADSPI:
         - channel: DMA1_CH5
@@ -359,14 +358,13 @@ cores:
       - pin: PA2
         signal: LSCO
       interrupts:
-      - RCC
-      - CRS
+        GLOBAL: RCC
     RNG:
       address: 0x50060800
       kind: RNG:rng1_v1_1
       block: rng_v1/RNG
       interrupts:
-      - RNG
+        GLOBAL: RNG
       clock: AHB2
     RTC:
       address: 0x40002800
@@ -376,9 +374,7 @@ cores:
         signal: OUT_CALIB
         af: 0
       interrupts:
-      - TAMP_STAMP
-      - RTC_WKUP
-      - RTC_Alarm
+        GLOBAL: TAMP_STAMP
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_1
@@ -422,7 +418,7 @@ cores:
         signal: NSS
         af: 5
       interrupts:
-      - SPI1
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -478,10 +474,10 @@ cores:
         signal: CH2N
         af: 1
       interrupts:
-      - TIM1_BRK_TIM15
-      - TIM1_UP_TIM16
-      - TIM1_TRG_COM
-      - TIM1_CC
+        BRK: TIM1_BRK_TIM15
+        COM: TIM1_TRG_COM
+        TRG: TIM1_TRG_COM
+        UP: TIM1_UP_TIM16
       clock: APB2
       dma_channels:
         CH1:
@@ -523,7 +519,10 @@ cores:
         signal: CH2
         af: 14
       interrupts:
-      - TIM1_BRK_TIM15
+        BRK: TIM1_BRK_TIM15
+        COM: TIM1_BRK_TIM15
+        TRG: TIM1_BRK_TIM15
+        UP: TIM1_BRK_TIM15
       clock: APB2
       dma_channels:
         CH1:
@@ -556,7 +555,10 @@ cores:
         signal: CH1
         af: 14
       interrupts:
-      - TIM1_UP_TIM16
+        BRK: TIM1_UP_TIM16
+        COM: TIM1_UP_TIM16
+        TRG: TIM1_UP_TIM16
+        UP: TIM1_UP_TIM16
       clock: APB2
       dma_channels:
         CH1:
@@ -608,7 +610,10 @@ cores:
         signal: CH4
         af: 1
       interrupts:
-      - TIM2
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       dma_channels:
         CH1:
         - channel: DMA1_CH5
@@ -630,7 +635,10 @@ cores:
       kind: TIM6_7L4:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       interrupts:
-      - TIM6
+        BRK: TIM6
+        COM: TIM6
+        TRG: TIM6
+        UP: TIM6
       dma_channels:
         UP:
         - channel: DMA1_CH3
@@ -660,7 +668,7 @@ cores:
         signal: SYNC
         af: 9
       interrupts:
-      - TSC
+        GLOBAL: TSC
       clock: AHB1
     USART1:
       address: 0x40013800
@@ -705,7 +713,7 @@ cores:
         signal: CK
         af: 7
       interrupts:
-      - USART1
+        GLOBAL: USART1
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -745,7 +753,7 @@ cores:
         signal: RX
         af: 7
       interrupts:
-      - USART2
+        GLOBAL: USART2
       dma_channels:
         RX:
         - channel: DMA1_CH6
@@ -767,7 +775,7 @@ cores:
         signal: NOE
         af: 10
       interrupts:
-      - USB
+        GLOBAL: USB
     VREFINTCAL:
       address: 0x1fff75aa
       block: vrefintcal_v1/VREFINTCAL
@@ -776,7 +784,7 @@ cores:
       kind: WWDG:wwdg1_v1_0
       clock: APB1
       interrupts:
-      - WWDG
+        GLOBAL: WWDG
   interrupts:
     ADC1_2: 18
     COMP: 64

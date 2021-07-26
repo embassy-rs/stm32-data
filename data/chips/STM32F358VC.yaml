@@ -42,8 +42,7 @@ cores:
         signal: IN4
       - pin: PF4
         signal: IN5
-      interrupts:
-      - ADC1_2
+      interrupts: {}
       dma_channels:
         ADC1:
         - channel: DMA1_CH1
@@ -74,7 +73,7 @@ cores:
       - pin: PC5
         signal: IN11
       interrupts:
-      - ADC1_2
+        GLOBAL: ADC1_2
       dma_channels:
         ADC2:
         - channel: DMA2_CH1
@@ -114,7 +113,7 @@ cores:
       - pin: PD14
         signal: IN11
       interrupts:
-      - ADC3
+        GLOBAL: ADC3
       dma_channels:
         ADC3:
         - channel: DMA2_CH5
@@ -149,7 +148,7 @@ cores:
       - pin: PD14
         signal: IN11
       interrupts:
-      - ADC4
+        GLOBAL: ADC4
       dma_channels:
         ADC4:
         - channel: DMA2_CH2
@@ -180,9 +179,7 @@ cores:
       - pin: PB9
         signal: TX
         af: 9
-      interrupts:
-      - CAN_RX1
-      - CAN_SCE
+      interrupts: {}
     COMP1:
       address: 0x4001001c
       kind: COMP:comp_v1_3_d422
@@ -210,7 +207,7 @@ cores:
       - pin: PB8
         signal: OUT
         af: 8
-      interrupts: []
+      interrupts: {}
     COMP2:
       address: 0x40010020
       kind: COMP:comp_v1_3_d422
@@ -237,7 +234,7 @@ cores:
       - pin: PB9
         signal: OUT
         af: 8
-      interrupts: []
+      interrupts: {}
     COMP3:
       address: 0x40010024
       kind: COMP:comp_v1_3_d422
@@ -260,7 +257,7 @@ cores:
       - pin: PA8
         signal: OUT
         af: 8
-      interrupts: []
+      interrupts: {}
     COMP4:
       address: 0x40010028
       kind: COMP:comp_v1_3_d422
@@ -278,7 +275,7 @@ cores:
         signal: INP
       - pin: PE8
         signal: INM
-      interrupts: []
+      interrupts: {}
     COMP5:
       address: 0x4001002c
       kind: COMP:comp_v1_3_d422
@@ -301,7 +298,7 @@ cores:
       - pin: PA9
         signal: OUT
         af: 8
-      interrupts: []
+      interrupts: {}
     COMP6:
       address: 0x40010030
       kind: COMP:comp_v1_3_d422
@@ -324,7 +321,7 @@ cores:
       - pin: PA10
         signal: OUT
         af: 8
-      interrupts: []
+      interrupts: {}
     COMP7:
       address: 0x40010034
       kind: COMP:comp_v1_3_d422
@@ -343,7 +340,7 @@ cores:
       - pin: PA5
         signal: INM
       interrupts:
-      - COMP7
+        GLOBAL: COMP7
     DAC:
       address: 0x40007400
       kind: DAC:F3_dacif_v1_1
@@ -353,7 +350,7 @@ cores:
       - pin: PA5
         signal: OUT2
       interrupts:
-      - TIM6_DAC
+        GLOBAL: TIM6_DAC
       dma_channels:
         CH1:
         - channel: DMA1_CH3
@@ -424,8 +421,8 @@ cores:
         signal: SDA
         af: 4
       interrupts:
-      - I2C1_EV
-      - I2C1_ER
+        ER: I2C1_ER
+        EV: I2C1_EV
       dma_channels:
         RX:
         - channel: DMA1_CH7
@@ -459,8 +456,8 @@ cores:
         signal: SCL
         af: 4
       interrupts:
-      - I2C2_EV
-      - I2C2_ER
+        ER: I2C2_ER
+        EV: I2C2_EV
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -601,7 +598,7 @@ cores:
         signal: MCO
         af: 0
       interrupts:
-      - RCC
+        GLOBAL: RCC
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_4
@@ -625,9 +622,7 @@ cores:
         signal: REFIN
         af: 0
       interrupts:
-      - TAMP_STAMP
-      - RTC_WKUP
-      - RTC_Alarm
+        GLOBAL: TAMP_STAMP
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_0
@@ -658,7 +653,7 @@ cores:
         signal: MOSI
         af: 5
       interrupts:
-      - SPI1
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - channel: DMA1_CH2
@@ -691,7 +686,7 @@ cores:
         signal: NSS
         af: 6
       interrupts:
-      - SPI2
+        GLOBAL: SPI2
       dma_channels:
         RX:
         - channel: DMA1_CH4
@@ -727,7 +722,7 @@ cores:
         signal: MOSI
         af: 6
       interrupts:
-      - SPI3
+        GLOBAL: SPI3
       dma_channels:
         RX:
         - channel: DMA2_CH1
@@ -838,10 +833,10 @@ cores:
         signal: BKIN
         af: 12
       interrupts:
-      - TIM1_BRK_TIM15
-      - TIM1_UP_TIM16
-      - TIM1_TRG_COM_TIM17
-      - TIM1_CC
+        BRK: TIM1_BRK_TIM15
+        COM: TIM1_TRG_COM_TIM17
+        TRG: TIM1_TRG_COM_TIM17
+        UP: TIM1_UP_TIM16
       dma_channels:
         CH1:
         - channel: DMA1_CH2
@@ -890,7 +885,10 @@ cores:
         signal: BKIN
         af: 9
       interrupts:
-      - TIM1_BRK_TIM15
+        BRK: TIM1_BRK_TIM15
+        COM: TIM1_BRK_TIM15
+        TRG: TIM1_BRK_TIM15
+        UP: TIM1_BRK_TIM15
       dma_channels:
         CH1:
         - channel: DMA1_CH5
@@ -930,7 +928,10 @@ cores:
         signal: CH1
         af: 4
       interrupts:
-      - TIM1_UP_TIM16
+        BRK: TIM1_UP_TIM16
+        COM: TIM1_UP_TIM16
+        TRG: TIM1_UP_TIM16
+        UP: TIM1_UP_TIM16
       dma_channels:
         CH1:
         - channel: DMA1_CH3
@@ -965,7 +966,10 @@ cores:
         signal: CH1
         af: 4
       interrupts:
-      - TIM1_TRG_COM_TIM17
+        BRK: TIM1_TRG_COM_TIM17
+        COM: TIM1_TRG_COM_TIM17
+        TRG: TIM1_TRG_COM_TIM17
+        UP: TIM1_TRG_COM_TIM17
       dma_channels:
         CH1:
         - channel: DMA1_CH1
@@ -1036,7 +1040,10 @@ cores:
         signal: CH2
         af: 1
       interrupts:
-      - TIM2
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       dma_channels:
         CH1:
         - channel: DMA1_CH5
@@ -1108,7 +1115,10 @@ cores:
         signal: CH4
         af: 10
       interrupts:
-      - TIM3
+        BRK: TIM3
+        COM: TIM3
+        TRG: TIM3
+        UP: TIM3
       dma_channels:
         CH1:
         - channel: DMA1_CH6
@@ -1171,7 +1181,10 @@ cores:
         signal: ETR
         af: 2
       interrupts:
-      - TIM4
+        BRK: TIM4
+        COM: TIM4
+        TRG: TIM4
+        UP: TIM4
       dma_channels:
         CH1:
         - channel: DMA1_CH1
@@ -1185,8 +1198,7 @@ cores:
       address: 0x40001000
       kind: TIM6_7F3:gptimer2_v3_x
       block: timer_v1/TIM_GP16
-      interrupts:
-      - TIM6_DAC
+      interrupts: {}
       dma_channels:
         UP:
         - channel: DMA1_CH3
@@ -1196,7 +1208,10 @@ cores:
       kind: TIM6_7F3:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       interrupts:
-      - TIM7
+        BRK: TIM7
+        COM: TIM7
+        TRG: TIM7
+        UP: TIM7
       dma_channels:
         UP:
         - channel: DMA1_CH4
@@ -1294,10 +1309,10 @@ cores:
         signal: CH3
         af: 10
       interrupts:
-      - TIM8_BRK
-      - TIM8_UP
-      - TIM8_TRG_COM
-      - TIM8_CC
+        BRK: TIM8_BRK
+        COM: TIM8_TRG_COM
+        TRG: TIM8_TRG_COM
+        UP: TIM8_UP
       dma_channels:
         CH1:
         - channel: DMA2_CH3
@@ -1417,7 +1432,7 @@ cores:
         signal: SYNC
         af: 3
       interrupts:
-      - EXTI2_TSC
+        GLOBAL: EXTI2_TSC
     UART4:
       address: 0x40004c00
       kind: UART:sci2_v2_1
@@ -1430,7 +1445,7 @@ cores:
         signal: RX
         af: 5
       interrupts:
-      - UART4
+        GLOBAL: UART4
       dma_channels:
         RX:
         - channel: DMA2_CH3
@@ -1448,7 +1463,7 @@ cores:
         signal: RX
         af: 5
       interrupts:
-      - UART5
+        GLOBAL: UART5
     USART1:
       address: 0x40013800
       kind: USART:sci2_v2_1
@@ -1491,7 +1506,7 @@ cores:
         signal: RX
         af: 7
       interrupts:
-      - USART1
+        GLOBAL: USART1
       dma_channels:
         RX:
         - channel: DMA1_CH5
@@ -1555,7 +1570,7 @@ cores:
         signal: CK
         af: 7
       interrupts:
-      - USART2
+        GLOBAL: USART2
       dma_channels:
         RX:
         - channel: DMA1_CH6
@@ -1625,7 +1640,7 @@ cores:
         signal: CK
         af: 7
       interrupts:
-      - USART3
+        GLOBAL: USART3
       dma_channels:
         RX:
         - channel: DMA1_CH3
@@ -1636,7 +1651,7 @@ cores:
       kind: WWDG:wwdg1_v1_0
       clock: APB1
       interrupts:
-      - WWDG
+        GLOBAL: WWDG
   interrupts:
     ADC1_2: 18
     ADC3: 47

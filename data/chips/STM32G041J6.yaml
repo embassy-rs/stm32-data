@@ -43,7 +43,7 @@ cores:
       - pin: PA14
         signal: IN18
       interrupts:
-      - ADC1
+        GLOBAL: ADC1
       dma_channels:
         ADC1:
         - dmamux: DMAMUX1
@@ -54,8 +54,7 @@ cores:
     AES:
       address: 0x40026000
       kind: AES:aes3_v1_0_G0
-      interrupts:
-      - AES_RNG
+      interrupts: {}
       dma_channels:
         IN:
         - dmamux: DMAMUX1
@@ -127,7 +126,8 @@ cores:
         signal: SCL
         af: 6
       interrupts:
-      - I2C1
+        ER: I2C1
+        EV: I2C1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -148,7 +148,8 @@ cores:
         signal: SDA
         af: 6
       interrupts:
-      - I2C2
+        ER: I2C2
+        EV: I2C2
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -180,7 +181,7 @@ cores:
         signal: ETR
         af: 5
       interrupts:
-      - LPTIM1
+        GLOBAL: LPTIM1
     LPTIM2:
       address: 0x40009400
       kind: LPTIM:G0xx_lptimer1_v1_4
@@ -193,7 +194,7 @@ cores:
         signal: OUT
         af: 5
       interrupts:
-      - LPTIM2
+        GLOBAL: LPTIM2
     LPUART1:
       address: 0x40008000
       kind: LPUART:sci3_v1_2
@@ -209,7 +210,7 @@ cores:
         signal: RTS
         af: 6
       interrupts:
-      - LPUART1
+        GLOBAL: LPUART1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -237,21 +238,20 @@ cores:
         signal: MCO
         af: 0
       interrupts:
-      - RCC
+        GLOBAL: RCC
     RNG:
       address: 0x40025000
       kind: RNG:rng1_v2_0
       block: rng_v1/RNG
       interrupts:
-      - AES_RNG
+        GLOBAL: AES_RNG
     RTC:
       address: 0x40002800
       kind: RTC:rtc3_v1_0
       pins:
       - pin: PA0
         signal: TAMP_IN2
-      interrupts:
-      - RTC_TAMP
+      interrupts: {}
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_5
@@ -279,7 +279,7 @@ cores:
         signal: MOSI
         af: 0
       interrupts:
-      - SPI1
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -317,7 +317,7 @@ cores:
         signal: MISO
         af: 4
       interrupts:
-      - SPI2
+        GLOBAL: SPI2
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -364,8 +364,10 @@ cores:
         signal: CH3
         af: 1
       interrupts:
-      - TIM1_BRK_UP_TRG_COM
-      - TIM1_CC
+        BRK: TIM1_BRK_UP_TRG_COM
+        COM: TIM1_BRK_UP_TRG_COM
+        TRG: TIM1_BRK_UP_TRG_COM
+        UP: TIM1_BRK_UP_TRG_COM
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -394,7 +396,10 @@ cores:
         signal: CH1
         af: 0
       interrupts:
-      - TIM14
+        BRK: TIM14
+        COM: TIM14
+        TRG: TIM14
+        UP: TIM14
     TIM16:
       address: 0x40014400
       kind: TIM1_8G0:gptimer2_v3_x
@@ -410,7 +415,10 @@ cores:
         signal: CH1N
         af: 2
       interrupts:
-      - TIM16
+        BRK: TIM16
+        COM: TIM16
+        TRG: TIM16
+        UP: TIM16
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -436,7 +444,10 @@ cores:
         signal: BK
         af: 5
       interrupts:
-      - TIM17
+        BRK: TIM17
+        COM: TIM17
+        TRG: TIM17
+        UP: TIM17
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -471,7 +482,10 @@ cores:
         signal: ETR
         af: 2
       interrupts:
-      - TIM2
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -506,7 +520,10 @@ cores:
         signal: CH2
         af: 1
       interrupts:
-      - TIM3
+        BRK: TIM3
+        COM: TIM3
+        TRG: TIM3
+        UP: TIM3
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -560,7 +577,7 @@ cores:
         signal: TX
         af: 0
       interrupts:
-      - USART1
+        GLOBAL: USART1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -573,7 +590,7 @@ cores:
       kind: WWDG:wwdg1_v2_0
       clock: APB
       interrupts:
-      - WWDG
+        GLOBAL: WWDG
   interrupts:
     ADC1: 12
     AES_RNG: 31

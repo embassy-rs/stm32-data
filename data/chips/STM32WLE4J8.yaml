@@ -41,7 +41,7 @@ cores:
       - pin: PB1
         signal: IN5
       interrupts:
-      - ADC
+        GLOBAL: ADC
       clock: APB2
       dma_channels:
         ADC:
@@ -55,7 +55,7 @@ cores:
       address: 0x58001800
       kind: AES:aes3_v1_0_WL
       interrupts:
-      - AES
+        GLOBAL: AES
       clock: AHB3
       dma_channels:
         IN:
@@ -90,7 +90,7 @@ cores:
         signal: OUT
         af: 12
       interrupts:
-      - COMP
+        GLOBAL: COMP
     COMP2:
       address: 0x40010204
       kind: COMP:TSMC90_WLxx
@@ -122,7 +122,7 @@ cores:
         signal: OUT
         af: 12
       interrupts:
-      - COMP
+        GLOBAL: COMP
     DAC:
       address: 0x40007400
       kind: DAC:WL_dacif_v3_0
@@ -130,7 +130,7 @@ cores:
       - pin: PA10
         signal: OUT1
       interrupts:
-      - DAC
+        GLOBAL: DAC
       dma_channels:
         OUT1:
         - dmamux: DMAMUX1
@@ -176,7 +176,7 @@ cores:
       address: 0x58001400
       kind: HSEM:hsem1_v1_0
       interrupts:
-      - HSEM
+        GLOBAL: HSEM
       clock: AHB3
     I2C1:
       address: 0x40005400
@@ -212,8 +212,8 @@ cores:
         signal: SMBA
         af: 4
       interrupts:
-      - I2C1_EV
-      - I2C1_ER
+        ER: I2C1_ER
+        EV: I2C1_EV
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -245,8 +245,8 @@ cores:
         signal: SMBA
         af: 4
       interrupts:
-      - I2C2_EV
-      - I2C2_ER
+        ER: I2C2_ER
+        EV: I2C2_EV
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -294,8 +294,8 @@ cores:
         signal: SCL
         af: 4
       interrupts:
-      - I2C3_EV
-      - I2C3_ER
+        ER: I2C3_ER
+        EV: I2C3_EV
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -343,7 +343,7 @@ cores:
         signal: OUT
         af: 1
       interrupts:
-      - LPTIM1
+        GLOBAL: LPTIM1
     LPTIM2:
       address: 0x40009400
       kind: LPTIM:WL5_lptimer1_v2_1
@@ -368,7 +368,7 @@ cores:
         signal: OUT
         af: 14
       interrupts:
-      - LPTIM2
+        GLOBAL: LPTIM2
     LPTIM3:
       address: 0x40009800
       kind: LPTIM:WL5_lptimer1_v2_1
@@ -383,7 +383,7 @@ cores:
         signal: OUT
         af: 3
       interrupts:
-      - LPTIM3
+        GLOBAL: LPTIM3
     LPUART1:
       address: 0x40008000
       kind: LPUART:sci3_v1_3
@@ -425,7 +425,7 @@ cores:
         signal: RX
         af: 8
       interrupts:
-      - LPUART1
+        GLOBAL: LPUART1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -437,7 +437,7 @@ cores:
       address: 0x58002000
       kind: PKA:pka32_v1_0
       interrupts:
-      - PKA
+        GLOBAL: PKA
       clock: AHB3
     PWR:
       address: 0x58000400
@@ -471,13 +471,13 @@ cores:
         signal: MCO
         af: 0
       interrupts:
-      - RCC
+        GLOBAL: RCC
     RNG:
       address: 0x58001000
       kind: RNG:rng1_v3_1
       block: rng_v1/RNG
       interrupts:
-      - RNG
+        GLOBAL: RNG
       clock: AHB3
     RTC:
       address: 0x40002800
@@ -499,9 +499,7 @@ cores:
       - pin: PA4
         signal: OUT2
       interrupts:
-      - TAMP_STAMP_LSECSS_SSRU
-      - RTC_WKUP
-      - RTC_Alarm
+        GLOBAL: TAMP_STAMP_LSECSS_SSRU
     SPI1:
       address: 0x40013000
       kind: SPI:spi2s1_v3_5
@@ -544,7 +542,7 @@ cores:
         signal: SCK
         af: 5
       interrupts:
-      - SPI1
+        GLOBAL: SPI1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -600,7 +598,7 @@ cores:
         signal: SCK
         af: 5
       interrupts:
-      - SPI2
+        GLOBAL: SPI2
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -664,10 +662,10 @@ cores:
         signal: CH1
         af: 1
       interrupts:
-      - TIM1_BRK
-      - TIM1_UP
-      - TIM1_TRG_COM
-      - TIM1_CC
+        BRK: TIM1_BRK
+        COM: TIM1_TRG_COM
+        TRG: TIM1_TRG_COM
+        UP: TIM1_UP
       clock: APB2
       dma_channels:
         CH1:
@@ -709,7 +707,10 @@ cores:
         signal: CH1
         af: 14
       interrupts:
-      - TIM16
+        BRK: TIM16
+        COM: TIM16
+        TRG: TIM16
+        UP: TIM16
       clock: APB2
       dma_channels:
         CH1:
@@ -739,7 +740,10 @@ cores:
         signal: CH1
         af: 14
       interrupts:
-      - TIM17
+        BRK: TIM17
+        COM: TIM17
+        TRG: TIM17
+        UP: TIM17
       clock: APB2
       dma_channels:
         CH1:
@@ -790,7 +794,10 @@ cores:
         signal: ETR
         af: 2
       interrupts:
-      - TIM2
+        BRK: TIM2
+        COM: TIM2
+        TRG: TIM2
+        UP: TIM2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -856,7 +863,7 @@ cores:
         signal: CK
         af: 7
       interrupts:
-      - USART1
+        GLOBAL: USART1
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -891,7 +898,7 @@ cores:
         signal: CK
         af: 7
       interrupts:
-      - USART2
+        GLOBAL: USART2
       dma_channels:
         RX:
         - dmamux: DMAMUX1
@@ -910,7 +917,7 @@ cores:
       kind: WWDG:wwdg1_v2_0
       clock: APB1
       interrupts:
-      - WWDG
+        GLOBAL: WWDG
   interrupts:
     ADC: 18
     AES: 51
