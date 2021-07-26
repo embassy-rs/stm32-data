@@ -681,7 +681,6 @@ def parse_chips():
                 if chip_nvic in chip_interrupts:
                     if pname in chip_interrupts[chip_nvic]:
                         # filter by available, because some are conditioned on <Die>
-                        #p['interrupts'] = [ v for v in chip_interrupts[chip_nvic][pname] if v in interrupts ]
                         p['interrupts'] = filter_interrupts( chip_interrupts[chip_nvic][pname], interrupts)
 
                 peris[pname] = p
@@ -715,6 +714,11 @@ def parse_chips():
                     })
                     if block := match_peri(chip_name+':'+dma+':DMA'):
                         p['block'] = block
+
+                    if chip_nvic in chip_interrupts:
+                        if dma in chip_interrupts[chip_nvic]:
+                            # filter by available, because some are conditioned on <Die>
+                            p['interrupts'] = filter_interrupts( chip_interrupts[chip_nvic][dma], interrupts)
 
                     peris[dma] = p
 
@@ -1081,9 +1085,11 @@ def parse_interrupts():
             parts = value.split(':')
             irq_name = removesuffix(parts[0], "_IRQn")
             peri_names = parts[2].split(',')
-            split = split_interrupts(peri_names, irq_name)
             if len(peri_names) == 1 and peri_names[0] == '':
                 continue
+            elif len(peri_names) == 1 and ( peri_names[0] == 'DMA' or peri_names[0].startswith("DMAL")):
+                peri_names = [ parts[3] ]
+            split = split_interrupts(peri_names, irq_name)
             for p in peri_names:
                 if p not in chip_irqs:
                     chip_irqs[p] = {}
@@ -1113,6 +1119,8 @@ irq_signals_map = {
 def remap_interrupt_signals(peri_name, irq_name):
     if peri_name == irq_name:
         return expand_all_irq_signals(peri_name, irq_name)
+    if (peri_name.startswith('DMA') or peri_name.startswith('BDMA')) and irq_name.startswith(peri_name):
+        return { irq_name: irq_name }
     if peri_name in irq_name:
         signals = {}
         start = irq_name.index(peri_name)
