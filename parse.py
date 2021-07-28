@@ -643,6 +643,11 @@ def parse_chips():
         # print("Got", len(chip['cores']), "cores")
         for core in chip['cores']:
             core_name = core['name']
+
+            if (chip_nvic + '-' + core_name) in chip_interrupts:
+                # if there's a more specific set of irqs...
+                chip_nvic = chip_nvic + '-' + core_name
+
             if not core_name in h['interrupts'] or not core_name in h['defines']:
                 core_name = 'all'
             #print("Defining for core", core_name)
@@ -1086,11 +1091,21 @@ chip_interrupts = {}
 
 def parse_interrupts():
     print("parsing interrupts")
-    for f in glob('sources/cubedb/mcu/IP/NVIC-*_Modes.xml'):
-        ff = removeprefix(f, 'sources/cubedb/mcu/IP/NVIC-')
+    for f in glob('sources/cubedb/mcu/IP/NVIC*_Modes.xml'):
+        ff = removeprefix(f, 'sources/cubedb/mcu/IP/NVIC')
         ff = removesuffix(ff, '_Modes.xml')
+
         chip_irqs = {}
         r = xmltodict.parse(open(f, 'rb'))
+
+        if ff.startswith('1') or ff.startswith('2'):
+            ff = removeprefix(ff, '1')
+            ff = removeprefix(ff, '2')
+            core = corename(next(filter(lambda x: x['@Name'] == 'CoreName', r['IP']['RefParameter']))['@DefaultValue'])
+            ff = ff + "-" + core
+
+        ff = removeprefix(ff, '-')
+
         irqs = next(filter(lambda x: x['@Name'] == 'IRQn', r['IP']['RefParameter']))
         for irq in irqs['PossibleValue']:
             value = irq['@Value']
