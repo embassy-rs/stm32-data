@@ -493,8 +493,14 @@ def parse_chips():
             package_flashs = [package_flashs]*len(package_names)
         for package_i, package_name in enumerate(package_names):
             chip_name = chip_name_from_package_name(package_name)
-            flash = int(package_flashs[package_i])
-            ram = int(package_rams[package_i])
+            flash = OrderedDict( {
+                'size': int(package_flashs[package_i]),
+                'base': None,
+            } )
+            ram = OrderedDict( {
+                'size': int(package_rams[package_i]),
+                'base': None,
+            } )
             gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version']
             gpio_af = removesuffix(gpio_af, '_gpio_v1_0')
 
@@ -567,6 +573,11 @@ def parse_chips():
                 if len(rm := documents_for(chip_name, 'Reference manual')) >= 1:
                     chips[chip_name]['reference-manual'] = rm[0]
                 chips[chip_name]['application-notes'] = documents_for(chip_name, 'Application note')
+
+            if 'datasheet' in chips[chip_name] and chips[chip_name]['datasheet'] is None:
+                del chips[chip_name]['datasheet']
+            if 'reference-manual' in chips[chip_name] and chips[chip_name]['reference-manual'] is None:
+                del chips[chip_name]['reference-manual']
 
             # Some packages have some peripehrals removed because the package had to
             # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
@@ -641,6 +652,15 @@ def parse_chips():
         if h is None:
             raise Exception("missing header for {}".format(chip_name))
         h = headers_parsed[h]
+
+        chip['flash']['base'] = h['defines']['all']['FLASH_BASE']
+
+        if 'SRAM_BASE' in h['defines']['all']:
+            chip['ram']['base'] = h['defines']['all']['SRAM_BASE']
+        elif 'SRAM1_BASE' in h['defines']['all']:
+            chip['ram']['base'] = h['defines']['all']['SRAM1_BASE']
+        elif 'D1_AXISRAM_BASE' in h['defines']['all']:
+            chip['ram']['base'] = h['defines']['all']['D1_AXISRAM_BASE']
 
         # print("Got", len(chip['cores']), "cores")
         for core in chip['cores']:
