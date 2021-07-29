@@ -331,6 +331,7 @@ perimap = [
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
     ('STM32H7(42|43|53|50).*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7smps/PWR'),
+    ('.*:STM32F4_pwr_v1_0', 'pwr_f4/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
     ('.*:STM32F0_flash_v1_0', 'flash_f0/FLASH'),
     ('.*:STM32F4_flash_v1_0', 'flash_f4/FLASH'),
@@ -788,6 +789,18 @@ def parse_chips():
                 if block := match_peri(kind):
                     crs_peri['block'] = block
                 peris['CRS'] = crs_peri
+
+            # PWR is not in some XMLs
+            if 'PWR' not in peris:
+                if addr := defines.get('PWR_BASE'):
+                    kind = 'PWR:' + chip_name[:7] + '_pwr_v1_0'
+                    pwr_peri = OrderedDict({
+                        'address': addr,
+                        'kind': kind,
+                    })
+                    if block := match_peri(kind):
+                        pwr_peri['block'] = block
+                    peris['PWR'] = pwr_peri
 
             core['peripherals'] = peris
 
