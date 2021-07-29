@@ -15,8 +15,12 @@ reference-manual:
   title: STM32L552xx and STM32L562xx advanced Arm-based 32-bit MCUs
   name: DM00346336
   url: http://www.st.com/resource/en/reference_manual/DM00346336.pdf
-flash: 512
-ram: 256
+flash:
+  size: 512
+  base: 0x8000000
+ram:
+  size: 256
+  base: 0x20000000
 cores:
 - name: cm33
   peripherals:
@@ -705,7 +709,7 @@ cores:
         signal: MCO
         af: 0
       interrupts:
-        GLOBAL: CRS
+        GLOBAL: RCC
     RNG:
       address: 0x420c0800
       kind: RNG:rng1_v2_0
@@ -725,7 +729,8 @@ cores:
       - pin: PB15
         signal: REFIN
         af: 0
-      interrupts: {}
+      interrupts:
+        GLOBAL: RTC
     SAI1:
       address: 0x40015400
       kind: SAI:sai1_L5
@@ -1152,7 +1157,8 @@ cores:
         signal: IN5
       - pin: PA1
         signal: OUT4
-      interrupts: {}
+      interrupts:
+        GLOBAL: TAMP
     TIM1:
       address: 0x40012c00
       kind: TIM1_8L5:gptimer2_v3_x
