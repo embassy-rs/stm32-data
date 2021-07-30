@@ -48,7 +48,7 @@ def removeprefix(value: str, prefix: str, /) -> str:
 
 
 def corename(d):
-    #print("CHECKING CORENAME", d)
+    # print("CHECKING CORENAME", d)
     if m := re.match('.*Cortex-M(\d+)(\+?)\s*(.*)', d):
         name = "cm" + str(m.group(1))
         if m.group(2) == "+":
@@ -347,6 +347,7 @@ perimap = [
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
     ('STM32H7.*:SYS:.*', 'syscfg_h7/SYSCFG'),
+    ('STM32G0.*:SYS:.*', 'syscfg_g0/SYSCFG'),
     ('STM32WB55.*:SYS:.*', 'syscfg_wb55/SYSCFG'),
     ('STM32WL.*:SYS:.*', 'syscfg_wl5x/SYSCFG'),
     ('STM32L0.*:RCC:.*', 'rcc_l0/RCC'),
@@ -408,6 +409,7 @@ address_overrides = {
     'STM32F412VG:GPIOF_BASE': 0x40021400,
     'STM32F412VG:GPIOG_BASE': 0x40021800,
 }
+
 
 def lookup_address(defines, name, d):
     if addr := defines.get(d):
@@ -661,6 +663,8 @@ def parse_chips():
                     pname = 'SYSCFG'
                 if pname == 'SUBGHZ':
                     pname = 'SUBGHZSPI'
+                if pname == 'SYSCFG_VREFBUF':
+                    pname = 'SYSCFG'
                 if pname in FAKE_PERIPHERALS:
                     continue
                 if pname.startswith('ADC'):
@@ -749,9 +753,9 @@ def parse_chips():
 
                 found.append(key)
 
-                chip['flash']['regions'][key] = OrderedDict( {
+                chip['flash']['regions'][key] = OrderedDict({
                     'base': HexInt(h['defines']['all'][each + '_BASE'])
-                } )
+                })
 
                 if key == 'BANK_1' or key == 'BANK_2':
                     flash_size = determine_flash_size(chip_name)
@@ -776,9 +780,9 @@ def parse_chips():
 
                 found.append(key)
 
-                chip['ram']['regions'][key] = OrderedDict( {
+                chip['ram']['regions'][key] = OrderedDict({
                     'base': HexInt(h['defines']['all'][each + '_BASE'])
-                } )
+                })
 
                 if key == 'SRAM':
                     ram_size = determine_ram_size(chip_name)
@@ -896,6 +900,8 @@ def parse_chips():
                     block = 'exti_wl5x/EXTI'
                 elif chip_name.startswith("STM32H7"):
                     block = 'exti_h7/EXTI'
+                elif chip_name.startswith("STM32G0"):
+                    block = 'exti_g0/EXTI'
                 else:
                     block = 'exti_v1/EXTI'
 
@@ -957,7 +963,15 @@ def parse_chips():
 
                 for (name, body) in core['peripherals'].items():
                     if 'clock' not in body:
-                        if (peri_clock := match_peri_clock(rcc_block, name)) is not None:
+                        peri_clock = None
+                        if chip_name.startswith('STM32G0') and name.startswith('TIM'):
+                            peri_clock = 'APB'
+                        if chip_name.startswith('STM32G0') and name.startswith('SYSCFG'):
+                            peri_clock = 'APB'
+                        else:
+                            peri_clock = match_peri_clock(rcc_block, name)
+
+                        if peri_clock is not None:
                             core['peripherals'][name]['clock'] = peri_clock
 
             # Process DMA channels
@@ -1359,7 +1373,9 @@ def filter_interrupts(peri_irqs, all_irqs):
 
     return filtered
 
+
 memories = []
+
 
 def parse_memories():
     with open('data/memories.yaml', 'r') as yaml_file:
@@ -1376,6 +1392,7 @@ def determine_ram_size(chip_name):
 
     return None
 
+
 def determine_flash_size(chip_name):
     for each in memories:
         for name in each['names']:
@@ -1384,6 +1401,7 @@ def determine_flash_size(chip_name):
 
     return None
 
+
 def determine_device_id(chip_name):
     for each in memories:
         for name in each['names']:
@@ -1391,10 +1409,10 @@ def determine_device_id(chip_name):
                 return each['device-id']
     return None
 
+
 def is_chip_name_match(pattern, chip_name):
     pattern = pattern.replace('x', '.')
     return re.match(pattern + ".*", chip_name)
-
 
 
 parse_memories()
