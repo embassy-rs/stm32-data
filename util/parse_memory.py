@@ -35,6 +35,8 @@ def splat_names(base, parts):
     for part in parts:
         if part.startswith("STM32"):
             names.append( base )
+        elif part.startswith( base[5]):
+            names.append('STM32' + part)
         else:
             names.append( base[0: len(base) - len(part)] + part)
 
@@ -56,6 +58,8 @@ def split_names(str):
         elif name.startswith("STM32"):
             current_base = name
             cleaned.append(name)
+        elif name.startswith( current_base[5]):
+            names.append('STM32' + name)
         else:
             cleaned.append( current_base[0: len(current_base) - len(name)] + name)
     return cleaned
