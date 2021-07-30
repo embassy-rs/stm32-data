@@ -699,7 +699,9 @@ def parse_chips():
                         if af_num is not None:
                             entry['af'] = af_num
 
-                        pins[peri_name].append(entry)
+                        # Some SVDs have duplicate pin definitions
+                        if entry not in pins[peri_name]:
+                            pins[peri_name].append(entry)
 
     for chip_name, chip in chips.items():
         if len(sys.argv) > 1:
