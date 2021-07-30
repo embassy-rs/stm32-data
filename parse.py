@@ -15,21 +15,27 @@ import os
 from collections import OrderedDict
 from glob import glob
 
+
 class DecimalInt:
     def __init__(self, val):
         self.val = val
 
+
 def represent_decimal_int(dumper, data):
     return dumper.represent_int(data.val)
 
+
 yaml.add_representer(DecimalInt, represent_decimal_int)
+
 
 class HexInt:
     def __init__(self, val):
         self.val = val
 
+
 def represent_hex_int(dumper, data):
     return dumper.represent_int(hex(data.val))
+
 
 yaml.add_representer(HexInt, represent_hex_int)
 
@@ -69,7 +75,6 @@ def represent_ordereddict(dumper, data):
 
 
 yaml.add_representer(OrderedDict, represent_ordereddict)
-
 
 
 def hexint_presenter(dumper, data):
@@ -488,6 +493,7 @@ def chip_name_from_package_name(x):
             return r
     raise Exception("bad name: {}".format(x))
 
+
 memories_map = {
     'flash': [
         'FLASH', 'FLASH_BANK1', 'FLASH_BANK2',
@@ -533,11 +539,11 @@ def parse_chips():
             chip_name = chip_name_from_package_name(package_name)
             flash = OrderedDict({
                 'bytes': DecimalInt(int(package_flashs[package_i]) * 1024),
-                'regions': []
+                'regions': {},
             })
             ram = OrderedDict({
                 'bytes': DecimalInt(int(package_rams[package_i]) * 1024),
-                'regions': [],
+                'regions': {},
             })
             gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version']
             gpio_af = removesuffix(gpio_af, '_gpio_v1_0')
@@ -709,13 +715,14 @@ def parse_chips():
 
                 found.append(key)
 
-                chip['flash']['regions'].append(
-                    OrderedDict({
-                        key: {
-                            'base': HexInt(h['defines']['all'][each + '_BASE']),
-                        }
-                    })
-                )
+                chip['flash']['regions'][key] = OrderedDict( {
+                    'base': HexInt(h['defines']['all'][each + '_BASE'])
+                } )
+
+                if key == 'BANK_1' or key == 'BANK_2':
+                    flash_size = determine_flash_size(chip_name)
+                    if flash_size is not None:
+                        chip['flash']['regions'][key]['bytes'] = DecimalInt(flash_size)
 
         found = []
 
@@ -733,15 +740,14 @@ def parse_chips():
 
                 found.append(key)
 
-                chip['ram']['regions'].append(
-                    OrderedDict({
-                        key: {
-                            'base': HexInt(h['defines']['all'][each + '_BASE'])
-                        }
-                    })
-                )
+                chip['ram']['regions'][key] = OrderedDict( {
+                    'base': HexInt(h['defines']['all'][each + '_BASE'])
+                } )
 
-
+                if key == 'SRAM':
+                    ram_size = determine_ram_size(chip_name)
+                    if ram_size is not None:
+                        chip['ram']['regions'][key]['bytes'] = DecimalInt(ram_size)
 
         # print("Got", len(chip['cores']), "cores")
         for core in chip['cores']:
@@ -1310,7 +1316,38 @@ def filter_interrupts(peri_irqs, all_irqs):
 
     return filtered
 
+memories = []
 
+def parse_memories():
+    with open('data/memories.yaml', 'r') as yaml_file:
+        m = yaml.load(yaml_file, Loader=SafeLoader)
+        for each in m:
+            memories.append(each)
+
+
+def determine_ram_size(chip_name):
+    for each in memories:
+        for name in each['names']:
+            if is_chip_name_match(name, chip_name):
+                return each['ram']['bytes']
+
+    return None
+
+def determine_flash_size(chip_name):
+    for each in memories:
+        for name in each['names']:
+            if is_chip_name_match(name, chip_name):
+                return each['flash']['bytes']
+
+    return None
+
+def is_chip_name_match(pattern, chip_name):
+    pattern = pattern.replace('x', '.')
+    return re.match(pattern + ".*", chip_name)
+
+
+
+parse_memories()
 parse_interrupts()
 parse_rcc_regs()
 parse_documentations()
