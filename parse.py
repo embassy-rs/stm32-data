@@ -319,6 +319,7 @@ perimap = [
     ('STM32WL.*:SYS:.*', 'syscfg_wl5x/SYSCFG'),
     ('STM32L0.*:RCC:.*', 'rcc_l0/RCC'),
     ('STM32L4.*:RCC:.*', 'rcc_l4/RCC'),
+    ('STM32F410.*:RCC:.*', 'rcc_f410/RCC'),
     ('STM32F4.*:RCC:.*', 'rcc_f4/RCC'),
     ('STM32WL.*:RCC:.*', 'rcc_wl5x/RCC'),
     ('STM32F0.0.*:RCC:.*', 'rcc_f0x0/RCC'),
