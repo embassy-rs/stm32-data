@@ -340,6 +340,8 @@ perimap = [
     ('.*:DAC:dacif_v2_0', 'dac_v2/DAC'),
     ('.*:DAC:dacif_v3_0', 'dac_v2/DAC'),
     ('.*:ADC:aditf5_v2_0', 'adc_v3/ADC'),
+    ('STM32G0.*:ADC:.*', 'adc_v3/ADC'),
+    ('STM32G0.*:ADC_COMMON:.*', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
     ('STM32F0.*:SYS:.*', 'syscfg_f0/SYSCFG'),
@@ -966,7 +968,7 @@ def parse_chips():
                         peri_clock = None
                         if chip_name.startswith('STM32G0') and name.startswith('TIM'):
                             peri_clock = 'APB'
-                        if chip_name.startswith('STM32G0') and name.startswith('SYSCFG'):
+                        elif chip_name.startswith('STM32G0') and name.startswith('SYSCFG'):
                             peri_clock = 'APB'
                         else:
                             peri_clock = match_peri_clock(rcc_block, name)
