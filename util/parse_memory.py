@@ -113,7 +113,7 @@ def parse_files(dir):
 
         memories.append( chunk )
 
-dir = sys.argv[1]
+dir = "sources/cubeprogdb/db"
 
 parse_files(dir)
 

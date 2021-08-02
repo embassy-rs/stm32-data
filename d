@@ -18,6 +18,7 @@ case "$CMD" in
         ./d download-svd
         ./d download-headers
         ./d download-cubedb
+        ./d download-cubeprogdb
     ;;
     download-mcufinder)
         mkdir -p sources/mcufinder
@@ -52,6 +53,10 @@ case "$CMD" in
     download-cubedb)
         rm -rf sources/cubedb
         git clone --depth 1 https://github.com/embassy-rs/stm32cube-database.git sources/cubedb
+    ;;
+    download-cubeprogdb)
+        rm -rf sources/cubeprogdb
+        git clone --depth 1 https://github.com/embassy-rs/stm32cubeprog-database.git sources/cubeprogdb
     ;;
     install-chiptool)
         cargo install --git https://github.com/embassy-rs/chiptool
