@@ -692,6 +692,10 @@ def parse_chips():
         chip_nvic = chip['nvic']
         del chip['nvic']
 
+        device_id = determine_device_id(chip_name)
+        if device_id is not None:
+            chip['device-id'] = device_id
+
         h = find_header(chip_name)
         if h is None:
             raise Exception("missing header for {}".format(chip_name))
@@ -722,6 +726,8 @@ def parse_chips():
                 if key == 'BANK_1' or key == 'BANK_2':
                     flash_size = determine_flash_size(chip_name)
                     if flash_size is not None:
+                        if flash_size > chip['flash']['bytes'].val:
+                            flash_size = chip['flash']['bytes'].val
                         chip['flash']['regions'][key]['bytes'] = DecimalInt(flash_size)
 
         found = []
@@ -1339,6 +1345,13 @@ def determine_flash_size(chip_name):
             if is_chip_name_match(name, chip_name):
                 return each['flash']['bytes']
 
+    return None
+
+def determine_device_id(chip_name):
+    for each in memories:
+        for name in each['names']:
+            if is_chip_name_match(name, chip_name):
+                return each['device-id']
     return None
 
 def is_chip_name_match(pattern, chip_name):
