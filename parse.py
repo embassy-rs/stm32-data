@@ -591,6 +591,7 @@ def parse_chips():
                     'family': family,
                     'line': r['@Line'],
                     'die': die,
+                    'device-id': None,
                     'packages': [],
                     'datasheet': None,
                     'reference-manual': None,
@@ -694,7 +695,9 @@ def parse_chips():
 
         device_id = determine_device_id(chip_name)
         if device_id is not None:
-            chip['device-id'] = device_id
+            chip['device-id'] = HexInt(device_id)
+        else:
+            del chip['device-id']
 
         h = find_header(chip_name)
         if h is None:
