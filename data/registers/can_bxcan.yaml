@@ -1,0 +1,820 @@
+block/CAN:
+  description: Controller area network
+  items:
+  - byte_offset: 0
+    description: master control register
+    fieldset: MCR
+    name: MCR
+  - byte_offset: 4
+    description: master status register
+    fieldset: MSR
+    name: MSR
+  - byte_offset: 8
+    description: transmit status register
+    fieldset: TSR
+    name: TSR
+  - array:
+      len: 2
+      stride: 4
+    byte_offset: 12
+    description: receive FIFO 0 register
+    fieldset: RFR
+    name: RFR
+  - byte_offset: 20
+    description: interrupt enable register
+    fieldset: IER
+    name: IER
+  - byte_offset: 24
+    description: error status register
+    fieldset: ESR
+    name: ESR
+  - byte_offset: 28
+    description: bit timing register
+    fieldset: BTR
+    name: BTR
+  - array:
+      len: 3
+      stride: 16
+    block: TX
+    byte_offset: 384
+    description: CAN Transmit cluster
+    name: TX
+  - array:
+      len: 2
+      stride: 16
+    block: RX
+    byte_offset: 432
+    description: CAN Receive cluster
+    name: RX
+  - byte_offset: 512
+    description: filter master register
+    fieldset: FMR
+    name: FMR
+  - byte_offset: 516
+    description: filter mode register
+    fieldset: FM1R
+    name: FM1R
+  - byte_offset: 524
+    description: filter scale register
+    fieldset: FS1R
+    name: FS1R
+  - byte_offset: 532
+    description: filter FIFO assignment register
+    fieldset: FFA1R
+    name: FFA1R
+  - byte_offset: 540
+    description: filter activation register
+    fieldset: FA1R
+    name: FA1R
+  - array:
+      len: 28
+      stride: 8
+    block: FB
+    byte_offset: 576
+    description: CAN Filter Bank cluster
+    name: FB
+block/FB:
+  description: CAN Filter Bank cluster
+  items:
+  - byte_offset: 0
+    description: Filter bank 0 register 1
+    fieldset: FR1
+    name: FR1
+  - byte_offset: 4
+    description: Filter bank 0 register 2
+    fieldset: FR2
+    name: FR2
+block/RX:
+  description: CAN Receive cluster
+  items:
+  - access: Read
+    byte_offset: 0
+    description: receive FIFO mailbox identifier register
+    fieldset: RIR
+    name: RIR
+  - access: Read
+    byte_offset: 4
+    description: mailbox data high register
+    fieldset: RDTR
+    name: RDTR
+  - access: Read
+    byte_offset: 8
+    description: mailbox data high register
+    fieldset: RDLR
+    name: RDLR
+  - access: Read
+    byte_offset: 12
+    description: receive FIFO mailbox data high register
+    fieldset: RDHR
+    name: RDHR
+block/TX:
+  description: CAN Transmit cluster
+  items:
+  - byte_offset: 0
+    description: TX mailbox identifier register
+    fieldset: TIR
+    name: TIR
+  - byte_offset: 4
+    description: mailbox data length control and time stamp register
+    fieldset: TDTR
+    name: TDTR
+  - byte_offset: 8
+    description: mailbox data low register
+    fieldset: TDLR
+    name: TDLR
+  - byte_offset: 12
+    description: mailbox data high register
+    fieldset: TDHR
+    name: TDHR
+enum/BOFIE:
+  bit_size: 1
+  variants:
+  - description: ERRI bit will not be set when BOFF is set
+    name: Disabled
+    value: 0
+  - description: ERRI bit will be set when BOFF is set
+    name: Enabled
+    value: 1
+enum/EPVIE:
+  bit_size: 1
+  variants:
+  - description: ERRI bit will not be set when EPVF is set
+    name: Disabled
+    value: 0
+  - description: ERRI bit will be set when EPVF is set
+    name: Enabled
+    value: 1
+enum/ERRIE:
+  bit_size: 1
+  variants:
+  - description: No interrupt will be generated when an error condition is pending
+      in the CAN_ESR
+    name: Disabled
+    value: 0
+  - description: An interrupt will be generation when an error condition is pending
+      in the CAN_ESR
+    name: Enabled
+    value: 1
+enum/EWGIE:
+  bit_size: 1
+  variants:
+  - description: ERRI bit will not be set when EWGF is set
+    name: Disabled
+    value: 0
+  - description: ERRI bit will be set when EWGF is set
+    name: Enabled
+    value: 1
+enum/FFIE:
+  bit_size: 1
+  variants:
+  - description: No interrupt when FULL bit is set
+    name: Disabled
+    value: 0
+  - description: Interrupt generated when FULL bit is set
+    name: Enabled
+    value: 1
+enum/FMPIE:
+  bit_size: 1
+  variants:
+  - description: No interrupt generated when state of FMP[1:0] bits are not 00b
+    name: Disabled
+    value: 0
+  - description: Interrupt generated when state of FMP[1:0] bits are not 00b
+    name: Enabled
+    value: 1
+enum/FOVIE:
+  bit_size: 1
+  variants:
+  - description: No interrupt when FOVR bit is set
+    name: Disabled
+    value: 0
+  - description: Interrupt generated when FOVR bit is set
+    name: Enabled
+    value: 1
+enum/FOVRR:
+  bit_size: 1
+  variants:
+  - description: No FIFO x overrun
+    name: NoOverrun
+    value: 0
+  - description: FIFO x overrun
+    name: Overrun
+    value: 1
+enum/FOVRW:
+  bit_size: 1
+  variants:
+  - description: Clear flag
+    name: Clear
+    value: 1
+enum/FULLR:
+  bit_size: 1
+  variants:
+  - description: FIFO x is not full
+    name: NotFull
+    value: 0
+  - description: FIFO x is full
+    name: Full
+    value: 1
+enum/FULLW:
+  bit_size: 1
+  variants:
+  - description: Clear flag
+    name: Clear
+    value: 1
+enum/LBKM:
+  bit_size: 1
+  variants:
+  - description: Loop Back Mode disabled
+    name: Disabled
+    value: 0
+  - description: Loop Back Mode enabled
+    name: Enabled
+    value: 1
+enum/LEC:
+  bit_size: 3
+  variants:
+  - description: No Error
+    name: NoError
+    value: 0
+  - description: Stuff Error
+    name: Stuff
+    value: 1
+  - description: Form Error
+    name: Form
+    value: 2
+  - description: Acknowledgment Error
+    name: Ack
+    value: 3
+  - description: Bit recessive Error
+    name: BitRecessive
+    value: 4
+  - description: Bit dominant Error
+    name: BitDominant
+    value: 5
+  - description: CRC Error
+    name: Crc
+    value: 6
+  - description: Set by software
+    name: Custom
+    value: 7
+enum/LECIE:
+  bit_size: 1
+  variants:
+  - description: ERRI bit will not be set when the error code in LEC[2:0] is set by
+      hardware on error detection
+    name: Disabled
+    value: 0
+  - description: ERRI bit will be set when the error code in LEC[2:0] is set by hardware
+      on error detection
+    name: Enabled
+    value: 1
+enum/RFOMW:
+  bit_size: 1
+  variants:
+  - description: Set by software to release the output mailbox of the FIFO
+    name: Release
+    value: 1
+enum/RIR_IDE:
+  bit_size: 1
+  variants:
+  - description: Standard identifier
+    name: Standard
+    value: 0
+  - description: Extended identifier
+    name: Extended
+    value: 1
+enum/RIR_RTR:
+  bit_size: 1
+  variants:
+  - description: Data frame
+    name: Data
+    value: 0
+  - description: Remote frame
+    name: Remote
+    value: 1
+enum/SILM:
+  bit_size: 1
+  variants:
+  - description: Normal operation
+    name: Normal
+    value: 0
+  - description: Silent Mode
+    name: Silent
+    value: 1
+enum/SLKIE:
+  bit_size: 1
+  variants:
+  - description: No interrupt when SLAKI bit is set
+    name: Disabled
+    value: 0
+  - description: Interrupt generated when SLAKI bit is set
+    name: Enabled
+    value: 1
+enum/TIR_IDE:
+  bit_size: 1
+  variants:
+  - description: Standard identifier
+    name: Standard
+    value: 0
+  - description: Extended identifier
+    name: Extended
+    value: 1
+enum/TIR_RTR:
+  bit_size: 1
+  variants:
+  - description: Data frame
+    name: Data
+    value: 0
+  - description: Remote frame
+    name: Remote
+    value: 1
+enum/TMEIE:
+  bit_size: 1
+  variants:
+  - description: No interrupt when RQCPx bit is set
+    name: Disabled
+    value: 0
+  - description: Interrupt generated when RQCPx bit is set
+    name: Enabled
+    value: 1
+enum/WKUIE:
+  bit_size: 1
+  variants:
+  - description: No interrupt when WKUI is set
+    name: Disabled
+    value: 0
+  - description: Interrupt generated when WKUI bit is set
+    name: Enabled
+    value: 1
+fieldset/BTR:
+  description: bit timing register
+  fields:
+  - bit_offset: 0
+    bit_size: 10
+    description: BRP
+    name: BRP
+  - array:
+      len: 2
+      stride: 4
+    bit_offset: 16
+    bit_size: 4
+    description: TS1
+    name: TS
+  - bit_offset: 24
+    bit_size: 2
+    description: SJW
+    name: SJW
+  - bit_offset: 30
+    bit_size: 1
+    description: LBKM
+    enum: LBKM
+    name: LBKM
+  - bit_offset: 31
+    bit_size: 1
+    description: SILM
+    enum: SILM
+    name: SILM
+fieldset/ESR:
+  description: interrupt enable register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: EWGF
+    name: EWGF
+  - bit_offset: 1
+    bit_size: 1
+    description: EPVF
+    name: EPVF
+  - bit_offset: 2
+    bit_size: 1
+    description: BOFF
+    name: BOFF
+  - bit_offset: 4
+    bit_size: 3
+    description: LEC
+    enum: LEC
+    name: LEC
+  - bit_offset: 16
+    bit_size: 8
+    description: TEC
+    name: TEC
+  - bit_offset: 24
+    bit_size: 8
+    description: REC
+    name: REC
+fieldset/FA1R:
+  description: filter activation register
+  fields:
+  - array:
+      len: 28
+      stride: 1
+    bit_offset: 0
+    bit_size: 1
+    description: Filter active
+    name: FACT
+fieldset/FFA1R:
+  description: filter FIFO assignment register
+  fields:
+  - array:
+      len: 28
+      stride: 1
+    bit_offset: 0
+    bit_size: 1
+    description: Filter FIFO assignment for filter 0
+    name: FFA
+fieldset/FM1R:
+  description: filter mode register
+  fields:
+  - array:
+      len: 28
+      stride: 1
+    bit_offset: 0
+    bit_size: 1
+    description: Filter mode
+    name: FBM
+fieldset/FMR:
+  description: filter master register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: FINIT
+    name: FINIT
+  - bit_offset: 8
+    bit_size: 6
+    description: CAN2SB
+    name: CAN2SB
+fieldset/FR1:
+  description: Filter bank 0 register 1
+  fields:
+  - array:
+      len: 32
+      stride: 1
+    bit_offset: 0
+    bit_size: 1
+    description: Filter bits
+    name: FB
+fieldset/FR2:
+  description: Filter bank 0 register 2
+  fields:
+  - array:
+      len: 32
+      stride: 1
+    bit_offset: 0
+    bit_size: 1
+    description: Filter bits
+    name: FB
+fieldset/FS1R:
+  description: filter scale register
+  fields:
+  - array:
+      len: 28
+      stride: 1
+    bit_offset: 0
+    bit_size: 1
+    description: Filter scale configuration
+    name: FSC
+fieldset/IER:
+  description: interrupt enable register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: TMEIE
+    enum: TMEIE
+    name: TMEIE
+  - array:
+      len: 2
+      stride: 3
+    bit_offset: 1
+    bit_size: 1
+    description: FMPIE0
+    enum: FMPIE
+    name: FMPIE
+  - array:
+      len: 2
+      stride: 3
+    bit_offset: 2
+    bit_size: 1
+    description: FFIE0
+    enum: FFIE
+    name: FFIE
+  - array:
+      len: 2
+      stride: 3
+    bit_offset: 3
+    bit_size: 1
+    description: FOVIE0
+    enum: FOVIE
+    name: FOVIE
+  - bit_offset: 8
+    bit_size: 1
+    description: EWGIE
+    enum: EWGIE
+    name: EWGIE
+  - bit_offset: 9
+    bit_size: 1
+    description: EPVIE
+    enum: EPVIE
+    name: EPVIE
+  - bit_offset: 10
+    bit_size: 1
+    description: BOFIE
+    enum: BOFIE
+    name: BOFIE
+  - bit_offset: 11
+    bit_size: 1
+    description: LECIE
+    enum: LECIE
+    name: LECIE
+  - bit_offset: 15
+    bit_size: 1
+    description: ERRIE
+    enum: ERRIE
+    name: ERRIE
+  - bit_offset: 16
+    bit_size: 1
+    description: WKUIE
+    enum: WKUIE
+    name: WKUIE
+  - bit_offset: 17
+    bit_size: 1
+    description: SLKIE
+    enum: SLKIE
+    name: SLKIE
+fieldset/MCR:
+  description: master control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: INRQ
+    name: INRQ
+  - bit_offset: 1
+    bit_size: 1
+    description: SLEEP
+    name: SLEEP
+  - bit_offset: 2
+    bit_size: 1
+    description: TXFP
+    name: TXFP
+  - bit_offset: 3
+    bit_size: 1
+    description: RFLM
+    name: RFLM
+  - bit_offset: 4
+    bit_size: 1
+    description: NART
+    name: NART
+  - bit_offset: 5
+    bit_size: 1
+    description: AWUM
+    name: AWUM
+  - bit_offset: 6
+    bit_size: 1
+    description: ABOM
+    name: ABOM
+  - bit_offset: 7
+    bit_size: 1
+    description: TTCM
+    name: TTCM
+  - bit_offset: 15
+    bit_size: 1
+    description: RESET
+    name: RESET
+  - bit_offset: 16
+    bit_size: 1
+    description: DBF
+    name: DBF
+fieldset/MSR:
+  description: master status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: INAK
+    name: INAK
+  - bit_offset: 1
+    bit_size: 1
+    description: SLAK
+    name: SLAK
+  - bit_offset: 2
+    bit_size: 1
+    description: ERRI
+    name: ERRI
+  - bit_offset: 3
+    bit_size: 1
+    description: WKUI
+    name: WKUI
+  - bit_offset: 4
+    bit_size: 1
+    description: SLAKI
+    name: SLAKI
+  - bit_offset: 8
+    bit_size: 1
+    description: TXM
+    name: TXM
+  - bit_offset: 9
+    bit_size: 1
+    description: RXM
+    name: RXM
+  - bit_offset: 10
+    bit_size: 1
+    description: SAMP
+    name: SAMP
+  - bit_offset: 11
+    bit_size: 1
+    description: RX
+    name: RX
+fieldset/RDHR:
+  description: receive FIFO mailbox data high register
+  fields:
+  - array:
+      len: 4
+      stride: 8
+    bit_offset: 0
+    bit_size: 8
+    description: DATA4
+    name: DATA
+fieldset/RDLR:
+  description: mailbox data high register
+  fields:
+  - array:
+      len: 4
+      stride: 8
+    bit_offset: 0
+    bit_size: 8
+    description: DATA0
+    name: DATA
+fieldset/RDTR:
+  description: mailbox data high register
+  fields:
+  - bit_offset: 0
+    bit_size: 4
+    description: DLC
+    name: DLC
+  - bit_offset: 8
+    bit_size: 8
+    description: FMI
+    name: FMI
+  - bit_offset: 16
+    bit_size: 16
+    description: TIME
+    name: TIME
+fieldset/RFR:
+  description: receive FIFO 0 register
+  fields:
+  - bit_offset: 0
+    bit_size: 2
+    description: FMP0
+    name: FMP
+  - bit_offset: 3
+    bit_size: 1
+    description: FULL0
+    enum_read: FULLR
+    enum_write: FULLW
+    name: FULL
+  - bit_offset: 4
+    bit_size: 1
+    description: FOVR0
+    enum_read: FOVRR
+    enum_write: FOVRW
+    name: FOVR
+  - bit_offset: 5
+    bit_size: 1
+    description: RFOM0
+    enum_write: RFOMW
+    name: RFOM
+fieldset/RIR:
+  description: receive FIFO mailbox identifier register
+  fields:
+  - bit_offset: 1
+    bit_size: 1
+    description: RTR
+    enum: RIR_RTR
+    name: RTR
+  - bit_offset: 2
+    bit_size: 1
+    description: IDE
+    enum: RIR_IDE
+    name: IDE
+  - bit_offset: 3
+    bit_size: 18
+    description: EXID
+    name: EXID
+  - bit_offset: 21
+    bit_size: 11
+    description: STID
+    name: STID
+fieldset/TDHR:
+  description: mailbox data high register
+  fields:
+  - array:
+      len: 4
+      stride: 8
+    bit_offset: 0
+    bit_size: 8
+    description: DATA4
+    name: DATA
+fieldset/TDLR:
+  description: mailbox data low register
+  fields:
+  - array:
+      len: 4
+      stride: 8
+    bit_offset: 0
+    bit_size: 8
+    description: DATA0
+    name: DATA
+fieldset/TDTR:
+  description: mailbox data length control and time stamp register
+  fields:
+  - bit_offset: 0
+    bit_size: 4
+    description: DLC
+    name: DLC
+  - bit_offset: 8
+    bit_size: 1
+    description: TGT
+    name: TGT
+  - bit_offset: 16
+    bit_size: 16
+    description: TIME
+    name: TIME
+fieldset/TIR:
+  description: TX mailbox identifier register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: TXRQ
+    name: TXRQ
+  - bit_offset: 1
+    bit_size: 1
+    description: RTR
+    enum: TIR_RTR
+    name: RTR
+  - bit_offset: 2
+    bit_size: 1
+    description: IDE
+    enum: TIR_IDE
+    name: IDE
+  - bit_offset: 3
+    bit_size: 18
+    description: EXID
+    name: EXID
+  - bit_offset: 21
+    bit_size: 11
+    description: STID
+    name: STID
+fieldset/TSR:
+  description: transmit status register
+  fields:
+  - array:
+      len: 3
+      stride: 8
+    bit_offset: 0
+    bit_size: 1
+    description: RQCP0
+    name: RQCP
+  - array:
+      len: 3
+      stride: 8
+    bit_offset: 1
+    bit_size: 1
+    description: TXOK0
+    name: TXOK
+  - array:
+      len: 3
+      stride: 8
+    bit_offset: 2
+    bit_size: 1
+    description: ALST0
+    name: ALST
+  - array:
+      len: 3
+      stride: 8
+    bit_offset: 3
+    bit_size: 1
+    description: TERR0
+    name: TERR
+  - array:
+      len: 3
+      stride: 8
+    bit_offset: 7
+    bit_size: 1
+    description: ABRQ0
+    name: ABRQ
+  - bit_offset: 24
+    bit_size: 2
+    description: CODE
+    name: CODE
+  - array:
+      len: 3
+      stride: 1
+    bit_offset: 26
+    bit_size: 1
+    description: Lowest priority flag for mailbox 0
+    name: TME
+  - array:
+      len: 3
+      stride: 1
+    bit_offset: 29
+    bit_size: 1
+    description: Lowest priority flag for mailbox 0
+    name: LOW
