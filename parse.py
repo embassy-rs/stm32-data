@@ -1280,6 +1280,8 @@ def remap_interrupt_signals(peri_name, irq_name):
         return expand_all_irq_signals(peri_name, irq_name)
     if (peri_name.startswith('DMA') or peri_name.startswith('BDMA')) and irq_name.startswith(peri_name):
         return {irq_name: irq_name}
+    if peri_name.startswith('USART') and irq_name.startswith(peri_name):
+        return {'GLOBAL': irq_name}
     if peri_name in irq_name:
         signals = {}
         start = irq_name.index(peri_name)
