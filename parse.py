@@ -317,6 +317,7 @@ perimap = [
     ('.*:USART:sci3_v1_2', 'usart_v2/USART'),
     ('.*:USART:sci3_v2_0', 'usart_v2/USART'),
     ('.*:USART:sci3_v2_1', 'usart_v2/USART'),
+    ('.*:UART:sci2_v2_1', 'usart_v2/USART'),
     ('.*:UART:sci2_v3_0', 'usart_v2/USART'),
     ('.*:UART:sci2_v3_1', 'usart_v2/USART'),
     ('.*:RNG:rng1_v1_1', 'rng_v1/RNG'),
