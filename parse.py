@@ -391,6 +391,8 @@ perimap = [
     ('STM32F[247].*:.*:DMA', 'dma_v2/DMA'),
     ('STM32H7.*:.*:DMA', 'dma_v1/DMA'),
     ('.*:DMA', 'bdma_v1/DMA'),
+
+    ('.*:CAN:bxcan1_v1_1.*', 'can_bxcan/CAN'),
 ]
 
 
