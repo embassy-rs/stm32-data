@@ -1272,6 +1272,7 @@ def split_interrupts(peri_names, irq_name):
 
 
 irq_signals_map = {
+    'CAN': ['TX', 'RX0', 'RX1', 'SCE'],
     'I2C': ['ER', 'EV'],
     'TIM': ['BRK', 'UP', 'TRG', 'COM'],
     'HRTIM': ['Master', 'TIMA', 'TIMB', 'TIMC', 'TIMD', 'TIME', 'TIMF']
