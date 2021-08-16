@@ -48,10 +48,13 @@ def removeprefix(value: str, prefix: str, /) -> str:
 
 
 def corename(d):
-    if m := re.match('.*Cortex-M(\d+)(\+?)', d):
+    #print("CHECKING CORENAME", d)
+    if m := re.match('.*Cortex-M(\d+)(\+?)\s*(.*)', d):
         name = "cm" + str(m.group(1))
         if m.group(2) == "+":
             name += "p"
+        if m.group(3) == "secure":
+            name += "s"
         return name
 
 
@@ -394,6 +397,20 @@ perimap = [
 
     ('.*:CAN:bxcan1_v1_1.*', 'can_bxcan/CAN'),
 ]
+
+# Device address overrides, in case of missing from headers
+address_overrides = {
+    'STM32F412VE:GPIOF_BASE': 0x40021400,
+    'STM32F412VE:GPIOG_BASE': 0x40021800,
+    'STM32F412VG:GPIOF_BASE': 0x40021400,
+    'STM32F412VG:GPIOG_BASE': 0x40021800,
+}
+
+def lookup_address(defines, name, d):
+    if addr := defines.get(d):
+        return addr
+    elif addr := address_overrides.get(name + ':' + d):
+        return addr
 
 
 def match_peri(peri):
@@ -825,7 +842,7 @@ def parse_chips():
             # Handle GPIO specially.
             for p in range(20):
                 port = 'GPIO' + chr(ord('A') + p)
-                if addr := defines.get(port + '_BASE'):
+                if addr := lookup_address(defines, chip['name'], port + '_BASE'):
                     block = 'gpio_v2/GPIO'
                     if chip['family'] == 'STM32F1':
                         block = 'gpio_v1/GPIO'
@@ -1284,6 +1301,8 @@ def remap_interrupt_signals(peri_name, irq_name):
         return expand_all_irq_signals(peri_name, irq_name)
     if (peri_name.startswith('DMA') or peri_name.startswith('BDMA')) and irq_name.startswith(peri_name):
         return {irq_name: irq_name}
+    if peri_name.startswith('USART') and irq_name.startswith(peri_name):
+        return {'GLOBAL': irq_name}
     if peri_name in irq_name:
         signals = {}
         start = irq_name.index(peri_name)
