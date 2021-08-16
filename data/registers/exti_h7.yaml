@@ -1,0 +1,140 @@
+---
+block/EXTI:
+  description: External interrupt/event controller
+  items:
+    - name: IMR
+      description: Interrupt mask register (EXTI_IMR)
+      byte_offset: 128
+      reset_value: 0
+      fieldset: IMR
+    - name: EMR
+      description: Event mask register (EXTI_EMR)
+      byte_offset: 132
+      reset_value: 0
+      fieldset: EMR
+    - name: RTSR
+      description: Rising Trigger selection register (EXTI_RTSR)
+      byte_offset: 0
+      reset_value: 0
+      fieldset: RTSR
+    - name: FTSR
+      description: Falling Trigger selection register (EXTI_FTSR)
+      byte_offset: 4
+      reset_value: 0
+      fieldset: FTSR
+    - name: SWIER
+      description: Software interrupt event register (EXTI_SWIER)
+      byte_offset: 8
+      reset_value: 0
+      fieldset: SWIER
+    - name: PR
+      description: Pending register (EXTI_PR)
+      byte_offset: 136
+      reset_value: 0
+      fieldset: PR
+fieldset/EMR:
+  description: Event mask register (EXTI_EMR)
+  fields:
+    - name: MR
+      description: Event Mask on line 0
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 23
+        stride: 1
+      enum: MR
+fieldset/FTSR:
+  description: Falling Trigger selection register (EXTI_FTSR)
+  fields:
+    - name: TR
+      description: Falling trigger event configuration of line 0
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 23
+        stride: 1
+      enum: TR
+fieldset/IMR:
+  description: Interrupt mask register (EXTI_IMR)
+  fields:
+    - name: MR
+      description: Interrupt Mask on line 0
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 23
+        stride: 1
+      enum: MR
+fieldset/PR:
+  description: Pending register (EXTI_PR)
+  fields:
+    - name: PR
+      description: Pending bit 0
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 23
+        stride: 1
+      enum_read: PRR
+      enum_write: PRW
+fieldset/RTSR:
+  description: Rising Trigger selection register (EXTI_RTSR)
+  fields:
+    - name: TR
+      description: Rising trigger event configuration of line 0
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 23
+        stride: 1
+      enum: TR
+fieldset/SWIER:
+  description: Software interrupt event register (EXTI_SWIER)
+  fields:
+    - name: SWIER
+      description: Software Interrupt on line 0
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 23
+        stride: 1
+      enum_write: SWIERW
+enum/MR:
+  bit_size: 1
+  variants:
+    - name: Masked
+      description: Interrupt request line is masked
+      value: 0
+    - name: Unmasked
+      description: Interrupt request line is unmasked
+      value: 1
+enum/TR:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Falling edge trigger is disabled
+      value: 0
+    - name: Enabled
+      description: Falling edge trigger is enabled
+      value: 1
+enum/PRR:
+  bit_size: 1
+  variants:
+    - name: NotPending
+      description: No trigger request occurred
+      value: 0
+    - name: Pending
+      description: Selected trigger request occurred
+      value: 1
+enum/PRW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears pending bit
+      value: 1
+enum/SWIERW:
+  bit_size: 1
+  variants:
+    - name: Pend
+      description: Generates an interrupt request
+      value: 1

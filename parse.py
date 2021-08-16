@@ -885,6 +885,8 @@ def parse_chips():
             if addr := defines.get('EXTI_BASE'):
                 if chip_name.startswith("STM32WB55"):
                     block = 'exti_wb55/EXTI'
+                elif chip_name.startswith("STM32H7"):
+                    block = 'exti_h7/EXTI'
                 else:
                     block = 'exti_v1/EXTI'
 
