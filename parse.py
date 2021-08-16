@@ -395,6 +395,20 @@ perimap = [
     ('.*:DMA', 'bdma_v1/DMA'),
 ]
 
+# Device address overrides, in case of missing from headers
+address_overrides = {
+    'STM32F412VE:GPIOF_BASE': 0x40021400,
+    'STM32F412VE:GPIOG_BASE': 0x40021800,
+    'STM32F412VG:GPIOF_BASE': 0x40021400,
+    'STM32F412VG:GPIOG_BASE': 0x40021800,
+}
+
+def lookup_address(defines, name, d):
+    if addr := defines.get(d):
+        return addr
+    elif addr := address_overrides.get(name + ':' + d):
+        return addr
+
 
 def match_peri(peri):
     for r, block in perimap:
@@ -825,7 +839,7 @@ def parse_chips():
             # Handle GPIO specially.
             for p in range(20):
                 port = 'GPIO' + chr(ord('A') + p)
-                if addr := defines.get(port + '_BASE'):
+                if addr := lookup_address(defines, chip['name'], port + '_BASE'):
                     block = 'gpio_v2/GPIO'
                     if chip['family'] == 'STM32F1':
                         block = 'gpio_v1/GPIO'
