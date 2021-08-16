@@ -48,10 +48,13 @@ def removeprefix(value: str, prefix: str, /) -> str:
 
 
 def corename(d):
-    if m := re.match('.*Cortex-M(\d+)(\+?)', d):
+    #print("CHECKING CORENAME", d)
+    if m := re.match('.*Cortex-M(\d+)(\+?)\s*(.*)', d):
         name = "cm" + str(m.group(1))
         if m.group(2) == "+":
             name += "p"
+        if m.group(3) == "secure":
+            name += "s"
         return name
 
 
