@@ -329,6 +329,7 @@ perimap = [
     ('.*:RNG:rng1_v3_1', 'rng_v1/RNG'),
     ('.*:SPI:spi2s1_v2_2', 'spi_v1/SPI'),
     ('.*:SPI:spi2s1_v3_3', 'spi_v2/SPI'),
+    ('.*:SPI:spi2s1_v3_5', 'spi_v2/SPI'),
     ('.*:SPI:spi2s1_v3_1', 'spi_v2/SPI'),
     ('.*:SPI:spi2s2_v1_1', 'spi_v3/SPI'),
     ('.*:SPI:spi2s2_v1_0', 'spi_v3/SPI'),
