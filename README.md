@@ -8,9 +8,10 @@ families, including:
     - Packages
 - :heavy_check_mark: Peripheral addresses and interrupts
 - :heavy_check_mark: Interrupts
-- :heavy_check_mark: GPIO AlternateFunction mappings (except F1)
+- :heavy_check_mark: GPIO AlternateFunction mappings (for all families except F1)
+- :x: GPIO mappings for F1
 - :construction: Register blocks for all peripherals
-- :construction: DMA stream mappings
+- :heavy_check_mark: DMA stream mappings
 - :x: Per-package pinouts
 - :heavy_check_mark: Links to applicable reference manuals, datasheets, appnotes PDFs.
 
