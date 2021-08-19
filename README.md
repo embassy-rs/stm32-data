@@ -42,4 +42,28 @@ This generates all the YAMLs in `data/` except those in `data/registers/`, which
 
 ## Extracting new register blocks
 
-TODO document
+For instance, to add support for the G0 series first download all the source
+SVDs:
+```
+$ ./d download-all
+```
+Now extract the RCC peripheral registers:
+```
+./d install-chiptool
+./d extract-all RCC --transform ./transform-RCC.yaml
+```
+Note that we have used a transform to mechanically clean up some of the RCC
+definitions. This will produce a YAML file for each chip model in `./tmp/RCC`
+At this point we need to choose the model with the largest peripheral set (e.g.
+the STM32G081) and compare its YAML against each of the other models' to verify
+that they are all mutually consistent.
+
+Finally, we can merge
+```
+./merge_regs.py tmp/RCC/g0*.yaml
+```
+This will produce `regs_merged.yaml`, which we can copy into its final resting
+place:
+```
+mv regs_merged.yaml data/registers/rcc_g0.yaml
+```
