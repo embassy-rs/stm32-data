@@ -34,6 +34,7 @@ cores:
     ADC1:
       address: 0x40012400
       kind: ADC:aditf4_v3_0
+      block: adc_v3/ADC
       pins:
       - pin: PA0
         signal: IN0
@@ -71,6 +72,7 @@ cores:
     ADC_COMMON:
       address: 0x40012708
       kind: ADC_COMMON:aditf4_v3_0
+      block: adccommon_v3/ADC_COMMON
     COMP1:
       address: 0x40010200
       kind: COMP:TSMC90_OrcaZERO
@@ -163,6 +165,7 @@ cores:
         DMA1_Ch4_7_DMAMUX1_OVR: DMA1_Ch4_7_DMAMUX1_OVR
         DMA1_Channel1: DMA1_Channel1
         DMA1_Channel2_3: DMA1_Channel2_3
+      clock: AHB
     DMAMUX1:
       address: 0x40020800
       kind: DMAMUX:v1
@@ -170,10 +173,11 @@ cores:
     EXTI:
       address: 0x40021800
       kind: EXTI
-      block: exti_v1/EXTI
+      block: exti_g0/EXTI
     FLASH:
       address: 0x40022000
       kind: FLASH:STM32G0_flash_v1_0
+      clock: AHB
     GPIOA:
       address: 0x50000000
       block: gpio_v2/GPIO
@@ -197,12 +201,6 @@ cores:
       pins:
       - pin: PA1
         signal: SMBA
-        af: 6
-      - pin: PA9
-        signal: SCL
-        af: 6
-      - pin: PA10
-        signal: SDA
         af: 6
       - pin: PA9
         signal: SCL
@@ -396,9 +394,6 @@ cores:
       - pin: PA9
         signal: MCO
         af: 0
-      - pin: PA9
-        signal: MCO
-        af: 0
       interrupts:
         GLOBAL: RCC
     RTC:
@@ -521,12 +516,6 @@ cores:
       - pin: PA10
         signal: MOSI
         af: 0
-      - pin: PA9
-        signal: MISO
-        af: 4
-      - pin: PA10
-        signal: MOSI
-        af: 0
       - pin: PD0
         signal: NSS
         af: 1
@@ -560,6 +549,8 @@ cores:
     SYSCFG:
       address: 0x40010000
       kind: SYS:STM32G07x_sys_v1_0
+      block: syscfg_g0/SYSCFG
+      clock: APB
     TIM1:
       address: 0x40012c00
       kind: TIM1_8G0:gptimer2_v3_x
@@ -610,14 +601,8 @@ cores:
       - pin: PA11
         signal: CH4
         af: 2
-      - pin: PA9
-        signal: CH2
-        af: 2
       - pin: PA12
         signal: ETR
-        af: 2
-      - pin: PA10
-        signal: CH3
         af: 2
       - pin: PD2
         signal: CH1N
@@ -636,6 +621,7 @@ cores:
         COM: TIM1_BRK_UP_TRG_COM
         TRG: TIM1_BRK_UP_TRG_COM
         UP: TIM1_BRK_UP_TRG_COM
+      clock: APB
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -677,6 +663,7 @@ cores:
         COM: TIM14
         TRG: TIM14
         UP: TIM14
+      clock: APB
     TIM15:
       address: 0x40014000
       kind: TIM1_8G0:gptimer2_v3_x
@@ -715,9 +702,6 @@ cores:
       - pin: PA9
         signal: BK
         af: 5
-      - pin: PA9
-        signal: BK
-        af: 5
       - pin: PB8
         signal: BK
         af: 5
@@ -726,6 +710,7 @@ cores:
         COM: TIM15
         TRG: TIM15
         UP: TIM15
+      clock: APB
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -764,6 +749,7 @@ cores:
         COM: TIM16
         TRG: TIM16
         UP: TIM16
+      clock: APB
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -785,9 +771,6 @@ cores:
       - pin: PA10
         signal: BK
         af: 5
-      - pin: PA10
-        signal: BK
-        af: 5
       - pin: PD1
         signal: CH1
         af: 2
@@ -805,6 +788,7 @@ cores:
         COM: TIM17
         TRG: TIM17
         UP: TIM17
+      clock: APB
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -867,6 +851,7 @@ cores:
         COM: TIM2
         TRG: TIM2
         UP: TIM2
+      clock: APB
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -923,6 +908,7 @@ cores:
         COM: TIM3
         TRG: TIM3
         UP: TIM3
+      clock: APB
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -947,6 +933,7 @@ cores:
       kind: TIM6_7G0:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       interrupts: {}
+      clock: APB
       dma_channels:
         UP:
         - dmamux: DMAMUX1
@@ -956,6 +943,7 @@ cores:
       kind: TIM6_7G0:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       interrupts: {}
+      clock: APB
       dma_channels:
         UP:
         - dmamux: DMAMUX1
@@ -1071,9 +1059,6 @@ cores:
       - pin: PA11
         signal: NSS
         af: 1
-      - pin: PA9
-        signal: TX
-        af: 1
       - pin: PA12
         signal: CK
         af: 1
@@ -1082,9 +1067,6 @@ cores:
         af: 1
       - pin: PA12
         signal: RTS
-        af: 1
-      - pin: PA10
-        signal: RX
         af: 1
       - pin: PB3
         signal: CK
