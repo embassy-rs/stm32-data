@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Usage: ./extract.sh all|<board_name> <peripheral>"
 
