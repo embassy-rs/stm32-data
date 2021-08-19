@@ -373,6 +373,14 @@ perimap = [
     ('STM32WL5.*:RCC:.*', 'rcc_wl5/RCC'),
     ('STM32WLE.*:RCC:.*', 'rcc_wle/RCC'),
 
+    ('STM32L5.*:EXTI:.*', 'exti_l5/EXTI'),
+    ('STM32G0.*:EXTI:.*', 'exti_g0/EXTI'),
+    ('STM32H7.*:EXTI:.*', 'exti_h7/EXTI'),
+    ('STM32WB.*:EXTI:.*', 'exti_w/EXTI'),
+    ('STM32WL5.*:EXTI:.*', 'exti_w/EXTI'),
+    ('STM32WLE.*:EXTI:.*', 'exti_wle/EXTI'),
+    ('.*:EXTI:.*', 'exti_v1/EXTI'),
+
     ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
     ('STM32H7(42|43|53|50).*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
@@ -905,22 +913,13 @@ def parse_chips():
 
             # EXTI is not in the cubedb XMLs
             if addr := defines.get('EXTI_BASE'):
-                if chip_name.startswith("STM32WB55"):
-                    block = 'exti_wb55/EXTI'
-                elif chip_name.startswith("STM32WL5"):
-                    block = 'exti_wl5x/EXTI'
-                elif chip_name.startswith("STM32H7"):
-                    block = 'exti_h7/EXTI'
-                elif chip_name.startswith("STM32G0"):
-                    block = 'exti_g0/EXTI'
-                else:
-                    block = 'exti_v1/EXTI'
-
-                peris['EXTI'] = OrderedDict({
+                peri = OrderedDict({
                     'address': addr,
                     'kind': 'EXTI',
-                    'block': block,
                 })
+                if block := match_peri(chip_name + ':EXTI:EXTI:v1'):
+                    peri['block'] = block
+                peris['EXTI'] = peri
 
             # FLASH is not in the cubedb XMLs
             if addr := defines.get('FLASH_R_BASE'):

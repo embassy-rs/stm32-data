@@ -2,47 +2,57 @@
 block/EXTI:
   description: External interrupt/event controller
   items:
-    - name: IMR
-      description: Interrupt mask register
+    - name: RTSR
+      description: rising trigger selection register
       array:
         len: 2
         stride: 32
       byte_offset: 0
       fieldset: LINES
-    - name: EMR
-      description: Interrupt mask register
+    - name: FTSR
+      description: falling trigger selection register
       array:
         len: 2
         stride: 32
       byte_offset: 4
       fieldset: LINES
-    - name: RTSR
-      description: Rising Trigger selection register
+    - name: SWIER
+      description: software interrupt event register
       array:
         len: 2
         stride: 32
       byte_offset: 8
       fieldset: LINES
-    - name: FTSR
-      description: Falling Trigger selection register
+    - name: PR
+      description: EXTI pending register
       array:
         len: 2
         stride: 32
       byte_offset: 12
       fieldset: LINES
-    - name: SWIER
-      description: Software interrupt event register
+    - name: CPU
+      description: CPU specific registers
+      byte_offset: 128
+      block: CPU
       array:
         len: 2
-        stride: 32
-      byte_offset: 16
+        stride: 64
+block/CPU:
+  description: CPU-specific registers
+  items:
+    - name: IMR
+      description: CPU x interrupt mask register
+      byte_offset: 0
       fieldset: LINES
-    - name: PR
-      description: Pending register
       array:
         len: 2
-        stride: 32
-      byte_offset: 20
+        stride: 16
+    - name: EMR
+      description: CPU x event mask register
+      array:
+        len: 2
+        stride: 16
+      byte_offset: 4
       fieldset: LINES
 fieldset/LINES:
   description: EXTI lines register, 1 bit per line
