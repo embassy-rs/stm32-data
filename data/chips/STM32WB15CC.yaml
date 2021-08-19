@@ -55,6 +55,7 @@ cores:
         signal: IN9
       interrupts:
         GLOBAL: ADC1
+      clock: AHB2
       dma_channels:
         ADC1:
         - dmamux: DMAMUX1
@@ -67,6 +68,7 @@ cores:
       kind: AES:aes3_v1_0_WB
       interrupts:
         GLOBAL: AES2
+      clock: AHB3
       dma_channels:
         IN:
         - dmamux: DMAMUX1
@@ -113,34 +115,42 @@ cores:
         DMA1_Channel5: DMA1_Channel5
         DMA1_Channel6: DMA1_Channel6
         DMA1_Channel7: DMA1_Channel7
+      clock: AHB1
     DMAMUX1:
       address: 0x40020800
       kind: DMAMUX:v1
       block: dmamux_v1/DMAMUX
+      clock: AHB1
     EXTI:
       address: 0x58000800
       kind: EXTI
-      block: exti_v1/EXTI
+      block: exti_w/EXTI
     GPIOA:
       address: 0x48000000
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOB:
       address: 0x48000400
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOC:
       address: 0x48000800
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOE:
       address: 0x48001000
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOH:
       address: 0x48001c00
       block: gpio_v2/GPIO
+      clock: AHB2
     HSEM:
       address: 0x58001400
       kind: HSEM:hsem1_v1_0
       interrupts:
         GLOBAL: HSEM
+      clock: AHB3
     I2C1:
       address: 0x40005400
       kind: I2C:i2c2_v1_1
@@ -186,6 +196,7 @@ cores:
       kind: IPCC:v1_0
       block: ipcc_v1/IPCC
       interrupts: {}
+      clock: AHB3
     IWDG:
       address: 0x40003000
       kind: IWDG:iwdg1_v2_0
@@ -270,12 +281,14 @@ cores:
       kind: PKA:pka32_v1_0
       interrupts:
         GLOBAL: PKA
+      clock: AHB3
     PWR:
       address: 0x58000400
       kind: PWR:STM32WB_pwr_v1_0
     RCC:
       address: 0x58000000
       kind: RCC:STM32WB1_rcc_v1_0
+      block: rcc_wb/RCC
       pins:
       - pin: PC14
         signal: OSC32_IN
@@ -305,6 +318,7 @@ cores:
       block: rng_v1/RNG
       interrupts:
         GLOBAL: RNG
+      clock: AHB3
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_6
@@ -377,6 +391,7 @@ cores:
       address: 0x40010000
       kind: SYS:STM32WB55_sys_v1_0
       clock: APB2
+      block: syscfg_wb/SYSCFG
     TIM1:
       address: 0x40012c00
       kind: TIM1_8WB5:gptimer2_v3_x
@@ -420,6 +435,7 @@ cores:
         COM: TIM1_TRG_COM
         TRG: TIM1_TRG_COM
         UP: TIM1_UP
+      clock: APB2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -516,6 +532,7 @@ cores:
         af: 9
       interrupts:
         GLOBAL: TSC
+      clock: AHB1
     USART1:
       address: 0x40013800
       kind: USART:sci3_v2_1

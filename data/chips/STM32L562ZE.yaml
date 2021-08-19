@@ -67,6 +67,7 @@ cores:
       - pin: PB1
         signal: IN16
       interrupts: {}
+      clock: AHB2
       dma_channels:
         ADC1:
         - dmamux: DMAMUX1
@@ -119,6 +120,7 @@ cores:
       kind: AES:aes3_v1_0_L5
       interrupts:
         GLOBAL: AES
+      clock: AHB2
       dma_channels:
         IN:
         - dmamux: DMAMUX1
@@ -201,6 +203,7 @@ cores:
         DMA1_Channel6: DMA1_Channel6
         DMA1_Channel7: DMA1_Channel7
         DMA1_Channel8: DMA1_Channel8
+      clock: AHB1
     DMA2:
       address: 0x40020400
       block: bdma_v1/DMA
@@ -213,14 +216,16 @@ cores:
         DMA2_Channel6: DMA2_Channel6
         DMA2_Channel7: DMA2_Channel7
         DMA2_Channel8: DMA2_Channel8
+      clock: AHB1
     DMAMUX1:
       address: 0x40020800
       kind: DMAMUX:v1
       block: dmamux_v1/DMAMUX
+      clock: AHB1
     EXTI:
       address: 0x4002f400
       kind: EXTI
-      block: exti_v1/EXTI
+      block: exti_l5/EXTI
     FDCAN1:
       address: 0x4000a400
       kind: FDCAN:fdcan1_v1_0
@@ -247,35 +252,45 @@ cores:
     FLASH:
       address: 0x40022000
       kind: FLASH:STM32L5_flash_v1_0
+      clock: AHB1
     GPIOA:
       address: 0x42020000
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOB:
       address: 0x42020400
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOC:
       address: 0x42020800
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOD:
       address: 0x42020c00
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOE:
       address: 0x42021000
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOF:
       address: 0x42021400
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOG:
       address: 0x42021800
       block: gpio_v2/GPIO
+      clock: AHB2
     GPIOH:
       address: 0x42021c00
       block: gpio_v2/GPIO
+      clock: AHB2
     HASH:
       address: 0x420c0400
       kind: HASH:hash1_v2_2
       interrupts:
         GLOBAL: HASH
+      clock: AHB2
       dma_channels:
         IN:
         - dmamux: DMAMUX1
@@ -771,11 +786,13 @@ cores:
       kind: OTFDEC:otfdec1_v1_0
       interrupts:
         GLOBAL: OTFDEC1
+      clock: AHB2
     PKA:
       address: 0x420c2000
       kind: PKA:pka32_v1_0
       interrupts:
         GLOBAL: PKA
+      clock: AHB2
     PWR:
       address: 0x40007000
       kind: PWR:STM32L55_pwr_v1_0
@@ -793,6 +810,7 @@ cores:
     RCC:
       address: 0x40021000
       kind: RCC:STM32L5_rcc_v1_0
+      block: rcc_l5/RCC
       pins:
       - pin: PC14
         signal: OSC32_IN
@@ -815,6 +833,7 @@ cores:
       block: rng_v1/RNG
       interrupts:
         GLOBAL: RNG
+      clock: AHB2
     RTC:
       address: 0x40002800
       kind: RTC:rtc2_v2_8
@@ -974,6 +993,7 @@ cores:
         af: 13
       interrupts:
         GLOBAL: SAI1
+      clock: APB2
       dma_channels:
         A:
         - dmamux: DMAMUX1
@@ -1056,6 +1076,7 @@ cores:
         af: 13
       interrupts:
         GLOBAL: SAI2
+      clock: APB2
       dma_channels:
         A:
         - dmamux: DMAMUX1
@@ -1302,6 +1323,7 @@ cores:
     SYSCFG:
       address: 0x40010000
       kind: SYS:STM32L55x_sys_v1_0
+      clock: APB2
     TAMP:
       address: 0x40003400
       kind: TAMP:STM32L5_rtc2_v2_8
@@ -1415,6 +1437,7 @@ cores:
         COM: TIM1_TRG_COM
         TRG: TIM1_TRG_COM
         UP: TIM1_UP
+      clock: APB2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -1480,6 +1503,7 @@ cores:
         COM: TIM15
         TRG: TIM15
         UP: TIM15
+      clock: APB2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -1518,6 +1542,7 @@ cores:
         COM: TIM16
         TRG: TIM16
         UP: TIM16
+      clock: APB2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -1553,6 +1578,7 @@ cores:
         COM: TIM17
         TRG: TIM17
         UP: TIM17
+      clock: APB2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -1889,6 +1915,7 @@ cores:
         COM: TIM8_TRG_COM
         TRG: TIM8_TRG_COM
         UP: TIM8_UP
+      clock: APB2
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -2010,6 +2037,7 @@ cores:
         af: 9
       interrupts:
         GLOBAL: TSC
+      clock: AHB1
     UART4:
       address: 0x40004c00
       kind: UART:sci2_v3_0
