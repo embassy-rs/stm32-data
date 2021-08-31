@@ -387,6 +387,7 @@ perimap = [
     ('STM32H7(42|43|53|50).*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7smps/PWR'),
     ('.*:STM32F4_pwr_v1_0', 'pwr_f4/PWR'),
+    ('.*:STM32WL_pwr_v1_0', 'pwr_wl5/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
     ('.*:STM32F0_flash_v1_0', 'flash_f0/FLASH'),
     ('.*:STM32F4_flash_v1_0', 'flash_f4/FLASH'),
@@ -713,6 +714,11 @@ def parse_chips():
                         signal_name = parts[1]
                         if signal_name.startswith("EXTI"):
                             continue
+                        if peri_name.startswith("DEBUG") and signal_name.startswith("SUBGHZSPI"):
+                            parts = signal_name.split('-', 1)
+                            if len(parts) == 2:
+                                peri_name = parts[0]
+                                signal_name = removesuffix(parts[1], "OUT")
                         if not peri_name in pins:
                             pins[peri_name] = []
                         entry = OrderedDict({
@@ -1056,6 +1062,11 @@ def parse_gpio_af():
             afs = {}
             for signal in children(pin, 'PinSignal'):
                 func = signal['@Name']
+                if func.startswith("DEBUG_SUBGHZSPI"):
+                    func = removeprefix(func, "DEBUG_")
+                    parts = func.split('-', 2)
+                    if len(parts) > 1:
+                        func = parts[0] + '_' + removesuffix(parts[1], "OUT")
                 afn = signal['SpecificParameter']['PossibleValue'].split('_')[1]
                 afn = int(removeprefix(afn, 'AF'))
                 afs[func] = afn
