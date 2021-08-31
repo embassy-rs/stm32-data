@@ -340,7 +340,7 @@ perimap = [
     ('.*:DAC:dacif_v2_0', 'dac_v2/DAC'),
     ('.*:DAC:dacif_v3_0', 'dac_v2/DAC'),
     ('.*:ADC:aditf5_v2_0', 'adc_v3/ADC'),
-    ('STM32G0.*:ADC:.*', 'adc_v3/ADC'),
+    ('STM32G0.*:ADC:.*', 'adc_g0/ADC'),
     ('STM32G0.*:ADC_COMMON:.*', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
@@ -384,6 +384,7 @@ perimap = [
 
     ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
+    ('.*:STM32G0_pwr_v1_0', 'pwr_g0/PWR'),
     ('STM32H7(42|43|53|50).*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7smps/PWR'),
     ('.*:STM32F4_pwr_v1_0', 'pwr_f4/PWR'),
