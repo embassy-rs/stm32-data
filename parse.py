@@ -348,6 +348,7 @@ perimap = [
     ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
     ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
     ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
+    ('STM32L1.*:SYS:.*', 'syscfg_l1/SYSCFG'),
     ('STM32H7.*:SYS:.*', 'syscfg_h7/SYSCFG'),
     ('STM32G0.*:SYS:.*', 'syscfg_g0/SYSCFG'),
     ('STM32WB.*:SYS:.*', 'syscfg_wb/SYSCFG'),
@@ -405,6 +406,7 @@ perimap = [
     ('.*:STM32G4_dbgmcu_v1_0', 'dbgmcu_g4/DBGMCU'),
     ('.*:STM32H7_dbgmcu_v1_0', 'dbgmcu_h7/DBGMCU'),
     ('.*:STM32L0_dbgmcu_v1_0', 'dbgmcu_l0/DBGMCU'),
+    ('.*:STM32L1_dbgmcu_v1_0', 'dbgmcu_l1/DBGMCU'),
     ('.*:STM32L4_dbgmcu_v1_0', 'dbgmcu_l4/DBGMCU'),
     ('.*:STM32WB_dbgmcu_v1_0', 'dbgmcu_wb/DBGMCU'),
     ('.*:STM32WL_dbgmcu_v1_0', 'dbgmcu_wl/DBGMCU'),
@@ -430,6 +432,8 @@ address_overrides = {
     'STM32F412VE:GPIOG_BASE': 0x40021800,
     'STM32F412VG:GPIOF_BASE': 0x40021400,
     'STM32F412VG:GPIOG_BASE': 0x40021800,
+    'STM32L151CB-A:GPIOF_BASE': 0x40021800,
+    'STM32L151CB-A:GPIOG_BASE': 0x40021C00,
 }
 
 
