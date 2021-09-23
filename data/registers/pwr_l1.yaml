@@ -1,0 +1,103 @@
+---
+block/PWR:
+  description: Power control
+  items:
+    - name: CR
+      description: power control register
+      byte_offset: 0
+      fieldset: CR
+    - name: CSR
+      description: power control/status register
+      byte_offset: 4
+      fieldset: CSR
+fieldset/CR:
+  description: power control register
+  fields:
+    - name: LPSDSR
+      description: Low-power deep sleep
+      bit_offset: 0
+      bit_size: 1
+    - name: PDDS
+      description: Power down deepsleep
+      bit_offset: 1
+      bit_size: 1
+      enum: PDDS
+    - name: CWUF
+      description: Clear wakeup flag
+      bit_offset: 2
+      bit_size: 1
+    - name: CSBF
+      description: Clear standby flag
+      bit_offset: 3
+      bit_size: 1
+    - name: PVDE
+      description: Power voltage detector enable
+      bit_offset: 4
+      bit_size: 1
+    - name: PLS
+      description: PVD level selection
+      bit_offset: 5
+      bit_size: 3
+    - name: DBP
+      description: Disable backup domain write protection
+      bit_offset: 8
+      bit_size: 1
+    - name: ULP
+      description: Ultralow power mode
+      bit_offset: 9
+      bit_size: 1
+    - name: FWU
+      description: Fast wakeup
+      bit_offset: 10
+      bit_size: 1
+    - name: VOS
+      description: Voltage scaling range selection
+      bit_offset: 11
+      bit_size: 2
+    - name: LPRUN
+      description: Low power run mode
+      bit_offset: 14
+      bit_size: 1
+fieldset/CSR:
+  description: power control/status register
+  fields:
+    - name: WUF
+      description: Wakeup flag
+      bit_offset: 0
+      bit_size: 1
+    - name: SBF
+      description: Standby flag
+      bit_offset: 1
+      bit_size: 1
+    - name: PVDO
+      description: PVD output
+      bit_offset: 2
+      bit_size: 1
+    - name: VREFINTRDYF
+      description: Internal voltage reference (VREFINT) ready flag
+      bit_offset: 3
+      bit_size: 1
+    - name: VOSF
+      description: Voltage Scaling select flag
+      bit_offset: 4
+      bit_size: 1
+    - name: REGLPF
+      description: Regulator LP flag
+      bit_offset: 5
+      bit_size: 1
+    - name: EWUP
+      description: Enable WKUP pin 1
+      bit_offset: 8
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+enum/PDDS:
+  bit_size: 1
+  variants:
+    - name: STOP_MODE
+      description: Enter Stop mode when the CPU enters deepsleep
+      value: 0
+    - name: STANDBY_MODE
+      description: Enter Standby mode when the CPU enters deepsleep
+      value: 1

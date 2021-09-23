@@ -389,6 +389,7 @@ perimap = [
     ('STM32H7(42|43|53|50).*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7smps/PWR'),
     ('.*:STM32F4_pwr_v1_0', 'pwr_f4/PWR'),
+    ('.*:STM32L1_pwr_v1_0', 'pwr_l1/PWR'),
     ('.*:STM32WL_pwr_v1_0', 'pwr_wl5/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
     ('.*:STM32F0_flash_v1_0', 'flash_f0/FLASH'),
