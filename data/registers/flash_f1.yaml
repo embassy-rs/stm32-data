@@ -1,0 +1,193 @@
+block/FLASH:
+  description: FLASH
+  items:
+  - byte_offset: 0
+    description: Flash access control register
+    fieldset: ACR
+    name: ACR
+  - access: Write
+    byte_offset: 4
+    description: Flash key register
+    fieldset: KEYR
+    name: KEYR
+  - access: Write
+    byte_offset: 8
+    description: Flash option key register
+    fieldset: OPTKEYR
+    name: OPTKEYR
+  - byte_offset: 12
+    description: Status register
+    fieldset: SR
+    name: SR
+  - byte_offset: 16
+    description: Control register
+    fieldset: CR
+    name: CR
+  - access: Write
+    byte_offset: 20
+    description: Flash address register
+    fieldset: AR
+    name: AR
+  - access: Read
+    byte_offset: 28
+    description: Option byte register
+    fieldset: OBR
+    name: OBR
+  - access: Read
+    byte_offset: 32
+    description: Write protection register
+    fieldset: WRPR
+    name: WRPR
+enum/LATENCY:
+  bit_size: 3
+  variants:
+  - description: "Zero wait state, if 0 < SYSCLK\u2264 24 MHz"
+    name: WS0
+    value: 0
+  - description: "One wait state, if 24 MHz < SYSCLK \u2264 48 MHz"
+    name: WS1
+    value: 1
+  - description: "Two wait states, if 48 MHz < SYSCLK \u2264 72 MHz"
+    name: WS2
+    value: 2
+fieldset/ACR:
+  description: Flash access control register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: Latency
+    enum: LATENCY
+    name: LATENCY
+  - bit_offset: 3
+    bit_size: 1
+    description: Flash half cycle access enable
+    name: HLFCYA
+  - bit_offset: 4
+    bit_size: 1
+    description: Prefetch buffer enable
+    name: PRFTBE
+  - bit_offset: 5
+    bit_size: 1
+    description: Prefetch buffer status
+    name: PRFTBS
+fieldset/AR:
+  description: Flash address register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Flash Address
+    name: FAR
+fieldset/CR:
+  description: Control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Programming
+    name: PG
+  - bit_offset: 1
+    bit_size: 1
+    description: Page Erase
+    name: PER
+  - bit_offset: 2
+    bit_size: 1
+    description: Mass Erase
+    name: MER
+  - bit_offset: 4
+    bit_size: 1
+    description: Option byte programming
+    name: OPTPG
+  - bit_offset: 5
+    bit_size: 1
+    description: Option byte erase
+    name: OPTER
+  - bit_offset: 6
+    bit_size: 1
+    description: Start
+    name: STRT
+  - bit_offset: 7
+    bit_size: 1
+    description: Lock
+    name: LOCK
+  - bit_offset: 9
+    bit_size: 1
+    description: Option bytes write enable
+    name: OPTWRE
+  - bit_offset: 10
+    bit_size: 1
+    description: Error interrupt enable
+    name: ERRIE
+  - bit_offset: 12
+    bit_size: 1
+    description: End of operation interrupt enable
+    name: EOPIE
+fieldset/KEYR:
+  description: Flash key register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: FPEC key
+    name: KEY
+fieldset/OBR:
+  description: Option byte register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Option byte error
+    name: OPTERR
+  - bit_offset: 1
+    bit_size: 1
+    description: Read protection
+    name: RDPRT
+  - bit_offset: 2
+    bit_size: 1
+    description: WDG_SW
+    name: WDG_SW
+  - bit_offset: 3
+    bit_size: 1
+    description: nRST_STOP
+    name: nRST_STOP
+  - bit_offset: 4
+    bit_size: 1
+    description: nRST_STDBY
+    name: nRST_STDBY
+  - bit_offset: 10
+    bit_size: 8
+    description: Data0
+    name: Data0
+  - bit_offset: 18
+    bit_size: 8
+    description: Data1
+    name: Data1
+fieldset/OPTKEYR:
+  description: Flash option key register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Option byte key
+    name: OPTKEY
+fieldset/SR:
+  description: Status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Busy
+    name: BSY
+  - bit_offset: 2
+    bit_size: 1
+    description: Programming error
+    name: PGERR
+  - bit_offset: 4
+    bit_size: 1
+    description: Write protection error
+    name: WRPRTERR
+  - bit_offset: 5
+    bit_size: 1
+    description: End of operation
+    name: EOP
+fieldset/WRPR:
+  description: Write protection register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Write protect
+    name: WRP
