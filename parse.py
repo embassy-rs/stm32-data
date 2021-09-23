@@ -375,6 +375,8 @@ perimap = [
     ('STM32WL5.*:RCC:.*', 'rcc_wl5/RCC'),
     ('STM32WLE.*:RCC:.*', 'rcc_wle/RCC'),
 
+    ('STM32F1.*:AFIO:.*', 'afio_f1/AFIO'),
+
     ('STM32L5.*:EXTI:.*', 'exti_l5/EXTI'),
     ('STM32G0.*:EXTI:.*', 'exti_g0/EXTI'),
     ('STM32H7.*:EXTI:.*', 'exti_h7/EXTI'),
@@ -393,6 +395,7 @@ perimap = [
     ('.*:STM32WL_pwr_v1_0', 'pwr_wl5/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
     ('.*:STM32F0_flash_v1_0', 'flash_f0/FLASH'),
+    ('.*:STM32F1_flash_v1_0', 'flash_f1/FLASH'),
     ('.*:STM32F4_flash_v1_0', 'flash_f4/FLASH'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
     ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
