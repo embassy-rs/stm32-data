@@ -1,0 +1,408 @@
+block/FLASH:
+  description: Flash
+  items:
+  - byte_offset: 0
+    description: Access control register
+    fieldset: ACR
+    name: ACR
+  - access: Write
+    byte_offset: 4
+    description: Power down key register
+    fieldset: PDKEYR
+    name: PDKEYR
+  - access: Write
+    byte_offset: 8
+    description: Flash key register
+    fieldset: KEYR
+    name: KEYR
+  - access: Write
+    byte_offset: 12
+    description: Option byte key register
+    fieldset: OPTKEYR
+    name: OPTKEYR
+  - byte_offset: 16
+    description: Status register
+    fieldset: SR
+    name: SR
+  - byte_offset: 20
+    description: Flash control register
+    fieldset: CR
+    name: CR
+  - byte_offset: 24
+    description: Flash ECC register
+    fieldset: ECCR
+    name: ECCR
+  - byte_offset: 32
+    description: Flash option register
+    fieldset: OPTR
+    name: OPTR
+  - byte_offset: 36
+    description: Flash Bank 1 PCROP Start address register
+    fieldset: PCROP1SR
+    name: PCROP1SR
+  - byte_offset: 40
+    description: Flash Bank 1 PCROP End address register
+    fieldset: PCROP1ER
+    name: PCROP1ER
+  - byte_offset: 44
+    description: Flash Bank 1 WRP area A address register
+    fieldset: WRP1AR
+    name: WRP1AR
+  - byte_offset: 48
+    description: Flash Bank 1 WRP area B address register
+    fieldset: WRP1BR
+    name: WRP1BR
+  - byte_offset: 68
+    description: Flash Bank 2 PCROP Start address register
+    fieldset: PCROP2SR
+    name: PCROP2SR
+  - byte_offset: 72
+    description: Flash Bank 2 PCROP End address register
+    fieldset: PCROP2ER
+    name: PCROP2ER
+  - byte_offset: 76
+    description: Flash Bank 2 WRP area A address register
+    fieldset: WRP2AR
+    name: WRP2AR
+  - byte_offset: 80
+    description: Flash Bank 2 WRP area B address register
+    fieldset: WRP2BR
+    name: WRP2BR
+fieldset/ACR:
+  description: Access control register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: Latency
+    name: LATENCY
+  - bit_offset: 8
+    bit_size: 1
+    description: Prefetch enable
+    name: PRFTEN
+  - bit_offset: 9
+    bit_size: 1
+    description: Instruction cache enable
+    name: ICEN
+  - bit_offset: 10
+    bit_size: 1
+    description: Data cache enable
+    name: DCEN
+  - bit_offset: 11
+    bit_size: 1
+    description: Instruction cache reset
+    name: ICRST
+  - bit_offset: 12
+    bit_size: 1
+    description: Data cache reset
+    name: DCRST
+  - bit_offset: 13
+    bit_size: 1
+    description: Flash Power-down mode during Low-power run mode
+    name: RUN_PD
+  - bit_offset: 14
+    bit_size: 1
+    description: Flash Power-down mode during Low-power sleep mode
+    name: SLEEP_PD
+fieldset/CR:
+  description: Flash control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Programming
+    name: PG
+  - bit_offset: 1
+    bit_size: 1
+    description: Page erase
+    name: PER
+  - array:
+      len: 2
+      stride: 13
+    bit_offset: 2
+    bit_size: 1
+    description: Bank 1 Mass erase
+    name: MER
+  - bit_offset: 3
+    bit_size: 8
+    description: Page number
+    name: PNB
+  - bit_offset: 11
+    bit_size: 1
+    description: Bank erase
+    name: BKER
+  - bit_offset: 16
+    bit_size: 1
+    description: Start
+    name: START
+  - bit_offset: 17
+    bit_size: 1
+    description: Options modification start
+    name: OPTSTRT
+  - bit_offset: 18
+    bit_size: 1
+    description: Fast programming
+    name: FSTPG
+  - bit_offset: 24
+    bit_size: 1
+    description: End of operation interrupt enable
+    name: EOPIE
+  - bit_offset: 25
+    bit_size: 1
+    description: Error interrupt enable
+    name: ERRIE
+  - bit_offset: 26
+    bit_size: 1
+    description: PCROP read error interrupt enable
+    name: RDERRIE
+  - bit_offset: 27
+    bit_size: 1
+    description: Force the option byte loading
+    name: OBL_LAUNCH
+  - bit_offset: 30
+    bit_size: 1
+    description: Options Lock
+    name: OPTLOCK
+  - bit_offset: 31
+    bit_size: 1
+    description: FLASH_CR Lock
+    name: LOCK
+fieldset/ECCR:
+  description: Flash ECC register
+  fields:
+  - bit_offset: 0
+    bit_size: 19
+    description: ECC fail address
+    name: ADDR_ECC
+  - bit_offset: 19
+    bit_size: 1
+    description: ECC fail bank
+    name: BK_ECC
+  - bit_offset: 20
+    bit_size: 1
+    description: System Flash ECC fail
+    name: SYSF_ECC
+  - bit_offset: 24
+    bit_size: 1
+    description: ECC correction interrupt enable
+    name: ECCIE
+  - bit_offset: 30
+    bit_size: 1
+    description: ECC correction
+    name: ECCC
+  - bit_offset: 31
+    bit_size: 1
+    description: ECC detection
+    name: ECCD
+fieldset/KEYR:
+  description: Flash key register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: KEYR
+    name: KEYR
+fieldset/OPTKEYR:
+  description: Option byte key register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Option byte key
+    name: OPTKEYR
+fieldset/OPTR:
+  description: Flash option register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Read protection level
+    name: RDP
+  - bit_offset: 8
+    bit_size: 3
+    description: BOR reset Level
+    name: BOR_LEV
+  - bit_offset: 12
+    bit_size: 1
+    description: nRST_STOP
+    name: nRST_STOP
+  - bit_offset: 13
+    bit_size: 1
+    description: nRST_STDBY
+    name: nRST_STDBY
+  - bit_offset: 16
+    bit_size: 1
+    description: Independent watchdog selection
+    name: IDWG_SW
+  - bit_offset: 17
+    bit_size: 1
+    description: Independent watchdog counter freeze in Stop mode
+    name: IWDG_STOP
+  - bit_offset: 18
+    bit_size: 1
+    description: Independent watchdog counter freeze in Standby mode
+    name: IWDG_STDBY
+  - bit_offset: 19
+    bit_size: 1
+    description: Window watchdog selection
+    name: WWDG_SW
+  - array:
+      len: 1
+      stride: 0
+    bit_offset: 20
+    bit_size: 1
+    description: Dual-bank boot
+    name: BFB
+  - bit_offset: 21
+    bit_size: 1
+    description: Dual-Bank on 512 KB or 256 KB Flash memory devices
+    name: DUALBANK
+  - bit_offset: 23
+    bit_size: 1
+    description: Boot configuration
+    name: nBOOT1
+  - bit_offset: 24
+    bit_size: 1
+    description: SRAM2 parity check enable
+    name: SRAM2_PE
+  - bit_offset: 25
+    bit_size: 1
+    description: SRAM2 Erase when system reset
+    name: SRAM2_RST
+  - bit_offset: 26
+    bit_size: 1
+    description: Software BOOT0
+    name: nSWBOOT0
+  - bit_offset: 27
+    bit_size: 1
+    description: nBOOT0 option bit
+    name: nBOOT0
+fieldset/PCROP1ER:
+  description: Flash Bank 1 PCROP End address register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Bank 1 PCROP area end offset
+    name: PCROP1_END
+  - bit_offset: 31
+    bit_size: 1
+    description: PCROP area preserved when RDP level decreased
+    name: PCROP_RDP
+fieldset/PCROP1SR:
+  description: Flash Bank 1 PCROP Start address register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Bank 1 PCROP area start offset
+    name: PCROP1_STRT
+fieldset/PCROP2ER:
+  description: Flash Bank 2 PCROP End address register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Bank 2 PCROP area end offset
+    name: PCROP2_END
+fieldset/PCROP2SR:
+  description: Flash Bank 2 PCROP Start address register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Bank 2 PCROP area start offset
+    name: PCROP2_STRT
+fieldset/PDKEYR:
+  description: Power down key register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: RUN_PD in FLASH_ACR key
+    name: PDKEYR
+fieldset/SR:
+  description: Status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: End of operation
+    name: EOP
+  - bit_offset: 1
+    bit_size: 1
+    description: Operation error
+    name: OPERR
+  - bit_offset: 3
+    bit_size: 1
+    description: Programming error
+    name: PROGERR
+  - bit_offset: 4
+    bit_size: 1
+    description: Write protected error
+    name: WRPERR
+  - bit_offset: 5
+    bit_size: 1
+    description: Programming alignment error
+    name: PGAERR
+  - bit_offset: 6
+    bit_size: 1
+    description: Size error
+    name: SIZERR
+  - bit_offset: 7
+    bit_size: 1
+    description: Programming sequence error
+    name: PGSERR
+  - bit_offset: 8
+    bit_size: 1
+    description: Fast programming data miss error
+    name: MISERR
+  - bit_offset: 9
+    bit_size: 1
+    description: Fast programming error
+    name: FASTERR
+  - bit_offset: 14
+    bit_size: 1
+    description: PCROP read error
+    name: RDERR
+  - bit_offset: 15
+    bit_size: 1
+    description: Option validity error
+    name: OPTVERR
+  - bit_offset: 16
+    bit_size: 1
+    description: Busy
+    name: BSY
+fieldset/WRP1AR:
+  description: Flash Bank 1 WRP area A address register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Bank 1 WRP first area tart offset
+    name: WRP1A_STRT
+  - bit_offset: 16
+    bit_size: 8
+    description: Bank 1 WRP first area A end offset
+    name: WRP1A_END
+fieldset/WRP1BR:
+  description: Flash Bank 1 WRP area B address register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Bank 1 WRP second area B start offset
+    name: WRP1B_STRT
+  - bit_offset: 16
+    bit_size: 8
+    description: Bank 1 WRP second area B end offset
+    name: WRP1B_END
+fieldset/WRP2AR:
+  description: Flash Bank 2 WRP area A address register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Bank 2 WRP first area A start offset
+    name: WRP2A_STRT
+  - bit_offset: 16
+    bit_size: 8
+    description: Bank 2 WRP first area A end offset
+    name: WRP2A_END
+fieldset/WRP2BR:
+  description: Flash Bank 2 WRP area B address register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Bank 2 WRP second area B start offset
+    name: WRP2B_STRT
+  - bit_offset: 16
+    bit_size: 8
+    description: Bank 2 WRP second area B end offset
+    name: WRP2B_END
