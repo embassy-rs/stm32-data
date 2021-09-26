@@ -1,38 +1,31 @@
 ---
 block/CRC:
-  description: Cryptographic processor
+  description: Cyclic Redundancy Check calculation unit
   items:
     - name: DR
       description: Data register
       byte_offset: 0
-      fieldset: DR
     - name: DR16
       description: Data register - half-word sized
       byte_offset: 0
       bit_size: 16
-      fieldset: DR16
     - name: DR8
       description: Data register - byte sized
       byte_offset: 0
       bit_size: 8
-      fieldset: DR8
     - name: IDR
       description: Independent Data register
       byte_offset: 4
-      fieldset: IDR
     - name: CR
       description: Control register
       byte_offset: 8
-      access: Write
       fieldset: CR
     - name: INIT
       description: Initial CRC value
       byte_offset: 16
-      fieldset: INIT
     - name: POL
       description: CRC polynomial
       byte_offset: 20
-      fieldset: POL
 fieldset/CR:
   description: Control register
   fields:
@@ -40,7 +33,6 @@ fieldset/CR:
       description: RESET bit
       bit_offset: 0
       bit_size: 1
-      enum_write: RESETW
     - name: POLYSIZE
       description: Polynomial size
       bit_offset: 3
@@ -56,54 +48,6 @@ fieldset/CR:
       bit_offset: 7
       bit_size: 1
       enum: REV_OUT
-fieldset/DR:
-  description: Data register
-  fields:
-    - name: DR
-      description: Data Register
-      bit_offset: 0
-      bit_size: 32
-fieldset/DR16:
-  description: Data register - half-word sized
-  fields:
-    - name: DR
-      description: Data register bits
-      bit_offset: 0
-      bit_size: 16
-      array:
-        len: 1
-        stride: 0
-fieldset/DR8:
-  description: Data register - byte sized
-  fields:
-    - name: DR
-      description: Data register bits
-      bit_offset: 0
-      bit_size: 8
-      array:
-        len: 1
-        stride: 0
-fieldset/IDR:
-  description: Independent Data register
-  fields:
-    - name: IDR
-      description: Independent Data register
-      bit_offset: 0
-      bit_size: 8
-fieldset/INIT:
-  description: Initial CRC value
-  fields:
-    - name: INIT
-      description: Programmable initial CRC value
-      bit_offset: 0
-      bit_size: 32
-fieldset/POL:
-  description: CRC polynomial
-  fields:
-    - name: POL
-      description: Programmable polynomial
-      bit_offset: 0
-      bit_size: 32
 enum/POLYSIZE:
   bit_size: 2
   variants:
@@ -119,12 +63,6 @@ enum/POLYSIZE:
     - name: Polysize7
       description: 7-bit polynomial
       value: 3
-enum/RESETW:
-  bit_size: 1
-  variants:
-    - name: Reset
-      description: Resets the CRC calculation unit and sets the data register to 0xFFFF FFFF
-      value: 1
 enum/REV_IN:
   bit_size: 2
   variants:
