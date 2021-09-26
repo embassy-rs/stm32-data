@@ -298,7 +298,7 @@ FAKE_PERIPHERALS = [
     'FREERTOS',
     'PDM2PCM',
     'FATFS',
-    'CRC',
+    # 'CRC',
     'LIBJPEG',
     'MBEDTLS',
     'LWIP',
@@ -429,6 +429,16 @@ perimap = [
     ('.*:DMA', 'bdma_v1/DMA'),
 
     ('.*:CAN:bxcan1_v1_1.*', 'can_bxcan/CAN'),
+    # stm32F4 CRC peripheral
+    # ("STM32F4*:CRC:CRC:crc_f4")
+    # v1: F1, F2, F4, L1
+    # v2, adds INIT reg: F0
+    # v3, adds POL reg: F3, F7, G0, G4, H7, L0, L4, L5, WB, WL
+    ('.*:CRC:integtest1_v1_0', 'crc_v1/CRC'),
+    ('STM32L[04].*:CRC:integtest1_v2_0', 'crc_v3/CRC'),
+    ('.*:CRC:integtest1_v2_0', 'crc_v2/CRC'),
+    ('.*:CRC:integtest1_v2_2', 'crc_v3/CRC'),
+
 ]
 
 # Device address overrides, in case of missing from headers
