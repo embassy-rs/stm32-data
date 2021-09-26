@@ -1,0 +1,89 @@
+---
+block/CRC:
+  description: Cyclic Redundancy Check calculation unit
+  items:
+    - name: DR
+      description: Data register
+      byte_offset: 0
+    - name: DR16
+      description: Data register - half-word sized
+      byte_offset: 0
+      bit_size: 16
+    - name: DR8
+      description: Data register - byte sized
+      byte_offset: 0
+      bit_size: 8
+    - name: IDR
+      description: Independent Data register
+      byte_offset: 4
+    - name: CR
+      description: Control register
+      byte_offset: 8
+      fieldset: CR
+    - name: INIT
+      description: Initial CRC value
+      byte_offset: 16
+    - name: POL
+      description: CRC polynomial
+      byte_offset: 20
+fieldset/CR:
+  description: Control register
+  fields:
+    - name: RESET
+      description: RESET bit
+      bit_offset: 0
+      bit_size: 1
+    - name: POLYSIZE
+      description: Polynomial size
+      bit_offset: 3
+      bit_size: 2
+      enum: POLYSIZE
+    - name: REV_IN
+      description: Reverse input data
+      bit_offset: 5
+      bit_size: 2
+      enum: REV_IN
+    - name: REV_OUT
+      description: Reverse output data
+      bit_offset: 7
+      bit_size: 1
+      enum: REV_OUT
+enum/POLYSIZE:
+  bit_size: 2
+  variants:
+    - name: Polysize32
+      description: 32-bit polynomial
+      value: 0
+    - name: Polysize16
+      description: 16-bit polynomial
+      value: 1
+    - name: Polysize8
+      description: 8-bit polynomial
+      value: 2
+    - name: Polysize7
+      description: 7-bit polynomial
+      value: 3
+enum/REV_IN:
+  bit_size: 2
+  variants:
+    - name: Normal
+      description: Bit order not affected
+      value: 0
+    - name: Byte
+      description: Bit reversal done by byte
+      value: 1
+    - name: HalfWord
+      description: Bit reversal done by half-word
+      value: 2
+    - name: Word
+      description: Bit reversal done by word
+      value: 3
+enum/REV_OUT:
+  bit_size: 1
+  variants:
+    - name: Normal
+      description: Bit order not affected
+      value: 0
+    - name: Reversed
+      description: Bit reversed output
+      value: 1
