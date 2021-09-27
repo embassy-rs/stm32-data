@@ -993,6 +993,17 @@ def parse_chips():
                         pwr_peri['block'] = block
                     peris['PWR'] = pwr_peri
 
+            # AFIO is not in the cubedb XMLs
+            if addr := defines.get('AFIO_BASE'):
+                kind = 'AFIO'
+                afio_peri = OrderedDict({
+                    'address': addr,
+                    'kind': kind,
+                })
+                if block := match_peri(chip_name[:7] + ':' + kind + ':'):
+                    afio_peri['block'] = block
+                peris['AFIO'] = afio_peri
+
             core['peripherals'] = peris
 
             if 'block' in core['peripherals']['RCC']:
