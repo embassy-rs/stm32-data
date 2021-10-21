@@ -1,0 +1,728 @@
+---
+block/DMA2D:
+  description: DMA2D controller
+  items:
+  - byte_offset: 0
+    description: control register
+    fieldset: CR
+    name: CR
+  - access: Read
+    byte_offset: 4
+    description: Interrupt Status Register
+    fieldset: ISR
+    name: ISR
+  - byte_offset: 8
+    description: interrupt flag clear register
+    fieldset: IFCR
+    name: IFCR
+  - byte_offset: 12
+    description: foreground memory address register
+    fieldset: FGMAR
+    name: FGMAR
+  - byte_offset: 16
+    description: foreground offset register
+    fieldset: FGOR
+    name: FGOR
+  - byte_offset: 20
+    description: background memory address register
+    fieldset: BGMAR
+    name: BGMAR
+  - byte_offset: 24
+    description: background offset register
+    fieldset: BGOR
+    name: BGOR
+  - byte_offset: 28
+    description: foreground PFC control register
+    fieldset: FGPFCCR
+    name: FGPFCCR
+  - byte_offset: 32
+    description: foreground color register
+    fieldset: FGCOLR
+    name: FGCOLR
+  - byte_offset: 36
+    description: background PFC control register
+    fieldset: BGPFCCR
+    name: BGPFCCR
+  - byte_offset: 40
+    description: background color register
+    fieldset: BGCOLR
+    name: BGCOLR
+  - byte_offset: 44
+    description: foreground CLUT memory address register
+    fieldset: FGCMAR
+    name: FGCMAR
+  - byte_offset: 48
+    description: background CLUT memory address register
+    fieldset: BGCMAR
+    name: BGCMAR
+  - byte_offset: 52
+    description: output PFC control register
+    fieldset: OPFCCR
+    name: OPFCCR
+  - byte_offset: 56
+    description: output color register
+    fieldset: OCOLR
+    name: OCOLR
+  - byte_offset: 60
+    description: output memory address register
+    fieldset: OMAR
+    name: OMAR
+  - byte_offset: 64
+    description: output offset register
+    fieldset: OOR
+    name: OOR
+  - byte_offset: 68
+    description: number of line register
+    fieldset: NLR
+    name: NLR
+  - byte_offset: 72
+    description: line watermark register
+    fieldset: LWR
+    name: LWR
+  - byte_offset: 76
+    description: AHB master timer configuration register
+    fieldset: AMTCR
+    name: AMTCR
+  - byte_offset: 1024
+    description: FGCLUT
+    fieldset: FGCLUT
+    name: FGCLUT
+  - byte_offset: 2048
+    description: BGCLUT
+    fieldset: BGCLUT
+    name: BGCLUT
+enum/ABORT:
+  bit_size: 1
+  variants:
+  - description: Transfer abort requested
+    name: AbortRequest
+    value: 1
+enum/BGPFCCR_AM:
+  bit_size: 2
+  variants:
+  - description: No modification of alpha channel
+    name: NoModify
+    value: 0
+  - description: Replace with value in ALPHA[7:0]
+    name: Replace
+    value: 1
+  - description: Multiply with value in ALPHA[7:0]
+    name: Multiply
+    value: 2
+enum/BGPFCCR_CCM:
+  bit_size: 1
+  variants:
+  - description: CLUT color format ARGB8888
+    name: ARGB8888
+    value: 0
+  - description: CLUT color format RGB888
+    name: RGB888
+    value: 1
+enum/BGPFCCR_CM:
+  bit_size: 4
+  variants:
+  - description: Color mode ARGB8888
+    name: ARGB8888
+    value: 0
+  - description: Color mode RGB888
+    name: RGB888
+    value: 1
+  - description: Color mode RGB565
+    name: RGB565
+    value: 2
+  - description: Color mode ARGB1555
+    name: ARGB1555
+    value: 3
+  - description: Color mode ARGB4444
+    name: ARGB4444
+    value: 4
+  - description: Color mode L8
+    name: L8
+    value: 5
+  - description: Color mode AL44
+    name: AL44
+    value: 6
+  - description: Color mode AL88
+    name: AL88
+    value: 7
+  - description: Color mode L4
+    name: L4
+    value: 8
+  - description: Color mode A8
+    name: A8
+    value: 9
+  - description: Color mode A4
+    name: A4
+    value: 10
+enum/BGPFCCR_START:
+  bit_size: 1
+  variants:
+  - description: Start the automatic loading of the CLUT
+    name: Start
+    value: 1
+enum/CAECIF:
+  bit_size: 1
+  variants:
+  - description: Clear the CAEIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/CAEIE:
+  bit_size: 1
+  variants:
+  - description: CAE interrupt disabled
+    name: Disabled
+    value: 0
+  - description: CAE interrupt enabled
+    name: Enabled
+    value: 1
+enum/CCEIF:
+  bit_size: 1
+  variants:
+  - description: Clear the CEIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/CCTCIF:
+  bit_size: 1
+  variants:
+  - description: Clear the CTCIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/CEIE:
+  bit_size: 1
+  variants:
+  - description: CE interrupt disabled
+    name: Disabled
+    value: 0
+  - description: CE interrupt enabled
+    name: Enabled
+    value: 1
+enum/CR_START:
+  bit_size: 1
+  variants:
+  - description: Launch the DMA2D
+    name: Start
+    value: 1
+enum/CTCIE:
+  bit_size: 1
+  variants:
+  - description: CTC interrupt disabled
+    name: Disabled
+    value: 0
+  - description: CTC interrupt enabled
+    name: Enabled
+    value: 1
+enum/CTCIF:
+  bit_size: 1
+  variants:
+  - description: Clear the TCIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/CTEIF:
+  bit_size: 1
+  variants:
+  - description: Clear the TEIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/CTWIF:
+  bit_size: 1
+  variants:
+  - description: Clear the TWIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/EN:
+  bit_size: 1
+  variants:
+  - description: Disabled AHB/AXI dead-time functionality
+    name: Disabled
+    value: 0
+  - description: Enabled AHB/AXI dead-time functionality
+    name: Enabled
+    value: 1
+enum/FGPFCCR_AM:
+  bit_size: 2
+  variants:
+  - description: No modification of alpha channel
+    name: NoModify
+    value: 0
+  - description: Replace with value in ALPHA[7:0]
+    name: Replace
+    value: 1
+  - description: Multiply with value in ALPHA[7:0]
+    name: Multiply
+    value: 2
+enum/FGPFCCR_CCM:
+  bit_size: 1
+  variants:
+  - description: CLUT color format ARGB8888
+    name: ARGB8888
+    value: 0
+  - description: CLUT color format RGB888
+    name: RGB888
+    value: 1
+enum/FGPFCCR_CM:
+  bit_size: 4
+  variants:
+  - description: Color mode ARGB8888
+    name: ARGB8888
+    value: 0
+  - description: Color mode RGB888
+    name: RGB888
+    value: 1
+  - description: Color mode RGB565
+    name: RGB565
+    value: 2
+  - description: Color mode ARGB1555
+    name: ARGB1555
+    value: 3
+  - description: Color mode ARGB4444
+    name: ARGB4444
+    value: 4
+  - description: Color mode L8
+    name: L8
+    value: 5
+  - description: Color mode AL44
+    name: AL44
+    value: 6
+  - description: Color mode AL88
+    name: AL88
+    value: 7
+  - description: Color mode L4
+    name: L4
+    value: 8
+  - description: Color mode A8
+    name: A8
+    value: 9
+  - description: Color mode A4
+    name: A4
+    value: 10
+enum/FGPFCCR_START:
+  bit_size: 1
+  variants:
+  - description: Start the automatic loading of the CLUT
+    name: Start
+    value: 1
+enum/MODE:
+  bit_size: 2
+  variants:
+  - description: Memory-to-memory (FG fetch only)
+    name: MemoryToMemory
+    value: 0
+  - description: Memory-to-memory with PFC (FG fetch only with FG PFC active)
+    name: MemoryToMemoryPFC
+    value: 1
+  - description: Memory-to-memory with blending (FG and BG fetch with PFC and blending)
+    name: MemoryToMemoryPFCBlending
+    value: 2
+  - description: Register-to-memory
+    name: RegisterToMemory
+    value: 3
+enum/OPFCCR_CM:
+  bit_size: 3
+  variants:
+  - description: ARGB8888
+    name: ARGB8888
+    value: 0
+  - description: RGB888
+    name: RGB888
+    value: 1
+  - description: RGB565
+    name: RGB565
+    value: 2
+  - description: ARGB1555
+    name: ARGB1555
+    value: 3
+  - description: ARGB4444
+    name: ARGB4444
+    value: 4
+enum/SUSP:
+  bit_size: 1
+  variants:
+  - description: Transfer not suspended
+    name: NotSuspended
+    value: 0
+  - description: Transfer suspended
+    name: Suspended
+    value: 1
+enum/TCIE:
+  bit_size: 1
+  variants:
+  - description: TC interrupt disabled
+    name: Disabled
+    value: 0
+  - description: TC interrupt enabled
+    name: Enabled
+    value: 1
+enum/TEIE:
+  bit_size: 1
+  variants:
+  - description: TE interrupt disabled
+    name: Disabled
+    value: 0
+  - description: TE interrupt enabled
+    name: Enabled
+    value: 1
+enum/TWIE:
+  bit_size: 1
+  variants:
+  - description: TW interrupt disabled
+    name: Disabled
+    value: 0
+  - description: TW interrupt enabled
+    name: Enabled
+    value: 1
+fieldset/AMTCR:
+  description: AHB master timer configuration register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Enable
+    enum: EN
+    name: EN
+  - bit_offset: 8
+    bit_size: 8
+    description: Dead Time
+    name: DT
+fieldset/BGCLUT:
+  description: BGCLUT
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: BLUE
+    name: BLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: GREEN
+    name: GREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: RED
+    name: RED
+  - bit_offset: 24
+    bit_size: 8
+    description: APLHA
+    name: APLHA
+fieldset/BGCMAR:
+  description: background CLUT memory address register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Memory address
+    name: MA
+fieldset/BGCOLR:
+  description: background color register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Blue Value
+    name: BLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: Green Value
+    name: GREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: Red Value
+    name: RED
+fieldset/BGMAR:
+  description: background memory address register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Memory address
+    name: MA
+fieldset/BGOR:
+  description: background offset register
+  fields:
+  - bit_offset: 0
+    bit_size: 14
+    description: Line offset
+    name: LO
+fieldset/BGPFCCR:
+  description: background PFC control register
+  fields:
+  - bit_offset: 0
+    bit_size: 4
+    description: Color mode
+    enum: BGPFCCR_CM
+    name: CM
+  - bit_offset: 4
+    bit_size: 1
+    description: CLUT Color mode
+    enum: BGPFCCR_CCM
+    name: CCM
+  - bit_offset: 5
+    bit_size: 1
+    description: Start
+    enum: BGPFCCR_START
+    name: START
+  - bit_offset: 8
+    bit_size: 8
+    description: CLUT size
+    name: CS
+  - bit_offset: 16
+    bit_size: 2
+    description: Alpha mode
+    enum: BGPFCCR_AM
+    name: AM
+  - bit_offset: 24
+    bit_size: 8
+    description: Alpha value
+    name: ALPHA
+fieldset/CR:
+  description: control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Start
+    enum: CR_START
+    name: START
+  - bit_offset: 1
+    bit_size: 1
+    description: Suspend
+    enum: SUSP
+    name: SUSP
+  - bit_offset: 2
+    bit_size: 1
+    description: Abort
+    enum: ABORT
+    name: ABORT
+  - bit_offset: 8
+    bit_size: 1
+    description: Transfer error interrupt enable
+    enum: TEIE
+    name: TEIE
+  - bit_offset: 9
+    bit_size: 1
+    description: Transfer complete interrupt enable
+    enum: TCIE
+    name: TCIE
+  - bit_offset: 10
+    bit_size: 1
+    description: Transfer watermark interrupt enable
+    enum: TWIE
+    name: TWIE
+  - bit_offset: 11
+    bit_size: 1
+    description: CLUT access error interrupt enable
+    enum: CAEIE
+    name: CAEIE
+  - bit_offset: 12
+    bit_size: 1
+    description: CLUT transfer complete interrupt enable
+    enum: CTCIE
+    name: CTCIE
+  - bit_offset: 13
+    bit_size: 1
+    description: Configuration Error Interrupt Enable
+    enum: CEIE
+    name: CEIE
+  - bit_offset: 16
+    bit_size: 2
+    description: DMA2D mode
+    enum: MODE
+    name: MODE
+fieldset/FGCLUT:
+  description: FGCLUT
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: BLUE
+    name: BLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: GREEN
+    name: GREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: RED
+    name: RED
+  - bit_offset: 24
+    bit_size: 8
+    description: APLHA
+    name: APLHA
+fieldset/FGCMAR:
+  description: foreground CLUT memory address register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Memory Address
+    name: MA
+fieldset/FGCOLR:
+  description: foreground color register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Blue Value
+    name: BLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: Green Value
+    name: GREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: Red Value
+    name: RED
+fieldset/FGMAR:
+  description: foreground memory address register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Memory address
+    name: MA
+fieldset/FGOR:
+  description: foreground offset register
+  fields:
+  - bit_offset: 0
+    bit_size: 14
+    description: Line offset
+    name: LO
+fieldset/FGPFCCR:
+  description: foreground PFC control register
+  fields:
+  - bit_offset: 0
+    bit_size: 4
+    description: Color mode
+    enum: FGPFCCR_CM
+    name: CM
+  - bit_offset: 4
+    bit_size: 1
+    description: CLUT color mode
+    enum: FGPFCCR_CCM
+    name: CCM
+  - bit_offset: 5
+    bit_size: 1
+    description: Start
+    enum: FGPFCCR_START
+    name: START
+  - bit_offset: 8
+    bit_size: 8
+    description: CLUT size
+    name: CS
+  - bit_offset: 16
+    bit_size: 2
+    description: Alpha mode
+    enum: FGPFCCR_AM
+    name: AM
+  - bit_offset: 24
+    bit_size: 8
+    description: Alpha value
+    name: ALPHA
+fieldset/IFCR:
+  description: interrupt flag clear register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Clear Transfer error interrupt flag
+    enum: CTEIF
+    name: CTEIF
+  - bit_offset: 1
+    bit_size: 1
+    description: Clear transfer complete interrupt flag
+    enum: CTCIF
+    name: CTCIF
+  - bit_offset: 2
+    bit_size: 1
+    description: Clear transfer watermark interrupt flag
+    enum: CTWIF
+    name: CTWIF
+  - bit_offset: 3
+    bit_size: 1
+    description: Clear CLUT access error interrupt flag
+    enum: CAECIF
+    name: CAECIF
+  - bit_offset: 4
+    bit_size: 1
+    description: Clear CLUT transfer complete interrupt flag
+    enum: CCTCIF
+    name: CCTCIF
+  - bit_offset: 5
+    bit_size: 1
+    description: Clear configuration error interrupt flag
+    enum: CCEIF
+    name: CCEIF
+fieldset/ISR:
+  description: Interrupt Status Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Transfer error interrupt flag
+    name: TEIF
+  - bit_offset: 1
+    bit_size: 1
+    description: Transfer complete interrupt flag
+    name: TCIF
+  - bit_offset: 2
+    bit_size: 1
+    description: Transfer watermark interrupt flag
+    name: TWIF
+  - bit_offset: 3
+    bit_size: 1
+    description: CLUT access error interrupt flag
+    name: CAEIF
+  - bit_offset: 4
+    bit_size: 1
+    description: CLUT transfer complete interrupt flag
+    name: CTCIF
+  - bit_offset: 5
+    bit_size: 1
+    description: Configuration error interrupt flag
+    name: CEIF
+fieldset/LWR:
+  description: line watermark register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Line watermark
+    name: LW
+fieldset/NLR:
+  description: number of line register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Number of lines
+    name: NL
+  - bit_offset: 16
+    bit_size: 14
+    description: Pixel per lines
+    name: PL
+fieldset/OCOLR:
+  description: output color register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Blue Value
+    name: BLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: Green Value
+    name: GREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: Red Value
+    name: RED
+  - bit_offset: 24
+    bit_size: 8
+    description: Alpha Channel Value
+    name: APLHA
+fieldset/OMAR:
+  description: output memory address register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Memory Address
+    name: MA
+fieldset/OOR:
+  description: output offset register
+  fields:
+  - bit_offset: 0
+    bit_size: 14
+    description: Line Offset
+    name: LO
+fieldset/OPFCCR:
+  description: output PFC control register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: Color mode
+    enum: OPFCCR_CM
+    name: CM

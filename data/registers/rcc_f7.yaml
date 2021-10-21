@@ -1,3 +1,4 @@
+---
 block/RCC:
   description: Reset and clock control
   items:
@@ -114,6 +115,15 @@ enum/ADFSDMSEL:
   - description: SAI2 clock selected as DFSDM1 Audio clock source
     name: SAI2
     value: 1
+enum/BORRSTFR:
+  bit_size: 1
+  variants:
+  - description: No reset has occured
+    name: NoReset
+    value: 0
+  - description: A reset has occured
+    name: Reset
+    value: 1
 enum/CECSEL:
   bit_size: 1
   variants:
@@ -205,6 +215,15 @@ enum/HSEBYP:
   - description: HSE crystal oscillator bypassed with external clock
     name: Bypassed
     value: 1
+enum/HSIRDYR:
+  bit_size: 1
+  variants:
+  - description: Clock not ready
+    name: NotReady
+    value: 0
+  - description: Clock ready
+    name: Ready
+    value: 1
 enum/ICSEL:
   bit_size: 2
   variants:
@@ -241,15 +260,6 @@ enum/LPTIMSEL:
   - description: LSE clock is selected as LPTILM1 clock
     name: LSE
     value: 3
-enum/LPWRRSTFR:
-  bit_size: 1
-  variants:
-  - description: No reset has occured
-    name: NoReset
-    value: 0
-  - description: A reset has occured
-    name: Reset
-    value: 1
 enum/LSEBYP:
   bit_size: 1
   variants:
@@ -282,6 +292,30 @@ enum/LSERDYR:
     value: 0
   - description: LSE oscillator ready
     name: Ready
+    value: 1
+enum/LSIRDYCW:
+  bit_size: 1
+  variants:
+  - description: Clear interrupt flag
+    name: Clear
+    value: 1
+enum/LSIRDYFR:
+  bit_size: 1
+  variants:
+  - description: No clock ready interrupt
+    name: NotInterrupted
+    value: 0
+  - description: Clock ready interrupt
+    name: Interrupted
+    value: 1
+enum/LSIRDYIE:
+  bit_size: 1
+  variants:
+  - description: Interrupt disabled
+    name: Disabled
+    value: 0
+  - description: Interrupt enabled
+    name: Enabled
     value: 1
 enum/LSIRDYR:
   bit_size: 1
@@ -454,15 +488,6 @@ enum/PLLISP:
   - description: PLL*P=8
     name: Div8
     value: 3
-enum/PLLISRDYR:
-  bit_size: 1
-  variants:
-  - description: Clock not ready
-    name: NotReady
-    value: 0
-  - description: Clock ready
-    name: Ready
-    value: 1
 enum/PLLP:
   bit_size: 2
   variants:
@@ -607,30 +632,6 @@ enum/PLLSAIP:
   - description: PLL*P=8
     name: Div8
     value: 3
-enum/PLLSAIRDYCW:
-  bit_size: 1
-  variants:
-  - description: Clear interrupt flag
-    name: Clear
-    value: 1
-enum/PLLSAIRDYFR:
-  bit_size: 1
-  variants:
-  - description: No clock ready interrupt
-    name: NotInterrupted
-    value: 0
-  - description: Clock ready interrupt
-    name: Interrupted
-    value: 1
-enum/PLLSAIRDYIE:
-  bit_size: 1
-  variants:
-  - description: Interrupt disabled
-    name: Disabled
-    value: 0
-  - description: Interrupt enabled
-    name: Enabled
-    value: 1
 enum/PLLSRC:
   bit_size: 1
   variants:
@@ -836,10 +837,6 @@ fieldset/AHB1ENR:
     bit_size: 1
     description: CCM data RAM clock enable
     name: DTCMRAMEN
-  - bit_offset: 20
-    bit_size: 1
-    description: CCM data RAM clock enable
-    name: CCMDATARAMEN
   - bit_offset: 21
     bit_size: 1
     description: DMA1 clock enable
@@ -855,27 +852,27 @@ fieldset/AHB1ENR:
   - bit_offset: 25
     bit_size: 1
     description: Ethernet MAC clock enable
-    name: ETHMACEN
+    name: ETHEN
   - bit_offset: 26
     bit_size: 1
     description: Ethernet Transmission clock enable
-    name: ETHMACTXEN
+    name: ETHTXEN
   - bit_offset: 27
     bit_size: 1
     description: Ethernet Reception clock enable
-    name: ETHMACRXEN
+    name: ETHRXEN
   - bit_offset: 28
     bit_size: 1
     description: Ethernet PTP clock enable
-    name: ETHMACPTPEN
+    name: ETHPTPEN
   - bit_offset: 29
     bit_size: 1
     description: USB OTG HS clock enable
-    name: OTGHSEN
+    name: USB_OTG_HSEN
   - bit_offset: 30
     bit_size: 1
     description: USB OTG HSULPI clock enable
-    name: OTGHSULPIEN
+    name: USB_OTG_HSULPIEN
 fieldset/AHB1LPENR:
   description: AHB1 peripheral clock enable in low power mode register
   fields:
@@ -970,27 +967,27 @@ fieldset/AHB1LPENR:
   - bit_offset: 25
     bit_size: 1
     description: Ethernet MAC clock enable during Sleep mode
-    name: ETHMACLPEN
+    name: ETHLPEN
   - bit_offset: 26
     bit_size: 1
     description: Ethernet transmission clock enable during Sleep mode
-    name: ETHMACTXLPEN
+    name: ETHTXLPEN
   - bit_offset: 27
     bit_size: 1
     description: Ethernet reception clock enable during Sleep mode
-    name: ETHMACRXLPEN
+    name: ETHRXLPEN
   - bit_offset: 28
     bit_size: 1
     description: Ethernet PTP clock enable during Sleep mode
-    name: ETHMACPTPLPEN
+    name: ETHPTPLPEN
   - bit_offset: 29
     bit_size: 1
     description: USB OTG HS clock enable during Sleep mode
-    name: OTGHSLPEN
+    name: USB_OTG_HSLPEN
   - bit_offset: 30
     bit_size: 1
     description: USB OTG HS ULPI clock enable during Sleep mode
-    name: OTGHSULPILPEN
+    name: USB_OTG_HSULPILPEN
 fieldset/AHB1RSTR:
   description: AHB1 peripheral reset register
   fields:
@@ -1057,11 +1054,11 @@ fieldset/AHB1RSTR:
   - bit_offset: 25
     bit_size: 1
     description: Ethernet MAC reset
-    name: ETHMACRST
+    name: ETHRST
   - bit_offset: 29
     bit_size: 1
     description: USB OTG HS module reset
-    name: OTGHSRST
+    name: USB_OTG_HSRST
 fieldset/AHB2ENR:
   description: AHB2 peripheral clock enable register
   fields:
@@ -1069,6 +1066,10 @@ fieldset/AHB2ENR:
     bit_size: 1
     description: Camera interface enable
     name: DCMIEN
+  - bit_offset: 1
+    bit_size: 1
+    description: JPEG enable
+    name: JPEGEN
   - bit_offset: 4
     bit_size: 1
     description: AES module clock enable
@@ -1088,7 +1089,7 @@ fieldset/AHB2ENR:
   - bit_offset: 7
     bit_size: 1
     description: USB OTG FS clock enable
-    name: OTGFSEN
+    name: USB_OTG_FSEN
 fieldset/AHB2LPENR:
   description: AHB2 peripheral clock enable in low power mode register
   fields:
@@ -1096,6 +1097,10 @@ fieldset/AHB2LPENR:
     bit_size: 1
     description: Camera interface enable during Sleep mode
     name: DCMILPEN
+  - bit_offset: 1
+    bit_size: 1
+    description: JPEG module enabled during Sleep mode
+    name: JPEGLPEN
   - bit_offset: 4
     bit_size: 1
     description: AES module clock enable during Sleep mode
@@ -1115,7 +1120,7 @@ fieldset/AHB2LPENR:
   - bit_offset: 7
     bit_size: 1
     description: USB OTG FS clock enable during Sleep mode
-    name: OTGFSLPEN
+    name: USB_OTG_FSLPEN
 fieldset/AHB2RSTR:
   description: AHB2 peripheral reset register
   fields:
@@ -1142,7 +1147,7 @@ fieldset/AHB2RSTR:
   - bit_offset: 7
     bit_size: 1
     description: USB OTG FS module reset
-    name: OTGFSRST
+    name: USB_OTG_FSRST
 fieldset/AHB3ENR:
   description: AHB3 peripheral clock enable register
   fields:
@@ -1153,7 +1158,7 @@ fieldset/AHB3ENR:
   - bit_offset: 1
     bit_size: 1
     description: Quad SPI memory controller clock enable
-    name: QSPIEN
+    name: QUADSPIEN
 fieldset/AHB3LPENR:
   description: AHB3 peripheral clock enable in low power mode register
   fields:
@@ -1164,7 +1169,7 @@ fieldset/AHB3LPENR:
   - bit_offset: 1
     bit_size: 1
     description: Quand SPI memory controller clock enable during Sleep mode
-    name: QSPILPEN
+    name: QUADSPILPEN
 fieldset/AHB3RSTR:
   description: AHB3 peripheral reset register
   fields:
@@ -1175,7 +1180,7 @@ fieldset/AHB3RSTR:
   - bit_offset: 1
     bit_size: 1
     description: Quad SPI memory controller reset
-    name: QSPIRST
+    name: QUADSPIRST
 fieldset/APB1ENR:
   description: APB1 peripheral clock enable register
   fields:
@@ -1219,18 +1224,18 @@ fieldset/APB1ENR:
     bit_size: 1
     description: Low power timer 1 clock enable
     name: LPTIM1EN
-  - bit_offset: 9
-    bit_size: 1
-    description: Low power timer 1 clock enable
-    name: LPTMI1EN
   - bit_offset: 10
     bit_size: 1
     description: RTCAPB clock enable
-    name: RTCAPBEN
+    name: RTCEN
   - bit_offset: 11
     bit_size: 1
     description: Window watchdog clock enable
     name: WWDGEN
+  - bit_offset: 13
+    bit_size: 1
+    description: CAN 3 enable
+    name: CAN3EN
   - bit_offset: 14
     bit_size: 1
     description: SPI2 clock enable
@@ -1346,10 +1351,18 @@ fieldset/APB1LPENR:
     bit_size: 1
     description: low power timer 1 clock enable during Sleep mode
     name: LPTIM1LPEN
+  - bit_offset: 10
+    bit_size: 1
+    description: RTCAPB clock enable during Sleep mode
+    name: RTCLPEN
   - bit_offset: 11
     bit_size: 1
     description: Window watchdog clock enable during Sleep mode
     name: WWDGLPEN
+  - bit_offset: 13
+    bit_size: 1
+    description: CAN 3 clock enable during Sleep mode
+    name: CAN3LPEN
   - bit_offset: 14
     bit_size: 1
     description: SPI2 clock enable during Sleep mode
@@ -1469,6 +1482,10 @@ fieldset/APB1RSTR:
     bit_size: 1
     description: Window watchdog reset
     name: WWDGRST
+  - bit_offset: 13
+    bit_size: 1
+    description: CAN 3 reset
+    name: CAN3RST
   - bit_offset: 14
     bit_size: 1
     description: SPI 2 reset
@@ -1484,11 +1501,11 @@ fieldset/APB1RSTR:
   - bit_offset: 17
     bit_size: 1
     description: USART 2 reset
-    name: UART2RST
+    name: USART2RST
   - bit_offset: 18
     bit_size: 1
     description: USART 3 reset
-    name: UART3RST
+    name: USART3RST
   - bit_offset: 19
     bit_size: 1
     description: USART 4 reset
@@ -1624,10 +1641,18 @@ fieldset/APB2ENR:
     bit_size: 1
     description: LTDC clock enable
     name: LTDCEN
+  - bit_offset: 27
+    bit_size: 1
+    description: DSI clock enable
+    name: DSIEN
+  - bit_offset: 29
+    bit_size: 1
+    description: DFSDM1 clock enable
+    name: DFSDM1EN
   - bit_offset: 30
     bit_size: 1
     description: MDIO clock enable
-    name: MDIOEN
+    name: MDIOSEN
   - bit_offset: 31
     bit_size: 1
     description: USB OTG HS PHY controller clock enable
@@ -1715,6 +1740,18 @@ fieldset/APB2LPENR:
     bit_size: 1
     description: LTDC clock enable during sleep mode
     name: LTDCLPEN
+  - bit_offset: 27
+    bit_size: 1
+    description: DSI clock enable during Sleep mode
+    name: DSILPEN
+  - bit_offset: 29
+    bit_size: 1
+    description: DFSDM1 clock enable during Sleep mode
+    name: DFSDM1LPEN
+  - bit_offset: 30
+    bit_size: 1
+    description: MDIO clock enable during Sleep mode
+    name: MDIOSLPEN
 fieldset/APB2RSTR:
   description: APB2 peripheral reset register
   fields:
@@ -1790,6 +1827,18 @@ fieldset/APB2RSTR:
     bit_size: 1
     description: LTDC reset
     name: LTDCRST
+  - bit_offset: 27
+    bit_size: 1
+    description: DSI reset
+    name: DSIRST
+  - bit_offset: 29
+    bit_size: 1
+    description: DFSDM 1 reset
+    name: DFSDM1RST
+  - bit_offset: 30
+    bit_size: 1
+    description: MDIOS reset
+    name: MDIOSRST
   - bit_offset: 31
     bit_size: 1
     description: USB OTG HS PHY controller reset
@@ -1892,37 +1941,37 @@ fieldset/CIR:
   - bit_offset: 0
     bit_size: 1
     description: LSI ready interrupt flag
-    enum_read: PLLSAIRDYFR
+    enum_read: LSIRDYFR
     name: LSIRDYF
   - bit_offset: 1
     bit_size: 1
     description: LSE ready interrupt flag
-    enum_read: PLLSAIRDYFR
+    enum_read: LSIRDYFR
     name: LSERDYF
   - bit_offset: 2
     bit_size: 1
     description: HSI ready interrupt flag
-    enum_read: PLLSAIRDYFR
+    enum_read: LSIRDYFR
     name: HSIRDYF
   - bit_offset: 3
     bit_size: 1
     description: HSE ready interrupt flag
-    enum_read: PLLSAIRDYFR
+    enum_read: LSIRDYFR
     name: HSERDYF
   - bit_offset: 4
     bit_size: 1
     description: Main PLL (PLL) ready interrupt flag
-    enum_read: PLLSAIRDYFR
+    enum_read: LSIRDYFR
     name: PLLRDYF
   - bit_offset: 5
     bit_size: 1
     description: PLLI2S ready interrupt flag
-    enum_read: PLLSAIRDYFR
+    enum_read: LSIRDYFR
     name: PLLI2SRDYF
   - bit_offset: 6
     bit_size: 1
     description: PLLSAI ready interrupt flag
-    enum_read: PLLSAIRDYFR
+    enum_read: LSIRDYFR
     name: PLLSAIRDYF
   - bit_offset: 7
     bit_size: 1
@@ -1932,72 +1981,72 @@ fieldset/CIR:
   - bit_offset: 8
     bit_size: 1
     description: LSI ready interrupt enable
-    enum: PLLSAIRDYIE
+    enum: LSIRDYIE
     name: LSIRDYIE
   - bit_offset: 9
     bit_size: 1
     description: LSE ready interrupt enable
-    enum: PLLSAIRDYIE
+    enum: LSIRDYIE
     name: LSERDYIE
   - bit_offset: 10
     bit_size: 1
     description: HSI ready interrupt enable
-    enum: PLLSAIRDYIE
+    enum: LSIRDYIE
     name: HSIRDYIE
   - bit_offset: 11
     bit_size: 1
     description: HSE ready interrupt enable
-    enum: PLLSAIRDYIE
+    enum: LSIRDYIE
     name: HSERDYIE
   - bit_offset: 12
     bit_size: 1
     description: Main PLL (PLL) ready interrupt enable
-    enum: PLLSAIRDYIE
+    enum: LSIRDYIE
     name: PLLRDYIE
   - bit_offset: 13
     bit_size: 1
     description: PLLI2S ready interrupt enable
-    enum: PLLSAIRDYIE
+    enum: LSIRDYIE
     name: PLLI2SRDYIE
   - bit_offset: 14
     bit_size: 1
     description: PLLSAI Ready Interrupt Enable
-    enum: PLLSAIRDYIE
+    enum: LSIRDYIE
     name: PLLSAIRDYIE
   - bit_offset: 16
     bit_size: 1
     description: LSI ready interrupt clear
-    enum_write: PLLSAIRDYCW
+    enum_write: LSIRDYCW
     name: LSIRDYC
   - bit_offset: 17
     bit_size: 1
     description: LSE ready interrupt clear
-    enum_write: PLLSAIRDYCW
+    enum_write: LSIRDYCW
     name: LSERDYC
   - bit_offset: 18
     bit_size: 1
     description: HSI ready interrupt clear
-    enum_write: PLLSAIRDYCW
+    enum_write: LSIRDYCW
     name: HSIRDYC
   - bit_offset: 19
     bit_size: 1
     description: HSE ready interrupt clear
-    enum_write: PLLSAIRDYCW
+    enum_write: LSIRDYCW
     name: HSERDYC
   - bit_offset: 20
     bit_size: 1
     description: Main PLL(PLL) ready interrupt clear
-    enum_write: PLLSAIRDYCW
+    enum_write: LSIRDYCW
     name: PLLRDYC
   - bit_offset: 21
     bit_size: 1
     description: PLLI2S ready interrupt clear
-    enum_write: PLLSAIRDYCW
+    enum_write: LSIRDYCW
     name: PLLI2SRDYC
   - bit_offset: 22
     bit_size: 1
     description: PLLSAI Ready Interrupt Clear
-    enum_write: PLLSAIRDYCW
+    enum_write: LSIRDYCW
     name: PLLSAIRDYC
   - bit_offset: 23
     bit_size: 1
@@ -2014,7 +2063,7 @@ fieldset/CR:
   - bit_offset: 1
     bit_size: 1
     description: Internal high-speed clock ready flag
-    enum_read: PLLISRDYR
+    enum_read: HSIRDYR
     name: HSIRDY
   - bit_offset: 3
     bit_size: 5
@@ -2031,7 +2080,7 @@ fieldset/CR:
   - bit_offset: 17
     bit_size: 1
     description: HSE clock ready flag
-    enum_read: PLLISRDYR
+    enum_read: HSIRDYR
     name: HSERDY
   - bit_offset: 18
     bit_size: 1
@@ -2049,7 +2098,7 @@ fieldset/CR:
   - bit_offset: 25
     bit_size: 1
     description: Main PLL (PLL) clock ready flag
-    enum_read: PLLISRDYR
+    enum_read: HSIRDYR
     name: PLLRDY
   - bit_offset: 26
     bit_size: 1
@@ -2058,7 +2107,7 @@ fieldset/CR:
   - bit_offset: 27
     bit_size: 1
     description: PLLI2S clock ready flag
-    enum_read: PLLISRDYR
+    enum_read: HSIRDYR
     name: PLLI2SRDY
   - bit_offset: 28
     bit_size: 1
@@ -2067,7 +2116,7 @@ fieldset/CR:
   - bit_offset: 29
     bit_size: 1
     description: PLLSAI clock ready flag
-    enum_read: PLLISRDYR
+    enum_read: HSIRDYR
     name: PLLSAIRDY
 fieldset/CSR:
   description: clock control & status register
@@ -2089,37 +2138,37 @@ fieldset/CSR:
   - bit_offset: 25
     bit_size: 1
     description: BOR reset flag
-    enum_read: LPWRRSTFR
+    enum_read: BORRSTFR
     name: BORRSTF
   - bit_offset: 26
     bit_size: 1
     description: PIN reset flag
-    enum_read: LPWRRSTFR
+    enum_read: BORRSTFR
     name: PADRSTF
   - bit_offset: 27
     bit_size: 1
     description: POR/PDR reset flag
-    enum_read: LPWRRSTFR
+    enum_read: BORRSTFR
     name: PORRSTF
   - bit_offset: 28
     bit_size: 1
     description: Software reset flag
-    enum_read: LPWRRSTFR
+    enum_read: BORRSTFR
     name: SFTRSTF
   - bit_offset: 29
     bit_size: 1
     description: Independent watchdog reset flag
-    enum_read: LPWRRSTFR
+    enum_read: BORRSTFR
     name: WDGRSTF
   - bit_offset: 30
     bit_size: 1
     description: Window watchdog reset flag
-    enum_read: LPWRRSTFR
+    enum_read: BORRSTFR
     name: WWDGRSTF
   - bit_offset: 31
     bit_size: 1
     description: Low-power reset flag
-    enum_read: LPWRRSTFR
+    enum_read: BORRSTFR
     name: LPWRRSTF
 fieldset/DCKCFGR1:
   description: dedicated clocks configuration register

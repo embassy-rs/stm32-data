@@ -1,0 +1,382 @@
+---
+block/FLASH:
+  description: FLASH
+  items:
+  - byte_offset: 0
+    description: Flash access control register
+    fieldset: ACR
+    name: ACR
+  - access: Write
+    byte_offset: 4
+    description: Flash key register
+    fieldset: KEYR
+    name: KEYR
+  - access: Write
+    byte_offset: 8
+    description: Flash option key register
+    fieldset: OPTKEYR
+    name: OPTKEYR
+  - byte_offset: 12
+    description: Status register
+    fieldset: SR
+    name: SR
+  - byte_offset: 16
+    description: Control register
+    fieldset: CR
+    name: CR
+  - byte_offset: 20
+    description: Flash option control register
+    fieldset: OPTCR
+    name: OPTCR
+  - byte_offset: 24
+    description: Flash option control register 1
+    fieldset: OPTCR1
+    name: OPTCR1
+  - byte_offset: 28
+    description: Flash option control register
+    fieldset: OPTCR2
+    name: OPTCR2
+enum/ARTEN:
+  bit_size: 1
+  variants:
+  - description: ART Accelerator is disabled
+    name: Disabled
+    value: 0
+  - description: ART Accelerator is enabled
+    name: Enabled
+    value: 1
+enum/ARTRST:
+  bit_size: 1
+  variants:
+  - description: Accelerator is not reset
+    name: NotReset
+    value: 0
+  - description: Accelerator is reset
+    name: Reset
+    value: 1
+enum/EOPIE:
+  bit_size: 1
+  variants:
+  - description: End of operation interrupt disabled
+    name: Disabled
+    value: 0
+  - description: End of operation interrupt enabled
+    name: Enabled
+    value: 1
+enum/ERRIE:
+  bit_size: 1
+  variants:
+  - description: Error interrupt generation disabled
+    name: Disabled
+    value: 0
+  - description: Error interrupt generation enabled
+    name: Enabled
+    value: 1
+enum/LATENCY:
+  bit_size: 4
+  variants:
+  - description: 0 wait states
+    name: WS0
+    value: 0
+  - description: 1 wait states
+    name: WS1
+    value: 1
+  - description: 2 wait states
+    name: WS2
+    value: 2
+  - description: 3 wait states
+    name: WS3
+    value: 3
+  - description: 4 wait states
+    name: WS4
+    value: 4
+  - description: 5 wait states
+    name: WS5
+    value: 5
+  - description: 6 wait states
+    name: WS6
+    value: 6
+  - description: 7 wait states
+    name: WS7
+    value: 7
+  - description: 8 wait states
+    name: WS8
+    value: 8
+  - description: 9 wait states
+    name: WS9
+    value: 9
+  - description: 10 wait states
+    name: WS10
+    value: 10
+  - description: 11 wait states
+    name: WS11
+    value: 11
+  - description: 12 wait states
+    name: WS12
+    value: 12
+  - description: 13 wait states
+    name: WS13
+    value: 13
+  - description: 14 wait states
+    name: WS14
+    value: 14
+  - description: 15 wait states
+    name: WS15
+    value: 15
+enum/LOCK:
+  bit_size: 1
+  variants:
+  - description: FLASH_CR register is unlocked
+    name: Unlocked
+    value: 0
+  - description: FLASH_CR register is locked
+    name: Locked
+    value: 1
+enum/MER:
+  bit_size: 1
+  variants:
+  - description: Erase activated for all user sectors
+    name: MassErase
+    value: 1
+enum/PG:
+  bit_size: 1
+  variants:
+  - description: Flash programming activated
+    name: Program
+    value: 1
+enum/PRFTEN:
+  bit_size: 1
+  variants:
+  - description: Prefetch is disabled
+    name: Disabled
+    value: 0
+  - description: Prefetch is enabled
+    name: Enabled
+    value: 1
+enum/PSIZE:
+  bit_size: 2
+  variants:
+  - description: Program x8
+    name: PSIZE8
+    value: 0
+  - description: Program x16
+    name: PSIZE16
+    value: 1
+  - description: Program x32
+    name: PSIZE32
+    value: 2
+  - description: Program x64
+    name: PSIZE64
+    value: 3
+enum/SER:
+  bit_size: 1
+  variants:
+  - description: Erase activated for selected sector
+    name: SectorErase
+    value: 1
+enum/STRT:
+  bit_size: 1
+  variants:
+  - description: Trigger an erase operation
+    name: Start
+    value: 1
+fieldset/ACR:
+  description: Flash access control register
+  fields:
+  - bit_offset: 0
+    bit_size: 4
+    description: Latency
+    enum: LATENCY
+    name: LATENCY
+  - bit_offset: 8
+    bit_size: 1
+    description: Prefetch enable
+    enum: PRFTEN
+    name: PRFTEN
+  - bit_offset: 9
+    bit_size: 1
+    description: ART Accelerator Enable
+    enum: ARTEN
+    name: ARTEN
+  - bit_offset: 11
+    bit_size: 1
+    description: ART Accelerator reset
+    enum: ARTRST
+    name: ARTRST
+fieldset/CR:
+  description: Control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Programming
+    enum: PG
+    name: PG
+  - bit_offset: 1
+    bit_size: 1
+    description: Sector Erase
+    enum: SER
+    name: SER
+  - bit_offset: 2
+    bit_size: 1
+    description: Mass Erase of sectors 0 to 11
+    enum: MER
+    name: MER
+  - bit_offset: 3
+    bit_size: 4
+    description: Sector number
+    name: SNB
+  - bit_offset: 8
+    bit_size: 2
+    description: Program size
+    enum: PSIZE
+    name: PSIZE
+  - bit_offset: 16
+    bit_size: 1
+    description: Start
+    enum: STRT
+    name: STRT
+  - bit_offset: 24
+    bit_size: 1
+    description: End of operation interrupt enable
+    enum: EOPIE
+    name: EOPIE
+  - bit_offset: 25
+    bit_size: 1
+    description: Error interrupt enable
+    enum: ERRIE
+    name: ERRIE
+  - bit_offset: 26
+    bit_size: 1
+    description: PCROP error interrupt enable
+    name: RDERRIE
+  - bit_offset: 31
+    bit_size: 1
+    description: Lock
+    enum: LOCK
+    name: LOCK
+fieldset/KEYR:
+  description: Flash key register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: FPEC key
+    name: KEY
+fieldset/OPTCR:
+  description: Flash option control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Option lock
+    name: OPTLOCK
+  - bit_offset: 1
+    bit_size: 1
+    description: Option start
+    name: OPTSTRT
+  - bit_offset: 2
+    bit_size: 2
+    description: BOR reset Level
+    name: BOR_LEV
+  - bit_offset: 4
+    bit_size: 1
+    description: User option bytes
+    name: WWDG_SW
+  - bit_offset: 5
+    bit_size: 1
+    description: WDG_SW User option bytes
+    name: IWDG_SW
+  - bit_offset: 6
+    bit_size: 1
+    description: nRST_STOP User option bytes
+    name: nRST_STOP
+  - bit_offset: 7
+    bit_size: 1
+    description: nRST_STDBY User option bytes
+    name: nRST_STDBY
+  - bit_offset: 8
+    bit_size: 8
+    description: Read protect
+    name: RDP
+  - bit_offset: 16
+    bit_size: 8
+    description: Not write protect
+    name: nWRP
+  - bit_offset: 28
+    bit_size: 1
+    description: Dual Boot mode (valid only when nDBANK=0)
+    name: nDBOOT
+  - bit_offset: 29
+    bit_size: 1
+    description: Not dual bank mode
+    name: nDBANK
+  - bit_offset: 30
+    bit_size: 1
+    description: Independent watchdog counter freeze in standby mode
+    name: IWDG_STDBY
+  - bit_offset: 31
+    bit_size: 1
+    description: Independent watchdog counter freeze in Stop mode
+    name: IWDG_STOP
+fieldset/OPTCR1:
+  description: Flash option control register 1
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Boot base address when Boot pin =0
+    name: BOOT_ADD0
+  - bit_offset: 16
+    bit_size: 16
+    description: Boot base address when Boot pin =1
+    name: BOOT_ADD1
+fieldset/OPTCR2:
+  description: Flash option control register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: PCROP option byte
+    name: PCROPi
+  - bit_offset: 31
+    bit_size: 1
+    description: PCROP zone preserved when RDP level decreased
+    name: PCROP_RDP
+fieldset/OPTKEYR:
+  description: Flash option key register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Option byte key
+    name: OPTKEYR
+fieldset/SR:
+  description: Status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: End of operation
+    name: EOP
+  - bit_offset: 1
+    bit_size: 1
+    description: Operation error
+    name: OPERR
+  - bit_offset: 4
+    bit_size: 1
+    description: Write protection error
+    name: WRPERR
+  - bit_offset: 5
+    bit_size: 1
+    description: Programming alignment error
+    name: PGAERR
+  - bit_offset: 6
+    bit_size: 1
+    description: Programming parallelism error
+    name: PGPERR
+  - bit_offset: 7
+    bit_size: 1
+    description: Erase Sequence Error
+    name: ERSERR
+  - bit_offset: 8
+    bit_size: 1
+    description: RDERR
+    name: RDERR
+  - bit_offset: 16
+    bit_size: 1
+    description: Busy
+    name: BSY
