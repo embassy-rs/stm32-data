@@ -1,0 +1,182 @@
+---
+block/PWR:
+  description: Power control
+  items:
+  - byte_offset: 0
+    description: power control register
+    fieldset: CR1
+    name: CR1
+  - byte_offset: 4
+    description: power control/status register
+    fieldset: CSR1
+    name: CSR1
+  - byte_offset: 8
+    description: power control register
+    fieldset: CR2
+    name: CR2
+  - byte_offset: 12
+    description: power control/status register
+    fieldset: CSR2
+    name: CSR2
+enum/PDDS:
+  bit_size: 1
+  variants:
+  - description: Enter Stop mode when the CPU enters deepsleep
+    name: STOP_MODE
+    value: 0
+  - description: Enter Standby mode when the CPU enters deepsleep
+    name: STANDBY_MODE
+    value: 1
+enum/VOS:
+  bit_size: 2
+  variants:
+  - description: Scale 3 mode
+    name: SCALE3
+    value: 1
+  - description: Scale 2 mode
+    name: SCALE2
+    value: 2
+  - description: Scale 1 mode (reset value)
+    name: SCALE1
+    value: 3
+fieldset/CR1:
+  description: power control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Low-power deep sleep
+    name: LPDS
+  - bit_offset: 1
+    bit_size: 1
+    description: Power down deepsleep
+    enum: PDDS
+    name: PDDS
+  - bit_offset: 3
+    bit_size: 1
+    description: Clear standby flag
+    name: CSBF
+  - bit_offset: 4
+    bit_size: 1
+    description: Power voltage detector enable
+    name: PVDE
+  - bit_offset: 5
+    bit_size: 3
+    description: PVD level selection
+    name: PLS
+  - bit_offset: 8
+    bit_size: 1
+    description: Disable backup domain write protection
+    name: DBP
+  - bit_offset: 9
+    bit_size: 1
+    description: Flash power down in Stop mode
+    name: FPDS
+  - bit_offset: 10
+    bit_size: 1
+    description: Low-power regulator in deepsleep under-drive mode
+    name: LPUDS
+  - bit_offset: 11
+    bit_size: 1
+    description: Main regulator in deepsleep under-drive mode
+    name: MRUDS
+  - array:
+      len: 1
+      stride: 0
+    bit_offset: 13
+    bit_size: 1
+    description: ADCDC1
+    name: ADCDC
+  - bit_offset: 14
+    bit_size: 2
+    description: Regulator voltage scaling output selection
+    enum: VOS
+    name: VOS
+  - bit_offset: 16
+    bit_size: 1
+    description: Over-drive enable
+    name: ODEN
+  - bit_offset: 17
+    bit_size: 1
+    description: Over-drive switching enabled
+    name: ODSWEN
+  - bit_offset: 18
+    bit_size: 2
+    description: Under-drive enable in stop mode
+    name: UDEN
+fieldset/CR2:
+  description: power control register
+  fields:
+  - array:
+      len: 6
+      stride: 1
+    bit_offset: 0
+    bit_size: 1
+    description: Clear Wakeup Pin flag for PA0
+    name: CWUPF
+  - array:
+      len: 6
+      stride: 1
+    bit_offset: 8
+    bit_size: 1
+    description: Wakeup pin polarity bit for PA0
+    name: WUPP
+fieldset/CSR1:
+  description: power control/status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Wakeup internal flag
+    name: WUIF
+  - bit_offset: 1
+    bit_size: 1
+    description: Standby flag
+    name: SBF
+  - bit_offset: 2
+    bit_size: 1
+    description: PVD output
+    name: PVDO
+  - bit_offset: 3
+    bit_size: 1
+    description: Backup regulator ready
+    name: BRR
+  - bit_offset: 8
+    bit_size: 1
+    description: Enable internal wakeup
+    name: EIWUP
+  - bit_offset: 9
+    bit_size: 1
+    description: Backup regulator enable
+    name: BRE
+  - bit_offset: 14
+    bit_size: 1
+    description: Regulator voltage scaling output selection ready bit
+    name: VOSRDY
+  - bit_offset: 16
+    bit_size: 1
+    description: Over-drive mode ready
+    name: ODRDY
+  - bit_offset: 17
+    bit_size: 1
+    description: Over-drive mode switching ready
+    name: ODSWRDY
+  - bit_offset: 18
+    bit_size: 2
+    description: Under-drive ready flag
+    name: UDRDY
+fieldset/CSR2:
+  description: power control/status register
+  fields:
+  - array:
+      len: 6
+      stride: 1
+    bit_offset: 0
+    bit_size: 1
+    description: Wakeup Pin flag for PA0
+    name: WUPF
+  - array:
+      len: 6
+      stride: 1
+    bit_offset: 8
+    bit_size: 1
+    description: Enable Wakeup pin for PA0
+    name: EWUP

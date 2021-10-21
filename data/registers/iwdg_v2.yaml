@@ -1,0 +1,110 @@
+---
+block/IWDG:
+  description: Independent watchdog
+  items:
+  - access: Write
+    byte_offset: 0
+    description: Key register
+    fieldset: KR
+    name: KR
+  - byte_offset: 4
+    description: Prescaler register
+    fieldset: PR
+    name: PR
+  - byte_offset: 8
+    description: Reload register
+    fieldset: RLR
+    name: RLR
+  - access: Read
+    byte_offset: 12
+    description: Status register
+    fieldset: SR
+    name: SR
+  - byte_offset: 16
+    description: Window register
+    fieldset: WINR
+    name: WINR
+enum/KEY:
+  bit_size: 16
+  variants:
+  - description: Enable access to PR, RLR and WINR registers (0x5555)
+    name: Enable
+    value: 21845
+  - description: Reset the watchdog value (0xAAAA)
+    name: Reset
+    value: 43690
+  - description: Start the watchdog (0xCCCC)
+    name: Start
+    value: 52428
+enum/PR:
+  bit_size: 3
+  variants:
+  - description: Divider /4
+    name: DivideBy4
+    value: 0
+  - description: Divider /8
+    name: DivideBy8
+    value: 1
+  - description: Divider /16
+    name: DivideBy16
+    value: 2
+  - description: Divider /32
+    name: DivideBy32
+    value: 3
+  - description: Divider /64
+    name: DivideBy64
+    value: 4
+  - description: Divider /128
+    name: DivideBy128
+    value: 5
+  - description: Divider /256
+    name: DivideBy256
+    value: 6
+  - description: Divider /256
+    name: DivideBy256bis
+    value: 7
+fieldset/KR:
+  description: Key register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Key value (write only, read 0000h)
+    enum: KEY
+    name: KEY
+fieldset/PR:
+  description: Prescaler register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: Prescaler divider
+    enum: PR
+    name: PR
+fieldset/RLR:
+  description: Reload register
+  fields:
+  - bit_offset: 0
+    bit_size: 12
+    description: Watchdog counter reload value
+    name: RL
+fieldset/SR:
+  description: Status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Watchdog prescaler value update
+    name: PVU
+  - bit_offset: 1
+    bit_size: 1
+    description: Watchdog counter reload value update
+    name: RVU
+  - bit_offset: 2
+    bit_size: 1
+    description: Watchdog counter window value update
+    name: WVU
+fieldset/WINR:
+  description: Window register
+  fields:
+  - bit_offset: 0
+    bit_size: 12
+    description: Watchdog counter window value
+    name: WIN
