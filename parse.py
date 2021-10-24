@@ -424,6 +424,8 @@ perimap = [
     ('STM32F7.*:ETH:ETH:ethermac110_v2_0', 'eth_v1c/ETH'),
     ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
 
+    ('.*LPTIM\d.*:G0xx_lptimer1_v1_4', 'lptim_g0/LPTIM'),
+
     ('STM32F7.*:TIM1:.*', 'timer_v1/TIM_ADV'),
     ('STM32F7.*:TIM8:.*', 'timer_v1/TIM_ADV'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
