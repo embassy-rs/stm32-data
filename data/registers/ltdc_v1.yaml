@@ -1,0 +1,774 @@
+---
+block/LAYER:
+  description: Cluster LAYER%s, containing L?CR, L?WHPCR, L?WVPCR, L?CKCR, L?PFCR,
+    L?CACR, L?DCCR, L?BFCR, L?CFBAR, L?CFBLR, L?CFBLNR, L?CLUTWR
+  items:
+  - byte_offset: 0
+    description: Layerx Control Register
+    fieldset: CR
+    name: CR
+  - byte_offset: 4
+    description: Layerx Window Horizontal Position Configuration Register
+    fieldset: WHPCR
+    name: WHPCR
+  - byte_offset: 8
+    description: Layerx Window Vertical Position Configuration Register
+    fieldset: WVPCR
+    name: WVPCR
+  - byte_offset: 12
+    description: Layerx Color Keying Configuration Register
+    fieldset: CKCR
+    name: CKCR
+  - byte_offset: 16
+    description: Layerx Pixel Format Configuration Register
+    fieldset: PFCR
+    name: PFCR
+  - byte_offset: 20
+    description: Layerx Constant Alpha Configuration Register
+    fieldset: CACR
+    name: CACR
+  - byte_offset: 24
+    description: Layerx Default Color Configuration Register
+    fieldset: DCCR
+    name: DCCR
+  - byte_offset: 28
+    description: Layerx Blending Factors Configuration Register
+    fieldset: BFCR
+    name: BFCR
+  - byte_offset: 40
+    description: Layerx Color Frame Buffer Address Register
+    fieldset: CFBAR
+    name: CFBAR
+  - byte_offset: 44
+    description: Layerx Color Frame Buffer Length Register
+    fieldset: CFBLR
+    name: CFBLR
+  - byte_offset: 48
+    description: Layerx ColorFrame Buffer Line Number Register
+    fieldset: CFBLNR
+    name: CFBLNR
+  - access: Write
+    byte_offset: 64
+    description: Layerx CLUT Write Register
+    fieldset: CLUTWR
+    name: CLUTWR
+block/LTDC:
+  description: LCD-TFT Controller
+  items:
+  - byte_offset: 8
+    description: Synchronization Size Configuration Register
+    fieldset: SSCR
+    name: SSCR
+  - byte_offset: 12
+    description: Back Porch Configuration Register
+    fieldset: BPCR
+    name: BPCR
+  - byte_offset: 16
+    description: Active Width Configuration Register
+    fieldset: AWCR
+    name: AWCR
+  - byte_offset: 20
+    description: Total Width Configuration Register
+    fieldset: TWCR
+    name: TWCR
+  - byte_offset: 24
+    description: Global Control Register
+    fieldset: GCR
+    name: GCR
+  - byte_offset: 36
+    description: Shadow Reload Configuration Register
+    fieldset: SRCR
+    name: SRCR
+  - byte_offset: 44
+    description: Background Color Configuration Register
+    fieldset: BCCR
+    name: BCCR
+  - byte_offset: 52
+    description: Interrupt Enable Register
+    fieldset: IER
+    name: IER
+  - access: Read
+    byte_offset: 56
+    description: Interrupt Status Register
+    fieldset: ISR
+    name: ISR
+  - access: Write
+    byte_offset: 60
+    description: Interrupt Clear Register
+    fieldset: ICR
+    name: ICR
+  - byte_offset: 64
+    description: Line Interrupt Position Configuration Register
+    fieldset: LIPCR
+    name: LIPCR
+  - access: Read
+    byte_offset: 68
+    description: Current Position Status Register
+    fieldset: CPSR
+    name: CPSR
+  - access: Read
+    byte_offset: 72
+    description: Current Display Status Register
+    fieldset: CDSR
+    name: CDSR
+  - array:
+      len: 2
+      stride: 128
+    block: LAYER
+    byte_offset: 132
+    description: Cluster LAYER%s, containing L?CR, L?WHPCR, L?WVPCR, L?CKCR, L?PFCR,
+      L?CACR, L?DCCR, L?BFCR, L?CFBAR, L?CFBLR, L?CFBLNR, L?CLUTWR
+    name: LAYER
+enum/BF1:
+  bit_size: 3
+  variants:
+  - description: BF1 = constant alpha
+    name: Constant
+    value: 4
+  - description: BF1 = pixel alpha * constant alpha
+    name: Pixel
+    value: 6
+enum/BF2:
+  bit_size: 3
+  variants:
+  - description: BF2 = 1 - constant alpha
+    name: Constant
+    value: 5
+  - description: BF2 = 1 - pixel alpha * constant alpha
+    name: Pixel
+    value: 7
+enum/CFUIF:
+  bit_size: 1
+  variants:
+  - description: Clears the FUIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/CLIF:
+  bit_size: 1
+  variants:
+  - description: Clears the LIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/CLUTEN:
+  bit_size: 1
+  variants:
+  - description: Color look-up table disabled
+    name: Disabled
+    value: 0
+  - description: Color look-up table enabled
+    name: Enabled
+    value: 1
+enum/COLKEN:
+  bit_size: 1
+  variants:
+  - description: Color keying disabled
+    name: Disabled
+    value: 0
+  - description: Color keying enabled
+    name: Enabled
+    value: 1
+enum/CRRIF:
+  bit_size: 1
+  variants:
+  - description: Clears the RRIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/CTERRIF:
+  bit_size: 1
+  variants:
+  - description: Clears the TERRIF flag in the ISR register
+    name: Clear
+    value: 1
+enum/DEN:
+  bit_size: 1
+  variants:
+  - description: Dither disabled
+    name: Disabled
+    value: 0
+  - description: Dither enabled
+    name: Enabled
+    value: 1
+enum/DEPOL:
+  bit_size: 1
+  variants:
+  - description: Data enable polarity is active low
+    name: ActiveLow
+    value: 0
+  - description: Data enable polarity is active high
+    name: ActiveHigh
+    value: 1
+enum/FUIE:
+  bit_size: 1
+  variants:
+  - description: FIFO underrun interrupt disabled
+    name: Disabled
+    value: 0
+  - description: FIFO underrun interrupt enabled
+    name: Enabled
+    value: 1
+enum/FUIF:
+  bit_size: 1
+  variants:
+  - description: No FIFO underrun
+    name: NoUnderrun
+    value: 0
+  - description: FIFO underrun interrupt generated, if one of the layer FIFOs is empty
+      and pixel data is read from the FIFO
+    name: Underrun
+    value: 1
+enum/HDES:
+  bit_size: 1
+  variants:
+  - description: Currently not in horizontal Data Enable phase
+    name: NotActive
+    value: 0
+  - description: Currently in horizontal Data Enable phase
+    name: Active
+    value: 1
+enum/HSPOL:
+  bit_size: 1
+  variants:
+  - description: Horizontal synchronization polarity is active low
+    name: ActiveLow
+    value: 0
+  - description: Horizontal synchronization polarity is active high
+    name: ActiveHigh
+    value: 1
+enum/HSYNCS:
+  bit_size: 1
+  variants:
+  - description: Currently not in HSYNC phase
+    name: NotActive
+    value: 0
+  - description: Currently in HSYNC phase
+    name: Active
+    value: 1
+enum/IMR:
+  bit_size: 1
+  variants:
+  - description: This bit is set by software and cleared only by hardware after reload
+      (it cannot be cleared through register write once it is set)
+    name: NoEffect
+    value: 0
+  - description: The shadow registers are reloaded immediately. This bit is set by
+      software and cleared only by hardware after reload
+    name: Reload
+    value: 1
+enum/LEN:
+  bit_size: 1
+  variants:
+  - description: Layer disabled
+    name: Disabled
+    value: 0
+  - description: Layer enabled
+    name: Enabled
+    value: 1
+enum/LIE:
+  bit_size: 1
+  variants:
+  - description: Line interrupt disabled
+    name: Disabled
+    value: 0
+  - description: Line interrupt enabled
+    name: Enabled
+    value: 1
+enum/LIF:
+  bit_size: 1
+  variants:
+  - description: Programmed line not reached
+    name: NotReached
+    value: 0
+  - description: Line interrupt generated when a programmed line is reached
+    name: Reached
+    value: 1
+enum/LTDCEN:
+  bit_size: 1
+  variants:
+  - description: LCD-TFT controller disabled
+    name: Disabled
+    value: 0
+  - description: LCD-TFT controller enabled
+    name: Enabled
+    value: 1
+enum/PCPOL:
+  bit_size: 1
+  variants:
+  - description: Pixel clock on rising edge
+    name: RisingEdge
+    value: 0
+  - description: Pixel clock on falling edge
+    name: FallingEdge
+    value: 1
+enum/PF:
+  bit_size: 3
+  variants:
+  - description: ARGB8888
+    name: ARGB8888
+    value: 0
+  - description: RGB888
+    name: RGB888
+    value: 1
+  - description: RGB565
+    name: RGB565
+    value: 2
+  - description: ARGB1555
+    name: ARGB1555
+    value: 3
+  - description: ARGB4444
+    name: ARGB4444
+    value: 4
+  - description: L8 (8-bit luminance)
+    name: L8
+    value: 5
+  - description: AL44 (4-bit alpha, 4-bit luminance)
+    name: AL44
+    value: 6
+  - description: AL88 (8-bit alpha, 8-bit luminance)
+    name: AL88
+    value: 7
+enum/RRIE:
+  bit_size: 1
+  variants:
+  - description: Register reload interrupt disabled
+    name: Disabled
+    value: 0
+  - description: Register reload interrupt enabled
+    name: Enabled
+    value: 1
+enum/RRIF:
+  bit_size: 1
+  variants:
+  - description: No register reload
+    name: NoReload
+    value: 0
+  - description: Register reload interrupt generated when a vertical blanking reload
+      occurs (and the first line after the active area is reached)
+    name: Reload
+    value: 1
+enum/TERRIE:
+  bit_size: 1
+  variants:
+  - description: Transfer error interrupt disabled
+    name: Disabled
+    value: 0
+  - description: Transfer error interrupt enabled
+    name: Enabled
+    value: 1
+enum/TERRIF:
+  bit_size: 1
+  variants:
+  - description: No transfer error
+    name: NoError
+    value: 0
+  - description: Transfer error interrupt generated when a bus error occurs
+    name: Error
+    value: 1
+enum/VBR:
+  bit_size: 1
+  variants:
+  - description: This bit is set by software and cleared only by hardware after reload
+      (it cannot be cleared through register write once it is set)
+    name: NoEffect
+    value: 0
+  - description: The shadow registers are reloaded during the vertical blanking period
+      (at the beginning of the first line after the active display area).
+    name: Reload
+    value: 1
+enum/VDES:
+  bit_size: 1
+  variants:
+  - description: Currently not in vertical Data Enable phase
+    name: NotActive
+    value: 0
+  - description: Currently in vertical Data Enable phase
+    name: Active
+    value: 1
+enum/VSPOL:
+  bit_size: 1
+  variants:
+  - description: Vertical synchronization polarity is active low
+    name: ActiveLow
+    value: 0
+  - description: Vertical synchronization polarity is active high
+    name: ActiveHigh
+    value: 1
+enum/VSYNCS:
+  bit_size: 1
+  variants:
+  - description: Currently not in VSYNC phase
+    name: NotActive
+    value: 0
+  - description: Currently in VSYNC phase
+    name: Active
+    value: 1
+fieldset/AWCR:
+  description: Active Width Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 11
+    description: Accumulated Active Height (in units of horizontal scan line)
+    name: AAH
+  - bit_offset: 16
+    bit_size: 12
+    description: Accumulated Active Width (in units of pixel clock period)
+    name: AAW
+fieldset/BCCR:
+  description: Background Color Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Background color blue value
+    name: BCBLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: Background color green value
+    name: BCGREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: Background color red value
+    name: BCRED
+fieldset/BFCR:
+  description: Layerx Blending Factors Configuration Register
+  fields:
+  - array:
+      len: 2
+      stride: 8
+    bit_offset: 0
+    bit_size: 3
+    description: Blending Factor 2
+    enum: BF2
+    name: BF
+fieldset/BPCR:
+  description: Back Porch Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 11
+    description: Accumulated Vertical back porch (in units of horizontal scan line)
+    name: AVBP
+  - bit_offset: 16
+    bit_size: 12
+    description: Accumulated Horizontal back porch (in units of pixel clock period)
+    name: AHBP
+fieldset/CACR:
+  description: Layerx Constant Alpha Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Constant Alpha
+    name: CONSTA
+fieldset/CDSR:
+  description: Current Display Status Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Vertical Data Enable display Status
+    enum: VDES
+    name: VDES
+  - bit_offset: 1
+    bit_size: 1
+    description: Horizontal Data Enable display Status
+    enum: HDES
+    name: HDES
+  - bit_offset: 2
+    bit_size: 1
+    description: Vertical Synchronization display Status
+    enum: VSYNCS
+    name: VSYNCS
+  - bit_offset: 3
+    bit_size: 1
+    description: Horizontal Synchronization display Status
+    enum: HSYNCS
+    name: HSYNCS
+fieldset/CFBAR:
+  description: Layerx Color Frame Buffer Address Register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Color Frame Buffer Start Address
+    name: CFBADD
+fieldset/CFBLNR:
+  description: Layerx ColorFrame Buffer Line Number Register
+  fields:
+  - bit_offset: 0
+    bit_size: 11
+    description: Frame Buffer Line Number
+    name: CFBLNBR
+fieldset/CFBLR:
+  description: Layerx Color Frame Buffer Length Register
+  fields:
+  - bit_offset: 0
+    bit_size: 13
+    description: Color Frame Buffer Line Length
+    name: CFBLL
+  - bit_offset: 16
+    bit_size: 13
+    description: Color Frame Buffer Pitch in bytes
+    name: CFBP
+fieldset/CKCR:
+  description: Layerx Color Keying Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Color Key Blue value
+    name: CKBLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: Color Key Green value
+    name: CKGREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: Color Key Red value
+    name: CKRED
+fieldset/CLUTWR:
+  description: Layerx CLUT Write Register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Blue value
+    name: BLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: Green value
+    name: GREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: Red value
+    name: RED
+  - bit_offset: 24
+    bit_size: 8
+    description: CLUT Address
+    name: CLUTADD
+fieldset/CPSR:
+  description: Current Position Status Register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Current Y Position
+    name: CYPOS
+  - bit_offset: 16
+    bit_size: 16
+    description: Current X Position
+    name: CXPOS
+fieldset/CR:
+  description: Layerx Control Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Layer Enable
+    enum: LEN
+    name: LEN
+  - bit_offset: 1
+    bit_size: 1
+    description: Color Keying Enable
+    enum: COLKEN
+    name: COLKEN
+  - bit_offset: 4
+    bit_size: 1
+    description: Color Look-Up Table Enable
+    enum: CLUTEN
+    name: CLUTEN
+fieldset/DCCR:
+  description: Layerx Default Color Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Default Color Blue
+    name: DCBLUE
+  - bit_offset: 8
+    bit_size: 8
+    description: Default Color Green
+    name: DCGREEN
+  - bit_offset: 16
+    bit_size: 8
+    description: Default Color Red
+    name: DCRED
+  - bit_offset: 24
+    bit_size: 8
+    description: Default Color Alpha
+    name: DCALPHA
+fieldset/GCR:
+  description: Global Control Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: LCD-TFT controller enable bit
+    enum: LTDCEN
+    name: LTDCEN
+  - bit_offset: 4
+    bit_size: 3
+    description: Dither Blue Width
+    name: DBW
+  - bit_offset: 8
+    bit_size: 3
+    description: Dither Green Width
+    name: DGW
+  - bit_offset: 12
+    bit_size: 3
+    description: Dither Red Width
+    name: DRW
+  - bit_offset: 16
+    bit_size: 1
+    description: Dither Enable
+    enum: DEN
+    name: DEN
+  - bit_offset: 28
+    bit_size: 1
+    description: Pixel Clock Polarity
+    enum: PCPOL
+    name: PCPOL
+  - bit_offset: 29
+    bit_size: 1
+    description: Data Enable Polarity
+    enum: DEPOL
+    name: DEPOL
+  - bit_offset: 30
+    bit_size: 1
+    description: Vertical Synchronization Polarity
+    enum: VSPOL
+    name: VSPOL
+  - bit_offset: 31
+    bit_size: 1
+    description: Horizontal Synchronization Polarity
+    enum: HSPOL
+    name: HSPOL
+fieldset/ICR:
+  description: Interrupt Clear Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Clears the Line Interrupt Flag
+    enum: CLIF
+    name: CLIF
+  - bit_offset: 1
+    bit_size: 1
+    description: Clears the FIFO Underrun Interrupt flag
+    enum: CFUIF
+    name: CFUIF
+  - bit_offset: 2
+    bit_size: 1
+    description: Clears the Transfer Error Interrupt Flag
+    enum: CTERRIF
+    name: CTERRIF
+  - bit_offset: 3
+    bit_size: 1
+    description: Clears Register Reload Interrupt Flag
+    enum: CRRIF
+    name: CRRIF
+fieldset/IER:
+  description: Interrupt Enable Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Line Interrupt Enable
+    enum: LIE
+    name: LIE
+  - bit_offset: 1
+    bit_size: 1
+    description: FIFO Underrun Interrupt Enable
+    enum: FUIE
+    name: FUIE
+  - bit_offset: 2
+    bit_size: 1
+    description: Transfer Error Interrupt Enable
+    enum: TERRIE
+    name: TERRIE
+  - bit_offset: 3
+    bit_size: 1
+    description: Register Reload interrupt enable
+    enum: RRIE
+    name: RRIE
+fieldset/ISR:
+  description: Interrupt Status Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Line Interrupt flag
+    enum: LIF
+    name: LIF
+  - bit_offset: 1
+    bit_size: 1
+    description: FIFO Underrun Interrupt flag
+    enum: FUIF
+    name: FUIF
+  - bit_offset: 2
+    bit_size: 1
+    description: Transfer Error interrupt flag
+    enum: TERRIF
+    name: TERRIF
+  - bit_offset: 3
+    bit_size: 1
+    description: Register Reload Interrupt Flag
+    enum: RRIF
+    name: RRIF
+fieldset/LIPCR:
+  description: Line Interrupt Position Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 11
+    description: Line Interrupt Position
+    name: LIPOS
+fieldset/PFCR:
+  description: Layerx Pixel Format Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 3
+    description: Pixel Format
+    enum: PF
+    name: PF
+fieldset/SRCR:
+  description: Shadow Reload Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Immediate Reload
+    enum: IMR
+    name: IMR
+  - bit_offset: 1
+    bit_size: 1
+    description: Vertical Blanking Reload
+    enum: VBR
+    name: VBR
+fieldset/SSCR:
+  description: Synchronization Size Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 11
+    description: Vertical Synchronization Height (in units of horizontal scan line)
+    name: VSH
+  - bit_offset: 16
+    bit_size: 12
+    description: Horizontal Synchronization Width (in units of pixel clock period)
+    name: HSW
+fieldset/TWCR:
+  description: Total Width Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 11
+    description: Total Height (in units of horizontal scan line)
+    name: TOTALH
+  - bit_offset: 16
+    bit_size: 12
+    description: Total Width (in units of pixel clock period)
+    name: TOTALW
+fieldset/WHPCR:
+  description: Layerx Window Horizontal Position Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 12
+    description: Window Horizontal Start Position
+    name: WHSTPOS
+  - bit_offset: 16
+    bit_size: 12
+    description: Window Horizontal Stop Position
+    name: WHSPPOS
+fieldset/WVPCR:
+  description: Layerx Window Vertical Position Configuration Register
+  fields:
+  - bit_offset: 0
+    bit_size: 11
+    description: Window Vertical Start Position
+    name: WVSTPOS
+  - bit_offset: 16
+    bit_size: 11
+    description: Window Vertical Stop Position
+    name: WVSPPOS

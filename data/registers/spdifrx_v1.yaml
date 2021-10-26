@@ -1,0 +1,241 @@
+---
+block/SPDIFRX:
+  description: Receiver Interface
+  items:
+  - byte_offset: 0
+    description: Control register
+    fieldset: CR
+    name: CR
+  - byte_offset: 4
+    description: Interrupt mask register
+    fieldset: IMR
+    name: IMR
+  - access: Read
+    byte_offset: 8
+    description: Status register
+    fieldset: SR
+    name: SR
+  - access: Write
+    byte_offset: 12
+    description: Interrupt Flag Clear register
+    fieldset: IFCR
+    name: IFCR
+  - access: Read
+    byte_offset: 16
+    description: Data input register
+    fieldset: DR
+    name: DR
+  - access: Read
+    byte_offset: 20
+    description: Channel Status register
+    fieldset: CSR
+    name: CSR
+  - access: Read
+    byte_offset: 24
+    description: Debug Information register
+    fieldset: DIR
+    name: DIR
+fieldset/CR:
+  description: Control register
+  fields:
+  - bit_offset: 0
+    bit_size: 2
+    description: Peripheral Block Enable
+    name: SPDIFEN
+  - bit_offset: 2
+    bit_size: 1
+    description: Receiver DMA ENable for data flow
+    name: RXDMAEN
+  - bit_offset: 3
+    bit_size: 1
+    description: STerEO Mode
+    name: RXSTEO
+  - bit_offset: 4
+    bit_size: 2
+    description: RX Data format
+    name: DRFMT
+  - bit_offset: 6
+    bit_size: 1
+    description: Mask Parity error bit
+    name: PMSK
+  - bit_offset: 7
+    bit_size: 1
+    description: Mask of Validity bit
+    name: VMSK
+  - bit_offset: 8
+    bit_size: 1
+    description: Mask of channel status and user bits
+    name: CUMSK
+  - bit_offset: 9
+    bit_size: 1
+    description: Mask of Preamble Type bits
+    name: PTMSK
+  - bit_offset: 10
+    bit_size: 1
+    description: Control Buffer DMA ENable for control flow
+    name: CBDMAEN
+  - bit_offset: 11
+    bit_size: 1
+    description: Channel Selection
+    name: CHSEL
+  - bit_offset: 12
+    bit_size: 2
+    description: Maximum allowed re-tries during synchronization phase
+    name: NBTR
+  - bit_offset: 14
+    bit_size: 1
+    description: Wait For Activity
+    name: WFA
+  - bit_offset: 16
+    bit_size: 3
+    description: input selection
+    name: INSEL
+fieldset/CSR:
+  description: Channel Status register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: User data information
+    name: USR
+  - bit_offset: 16
+    bit_size: 8
+    description: Channel A status information
+    name: CS
+  - bit_offset: 24
+    bit_size: 1
+    description: Start Of Block
+    name: SOB
+fieldset/DIR:
+  description: Debug Information register
+  fields:
+  - bit_offset: 0
+    bit_size: 13
+    description: Threshold HIGH
+    name: THI
+  - bit_offset: 16
+    bit_size: 13
+    description: Threshold LOW
+    name: TLO
+fieldset/DR:
+  description: Data input register
+  fields:
+  - bit_offset: 0
+    bit_size: 24
+    description: Parity Error bit
+    name: DR
+  - bit_offset: 24
+    bit_size: 1
+    description: Parity Error bit
+    name: PE
+  - bit_offset: 25
+    bit_size: 1
+    description: Validity bit
+    name: V
+  - bit_offset: 26
+    bit_size: 1
+    description: User bit
+    name: U
+  - bit_offset: 27
+    bit_size: 1
+    description: Channel Status bit
+    name: C
+  - bit_offset: 28
+    bit_size: 2
+    description: Preamble Type
+    name: PT
+fieldset/IFCR:
+  description: Interrupt Flag Clear register
+  fields:
+  - bit_offset: 2
+    bit_size: 1
+    description: Clears the Parity error flag
+    name: PERRCF
+  - bit_offset: 3
+    bit_size: 1
+    description: Clears the Overrun error flag
+    name: OVRCF
+  - bit_offset: 4
+    bit_size: 1
+    description: Clears the Synchronization Block Detected flag
+    name: SBDCF
+  - bit_offset: 5
+    bit_size: 1
+    description: Clears the Synchronization Done flag
+    name: SYNCDCF
+fieldset/IMR:
+  description: Interrupt mask register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: RXNE interrupt enable
+    name: RXNEIE
+  - bit_offset: 1
+    bit_size: 1
+    description: Control Buffer Ready Interrupt Enable
+    name: CSRNEIE
+  - bit_offset: 2
+    bit_size: 1
+    description: Parity error interrupt enable
+    name: PERRIE
+  - bit_offset: 3
+    bit_size: 1
+    description: Overrun error Interrupt Enable
+    name: OVRIE
+  - bit_offset: 4
+    bit_size: 1
+    description: Synchronization Block Detected Interrupt Enable
+    name: SBLKIE
+  - bit_offset: 5
+    bit_size: 1
+    description: Synchronization Done
+    name: SYNCDIE
+  - bit_offset: 6
+    bit_size: 1
+    description: Serial Interface Error Interrupt Enable
+    name: IFEIE
+fieldset/SR:
+  description: Status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Read data register not empty
+    name: RXNE
+  - bit_offset: 1
+    bit_size: 1
+    description: Control Buffer register is not empty
+    name: CSRNE
+  - bit_offset: 2
+    bit_size: 1
+    description: Parity error
+    name: PERR
+  - bit_offset: 3
+    bit_size: 1
+    description: Overrun error
+    name: OVR
+  - bit_offset: 4
+    bit_size: 1
+    description: Synchronization Block Detected
+    name: SBD
+  - bit_offset: 5
+    bit_size: 1
+    description: Synchronization Done
+    name: SYNCD
+  - bit_offset: 6
+    bit_size: 1
+    description: Framing error
+    name: FERR
+  - bit_offset: 7
+    bit_size: 1
+    description: Synchronization error
+    name: SERR
+  - bit_offset: 8
+    bit_size: 1
+    description: Time-out error
+    name: TERR
+  - array:
+      len: 1
+      stride: 0
+    bit_offset: 16
+    bit_size: 15
+    description: Duration of 5 symbols counted with SPDIF_CLK
+    name: WIDTH

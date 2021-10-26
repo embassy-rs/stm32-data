@@ -1,0 +1,507 @@
+---
+block/SDMMC:
+  description: Secure digital input/output interface
+  items:
+  - byte_offset: 0
+    description: power control register
+    fieldset: POWER
+    name: POWER
+  - byte_offset: 4
+    description: SDI clock control register
+    fieldset: CLKCR
+    name: CLKCR
+  - byte_offset: 8
+    description: argument register
+    fieldset: ARG
+    name: ARG
+  - byte_offset: 12
+    description: command register
+    fieldset: CMD
+    name: CMD
+  - access: Read
+    byte_offset: 16
+    description: command response register
+    fieldset: RESPCMD
+    name: RESPCMD
+  - access: Read
+    byte_offset: 20
+    description: response 1..4 register
+    fieldset: RESP1
+    name: RESP1
+  - access: Read
+    byte_offset: 24
+    description: response 1..4 register
+    fieldset: RESP2
+    name: RESP2
+  - access: Read
+    byte_offset: 28
+    description: response 1..4 register
+    fieldset: RESP3
+    name: RESP3
+  - access: Read
+    byte_offset: 32
+    description: response 1..4 register
+    fieldset: RESP4
+    name: RESP4
+  - byte_offset: 36
+    description: data timer register
+    fieldset: DTIMER
+    name: DTIMER
+  - byte_offset: 40
+    description: data length register
+    fieldset: DLEN
+    name: DLEN
+  - byte_offset: 44
+    description: data control register
+    fieldset: DCTRL
+    name: DCTRL
+  - access: Read
+    byte_offset: 48
+    description: data counter register
+    fieldset: DCOUNT
+    name: DCOUNT
+  - access: Read
+    byte_offset: 52
+    description: status register
+    fieldset: STA
+    name: STA
+  - byte_offset: 56
+    description: interrupt clear register
+    fieldset: ICR
+    name: ICR
+  - byte_offset: 60
+    description: mask register
+    fieldset: MASK
+    name: MASK
+  - access: Read
+    byte_offset: 72
+    description: FIFO counter register
+    fieldset: FIFOCNT
+    name: FIFOCNT
+  - byte_offset: 128
+    description: data FIFO register
+    fieldset: FIFO
+    name: FIFO
+fieldset/ARG:
+  description: argument register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Command argument
+    name: CMDARG
+fieldset/CLKCR:
+  description: SDI clock control register
+  fields:
+  - bit_offset: 0
+    bit_size: 8
+    description: Clock divide factor
+    name: CLKDIV
+  - bit_offset: 8
+    bit_size: 1
+    description: Clock enable bit
+    name: CLKEN
+  - bit_offset: 9
+    bit_size: 1
+    description: Power saving configuration bit
+    name: PWRSAV
+  - bit_offset: 10
+    bit_size: 1
+    description: Clock divider bypass enable bit
+    name: BYPASS
+  - bit_offset: 11
+    bit_size: 2
+    description: Wide bus mode enable bit
+    name: WIDBUS
+  - bit_offset: 13
+    bit_size: 1
+    description: SDIO_CK dephasing selection bit
+    name: NEGEDGE
+  - bit_offset: 14
+    bit_size: 1
+    description: HW Flow Control enable
+    name: HWFC_EN
+fieldset/CMD:
+  description: command register
+  fields:
+  - bit_offset: 0
+    bit_size: 6
+    description: Command index
+    name: CMDINDEX
+  - bit_offset: 6
+    bit_size: 2
+    description: Wait for response bits
+    name: WAITRESP
+  - bit_offset: 8
+    bit_size: 1
+    description: CPSM waits for interrupt request
+    name: WAITINT
+  - bit_offset: 9
+    bit_size: 1
+    description: CPSM Waits for ends of data transfer (CmdPend internal signal)
+    name: WAITPEND
+  - bit_offset: 10
+    bit_size: 1
+    description: Command path state machine (CPSM) Enable bit
+    name: CPSMEN
+  - bit_offset: 11
+    bit_size: 1
+    description: SD I/O suspend command
+    name: SDIOSuspend
+fieldset/DCOUNT:
+  description: data counter register
+  fields:
+  - bit_offset: 0
+    bit_size: 25
+    description: Data count value
+    name: DATACOUNT
+fieldset/DCTRL:
+  description: data control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: DTEN
+    name: DTEN
+  - bit_offset: 1
+    bit_size: 1
+    description: Data transfer direction selection
+    name: DTDIR
+  - bit_offset: 2
+    bit_size: 1
+    description: 'Data transfer mode selection 1: Stream or SDIO multibyte data transfer'
+    name: DTMODE
+  - bit_offset: 3
+    bit_size: 1
+    description: DMA enable bit
+    name: DMAEN
+  - bit_offset: 4
+    bit_size: 4
+    description: Data block size
+    name: DBLOCKSIZE
+  - bit_offset: 8
+    bit_size: 1
+    description: Read wait start
+    name: RWSTART
+  - bit_offset: 9
+    bit_size: 1
+    description: Read wait stop
+    name: RWSTOP
+  - bit_offset: 10
+    bit_size: 1
+    description: Read wait mode
+    name: RWMOD
+  - bit_offset: 11
+    bit_size: 1
+    description: SD I/O enable functions
+    name: SDIOEN
+fieldset/DLEN:
+  description: data length register
+  fields:
+  - bit_offset: 0
+    bit_size: 25
+    description: Data length value
+    name: DATALENGTH
+fieldset/DTIMER:
+  description: data timer register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Data timeout period
+    name: DATATIME
+fieldset/FIFO:
+  description: data FIFO register
+  fields:
+  - bit_offset: 0
+    bit_size: 32
+    description: Receive and transmit FIFO data
+    name: FIFOData
+fieldset/FIFOCNT:
+  description: FIFO counter register
+  fields:
+  - bit_offset: 0
+    bit_size: 24
+    description: Remaining number of words to be written to or read from the FIFO
+    name: FIFOCOUNT
+fieldset/ICR:
+  description: interrupt clear register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: CCRCFAIL flag clear bit
+    name: CCRCFAILC
+  - bit_offset: 1
+    bit_size: 1
+    description: DCRCFAIL flag clear bit
+    name: DCRCFAILC
+  - bit_offset: 2
+    bit_size: 1
+    description: CTIMEOUT flag clear bit
+    name: CTIMEOUTC
+  - bit_offset: 3
+    bit_size: 1
+    description: DTIMEOUT flag clear bit
+    name: DTIMEOUTC
+  - bit_offset: 4
+    bit_size: 1
+    description: TXUNDERR flag clear bit
+    name: TXUNDERRC
+  - bit_offset: 5
+    bit_size: 1
+    description: RXOVERR flag clear bit
+    name: RXOVERRC
+  - bit_offset: 6
+    bit_size: 1
+    description: CMDREND flag clear bit
+    name: CMDRENDC
+  - bit_offset: 7
+    bit_size: 1
+    description: CMDSENT flag clear bit
+    name: CMDSENTC
+  - bit_offset: 8
+    bit_size: 1
+    description: DATAEND flag clear bit
+    name: DATAENDC
+  - bit_offset: 10
+    bit_size: 1
+    description: DBCKEND flag clear bit
+    name: DBCKENDC
+  - bit_offset: 22
+    bit_size: 1
+    description: SDIOIT flag clear bit
+    name: SDIOITC
+fieldset/MASK:
+  description: mask register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Command CRC fail interrupt enable
+    name: CCRCFAILIE
+  - bit_offset: 1
+    bit_size: 1
+    description: Data CRC fail interrupt enable
+    name: DCRCFAILIE
+  - bit_offset: 2
+    bit_size: 1
+    description: Command timeout interrupt enable
+    name: CTIMEOUTIE
+  - bit_offset: 3
+    bit_size: 1
+    description: Data timeout interrupt enable
+    name: DTIMEOUTIE
+  - bit_offset: 4
+    bit_size: 1
+    description: Tx FIFO underrun error interrupt enable
+    name: TXUNDERRIE
+  - bit_offset: 5
+    bit_size: 1
+    description: Rx FIFO overrun error interrupt enable
+    name: RXOVERRIE
+  - bit_offset: 6
+    bit_size: 1
+    description: Command response received interrupt enable
+    name: CMDRENDIE
+  - bit_offset: 7
+    bit_size: 1
+    description: Command sent interrupt enable
+    name: CMDSENTIE
+  - bit_offset: 8
+    bit_size: 1
+    description: Data end interrupt enable
+    name: DATAENDIE
+  - bit_offset: 10
+    bit_size: 1
+    description: Data block end interrupt enable
+    name: DBCKENDIE
+  - bit_offset: 11
+    bit_size: 1
+    description: Command acting interrupt enable
+    name: CMDACTIE
+  - bit_offset: 12
+    bit_size: 1
+    description: Data transmit acting interrupt enable
+    name: TXACTIE
+  - bit_offset: 13
+    bit_size: 1
+    description: Data receive acting interrupt enable
+    name: RXACTIE
+  - bit_offset: 14
+    bit_size: 1
+    description: Tx FIFO half empty interrupt enable
+    name: TXFIFOHEIE
+  - bit_offset: 15
+    bit_size: 1
+    description: Rx FIFO half full interrupt enable
+    name: RXFIFOHFIE
+  - bit_offset: 16
+    bit_size: 1
+    description: Tx FIFO full interrupt enable
+    name: TXFIFOFIE
+  - bit_offset: 17
+    bit_size: 1
+    description: Rx FIFO full interrupt enable
+    name: RXFIFOFIE
+  - bit_offset: 18
+    bit_size: 1
+    description: Tx FIFO empty interrupt enable
+    name: TXFIFOEIE
+  - bit_offset: 19
+    bit_size: 1
+    description: Rx FIFO empty interrupt enable
+    name: RXFIFOEIE
+  - bit_offset: 20
+    bit_size: 1
+    description: Data available in Tx FIFO interrupt enable
+    name: TXDAVLIE
+  - bit_offset: 21
+    bit_size: 1
+    description: Data available in Rx FIFO interrupt enable
+    name: RXDAVLIE
+  - bit_offset: 22
+    bit_size: 1
+    description: SDIO mode interrupt received interrupt enable
+    name: SDIOITIE
+fieldset/POWER:
+  description: power control register
+  fields:
+  - bit_offset: 0
+    bit_size: 2
+    description: PWRCTRL
+    name: PWRCTRL
+fieldset/RESP1:
+  description: response 1..4 register
+  fields:
+  - array:
+      len: 1
+      stride: 0
+    bit_offset: 0
+    bit_size: 32
+    description: see Table 132
+    name: CARDSTATUS
+fieldset/RESP2:
+  description: response 1..4 register
+  fields:
+  - array:
+      len: 1
+      stride: 0
+    bit_offset: 0
+    bit_size: 32
+    description: see Table 132
+    name: CARDSTATUS
+fieldset/RESP3:
+  description: response 1..4 register
+  fields:
+  - array:
+      len: 1
+      stride: 0
+    bit_offset: 0
+    bit_size: 32
+    description: see Table 132
+    name: CARDSTATUS
+fieldset/RESP4:
+  description: response 1..4 register
+  fields:
+  - array:
+      len: 1
+      stride: 0
+    bit_offset: 0
+    bit_size: 32
+    description: see Table 132
+    name: CARDSTATUS
+fieldset/RESPCMD:
+  description: command response register
+  fields:
+  - bit_offset: 0
+    bit_size: 6
+    description: Response command index
+    name: RESPCMD
+fieldset/STA:
+  description: status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Command response received (CRC check failed)
+    name: CCRCFAIL
+  - bit_offset: 1
+    bit_size: 1
+    description: Data block sent/received (CRC check failed)
+    name: DCRCFAIL
+  - bit_offset: 2
+    bit_size: 1
+    description: Command response timeout
+    name: CTIMEOUT
+  - bit_offset: 3
+    bit_size: 1
+    description: Data timeout
+    name: DTIMEOUT
+  - bit_offset: 4
+    bit_size: 1
+    description: Transmit FIFO underrun error
+    name: TXUNDERR
+  - bit_offset: 5
+    bit_size: 1
+    description: Received FIFO overrun error
+    name: RXOVERR
+  - bit_offset: 6
+    bit_size: 1
+    description: Command response received (CRC check passed)
+    name: CMDREND
+  - bit_offset: 7
+    bit_size: 1
+    description: Command sent (no response required)
+    name: CMDSENT
+  - bit_offset: 8
+    bit_size: 1
+    description: Data end (data counter, SDIDCOUNT, is zero)
+    name: DATAEND
+  - bit_offset: 10
+    bit_size: 1
+    description: Data block sent/received (CRC check passed)
+    name: DBCKEND
+  - bit_offset: 11
+    bit_size: 1
+    description: Command transfer in progress
+    name: CMDACT
+  - bit_offset: 12
+    bit_size: 1
+    description: Data transmit in progress
+    name: TXACT
+  - bit_offset: 13
+    bit_size: 1
+    description: Data receive in progress
+    name: RXACT
+  - bit_offset: 14
+    bit_size: 1
+    description: 'Transmit FIFO half empty: at least 8 words can be written into the
+      FIFO'
+    name: TXFIFOHE
+  - bit_offset: 15
+    bit_size: 1
+    description: 'Receive FIFO half full: there are at least 8 words in the FIFO'
+    name: RXFIFOHF
+  - bit_offset: 16
+    bit_size: 1
+    description: Transmit FIFO full
+    name: TXFIFOF
+  - bit_offset: 17
+    bit_size: 1
+    description: Receive FIFO full
+    name: RXFIFOF
+  - bit_offset: 18
+    bit_size: 1
+    description: Transmit FIFO empty
+    name: TXFIFOE
+  - bit_offset: 19
+    bit_size: 1
+    description: Receive FIFO empty
+    name: RXFIFOE
+  - bit_offset: 20
+    bit_size: 1
+    description: Data available in transmit FIFO
+    name: TXDAVL
+  - bit_offset: 21
+    bit_size: 1
+    description: Data available in receive FIFO
+    name: RXDAVL
+  - bit_offset: 22
+    bit_size: 1
+    description: SDIO interrupt received
+    name: SDIOIT
