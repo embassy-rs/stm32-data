@@ -1,0 +1,737 @@
+---
+block/ADC:
+  description: Analog-to-digital converter
+  items:
+  - byte_offset: 0
+    description: status register
+    fieldset: SR
+    name: SR
+  - byte_offset: 4
+    description: control register 1
+    fieldset: CR1
+    name: CR1
+  - byte_offset: 8
+    description: control register 2
+    fieldset: CR2
+    name: CR2
+  - byte_offset: 12
+    description: sample time register 1
+    fieldset: SMPR1
+    name: SMPR1
+  - byte_offset: 16
+    description: sample time register 2
+    fieldset: SMPR2
+    name: SMPR2
+  - array:
+      len: 4
+      stride: 4
+    byte_offset: 20
+    description: injected channel data offset register x
+    fieldset: JOFR
+    name: JOFR
+  - byte_offset: 36
+    description: watchdog higher threshold register
+    fieldset: HTR
+    name: HTR
+  - byte_offset: 40
+    description: watchdog lower threshold register
+    fieldset: LTR
+    name: LTR
+  - byte_offset: 44
+    description: regular sequence register 1
+    fieldset: SQR1
+    name: SQR1
+  - byte_offset: 48
+    description: regular sequence register 2
+    fieldset: SQR2
+    name: SQR2
+  - byte_offset: 52
+    description: regular sequence register 3
+    fieldset: SQR3
+    name: SQR3
+  - byte_offset: 56
+    description: injected sequence register
+    fieldset: JSQR
+    name: JSQR
+  - access: Read
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 60
+    description: injected data register x
+    fieldset: JDR
+    name: JDR
+  - access: Read
+    byte_offset: 76
+    description: regular data register
+    fieldset: DR
+    name: DR
+enum/ADON:
+  bit_size: 1
+  variants:
+  - description: Disable ADC conversion and go to power down mode
+    name: Disabled
+    value: 0
+  - description: Enable ADC
+    name: Enabled
+    value: 1
+enum/ALIGN:
+  bit_size: 1
+  variants:
+  - description: Right alignment
+    name: Right
+    value: 0
+  - description: Left alignment
+    name: Left
+    value: 1
+enum/AWD:
+  bit_size: 1
+  variants:
+  - description: No analog watchdog event occurred
+    name: NoEvent
+    value: 0
+  - description: Analog watchdog event occurred
+    name: Event
+    value: 1
+enum/AWDEN:
+  bit_size: 1
+  variants:
+  - description: Analog watchdog disabled on regular channels
+    name: Disabled
+    value: 0
+  - description: Analog watchdog enabled on regular channels
+    name: Enabled
+    value: 1
+enum/AWDIE:
+  bit_size: 1
+  variants:
+  - description: Analogue watchdog interrupt disabled
+    name: Disabled
+    value: 0
+  - description: Analogue watchdog interrupt enabled
+    name: Enabled
+    value: 1
+enum/AWDSGL:
+  bit_size: 1
+  variants:
+  - description: Analog watchdog enabled on all channels
+    name: AllChannels
+    value: 0
+  - description: Analog watchdog enabled on a single channel
+    name: SingleChannel
+    value: 1
+enum/CONT:
+  bit_size: 1
+  variants:
+  - description: Single conversion mode
+    name: Single
+    value: 0
+  - description: Continuous conversion mode
+    name: Continuous
+    value: 1
+enum/DDS:
+  bit_size: 1
+  variants:
+  - description: No new DMA request is issued after the last transfer
+    name: Single
+    value: 0
+  - description: DMA requests are issued as long as data are converted and DMA=1
+    name: Continuous
+    value: 1
+enum/DISCEN:
+  bit_size: 1
+  variants:
+  - description: Discontinuous mode on regular channels disabled
+    name: Disabled
+    value: 0
+  - description: Discontinuous mode on regular channels enabled
+    name: Enabled
+    value: 1
+enum/DMA:
+  bit_size: 1
+  variants:
+  - description: DMA mode disabled
+    name: Disabled
+    value: 0
+  - description: DMA mode enabled
+    name: Enabled
+    value: 1
+enum/EOC:
+  bit_size: 1
+  variants:
+  - description: Conversion is not complete
+    name: NotComplete
+    value: 0
+  - description: Conversion complete
+    name: Complete
+    value: 1
+enum/EOCIE:
+  bit_size: 1
+  variants:
+  - description: EOC interrupt disabled
+    name: Disabled
+    value: 0
+  - description: EOC interrupt enabled
+    name: Enabled
+    value: 1
+enum/EOCS:
+  bit_size: 1
+  variants:
+  - description: The EOC bit is set at the end of each sequence of regular conversions
+    name: EachSequence
+    value: 0
+  - description: The EOC bit is set at the end of each regular conversion
+    name: EachConversion
+    value: 1
+enum/EXTEN:
+  bit_size: 2
+  variants:
+  - description: Trigger detection disabled
+    name: Disabled
+    value: 0
+  - description: Trigger detection on the rising edge
+    name: RisingEdge
+    value: 1
+  - description: Trigger detection on the falling edge
+    name: FallingEdge
+    value: 2
+  - description: Trigger detection on both the rising and falling edges
+    name: BothEdges
+    value: 3
+enum/EXTSEL:
+  bit_size: 4
+  variants:
+  - description: Timer 1 CC1 event
+    name: TIM1CC1
+    value: 0
+  - description: Timer 1 CC2 event
+    name: TIM1CC2
+    value: 1
+  - description: Timer 1 CC3 event
+    name: TIM1CC3
+    value: 2
+  - description: Timer 2 CC2 event
+    name: TIM2CC2
+    value: 3
+  - description: Timer 2 CC3 event
+    name: TIM2CC3
+    value: 4
+  - description: Timer 2 CC4 event
+    name: TIM2CC4
+    value: 5
+  - description: Timer 2 TRGO event
+    name: TIM2TRGO
+    value: 6
+enum/JAUTO:
+  bit_size: 1
+  variants:
+  - description: Automatic injected group conversion disabled
+    name: Disabled
+    value: 0
+  - description: Automatic injected group conversion enabled
+    name: Enabled
+    value: 1
+enum/JAWDEN:
+  bit_size: 1
+  variants:
+  - description: Analog watchdog disabled on injected channels
+    name: Disabled
+    value: 0
+  - description: Analog watchdog enabled on injected channels
+    name: Enabled
+    value: 1
+enum/JDISCEN:
+  bit_size: 1
+  variants:
+  - description: Discontinuous mode on injected channels disabled
+    name: Disabled
+    value: 0
+  - description: Discontinuous mode on injected channels enabled
+    name: Enabled
+    value: 1
+enum/JEOC:
+  bit_size: 1
+  variants:
+  - description: Conversion is not complete
+    name: NotComplete
+    value: 0
+  - description: Conversion complete
+    name: Complete
+    value: 1
+enum/JEOCIE:
+  bit_size: 1
+  variants:
+  - description: JEOC interrupt disabled
+    name: Disabled
+    value: 0
+  - description: JEOC interrupt enabled
+    name: Enabled
+    value: 1
+enum/JEXTEN:
+  bit_size: 2
+  variants:
+  - description: Trigger detection disabled
+    name: Disabled
+    value: 0
+  - description: Trigger detection on the rising edge
+    name: RisingEdge
+    value: 1
+  - description: Trigger detection on the falling edge
+    name: FallingEdge
+    value: 2
+  - description: Trigger detection on both the rising and falling edges
+    name: BothEdges
+    value: 3
+enum/JEXTSEL:
+  bit_size: 4
+  variants:
+  - description: Timer 1 TRGO event
+    name: TIM1TRGO
+    value: 0
+  - description: Timer 1 CC4 event
+    name: TIM1CC4
+    value: 1
+  - description: Timer 2 TRGO event
+    name: TIM2TRGO
+    value: 2
+  - description: Timer 2 CC1 event
+    name: TIM2CC1
+    value: 3
+  - description: Timer 3 CC4 event
+    name: TIM3CC4
+    value: 4
+  - description: Timer 4 TRGO event
+    name: TIM4TRGO
+    value: 5
+  - description: Timer 8 CC4 event
+    name: TIM8CC4
+    value: 7
+  - description: Timer 1 TRGO(2) event
+    name: TIM1TRGO2
+    value: 8
+  - description: Timer 8 TRGO event
+    name: TIM8TRGO
+    value: 9
+  - description: Timer 8 TRGO(2) event
+    name: TIM8TRGO2
+    value: 10
+  - description: Timer 3 CC3 event
+    name: TIM3CC3
+    value: 11
+  - description: Timer 5 TRGO event
+    name: TIM5TRGO
+    value: 12
+  - description: Timer 3 CC1 event
+    name: TIM3CC1
+    value: 13
+  - description: Timer 6 TRGO event
+    name: TIM6TRGO
+    value: 14
+enum/JSTRT:
+  bit_size: 1
+  variants:
+  - description: No injected channel conversion started
+    name: NotStarted
+    value: 0
+  - description: Injected channel conversion has started
+    name: Started
+    value: 1
+enum/JSWSTARTW:
+  bit_size: 1
+  variants:
+  - description: Starts conversion of injected channels
+    name: Start
+    value: 1
+enum/OVR:
+  bit_size: 1
+  variants:
+  - description: No overrun occurred
+    name: NoOverrun
+    value: 0
+  - description: Overrun occurred
+    name: Overrun
+    value: 1
+enum/OVRIE:
+  bit_size: 1
+  variants:
+  - description: Overrun interrupt disabled
+    name: Disabled
+    value: 0
+  - description: Overrun interrupt enabled
+    name: Enabled
+    value: 1
+enum/RES:
+  bit_size: 2
+  variants:
+  - description: 12-bit (15 ADCCLK cycles)
+    name: TwelveBit
+    value: 0
+  - description: 10-bit (13 ADCCLK cycles)
+    name: TenBit
+    value: 1
+  - description: 8-bit (11 ADCCLK cycles)
+    name: EightBit
+    value: 2
+  - description: 6-bit (9 ADCCLK cycles)
+    name: SixBit
+    value: 3
+enum/SCAN:
+  bit_size: 1
+  variants:
+  - description: Scan mode disabled
+    name: Disabled
+    value: 0
+  - description: Scan mode enabled
+    name: Enabled
+    value: 1
+enum/SMP:
+  bit_size: 3
+  variants:
+  - description: 3 cycles
+    name: Cycles3
+    value: 0
+  - description: 15 cycles
+    name: Cycles15
+    value: 1
+  - description: 28 cycles
+    name: Cycles28
+    value: 2
+  - description: 56 cycles
+    name: Cycles56
+    value: 3
+  - description: 84 cycles
+    name: Cycles84
+    value: 4
+  - description: 112 cycles
+    name: Cycles112
+    value: 5
+  - description: 144 cycles
+    name: Cycles144
+    value: 6
+  - description: 480 cycles
+    name: Cycles480
+    value: 7
+enum/SMPR_SMPx_x:
+  bit_size: 32
+  variants:
+  - description: 3 cycles
+    name: Cycles3
+    value: 0
+  - description: 15 cycles
+    name: Cycles15
+    value: 1
+  - description: 28 cycles
+    name: Cycles28
+    value: 2
+  - description: 56 cycles
+    name: Cycles56
+    value: 3
+  - description: 84 cycles
+    name: Cycles84
+    value: 4
+  - description: 112 cycles
+    name: Cycles112
+    value: 5
+  - description: 144 cycles
+    name: Cycles144
+    value: 6
+  - description: 480 cycles
+    name: Cycles480
+    value: 7
+enum/STRT:
+  bit_size: 1
+  variants:
+  - description: No regular channel conversion started
+    name: NotStarted
+    value: 0
+  - description: Regular channel conversion has started
+    name: Started
+    value: 1
+enum/SWSTARTW:
+  bit_size: 1
+  variants:
+  - description: Starts conversion of regular channels
+    name: Start
+    value: 1
+fieldset/CR1:
+  description: control register 1
+  fields:
+  - bit_offset: 0
+    bit_size: 5
+    description: Analog watchdog channel select bits
+    name: AWDCH
+  - bit_offset: 5
+    bit_size: 1
+    description: Interrupt enable for EOC
+    enum: EOCIE
+    name: EOCIE
+  - bit_offset: 6
+    bit_size: 1
+    description: Analog watchdog interrupt enable
+    enum: AWDIE
+    name: AWDIE
+  - bit_offset: 7
+    bit_size: 1
+    description: Interrupt enable for injected channels
+    enum: JEOCIE
+    name: JEOCIE
+  - bit_offset: 8
+    bit_size: 1
+    description: Scan mode
+    enum: SCAN
+    name: SCAN
+  - bit_offset: 9
+    bit_size: 1
+    description: Enable the watchdog on a single channel in scan mode
+    enum: AWDSGL
+    name: AWDSGL
+  - bit_offset: 10
+    bit_size: 1
+    description: Automatic injected group conversion
+    enum: JAUTO
+    name: JAUTO
+  - bit_offset: 11
+    bit_size: 1
+    description: Discontinuous mode on regular channels
+    enum: DISCEN
+    name: DISCEN
+  - bit_offset: 12
+    bit_size: 1
+    description: Discontinuous mode on injected channels
+    enum: JDISCEN
+    name: JDISCEN
+  - bit_offset: 13
+    bit_size: 3
+    description: Discontinuous mode channel count
+    name: DISCNUM
+  - bit_offset: 22
+    bit_size: 1
+    description: Analog watchdog enable on injected channels
+    enum: JAWDEN
+    name: JAWDEN
+  - bit_offset: 23
+    bit_size: 1
+    description: Analog watchdog enable on regular channels
+    enum: AWDEN
+    name: AWDEN
+  - bit_offset: 24
+    bit_size: 2
+    description: Resolution
+    enum: RES
+    name: RES
+  - bit_offset: 26
+    bit_size: 1
+    description: Overrun interrupt enable
+    enum: OVRIE
+    name: OVRIE
+fieldset/CR2:
+  description: control register 2
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: A/D Converter ON / OFF
+    enum: ADON
+    name: ADON
+  - bit_offset: 1
+    bit_size: 1
+    description: Continuous conversion
+    enum: CONT
+    name: CONT
+  - bit_offset: 8
+    bit_size: 1
+    description: Direct memory access mode (for single ADC mode)
+    enum: DMA
+    name: DMA
+  - bit_offset: 9
+    bit_size: 1
+    description: DMA disable selection (for single ADC mode)
+    enum: DDS
+    name: DDS
+  - bit_offset: 10
+    bit_size: 1
+    description: End of conversion selection
+    enum: EOCS
+    name: EOCS
+  - bit_offset: 11
+    bit_size: 1
+    description: Data alignment
+    enum: ALIGN
+    name: ALIGN
+  - bit_offset: 16
+    bit_size: 4
+    description: External event select for injected group
+    enum: JEXTSEL
+    name: JEXTSEL
+  - bit_offset: 20
+    bit_size: 2
+    description: External trigger enable for injected channels
+    enum: JEXTEN
+    name: JEXTEN
+  - bit_offset: 22
+    bit_size: 1
+    description: Start conversion of injected channels
+    enum_write: JSWSTARTW
+    name: JSWSTART
+  - bit_offset: 24
+    bit_size: 4
+    description: External event select for regular group
+    enum: EXTSEL
+    name: EXTSEL
+  - bit_offset: 28
+    bit_size: 2
+    description: External trigger enable for regular channels
+    enum: EXTEN
+    name: EXTEN
+  - bit_offset: 30
+    bit_size: 1
+    description: Start conversion of regular channels
+    enum_write: SWSTARTW
+    name: SWSTART
+fieldset/DR:
+  description: regular data register
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Regular data
+    name: DATA
+fieldset/HTR:
+  description: watchdog higher threshold register
+  fields:
+  - bit_offset: 0
+    bit_size: 12
+    description: Analog watchdog higher threshold
+    name: HT
+fieldset/JDR:
+  description: injected data register x
+  fields:
+  - bit_offset: 0
+    bit_size: 16
+    description: Injected data
+    name: JDATA
+fieldset/JOFR:
+  description: injected channel data offset register x
+  fields:
+  - bit_offset: 0
+    bit_size: 12
+    description: Data offset for injected channel x
+    name: JOFFSET
+fieldset/JSQR:
+  description: injected sequence register
+  fields:
+  - array:
+      len: 4
+      stride: 5
+    bit_offset: 0
+    bit_size: 5
+    description: 1st conversion in injected sequence
+    name: JSQ
+  - bit_offset: 20
+    bit_size: 2
+    description: Injected sequence length
+    name: JL
+fieldset/LTR:
+  description: watchdog lower threshold register
+  fields:
+  - bit_offset: 0
+    bit_size: 12
+    description: Analog watchdog lower threshold
+    name: LT
+fieldset/SMPR1:
+  description: sample time register 1
+  fields:
+  - array:
+      len: 9
+      stride: 3
+    bit_offset: 0
+    bit_size: 3
+    description: Channel 10 sampling time selection
+    enum: SMP
+    name: SMP
+  - bit_offset: 0
+    bit_size: 32
+    description: Sample time bits
+    enum: SMPR_SMPx_x
+    name: SMPx_x
+fieldset/SMPR2:
+  description: sample time register 2
+  fields:
+  - array:
+      len: 10
+      stride: 3
+    bit_offset: 0
+    bit_size: 3
+    description: Channel 0 sampling time selection
+    enum: SMP
+    name: SMP
+  - bit_offset: 0
+    bit_size: 32
+    description: Sample time bits
+    enum: SMPR_SMPx_x
+    name: SMPx_x
+fieldset/SQR1:
+  description: regular sequence register 1
+  fields:
+  - array:
+      len: 4
+      stride: 5
+    bit_offset: 0
+    bit_size: 5
+    description: 13th conversion in regular sequence
+    name: SQ
+  - bit_offset: 20
+    bit_size: 4
+    description: Regular channel sequence length
+    name: L
+fieldset/SQR2:
+  description: regular sequence register 2
+  fields:
+  - array:
+      len: 6
+      stride: 5
+    bit_offset: 0
+    bit_size: 5
+    description: 7th conversion in regular sequence
+    name: SQ
+fieldset/SQR3:
+  description: regular sequence register 3
+  fields:
+  - array:
+      len: 6
+      stride: 5
+    bit_offset: 0
+    bit_size: 5
+    description: 1st conversion in regular sequence
+    name: SQ
+fieldset/SR:
+  description: status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Analog watchdog flag
+    enum: AWD
+    name: AWD
+  - bit_offset: 1
+    bit_size: 1
+    description: Regular channel end of conversion
+    enum: EOC
+    name: EOC
+  - bit_offset: 2
+    bit_size: 1
+    description: Injected channel end of conversion
+    enum: JEOC
+    name: JEOC
+  - bit_offset: 3
+    bit_size: 1
+    description: Injected channel start flag
+    enum: JSTRT
+    name: JSTRT
+  - bit_offset: 4
+    bit_size: 1
+    description: Regular channel start flag
+    enum: STRT
+    name: STRT
+  - bit_offset: 5
+    bit_size: 1
+    description: Overrun
+    enum: OVR
+    name: OVR
