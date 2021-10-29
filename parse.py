@@ -148,6 +148,8 @@ def parse_value(val, defines):
     val = val.strip()
     if val == '':
         return 0
+    if m := re.match('(0([1-9][0-9]*)(U))', val):
+        return int(m.group(2), 10)
     if m := re.match('((0x[0-9a-fA-F]+|\\d+))(|u|ul|U|UL)$', val):
         return int(m.group(1), 0)
     if m := re.match('([0-9A-Za-z_]+)$', val):
@@ -159,6 +161,8 @@ def parse_value(val, defines):
         return parse_value(m.group(1), defines)
     # if m := re.match('\\*?\\(u?int(8|16|32|64)_t\\ *)(.*)$', val):
     #    return parse_value(m.group(1), defines)
+    if m := re.match('(.*)/(.*)$', val):
+        return parse_value(m.group(1), defines) / parse_value(m.group(2), defines)
     if m := re.match('(.*)<<(.*)$', val):
         return (parse_value(m.group(1), defines) << parse_value(m.group(2), defines)) & 0xFFFFFFFF
     if m := re.match('(.*)>>(.*)$', val):
