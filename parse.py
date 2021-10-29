@@ -585,6 +585,7 @@ def chip_name_from_package_name(x):
         ('(STM32L5....).x[PQ]', '\\1'),
         ('(STM32L0....).xS', '\\1'),
         ('(STM32H7....).xQ', '\\1'),
+        ('(STM32U5....).xQ', '\\1'),
         ('(STM32......).x', '\\1'),
     ]
 
@@ -1074,16 +1075,17 @@ def parse_chips():
             core['dma_channels'] = chs
 
             # Process peripheral - DMA channel associations
-            for pname, p in peris.items():
-                if (peri_chs := dma_channels[chip_dma]['peripherals'].get(pname)) is not None:
-                    p['dma_channels'] = {
-                        req: [
-                            ch
-                            for ch in req_chs
-                            if ('channel' not in ch) or ch['channel'] in chs
-                        ]
-                        for req, req_chs in peri_chs.items()
-                    }
+            if chip_dma is not None:
+                for pname, p in peris.items():
+                    if (peri_chs := dma_channels[chip_dma]['peripherals'].get(pname)) is not None:
+                        p['dma_channels'] = {
+                            req: [
+                                ch
+                                for ch in req_chs
+                                if ('channel' not in ch) or ch['channel'] in chs
+                            ]
+                            for req, req_chs in peri_chs.items()
+                        }
 
         # remove all pins from the root of the chip before emitting.
         del chip['pins']
