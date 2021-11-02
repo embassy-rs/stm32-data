@@ -148,6 +148,8 @@ def parse_value(val, defines):
     val = val.strip()
     if val == '':
         return 0
+    if m := re.match('(0([1-9][0-9]*)(U))', val):
+        return int(m.group(2), 10)
     if m := re.match('((0x[0-9a-fA-F]+|\\d+))(|u|ul|U|UL)$', val):
         return int(m.group(1), 0)
     if m := re.match('([0-9A-Za-z_]+)$', val):
@@ -159,6 +161,8 @@ def parse_value(val, defines):
         return parse_value(m.group(1), defines)
     # if m := re.match('\\*?\\(u?int(8|16|32|64)_t\\ *)(.*)$', val):
     #    return parse_value(m.group(1), defines)
+    if m := re.match('(.*)/(.*)$', val):
+        return parse_value(m.group(1), defines) / parse_value(m.group(2), defines)
     if m := re.match('(.*)<<(.*)$', val):
         return (parse_value(m.group(1), defines) << parse_value(m.group(2), defines)) & 0xFFFFFFFF
     if m := re.match('(.*)>>(.*)$', val):
@@ -350,15 +354,16 @@ perimap = [
     ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
     ('.*:DCMI:cci_v2_0', 'dcmi_v1/DCMI'),
-    ('STM32F0.*:SYS:.*', 'syscfg_f0/SYSCFG'),
-    ('STM32F4.*:SYS:.*', 'syscfg_f4/SYSCFG'),
-    ('STM32F7.*:SYS:.*', 'syscfg_f7/SYSCFG'),
-    ('STM32L4.*:SYS:.*', 'syscfg_l4/SYSCFG'),
-    ('STM32L0.*:SYS:.*', 'syscfg_l0/SYSCFG'),
-    ('STM32L1.*:SYS:.*', 'syscfg_l1/SYSCFG'),
-    ('STM32H7.*:SYS:.*', 'syscfg_h7/SYSCFG'),
-    ('STM32G0.*:SYS:.*', 'syscfg_g0/SYSCFG'),
-    ('STM32WB.*:SYS:.*', 'syscfg_wb/SYSCFG'),
+    ('STM32F0.*:SYS:.*',  'syscfg_f0/SYSCFG'),
+    ('STM32F4.*:SYS:.*',  'syscfg_f4/SYSCFG'),
+    ('STM32F7.*:SYS:.*',  'syscfg_f7/SYSCFG'),
+    ('STM32L4.*:SYS:.*',  'syscfg_l4/SYSCFG'),
+    ('STM32L0.*:SYS:.*',  'syscfg_l0/SYSCFG'),
+    ('STM32L1.*:SYS:.*',  'syscfg_l1/SYSCFG'),
+    ('STM32G0.*:SYS:.*',  'syscfg_g0/SYSCFG'),
+    ('STM32H7.*:SYS:.*',  'syscfg_h7/SYSCFG'),
+    ('STM32U5.*:SYS:.*',  'syscfg_u5/SYSCFG'),
+    ('STM32WB.*:SYS:.*',  'syscfg_wb/SYSCFG'),
     ('STM32WL5.*:SYS:.*', 'syscfg_wl5/SYSCFG'),
     ('STM32WLE.*:SYS:.*', 'syscfg_wle/SYSCFG'),
 
@@ -392,6 +397,7 @@ perimap = [
     ('STM32L1.*:RCC:.*', 'rcc_l1/RCC'),
     ('STM32L4.*:RCC:.*', 'rcc_l4/RCC'),
     ('STM32L5.*:RCC:.*', 'rcc_l5/RCC'),
+    ('STM32U5.*:RCC:.*', 'rcc_u5/RCC'),
     ('STM32WB.*:RCC:.*', 'rcc_wb/RCC'),
     ('STM32WL5.*:RCC:.*', 'rcc_wl5/RCC'),
     ('STM32WLE.*:RCC:.*', 'rcc_wle/RCC'),
@@ -401,6 +407,7 @@ perimap = [
     ('STM32L5.*:EXTI:.*', 'exti_l5/EXTI'),
     ('STM32G0.*:EXTI:.*', 'exti_g0/EXTI'),
     ('STM32H7.*:EXTI:.*', 'exti_h7/EXTI'),
+    ('STM32U5.*:EXTI:.*', 'exti_u5/EXTI'),
     ('STM32WB.*:EXTI:.*', 'exti_w/EXTI'),
     ('STM32WL5.*:EXTI:.*', 'exti_w/EXTI'),
     ('STM32WLE.*:EXTI:.*', 'exti_wle/EXTI'),
@@ -414,6 +421,7 @@ perimap = [
     ('.*:STM32F4_pwr_v1_0', 'pwr_f4/PWR'),
     ('.*:STM32F7_pwr_v1_0', 'pwr_f7/PWR'),
     ('.*:STM32L1_pwr_v1_0', 'pwr_l1/PWR'),
+    ('.*:STM32U5_pwr_v1_0', 'pwr_u5/PWR'),
     ('.*:STM32WL_pwr_v1_0', 'pwr_wl5/PWR'),
     ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
     ('.*:STM32F0_flash_v1_0', 'flash_f0/FLASH'),
@@ -442,6 +450,7 @@ perimap = [
     ('.*:STM32L0_dbgmcu_v1_0', 'dbgmcu_l0/DBGMCU'),
     ('.*:STM32L1_dbgmcu_v1_0', 'dbgmcu_l1/DBGMCU'),
     ('.*:STM32L4_dbgmcu_v1_0', 'dbgmcu_l4/DBGMCU'),
+    ('.*:STM32U5_dbgmcu_v1_0', 'dbgmcu_u5/DBGMCU'),
     ('.*:STM32WB_dbgmcu_v1_0', 'dbgmcu_wb/DBGMCU'),
     ('.*:STM32WL_dbgmcu_v1_0', 'dbgmcu_wl/DBGMCU'),
 
@@ -581,6 +590,7 @@ def chip_name_from_package_name(x):
         ('(STM32L5....).x[PQ]', '\\1'),
         ('(STM32L0....).xS', '\\1'),
         ('(STM32H7....).xQ', '\\1'),
+        ('(STM32U5....).xQ', '\\1'),
         ('(STM32......).x', '\\1'),
     ]
 
@@ -1070,16 +1080,17 @@ def parse_chips():
             core['dma_channels'] = chs
 
             # Process peripheral - DMA channel associations
-            for pname, p in peris.items():
-                if (peri_chs := dma_channels[chip_dma]['peripherals'].get(pname)) is not None:
-                    p['dma_channels'] = {
-                        req: [
-                            ch
-                            for ch in req_chs
-                            if ('channel' not in ch) or ch['channel'] in chs
-                        ]
-                        for req, req_chs in peri_chs.items()
-                    }
+            if chip_dma is not None:
+                for pname, p in peris.items():
+                    if (peri_chs := dma_channels[chip_dma]['peripherals'].get(pname)) is not None:
+                        p['dma_channels'] = {
+                            req: [
+                                ch
+                                for ch in req_chs
+                                if ('channel' not in ch) or ch['channel'] in chs
+                            ]
+                            for req, req_chs in peri_chs.items()
+                        }
 
         # remove all pins from the root of the chip before emitting.
         del chip['pins']
