@@ -195,6 +195,7 @@ cores:
       kind: CORDIC:cordic1_v1_0
       interrupts:
         GLOBAL: CORDIC
+      clock: AHB2
       dma_channels:
         READ:
         - dmamux: DMAMUX1
@@ -341,6 +342,7 @@ cores:
       kind: DTS:dts_v1_0
       interrupts:
         GLOBAL: DTS
+      clock: APB4
     EXTI:
       address: 0x58000000
       kind: EXTI
@@ -391,6 +393,7 @@ cores:
       kind: FMAC:matrix1_v1_0
       interrupts:
         GLOBAL: FMAC
+      clock: AHB2
       dma_channels:
         READ:
         - dmamux: DMAMUX1
@@ -735,10 +738,12 @@ cores:
       - pin: PA12
         signal: R5
         af: 14
-      - pin: PA15(JTDI)
+      - pin: PA15
         signal: B6
-      - pin: PA15(JTDI)
+        af: 14
+      - pin: PA15
         signal: R3
+        af: 9
       - pin: PC10
         signal: B1
         af: 10
@@ -805,6 +810,7 @@ cores:
       kind: OCTOSPI:octospi_v2_1H7AB
       interrupts:
         GLOBAL: OCTOSPI2
+      clock: AHB3
     OCTOSPIM:
       address: 0x5200b400
       kind: OCTOSPIM:octospi_v2_1H7AB
@@ -959,6 +965,8 @@ cores:
         signal: WKUP1
       - pin: PA2
         signal: WKUP2
+      - pin: PA5
+        signal: NDSTOP2
       - pin: PB7
         signal: PVD_IN
     RCC:
@@ -1082,10 +1090,12 @@ cores:
       - pin: PC7
         signal: D7
         af: 10
-      - pin: PB3(JTDO/TRACESWO)
+      - pin: PB3
         signal: D2
-      - pin: PB4(NJTRST)
+        af: 9
+      - pin: PB4
         signal: D3
+        af: 9
       - pin: PB8
         signal: D4
         af: 10
@@ -1113,12 +1123,15 @@ cores:
       - pin: PA7
         signal: MOSI
         af: 5
-      - pin: PA15(JTDI)
+      - pin: PA15
         signal: NSS
-      - pin: PB3(JTDO/TRACESWO)
+        af: 5
+      - pin: PB3
         signal: SCK
-      - pin: PB4(NJTRST)
+        af: 5
+      - pin: PB4
         signal: MISO
+        af: 5
       - pin: PB5
         signal: MOSI
         af: 5
@@ -1164,8 +1177,9 @@ cores:
       - pin: PA12
         signal: SCK
         af: 5
-      - pin: PB4(NJTRST)
+      - pin: PB4
         signal: NSS
+        af: 7
       - pin: PB9
         signal: NSS
         af: 5
@@ -1190,8 +1204,9 @@ cores:
       - pin: PB2
         signal: MOSI
         af: 7
-      - pin: PA15(JTDI)
+      - pin: PA15
         signal: NSS
+        af: 6
       - pin: PC10
         signal: SCK
         af: 6
@@ -1201,10 +1216,12 @@ cores:
       - pin: PC12
         signal: MOSI
         af: 6
-      - pin: PB3(JTDO/TRACESWO)
+      - pin: PB3
         signal: SCK
-      - pin: PB4(NJTRST)
+        af: 6
+      - pin: PB4
         signal: MISO
+        af: 6
       - pin: PB5
         signal: MOSI
         af: 7
@@ -1238,15 +1255,18 @@ cores:
       - pin: PA7
         signal: MOSI
         af: 8
-      - pin: PA15(JTDI)
+      - pin: PA15
         signal: NSS
+        af: 7
       - pin: PC12
         signal: SCK
         af: 5
-      - pin: PB3(JTDO/TRACESWO)
+      - pin: PB3
         signal: SCK
-      - pin: PB4(NJTRST)
+        af: 8
+      - pin: PB4
         signal: MISO
+        af: 8
       - pin: PB5
         signal: MOSI
         af: 8
@@ -1461,8 +1481,9 @@ cores:
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       pins:
-      - pin: PB4(NJTRST)
+      - pin: PB4
         signal: BKIN
+        af: 1
       - pin: PB6
         signal: CH1N
         af: 1
@@ -1538,12 +1559,15 @@ cores:
       - pin: PB10
         signal: CH3
         af: 1
-      - pin: PA15(JTDI)
+      - pin: PA15
         signal: CH1
-      - pin: PA15(JTDI)
+        af: 1
+      - pin: PA15
         signal: ETR
-      - pin: PB3(JTDO/TRACESWO)
+        af: 1
+      - pin: PB3
         signal: CH2
+        af: 1
       interrupts:
         BRK: TIM2
         COM: TIM2
@@ -1579,6 +1603,7 @@ cores:
         COM: TIM23
         TRG: TIM23
         UP: TIM23
+      clock: APB1
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -1603,13 +1628,15 @@ cores:
       kind: TIM1_8H7:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       pins:
-      - pin: PB3(JTDO/TRACESWO)
+      - pin: PB3
         signal: ETR
+        af: 14
       interrupts:
         BRK: TIM24
         COM: TIM24
         TRG: TIM24
         UP: TIM24
+      clock: APB1
       dma_channels:
         CH1:
         - dmamux: DMAMUX1
@@ -1658,8 +1685,9 @@ cores:
       - pin: PD2
         signal: ETR
         af: 2
-      - pin: PB4(NJTRST)
+      - pin: PB4
         signal: CH1
+        af: 2
       - pin: PB5
         signal: CH2
         af: 2
@@ -1904,10 +1932,12 @@ cores:
       - pin: PA12
         signal: TX
         af: 6
-      - pin: PA15(JTDI)
+      - pin: PA15
         signal: DE
-      - pin: PA15(JTDI)
+        af: 8
+      - pin: PA15
         signal: RTS
+        af: 8
       - pin: PC10
         signal: TX
         af: 8
@@ -1973,12 +2003,15 @@ cores:
       - pin: PA8
         signal: RX
         af: 11
-      - pin: PA15(JTDI)
+      - pin: PA15
         signal: TX
-      - pin: PB3(JTDO/TRACESWO)
+        af: 11
+      - pin: PB3
         signal: RX
-      - pin: PB4(NJTRST)
+        af: 11
+      - pin: PB4
         signal: TX
+        af: 11
       interrupts:
         GLOBAL: UART7
       clock: APB1
