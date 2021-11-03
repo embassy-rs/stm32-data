@@ -1,5 +1,20 @@
 ---
 block/ETH:
+  description: "Ethernet Peripheral"
+  items:
+    - name: ETHERNET_MAC
+      description: "Ethernet: media access control (MAC)"
+      byte_offset: 0
+      block: ETHERNET_MAC
+    - name: ETHERNET_PTP
+      description: "Ethernet: Precision Time Protocol (PTP)"
+      byte_offset: 1792
+      block: ETHERNET_PTP
+    - name: ETHERNET_DMA
+      description: "Ethernet: DMA mode register (DMA)"
+      byte_offset: 4096
+      block: ETHERNET_DMA
+block/ETHERNET_MAC:
   description: 'Ethernet: media access control (MAC)'
   items:
   - byte_offset: 0
@@ -34,6 +49,9 @@ block/ETH:
     description: Ethernet MAC VLAN tag register
     fieldset: MACVLANTR
     name: MACVLANTR
+  - byte_offset: 40
+    description: Ethernet MAC remote wakeup frame filter register
+    name: MACRWUFFR
   - byte_offset: 44
     description: Ethernet MAC PMT control and status register
     fieldset: MACPMTCSR
@@ -83,9 +101,518 @@ block/ETH:
     description: Ethernet MAC address 3 low register
     fieldset: MACA3LR
     name: MACA3LR
-  - byte_offset: 96
-    description: Ethernet MAC remote wakeup frame filter register
-    name: MACRWUFFER
+  - byte_offset: 256
+    description: Ethernet MMC control register
+    fieldset: MMCCR
+    name: MMCCR
+  - byte_offset: 260
+    description: Ethernet MMC receive interrupt register
+    fieldset: MMCRIR
+    name: MMCRIR
+  - access: Read
+    byte_offset: 264
+    description: Ethernet MMC transmit interrupt register
+    fieldset: MMCTIR
+    name: MMCTIR
+  - byte_offset: 268
+    description: Ethernet MMC receive interrupt mask register
+    fieldset: MMCRIMR
+    name: MMCRIMR
+  - byte_offset: 272
+    description: Ethernet MMC transmit interrupt mask register
+    fieldset: MMCTIMR
+    name: MMCTIMR
+  - access: Read
+    byte_offset: 332
+    description: Ethernet MMC transmitted good frames after a single collision counter
+    fieldset: MMCTGFSCCR
+    name: MMCTGFSCCR
+  - access: Read
+    byte_offset: 336
+    description: Ethernet MMC transmitted good frames after more than a single collision
+    fieldset: MMCTGFMSCCR
+    name: MMCTGFMSCCR
+  - access: Read
+    byte_offset: 360
+    description: Ethernet MMC transmitted good frames counter register
+    fieldset: MMCTGFCR
+    name: MMCTGFCR
+  - access: Read
+    byte_offset: 404
+    description: Ethernet MMC received frames with CRC error counter register
+    fieldset: MMCRFCECR
+    name: MMCRFCECR
+  - access: Read
+    byte_offset: 408
+    description: Ethernet MMC received frames with alignment error counter register
+    fieldset: MMCRFAECR
+    name: MMCRFAECR
+  - access: Read
+    byte_offset: 452
+    description: MMC received good unicast frames counter register
+    fieldset: MMCRGUFCR
+    name: MMCRGUFCR
+fieldset/MACA0HR:
+  description: Ethernet MAC address 0 high register
+  fields:
+    - bit_offset: 0
+      bit_size: 16
+      description: MAC address0 high
+      name: MACA0H
+    - bit_offset: 31
+      bit_size: 1
+      description: Always 1
+      name: MO
+fieldset/MACA0LR:
+  description: Ethernet MAC address 0 low register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: '0'
+      name: MACA0L
+fieldset/MACA1HR:
+  description: Ethernet MAC address 1 high register
+  fields:
+    - bit_offset: 0
+      bit_size: 16
+      description: MACA1H
+      name: MACA1H
+    - bit_offset: 24
+      bit_size: 6
+      description: MBC
+      name: MBC
+    - bit_offset: 30
+      bit_size: 1
+      description: SA
+      enum: MACAHR_SA
+      name: SA
+    - bit_offset: 31
+      bit_size: 1
+      description: AE
+      enum: MACAHR_AE
+      name: AE
+fieldset/MACA1LR:
+  description: Ethernet MAC address1 low register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: MACA1LR
+      name: MACA1L
+fieldset/MACA2HR:
+  description: Ethernet MAC address 2 high register
+  fields:
+    - bit_offset: 0
+      bit_size: 16
+      description: MAC2AH
+      name: MACA2H
+    - bit_offset: 24
+      bit_size: 6
+      description: MBC
+      name: MBC
+    - bit_offset: 30
+      bit_size: 1
+      description: SA
+      enum: MACAHR_SA
+      name: SA
+    - bit_offset: 31
+      bit_size: 1
+      description: AE
+      enum: MACAHR_AE
+      name: AE
+fieldset/MACA2LR:
+  description: Ethernet MAC address 2 low register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: MACA2L
+      name: MACA2L
+fieldset/MACA3HR:
+  description: Ethernet MAC address 3 high register
+  fields:
+    - bit_offset: 0
+      bit_size: 16
+      description: MACA3H
+      name: MACA3H
+    - bit_offset: 24
+      bit_size: 6
+      description: MBC
+      name: MBC
+    - bit_offset: 30
+      bit_size: 1
+      description: SA
+      enum: MACAHR_SA
+      name: SA
+    - bit_offset: 31
+      bit_size: 1
+      description: AE
+      enum: MACAHR_AE
+      name: AE
+fieldset/MACA3LR:
+  description: Ethernet MAC address 3 low register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: MBCA3L
+      name: MACA3L
+fieldset/MACCR:
+  description: Ethernet MAC configuration register
+  fields:
+    - bit_offset: 2
+      bit_size: 1
+      description: Receiver enable
+      name: RE
+    - bit_offset: 3
+      bit_size: 1
+      description: Transmitter enable
+      name: TE
+    - bit_offset: 4
+      bit_size: 1
+      description: Deferral check
+      enum: DC
+      name: DC
+    - bit_offset: 5
+      bit_size: 2
+      description: Back-off limit
+      enum: BL
+      name: BL
+    - bit_offset: 7
+      bit_size: 1
+      description: Automatic pad/CRC stripping
+      enum: APCS
+      name: APCS
+    - bit_offset: 9
+      bit_size: 1
+      description: Retry disable
+      enum: RD
+      name: RD
+    - bit_offset: 10
+      bit_size: 1
+      description: IPv4 checksum offload
+      enum: IPCO
+      name: IPCO
+    - bit_offset: 11
+      bit_size: 1
+      description: Duplex mode
+      enum: DM
+      name: DM
+    - bit_offset: 12
+      bit_size: 1
+      description: Loopback mode
+      enum: LM
+      name: LM
+    - bit_offset: 13
+      bit_size: 1
+      description: Receive own disable
+      enum: ROD
+      name: ROD
+    - bit_offset: 14
+      bit_size: 1
+      description: Fast Ethernet speed
+      enum: FES
+      name: FES
+    - bit_offset: 16
+      bit_size: 1
+      description: Carrier sense disable
+      enum: CSD
+      name: CSD
+    - bit_offset: 17
+      bit_size: 3
+      description: Interframe gap
+      enum: IFG
+      name: IFG
+    - bit_offset: 22
+      bit_size: 1
+      description: Jabber disable
+      enum: JD
+      name: JD
+    - bit_offset: 23
+      bit_size: 1
+      description: Watchdog disable
+      enum: WD
+      name: WD
+    - bit_offset: 25
+      bit_size: 1
+      description: CRC stripping for type frames
+      enum: CSTF
+      name: CSTF
+fieldset/MACDBGR:
+  description: Ethernet MAC debug register
+  fields:
+    - bit_offset: 0
+      bit_size: 1
+      description: MAC MII receive protocol engine active
+      name: MMRPEA
+    - bit_offset: 1
+      bit_size: 2
+      description: MAC small FIFO read/write controllers status
+      name: MSFRWCS
+    - bit_offset: 4
+      bit_size: 1
+      description: Rx FIFO write controller active
+      name: RFWRA
+    - bit_offset: 5
+      bit_size: 2
+      description: Rx FIFO read controller status
+      name: RFRCS
+    - bit_offset: 8
+      bit_size: 2
+      description: Rx FIFO fill level
+      name: RFFL
+    - bit_offset: 16
+      bit_size: 1
+      description: MAC MII transmit engine active
+      name: MMTEA
+    - bit_offset: 17
+      bit_size: 2
+      description: MAC transmit frame controller status
+      name: MTFCS
+    - bit_offset: 19
+      bit_size: 1
+      description: MAC transmitter in pause
+      name: MTP
+    - bit_offset: 20
+      bit_size: 2
+      description: Tx FIFO read status
+      name: TFRS
+    - bit_offset: 22
+      bit_size: 1
+      description: Tx FIFO write active
+      name: TFWA
+    - bit_offset: 24
+      bit_size: 1
+      description: Tx FIFO not empty
+      name: TFNE
+    - bit_offset: 25
+      bit_size: 1
+      description: Tx FIFO full
+      name: TFF
+fieldset/MACFCR:
+  description: Ethernet MAC flow control register
+  fields:
+    - bit_offset: 0
+      bit_size: 1
+      description: Flow control busy/back pressure activate
+      enum: FCB
+      name: FCB
+    - bit_offset: 1
+      bit_size: 1
+      description: Transmit flow control enable
+      enum: TFCE
+      name: TFCE
+    - bit_offset: 2
+      bit_size: 1
+      description: Receive flow control enable
+      enum: RFCE
+      name: RFCE
+    - bit_offset: 3
+      bit_size: 1
+      description: Unicast pause frame detect
+      enum: UPFD
+      name: UPFD
+    - bit_offset: 4
+      bit_size: 2
+      description: Pause low threshold
+      enum: PLT
+      name: PLT
+    - bit_offset: 7
+      bit_size: 1
+      description: Zero-quanta pause disable
+      enum: ZQPD
+      name: ZQPD
+    - bit_offset: 16
+      bit_size: 16
+      description: Pause time
+      name: PT
+fieldset/MACFFR:
+  description: Ethernet MAC frame filter register
+  fields:
+    - bit_offset: 0
+      bit_size: 1
+      description: Promiscuous mode
+      enum: PM
+      name: PM
+    - bit_offset: 1
+      bit_size: 1
+      description: Hash unicast
+      enum: HU
+      name: HU
+    - bit_offset: 2
+      bit_size: 1
+      description: Hash multicast
+      enum: HM
+      name: HM
+    - bit_offset: 3
+      bit_size: 1
+      description: Destination address unique filtering
+      enum: DAIF
+      name: DAIF
+    - bit_offset: 4
+      bit_size: 1
+      description: Pass all multicast
+      enum: PAM
+      name: PAM
+    - bit_offset: 5
+      bit_size: 1
+      description: Broadcast frames disable
+      enum: BFD
+      name: BFD
+    - bit_offset: 6
+      bit_size: 2
+      description: Pass control frames
+      enum: PCF
+      name: PCF
+    - bit_offset: 7
+      bit_size: 1
+      description: Source address inverse filtering
+      enum: SAIF
+      name: SAIF
+    - bit_offset: 8
+      bit_size: 1
+      description: Source address filter
+      enum: SAF
+      name: SAF
+    - bit_offset: 9
+      bit_size: 1
+      description: Hash or perfect filter
+      enum: HPF
+      name: HPF
+    - bit_offset: 31
+      bit_size: 1
+      description: Receive all
+      enum: RA
+      name: RA
+fieldset/MACHTHR:
+  description: Ethernet MAC hash table high register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Upper 32 bits of hash table
+      name: HTH
+fieldset/MACHTLR:
+  description: Ethernet MAC hash table low register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Lower 32 bits of hash table
+      name: HTL
+fieldset/MACIMR:
+  description: Ethernet MAC interrupt mask register
+  fields:
+    - bit_offset: 3
+      bit_size: 1
+      description: PMT interrupt mask
+      enum: PMTIM
+      name: PMTIM
+    - bit_offset: 9
+      bit_size: 1
+      description: Time stamp trigger interrupt mask
+      enum: TSTIM
+      name: TSTIM
+fieldset/MACMIIAR:
+  description: Ethernet MAC MII address register
+  fields:
+    - bit_offset: 0
+      bit_size: 1
+      description: MII busy
+      enum: MB_progress
+      name: MB
+    - bit_offset: 1
+      bit_size: 1
+      description: MII write
+      enum: MW
+      name: MW
+    - bit_offset: 2
+      bit_size: 3
+      description: Clock range
+      enum: CR
+      name: CR
+    - bit_offset: 6
+      bit_size: 5
+      description: MII register - select the desired MII register in the PHY device
+      name: MR
+    - bit_offset: 11
+      bit_size: 5
+      description: PHY address - select which of possible 32 PHYs is being accessed
+      name: PA
+fieldset/MACMIIDR:
+  description: Ethernet MAC MII data register
+  fields:
+    - bit_offset: 0
+      bit_size: 16
+      description: MII data read from/written to the PHY
+      name: MD
+fieldset/MACPMTCSR:
+  description: Ethernet MAC PMT control and status register
+  fields:
+    - bit_offset: 0
+      bit_size: 1
+      description: Power down
+      enum: PD
+      name: PD
+    - bit_offset: 1
+      bit_size: 1
+      description: Magic packet enable
+      enum: MPE
+      name: MPE
+    - bit_offset: 2
+      bit_size: 1
+      description: Wakeup frame enable
+      enum: WFE
+      name: WFE
+    - bit_offset: 5
+      bit_size: 1
+      description: Magic packet received
+      name: MPR
+    - bit_offset: 6
+      bit_size: 1
+      description: Wakeup frame received
+      name: WFR
+    - bit_offset: 9
+      bit_size: 1
+      description: Global unicast
+      enum: GU
+      name: GU
+    - bit_offset: 31
+      bit_size: 1
+      description: Wakeup frame filter register pointer reset
+      enum: WFFRPR
+      name: WFFRPR
+fieldset/MACSR:
+  description: Ethernet MAC interrupt status register
+  fields:
+    - bit_offset: 3
+      bit_size: 1
+      description: PMT status
+      name: PMTS
+    - bit_offset: 4
+      bit_size: 1
+      description: MMC status
+      name: MMCS
+    - bit_offset: 5
+      bit_size: 1
+      description: MMC receive status
+      name: MMCRS
+    - bit_offset: 6
+      bit_size: 1
+      description: MMC transmit status
+      name: MMCTS
+    - bit_offset: 9
+      bit_size: 1
+      description: Time stamp trigger status
+      name: TSTS
+fieldset/MACVLANTR:
+  description: Ethernet MAC VLAN tag register
+  fields:
+    - bit_offset: 0
+      bit_size: 16
+      description: VLAN tag identifier (for receive frames)
+      name: VLANTI
+    - bit_offset: 16
+      bit_size: 1
+      description: 12-bit VLAN tag comparison
+      enum: VLANTC
+      name: VLANTC
+
 enum/APCS:
   bit_size: 1
   variants:
@@ -318,7 +845,7 @@ enum/MACAHR_SA:
   - description: This address is used for comparison with SA fields of received frames
     name: Source
     value: 1
-enum/MB:
+enum/MB_progress:
   bit_size: 1
   variants:
   - description: This bit is set to 1 by the application to indicate that a read or
@@ -561,465 +1088,1167 @@ enum/ZQPD:
   - description: Automatic generation of zero-quanta pause control frames is disabled
     name: Disabled
     value: 1
-fieldset/MACA0HR:
-  description: Ethernet MAC address 0 high register
+enum/CounterReset:
+  bit_size: 1
+  variants:
+    - description: Reset all counters. Cleared automatically
+      name: Reset
+      value: 1
+enum/CSR:
+  bit_size: 1
+  variants:
+    - description: Counters roll over to zero after reaching the maximum value
+      name: Disabled
+      value: 0
+    - description: Counters do not roll over to zero after reaching the maximum value
+      name: Enabled
+      value: 1
+enum/MCF:
+  bit_size: 1
+  variants:
+    - description: All MMC counters update normally
+      name: Unfrozen
+      value: 0
+    - description: All MMC counters frozen to their current value
+      name: Frozen
+      value: 1
+enum/MCFHP:
+  bit_size: 1
+  variants:
+    - description: When MCP is set, MMC counters are preset to almost-half value 0x7FFF_FFF0
+      name: AlmostHalf
+      value: 0
+    - description: When MCP is set, MMC counters are preset to almost-full value 0xFFFF_FFF0
+      name: AlmostFull
+      value: 1
+enum/MCP:
+  bit_size: 1
+  variants:
+    - description: MMC counters will be preset to almost full or almost half. Cleared
+        automatically
+      name: Preset
+      value: 1
+enum/RFAEM:
+  bit_size: 1
+  variants:
+    - description: Received-alignment-error counter half-full interrupt enabled
+      name: Unmasked
+      value: 0
+    - description: Received-alignment-error counter half-full interrupt disabled
+      name: Masked
+      value: 1
+enum/RFCEM:
+  bit_size: 1
+  variants:
+    - description: Received-crc-error counter half-full interrupt enabled
+      name: Unmasked
+      value: 0
+    - description: Received-crc-error counter half-full interrupt disabled
+      name: Masked
+      value: 1
+enum/RGUFM:
+  bit_size: 1
+  variants:
+    - description: Received-good-unicast counter half-full interrupt enabled
+      name: Unmasked
+      value: 0
+    - description: Received-good-unicast counter half-full interrupt disabled
+      name: Masked
+      value: 1
+enum/ROR:
+  bit_size: 1
+  variants:
+    - description: MMC counters do not reset on read
+      name: Disabled
+      value: 0
+    - description: MMC counters reset to zero after read
+      name: Enabled
+      value: 1
+enum/TGFM:
+  bit_size: 1
+  variants:
+    - description: Transmitted-good counter half-full interrupt enabled
+      name: Unmasked
+      value: 0
+    - description: Transmitted-good counter half-full interrupt disabled
+      name: Masked
+      value: 1
+enum/TGFMSCM:
+  bit_size: 1
+  variants:
+    - description: Transmitted-good-multiple-collision half-full interrupt enabled
+      name: Unmasked
+      value: 0
+    - description: Transmitted-good-multiple-collision half-full interrupt disabled
+      name: Masked
+      value: 1
+enum/TGFSCM:
+  bit_size: 1
+  variants:
+    - description: Transmitted-good-single-collision half-full interrupt enabled
+      name: Unmasked
+      value: 0
+    - description: Transmitted-good-single-collision half-full interrupt disabled
+      name: Masked
+      value: 1
+fieldset/MMCCR:
+  description: Ethernet MMC control register
   fields:
-  - bit_offset: 0
-    bit_size: 16
-    description: MAC address0 high
-    name: MACA0H
-  - bit_offset: 31
-    bit_size: 1
-    description: Always 1
-    name: MO
-fieldset/MACA0LR:
-  description: Ethernet MAC address 0 low register
+    - bit_offset: 0
+      bit_size: 1
+      description: Counter reset
+      enum: CounterReset
+      name: CR
+    - bit_offset: 1
+      bit_size: 1
+      description: Counter stop rollover
+      enum: CSR
+      name: CSR
+    - bit_offset: 2
+      bit_size: 1
+      description: Reset on read
+      enum: ROR
+      name: ROR
+    - bit_offset: 3
+      bit_size: 1
+      description: MMC counter freeze
+      enum: MCF
+      name: MCF
+    - bit_offset: 4
+      bit_size: 1
+      description: MMC counter preset
+      enum: MCP
+      name: MCP
+    - bit_offset: 5
+      bit_size: 1
+      description: MMC counter Full-Half preset
+      enum: MCFHP
+      name: MCFHP
+fieldset/MMCRFAECR:
+  description: Ethernet MMC received frames with alignment error counter register
   fields:
-  - bit_offset: 0
-    bit_size: 32
-    description: '0'
-    name: MACA0L
-fieldset/MACA1HR:
-  description: Ethernet MAC address 1 high register
+    - bit_offset: 0
+      bit_size: 32
+      description: RFAEC
+      name: RFAEC
+fieldset/MMCRFCECR:
+  description: Ethernet MMC received frames with CRC error counter register
   fields:
-  - bit_offset: 0
-    bit_size: 16
-    description: MACA1H
-    name: MACA1H
-  - bit_offset: 24
-    bit_size: 6
-    description: MBC
-    name: MBC
-  - bit_offset: 30
-    bit_size: 1
-    description: SA
-    enum: MACAHR_SA
-    name: SA
-  - bit_offset: 31
-    bit_size: 1
-    description: AE
-    enum: MACAHR_AE
-    name: AE
-fieldset/MACA1LR:
-  description: Ethernet MAC address1 low register
+    - bit_offset: 0
+      bit_size: 32
+      description: RFCFC
+      name: RFCFC
+fieldset/MMCRGUFCR:
+  description: MMC received good unicast frames counter register
   fields:
-  - bit_offset: 0
-    bit_size: 32
-    description: MACA1LR
-    name: MACA1L
-fieldset/MACA2HR:
-  description: Ethernet MAC address 2 high register
+    - bit_offset: 0
+      bit_size: 32
+      description: RGUFC
+      name: RGUFC
+fieldset/MMCRIMR:
+  description: Ethernet MMC receive interrupt mask register
   fields:
-  - bit_offset: 0
-    bit_size: 16
-    description: MAC2AH
-    name: MACA2H
-  - bit_offset: 24
-    bit_size: 6
-    description: MBC
-    name: MBC
-  - bit_offset: 30
-    bit_size: 1
-    description: SA
-    enum: MACAHR_SA
-    name: SA
-  - bit_offset: 31
-    bit_size: 1
-    description: AE
-    enum: MACAHR_AE
-    name: AE
-fieldset/MACA2LR:
-  description: Ethernet MAC address 2 low register
+    - bit_offset: 5
+      bit_size: 1
+      description: Received frame CRC error mask
+      enum: RFCEM
+      name: RFCEM
+    - bit_offset: 6
+      bit_size: 1
+      description: Received frames alignment error mask
+      enum: RFAEM
+      name: RFAEM
+    - bit_offset: 17
+      bit_size: 1
+      description: Received good Unicast frames mask
+      enum: RGUFM
+      name: RGUFM
+fieldset/MMCRIR:
+  description: Ethernet MMC receive interrupt register
   fields:
-  - bit_offset: 0
-    bit_size: 32
-    description: MACA2L
-    name: MACA2L
-fieldset/MACA3HR:
-  description: Ethernet MAC address 3 high register
+    - bit_offset: 5
+      bit_size: 1
+      description: Received frames CRC error status
+      name: RFCES
+    - bit_offset: 6
+      bit_size: 1
+      description: Received frames alignment error status
+      name: RFAES
+    - bit_offset: 17
+      bit_size: 1
+      description: Received good Unicast frames status
+      name: RGUFS
+fieldset/MMCTGFCR:
+  description: Ethernet MMC transmitted good frames counter register
   fields:
-  - bit_offset: 0
-    bit_size: 16
-    description: MACA3H
-    name: MACA3H
-  - bit_offset: 24
-    bit_size: 6
-    description: MBC
-    name: MBC
-  - bit_offset: 30
-    bit_size: 1
-    description: SA
-    enum: MACAHR_SA
-    name: SA
-  - bit_offset: 31
-    bit_size: 1
-    description: AE
-    enum: MACAHR_AE
-    name: AE
-fieldset/MACA3LR:
-  description: Ethernet MAC address 3 low register
+    - bit_offset: 0
+      bit_size: 32
+      description: HTL
+      name: TGFC
+fieldset/MMCTGFMSCCR:
+  description: Ethernet MMC transmitted good frames after more than a single collision
   fields:
-  - bit_offset: 0
-    bit_size: 32
-    description: MBCA3L
-    name: MACA3L
-fieldset/MACCR:
-  description: Ethernet MAC configuration register
+    - bit_offset: 0
+      bit_size: 32
+      description: TGFMSCC
+      name: TGFMSCC
+fieldset/MMCTGFSCCR:
+  description: Ethernet MMC transmitted good frames after a single collision counter
   fields:
-  - bit_offset: 2
-    bit_size: 1
-    description: Receiver enable
-    enum: RE
-    name: RE
-  - bit_offset: 3
-    bit_size: 1
-    description: Transmitter enable
-    enum: TE
-    name: TE
-  - bit_offset: 4
-    bit_size: 1
-    description: Deferral check
-    enum: DC
-    name: DC
-  - bit_offset: 5
-    bit_size: 2
-    description: Back-off limit
-    enum: BL
-    name: BL
-  - bit_offset: 7
-    bit_size: 1
-    description: Automatic pad/CRC stripping
-    enum: APCS
-    name: APCS
-  - bit_offset: 9
-    bit_size: 1
-    description: Retry disable
-    enum: RD
-    name: RD
-  - bit_offset: 10
-    bit_size: 1
-    description: IPv4 checksum offload
-    enum: IPCO
-    name: IPCO
-  - bit_offset: 11
-    bit_size: 1
-    description: Duplex mode
-    enum: DM
-    name: DM
-  - bit_offset: 12
-    bit_size: 1
-    description: Loopback mode
-    enum: LM
-    name: LM
-  - bit_offset: 13
-    bit_size: 1
-    description: Receive own disable
-    enum: ROD
-    name: ROD
-  - bit_offset: 14
-    bit_size: 1
-    description: Fast Ethernet speed
-    enum: FES
-    name: FES
-  - bit_offset: 16
-    bit_size: 1
-    description: Carrier sense disable
-    enum: CSD
-    name: CSD
-  - bit_offset: 17
-    bit_size: 3
-    description: Interframe gap
-    enum: IFG
-    name: IFG
-  - bit_offset: 22
-    bit_size: 1
-    description: Jabber disable
-    enum: JD
-    name: JD
-  - bit_offset: 23
-    bit_size: 1
-    description: Watchdog disable
-    enum: WD
-    name: WD
-  - bit_offset: 25
-    bit_size: 1
-    description: CRC stripping for type frames
-    enum: CSTF
-    name: CSTF
-fieldset/MACDBGR:
-  description: Ethernet MAC debug register
+    - bit_offset: 0
+      bit_size: 32
+      description: Transmitted good frames single collision counter
+      name: TGFSCC
+fieldset/MMCTIMR:
+  description: Ethernet MMC transmit interrupt mask register
   fields:
-  - bit_offset: 0
-    bit_size: 1
-    description: MAC MII receive protocol engine active
-    name: MMRPEA
-  - bit_offset: 1
-    bit_size: 2
-    description: MAC small FIFO read/write controllers status
-    name: MSFRWCS
-  - bit_offset: 4
-    bit_size: 1
-    description: Rx FIFO write controller active
-    name: RFWRA
-  - bit_offset: 5
-    bit_size: 2
-    description: Rx FIFO read controller status
-    name: RFRCS
-  - bit_offset: 8
-    bit_size: 2
-    description: Rx FIFO fill level
-    name: RFFL
-  - bit_offset: 16
-    bit_size: 1
-    description: MAC MII transmit engine active
-    name: MMTEA
-  - bit_offset: 17
-    bit_size: 2
-    description: MAC transmit frame controller status
-    name: MTFCS
-  - bit_offset: 19
-    bit_size: 1
-    description: MAC transmitter in pause
-    name: MTP
-  - bit_offset: 20
-    bit_size: 2
-    description: Tx FIFO read status
-    name: TFRS
-  - bit_offset: 22
-    bit_size: 1
-    description: Tx FIFO write active
-    name: TFWA
-  - bit_offset: 24
-    bit_size: 1
-    description: Tx FIFO not empty
-    name: TFNE
-  - bit_offset: 25
-    bit_size: 1
-    description: Tx FIFO full
-    name: TFF
-fieldset/MACFCR:
-  description: Ethernet MAC flow control register
+    - bit_offset: 14
+      bit_size: 1
+      description: Transmitted good frames single collision mask
+      enum: TGFSCM
+      name: TGFSCM
+    - bit_offset: 15
+      bit_size: 1
+      description: Transmitted good frames more than single collision mask
+      enum: TGFMSCM
+      name: TGFMSCM
+    - bit_offset: 16
+      bit_size: 1
+      description: Transmitted good frames mask
+      enum: TGFM
+      name: TGFM
+fieldset/MMCTIR:
+  description: Ethernet MMC transmit interrupt register
   fields:
-  - bit_offset: 0
-    bit_size: 1
-    description: Flow control busy/back pressure activate
-    enum: FCB
-    name: FCB
-  - bit_offset: 1
-    bit_size: 1
-    description: Transmit flow control enable
-    enum: TFCE
-    name: TFCE
-  - bit_offset: 2
-    bit_size: 1
-    description: Receive flow control enable
-    enum: RFCE
-    name: RFCE
-  - bit_offset: 3
-    bit_size: 1
-    description: Unicast pause frame detect
-    enum: UPFD
-    name: UPFD
-  - bit_offset: 4
-    bit_size: 2
-    description: Pause low threshold
-    enum: PLT
-    name: PLT
-  - bit_offset: 7
-    bit_size: 1
-    description: Zero-quanta pause disable
-    enum: ZQPD
-    name: ZQPD
-  - bit_offset: 16
-    bit_size: 16
-    description: Pause time
-    name: PT
-fieldset/MACFFR:
-  description: Ethernet MAC frame filter register
+    - bit_offset: 14
+      bit_size: 1
+      description: Transmitted good frames single collision status
+      name: TGFSCS
+    - bit_offset: 15
+      bit_size: 1
+      description: Transmitted good frames more than single collision status
+      name: TGFMSCS
+    - bit_offset: 21
+      bit_size: 1
+      description: Transmitted good frames status
+      name: TGFS
+block/ETHERNET_PTP:
+  description: 'Ethernet: Precision time protocol'
+  items:
+    - byte_offset: 0
+      description: Ethernet PTP time stamp control register
+      fieldset: PTPTSCR
+      name: PTPTSCR
+    - byte_offset: 4
+      description: Ethernet PTP subsecond increment register
+      fieldset: PTPSSIR
+      name: PTPSSIR
+    - access: Read
+      byte_offset: 8
+      description: Ethernet PTP time stamp high register
+      fieldset: PTPTSHR
+      name: PTPTSHR
+    - access: Read
+      byte_offset: 12
+      description: Ethernet PTP time stamp low register
+      fieldset: PTPTSLR
+      name: PTPTSLR
+    - byte_offset: 16
+      description: Ethernet PTP time stamp high update register
+      fieldset: PTPTSHUR
+      name: PTPTSHUR
+    - byte_offset: 20
+      description: Ethernet PTP time stamp low update register
+      fieldset: PTPTSLUR
+      name: PTPTSLUR
+    - byte_offset: 24
+      description: Ethernet PTP time stamp addend register
+      fieldset: PTPTSAR
+      name: PTPTSAR
+    - byte_offset: 28
+      description: Ethernet PTP target time high register
+      fieldset: PTPTTHR
+      name: PTPTTHR
+    - byte_offset: 32
+      description: Ethernet PTP target time low register
+      fieldset: PTPTTLR
+      name: PTPTTLR
+    - access: Read
+      byte_offset: 40
+      description: Ethernet PTP time stamp status register
+      fieldset: PTPTSSR
+      name: PTPTSSR
+    - access: Read
+      byte_offset: 44
+      description: Ethernet PTP PPS control register
+      fieldset: PTPPPSCR
+      name: PTPPPSCR
+fieldset/PTPPPSCR:
+  description: Ethernet PTP PPS control register
   fields:
-  - bit_offset: 0
-    bit_size: 1
-    description: Promiscuous mode
-    enum: PM
-    name: PM
-  - bit_offset: 1
-    bit_size: 1
-    description: Hash unicast
-    enum: HU
-    name: HU
-  - bit_offset: 2
-    bit_size: 1
-    description: Hash multicast
-    enum: HM
-    name: HM
-  - bit_offset: 3
-    bit_size: 1
-    description: Destination address unique filtering
-    enum: DAIF
-    name: DAIF
-  - bit_offset: 4
-    bit_size: 1
-    description: Pass all multicast
-    enum: PAM
-    name: PAM
-  - bit_offset: 5
-    bit_size: 1
-    description: Broadcast frames disable
-    enum: BFD
-    name: BFD
-  - bit_offset: 6
-    bit_size: 2
-    description: Pass control frames
-    enum: PCF
-    name: PCF
-  - bit_offset: 7
-    bit_size: 1
-    description: Source address inverse filtering
-    enum: SAIF
-    name: SAIF
-  - bit_offset: 8
-    bit_size: 1
-    description: Source address filter
-    enum: SAF
-    name: SAF
-  - bit_offset: 9
-    bit_size: 1
-    description: Hash or perfect filter
-    enum: HPF
-    name: HPF
-  - bit_offset: 31
-    bit_size: 1
-    description: Receive all
-    enum: RA
-    name: RA
-fieldset/MACHTHR:
-  description: Ethernet MAC hash table high register
+    - bit_offset: 0
+      bit_size: 1
+      description: TSSO
+      name: TSSO
+    - bit_offset: 1
+      bit_size: 1
+      description: TSTTR
+      name: TSTTR
+fieldset/PTPSSIR:
+  description: Ethernet PTP subsecond increment register
   fields:
-  - bit_offset: 0
-    bit_size: 32
-    description: Upper 32 bits of hash table
-    name: HTH
-fieldset/MACHTLR:
-  description: Ethernet MAC hash table low register
+    - bit_offset: 0
+      bit_size: 8
+      description: STSSI
+      name: STSSI
+fieldset/PTPTSAR:
+  description: Ethernet PTP time stamp addend register
   fields:
-  - bit_offset: 0
-    bit_size: 32
-    description: Lower 32 bits of hash table
-    name: HTL
-fieldset/MACIMR:
-  description: Ethernet MAC interrupt mask register
+    - bit_offset: 0
+      bit_size: 32
+      description: TSA
+      name: TSA
+fieldset/PTPTSCR:
+  description: Ethernet PTP time stamp control register
   fields:
-  - bit_offset: 3
-    bit_size: 1
-    description: PMT interrupt mask
-    enum: PMTIM
-    name: PMTIM
-  - bit_offset: 9
-    bit_size: 1
-    description: Time stamp trigger interrupt mask
-    enum: TSTIM
-    name: TSTIM
-fieldset/MACMIIAR:
-  description: Ethernet MAC MII address register
+    - bit_offset: 0
+      bit_size: 1
+      description: TSE
+      name: TSE
+    - bit_offset: 1
+      bit_size: 1
+      description: TSFCU
+      name: TSFCU
+    - bit_offset: 2
+      bit_size: 1
+      description: TSSTI
+      name: TSSTI
+    - bit_offset: 3
+      bit_size: 1
+      description: TSSTU
+      name: TSSTU
+    - bit_offset: 4
+      bit_size: 1
+      description: TSITE
+      name: TSITE
+    - bit_offset: 5
+      bit_size: 1
+      description: TTSARU
+      name: TTSARU
+    - bit_offset: 8
+      bit_size: 1
+      description: TSSARFE
+      name: TSSARFE
+    - bit_offset: 9
+      bit_size: 1
+      description: TSSSR
+      name: TSSSR
+    - bit_offset: 10
+      bit_size: 1
+      description: TSPTPPSV2E
+      name: TSPTPPSV2E
+    - bit_offset: 11
+      bit_size: 1
+      description: TSSPTPOEFE
+      name: TSSPTPOEFE
+    - bit_offset: 12
+      bit_size: 1
+      description: TSSIPV6FE
+      name: TSSIPV6FE
+    - bit_offset: 13
+      bit_size: 1
+      description: TSSIPV4FE
+      name: TSSIPV4FE
+    - bit_offset: 14
+      bit_size: 1
+      description: TSSEME
+      name: TSSEME
+    - bit_offset: 15
+      bit_size: 1
+      description: TSSMRME
+      name: TSSMRME
+    - bit_offset: 16
+      bit_size: 2
+      description: TSCNT
+      name: TSCNT
+    - bit_offset: 18
+      bit_size: 1
+      description: TSPFFMAE
+      name: TSPFFMAE
+fieldset/PTPTSHR:
+  description: Ethernet PTP time stamp high register
   fields:
-  - bit_offset: 0
-    bit_size: 1
-    description: MII busy
-    enum: MB
-    name: MB
-  - bit_offset: 1
-    bit_size: 1
-    description: MII write
-    enum: MW
-    name: MW
-  - bit_offset: 2
-    bit_size: 3
-    description: Clock range
-    enum: CR
-    name: CR
-  - bit_offset: 6
-    bit_size: 5
-    description: MII register - select the desired MII register in the PHY device
-    name: MR
-  - bit_offset: 11
-    bit_size: 5
-    description: PHY address - select which of possible 32 PHYs is being accessed
-    name: PA
-fieldset/MACMIIDR:
-  description: Ethernet MAC MII data register
+    - bit_offset: 0
+      bit_size: 32
+      description: STS
+      name: STS
+fieldset/PTPTSHUR:
+  description: Ethernet PTP time stamp high update register
   fields:
-  - bit_offset: 0
-    bit_size: 16
-    description: MII data read from/written to the PHY
-    name: MD
-fieldset/MACPMTCSR:
-  description: Ethernet MAC PMT control and status register
+    - bit_offset: 0
+      bit_size: 32
+      description: TSUS
+      name: TSUS
+fieldset/PTPTSLR:
+  description: Ethernet PTP time stamp low register
   fields:
-  - bit_offset: 0
-    bit_size: 1
-    description: Power down
-    enum: PD
-    name: PD
-  - bit_offset: 1
-    bit_size: 1
-    description: Magic packet enable
-    enum: MPE
-    name: MPE
-  - bit_offset: 2
-    bit_size: 1
-    description: Wakeup frame enable
-    enum: WFE
-    name: WFE
-  - bit_offset: 5
-    bit_size: 1
-    description: Magic packet received
-    name: MPR
-  - bit_offset: 6
-    bit_size: 1
-    description: Wakeup frame received
-    name: WFR
-  - bit_offset: 9
-    bit_size: 1
-    description: Global unicast
-    enum: GU
-    name: GU
-  - bit_offset: 31
-    bit_size: 1
-    description: Wakeup frame filter register pointer reset
-    enum: WFFRPR
-    name: WFFRPR
-fieldset/MACSR:
-  description: Ethernet MAC interrupt status register
+    - bit_offset: 0
+      bit_size: 31
+      description: STSS
+      name: STSS
+    - bit_offset: 31
+      bit_size: 1
+      description: STPNS
+      name: STPNS
+fieldset/PTPTSLUR:
+  description: Ethernet PTP time stamp low update register
   fields:
-  - bit_offset: 3
-    bit_size: 1
-    description: PMT status
-    name: PMTS
-  - bit_offset: 4
-    bit_size: 1
-    description: MMC status
-    name: MMCS
-  - bit_offset: 5
-    bit_size: 1
-    description: MMC receive status
-    name: MMCRS
-  - bit_offset: 6
-    bit_size: 1
-    description: MMC transmit status
-    name: MMCTS
-  - bit_offset: 9
-    bit_size: 1
-    description: Time stamp trigger status
-    name: TSTS
-fieldset/MACVLANTR:
-  description: Ethernet MAC VLAN tag register
+    - bit_offset: 0
+      bit_size: 31
+      description: TSUSS
+      name: TSUSS
+    - bit_offset: 31
+      bit_size: 1
+      description: TSUPNS
+      name: TSUPNS
+fieldset/PTPTSSR:
+  description: Ethernet PTP time stamp status register
   fields:
-  - bit_offset: 0
-    bit_size: 16
-    description: VLAN tag identifier (for receive frames)
-    name: VLANTI
-  - bit_offset: 16
-    bit_size: 1
-    description: 12-bit VLAN tag comparison
-    enum: VLANTC
-    name: VLANTC
+    - bit_offset: 0
+      bit_size: 1
+      description: TSSO
+      name: TSSO
+    - bit_offset: 1
+      bit_size: 1
+      description: TSSO
+      name: TSTTR
+fieldset/PTPTTHR:
+  description: Ethernet PTP target time high register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: '0'
+      name: TTSH
+fieldset/PTPTTLR:
+  description: Ethernet PTP target time low register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: TTSL
+      name: TTSL
+block/ETHERNET_DMA:
+  description: 'Ethernet: DMA controller operation'
+  items:
+    - byte_offset: 0
+      description: Ethernet DMA bus mode register
+      fieldset: DMABMR
+      name: DMABMR
+    - byte_offset: 4
+      description: Ethernet DMA transmit poll demand register
+      fieldset: DMATPDR
+      name: DMATPDR
+    - byte_offset: 8
+      description: EHERNET DMA receive poll demand register
+      fieldset: DMARPDR
+      name: DMARPDR
+    - byte_offset: 12
+      description: Ethernet DMA receive descriptor list address register
+      fieldset: DMARDLAR
+      name: DMARDLAR
+    - byte_offset: 16
+      description: Ethernet DMA transmit descriptor list address register
+      fieldset: DMATDLAR
+      name: DMATDLAR
+    - byte_offset: 20
+      description: Ethernet DMA status register
+      fieldset: DMASR
+      name: DMASR
+    - byte_offset: 24
+      description: Ethernet DMA operation mode register
+      fieldset: DMAOMR
+      name: DMAOMR
+    - byte_offset: 28
+      description: Ethernet DMA interrupt enable register
+      fieldset: DMAIER
+      name: DMAIER
+    - byte_offset: 32
+      description: Ethernet DMA missed frame and buffer overflow counter register
+      fieldset: DMAMFBOCR
+      name: DMAMFBOCR
+    - byte_offset: 36
+      description: Ethernet DMA receive status watchdog timer register
+      fieldset: DMARSWTR
+      name: DMARSWTR
+    - access: Read
+      byte_offset: 72
+      description: Ethernet DMA current host transmit descriptor register
+      fieldset: DMACHTDR
+      name: DMACHTDR
+    - access: Read
+      byte_offset: 76
+      description: Ethernet DMA current host receive descriptor register
+      fieldset: DMACHRDR
+      name: DMACHRDR
+    - access: Read
+      byte_offset: 80
+      description: Ethernet DMA current host transmit buffer address register
+      fieldset: DMACHTBAR
+      name: DMACHTBAR
+    - access: Read
+      byte_offset: 84
+      description: Ethernet DMA current host receive buffer address register
+      fieldset: DMACHRBAR
+      name: DMACHRBAR
+enum/AAB:
+  bit_size: 1
+  variants:
+    - description: Bursts are not aligned
+      name: Unaligned
+      value: 0
+    - description: Align bursts to start address LS bits. First burst alignment depends
+        on FB bit
+      name: Aligned
+      value: 1
+enum/DA:
+  bit_size: 1
+  variants:
+    - description: Round-robin with Rx:Tx priority given by PM
+      name: RoundRobin
+      value: 0
+    - description: Rx has priority over Tx
+      name: RxPriority
+      value: 1
+enum/DMABMR_SR:
+  bit_size: 1
+  variants:
+    - description: Reset all MAC subsystem internal registers and logic. Cleared automatically
+      name: Reset
+      value: 1
+enum/DMAOMR_SR:
+  bit_size: 1
+  variants:
+    - description: Reception is stopped after transfer of the current frame
+      name: Stopped
+      value: 0
+    - description: Reception is placed in the Running state
+      name: Started
+      value: 1
+enum/DTCEFD:
+  bit_size: 1
+  variants:
+    - description: Drop frames with errors only in the receive checksum offload engine
+      name: Enabled
+      value: 0
+    - description: Do not drop frames that only have errors in the receive checksum
+        offload engine
+      name: Disabled
+      value: 1
+enum/EDFE:
+  bit_size: 1
+  variants:
+    - description: Normal descriptor format
+      name: Disabled
+      value: 0
+    - description: Enhanced 32-byte descriptor format, required for timestamping and
+        IPv4 checksum offload
+      name: Enabled
+      value: 1
+enum/FB:
+  bit_size: 1
+  variants:
+    - description: AHB uses SINGLE and INCR burst transfers
+      name: Variable
+      value: 0
+    - description: AHB uses only fixed burst transfers
+      name: Fixed
+      value: 1
+enum/FEF:
+  bit_size: 1
+  variants:
+    - description: Rx FIFO drops frames with error status
+      name: Drop
+      value: 0
+    - description: All frames except runt error frames are forwarded to the DMA
+      name: Forward
+      value: 1
+enum/FPM:
+  bit_size: 1
+  variants:
+    - description: PBL values used as-is
+      name: x1
+      value: 0
+    - description: PBL values multiplied by 4
+      name: x4
+      value: 1
+enum/FTF:
+  bit_size: 1
+  variants:
+    - description: Transmit FIFO controller logic is reset to its default values. Cleared
+        automatically
+      name: Flush
+      value: 1
+enum/FUGF:
+  bit_size: 1
+  variants:
+    - description: Rx FIFO drops all frames of less than 64 bytes
+      name: Drop
+      value: 0
+    - description: Rx FIFO forwards undersized frames
+      name: Forward
+      value: 1
+enum/MB:
+  bit_size: 1
+  variants:
+    - description: Fixed burst transfers (INCRx and SINGLE) for burst lengths of 16
+        and below
+      name: Normal
+      value: 0
+    - description: If FB is low, start all bursts greater than 16 with INCR (undefined
+        burst)
+      name: Mixed
+      value: 1
+enum/PBL:
+  bit_size: 6
+  variants:
+    - description: Maximum of 1 beat per DMA transaction
+      name: PBL1
+      value: 1
+    - description: Maximum of 2 beats per DMA transaction
+      name: PBL2
+      value: 2
+    - description: Maximum of 4 beats per DMA transaction
+      name: PBL4
+      value: 4
+    - description: Maximum of 8 beats per DMA transaction
+      name: PBL8
+      value: 8
+    - description: Maximum of 16 beats per DMA transaction
+      name: PBL16
+      value: 16
+    - description: Maximum of 32 beats per DMA transaction
+      name: PBL32
+      value: 32
+enum/PriorityRxOverTx:
+  bit_size: 2
+  variants:
+    - description: RxDMA priority over TxDMA is 1:1
+      name: OneToOne
+      value: 0
+    - description: RxDMA priority over TxDMA is 2:1
+      name: TwoToOne
+      value: 1
+    - description: RxDMA priority over TxDMA is 3:1
+      name: ThreeToOne
+      value: 2
+    - description: RxDMA priority over TxDMA is 4:1
+      name: FourToOne
+      value: 3
+enum/RDP:
+  bit_size: 6
+  variants:
+    - description: 1 beat per RxDMA transaction
+      name: RDP1
+      value: 1
+    - description: 2 beats per RxDMA transaction
+      name: RDP2
+      value: 2
+    - description: 4 beats per RxDMA transaction
+      name: RDP4
+      value: 4
+    - description: 8 beats per RxDMA transaction
+      name: RDP8
+      value: 8
+    - description: 16 beats per RxDMA transaction
+      name: RDP16
+      value: 16
+    - description: 32 beats per RxDMA transaction
+      name: RDP32
+      value: 32
+enum/RPD:
+  bit_size: 32
+  variants:
+    - description: Poll the receive descriptor list
+      name: Poll
+      value: 0
+enum/RPS:
+  bit_size: 3
+  variants:
+    - description: Stopped, reset or Stop Receive command issued
+      name: Stopped
+      value: 0
+    - description: Running, fetching receive transfer descriptor
+      name: RunningFetching
+      value: 1
+    - description: Running, waiting for receive packet
+      name: RunningWaiting
+      value: 3
+    - description: Suspended, receive descriptor unavailable
+      name: Suspended
+      value: 4
+    - description: Running, writing data to host memory buffer
+      name: RunningWriting
+      value: 7
+enum/RSF:
+  bit_size: 1
+  variants:
+    - description: Rx FIFO operates in cut-through mode, subject to RTC bits
+      name: CutThrough
+      value: 0
+    - description: Frames are read from Rx FIFO after complete frame has been written
+      name: StoreForward
+      value: 1
+enum/RTC:
+  bit_size: 2
+  variants:
+    - description: 64 bytes
+      name: RTC64
+      value: 0
+    - description: 32 bytes
+      name: RTC32
+      value: 1
+    - description: 96 bytes
+      name: RTC96
+      value: 2
+    - description: 128 bytes
+      name: RTC128
+      value: 3
+enum/ST:
+  bit_size: 1
+  variants:
+    - description: Transmission is placed in the Stopped state
+      name: Stopped
+      value: 0
+    - description: Transmission is placed in Running state
+      name: Started
+      value: 1
+enum/TPD:
+  bit_size: 32
+  variants:
+    - description: Poll the transmit descriptor list
+      name: Poll
+      value: 0
+enum/TPS:
+  bit_size: 3
+  variants:
+    - description: Stopped, Reset or Stop Transmit command issued
+      name: Stopped
+      value: 0
+    - description: Running, fetching transmit transfer descriptor
+      name: RunningFetching
+      value: 1
+    - description: Running, waiting for status
+      name: RunningWaiting
+      value: 2
+    - description: Running, reading data from host memory buffer
+      name: RunningReading
+      value: 3
+    - description: Suspended, transmit descriptor unavailable or transmit buffer underflow
+      name: Suspended
+      value: 6
+    - description: Running, closing transmit descriptor
+      name: Running
+      value: 7
+enum/TSF:
+  bit_size: 1
+  variants:
+    - description: Transmission starts when the frame size in the Tx FIFO exceeds TTC
+        threshold
+      name: CutThrough
+      value: 0
+    - description: Transmission starts when a full frame is in the Tx FIFO
+      name: StoreForward
+      value: 1
+enum/TTC:
+  bit_size: 3
+  variants:
+    - description: 64 bytes
+      name: TTC64
+      value: 0
+    - description: 128 bytes
+      name: TTC128
+      value: 1
+    - description: 192 bytes
+      name: TTC192
+      value: 2
+    - description: 256 bytes
+      name: TTC256
+      value: 3
+    - description: 40 bytes
+      name: TTC40
+      value: 4
+    - description: 32 bytes
+      name: TTC32
+      value: 5
+    - description: 24 bytes
+      name: TTC24
+      value: 6
+    - description: 16 bytes
+      name: TTC16
+      value: 7
+enum/USP:
+  bit_size: 1
+  variants:
+    - description: PBL value used for both Rx and Tx DMA
+      name: Combined
+      value: 0
+    - description: RxDMA uses RDP value, TxDMA uses PBL value
+      name: Separate
+      value: 1
+fieldset/DMABMR:
+  description: Ethernet DMA bus mode register
+  fields:
+    - bit_offset: 0
+      bit_size: 1
+      description: Software reset
+      name: SR
+    - bit_offset: 1
+      bit_size: 1
+      description: DMA arbitration
+      enum: DA
+      name: DA
+    - bit_offset: 2
+      bit_size: 5
+      description: Descriptor skip length
+      name: DSL
+    - bit_offset: 7
+      bit_size: 1
+      description: Enhanced descriptor format enable
+      enum: EDFE
+      name: EDFE
+    - bit_offset: 8
+      bit_size: 6
+      description: Programmable burst length
+      enum: PBL
+      name: PBL
+    - bit_offset: 14
+      bit_size: 2
+      description: Rx-Tx priority ratio
+      enum: PriorityRxOverTx
+      name: PM
+    - bit_offset: 16
+      bit_size: 1
+      description: Fixed burst
+      enum: FB
+      name: FB
+    - bit_offset: 17
+      bit_size: 6
+      description: Rx DMA PBL
+      enum: RDP
+      name: RDP
+    - bit_offset: 23
+      bit_size: 1
+      description: Use separate PBL
+      enum: USP
+      name: USP
+    - bit_offset: 24
+      bit_size: 1
+      description: 4xPBL mode
+      enum: FPM
+      name: FPM
+    - bit_offset: 25
+      bit_size: 1
+      description: Address-aligned beats
+      enum: AAB
+      name: AAB
+    - bit_offset: 26
+      bit_size: 1
+      description: Mixed burst
+      enum: MB
+      name: MB
+fieldset/DMACHRBAR:
+  description: Ethernet DMA current host receive buffer address register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Host receive buffer address pointer
+      name: HRBAP
+fieldset/DMACHRDR:
+  description: Ethernet DMA current host receive descriptor register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Host receive descriptor address pointer
+      name: HRDAP
+fieldset/DMACHTBAR:
+  description: Ethernet DMA current host transmit buffer address register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Host transmit buffer address pointer
+      name: HTBAP
+fieldset/DMACHTDR:
+  description: Ethernet DMA current host transmit descriptor register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Host transmit descriptor address pointer
+      name: HTDAP
+fieldset/DMAIER:
+  description: Ethernet DMA interrupt enable register
+  fields:
+    - bit_offset: 0
+      bit_size: 1
+      description: Transmit interrupt enable
+      name: TIE
+    - bit_offset: 1
+      bit_size: 1
+      description: Transmit process stopped interrupt enable
+      name: TPSIE
+    - bit_offset: 2
+      bit_size: 1
+      description: Transmit buffer unavailable interrupt enable
+      name: TBUIE
+    - bit_offset: 3
+      bit_size: 1
+      description: Transmit jabber timeout interrupt enable
+      name: TJTIE
+    - bit_offset: 4
+      bit_size: 1
+      description: Receive overflow interrupt enable
+      name: ROIE
+    - bit_offset: 5
+      bit_size: 1
+      description: Transmit underflow interrupt enable
+      name: TUIE
+    - bit_offset: 6
+      bit_size: 1
+      description: Receive interrupt enable
+      name: RIE
+    - bit_offset: 7
+      bit_size: 1
+      description: Receive buffer unavailable interrupt enable
+      name: RBUIE
+    - bit_offset: 8
+      bit_size: 1
+      description: Receive process stopped interrupt enable
+      name: RPSIE
+    - bit_offset: 9
+      bit_size: 1
+      description: Receive watchdog timeout interrupt enable
+      name: RWTIE
+    - bit_offset: 10
+      bit_size: 1
+      description: Early transmit interrupt enable
+      name: ETIE
+    - bit_offset: 13
+      bit_size: 1
+      description: Fatal bus error interrupt enable
+      name: FBEIE
+    - bit_offset: 14
+      bit_size: 1
+      description: Early receive interrupt enable
+      name: ERIE
+    - bit_offset: 15
+      bit_size: 1
+      description: Abnormal interrupt summary enable
+      name: AISE
+    - bit_offset: 16
+      bit_size: 1
+      description: Normal interrupt summary enable
+      name: NISE
+fieldset/DMAMFBOCR:
+  description: Ethernet DMA missed frame and buffer overflow counter register
+  fields:
+    - bit_offset: 0
+      bit_size: 16
+      description: Missed frames by the controller
+      name: MFC
+    - bit_offset: 16
+      bit_size: 1
+      description: Overflow bit for missed frame counter
+      name: OMFC
+    - bit_offset: 17
+      bit_size: 11
+      description: Missed frames by the application
+      name: MFA
+    - bit_offset: 28
+      bit_size: 1
+      description: Overflow bit for FIFO overflow counter
+      name: OFOC
+fieldset/DMAOMR:
+  description: Ethernet DMA operation mode register
+  fields:
+    - bit_offset: 1
+      bit_size: 1
+      description: Start/stop receive
+      enum: DMAOMR_SR
+      name: SR
+    - bit_offset: 2
+      bit_size: 1
+      description: Operate on second frame
+      name: OSF
+    - bit_offset: 3
+      bit_size: 2
+      description: Receive threshold control
+      enum: RTC
+      name: RTC
+    - bit_offset: 6
+      bit_size: 1
+      description: Forward undersized good frames
+      enum: FUGF
+      name: FUGF
+    - bit_offset: 7
+      bit_size: 1
+      description: Forward error frames
+      enum: FEF
+      name: FEF
+    - bit_offset: 13
+      bit_size: 1
+      description: Start/stop transmission
+      enum: ST
+      name: ST
+    - bit_offset: 14
+      bit_size: 3
+      description: Transmit threshold control
+      enum: TTC
+      name: TTC
+    - bit_offset: 20
+      bit_size: 1
+      description: Flush transmit FIFO
+      enum: FTF
+      name: FTF
+    - bit_offset: 21
+      bit_size: 1
+      description: Transmit store and forward
+      enum: TSF
+      name: TSF
+    - bit_offset: 24
+      bit_size: 1
+      description: Disable flushing of received frames
+      name: DFRF
+    - bit_offset: 25
+      bit_size: 1
+      description: Receive store and forward
+      enum: RSF
+      name: RSF
+    - bit_offset: 26
+      bit_size: 1
+      description: Dropping of TCP/IP checksum error frames disable
+      enum: DTCEFD
+      name: DTCEFD
+fieldset/DMARDLAR:
+  description: Ethernet DMA receive descriptor list address register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Start of receive list
+      name: SRL
+fieldset/DMARPDR:
+  description: EHERNET DMA receive poll demand register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Receive poll demand
+      enum: RPD
+      name: RPD
+fieldset/DMARSWTR:
+  description: Ethernet DMA receive status watchdog timer register
+  fields:
+    - bit_offset: 0
+      bit_size: 8
+      description: Receive status watchdog timer count
+      name: RSWTC
+fieldset/DMASR:
+  description: Ethernet DMA status register
+  fields:
+    - bit_offset: 0
+      bit_size: 1
+      description: Transmit status
+      name: TS
+    - bit_offset: 1
+      bit_size: 1
+      description: Transmit process stopped status
+      name: TPSS
+    - bit_offset: 2
+      bit_size: 1
+      description: Transmit buffer unavailable status
+      name: TBUS
+    - bit_offset: 3
+      bit_size: 1
+      description: Transmit jabber timeout status
+      name: TJTS
+    - bit_offset: 4
+      bit_size: 1
+      description: Receive overflow status
+      name: ROS
+    - bit_offset: 5
+      bit_size: 1
+      description: Transmit underflow status
+      name: TUS
+    - bit_offset: 6
+      bit_size: 1
+      description: Receive status
+      name: RS
+    - bit_offset: 7
+      bit_size: 1
+      description: Receive buffer unavailable status
+      name: RBUS
+    - bit_offset: 8
+      bit_size: 1
+      description: Receive process stopped status
+      name: RPSS
+    - bit_offset: 9
+      bit_size: 1
+      description: PWTS
+      name: PWTS
+    - bit_offset: 10
+      bit_size: 1
+      description: Early transmit status
+      name: ETS
+    - bit_offset: 13
+      bit_size: 1
+      description: Fatal bus error status
+      name: FBES
+    - bit_offset: 14
+      bit_size: 1
+      description: Early receive status
+      name: ERS
+    - bit_offset: 15
+      bit_size: 1
+      description: Abnormal interrupt summary
+      name: AIS
+    - bit_offset: 16
+      bit_size: 1
+      description: Normal interrupt summary
+      name: NIS
+    - bit_offset: 17
+      bit_size: 3
+      description: Receive process state
+      enum: RPS
+      name: RPS
+    - bit_offset: 20
+      bit_size: 3
+      description: Transmit process state
+      enum: TPS
+      name: TPS
+    - bit_offset: 23
+      bit_size: 3
+      description: Error bits status
+      name: EBS
+    - bit_offset: 27
+      bit_size: 1
+      description: MMC status
+      name: MMCS
+    - bit_offset: 28
+      bit_size: 1
+      description: PMT status
+      name: PMTS
+    - bit_offset: 29
+      bit_size: 1
+      description: Time stamp trigger status
+      name: TSTS
+fieldset/DMATDLAR:
+  description: Ethernet DMA transmit descriptor list address register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Start of transmit list
+      name: STL
+fieldset/DMATPDR:
+  description: Ethernet DMA transmit poll demand register
+  fields:
+    - bit_offset: 0
+      bit_size: 32
+      description: Transmit poll demand
+      enum: TPD
+      name: TPD
