@@ -691,7 +691,7 @@ def parse_chips():
 
                 if pname in chip['pins']:
                     if len(chip['pins'][pname]) > 0:
-                        p['pins'] = chip['pins'][pname]
+                        p['pins'] = sorted(chip['pins'][pname], key=lambda p: (parse_pin_name(p['pin']), p['signal']))
 
                 if chip_nvic in chip_interrupts:
                     if pname in chip_interrupts[chip_nvic]:
