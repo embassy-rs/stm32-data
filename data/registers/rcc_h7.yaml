@@ -9,10 +9,6 @@ block/RCC:
     description: RCC HSI configuration register
     fieldset: HSICFGR
     name: HSICFGR
-  - byte_offset: 4
-    description: RCC Internal Clock Source Calibration Register
-    fieldset: ICSCR
-    name: ICSCR
   - access: Read
     byte_offset: 8
     description: RCC Clock Recovery RC Register
@@ -680,7 +676,7 @@ enum/HSIRDYR:
   - description: Clock ready
     name: Ready
     value: 1
-enum/I2C123SEL:
+enum/I2C1235SEL:
   bit_size: 2
   variants:
   - description: rcc_pclk1 selected as peripheral clock
@@ -1124,7 +1120,7 @@ enum/TIMPRE:
   - description: Timer kernel clock equal to 4x pclk by default
     name: DefaultX4
     value: 1
-enum/USART16SEL:
+enum/USART16910SEL:
   bit_size: 3
   variants:
   - description: rcc_pclk2 selected as peripheral clock
@@ -1350,6 +1346,14 @@ fieldset/AHB2ENR:
     bit_size: 1
     description: SDMMC2 and SDMMC2 delay clock enable
     name: SDMMC2EN
+  - bit_offset: 16
+    bit_size: 1
+    description: FMAC enable
+    name: FMACEN
+  - bit_offset: 17
+    bit_size: 1
+    description: CORDIC enable
+    name: CORDICEN
   - bit_offset: 29
     bit_size: 1
     description: SRAM1 block enable
@@ -1385,6 +1389,14 @@ fieldset/AHB2LPENR:
     bit_size: 1
     description: SDMMC2 and SDMMC2 Delay Clock Enable During CSleep Mode
     name: SDMMC2LPEN
+  - bit_offset: 16
+    bit_size: 1
+    description: FMAC enable during CSleep Mode
+    name: FMACLPEN
+  - bit_offset: 17
+    bit_size: 1
+    description: CORDIC enable during CSleep Mode
+    name: CORDICLPEN
   - bit_offset: 29
     bit_size: 1
     description: SRAM1 Clock Enable During CSleep Mode
@@ -1420,6 +1432,14 @@ fieldset/AHB2RSTR:
     bit_size: 1
     description: SDMMC2 and SDMMC2 Delay block reset
     name: SDMMC2RST
+  - bit_offset: 16
+    bit_size: 1
+    description: FMAC reset
+    name: FMACRST
+  - bit_offset: 17
+    bit_size: 1
+    description: CORDIC reset
+    name: CORDICRST
 fieldset/AHB3ENR:
   description: RCC AHB3 Clock Register
   fields:
@@ -1447,6 +1467,22 @@ fieldset/AHB3ENR:
     bit_size: 1
     description: SDMMC1 and SDMMC1 Delay Clock Enable
     name: SDMMC1EN
+  - bit_offset: 19
+    bit_size: 1
+    description: OCTOSPI2 and OCTOSPI2 delay block enable
+    name: OCTOSPI2EN
+  - bit_offset: 21
+    bit_size: 1
+    description: OCTOSPI IO manager enable
+    name: IOMNGREN
+  - bit_offset: 22
+    bit_size: 1
+    description: OTFDEC1 enable
+    name: OTFD1EN
+  - bit_offset: 23
+    bit_size: 1
+    description: OTFDEC2 enable
+    name: OTFD2EN
   - bit_offset: 28
     bit_size: 1
     description: D1 DTCM1 block enable
@@ -1498,6 +1534,22 @@ fieldset/AHB3LPENR:
     bit_size: 1
     description: SDMMC1 and SDMMC1 Delay Clock Enable During CSleep Mode
     name: SDMMC1LPEN
+  - bit_offset: 19
+    bit_size: 1
+    description: OCTOSPI2 and OCTOSPI2 delay block enable during CSleep Mode
+    name: OCTOSPI2LPEN
+  - bit_offset: 21
+    bit_size: 1
+    description: OCTOSPI IO manager enable during CSleep Mode
+    name: IOMNGRLPEN
+  - bit_offset: 22
+    bit_size: 1
+    description: OTFDEC1 enable during CSleep Mode
+    name: OTFD1LPEN
+  - bit_offset: 23
+    bit_size: 1
+    description: OTFDEC2 enable during CSleep Mode
+    name: OTFD2LPEN
   - bit_offset: 28
     bit_size: 1
     description: D1DTCM1 Block Clock Enable During CSleep mode
@@ -1541,6 +1593,22 @@ fieldset/AHB3RSTR:
     bit_size: 1
     description: SDMMC1 and SDMMC1 delay block reset
     name: SDMMC1RST
+  - bit_offset: 19
+    bit_size: 1
+    description: OCTOSPI2 and OCTOSPI2 delay block reset
+    name: OCTOSPI2RST
+  - bit_offset: 21
+    bit_size: 1
+    description: OCTOSPI IO manager reset
+    name: IOMNGRRST
+  - bit_offset: 22
+    bit_size: 1
+    description: OTFDEC1 reset
+    name: OTFD1RST
+  - bit_offset: 23
+    bit_size: 1
+    description: OTFDEC2 reset
+    name: OTFD2RST
   - bit_offset: 31
     bit_size: 1
     description: CPU reset
@@ -1765,6 +1833,14 @@ fieldset/APB1HENR:
     bit_size: 1
     description: FDCAN Peripheral Clocks Enable
     name: FDCANEN
+  - bit_offset: 24
+    bit_size: 1
+    description: TIM23 block enable
+    name: TIM23EN
+  - bit_offset: 25
+    bit_size: 1
+    description: TIM24 block enable
+    name: TIM24EN
 fieldset/APB1HLPENR:
   description: RCC APB1 High Sleep Clock Register
   fields:
@@ -1788,6 +1864,14 @@ fieldset/APB1HLPENR:
     bit_size: 1
     description: FDCAN Peripheral Clocks Enable During CSleep Mode
     name: FDCANLPEN
+  - bit_offset: 24
+    bit_size: 1
+    description: TIM23 block enable during CSleep Mode
+    name: TIM23LPEN
+  - bit_offset: 25
+    bit_size: 1
+    description: TIM24 block enable during CSleep Mode
+    name: TIM24LPEN
 fieldset/APB1HRSTR:
   description: RCC APB1 Peripheral Reset Register
   fields:
@@ -1811,6 +1895,14 @@ fieldset/APB1HRSTR:
     bit_size: 1
     description: FDCAN block reset
     name: FDCANRST
+  - bit_offset: 24
+    bit_size: 1
+    description: TIM23 block reset
+    name: TIM23RST
+  - bit_offset: 25
+    bit_size: 1
+    description: TIM24 block reset
+    name: TIM24RST
 fieldset/APB1LENR:
   description: RCC APB1 Clock Register
   fields:
@@ -1898,6 +1990,10 @@ fieldset/APB1LENR:
     bit_size: 1
     description: I2C3 Peripheral Clocks Enable
     name: I2C3EN
+  - bit_offset: 25
+    bit_size: 1
+    description: "I2C5 Peripheral Clocks\r Enable"
+    name: I2C5EN
   - bit_offset: 27
     bit_size: 1
     description: HDMI-CEC peripheral clock enable
@@ -2001,6 +2097,10 @@ fieldset/APB1LLPENR:
     bit_size: 1
     description: I2C3 Peripheral Clocks Enable During CSleep Mode
     name: I2C3LPEN
+  - bit_offset: 25
+    bit_size: 1
+    description: I2C5 block enable during CSleep Mode
+    name: I2C5LPEN
   - bit_offset: 27
     bit_size: 1
     description: HDMI-CEC Peripheral Clocks Enable During CSleep Mode
@@ -2100,6 +2200,10 @@ fieldset/APB1LRSTR:
     bit_size: 1
     description: I2C3 block reset
     name: I2C3RST
+  - bit_offset: 25
+    bit_size: 1
+    description: I2C5 block reset
+    name: I2C5RST
   - bit_offset: 27
     bit_size: 1
     description: HDMI-CEC block reset
@@ -2135,6 +2239,14 @@ fieldset/APB2ENR:
     bit_size: 1
     description: USART6 Peripheral Clocks Enable
     name: USART6EN
+  - bit_offset: 6
+    bit_size: 1
+    description: "UART9 Peripheral Clocks\r Enable"
+    name: UART9EN
+  - bit_offset: 7
+    bit_size: 1
+    description: "USART10 Peripheral Clocks\r Enable"
+    name: USART10EN
   - bit_offset: 12
     bit_size: 1
     description: SPI1 Peripheral Clocks Enable
@@ -2261,6 +2373,14 @@ fieldset/APB2RSTR:
     bit_size: 1
     description: USART6 block reset
     name: USART6RST
+  - bit_offset: 6
+    bit_size: 1
+    description: UART9 block reset
+    name: UART9RST
+  - bit_offset: 7
+    bit_size: 1
+    description: USART10 block reset
+    name: USART10RST
   - bit_offset: 12
     bit_size: 1
     description: SPI1 block reset
@@ -2397,6 +2517,10 @@ fieldset/APB4ENR:
     bit_size: 1
     description: SAI4 Peripheral Clocks Enable
     name: SAI4EN
+  - bit_offset: 26
+    bit_size: 1
+    description: Digital temperature sensor block enable
+    name: DTSEN
 fieldset/APB4LPENR:
   description: RCC APB4 Sleep Clock Register
   fields:
@@ -2448,6 +2572,10 @@ fieldset/APB4LPENR:
     bit_size: 1
     description: SAI4 Peripheral Clocks Enable During CSleep Mode
     name: SAI4LPEN
+  - bit_offset: 26
+    bit_size: 1
+    description: Digital temperature sensor block enable during CSleep Mode
+    name: DTSLPEN
 fieldset/APB4RSTR:
   description: RCC APB4 Peripheral Reset Register
   fields:
@@ -2495,6 +2623,10 @@ fieldset/APB4RSTR:
     bit_size: 1
     description: SAI4 block reset
     name: SAI4RST
+  - bit_offset: 26
+    bit_size: 1
+    description: Digital temperature sensor block reset
+    name: DTSRST
 fieldset/BDCR:
   description: RCC Backup Domain Control Register
   fields:
@@ -2691,6 +2823,14 @@ fieldset/C1_AHB2LPENR:
     bit_size: 1
     description: SDMMC2 and SDMMC2 Delay Clock Enable During CSleep Mode
     name: SDMMC2LPEN
+  - bit_offset: 16
+    bit_size: 1
+    description: FMAC enable during CSleep Mode
+    name: FMACLPEN
+  - bit_offset: 17
+    bit_size: 1
+    description: CORDIC enable during CSleep Mode
+    name: CORDICLPEN
   - bit_offset: 29
     bit_size: 1
     description: SRAM1 Clock Enable During CSleep Mode
@@ -2761,6 +2901,22 @@ fieldset/C1_AHB3LPENR:
     bit_size: 1
     description: SDMMC1 and SDMMC1 Delay Clock Enable During CSleep Mode
     name: SDMMC1LPEN
+  - bit_offset: 19
+    bit_size: 1
+    description: OCTOSPI2 and OCTOSPI2 delay block enable during CSleep Mode
+    name: OCTOSPI2LPEN
+  - bit_offset: 21
+    bit_size: 1
+    description: OCTOSPI IO manager enable during CSleep Mode
+    name: IOMNGRLPEN
+  - bit_offset: 22
+    bit_size: 1
+    description: OTFDEC1 enable during CSleep Mode
+    name: OTFD1LPEN
+  - bit_offset: 23
+    bit_size: 1
+    description: OTFDEC2 enable during CSleep Mode
+    name: OTFD2LPEN
   - bit_offset: 28
     bit_size: 1
     description: D1DTCM1 Block Clock Enable During CSleep mode
@@ -2957,6 +3113,14 @@ fieldset/C1_APB1HLPENR:
     bit_size: 1
     description: FDCAN Peripheral Clocks Enable During CSleep Mode
     name: FDCANLPEN
+  - bit_offset: 24
+    bit_size: 1
+    description: TIM23 block enable during CSleep Mode
+    name: TIM23LPEN
+  - bit_offset: 25
+    bit_size: 1
+    description: TIM24 block enable during CSleep Mode
+    name: TIM24LPEN
 fieldset/C1_APB1LENR:
   description: RCC APB1 Clock Register
   fields:
@@ -3044,6 +3208,10 @@ fieldset/C1_APB1LENR:
     bit_size: 1
     description: I2C3 Peripheral Clocks Enable
     name: I2C3EN
+  - bit_offset: 25
+    bit_size: 1
+    description: "I2C5 Peripheral Clocks\r Enable"
+    name: I2C5EN
   - bit_offset: 27
     bit_size: 1
     description: HDMI-CEC peripheral clock enable
@@ -3147,6 +3315,10 @@ fieldset/C1_APB1LLPENR:
     bit_size: 1
     description: I2C3 Peripheral Clocks Enable During CSleep Mode
     name: I2C3LPEN
+  - bit_offset: 25
+    bit_size: 1
+    description: I2C5 block enable during CSleep Mode
+    name: I2C5LPEN
   - bit_offset: 27
     bit_size: 1
     description: HDMI-CEC Peripheral Clocks Enable During CSleep Mode
@@ -3182,6 +3354,14 @@ fieldset/C1_APB2ENR:
     bit_size: 1
     description: USART6 Peripheral Clocks Enable
     name: USART6EN
+  - bit_offset: 6
+    bit_size: 1
+    description: "UART9 Peripheral Clocks\r Enable"
+    name: UART9EN
+  - bit_offset: 7
+    bit_size: 1
+    description: "USART10 Peripheral Clocks\r Enable"
+    name: USART10EN
   - bit_offset: 12
     bit_size: 1
     description: SPI1 Peripheral Clocks Enable
@@ -3421,6 +3601,10 @@ fieldset/C1_APB4LPENR:
     bit_size: 1
     description: SAI4 Peripheral Clocks Enable During CSleep Mode
     name: SAI4LPEN
+  - bit_offset: 26
+    bit_size: 1
+    description: Digital temperature sensor block enable during CSleep Mode
+    name: DTSLPEN
 fieldset/C1_RSR:
   description: RCC Reset Status Register
   fields:
@@ -3892,8 +4076,8 @@ fieldset/D2CCIP2R:
   - bit_offset: 3
     bit_size: 3
     description: USART1 and 6 kernel clock source selection
-    enum: USART16SEL
-    name: USART16SEL
+    enum: USART16910SEL
+    name: USART16910SEL
   - bit_offset: 8
     bit_size: 2
     description: RNG kernel clock source selection
@@ -3902,8 +4086,8 @@ fieldset/D2CCIP2R:
   - bit_offset: 12
     bit_size: 2
     description: I2C1,2,3 kernel clock source selection
-    enum: I2C123SEL
-    name: I2C123SEL
+    enum: I2C1235SEL
+    name: I2C1235SEL
   - bit_offset: 20
     bit_size: 2
     description: USBOTG 1 and 2 kernel clock source selection
@@ -3991,6 +4175,10 @@ fieldset/D3AMR:
     bit_size: 1
     description: ADC3 Autonomous mode enable
     name: ADC3AMEN
+  - bit_offset: 26
+    bit_size: 1
+    description: Digital temperature sensor Autonomous mode enable
+    name: DTSAMEN
   - bit_offset: 28
     bit_size: 1
     description: Backup RAM Autonomous mode enable
