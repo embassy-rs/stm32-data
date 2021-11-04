@@ -759,6 +759,12 @@ def parse_chips():
                 pin_name = pin['@Name']
                 pin_name = pin_name.split(' ', 1)[0]
                 pin_name = pin_name.split('-', 1)[0]
+                pin_name = pin_name.split('/', 1)[0]
+                pin_name = pin_name.split('_', 1)[0]
+                pin_name = pin_name.split('(', 1)[0]
+                pin_name = removesuffix(pin_name, 'OSC32')
+                pin_name = removesuffix(pin_name, 'BOOT0')
+
                 if 'Signal' in pin:
                     signals = []
                     if not type(pin['Signal']) is list:
