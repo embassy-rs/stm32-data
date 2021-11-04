@@ -362,6 +362,33 @@ memories_map = {
 }
 
 
+def cleanup_pin_name(pin_name):
+    if p := parse_pin_name(pin_name):
+        return f'P{p[0]}{p[1]}'
+
+
+def parse_pin_name(pin_name):
+    if len(pin_name) < 3:
+        return None
+    if pin_name[0] != 'P':
+        return None
+    port = pin_name[1]
+    if not port.isalpha():
+        return None
+
+    pin = pin_name[2:]
+    i = 0
+    while i < len(pin) and pin[i].isnumeric():
+        i += 1
+
+    if i == 0:
+        return None
+
+    pin = int(pin[:i])
+
+    return port, pin
+
+
 def parse_chips():
     os.makedirs('data/chips', exist_ok=True)
 
@@ -499,14 +526,9 @@ def parse_chips():
                 pins[pname] = []
 
             for pin in r['Pin']:
-                pin_name = pin['@Name']
-                pin_name = pin_name.split(' ', 1)[0]
-                pin_name = pin_name.split('-', 1)[0]
-                pin_name = pin_name.split('/', 1)[0]
-                pin_name = pin_name.split('_', 1)[0]
-                pin_name = pin_name.split('(', 1)[0]
-                pin_name = removesuffix(pin_name, 'OSC32')
-                pin_name = removesuffix(pin_name, 'BOOT0')
+                pin_name = cleanup_pin_name(pin['@Name'])
+                if pin_name is None:
+                    continue
 
                 if 'Signal' in pin:
                     signals = []
@@ -871,13 +893,9 @@ def parse_gpio_af():
                 continue
 
             # Cleanup pin name
-            pin_name = pin_name.split('/')[0]
-            pin_name = pin_name.split('-')[0]
-            pin_name = pin_name.split(' ')[0]
-            pin_name = pin_name.split('_')[0]
-            pin_name = pin_name.split('(')[0]
-            pin_name = removesuffix(pin_name, 'OSC32')
-            pin_name = removesuffix(pin_name, 'BOOT0')
+            pin_name = cleanup_pin_name(pin_name)
+            if pin_name is None:
+                continue
 
             # Extract AFs
             afs = {}
