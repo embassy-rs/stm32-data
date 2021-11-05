@@ -299,18 +299,37 @@ def parse_documentations():
                 per_mcu_files[rpn].append(file['file_id'])
 
 
-def documents_for(chip_name, type):
+def parse_document_type(t):
+    if t == 'Reference manual':
+        return 0, 'reference_manual'
+    if t == 'Programming manual':
+        return 1, 'programming_manual'
+    if t == 'Datasheet':
+        return 2, 'datahseet'
+    if t == 'Errata sheet':
+        return 3, 'errata_sseet'
+    if t == 'Application note':
+        return 4, 'application_note'
+    raise Exception(f'Unknown doc type {t}')
+
+
+def documents_for(chip_name):
     docs = []
-    for id in per_mcu_files[chip_name]:
-        if id in all_mcu_files:
-            file = all_mcu_files[id]
-            if file['type'] == type:
+    if ids := per_mcu_files.get(chip_name):
+        for id in ids:
+            if file := all_mcu_files.get(id):
+                file = all_mcu_files[id]
+                order, doc_type = parse_document_type(file['type'])
                 docs.append(OrderedDict({
+                    'order': order,
+                    'type': doc_type,
                     'title': file['title'],
                     'name': file['name'],
                     'url': file['url'],
                 }))
-
+    docs.sort(key=lambda x: (x['order'], x['name']))
+    for doc in docs:
+        del doc['order']
     return docs
 
 
@@ -807,15 +826,7 @@ def parse_chips():
                         if ram_size is not None:
                             ram['regions'][key]['bytes'] = DecimalInt(ram_size)
 
-            datasheet = None
-            reference_manual = None
-            application_notes = None
-            if chip_name in per_mcu_files:
-                if len(ds := documents_for(chip_name, 'Datasheet')) >= 1:
-                    datasheet = ds[0]
-                if len(rm := documents_for(chip_name, 'Reference manual')) >= 1:
-                    reference_manual = rm[0]
-                application_notes = documents_for(chip_name, 'Application note')
+            docs = documents_for(chip_name)
 
             device_id = determine_device_id(chip_name)
             if device_id is not None:
@@ -826,24 +837,13 @@ def parse_chips():
                 'family': group['family'],
                 'line': group['line'],
                 'die': group['die'],
-                'device-id': device_id,
+                'device_id': device_id,
                 'packages': chip['packages'],
-                'datasheet': datasheet,
-                'reference-manual': reference_manual,
                 'flash': flash,
                 'ram': ram,
+                'docs': docs,
                 'cores': cores,
-                'application-notes': application_notes,
             })
-
-            if chip['device-id'] is None:
-                del chip['device-id']
-            if chip['datasheet'] is None:
-                del chip['datasheet']
-            if chip['reference-manual'] is None:
-                del chip['reference-manual']
-            if chip['application-notes'] is None or len(chip['application-notes']) == 0:
-                del chip['application-notes']
 
             with open('data/chips/' + chip_name + '.yaml', 'w') as f:
                 f.write(yaml.dump(chip, width=500))
