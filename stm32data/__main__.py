@@ -524,7 +524,7 @@ def parse_chips():
 
         chip_af = next(filter(lambda x: x['@Name'] == 'GPIO', chip['ips'].values()))['@Version']
         chip_af = removesuffix(chip_af, '_gpio_v1_0')
-        chip_af = af.get(chip_af)
+        chip_af = af[chip_af]
 
         # Analog pins are in the MCU XML, not in the GPIO XML.
         analog_pins = {}
@@ -532,14 +532,13 @@ def parse_chips():
             for signal in children(pin, 'Signal'):
                 if p := parse_signal_name(signal['@Name']):
                     peri_name, signal_name = p
-                    if not peri_name.startswith('ADC'):
-                        continue
-                    if peri_name not in analog_pins:
-                        analog_pins[peri_name] = []
-                    analog_pins[peri_name].append(OrderedDict({
-                        'pin': pin_name,
-                        'signal': signal_name,
-                    }))
+                    if peri_name.startswith('ADC') or peri_name.startswith('DAC') or peri_name.startswith('COMP') or peri_name.startswith('OPAMP'):
+                        if peri_name not in analog_pins:
+                            analog_pins[peri_name] = []
+                        analog_pins[peri_name].append(OrderedDict({
+                            'pin': pin_name,
+                            'signal': signal_name,
+                        }))
 
         cores = []
         for core_xml in children(chip['xml'], 'Core'):
@@ -611,13 +610,10 @@ def parse_chips():
                 if block := match_peri(chip_name + ':' + pname + ':' + pkind):
                     p['block'] = block
 
-                if chip_af is not None:
-                    if peri_af := chip_af.get(pname):
-                        p['pins'] = peri_af
-
-                if pname.startswith('ADC'):
-                    if pins := analog_pins.get(pname):
-                        p['pins'] = pins
+                if pins := chip_af.get(pname):
+                    p['pins'] = pins
+                elif pins := analog_pins.get(pname):
+                    p['pins'] = pins
 
                 if chip_nvic in chip_interrupts:
                     if pname in chip_interrupts[chip_nvic]:
