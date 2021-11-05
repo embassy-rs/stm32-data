@@ -271,14 +271,6 @@ def match_peri(peri):
     return None
 
 
-def find_af(gpio_af, peri_name, pin_name, signal_name):
-    if gpio_af in af:
-        if pin_name in af[gpio_af]:
-            if peri_name + '_' + signal_name in af[gpio_af][pin_name]:
-                return af[gpio_af][pin_name][peri_name + '_' + signal_name]
-    return None
-
-
 all_mcu_files = {}
 per_mcu_files = {}
 
@@ -367,6 +359,23 @@ def cleanup_pin_name(pin_name):
         return f'P{p[0]}{p[1]}'
 
 
+def parse_signal_name(signal_name):
+    parts = signal_name.split('_', 1)
+    if len(parts) == 1:
+        return None
+    peri_name = parts[0]
+    signal_name = parts[1]
+    if signal_name.startswith("EXTI"):
+        return None
+    if peri_name.startswith("DEBUG") and signal_name.startswith("SUBGHZSPI"):
+        parts = signal_name.split('-', 1)
+        if len(parts) == 2:
+            peri_name = parts[0]
+            signal_name = removesuffix(parts[1], "OUT")
+
+    return peri_name, signal_name
+
+
 def parse_pin_name(pin_name):
     if len(pin_name) < 3:
         return None
@@ -392,14 +401,24 @@ def parse_pin_name(pin_name):
 def parse_chips():
     os.makedirs('data/chips', exist_ok=True)
 
+    # XMLs group together chips that are identical except flash/ram size.
+    # For example STM32L471Z(E-G)Jx.xml is STM32L471ZEJx, STM32L471ZGJx.
+    # However they do NOT group together identical chips with different package.
+    #
+    # We want exactly the opposite: group all packages of a chip together, but
+    # NOT group equal-except-memory-size chips together. Yay.
+    #
+    # We first read all XMLs, and fold together all packages. We don't expand
+    # flash/ram sizes yet, we want to do it as late as possible to avoid duplicate
+    # work so that generation is faster.
+
     chips = {}
+    chip_groups = []
 
     for f in sorted(glob('sources/cubedb/mcu/STM32*.xml')):
         if 'STM32MP' in f:
             continue
-        if len(sys.argv) > 1:
-            if not sys.argv[1] in f:
-                continue
+
         print(f)
 
         r = xmltodict.parse(open(f, 'rb'))['Mcu']
@@ -407,248 +426,91 @@ def parse_chips():
         package_names = expand_name(r['@RefName'])
         package_rams = r['Ram']
         package_flashs = r['Flash']
-        die = r['Die']
         if type(package_rams) != list:
             package_rams = [package_rams] * len(package_names)
         if type(package_flashs) != list:
             package_flashs = [package_flashs] * len(package_names)
+
+        group_idx = None
+        for package_name in package_names:
+            chip_name = chip_name_from_package_name(package_name)
+            if chip := chips.get(chip_name):
+                group_idx = chip['group_idx']
+                break
+
+        if group_idx is None:
+            group_idx = len(chip_groups)
+            chip_groups.append({
+                'chip_names': [],
+                'xml': r,
+                'ips': {},
+            })
+
         for package_i, package_name in enumerate(package_names):
             chip_name = chip_name_from_package_name(package_name)
-            flash = OrderedDict({
-                'bytes': DecimalInt(int(package_flashs[package_i]) * 1024),
-                'regions': {},
-            })
-            ram = OrderedDict({
-                'bytes': DecimalInt(int(package_rams[package_i]) * 1024),
-                'regions': {},
-            })
-            gpio_af = next(filter(lambda x: x['@Name'] == 'GPIO', r['IP']))['@Version']
-            gpio_af = removesuffix(gpio_af, '_gpio_v1_0')
-
-            dma = next(filter(lambda x: x['@Name'] == 'DMA', r['IP']), None)
-            bdma = next(filter(lambda x: x['@Name'] == 'BDMA', r['IP']), None)
-            nvic = next(filter(lambda x: x['@Name'] == 'NVIC', r['IP']), None)
-
-            if nvic is None:
-                nvic = next(filter(lambda x: x['@Name'] == 'NVIC1', r['IP']), None)
-
-            nvic = nvic['@Version']
-
-            if dma is not None:
-                dma = dma['@Version']
-            if bdma is not None:
-                bdma = bdma['@Version']
-
-            rcc = next(filter(lambda x: x['@Name'] == 'RCC', r['IP']))['@Version']
-
-            rcc = removesuffix(rcc, '-rcc_v1_0')
-            rcc = removesuffix(rcc, '_rcc_v1_0')
-
-            core = r['Core']
-            family = r['@Family']
-
-            cores = []
-            if isinstance(core, list):
-                for core in core:
-                    cores.append(OrderedDict(
-                        {
-                            'name': corename(core),
-                            'peripherals': {},
-                        }))
-            else:
-                cores.append(OrderedDict(
-                    {
-                        'name': corename(core),
-                        'peripherals': {},
-                    }))
-
             if chip_name not in chips:
-                chips[chip_name] = OrderedDict({
+                chips[chip_name] = {
                     'name': chip_name,
-                    'family': family,
-                    'line': r['@Line'],
-                    'die': die,
-                    'device-id': None,
+                    'flash': package_flashs[package_i],
+                    'ram': package_rams[package_i],
+                    'group_idx': group_idx,
                     'packages': [],
-                    'datasheet': None,
-                    'reference-manual': None,
-                    'flash': flash,
-                    'ram': ram,
-                    'cores': cores,
-                    'peripherals': {},
-                    'pins': {},
-                    'application-notes': [],
-                    'rcc': rcc,  # temporarily stashing it here
-                    'dma': dma,  # temporarily stashing it here
-                    'bdma': bdma,  # temporarily stashing it here
-                    'nvic': nvic  # temporarily stashing it here
-                })
-
+                }
             chips[chip_name]['packages'].append(OrderedDict({
                 'name': package_name,
                 'package': r['@Package'],
             }))
 
-            if chip_name in per_mcu_files:
-                if len(ds := documents_for(chip_name, 'Datasheet')) >= 1:
-                    chips[chip_name]['datasheet'] = ds[0]
-                if len(rm := documents_for(chip_name, 'Reference manual')) >= 1:
-                    chips[chip_name]['reference-manual'] = rm[0]
-                chips[chip_name]['application-notes'] = documents_for(chip_name, 'Application note')
-
-            if 'datasheet' in chips[chip_name] and chips[chip_name]['datasheet'] is None:
-                del chips[chip_name]['datasheet']
-            if 'reference-manual' in chips[chip_name] and chips[chip_name]['reference-manual'] is None:
-                del chips[chip_name]['reference-manual']
-
-            # Some packages have some peripehrals removed because the package had to
-            # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
-            peris = chips[chip_name]['peripherals']
-            pins = chips[chip_name]['pins']
-
-            for ip in r['IP']:
-                pname = ip['@InstanceName']
-                pkind = ip['@Name'] + ':' + ip['@Version']
-                pkind = removesuffix(pkind, '_Cube')
-
-                if pname == 'SYS':
-                    pname = 'SYSCFG'
-                if pname == 'SUBGHZ':
-                    pname = 'SUBGHZSPI'
-                if pname == 'SYSCFG_VREFBUF':
-                    pname = 'SYSCFG'
-                if pname in FAKE_PERIPHERALS:
-                    continue
-                if pname.startswith('ADC'):
-                    if not 'ADC_COMMON' in peris:
-                        peris['ADC_COMMON'] = 'ADC_COMMON:' + removesuffix(ip['@Version'], '_Cube')
-                peris[pname] = pkind
-                pins[pname] = []
-
-            for pin in r['Pin']:
-                pin_name = cleanup_pin_name(pin['@Name'])
-                if pin_name is None:
-                    continue
-
-                if 'Signal' in pin:
-                    signals = []
-                    if not type(pin['Signal']) is list:
-                        signals.append(pin['Signal'])
-                    else:
-                        signals = pin['Signal']
-
-                    for signal in signals:
-                        signal_name = signal['@Name']
-                        parts = signal_name.split('_', 1)
-                        if len(parts) == 1:
-                            continue
-                        peri_name = parts[0]
-                        signal_name = parts[1]
-                        if signal_name.startswith("EXTI"):
-                            continue
-                        if peri_name.startswith("DEBUG") and signal_name.startswith("SUBGHZSPI"):
-                            parts = signal_name.split('-', 1)
-                            if len(parts) == 2:
-                                peri_name = parts[0]
-                                signal_name = removesuffix(parts[1], "OUT")
-                        if not peri_name in pins:
-                            pins[peri_name] = []
-                        entry = OrderedDict({
-                            'pin': pin_name,
-                            'signal': signal_name,
-                        })
-                        af_num = find_af(gpio_af, peri_name, pin_name, signal_name)
-                        if af_num is not None:
-                            entry['af'] = af_num
-
-                        # Some SVDs have duplicate pin definitions
-                        if entry not in pins[peri_name]:
-                            pins[peri_name].append(entry)
+        # Some packages have some peripehrals removed because the package had to
+        # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
+        group = chip_groups[group_idx]
+        for ip in r['IP']:
+            group['ips'][ip['@InstanceName']] = ip
 
     for chip_name, chip in chips.items():
-        if len(sys.argv) > 1:
-            if not chip_name.startswith(sys.argv[1]):
-                continue
-        print(f'* processing chip {chip_name}')
-        rcc = chip['rcc']
-        del chip['rcc']
+        chip_groups[chip['group_idx']]['chip_names'].append(chip_name)
 
-        chip_dma = chip['dma']
-        del chip['dma']
+    for chip in chip_groups:
+        chip_name = chip["chip_names"][0]
+        print(f'* processing chip group {chip["chip_names"]}')
 
-        chip_bdma = chip['bdma']
-        del chip['bdma']
+        chip['family'] = chip['xml']['@Family']
+        chip['line'] = chip['xml']['@Line']
+        chip['die'] = chip['xml']['Die']
 
-        chip_nvic = chip['nvic']
-        del chip['nvic']
+        chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC', chip['ips'].values()), None)
+        if chip_nvic is None:
+            chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC1', chip['ips'].values()), None)
+        chip_nvic = chip_nvic['@Version']
 
-        device_id = determine_device_id(chip_name)
-        if device_id is not None:
-            chip['device-id'] = HexInt(device_id)
-        else:
-            del chip['device-id']
+        chip_dma = next(filter(lambda x: x['@Name'] == 'DMA', chip['ips'].values()), None)
+        if chip_dma is not None:
+            chip_dma = chip_dma['@Version']
+
+        chip_bdma = next(filter(lambda x: x['@Name'] == 'BDMA', chip['ips'].values()), None)
+        if chip_bdma is not None:
+            chip_bdma = chip_bdma['@Version']
+
+        rcc = next(filter(lambda x: x['@Name'] == 'RCC', chip['ips'].values()))['@Version']
+        rcc = removesuffix(rcc, '-rcc_v1_0')
+        rcc = removesuffix(rcc, '_rcc_v1_0')
 
         h = header.get_for_chip(chip_name)
         if h is None:
             raise Exception("missing header for {}".format(chip_name))
 
-        found = []
+        chip_af = next(filter(lambda x: x['@Name'] == 'GPIO', chip['ips'].values()))['@Version']
+        chip_af = removesuffix(chip_af, '_gpio_v1_0')
+        chip_af = af.get(chip_af)
 
-        for each in memories_map['flash']:
-            if each + '_BASE' in h['defines']['all']:
-                if each == 'FLASH':
-                    key = 'BANK_1'
-                elif each == 'FLASH_BANK1':
-                    key = 'BANK_1'
-                elif each == 'FLASH_BANK2':
-                    key = 'BANK_2'
-                else:
-                    key = each
-
-                if key in found:
-                    continue
-
-                found.append(key)
-
-                chip['flash']['regions'][key] = OrderedDict({
-                    'base': HexInt(h['defines']['all'][each + '_BASE'])
-                })
-
-                if key == 'BANK_1' or key == 'BANK_2':
-                    flash_size = determine_flash_size(chip_name)
-                    if flash_size is not None:
-                        if flash_size > chip['flash']['bytes'].val:
-                            flash_size = chip['flash']['bytes'].val
-                        chip['flash']['regions'][key]['bytes'] = DecimalInt(flash_size)
-
-        found = []
-
-        for each in memories_map['ram']:
-            if each + '_BASE' in h['defines']['all']:
-                if each == 'D1_AXISRAM':
-                    key = 'SRAM'
-                elif each == 'SRAM1':
-                    key = 'SRAM'
-                else:
-                    key = each
-
-                if key in found:
-                    continue
-
-                found.append(key)
-
-                chip['ram']['regions'][key] = OrderedDict({
-                    'base': HexInt(h['defines']['all'][each + '_BASE'])
-                })
-
-                if key == 'SRAM':
-                    ram_size = determine_ram_size(chip_name)
-                    if ram_size is not None:
-                        chip['ram']['regions'][key]['bytes'] = DecimalInt(ram_size)
-
-        # print("Got", len(chip['cores']), "cores")
-        for core in chip['cores']:
-            core_name = core['name']
+        cores = []
+        for core_xml in children(chip['xml'], 'Core'):
+            core_name = corename(core_xml)
+            core = OrderedDict({
+                'name': core_name,
+                'peripherals': {},
+            })
+            cores.append(core)
 
             if (chip_nvic + '-' + core_name) in chip_interrupts:
                 # if there's a more specific set of irqs...
@@ -665,8 +527,30 @@ def parse_chips():
 
             core['interrupts'] = interrupts
 
+            peri_kinds = {}
+
+            for ip in chip['ips'].values():
+                pname = ip['@InstanceName']
+                pkind = ip['@Name'] + ':' + ip['@Version']
+                pkind = removesuffix(pkind, '_Cube')
+
+                if pname == 'SYS':
+                    pname = 'SYSCFG'
+                if pname == 'SUBGHZ':
+                    pname = 'SUBGHZSPI'
+                if pname == 'SYSCFG_VREFBUF':
+                    pname = 'SYSCFG'
+                if pname in FAKE_PERIPHERALS:
+                    continue
+
+                if pname.startswith('ADC'):
+                    if not 'ADC_COMMON' in peri_kinds:
+                        peri_kinds['ADC_COMMON'] = 'ADC_COMMON:' + removesuffix(ip['@Version'], '_Cube')
+
+                peri_kinds[pname] = pkind
+
             peris = {}
-            for pname, pkind in chip['peripherals'].items():
+            for pname, pkind in peri_kinds.items():
                 addr = defines.get(pname)
                 if addr is None:
                     if pname == 'ADC_COMMON':
@@ -689,9 +573,9 @@ def parse_chips():
                 if block := match_peri(chip_name + ':' + pname + ':' + pkind):
                     p['block'] = block
 
-                if pname in chip['pins']:
-                    if len(chip['pins'][pname]) > 0:
-                        p['pins'] = sorted(chip['pins'][pname], key=lambda p: (parse_pin_name(p['pin']), p['signal']))
+                if chip_af is not None:
+                    if peri_af := chip_af.get(pname):
+                        p['pins'] = peri_af
 
                 if chip_nvic in chip_interrupts:
                     if pname in chip_interrupts[chip_nvic]:
@@ -710,7 +594,7 @@ def parse_chips():
             # Handle GPIO specially.
             for p in range(20):
                 port = 'GPIO' + chr(ord('A') + p)
-                if addr := lookup_address(defines, chip['name'], port + '_BASE'):
+                if addr := lookup_address(defines, chip_name, port + '_BASE'):
                     block = 'gpio_v2/GPIO'
                     if chip['family'] == 'STM32F1':
                         block = 'gpio_v1/GPIO'
@@ -862,12 +746,107 @@ def parse_chips():
                             for req, req_chs in peri_chs.items()
                         }
 
-        # remove all pins from the root of the chip before emitting.
-        del chip['pins']
-        del chip['peripherals']
+        # Now that we've processed everything common to the entire group,
+        # process each chip in the group.
 
-        with open('data/chips/' + chip_name + '.yaml', 'w') as f:
-            f.write(yaml.dump(chip, width=500))
+        group = chip
+
+        for chip_name in group['chip_names']:
+            chip = chips[chip_name]
+
+            flash = OrderedDict({
+                'bytes': DecimalInt(int(chip['flash']) * 1024),
+                'regions': {},
+            })
+            ram = OrderedDict({
+                'bytes': DecimalInt(int(chip['ram']) * 1024),
+                'regions': {},
+            })
+
+            found = []
+            for each in memories_map['flash']:
+                if each + '_BASE' in h['defines']['all']:
+                    if each == 'FLASH':
+                        key = 'BANK_1'
+                    elif each == 'FLASH_BANK1':
+                        key = 'BANK_1'
+                    elif each == 'FLASH_BANK2':
+                        key = 'BANK_2'
+                    else:
+                        key = each
+
+                    if key in found:
+                        continue
+                    found.append(key)
+                    flash['regions'][key] = OrderedDict({
+                        'base': HexInt(h['defines']['all'][each + '_BASE'])
+                    })
+                    if key == 'BANK_1' or key == 'BANK_2':
+                        flash_size = determine_flash_size(chip_name)
+                        if flash_size is not None:
+                            if flash_size > flash['bytes'].val:
+                                flash_size = flash['bytes'].val
+                            flash['regions'][key]['bytes'] = DecimalInt(flash_size)
+            found = []
+            for each in memories_map['ram']:
+                if each + '_BASE' in h['defines']['all']:
+                    if each == 'D1_AXISRAM':
+                        key = 'SRAM'
+                    elif each == 'SRAM1':
+                        key = 'SRAM'
+                    else:
+                        key = each
+                    if key in found:
+                        continue
+                    found.append(key)
+                    ram['regions'][key] = OrderedDict({
+                        'base': HexInt(h['defines']['all'][each + '_BASE'])
+                    })
+                    if key == 'SRAM':
+                        ram_size = determine_ram_size(chip_name)
+                        if ram_size is not None:
+                            ram['regions'][key]['bytes'] = DecimalInt(ram_size)
+
+            datasheet = None
+            reference_manual = None
+            application_notes = None
+            if chip_name in per_mcu_files:
+                if len(ds := documents_for(chip_name, 'Datasheet')) >= 1:
+                    datasheet = ds[0]
+                if len(rm := documents_for(chip_name, 'Reference manual')) >= 1:
+                    reference_manual = rm[0]
+                application_notes = documents_for(chip_name, 'Application note')
+
+            device_id = determine_device_id(chip_name)
+            if device_id is not None:
+                device_id = HexInt(device_id)
+
+            chip = OrderedDict({
+                'name': chip_name,
+                'family': group['family'],
+                'line': group['line'],
+                'die': group['die'],
+                'device-id': device_id,
+                'packages': chip['packages'],
+                'datasheet': datasheet,
+                'reference-manual': reference_manual,
+                'flash': flash,
+                'ram': ram,
+                'cores': cores,
+                'application-notes': application_notes,
+            })
+
+            if chip['device-id'] is None:
+                del chip['device-id']
+            if chip['datasheet'] is None:
+                del chip['datasheet']
+            if chip['reference-manual'] is None:
+                del chip['reference-manual']
+            if chip['application-notes'] is None or len(chip['application-notes']) == 0:
+                del chip['application-notes']
+
+            with open('data/chips/' + chip_name + '.yaml', 'w') as f:
+                f.write(yaml.dump(chip, width=500))
 
 
 af = {}
@@ -882,7 +861,7 @@ def parse_gpio_af():
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/GPIO-')
         ff = removesuffix(ff, '_gpio_v1_0_Modes.xml')
 
-        pins = {}
+        peris = {}
 
         r = xmltodict.parse(open(f, 'rb'))
         for pin in r['IP']['GPIO_Pin']:
@@ -898,24 +877,30 @@ def parse_gpio_af():
                 continue
 
             # Extract AFs
-            afs = {}
             for signal in children(pin, 'PinSignal'):
-                func = signal['@Name']
-                if func.startswith("DEBUG_SUBGHZSPI"):
-                    func = removeprefix(func, "DEBUG_")
-                    parts = func.split('-', 2)
-                    if len(parts) > 1:
-                        func = parts[0] + '_' + removesuffix(parts[1], "OUT")
+                p = parse_signal_name(signal['@Name'])
+                if p is None:
+                    continue
+                peri_name, signal_name = p
+
                 afn = signal['SpecificParameter']['PossibleValue'].split('_')[1]
                 afn = int(removeprefix(afn, 'AF'))
-                afs[func] = afn
 
-            pins[pin_name] = afs
+                if peri_name not in peris:
+                    peris[peri_name] = []
+                peris[peri_name].append(OrderedDict({
+                    'pin': pin_name,
+                    'signal': signal_name,
+                    'af': afn,
+                }))
+
+        for p in peris.values():
+            p.sort(key=lambda p: (parse_pin_name(p['pin']), p['signal']))
 
         # with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
         # f.write(yaml.dump(pins))
 
-        af[ff] = pins
+        af[ff] = peris
 
 
 dma_channels = {}
