@@ -463,6 +463,7 @@ def parse_chips():
                 'chip_names': [],
                 'xml': r,
                 'ips': {},
+                'pins': {},
             })
 
         for package_i, package_name in enumerate(package_names):
@@ -485,6 +486,9 @@ def parse_chips():
         group = chip_groups[group_idx]
         for ip in r['IP']:
             group['ips'][ip['@InstanceName']] = ip
+        for pin in r['Pin']:
+            if pin_name := cleanup_pin_name(pin['@Name']):
+                group['pins'][pin_name] = pin
 
     for chip_name, chip in chips.items():
         chip_groups[chip['group_idx']]['chip_names'].append(chip_name)
@@ -521,6 +525,21 @@ def parse_chips():
         chip_af = next(filter(lambda x: x['@Name'] == 'GPIO', chip['ips'].values()))['@Version']
         chip_af = removesuffix(chip_af, '_gpio_v1_0')
         chip_af = af.get(chip_af)
+
+        # Analog pins are in the MCU XML, not in the GPIO XML.
+        analog_pins = {}
+        for pin_name, pin in chip['pins'].items():
+            for signal in children(pin, 'Signal'):
+                if p := parse_signal_name(signal['@Name']):
+                    peri_name, signal_name = p
+                    if not peri_name.startswith('ADC'):
+                        continue
+                    if peri_name not in analog_pins:
+                        analog_pins[peri_name] = []
+                    analog_pins[peri_name].append(OrderedDict({
+                        'pin': pin_name,
+                        'signal': signal_name,
+                    }))
 
         cores = []
         for core_xml in children(chip['xml'], 'Core'):
@@ -595,6 +614,10 @@ def parse_chips():
                 if chip_af is not None:
                     if peri_af := chip_af.get(pname):
                         p['pins'] = peri_af
+
+                if pname.startswith('ADC'):
+                    if pins := analog_pins.get(pname):
+                        p['pins'] = pins
 
                 if chip_nvic in chip_interrupts:
                     if pname in chip_interrupts[chip_nvic]:
@@ -852,6 +875,10 @@ def parse_chips():
 af = {}
 
 
+def sort_pins(pins):
+    pins.sort(key=lambda p: (parse_pin_name(p['pin']), p['signal']))
+
+
 def parse_gpio_af():
     # os.makedirs('data/gpio_af', exist_ok=True)
     for f in glob('sources/cubedb/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
@@ -895,7 +922,7 @@ def parse_gpio_af():
                 }))
 
         for p in peris.values():
-            p.sort(key=lambda p: (parse_pin_name(p['pin']), p['signal']))
+            sort_pins(p)
 
         # with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
         # f.write(yaml.dump(pins))
