@@ -879,6 +879,15 @@ def sort_pins(pins):
     pins.sort(key=lambda p: (parse_pin_name(p['pin']), p['signal']))
 
 
+def remove_duplicates(item_list):
+    ''' Removes duplicate items from a list '''
+    singles_list = []
+    for element in item_list:
+        if element not in singles_list:
+            singles_list.append(element)
+    return singles_list
+
+
 def parse_gpio_af():
     # os.makedirs('data/gpio_af', exist_ok=True)
     for f in glob('sources/cubedb/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
@@ -921,8 +930,10 @@ def parse_gpio_af():
                     'af': afn,
                 }))
 
-        for p in peris.values():
+        for pname, p in peris.items():
+            p = remove_duplicates(p)
             sort_pins(p)
+            peris[pname] = p
 
         # with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
         # f.write(yaml.dump(pins))
