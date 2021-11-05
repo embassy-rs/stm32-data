@@ -2,6 +2,7 @@ name: STM32G050C8
 family: STM32G0
 line: STM32G0x0 Value line
 die: DIE456
+device_id: null
 packages:
 - name: STM32G050C8Tx
   package: LQFP48
@@ -15,6 +16,7 @@ ram:
   regions:
     SRAM:
       base: 0x20000000
+docs: []
 cores:
 - name: cm0p
   peripherals:
@@ -160,6 +162,12 @@ cores:
       clock: APB
       block: i2c_v2/I2C
       pins:
+      - pin: PA11
+        signal: SCL
+        af: 6
+      - pin: PA12
+        signal: SDA
+        af: 6
       - pin: PB10
         signal: SCL
         af: 6
@@ -170,12 +178,6 @@ cores:
         signal: SCL
         af: 6
       - pin: PB14
-        signal: SDA
-        af: 6
-      - pin: PA11
-        signal: SCL
-        af: 6
-      - pin: PA12
         signal: SDA
         af: 6
       interrupts:
@@ -201,32 +203,22 @@ cores:
       kind: RCC:STM32G06_rcc_v1_0
       block: rcc_g0/RCC
       pins:
-      - pin: PC14
-        signal: OSC32_IN
-      - pin: PC15
-        signal: OSC32_EN
-        af: 0
-      - pin: PC15
-        signal: OSC32_OUT
-      - pin: PC15
-        signal: OSC_EN
-        af: 1
-      - pin: PF0
-        signal: OSC_IN
-      - pin: PF1
-        signal: OSC_EN
-        af: 0
-      - pin: PF1
-        signal: OSC_OUT
-      - pin: PF2
-        signal: MCO
-        af: 0
-      - pin: PA2
-        signal: LSCO
       - pin: PA8
         signal: MCO
         af: 0
       - pin: PA9
+        signal: MCO
+        af: 0
+      - pin: PC15
+        signal: OSC32_EN
+        af: 0
+      - pin: PC15
+        signal: OSC_EN
+        af: 1
+      - pin: PF1
+        signal: OSC_EN
+        af: 0
+      - pin: PF2
         signal: MCO
         af: 0
       interrupts:
@@ -234,19 +226,6 @@ cores:
     RTC:
       address: 0x40002800
       kind: RTC:rtc3_v1_0
-      pins:
-      - pin: PC13
-        signal: OUT1
-      - pin: PC13
-        signal: TAMP_IN1
-      - pin: PC13
-        signal: TS
-      - pin: PA0
-        signal: TAMP_IN2
-      - pin: PA4
-        signal: OUT2
-      - pin: PB15
-        signal: REFIN
       interrupts: {}
     SPI1:
       address: 0x40013000
@@ -272,9 +251,6 @@ cores:
       - pin: PA7
         signal: MOSI
         af: 0
-      - pin: PB0
-        signal: NSS
-        af: 0
       - pin: PA11
         signal: MISO
         af: 0
@@ -282,6 +258,9 @@ cores:
         signal: MOSI
         af: 0
       - pin: PA15
+        signal: NSS
+        af: 0
+      - pin: PB0
         signal: NSS
         af: 0
       - pin: PB3
@@ -317,9 +296,30 @@ cores:
       - pin: PA4
         signal: MOSI
         af: 1
+      - pin: PA8
+        signal: NSS
+        af: 1
+      - pin: PA9
+        signal: MISO
+        af: 4
+      - pin: PA10
+        signal: MOSI
+        af: 0
       - pin: PB2
         signal: MISO
         af: 1
+      - pin: PB6
+        signal: MISO
+        af: 4
+      - pin: PB7
+        signal: MOSI
+        af: 1
+      - pin: PB8
+        signal: SCK
+        af: 1
+      - pin: PB9
+        signal: NSS
+        af: 5
       - pin: PB10
         signal: SCK
         af: 5
@@ -338,15 +338,6 @@ cores:
       - pin: PB15
         signal: MOSI
         af: 0
-      - pin: PA8
-        signal: NSS
-        af: 1
-      - pin: PA9
-        signal: MISO
-        af: 4
-      - pin: PA10
-        signal: MOSI
-        af: 0
       - pin: PD0
         signal: NSS
         af: 1
@@ -356,18 +347,6 @@ cores:
       - pin: PD3
         signal: MISO
         af: 1
-      - pin: PB6
-        signal: MISO
-        af: 4
-      - pin: PB7
-        signal: MOSI
-        af: 1
-      - pin: PB8
-        signal: SCK
-        af: 1
-      - pin: PB9
-        signal: NSS
-        af: 5
       interrupts:
         GLOBAL: SPI2
       dma_channels:
@@ -387,35 +366,11 @@ cores:
       kind: TIM1_8G0:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       pins:
-      - pin: PC13
-        signal: BK
-        af: 2
-      - pin: PC14
-        signal: BK2
-        af: 2
       - pin: PA6
         signal: BK
         af: 2
       - pin: PA7
         signal: CH1N
-        af: 2
-      - pin: PB0
-        signal: CH2N
-        af: 2
-      - pin: PB1
-        signal: CH3N
-        af: 2
-      - pin: PB12
-        signal: BK
-        af: 2
-      - pin: PB13
-        signal: CH1N
-        af: 2
-      - pin: PB14
-        signal: CH2N
-        af: 2
-      - pin: PB15
-        signal: CH3N
         af: 2
       - pin: PA8
         signal: CH1
@@ -435,11 +390,11 @@ cores:
       - pin: PA12
         signal: ETR
         af: 2
-      - pin: PD2
-        signal: CH1N
-        af: 2
-      - pin: PD3
+      - pin: PB0
         signal: CH2N
+        af: 2
+      - pin: PB1
+        signal: CH3N
         af: 2
       - pin: PB3
         signal: CH2
@@ -447,6 +402,30 @@ cores:
       - pin: PB6
         signal: CH3
         af: 1
+      - pin: PB12
+        signal: BK
+        af: 2
+      - pin: PB13
+        signal: CH1N
+        af: 2
+      - pin: PB14
+        signal: CH2N
+        af: 2
+      - pin: PB15
+        signal: CH3N
+        af: 2
+      - pin: PC13
+        signal: BK
+        af: 2
+      - pin: PC14
+        signal: BK2
+        af: 2
+      - pin: PD2
+        signal: CH1N
+        af: 2
+      - pin: PD3
+        signal: CH2N
+        af: 2
       interrupts:
         BRK: TIM1_BRK_UP_TRG_COM
         COM: TIM1_BRK_UP_TRG_COM
@@ -477,9 +456,6 @@ cores:
       kind: TIM1_8G0:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       pins:
-      - pin: PF0
-        signal: CH1
-        af: 2
       - pin: PA4
         signal: CH1
         af: 4
@@ -489,6 +465,9 @@ cores:
       - pin: PB1
         signal: CH1
         af: 0
+      - pin: PF0
+        signal: CH1
+        af: 2
       interrupts:
         BRK: TIM14
         COM: TIM14
@@ -500,12 +479,6 @@ cores:
       kind: TIM1_8G0:gptimer2_v3_x
       block: timer_v1/TIM_GP16
       pins:
-      - pin: PC15
-        signal: BK
-        af: 2
-      - pin: PF1
-        signal: CH1N
-        af: 2
       - pin: PA1
         signal: CH1N
         af: 5
@@ -514,6 +487,12 @@ cores:
         af: 5
       - pin: PA3
         signal: CH2
+        af: 5
+      - pin: PA9
+        signal: BK
+        af: 5
+      - pin: PB8
+        signal: BK
         af: 5
       - pin: PB12
         signal: BK
@@ -530,12 +509,12 @@ cores:
       - pin: PB15
         signal: CH2
         af: 5
-      - pin: PA9
+      - pin: PC15
         signal: BK
-        af: 5
-      - pin: PB8
-        signal: BK
-        af: 5
+        af: 2
+      - pin: PF1
+        signal: CH1N
+        af: 2
       interrupts:
         BRK: TIM15
         COM: TIM15
@@ -563,9 +542,6 @@ cores:
       - pin: PA6
         signal: CH1
         af: 5
-      - pin: PD0
-        signal: CH1
-        af: 2
       - pin: PB5
         signal: BK
         af: 2
@@ -573,6 +549,9 @@ cores:
         signal: CH1N
         af: 2
       - pin: PB8
+        signal: CH1
+        af: 2
+      - pin: PD0
         signal: CH1
         af: 2
       interrupts:
@@ -602,9 +581,6 @@ cores:
       - pin: PA10
         signal: BK
         af: 5
-      - pin: PD1
-        signal: CH1
-        af: 2
       - pin: PB4
         signal: BK
         af: 5
@@ -612,6 +588,9 @@ cores:
         signal: CH1N
         af: 2
       - pin: PB9
+        signal: CH1
+        af: 2
+      - pin: PD1
         signal: CH1
         af: 2
       interrupts:
@@ -647,6 +626,12 @@ cores:
       - pin: PB1
         signal: CH4
         af: 1
+      - pin: PB4
+        signal: CH1
+        af: 1
+      - pin: PB5
+        signal: CH2
+        af: 1
       - pin: PC6
         signal: CH1
         af: 1
@@ -655,12 +640,6 @@ cores:
         af: 1
       - pin: PD2
         signal: ETR
-        af: 1
-      - pin: PB4
-        signal: CH1
-        af: 1
-      - pin: PB5
-        signal: CH2
         af: 1
       interrupts:
         BRK: TIM3
@@ -889,4 +868,3 @@ cores:
       channel: 6
       dmamux: DMAMUX1
       dmamux_channel: 6
-application-notes: []
