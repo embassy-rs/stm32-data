@@ -891,54 +891,83 @@ def remove_duplicates(item_list):
 def parse_gpio_af():
     # os.makedirs('data/gpio_af', exist_ok=True)
     for f in glob('sources/cubedb/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
-        if 'STM32F1' in f:
-            continue
 
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/GPIO-')
         ff = removesuffix(ff, '_gpio_v1_0_Modes.xml')
-
-        peris = {}
-
         r = xmltodict.parse(open(f, 'rb'))
-        for pin in r['IP']['GPIO_Pin']:
-            pin_name = pin['@Name']
 
-            # Blacklist non-pins
-            if pin_name == 'PDR_ON':
-                continue
-
-            # Cleanup pin name
-            pin_name = cleanup_pin_name(pin_name)
-            if pin_name is None:
-                continue
-
-            # Extract AFs
-            for signal in children(pin, 'PinSignal'):
-                p = parse_signal_name(signal['@Name'])
-                if p is None:
-                    continue
-                peri_name, signal_name = p
-
-                afn = signal['SpecificParameter']['PossibleValue'].split('_')[1]
-                afn = int(removeprefix(afn, 'AF'))
-
-                if peri_name not in peris:
-                    peris[peri_name] = []
-                peris[peri_name].append(OrderedDict({
-                    'pin': pin_name,
-                    'signal': signal_name,
-                    'af': afn,
-                }))
-
-        for pname, p in peris.items():
-            p = remove_duplicates(p)
-            sort_pins(p)
-            peris[pname] = p
-
-        # with open('data/gpio_af/'+ff+'.yaml', 'w') as f:
-        # f.write(yaml.dump(pins))
-
+        if 'STM32F1' in f:
+            peris = parse_gpio_af_f1(r)
+        else:
+            peris = parse_gpio_af_nonf1(r)
         af[ff] = peris
+
+
+def parse_gpio_af_f1(xml):
+    peris = {}
+    for pin in xml['IP']['GPIO_Pin']:
+        pin_name = pin['@Name']
+
+        # Cleanup pin name
+        pin_name = cleanup_pin_name(pin_name)
+        if pin_name is None:
+            continue
+
+        # Extract AFs
+        for signal in children(pin, 'PinSignal'):
+            p = parse_signal_name(signal['@Name'])
+            if p is None:
+                continue
+            peri_name, signal_name = p
+
+            if peri_name not in peris:
+                peris[peri_name] = []
+            peris[peri_name].append(OrderedDict({
+                'pin': pin_name,
+                'signal': signal_name,
+            }))
+
+    for pname, p in peris.items():
+        p = remove_duplicates(p)
+        sort_pins(p)
+        peris[pname] = p
+    return peris
+
+
+def parse_gpio_af_nonf1(xml):
+    peris = {}
+
+    for pin in xml['IP']['GPIO_Pin']:
+        pin_name = pin['@Name']
+
+        # Cleanup pin name
+        pin_name = cleanup_pin_name(pin_name)
+        if pin_name is None:
+            continue
+
+        # Extract AFs
+        for signal in children(pin, 'PinSignal'):
+            p = parse_signal_name(signal['@Name'])
+            if p is None:
+                continue
+            peri_name, signal_name = p
+
+            afn = signal['SpecificParameter']['PossibleValue'].split('_')[1]
+            afn = int(removeprefix(afn, 'AF'))
+
+            if peri_name not in peris:
+                peris[peri_name] = []
+            peris[peri_name].append(OrderedDict({
+                'pin': pin_name,
+                'signal': signal_name,
+                'af': afn,
+            }))
+
+    for pname, p in peris.items():
+        p = remove_duplicates(p)
+        sort_pins(p)
+        peris[pname] = p
+    return peris
 
 
 dma_channels = {}
