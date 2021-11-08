@@ -192,6 +192,7 @@ perimap = [
     ('.*:STM32F4_flash_v1_0', 'flash_f4/FLASH'),
     ('.*:STM32F7_flash_v1_0', 'flash_f7/FLASH'),
     ('.*:STM32L4_flash_v1_0', 'flash_l4/FLASH'),
+    ('.*:STM32U5_flash_v1_0', 'flash_u5/FLASH'),
     ('STM32F7.*:ETH:ETH:ethermac110_v2_0', 'eth_v1c/ETH'),
     ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
 
