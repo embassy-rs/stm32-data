@@ -36,7 +36,7 @@ In order to run the generator, you will need to install the following tools:
 ## Generating the YAMLs
 
 - Run `./d download-all`
-- Run `python3 parse.py`
+- Run `python3 -m stm32data`
 
 This generates all the YAMLs in `data/` except those in `data/registers/`, which are manually extracted and cleaned up.
 

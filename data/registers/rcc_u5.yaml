@@ -1783,7 +1783,6 @@ fieldset/CR:
       description: "MSIS clock ready flag\r Set by hardware to indicate that the MSIS oscillator is stable. This bit is set only when MSIS is enabled by software by setting MSISON.\r Note: Once the MSISON bit is cleared, MSISRDY goes low after six MSIS clock cycles."
       bit_offset: 2
       bit_size: 1
-      enum: MSISRDY
     - name: MSIPLLEN
       description: "MSI clock PLL-mode enable\r Set and cleared by software to enable/disable the PLL part of the MSI clock source.\r MSIPLLEN must be enabled after LSE is enabled (LSEON enabled) and ready (LSERDY set by hardware). A hardware protection prevents from enabling MSIPLLEN if LSE is not ready.\r This bit is cleared by hardware when LSE is disabled (LSEON = 0) or when the CSS on LSE detects a LSE failure (see RCC_CSR)."
       bit_offset: 3
@@ -1819,7 +1818,6 @@ fieldset/CR:
       description: "HSI16 clock ready flag\r Set by hardware to indicate that HSI16 oscillator is stable. This bit is set only when HSI16 is enabled by software by setting HSION.\r Note: Once the HSION bit is cleared, HSIRDY goes low after six HSI16 clock cycles."
       bit_offset: 10
       bit_size: 1
-      enum: HSIRDY
     - name: HSI48ON
       description: "HSI48 clock enable\r Set and cleared by software.\r Cleared by hardware to stop the HSI48 when entering in Stop, Standby or Shutdown modes."
       bit_offset: 12
@@ -1828,7 +1826,6 @@ fieldset/CR:
       description: "HSI48 clock ready flag\r Set by hardware to indicate that HSI48 oscillator is stable. This bit is set only when HSI48 is enabled by software by setting HSI48ON."
       bit_offset: 13
       bit_size: 1
-      enum: HSIRDY
     - name: SHSION
       description: "SHSI clock enable\r Set and cleared by software.\r Cleared by hardware to stop the SHSI when entering in Stop, Standby or Shutdown modes."
       bit_offset: 14
@@ -1846,7 +1843,6 @@ fieldset/CR:
       description: "HSE clock ready flag\r Set by hardware to indicate that the HSE oscillator is stable.\r Note: Once the HSEON bit is cleared, HSERDY goes low after six HSE clock cycles."
       bit_offset: 17
       bit_size: 1
-      enum: HSERDY
     - name: HSEBYP
       description: "HSE crystal oscillator bypass\r Set and cleared by software to bypass the oscillator with an external clock. The external clock must be enabled with the HSEON bit set, to be used by the device. The HSEBYP bit can be written only if the HSE oscillator is disabled."
       bit_offset: 18
@@ -1875,7 +1871,6 @@ fieldset/CR:
       array:
         len: 3
         stride: 2
-      enum: PLLRDY
 fieldset/CRRCR:
   description: "RCC clock recovery RC register "
   fields:
@@ -1969,12 +1964,12 @@ fieldset/ICSCR1:
       description: "MSIK clock ranges\r These bits are configured by software to choose the frequency range of MSIK oscillator when MSIRGSEL is set. 16 frequency ranges are available:\r Note: MSIKRANGE can be modified when MSIK is OFF (MSISON = 0) or when MSIK is ready (MSIKRDY = 1). MSIKRANGE must NOT be modified when MSIK is ON and NOT ready (MSIKON = 1 and MSIKRDY = 0)\r MSIKRANGE is kept when the device wakes up from Stop mode, except when the MSIK range is above 24 MHz. In this case MSIKRANGE is changed by hardware into Range 2 (24 MHz)."
       bit_offset: 24
       bit_size: 4
-      enum: MSIKRANGE
+      enum: MSIRANGE
     - name: MSISRANGE
       description: "MSIS clock ranges\r These bits are configured by software to choose the frequency range of MSIS oscillator when MSIRGSEL is set. 16 frequency ranges are available:\r Note: MSISRANGE can be modified when MSIS is OFF (MSISON = 0) or when MSIS is ready (MSISRDY = 1). MSISRANGE must NOT be modified when MSIS is ON and NOT ready (MSISON = 1 and MSISRDY = 0)\r MSISRANGE is kept when the device wakes up from Stop mode, except when the MSIS range is above 24 MHz. In this case MSISRANGE is changed by hardware into Range 2 (24 MHz)."
       bit_offset: 28
       bit_size: 4
-      enum: MSISRANGE
+      enum: MSIRANGE
 fieldset/ICSCR2:
   description: "RCC internal clock sources calibration register 2 "
   fields:
@@ -2012,62 +2007,38 @@ fieldset/PLL1CFGR:
       description: "PLL1 entry clock source\r Set and cleared by software to select PLL1 clock source. These bits can be written only when the PLL1 is disabled.\r In order to save power, when no PLL1 is used, the value of PLL1SRC must be 0."
       bit_offset: 0
       bit_size: 2
-      array:
-        len: 1
-        stride: 0
       enum: PLLSRC
     - name: PLLRGE
       description: "PLL1 input frequency range\r Set and reset by software to select the proper reference frequency range used for PLL1.\r This bit must be written before enabling the PLL1.\r 00-01-10: PLL1 input (ref1_ck) clock range frequency between 4 and 8 MHz"
       bit_offset: 2
       bit_size: 2
-      array:
-        len: 1
-        stride: 0
       enum: PLLRGE
     - name: PLLFRACEN
       description: "PLL1 fractional latch enable\r Set and reset by software to latch the content of PLL1FRACN into the Î£Î modulator.\r In order to latch the PLL1FRACN value into the Î£Î modulator, PLL1FRACEN must be set to 0, then set to 1: the transition 0 to 1 transfers the content of PLL1FRACN into the modulator (see for details)."
       bit_offset: 4
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: PLLM
       description: "Prescaler for PLL1\r Set and cleared by software to configure the prescaler of the PLL1. The VCO1 input frequency is PLL1 input clock frequency/PLL1M.\r This bit can be written only when the PLL1 is disabled (PLL1ON = 0 and PLL1RDY = 0).\r ..."
       bit_offset: 8
       bit_size: 4
-      array:
-        len: 1
-        stride: 0
       enum: PLLM
     - name: PLLMBOOST
       description: "Prescaler for EPOD booster input clock\r Set and cleared by software to configure the prescaler of the PLL1, used for the EPOD booster. The EPOD booster input frequency is PLL1 input clock frequency/PLL1MBOOST.\r This bit can be written only when the PLL1 is disabled (PLL1ON = 0 and PLL1RDY = 0) and EPOD Boost mode is disabled (see ).\r others: reserved"
       bit_offset: 12
       bit_size: 4
-      array:
-        len: 1
-        stride: 0
       enum: PLLMBOOST
     - name: PLLPEN
       description: "PLL1 DIVP divider output enable\r Set and reset by software to enable the pll1_p_ck output of the PLL1.\r To save power, PLL1PEN and PLL1P bits must be set to 0 when the pll1_p_ck is not used.\r This bit can be written only when the PLL1 is disabled (PLL1ON = 0 and PLL1RDY = 0)."
       bit_offset: 16
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: PLLQEN
       description: "PLL1 DIVQ divider output enable\r Set and reset by software to enable the pll1_q_ck output of the PLL1.\r To save power, PLL1QEN and PLL1Q bits must be set to 0 when the pll1_q_ck is not used.\r This bit can be written only when the PLL1 is disabled (PLL1ON = 0 and PLL1RDY = 0)."
       bit_offset: 17
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: PLLREN
       description: "PLL1 DIVR divider output enable\r Set and reset by software to enable the pll1_r_ck output of the PLL1.\r To save power, PLL1RENPLL2REN and PLL1R bits must be set to 0 when the pll1_r_ck is not used.\r This bit can be written only when the PLL1 is disabled (PLL1ON = 0 and PLL1RDY = 0)."
       bit_offset: 18
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
 fieldset/PLL1DIVR:
   description: "RCC PLL1 dividers register "
   fields:
@@ -2075,34 +2046,20 @@ fieldset/PLL1DIVR:
       description: "Multiplication factor for PLL1 VCO\r Set and reset by software to control the multiplication factor of the VCO.\r These bits can be written only when the PLL is disabled (PLL1ON = 0 and PLL1RDY = 0).\r ...\r ...\r Others: reserved\r VCO output frequency = Fref1_ck x PLL1N, when fractional value 0 has been loaded into PLL1FRACN, with:\r PLL1N between 4 and 512\r input frequency Fref1_ck between 4 and 16 MHz"
       bit_offset: 0
       bit_size: 9
-      array:
-        len: 1
-        stride: 0
-      enum: PLLN
     - name: PLLP
       description: "PLL1 DIVP division factor\r Set and reset by software to control the frequency of the pll1_p_ck clock.\r These bits can be written only when the PLL1 is disabled (PLL1ON = 0 and PLL1RDY = 0).\r Note that odd division factors are not allowed.\r ..."
       bit_offset: 9
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
       enum: PLLP
     - name: PLLQ
       description: "PLL1 DIVQ division factor\r Set and reset by software to control the frequency of the pll1_q_ck clock.\r These bits can be written only when the PLL1 is disabled (PLL1ON = 0 and PLL1RDY = 0).\r ..."
       bit_offset: 16
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
       enum: PLLQ
     - name: PLLR
       description: "PLL1 DIVR division factor\r Set and reset by software to control the frequency of the pll1_r_ck clock.\r These bits can be written only when the PLL1 is disabled (PLL1ON = 0 and PLL1RDY = 0).\r ..."
       bit_offset: 24
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
-      enum: PLLR
 fieldset/PLL1FRACR:
   description: "RCC PLL1 fractional divider register "
   fields:
@@ -2110,9 +2067,6 @@ fieldset/PLL1FRACR:
       description: "Fractional part of the multiplication factor for PLL1 VCO\r Set and reset by software to control the fractional part of the multiplication factor of the VCO.\r These bits can be written at any time, allowing dynamic fine-tuning of the PLL1 VCO.\r VCO output frequency = Fref1_ck x (PLL1N + (PLL1FRACN / 213)), with:\r PLL1N must be between 4 and 512.\r PLL1FRACN can be between 0 and 213- 1.\r The input frequency Fref1_ck must be between 4 and 16 MHz.\r To change the FRACN value on-the-fly even if the PLL is enabled, the application must proceed as follows:\r Set the bit PLL1FRACEN to 0.\r Write the new fractional value into PLL1FRACN.\r Set the bit PLL1FRACEN to 1."
       bit_offset: 3
       bit_size: 13
-      array:
-        len: 1
-        stride: 0
 fieldset/PLL2CFGR:
   description: "RCC PLL2 configuration register "
   fields:
@@ -2120,54 +2074,33 @@ fieldset/PLL2CFGR:
       description: "PLL2 entry clock source\r Set and cleared by software to select PLL2 clock source. These bits can be written only when the PLL2 is disabled.\r In order to save power, when no PLL2 is used, the value of PLL2SRC must be 0."
       bit_offset: 0
       bit_size: 2
-      array:
-        len: 1
-        stride: 0
       enum: PLLSRC
     - name: PLLRGE
       description: "PLL2 input frequency range\r Set and reset by software to select the proper reference frequency range used for PLL2.\r This bit must be written before enabling the PLL2.\r 00-01-10: PLL2 input (ref2_ck) clock range frequency between 4 and 8 MHz"
       bit_offset: 2
       bit_size: 2
-      array:
-        len: 1
-        stride: 0
       enum: PLLRGE
     - name: PLLFRACEN
       description: "PLL2 fractional latch enable\r Set and reset by software to latch the content of PLL2FRACN into the Î£Î modulator.\r In order to latch the PLL2FRACN value into the Î£Î modulator, PLL2FRACEN must be set to 0, then set to 1: the transition 0 to 1 transfers the content of PLL2FRACN into the modulator (see for details)."
       bit_offset: 4
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: PLLM
       description: "Prescaler for PLL2\r Set and cleared by software to configure the prescaler of the PLL2. The VCO2 input frequency is PLL2 input clock frequency/PLL2M.\r This bit can be written only when the PLL2 is disabled (PLL2ON = 0 and PLL2RDY = 0).\r ..."
       bit_offset: 8
       bit_size: 4
-      array:
-        len: 1
-        stride: 0
       enum: PLLM
     - name: PLLPEN
       description: "PLL2 DIVP divider output enable\r Set and reset by software to enable the pll2_p_ck output of the PLL2.\r To save power, PLL2PEN and PLL2P bits must be set to 0 when the pll2_p_ck is not used.\r This bit can be written only when the PLL2 is disabled (PLL2ON = 0 and PLL2RDY = 0)."
       bit_offset: 16
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: PLLQEN
       description: "PLL2 DIVQ divider output enable\r Set and reset by software to enable the pll2_q_ck output of the PLL2.\r To save power, PLL2QEN and PLL2Q bits must be set to 0 when the pll2_q_ck is not used.\r This bit can be written only when the PLL2 is disabled (PLL2ON = 0 and PLL2RDY = 0."
       bit_offset: 17
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: PLLREN
       description: "PLL2 DIVR divider output enable\r Set and reset by software to enable the pll2_r_ck output of the PLL2.\r To save power, PLL2REN and PLL2R bits must be set to 0 when the pll2_r_ck is not used.\r This bit can be written only when the PLL2 is disabled (PLL2ON = 0 and PLL2RDY = 0)."
       bit_offset: 18
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
 fieldset/PLL2DIVR:
   description: "RCC PLL2 dividers configuration register "
   fields:
@@ -2175,34 +2108,20 @@ fieldset/PLL2DIVR:
       description: "Multiplication factor for PLL2 VCO\r Set and reset by software to control the multiplication factor of the VCO.\r These bits can be written only when the PLL is disabled (PLL2ON = 0 and PLL2RDY = 0).\r ...\r ...\r Others: reserved\r VCO output frequency = Fref2_ck x PLL2N, when fractional value 0 has been loaded into PLL2FRACN, with:\r PLL2N between 4 and 512\r input frequency Fref2_ck between 1MHz and 16MHz"
       bit_offset: 0
       bit_size: 9
-      array:
-        len: 1
-        stride: 0
-      enum: PLLN
     - name: PLLP
       description: "PLL2 DIVP division factor\r Set and reset by software to control the frequency of the pll2_p_ck clock.\r These bits can be written only when the PLL2 is disabled (PLL2ON = 0 and PLL2RDY = 0).\r ..."
       bit_offset: 9
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
       enum: PLLP
     - name: PLLQ
       description: "PLL2 DIVQ division factor\r Set and reset by software to control the frequency of the pll2_q_ck clock.\r These bits can be written only when the PLL2 is disabled (PLL2ON = 0 and PLL2RDY = 0).\r ..."
       bit_offset: 16
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
       enum: PLLQ
     - name: PLLR
       description: "PLL2 DIVR division factor\r Set and reset by software to control the frequency of the pll2_r_ck clock.\r These bits can be written only when the PLL2 is disabled (PLL2ON = 0 and PLL2RDY = 0).\r ..."
       bit_offset: 24
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
-      enum: PLLR
 fieldset/PLL2FRACR:
   description: "RCC PLL2 fractional divider register "
   fields:
@@ -2210,9 +2129,6 @@ fieldset/PLL2FRACR:
       description: "Fractional part of the multiplication factor for PLL2 VCO\r Set and reset by software to control the fractional part of the multiplication factor of the VCO.\r These bits can be written at any time, allowing dynamic fine-tuning of the PLL2 VCO.\r VCO output frequency = Fref2_ck x (PLL2N + (PLL2FRACN / 213)), with\r PLL2N must be between 4 and 512.\r PLL2FRACN can be between 0 and 213 - 1.\r The input frequency Fref2_ck must be between 4 and 16 MHz.\r In order to change the FRACN value on-the-fly even if the PLL is enabled, the application must proceed as follows:\r Set the bit PLL2FRACEN to 0.\r Write the new fractional value into PLL2FRACN.\r Set the bit PLL2FRACEN to 1."
       bit_offset: 3
       bit_size: 13
-      array:
-        len: 1
-        stride: 0
 fieldset/PLL3CFGR:
   description: "RCC PLL3 configuration register "
   fields:
@@ -2220,40 +2136,25 @@ fieldset/PLL3CFGR:
       description: "PLL3 entry clock source\r Set and cleared by software to select PLL3 clock source. These bits can be written only when the PLL3 is disabled.\r In order to save power, when no PLL3 is used, the value of PLL3SRC must be 00."
       bit_offset: 0
       bit_size: 2
-      array:
-        len: 1
-        stride: 0
       enum: PLLSRC
     - name: PLLRGE
       description: "PLL3 input frequency range\r Set and reset by software to select the proper reference frequency range used for PLL3.\r This bit must be written before enabling the PLL3.\r 00-01-10: PLL3 input (ref3_ck) clock range frequency between 4 and 8 MHz"
       bit_offset: 2
       bit_size: 2
-      array:
-        len: 1
-        stride: 0
       enum: PLLRGE
     - name: PLLFRACEN
       description: "PLL3 fractional latch enable\r Set and reset by software to latch the content of PLL3FRACN into the Î£Î modulator.\r In order to latch the PLL3FRACN value into the Î£Î modulator, PLL3FRACEN must be set to 0, then set to 1: the transition 0 to 1 transfers the content of PLL3FRACN into the modulator (see for details)."
       bit_offset: 4
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: PLLM
       description: "Prescaler for PLL3\r Set and cleared by software to configure the prescaler of the PLL3. The VCO3 input frequency is PLL3 input clock frequency/PLL3M.\r This bit can be written only when the PLL3 is disabled (PLL3ON = 0 and PLL3RDY = 0).\r ..."
       bit_offset: 8
       bit_size: 4
-      array:
-        len: 1
-        stride: 0
       enum: PLLM
     - name: PLLPEN
       description: "PLL3 DIVP divider output enable\r Set and reset by software to enable the pll3_p_ck output of the PLL3.\r To save power, PLL3PEN and PLL3P bits must be set to 0 when the pll3_p_ck is not used.\r This bit can be written only when the PLL3 is disabled (PLL3ON = 0 and PLL3RDY = 0)."
       bit_offset: 16
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
     - name: PLLQEN
       description: "PLL3 DIVQ divider output enable\r Set and reset by software to enable the pll3_q_ck output of the PLL3.\r To save power, PLL3QEN and PLL3Q bits must be set to 0 when the pll3_q_ck is not used.\r This bit can be written only when the PLL3 is disabled (PLL3ON = 0 and PLL3RDY = 0)."
       bit_offset: 17
@@ -2265,9 +2166,6 @@ fieldset/PLL3CFGR:
       description: "PLL3 DIVR divider output enable\r Set and reset by software to enable the pll3_r_ck output of the PLL3.\r To save power, PLL3REN and PLL3R bits must be set to 0 when the pll3_r_ck is not used.\r This bit can be written only when the PLL3 is disabled (PLL3ON = 0 and PLL3RDY = 0)."
       bit_offset: 18
       bit_size: 1
-      array:
-        len: 1
-        stride: 0
 fieldset/PLL3DIVR:
   description: "RCC PLL3 dividers configuration register "
   fields:
@@ -2275,34 +2173,20 @@ fieldset/PLL3DIVR:
       description: "Multiplication factor for PLL3 VCO\r Set and reset by software to control the multiplication factor of the VCO.\r These bits can be written only when the PLL is disabled (PLL3ON = 0 and PLL3RDY = 0).\r ...\r ...\r Others: reserved\r VCO output frequency = Fref3_ck x PLL3N, when fractional value 0 has been loaded into PLL3FRACN, with:\r PLL3N between 4 and 512\r input frequency Fref3_ck between 4 and 16MHz"
       bit_offset: 0
       bit_size: 9
-      array:
-        len: 1
-        stride: 0
-      enum: PLLN
     - name: PLLP
       description: "PLL3 DIVP division factor\r Set and reset by software to control the frequency of the pll3_p_ck clock.\r These bits can be written only when the PLL3 is disabled (PLL3ON = 0 and PLL3RDY = 0).\r ..."
       bit_offset: 9
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
       enum: PLLP
     - name: PLLQ
       description: "PLL3 DIVQ division factor\r Set and reset by software to control the frequency of the pll3_q_ck clock.\r These bits can be written only when the PLL3 is disabled (PLL3ON = 0 and PLL3RDY = 0).\r ..."
       bit_offset: 16
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
       enum: PLLQ
     - name: PLLR
       description: "PLL3 DIVR division factor\r Set and reset by software to control the frequency of the pll3_r_ck clock.\r These bits can be written only when the PLL3 is disabled (PLL3ON = 0 and PLL3RDY = 0).\r ..."
       bit_offset: 24
       bit_size: 7
-      array:
-        len: 1
-        stride: 0
-      enum: PLLR
 fieldset/PLL3FRACR:
   description: "RCC PLL3 fractional divider register "
   fields:
@@ -2310,9 +2194,6 @@ fieldset/PLL3FRACR:
       description: "Fractional part of the multiplication factor for PLL3 VCO\r Set and reset by software to control the fractional part of the multiplication factor of the VCO.\r These bits can be written at any time, allowing dynamic fine-tuning of the PLL3 VCO.\r VCO output frequency = Fref3_ck x (PLL3N + (PLL3FRACN / 213)), with:\r PLL3N must be between 4 and 512.\r PLL3FRACN can be between 0 and 213 - 1.\r The input frequency Fref3_ck must be between 4 and 16 MHz.\r In order to change the FRACN value on-the-fly even if the PLL is enabled, the application must proceed as follows:\r Set the bit PLL3FRACEN to 0.\r Write the new fractional value into PLL3FRACN.\r Set the bit PLL3FRACEN to 1."
       bit_offset: 3
       bit_size: 13
-      array:
-        len: 1
-        stride: 0
 fieldset/PRIVCFGR:
   description: "RCC privilege configuration register "
   fields:
@@ -2553,28 +2434,31 @@ enum/FDCANSEL:
 enum/HPRE:
   bit_size: 4
   variants:
-    - name: B_0x8
+    - name: NONE
+      description: SYSCLK not divided
+      value: 0
+    - name: DIV2
       description: SYSCLK divided by 2
       value: 8
-    - name: B_0x9
+    - name: DIV4
       description: SYSCLK divided by 4
       value: 9
-    - name: B_0xA
+    - name: DIV8
       description: SYSCLK divided by 8
       value: 10
-    - name: B_0xB
+    - name: DIV16
       description: SYSCLK divided by 16
       value: 11
-    - name: B_0xC
+    - name: DIV64
       description: SYSCLK divided by 64
       value: 12
-    - name: B_0xD
+    - name: DIV128
       description: SYSCLK divided by 128
       value: 13
-    - name: B_0xE
+    - name: DIV256
       description: SYSCLK divided by 256
       value: 14
-    - name: B_0xF
+    - name: DIV512
       description: SYSCLK divided by 512
       value: 15
 enum/HSEBYP:
@@ -2594,15 +2478,6 @@ enum/HSEEXT:
       value: 0
     - name: B_0x1
       description: external HSE clock digital mode (through I/O Schmitt trigger)
-      value: 1
-enum/HSERDY:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: HSE oscillator not ready
-      value: 0
-    - name: B_0x1
-      description: "HSE oscillator ready "
       value: 1
 enum/HSERDYF:
   bit_size: 1
@@ -2630,15 +2505,6 @@ enum/HSESEC:
       value: 0
     - name: B_0x1
       description: secure
-      value: 1
-enum/HSIRDY:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: HSI16 oscillator not ready
-      value: 0
-    - name: B_0x1
-      description: HSI16 oscillator ready
       value: 1
 enum/HSIRDYF:
   bit_size: 1
@@ -2967,55 +2833,55 @@ enum/MSIBIAS:
     - name: B_0x1
       description: MSI bias sampling mode (ultra-low-power mode)
       value: 1
-enum/MSIKRANGE:
+enum/MSIRANGE:
   bit_size: 4
   variants:
-    - name: B_0x0
+    - name: RANGE_48MHZ
       description: "range 0 around 48 MHz "
       value: 0
-    - name: B_0x1
+    - name: RANGE_24MHZ
       description: "range 1 around 24 MHz "
       value: 1
-    - name: B_0x2
+    - name: RANGE_16MHZ
       description: "range 2 around 16 MHz "
       value: 2
-    - name: B_0x3
+    - name: RANGE_12MHZ
       description: "range 3 around 12 MHz "
       value: 3
-    - name: B_0x4
+    - name: RANGE_4MHZ
       description: "range 4 around 4 MHz (reset value) "
       value: 4
-    - name: B_0x5
+    - name: RANGE_2MHZ
       description: "range 5 around 2 MHz "
       value: 5
-    - name: B_0x6
+    - name: RANGE_1_33MHZ
       description: "range 6 around 1.33 MHz "
       value: 6
-    - name: B_0x7
+    - name: RANGE_1MHZ
       description: "range 7 around 1 MHz "
       value: 7
-    - name: B_0x8
+    - name: RANGE_3_072MHZ
       description: "range 8 around 3.072 MHz "
       value: 8
-    - name: B_0x9
+    - name: RANGE_1_536MHZ
       description: "range 9 around 1.536 MHz "
       value: 9
-    - name: B_0xA
+    - name: RANGE_1_024MHZ
       description: "range 10 around 1.024 MHz "
       value: 10
-    - name: B_0xB
+    - name: RANGE_768KHZ
       description: "range 11 around 768 kHz "
       value: 11
-    - name: B_0xC
+    - name: RANGE_400KHZ
       description: "range 12 around 400 kHz "
       value: 12
-    - name: B_0xD
+    - name: RANGE_200KHZ
       description: "range 13 around 200 kHz "
       value: 13
-    - name: B_0xE
+    - name: RANGE_133KHZ
       description: range 14 around 133 kHz
       value: 14
-    - name: B_0xF
+    - name: RANGE_100KHZ
       description: "range 15 around 100 kHz "
       value: 15
 enum/MSIKRDY:
@@ -3084,10 +2950,10 @@ enum/MSIPLLSEL:
 enum/MSIRGSEL:
   bit_size: 1
   variants:
-    - name: B_0x0
+    - name: RCC_CSR
       description: "MSIS/MSIK ranges provided by MSISSRANGE[3:0] and MSIKSRANGE[3:0] in RCC_CSR"
       value: 0
-    - name: B_0x1
+    - name: RCC_ICSCR1
       description: "MSIS/MSIK ranges provided by MSISRANGE[3:0] and MSIKRANGE[3:0] in RCC_ICSCR1"
       value: 1
 enum/MSISEC:
@@ -3098,66 +2964,6 @@ enum/MSISEC:
       value: 0
     - name: B_0x1
       description: secure
-      value: 1
-enum/MSISRANGE:
-  bit_size: 4
-  variants:
-    - name: B_0x0
-      description: "range 0 around 48 MHz "
-      value: 0
-    - name: B_0x1
-      description: "range 1 around 24 MHz "
-      value: 1
-    - name: B_0x2
-      description: "range 2 around 16 MHz "
-      value: 2
-    - name: B_0x3
-      description: "range 3 around 12 MHz "
-      value: 3
-    - name: B_0x4
-      description: "range 4 around 4 MHz (reset value) "
-      value: 4
-    - name: B_0x5
-      description: "range 5 around 2 MHz "
-      value: 5
-    - name: B_0x6
-      description: "range 6 around 1.33 MHz "
-      value: 6
-    - name: B_0x7
-      description: "range 7 around 1 MHz "
-      value: 7
-    - name: B_0x8
-      description: "range 8 around 3.072 MHz "
-      value: 8
-    - name: B_0x9
-      description: "range 9 around 1.536 MHz "
-      value: 9
-    - name: B_0xA
-      description: "range 10 around 1.024 MHz "
-      value: 10
-    - name: B_0xB
-      description: "range 11 around 768 kHz "
-      value: 11
-    - name: B_0xC
-      description: "range 12 around 400 kHz "
-      value: 12
-    - name: B_0xD
-      description: "range 13 around 200 kHz "
-      value: 13
-    - name: B_0xE
-      description: range 14 around 133 kHz
-      value: 14
-    - name: B_0xF
-      description: "range 15 around 100 kHz "
-      value: 15
-enum/MSISRDY:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: MSIS (MSI system) oscillator not ready
-      value: 0
-    - name: B_0x1
-      description: MSIS (MSI system) oscillator ready
       value: 1
 enum/MSISRDYF:
   bit_size: 1
@@ -3282,24 +3088,6 @@ enum/PLLMBOOST:
     - name: B_0x8
       description: division by 16
       value: 8
-enum/PLLN:
-  bit_size: 9
-  variants:
-    - name: B_0x3
-      description: "PLL1N = 4 "
-      value: 3
-    - name: B_0x4
-      description: "PLL1N = 5 "
-      value: 4
-    - name: B_0x5
-      description: "PLL1N = 6 "
-      value: 5
-    - name: B_0x80
-      description: PLL1N = 129 (default after reset)
-      value: 128
-    - name: B_0x1FF
-      description: PLL1N = 512
-      value: 511
 enum/PLLP:
   bit_size: 7
   variants:
@@ -3336,33 +3124,6 @@ enum/PLLQ:
     - name: B_0x7F
       description: pll3_q_ck = vco3_ck / 128
       value: 127
-enum/PLLR:
-  bit_size: 7
-  variants:
-    - name: B_0x0
-      description: "pll2_r_ck = vco2_ck "
-      value: 0
-    - name: B_0x1
-      description: pll2_r_ck = vco2_ck / 2 (default after reset)
-      value: 1
-    - name: B_0x2
-      description: pll2_r_ck = vco2_ck / 3
-      value: 2
-    - name: B_0x3
-      description: pll2_r_ck = vco2_ck / 4
-      value: 3
-    - name: B_0x7F
-      description: pll2_r_ck = vco2_ck / 128
-      value: 127
-enum/PLLRDY:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: PLL3 unlocked
-      value: 0
-    - name: B_0x1
-      description: PLL3 locked
-      value: 1
 enum/PLLRDYF:
   bit_size: 1
   variants:
@@ -3399,31 +3160,34 @@ enum/PLLSEC:
 enum/PLLSRC:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: NONE
       description: No clock sent to PLL3
       value: 0
-    - name: B_0x1
+    - name: MSIS
       description: MSIS clock selected as PLL3 clock entry
       value: 1
-    - name: B_0x2
+    - name: HSI16
       description: HSI16 clock selected as PLL3 clock entry
       value: 2
-    - name: B_0x3
+    - name: HSE
       description: HSE clock selected as PLL3 clock entry
       value: 3
 enum/PPRE:
   bit_size: 3
   variants:
-    - name: B_0x4
+    - name: NONE
+      description: HCLK not divided
+      value: 0
+    - name: DIV2
       description: HCLK divided by 2
       value: 4
-    - name: B_0x5
+    - name: DIV4
       description: HCLK divided by 4
       value: 5
-    - name: B_0x6
+    - name: DIV8
       description: HCLK divided by 8
       value: 6
-    - name: B_0x7
+    - name: DIV16
       description: HCLK divided by 16
       value: 7
 enum/PRESCSEC:
@@ -3597,16 +3361,16 @@ enum/STOPWUCK:
 enum/SW:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: MSIS
       description: MSIS selected as system clock
       value: 0
-    - name: B_0x1
+    - name: HSI16
       description: HSI16 selected as system clock
       value: 1
-    - name: B_0x2
+    - name: HSE
       description: HSE selected as system clock
       value: 2
-    - name: B_0x3
+    - name: PLL1R
       description: PLL pll1_r_ck selected as system clock
       value: 3
 enum/SWS:
