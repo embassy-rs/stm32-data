@@ -1533,7 +1533,7 @@ fieldset/CFGR1:
       description: "system clock switch status\r Set and cleared by hardware to indicate which clock source is used as system clock."
       bit_offset: 2
       bit_size: 2
-      enum: SWS
+      enum: SW
     - name: STOPWUCK
       description: "wakeup from Stop and CSS backup clock selection\r Set and cleared by software to select the system clock used when exiting Stop mode.\r The selected clock is also used as emergency clock for the clock security system on HSE. Warning: STOPWUCK must not be modified when the CSS is enabled by HSECSSON bit in RCC_CR and the system clock is HSE (SWS = 10) or a switch on HSE is requested (SW = 10)."
       bit_offset: 4
@@ -2214,37 +2214,37 @@ fieldset/SECCFGR:
       description: "HSI clock configuration and status bits security\r Set and reset by software."
       bit_offset: 0
       bit_size: 1
-      enum: HSISEC
+      enum: SECURITY
     - name: HSESEC
       description: "HSE clock configuration bits, status bits and HSE_CSS security\r Set and reset by software."
       bit_offset: 1
       bit_size: 1
-      enum: HSESEC
+      enum: SECURITY
     - name: MSISEC
       description: "MSI clock configuration and status bits security\r Set and reset by software."
       bit_offset: 2
       bit_size: 1
-      enum: MSISEC
+      enum: SECURITY
     - name: LSISEC
       description: "LSI clock configuration and status bits security\r Set and reset by software."
       bit_offset: 3
       bit_size: 1
-      enum: LSISEC
+      enum: SECURITY
     - name: LSESEC
       description: "LSE clock configuration and status bits security\r Set and reset by software."
       bit_offset: 4
       bit_size: 1
-      enum: LSESEC
+      enum: SECURITY
     - name: SYSCLKSEC
       description: "SYSCLK clock selection, STOPWUCK bit, clock output on MCO configuration security\r Set and reset by software."
       bit_offset: 5
       bit_size: 1
-      enum: SYSCLKSEC
+      enum: SECURITY
     - name: PRESCSEC
       description: "AHBx/APBx prescaler configuration bits security\r Set and reset by software."
       bit_offset: 6
       bit_size: 1
-      enum: PRESCSEC
+      enum: SECURITY
     - name: PLLSEC
       description: "PLL1 clock configuration and status bits security\r Set and reset by software."
       bit_offset: 7
@@ -2252,22 +2252,22 @@ fieldset/SECCFGR:
       array:
         len: 3
         stride: 1
-      enum: PLLSEC
+      enum: SECURITY
     - name: ICLKSEC
       description: "intermediate clock source selection security\r Set and reset by software."
       bit_offset: 10
       bit_size: 1
-      enum: ICLKSEC
+      enum: SECURITY
     - name: HSI48SEC
       description: "HSI48 clock configuration and status bits security\r Set and reset by software."
       bit_offset: 11
       bit_size: 1
-      enum: HSISEC
+      enum: SECURITY
     - name: RMVFSEC
       description: "Remove reset flag security\r Set and reset by software."
       bit_offset: 12
       bit_size: 1
-      enum: RMVFSEC
+      enum: SECURITY
 fieldset/SRDAMR:
   description: "RCC SmartRun domain peripheral autonomous mode register\t"
   fields:
@@ -2497,15 +2497,6 @@ enum/HSERDYIE:
     - name: B_0x1
       description: HSE ready interrupt enabled
       value: 1
-enum/HSESEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
-      value: 1
 enum/HSIRDYF:
   bit_size: 1
   variants:
@@ -2523,24 +2514,6 @@ enum/HSIRDYIE:
       value: 0
     - name: B_0x1
       description: HSI16 ready interrupt enabled
-      value: 1
-enum/HSISEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
-      value: 1
-enum/ICLKSEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
       value: 1
 enum/ICLKSEL:
   bit_size: 2
@@ -2599,19 +2572,19 @@ enum/LPTIMSEL:
 enum/LPUARTSEL:
   bit_size: 3
   variants:
-    - name: B_0x0
+    - name: PCLK3
       description: PCLK3 selected
       value: 0
-    - name: B_0x1
+    - name: SYSCLK
       description: SYSCLK selected
       value: 1
-    - name: B_0x2
+    - name: HSI16
       description: HSI16 selected
       value: 2
-    - name: B_0x3
+    - name: LSE
       description: LSE selected
       value: 3
-    - name: B_0x4
+    - name: MSIK
       description: MSIK selected
       value: 4
 enum/LPWRRSTF:
@@ -2626,10 +2599,10 @@ enum/LPWRRSTF:
 enum/LSCOSEL:
   bit_size: 1
   variants:
-    - name: B_0x0
+    - name: LSI
       description: LSI clock selected
       value: 0
-    - name: B_0x1
+    - name: LSE
       description: LSE clock selected
       value: 1
 enum/LSEBYP:
@@ -2692,15 +2665,6 @@ enum/LSERDYIE:
     - name: B_0x1
       description: LSE ready interrupt enabled
       value: 1
-enum/LSESEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
-      value: 1
 enum/LSESYSRDY:
   bit_size: 1
   variants:
@@ -2745,15 +2709,6 @@ enum/LSIRDYIE:
       value: 0
     - name: B_0x1
       description: LSI ready interrupt enabled
-      value: 1
-enum/LSISEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
       value: 1
 enum/MCOPRE:
   bit_size: 3
@@ -2932,19 +2887,19 @@ enum/MSIKSRANGE:
 enum/MSIPLLFAST:
   bit_size: 1
   variants:
-    - name: B_0x0
+    - name: NORMAL
       description: MSI PLL normal start-up
       value: 0
-    - name: B_0x1
+    - name: FAST
       description: MSI PLL fast start-up
       value: 1
 enum/MSIPLLSEL:
   bit_size: 1
   variants:
-    - name: B_0x0
+    - name: MSIK
       description: "PLL mode applied to MSIK (MSI kernel) clock output "
       value: 0
-    - name: B_0x1
+    - name: MSIS
       description: PLL mode applied to MSIS (MSI system) clock output
       value: 1
 enum/MSIRGSEL:
@@ -2955,15 +2910,6 @@ enum/MSIRGSEL:
       value: 0
     - name: RCC_ICSCR1
       description: "MSIS/MSIK ranges provided by MSISRANGE[3:0] and MSIKRANGE[3:0] in RCC_ICSCR1"
-      value: 1
-enum/MSISEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
       value: 1
 enum/MSISRDYF:
   bit_size: 1
@@ -3022,16 +2968,16 @@ enum/OBLRSTF:
 enum/OCTOSPISEL:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: SYSCLK
       description: SYSCLK selected
       value: 0
-    - name: B_0x1
+    - name: MSIK
       description: MSIK selected
       value: 1
-    - name: B_0x2
+    - name: PLL1_Q
       description: "PLL1 Q (pll1_q_ck) selected, can be up to 200 MHz"
       value: 2
-    - name: B_0x3
+    - name: PLL2_Q
       description: "PLL2 Q (pll2_q_ck) selected, can be up to 200 MHz"
       value: 3
 enum/PINRSTF:
@@ -3046,46 +2992,46 @@ enum/PINRSTF:
 enum/PLLM:
   bit_size: 4
   variants:
-    - name: B_0x0
+    - name: BYPASS
       description: division by 1 (bypass)
       value: 0
-    - name: B_0x1
+    - name: DIV2
       description: division by 2
       value: 1
-    - name: B_0x2
+    - name: DIV3
       description: division by 3
       value: 2
-    - name: B_0xF
+    - name: DIV16
       description: division by 16
       value: 15
 enum/PLLMBOOST:
   bit_size: 4
   variants:
-    - name: B_0x0
+    - name: BYPASS
       description: division by 1 (bypass)
       value: 0
-    - name: B_0x1
+    - name: DIV2
       description: division by 2
       value: 1
-    - name: B_0x2
+    - name: DIV4
       description: division by 4
       value: 2
-    - name: B_0x3
+    - name: DIV6
       description: division by 6
       value: 3
-    - name: B_0x4
+    - name: DIV8
       description: division by 8
       value: 4
-    - name: B_0x5
+    - name: DIV10
       description: division by 10
       value: 5
-    - name: B_0x6
+    - name: DIV12
       description: division by 12
       value: 6
-    - name: B_0x7
+    - name: DIV14
       description: division by 14
       value: 7
-    - name: B_0x8
+    - name: DIV16
       description: division by 16
       value: 8
 enum/PLLP:
@@ -3109,19 +3055,19 @@ enum/PLLP:
 enum/PLLQ:
   bit_size: 7
   variants:
-    - name: B_0x0
+    - name: VCO_CK
       description: "pll3_q_ck = vco3_ck "
       value: 0
-    - name: B_0x1
+    - name: VCO_CK_DIV2
       description: pll3_q_ck = vco3_ck / 2 (default after reset)
       value: 1
-    - name: B_0x2
+    - name: VCO_CK_DIV3
       description: pll3_q_ck = vco3_ck / 3
       value: 2
-    - name: B_0x3
+    - name: VCO_CK_DIV4
       description: pll3_q_ck = vco3_ck / 4
       value: 3
-    - name: B_0x7F
+    - name: VCO_CK_DIV128
       description: pll3_q_ck = vco3_ck / 128
       value: 127
 enum/PLLRDYF:
@@ -3148,15 +3094,6 @@ enum/PLLRGE:
     - name: B_0x3
       description: PLL2 input (ref2_ck) clock range frequency between 8 and 16 MHz
       value: 3
-enum/PLLSEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
-      value: 1
 enum/PLLSRC:
   bit_size: 2
   variants:
@@ -3190,15 +3127,6 @@ enum/PPRE:
     - name: DIV16
       description: HCLK divided by 16
       value: 7
-enum/PRESCSEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
-      value: 1
 enum/RMVF:
   bit_size: 1
   variants:
@@ -3208,67 +3136,58 @@ enum/RMVF:
     - name: B_0x1
       description: Clear the reset flags
       value: 1
-enum/RMVFSEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
-      value: 1
 enum/RNGSEL:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: HSI48
       description: "HSI48 selected "
       value: 0
-    - name: B_0x1
+    - name: HSI48_DIV2
       description: "HSI48 / 2 selected, can be used in Range 4"
       value: 1
-    - name: B_0x2
+    - name: HSI16
       description: HSI16 selected
       value: 2
 enum/RTCSEL:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: NONE
       description: No clock selected
       value: 0
-    - name: B_0x1
+    - name: LSE
       description: LSE oscillator clock selected
       value: 1
-    - name: B_0x2
+    - name: LSI
       description: LSI oscillator clock selected
       value: 2
-    - name: B_0x3
+    - name: HSE
       description: HSE oscillator clock divided by 32 selected
       value: 3
 enum/SAESSEL:
   bit_size: 1
   variants:
-    - name: B_0x0
+    - name: SHSI
       description: SHSI selected
       value: 0
-    - name: B_0x1
+    - name: SHSI_DIV2
       description: "SHSI / 2 selected, can be used in Range 4"
       value: 1
 enum/SAISEL:
   bit_size: 3
   variants:
-    - name: B_0x0
+    - name: PLL2
       description: PLL2 P (pll2_p_ck) selected
       value: 0
-    - name: B_0x1
+    - name: PLL3
       description: PLL3 P (pll3_p_ck) selected
       value: 1
-    - name: B_0x2
+    - name: PLL1
       description: PLL1 P (pll1_p_ck) selected
       value: 2
-    - name: B_0x3
+    - name: AUDIOCLK
       description: input pin AUDIOCLK selected
       value: 3
-    - name: B_0x4
+    - name: HSI16
       description: HSI16 clock selected
       value: 4
 enum/SDMMCSEL:
@@ -3319,16 +3238,16 @@ enum/SHSIRDYIE:
 enum/SPISEL:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: PCLK2
       description: PCLK2 selected
       value: 0
-    - name: B_0x1
+    - name: SYSCLK
       description: SYSCLK selected
       value: 1
-    - name: B_0x2
+    - name: HSI16
       description: HSI16 selected
       value: 2
-    - name: B_0x3
+    - name: MSIK
       description: MSIK selected
       value: 3
 enum/SPRIV:
@@ -3373,40 +3292,16 @@ enum/SW:
     - name: PLL1R
       description: PLL pll1_r_ck selected as system clock
       value: 3
-enum/SWS:
-  bit_size: 2
-  variants:
-    - name: B_0x0
-      description: MSIS oscillator used as system clock
-      value: 0
-    - name: B_0x1
-      description: HSI16 oscillator used as system clock
-      value: 1
-    - name: B_0x2
-      description: HSE used as system clock
-      value: 2
-    - name: B_0x3
-      description: PLL pll1_r_ck used as system clock
-      value: 3
-enum/SYSCLKSEC:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: non secure
-      value: 0
-    - name: B_0x1
-      description: secure
-      value: 1
 enum/SYSTICKSEL:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: HCLK_DIV8
       description: HCLK/8 selected
       value: 0
-    - name: B_0x1
+    - name: LSI
       description: LSI selected
       value: 1
-    - name: B_0x2
+    - name: LSE
       description: LSE selected
       value: 2
 enum/TIMICSEL:
@@ -3427,31 +3322,31 @@ enum/TIMICSEL:
 enum/UARTSEL:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: PCLK1
       description: PCLK1 selected
       value: 0
-    - name: B_0x1
+    - name: SYSCLK
       description: SYSCLK selected
       value: 1
-    - name: B_0x2
+    - name: HSI16
       description: HSI16 selected
       value: 2
-    - name: B_0x3
+    - name: LSE
       description: LSE selected
       value: 3
 enum/USARTSEL:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: PCLK2
       description: PCLK2 selected
       value: 0
-    - name: B_0x1
+    - name: SYSCLK
       description: SYSCLK selected
       value: 1
-    - name: B_0x2
+    - name: HSI16
       description: HSI16 selected
       value: 2
-    - name: B_0x3
+    - name: LSE
       description: LSE selected
       value: 3
 enum/WWDGRSTF:
@@ -3462,4 +3357,13 @@ enum/WWDGRSTF:
       value: 0
     - name: B_0x1
       description: Window watchdog reset occurred
+      value: 1
+enum/SECURITY:
+  bit_size: 1
+  variants:
+    - name: NON_SECURE
+      description: non secure
+      value: 0
+    - name: SECURE
+      description: secure
       value: 1
