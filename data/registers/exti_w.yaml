@@ -1,4 +1,21 @@
 ---
+block/CPU:
+  description: CPU-specific registers
+  items:
+    - name: IMR
+      description: CPU x interrupt mask register
+      array:
+        len: 2
+        stride: 16
+      byte_offset: 0
+      fieldset: LINES
+    - name: EMR
+      description: CPU x event mask register
+      array:
+        len: 2
+        stride: 16
+      byte_offset: 4
+      fieldset: LINES
 block/EXTI:
   description: External interrupt/event controller
   items:
@@ -32,30 +49,13 @@ block/EXTI:
       fieldset: LINES
     - name: CPU
       description: CPU specific registers
-      byte_offset: 128
-      block: CPU
       array:
         len: 2
         stride: 64
-block/CPU:
-  description: CPU-specific registers
-  items:
-    - name: IMR
-      description: CPU x interrupt mask register
-      byte_offset: 0
-      fieldset: LINES
-      array:
-        len: 2
-        stride: 16
-    - name: EMR
-      description: CPU x event mask register
-      array:
-        len: 2
-        stride: 16
-      byte_offset: 4
-      fieldset: LINES
+      byte_offset: 128
+      block: CPU
 fieldset/LINES:
-  description: EXTI lines register, 1 bit per line
+  description: "EXTI lines register, 1 bit per line"
   fields:
     - name: LINE
       description: EXTI line

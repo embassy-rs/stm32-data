@@ -1,17 +1,32 @@
 ---
+block/CH:
+  description: "Channel cluster: CCR?, CNDTR?, CPAR?, and CMAR? registers"
+  items:
+    - name: CR
+      description: DMA channel configuration register (DMA_CCR)
+      byte_offset: 0
+      fieldset: CR
+    - name: NDTR
+      description: DMA channel 1 number of data register
+      byte_offset: 4
+      fieldset: NDTR
+    - name: PAR
+      description: DMA channel 1 peripheral address register
+      byte_offset: 8
+    - name: MAR
+      description: DMA channel 1 memory address register
+      byte_offset: 12
 block/DMA:
   description: DMA controller
   items:
     - name: ISR
       description: DMA interrupt status register (DMA_ISR)
       byte_offset: 0
-      reset_value: 0
       access: Read
       fieldset: ISR
     - name: IFCR
       description: DMA interrupt flag clear register (DMA_IFCR)
       byte_offset: 4
-      reset_value: 0
       access: Write
       fieldset: ISR
     - name: CH
@@ -21,27 +36,6 @@ block/DMA:
         stride: 20
       byte_offset: 8
       block: CH
-block/CH:
-  description: "Channel cluster: CCR?, CNDTR?, CPAR?, and CMAR? registers"
-  items:
-    - name: CR
-      description: DMA channel configuration register (DMA_CCR)
-      byte_offset: 0
-      reset_value: 0
-      fieldset: CR
-    - name: NDTR
-      description: DMA channel 1 number of data register
-      byte_offset: 4
-      reset_value: 0
-      fieldset: NDTR
-    - name: PAR
-      description: DMA channel 1 peripheral address register
-      byte_offset: 8
-      reset_value: 0
-    - name: MAR
-      description: DMA channel 1 memory address register
-      byte_offset: 12
-      reset_value: 0
 fieldset/CR:
   description: DMA channel configuration register (DMA_CCR)
   fields:
@@ -157,15 +151,6 @@ enum/DIR:
     - name: FromMemory
       description: Read from memory
       value: 1
-enum/MEMMEM:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Memory to memory mode disabled
-      value: 0
-    - name: Enabled
-      description: Memory to memory mode enabled
-      value: 1
 enum/INC:
   bit_size: 1
   variants:
@@ -174,6 +159,15 @@ enum/INC:
       value: 0
     - name: Enabled
       description: Increment mode enabled
+      value: 1
+enum/MEMMEM:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Memory to memory mode disabled
+      value: 0
+    - name: Enabled
+      description: Memory to memory mode enabled
       value: 1
 enum/PL:
   bit_size: 2

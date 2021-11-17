@@ -8,7 +8,6 @@ block/DMA:
         len: 2
         stride: 4
       byte_offset: 0
-      reset_value: 0
       access: Read
       fieldset: IXR
     - name: IFCR
@@ -17,7 +16,6 @@ block/DMA:
         len: 2
         stride: 4
       byte_offset: 8
-      reset_value: 0
       access: Write
       fieldset: IXR
     - name: ST
@@ -33,29 +31,23 @@ block/ST:
     - name: CR
       description: stream x configuration register
       byte_offset: 0
-      reset_value: 0
       fieldset: CR
     - name: NDTR
       description: stream x number of data register
       byte_offset: 4
-      reset_value: 0
       fieldset: NDTR
     - name: PAR
       description: stream x peripheral address register
       byte_offset: 8
-      reset_value: 0
     - name: M0AR
       description: stream x memory 0 address register
       byte_offset: 12
-      reset_value: 0
     - name: M1AR
       description: stream x memory 1 address register
       byte_offset: 16
-      reset_value: 0
     - name: FCR
       description: stream x FIFO control register
       byte_offset: 20
-      reset_value: 33
       fieldset: FCR
 fieldset/CR:
   description: stream x configuration register
@@ -231,6 +223,21 @@ fieldset/NDTR:
       description: Number of data items to transfer
       bit_offset: 0
       bit_size: 16
+enum/BURST:
+  bit_size: 2
+  variants:
+    - name: Single
+      description: Single transfer
+      value: 0
+    - name: INCR4
+      description: Incremental burst of 4 beats
+      value: 1
+    - name: INCR8
+      description: Incremental burst of 8 beats
+      value: 2
+    - name: INCR16
+      description: Incremental burst of 16 beats
+      value: 3
 enum/CIRC:
   bit_size: 1
   variants:
@@ -315,21 +322,6 @@ enum/FTH:
     - name: Full
       description: Full FIFO
       value: 3
-enum/BURST:
-  bit_size: 2
-  variants:
-    - name: Single
-      description: Single transfer
-      value: 0
-    - name: INCR4
-      description: Incremental burst of 4 beats
-      value: 1
-    - name: INCR8
-      description: Incremental burst of 8 beats
-      value: 2
-    - name: INCR16
-      description: Incremental burst of 16 beats
-      value: 3
 enum/INC:
   bit_size: 1
   variants:
@@ -339,18 +331,6 @@ enum/INC:
     - name: Incremented
       description: Address pointer is incremented after each data transfer
       value: 1
-enum/SIZE:
-  bit_size: 2
-  variants:
-    - name: Bits8
-      description: Byte (8-bit)
-      value: 0
-    - name: Bits16
-      description: Half-word (16-bit)
-      value: 1
-    - name: Bits32
-      description: Word (32-bit)
-      value: 2
 enum/PFCTRL:
   bit_size: 1
   variants:
@@ -384,3 +364,15 @@ enum/PL:
     - name: VeryHigh
       description: Very high
       value: 3
+enum/SIZE:
+  bit_size: 2
+  variants:
+    - name: Bits8
+      description: Byte (8-bit)
+      value: 0
+    - name: Bits16
+      description: Half-word (16-bit)
+      value: 1
+    - name: Bits32
+      description: Word (32-bit)
+      value: 2
