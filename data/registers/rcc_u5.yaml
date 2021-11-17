@@ -2560,6 +2560,24 @@ enum/MSIBIAS:
     - name: SAMPLING
       description: MSI bias sampling mode (ultra-low-power mode)
       value: 1
+enum/MSIPLLFAST:
+  bit_size: 1
+  variants:
+    - name: NORMAL
+      description: MSI PLL normal start-up
+      value: 0
+    - name: FAST
+      description: MSI PLL fast start-up
+      value: 1
+enum/MSIPLLSEL:
+  bit_size: 1
+  variants:
+    - name: MSIK
+      description: "PLL mode applied to MSIK (MSI kernel) clock output "
+      value: 0
+    - name: MSIS
+      description: PLL mode applied to MSIS (MSI system) clock output
+      value: 1
 enum/MSIRANGE:
   bit_size: 4
   variants:
@@ -2611,6 +2629,15 @@ enum/MSIRANGE:
     - name: RANGE_100KHZ
       description: "range 15 around 100 kHz "
       value: 15
+enum/MSIRGSEL:
+  bit_size: 1
+  variants:
+    - name: RCC_CSR
+      description: "MSIS/MSIK ranges provided by MSISSRANGE[3:0] and MSIKSRANGE[3:0] in RCC_CSR"
+      value: 0
+    - name: RCC_ICSCR1
+      description: "MSIS/MSIK ranges provided by MSISRANGE[3:0] and MSIKRANGE[3:0] in RCC_ICSCR1"
+      value: 1
 enum/MSIXSRANGE:
   bit_size: 4
   variants:
@@ -2629,33 +2656,6 @@ enum/MSIXSRANGE:
     - name: RANGE_3_072MHZ
       description: "range 8 around 3.072 MHz "
       value: 8
-enum/MSIPLLFAST:
-  bit_size: 1
-  variants:
-    - name: NORMAL
-      description: MSI PLL normal start-up
-      value: 0
-    - name: FAST
-      description: MSI PLL fast start-up
-      value: 1
-enum/MSIPLLSEL:
-  bit_size: 1
-  variants:
-    - name: MSIK
-      description: "PLL mode applied to MSIK (MSI kernel) clock output "
-      value: 0
-    - name: MSIS
-      description: PLL mode applied to MSIS (MSI system) clock output
-      value: 1
-enum/MSIRGSEL:
-  bit_size: 1
-  variants:
-    - name: RCC_CSR
-      description: "MSIS/MSIK ranges provided by MSISSRANGE[3:0] and MSIKSRANGE[3:0] in RCC_CSR"
-      value: 0
-    - name: RCC_ICSCR1
-      description: "MSIS/MSIK ranges provided by MSISRANGE[3:0] and MSIKRANGE[3:0] in RCC_ICSCR1"
-      value: 1
 enum/OCTOSPISEL:
   bit_size: 2
   variants:
@@ -2758,6 +2758,15 @@ enum/PPRE:
     - name: DIV16
       description: HCLK divided by 16
       value: 7
+enum/PRIV:
+  bit_size: 1
+  variants:
+    - name: UNPRIVILEGED
+      description: Read and write to secure functions can be done by privileged or unprivileged access.
+      value: 0
+    - name: PRIVILEGED
+      description: Read and write to secure functions can be done by privileged access only.
+      value: 1
 enum/RNGSEL:
   bit_size: 2
   variants:
@@ -2820,6 +2829,15 @@ enum/SDMMCSEL:
       value: 0
     - name: PLL1_P
       description: "PLL1 P (pll1_p_ck) selected, in case higher than 48 MHz is needed (for SDR50 mode) "
+      value: 1
+enum/SECURITY:
+  bit_size: 1
+  variants:
+    - name: NON_SECURE
+      description: non secure
+      value: 0
+    - name: SECURE
+      description: secure
       value: 1
 enum/SPISEL:
   bit_size: 2
@@ -2929,21 +2947,3 @@ enum/USARTSEL:
     - name: LSE
       description: LSE selected
       value: 3
-enum/SECURITY:
-  bit_size: 1
-  variants:
-    - name: NON_SECURE
-      description: non secure
-      value: 0
-    - name: SECURE
-      description: secure
-      value: 1
-enum/PRIV:
-  bit_size: 1
-  variants:
-    - name: UNPRIVILEGED
-      description: Read and write to secure functions can be done by privileged or unprivileged access.
-      value: 0
-    - name: PRIVILEGED
-      description: Read and write to secure functions can be done by privileged access only.
-      value: 1

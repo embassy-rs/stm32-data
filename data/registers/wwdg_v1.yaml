@@ -2,98 +2,98 @@
 block/WWDG:
   description: Window watchdog
   items:
-  - byte_offset: 0
-    description: Control register
-    fieldset: CR
-    name: CR
-  - byte_offset: 4
-    description: Configuration register
-    fieldset: CFR
-    name: CFR
-  - byte_offset: 8
-    description: Status register
-    fieldset: SR
-    name: SR
-enum/EWIFR:
-  bit_size: 1
-  variants:
-  - description: The EWI Interrupt Service Routine has been serviced
-    name: Finished
-    value: 0
-  - description: The EWI Interrupt Service Routine has been triggered
-    name: Pending
-    value: 1
-enum/EWIFW:
-  bit_size: 1
-  variants:
-  - description: The EWI Interrupt Service Routine has been serviced
-    name: Finished
-    value: 0
-enum/EWIW:
-  bit_size: 1
-  variants:
-  - description: interrupt occurs whenever the counter reaches the value 0x40
-    name: Enable
-    value: 1
-enum/WDGA:
-  bit_size: 1
-  variants:
-  - description: Watchdog disabled
-    name: Disabled
-    value: 0
-  - description: Watchdog enabled
-    name: Enabled
-    value: 1
-enum/WDGTB:
-  bit_size: 2
-  variants:
-  - description: Counter clock (PCLK1 div 4096) div 1
-    name: Div1
-    value: 0
-  - description: Counter clock (PCLK1 div 4096) div 2
-    name: Div2
-    value: 1
-  - description: Counter clock (PCLK1 div 4096) div 4
-    name: Div4
-    value: 2
-  - description: Counter clock (PCLK1 div 4096) div 8
-    name: Div8
-    value: 3
+    - name: CR
+      description: Control register
+      byte_offset: 0
+      fieldset: CR
+    - name: CFR
+      description: Configuration register
+      byte_offset: 4
+      fieldset: CFR
+    - name: SR
+      description: Status register
+      byte_offset: 8
+      fieldset: SR
 fieldset/CFR:
   description: Configuration register
   fields:
-  - bit_offset: 0
-    bit_size: 7
-    description: 7-bit window value
-    name: W
-  - bit_offset: 7
-    bit_size: 2
-    description: Timer base
-    enum: WDGTB
-    name: WDGTB
-  - bit_offset: 9
-    bit_size: 1
-    description: Early wakeup interrupt
-    enum_write: EWIW
-    name: EWI
+    - name: W
+      description: 7-bit window value
+      bit_offset: 0
+      bit_size: 7
+    - name: WDGTB
+      description: Timer base
+      bit_offset: 7
+      bit_size: 2
+      enum: WDGTB
+    - name: EWI
+      description: Early wakeup interrupt
+      bit_offset: 9
+      bit_size: 1
+      enum_write: EWIW
 fieldset/CR:
   description: Control register
   fields:
-  - bit_offset: 0
-    bit_size: 7
-    description: 7-bit counter (MSB to LSB)
-    name: T
-  - bit_offset: 7
-    bit_size: 1
-    description: Activation bit
-    enum: WDGA
-    name: WDGA
+    - name: T
+      description: 7-bit counter (MSB to LSB)
+      bit_offset: 0
+      bit_size: 7
+    - name: WDGA
+      description: Activation bit
+      bit_offset: 7
+      bit_size: 1
+      enum: WDGA
 fieldset/SR:
   description: Status register
   fields:
-  - bit_offset: 0
-    bit_size: 1
-    description: Early wakeup interrupt flag
-    enum_read: EWIFR
-    enum_write: EWIFW
-    name: EWIF
+    - name: EWIF
+      description: Early wakeup interrupt flag
+      bit_offset: 0
+      bit_size: 1
+      enum_read: EWIFR
+      enum_write: EWIFW
+enum/EWIFR:
+  bit_size: 1
+  variants:
+    - name: Finished
+      description: The EWI Interrupt Service Routine has been serviced
+      value: 0
+    - name: Pending
+      description: The EWI Interrupt Service Routine has been triggered
+      value: 1
+enum/EWIFW:
+  bit_size: 1
+  variants:
+    - name: Finished
+      description: The EWI Interrupt Service Routine has been serviced
+      value: 0
+enum/EWIW:
+  bit_size: 1
+  variants:
+    - name: Enable
+      description: interrupt occurs whenever the counter reaches the value 0x40
+      value: 1
+enum/WDGA:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Watchdog disabled
+      value: 0
+    - name: Enabled
+      description: Watchdog enabled
+      value: 1
+enum/WDGTB:
+  bit_size: 2
+  variants:
+    - name: Div1
+      description: Counter clock (PCLK1 div 4096) div 1
+      value: 0
+    - name: Div2
+      description: Counter clock (PCLK1 div 4096) div 2
+      value: 1
+    - name: Div4
+      description: Counter clock (PCLK1 div 4096) div 4
+      value: 2
+    - name: Div8
+      description: Counter clock (PCLK1 div 4096) div 8
+      value: 3

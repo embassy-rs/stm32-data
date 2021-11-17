@@ -2,271 +2,268 @@
 block/ADC_COMMON:
   description: ADC common registers
   items:
-  - access: Read
-    byte_offset: 0
-    description: ADC Common status register
-    fieldset: CSR
-    name: CSR
-  - byte_offset: 4
-    description: ADC common control register
-    fieldset: CCR
-    name: CCR
-  - access: Read
-    byte_offset: 8
-    description: ADC common regular data register for dual and triple modes
-    fieldset: CDR
-    name: CDR
-enum/ADCPRE:
-  bit_size: 2
-  variants:
-  - description: PCLK2 divided by 2
-    name: Div2
-    value: 0
-  - description: PCLK2 divided by 4
-    name: Div4
-    value: 1
-  - description: PCLK2 divided by 6
-    name: Div6
-    value: 2
-  - description: PCLK2 divided by 8
-    name: Div8
-    value: 3
-enum/AWD:
-  bit_size: 1
-  variants:
-  - description: No analog watchdog event occurred
-    name: NoEvent
-    value: 0
-  - description: Analog watchdog event occurred
-    name: Event
-    value: 1
-enum/DDS:
-  bit_size: 1
-  variants:
-  - description: No new DMA request is issued after the last transfer
-    name: Single
-    value: 0
-  - description: DMA requests are issued as long as data are converted and DMA=01,
-      10 or 11
-    name: Continuous
-    value: 1
-enum/DMA:
-  bit_size: 2
-  variants:
-  - description: DMA mode disabled
-    name: Disabled
-    value: 0
-  - description: DMA mode 1 enabled (2 / 3 half-words one by one - 1 then 2 then 3)
-    name: Mode1
-    value: 1
-  - description: DMA mode 2 enabled (2 / 3 half-words by pairs - 2&1 then 1&3 then
-      3&2)
-    name: Mode2
-    value: 2
-  - description: DMA mode 3 enabled (2 / 3 half-words by pairs - 2&1 then 1&3 then
-      3&2)
-    name: Mode3
-    value: 3
-enum/EOC:
-  bit_size: 1
-  variants:
-  - description: Conversion is not complete
-    name: NotComplete
-    value: 0
-  - description: Conversion complete
-    name: Complete
-    value: 1
-enum/JEOC:
-  bit_size: 1
-  variants:
-  - description: Conversion is not complete
-    name: NotComplete
-    value: 0
-  - description: Conversion complete
-    name: Complete
-    value: 1
-enum/JSTRT:
-  bit_size: 1
-  variants:
-  - description: No injected channel conversion started
-    name: NotStarted
-    value: 0
-  - description: Injected channel conversion has started
-    name: Started
-    value: 1
-enum/MULTI:
-  bit_size: 5
-  variants:
-  - description: 'All the ADCs independent: independent mode'
-    name: Independent
-    value: 0
-  - description: Dual ADC1 and ADC2, combined regular and injected simultaneous mode
-    name: DualRJ
-    value: 1
-  - description: Dual ADC1 and ADC2, combined regular and alternate trigger mode
-    name: DualRA
-    value: 2
-  - description: Dual ADC1 and ADC2, injected simultaneous mode only
-    name: DualJ
-    value: 5
-  - description: Dual ADC1 and ADC2, regular simultaneous mode only
-    name: DualR
-    value: 6
-  - description: Dual ADC1 and ADC2, interleaved mode only
-    name: DualI
-    value: 7
-  - description: Dual ADC1 and ADC2, alternate trigger mode only
-    name: DualA
-    value: 9
-  - description: Triple ADC, regular and injected simultaneous mode
-    name: TripleRJ
-    value: 17
-  - description: Triple ADC, regular and alternate trigger mode
-    name: TripleRA
-    value: 18
-  - description: Triple ADC, injected simultaneous mode only
-    name: TripleJ
-    value: 21
-  - description: Triple ADC, regular simultaneous mode only
-    name: TripleR
-    value: 22
-  - description: Triple ADC, interleaved mode only
-    name: TripleI
-    value: 23
-  - description: Triple ADC, alternate trigger mode only
-    name: TripleA
-    value: 24
-enum/OVR:
-  bit_size: 1
-  variants:
-  - description: No overrun occurred
-    name: NoOverrun
-    value: 0
-  - description: Overrun occurred
-    name: Overrun
-    value: 1
-enum/STRT:
-  bit_size: 1
-  variants:
-  - description: No regular channel conversion started
-    name: NotStarted
-    value: 0
-  - description: Regular channel conversion has started
-    name: Started
-    value: 1
-enum/TSVREFE:
-  bit_size: 1
-  variants:
-  - description: Temperature sensor and V_REFINT channel disabled
-    name: Disabled
-    value: 0
-  - description: Temperature sensor and V_REFINT channel enabled
-    name: Enabled
-    value: 1
-enum/VBATE:
-  bit_size: 1
-  variants:
-  - description: V_BAT channel disabled
-    name: Disabled
-    value: 0
-  - description: V_BAT channel enabled
-    name: Enabled
-    value: 1
+    - name: CSR
+      description: ADC Common status register
+      byte_offset: 0
+      access: Read
+      fieldset: CSR
+    - name: CCR
+      description: ADC common control register
+      byte_offset: 4
+      fieldset: CCR
+    - name: CDR
+      description: ADC common regular data register for dual and triple modes
+      byte_offset: 8
+      access: Read
+      fieldset: CDR
 fieldset/CCR:
   description: ADC common control register
   fields:
-  - bit_offset: 0
-    bit_size: 5
-    description: Multi ADC mode selection
-    enum: MULTI
-    name: MULTI
-  - bit_offset: 8
-    bit_size: 4
-    description: Delay between 2 sampling phases
-    name: DELAY
-  - bit_offset: 13
-    bit_size: 1
-    description: DMA disable selection for multi-ADC mode
-    enum: DDS
-    name: DDS
-  - bit_offset: 14
-    bit_size: 2
-    description: Direct memory access mode for multi ADC mode
-    enum: DMA
-    name: DMA
-  - bit_offset: 16
-    bit_size: 2
-    description: ADC prescaler
-    enum: ADCPRE
-    name: ADCPRE
-  - bit_offset: 22
-    bit_size: 1
-    description: VBAT enable
-    enum: VBATE
-    name: VBATE
-  - bit_offset: 23
-    bit_size: 1
-    description: Temperature sensor and VREFINT enable
-    enum: TSVREFE
-    name: TSVREFE
+    - name: MULTI
+      description: Multi ADC mode selection
+      bit_offset: 0
+      bit_size: 5
+      enum: MULTI
+    - name: DELAY
+      description: Delay between 2 sampling phases
+      bit_offset: 8
+      bit_size: 4
+    - name: DDS
+      description: DMA disable selection for multi-ADC mode
+      bit_offset: 13
+      bit_size: 1
+      enum: DDS
+    - name: DMA
+      description: Direct memory access mode for multi ADC mode
+      bit_offset: 14
+      bit_size: 2
+      enum: DMA
+    - name: ADCPRE
+      description: ADC prescaler
+      bit_offset: 16
+      bit_size: 2
+      enum: ADCPRE
+    - name: VBATE
+      description: VBAT enable
+      bit_offset: 22
+      bit_size: 1
+      enum: VBATE
+    - name: TSVREFE
+      description: Temperature sensor and VREFINT enable
+      bit_offset: 23
+      bit_size: 1
+      enum: TSVREFE
 fieldset/CDR:
   description: ADC common regular data register for dual and triple modes
   fields:
-  - array:
-      len: 2
-      stride: 16
-    bit_offset: 0
-    bit_size: 16
-    description: 1st data item of a pair of regular conversions
-    name: DATA
+    - name: DATA
+      description: 1st data item of a pair of regular conversions
+      bit_offset: 0
+      bit_size: 16
+      array:
+        len: 2
+        stride: 16
 fieldset/CSR:
   description: ADC common status register
   fields:
-  - array:
-      len: 3
-      stride: 8
-    bit_offset: 0
-    bit_size: 1
-    description: Analog watchdog flag of ADC 1
-    enum: AWD
-    name: AWD
-  - array:
-      len: 3
-      stride: 8
-    bit_offset: 1
-    bit_size: 1
-    description: End of conversion of ADC 1
-    enum: EOC
-    name: EOC
-  - array:
-      len: 3
-      stride: 8
-    bit_offset: 2
-    bit_size: 1
-    description: Injected channel end of conversion of ADC 1
-    enum: JEOC
-    name: JEOC
-  - array:
-      len: 3
-      stride: 8
-    bit_offset: 3
-    bit_size: 1
-    description: Injected channel Start flag of ADC 1
-    enum: JSTRT
-    name: JSTRT
-  - array:
-      len: 3
-      stride: 8
-    bit_offset: 4
-    bit_size: 1
-    description: Regular channel Start flag of ADC 1
-    enum: STRT
-    name: STRT
-  - array:
-      len: 3
-      stride: 8
-    bit_offset: 5
-    bit_size: 1
-    description: Overrun flag of ADC 1
-    enum: OVR
-    name: OVR
+    - name: AWD
+      description: Analog watchdog flag of ADC 1
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 3
+        stride: 8
+      enum: AWD
+    - name: EOC
+      description: End of conversion of ADC 1
+      bit_offset: 1
+      bit_size: 1
+      array:
+        len: 3
+        stride: 8
+      enum: EOC
+    - name: JEOC
+      description: Injected channel end of conversion of ADC 1
+      bit_offset: 2
+      bit_size: 1
+      array:
+        len: 3
+        stride: 8
+      enum: JEOC
+    - name: JSTRT
+      description: Injected channel Start flag of ADC 1
+      bit_offset: 3
+      bit_size: 1
+      array:
+        len: 3
+        stride: 8
+      enum: JSTRT
+    - name: STRT
+      description: Regular channel Start flag of ADC 1
+      bit_offset: 4
+      bit_size: 1
+      array:
+        len: 3
+        stride: 8
+      enum: STRT
+    - name: OVR
+      description: Overrun flag of ADC 1
+      bit_offset: 5
+      bit_size: 1
+      array:
+        len: 3
+        stride: 8
+      enum: OVR
+enum/ADCPRE:
+  bit_size: 2
+  variants:
+    - name: Div2
+      description: PCLK2 divided by 2
+      value: 0
+    - name: Div4
+      description: PCLK2 divided by 4
+      value: 1
+    - name: Div6
+      description: PCLK2 divided by 6
+      value: 2
+    - name: Div8
+      description: PCLK2 divided by 8
+      value: 3
+enum/AWD:
+  bit_size: 1
+  variants:
+    - name: NoEvent
+      description: No analog watchdog event occurred
+      value: 0
+    - name: Event
+      description: Analog watchdog event occurred
+      value: 1
+enum/DDS:
+  bit_size: 1
+  variants:
+    - name: Single
+      description: No new DMA request is issued after the last transfer
+      value: 0
+    - name: Continuous
+      description: "DMA requests are issued as long as data are converted and DMA=01, 10 or 11"
+      value: 1
+enum/DMA:
+  bit_size: 2
+  variants:
+    - name: Disabled
+      description: DMA mode disabled
+      value: 0
+    - name: Mode1
+      description: DMA mode 1 enabled (2 / 3 half-words one by one - 1 then 2 then 3)
+      value: 1
+    - name: Mode2
+      description: DMA mode 2 enabled (2 / 3 half-words by pairs - 2&1 then 1&3 then 3&2)
+      value: 2
+    - name: Mode3
+      description: DMA mode 3 enabled (2 / 3 half-words by pairs - 2&1 then 1&3 then 3&2)
+      value: 3
+enum/EOC:
+  bit_size: 1
+  variants:
+    - name: NotComplete
+      description: Conversion is not complete
+      value: 0
+    - name: Complete
+      description: Conversion complete
+      value: 1
+enum/JEOC:
+  bit_size: 1
+  variants:
+    - name: NotComplete
+      description: Conversion is not complete
+      value: 0
+    - name: Complete
+      description: Conversion complete
+      value: 1
+enum/JSTRT:
+  bit_size: 1
+  variants:
+    - name: NotStarted
+      description: No injected channel conversion started
+      value: 0
+    - name: Started
+      description: Injected channel conversion has started
+      value: 1
+enum/MULTI:
+  bit_size: 5
+  variants:
+    - name: Independent
+      description: "All the ADCs independent: independent mode"
+      value: 0
+    - name: DualRJ
+      description: "Dual ADC1 and ADC2, combined regular and injected simultaneous mode"
+      value: 1
+    - name: DualRA
+      description: "Dual ADC1 and ADC2, combined regular and alternate trigger mode"
+      value: 2
+    - name: DualJ
+      description: "Dual ADC1 and ADC2, injected simultaneous mode only"
+      value: 5
+    - name: DualR
+      description: "Dual ADC1 and ADC2, regular simultaneous mode only"
+      value: 6
+    - name: DualI
+      description: "Dual ADC1 and ADC2, interleaved mode only"
+      value: 7
+    - name: DualA
+      description: "Dual ADC1 and ADC2, alternate trigger mode only"
+      value: 9
+    - name: TripleRJ
+      description: "Triple ADC, regular and injected simultaneous mode"
+      value: 17
+    - name: TripleRA
+      description: "Triple ADC, regular and alternate trigger mode"
+      value: 18
+    - name: TripleJ
+      description: "Triple ADC, injected simultaneous mode only"
+      value: 21
+    - name: TripleR
+      description: "Triple ADC, regular simultaneous mode only"
+      value: 22
+    - name: TripleI
+      description: "Triple ADC, interleaved mode only"
+      value: 23
+    - name: TripleA
+      description: "Triple ADC, alternate trigger mode only"
+      value: 24
+enum/OVR:
+  bit_size: 1
+  variants:
+    - name: NoOverrun
+      description: No overrun occurred
+      value: 0
+    - name: Overrun
+      description: Overrun occurred
+      value: 1
+enum/STRT:
+  bit_size: 1
+  variants:
+    - name: NotStarted
+      description: No regular channel conversion started
+      value: 0
+    - name: Started
+      description: Regular channel conversion has started
+      value: 1
+enum/TSVREFE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Temperature sensor and V_REFINT channel disabled
+      value: 0
+    - name: Enabled
+      description: Temperature sensor and V_REFINT channel enabled
+      value: 1
+enum/VBATE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: V_BAT channel disabled
+      value: 0
+    - name: Enabled
+      description: V_BAT channel enabled
+      value: 1
