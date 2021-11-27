@@ -1,0 +1,155 @@
+---
+block/SYSCFG:
+  description: System configuration controller
+  items:
+    - name: MEMRMP
+      description: Remap Memory register
+      byte_offset: 0
+      fieldset: MEMRMP
+    - name: CFGR1
+      description: peripheral mode configuration register
+      byte_offset: 4
+      fieldset: CFGR1
+    - name: EXTICR
+      description: external interrupt configuration register 1
+      array:
+        len: 4
+        stride: 4
+      byte_offset: 8
+      fieldset: EXTICR
+    - name: SCSR
+      description: CCM SRAM control and status register
+      byte_offset: 24
+      fieldset: SCSR
+    - name: CFGR2
+      description: configuration register 2
+      byte_offset: 28
+      fieldset: CFGR2
+    - name: SWPR
+      description: SRAM Write protection register 1
+      byte_offset: 32
+      fieldset: SWPR
+    - name: SKR
+      description: SRAM2 Key Register
+      byte_offset: 36
+      access: Write
+      fieldset: SKR
+fieldset/CFGR1:
+  description: peripheral mode configuration register
+  fields:
+    - name: BOOSTEN
+      description: BOOSTEN
+      bit_offset: 8
+      bit_size: 1
+    - name: ANASWVDD
+      description: GPIO analog switch control voltage selection
+      bit_offset: 9
+      bit_size: 1
+    - name: I2C_PB6_FMP
+      description: FM+ drive capability on PB6
+      bit_offset: 16
+      bit_size: 1
+    - name: I2C_PB7_FMP
+      description: FM+ drive capability on PB6
+      bit_offset: 17
+      bit_size: 1
+    - name: I2C_PB8_FMP
+      description: FM+ drive capability on PB6
+      bit_offset: 18
+      bit_size: 1
+    - name: I2C_PB9_FMP
+      description: FM+ drive capability on PB6
+      bit_offset: 19
+      bit_size: 1
+    - name: I2C1_FMP
+      description: I2C1 FM+ drive capability enable
+      bit_offset: 20
+      bit_size: 1
+    - name: I2C2_FMP
+      description: I2C1 FM+ drive capability enable
+      bit_offset: 21
+      bit_size: 1
+    - name: I2C3_FMP
+      description: I2C1 FM+ drive capability enable
+      bit_offset: 22
+      bit_size: 1
+    - name: I2C4_FMP
+      description: I2C1 FM+ drive capability enable
+      bit_offset: 23
+      bit_size: 1
+    - name: FPU_IE
+      description: FPU Interrupts Enable
+      bit_offset: 26
+      bit_size: 6
+fieldset/CFGR2:
+  description: configuration register 2
+  fields:
+    - name: CLL
+      description: Core Lockup Lock
+      bit_offset: 0
+      bit_size: 1
+    - name: SPL
+      description: SRAM Parity Lock
+      bit_offset: 1
+      bit_size: 1
+    - name: PVDL
+      description: PVD Lock
+      bit_offset: 2
+      bit_size: 1
+    - name: ECCL
+      description: ECC Lock
+      bit_offset: 3
+      bit_size: 1
+    - name: SPF
+      description: SRAM Parity Flag
+      bit_offset: 8
+      bit_size: 1
+fieldset/EXTICR:
+  description: external interrupt configuration register
+  fields:
+    - name: EXTI
+      description: EXTI x configuration
+      bit_offset: 0
+      bit_size: 4
+      array:
+        len: 4
+        stride: 4
+fieldset/MEMRMP:
+  description: Remap Memory register
+  fields:
+    - name: MEM_MODE
+      description: Memory mapping selection
+      bit_offset: 0
+      bit_size: 3
+    - name: FB_mode
+      description: User Flash Bank mode
+      bit_offset: 8
+      bit_size: 1
+fieldset/SCSR:
+  description: CCM SRAM control and status register
+  fields:
+    - name: CCMER
+      description: CCM SRAM Erase
+      bit_offset: 0
+      bit_size: 1
+    - name: CCMBSY
+      description: CCM SRAM busy by erase operation
+      bit_offset: 1
+      bit_size: 1
+fieldset/SKR:
+  description: SRAM2 Key Register
+  fields:
+    - name: KEY
+      description: SRAM2 Key for software erase
+      bit_offset: 0
+      bit_size: 8
+fieldset/SWPR:
+  description: SRAM Write protection register
+  fields:
+    - name: Page_WP
+      description: Write protection
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 32
+        stride: 1
