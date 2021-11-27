@@ -125,6 +125,7 @@ perimap = [
     ('STM32L0.*:SYS:.*',  'syscfg_l0/SYSCFG'),
     ('STM32L1.*:SYS:.*',  'syscfg_l1/SYSCFG'),
     ('STM32G0.*:SYS:.*',  'syscfg_g0/SYSCFG'),
+    ('STM32G4.*:SYS:.*',  'syscfg_g4/SYSCFG'),
     ('STM32H7.*:SYS:.*',  'syscfg_h7/SYSCFG'),
     ('STM32U5.*:SYS:.*',  'syscfg_u5/SYSCFG'),
     ('STM32WB.*:SYS:.*',  'syscfg_wb/SYSCFG'),
@@ -180,6 +181,7 @@ perimap = [
     ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
     ('.*:STM32G0_pwr_v1_0', 'pwr_g0/PWR'),
+    ('.*:STM32G4_pwr_v1_0', 'pwr_g4/PWR'),
     ('STM32H7(42|43|53|50).*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
     ('.*:STM32H7_pwr_v1_0', 'pwr_h7smps/PWR'),
     ('.*:STM32F4_pwr_v1_0', 'pwr_f4/PWR'),
@@ -1152,6 +1154,7 @@ def parse_rcc_regs():
         with open(f, 'r') as yaml_file:
             y = yaml.load(yaml_file)
             for (key, body) in y.items():
+                if 'SMENR' in key: continue
                 if key.startswith("fieldset/A") and key.endswith("ENR"):
                     clock = removesuffix(key, "ENR")
                     clock = removeprefix(clock, "fieldset/")
