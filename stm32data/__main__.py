@@ -532,9 +532,10 @@ def parse_chips():
         if chip_bdma is not None:
             chip_bdma = chip_bdma['@Version']
 
-        rcc = next(filter(lambda x: x['@Name'] == 'RCC', chip['ips'].values()))['@Version']
-        rcc = removesuffix(rcc, '-rcc_v1_0')
-        rcc = removesuffix(rcc, '_rcc_v1_0')
+        rcc_kind = next(filter(lambda x: x['@Name'] == 'RCC', chip['ips'].values()))['@Version']
+        assert rcc_kind is not None
+        rcc_block = match_peri(f'{chip_name}:RCC:{rcc_kind}')
+        assert rcc_block is not None
 
         h = header.get_for_chip(chip_name)
         if h is None:
@@ -626,8 +627,16 @@ def parse_chips():
                     'kind': pkind,
                 })
 
-                if pname in clocks[rcc]:
-                    p['clock'] = clocks[rcc][pname]
+                peri_clock = None
+                if chip_name.startswith('STM32G0') and pname.startswith('TIM'):
+                    peri_clock = 'APB'
+                elif chip_name.startswith('STM32G0') and pname.startswith('SYSCFG'):
+                    peri_clock = 'APB'
+                else:
+                    peri_clock = match_peri_clock(rcc_block, pname)
+
+                if peri_clock is not None:
+                    p['clock'] = peri_clock
 
                 if block := match_peri(chip_name + ':' + pname + ':' + pkind):
                     p['block'] = block
@@ -652,22 +661,6 @@ def parse_chips():
                         peris[extra_name] = extra_p
 
             core['peripherals'] = peris
-
-            if 'block' in core['peripherals']['RCC']:
-                rcc_block = core['peripherals']['RCC']['block']
-
-                for (name, body) in core['peripherals'].items():
-                    if 'clock' not in body:
-                        peri_clock = None
-                        if chip_name.startswith('STM32G0') and name.startswith('TIM'):
-                            peri_clock = 'APB'
-                        elif chip_name.startswith('STM32G0') and name.startswith('SYSCFG'):
-                            peri_clock = 'APB'
-                        else:
-                            peri_clock = match_peri_clock(rcc_block, name)
-
-                        if peri_clock is not None:
-                            core['peripherals'][name]['clock'] = peri_clock
 
             # Process DMA channels
             chs = {}
@@ -1026,28 +1019,6 @@ def parse_dma():
         dma_channels[ff] = chip_dma
 
 
-clocks = {}
-
-
-def parse_clocks():
-    for f in glob('sources/cubedb/mcu/IP/RCC-*rcc_v1_0_Modes.xml'):
-        ff = removeprefix(f, 'sources/cubedb/mcu/IP/RCC-')
-        ff = removesuffix(ff, '_rcc_v1_0_Modes.xml')
-        ff = removesuffix(ff, '-rcc_v1_0_Modes.xml')
-        chip_clocks = {}
-        r = xmltodict.parse(open(f, 'rb'))
-        for ref in r['IP']['RefParameter']:
-            name = ref['@Name']
-            if name.startswith("APB") and name.endswith("Freq_Value") and not name.endswith("TimFreq_Value") and '@IP' in ref:
-                name = removesuffix(name, "Freq_Value")
-                peripherals = ref['@IP']
-                peripherals = peripherals.split(",")
-                for p in peripherals:
-                    chip_clocks[p] = name
-
-        clocks[ff] = chip_clocks
-
-
 peripheral_to_clock = {}
 
 
@@ -1060,7 +1031,8 @@ def parse_rcc_regs():
         with open(f, 'r') as yaml_file:
             y = yaml.load(yaml_file)
             for (key, body) in y.items():
-                if 'SMENR' in key: continue
+                if 'SMENR' in key:
+                    continue
                 if m := re.match('^fieldset/(A[PH]B\d?)ENR\d?$', key):
                     clock = m.group(1)
                     for field in body['fields']:
@@ -1242,5 +1214,4 @@ parse_rcc_regs()
 parse_documentations()
 parse_dma()
 parse_gpio_af()
-parse_clocks()
 parse_chips()
