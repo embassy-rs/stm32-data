@@ -445,6 +445,8 @@ def parse_chips():
     for f in sorted(glob('sources/cubedb/mcu/STM32*.xml')):
         if 'STM32MP' in f:
             continue
+        if 'STM32GBK' in f:
+            continue
 
         print(f)
 
