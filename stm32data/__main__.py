@@ -624,7 +624,6 @@ def parse_chips():
 
                 p = OrderedDict({
                     'address': addr,
-                    'kind': pkind,
                 })
 
                 peri_clock = None
