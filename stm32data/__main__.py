@@ -1155,11 +1155,8 @@ def parse_rcc_regs():
             y = yaml.load(yaml_file)
             for (key, body) in y.items():
                 if 'SMENR' in key: continue
-                if key.startswith("fieldset/A") and key.endswith("ENR"):
-                    clock = removesuffix(key, "ENR")
-                    clock = removeprefix(clock, "fieldset/")
-                    clock = removesuffix(clock, "L")
-                    clock = removesuffix(clock, "H")
+                if m := re.match('^fieldset/(A[PH]B\d?)ENR\d?$', key):
+                    clock = m.group(1)
                     for field in body['fields']:
                         if field['name'].endswith('EN'):
                             peri = removesuffix(field['name'], 'EN')
