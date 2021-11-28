@@ -1009,7 +1009,7 @@ def parse_dma():
                     dmamux_file = 'L4PQ'
                 if ff.startswith('STM32L4S'):
                     dmamux_file = 'L4RS'
-                for mf in glob('data/dmamux/{}_*.yaml'.format(dmamux_file)):
+                for mf in sorted(glob('data/dmamux/{}_*.yaml'.format(dmamux_file))):
                     with open(mf, 'r') as yaml_file:
                         y = yaml.load(yaml_file)
                     mf = removesuffix(mf, '.yaml')
