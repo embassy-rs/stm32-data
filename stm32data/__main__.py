@@ -118,19 +118,19 @@ perimap = [
     ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
     ('.*:DCMI:cci_v2_0', 'dcmi_v1/DCMI'),
-    ('STM32F0.*:SYS:.*',  'syscfg_f0/SYSCFG'),
-    ('STM32F4.*:SYS:.*',  'syscfg_f4/SYSCFG'),
-    ('STM32F7.*:SYS:.*',  'syscfg_f7/SYSCFG'),
-    ('STM32L4.*:SYS:.*',  'syscfg_l4/SYSCFG'),
-    ('STM32L0.*:SYS:.*',  'syscfg_l0/SYSCFG'),
-    ('STM32L1.*:SYS:.*',  'syscfg_l1/SYSCFG'),
-    ('STM32G0.*:SYS:.*',  'syscfg_g0/SYSCFG'),
-    ('STM32G4.*:SYS:.*',  'syscfg_g4/SYSCFG'),
-    ('STM32H7.*:SYS:.*',  'syscfg_h7/SYSCFG'),
-    ('STM32U5.*:SYS:.*',  'syscfg_u5/SYSCFG'),
-    ('STM32WB.*:SYS:.*',  'syscfg_wb/SYSCFG'),
-    ('STM32WL5.*:SYS:.*', 'syscfg_wl5/SYSCFG'),
-    ('STM32WLE.*:SYS:.*', 'syscfg_wle/SYSCFG'),
+    ('STM32F0.*:SYSCFG:.*',  'syscfg_f0/SYSCFG'),
+    ('STM32F4.*:SYSCFG:.*',  'syscfg_f4/SYSCFG'),
+    ('STM32F7.*:SYSCFG:.*',  'syscfg_f7/SYSCFG'),
+    ('STM32L4.*:SYSCFG:.*',  'syscfg_l4/SYSCFG'),
+    ('STM32L0.*:SYSCFG:.*',  'syscfg_l0/SYSCFG'),
+    ('STM32L1.*:SYSCFG:.*',  'syscfg_l1/SYSCFG'),
+    ('STM32G0.*:SYSCFG:.*',  'syscfg_g0/SYSCFG'),
+    ('STM32G4.*:SYSCFG:.*',  'syscfg_g4/SYSCFG'),
+    ('STM32H7.*:SYSCFG:.*',  'syscfg_h7/SYSCFG'),
+    ('STM32U5.*:SYSCFG:.*',  'syscfg_u5/SYSCFG'),
+    ('STM32WB.*:SYSCFG:.*',  'syscfg_wb/SYSCFG'),
+    ('STM32WL5.*:SYSCFG:.*', 'syscfg_wl5/SYSCFG'),
+    ('STM32WLE.*:SYSCFG:.*', 'syscfg_wle/SYSCFG'),
 
     ('.*:IWDG:iwdg1_v2_0', 'iwdg_v2/IWDG'),
     ('.*:WWDG:wwdg1_v1_0', 'wwdg_v1/WWDG'),
@@ -178,24 +178,24 @@ perimap = [
     ('STM32WLE.*:EXTI:.*', 'exti_wle/EXTI'),
     ('.*:EXTI:.*', 'exti_v1/EXTI'),
 
-    ('.*:STM32L0_crs_v1_0', 'crs_l0/CRS'),
+    ('STM32L0.*:CRS:.*', 'crs_l0/CRS'),
     ('.*SDMMC:sdmmc2_v1_0', 'sdmmc_v2/SDMMC'),
-    ('.*:STM32G0_pwr_v1_0', 'pwr_g0/PWR'),
-    ('.*:STM32G4_pwr_v1_0', 'pwr_g4/PWR'),
-    ('STM32H7(42|43|53|50).*:STM32H7_pwr_v1_0', 'pwr_h7/PWR'),
-    ('.*:STM32H7_pwr_v1_0', 'pwr_h7smps/PWR'),
-    ('.*:STM32F4_pwr_v1_0', 'pwr_f4/PWR'),
-    ('.*:STM32F7_pwr_v1_0', 'pwr_f7/PWR'),
-    ('.*:STM32L1_pwr_v1_0', 'pwr_l1/PWR'),
-    ('.*:STM32U5_pwr_v1_0', 'pwr_u5/PWR'),
-    ('.*:STM32WL_pwr_v1_0', 'pwr_wl5/PWR'),
-    ('.*:STM32H7_flash_v1_0', 'flash_h7/FLASH'),
-    ('.*:STM32F0_flash_v1_0', 'flash_f0/FLASH'),
-    ('.*:STM32F1_flash_v1_0', 'flash_f1/FLASH'),
-    ('.*:STM32F4_flash_v1_0', 'flash_f4/FLASH'),
-    ('.*:STM32F7_flash_v1_0', 'flash_f7/FLASH'),
-    ('.*:STM32L4_flash_v1_0', 'flash_l4/FLASH'),
-    ('.*:STM32U5_flash_v1_0', 'flash_u5/FLASH'),
+    ('STM32G0.*:PWR:.*', 'pwr_g0/PWR'),
+    ('STM32G4.*:PWR:.*', 'pwr_g4/PWR'),
+    ('STM32H7(42|43|53|50).*:PWR:.*', 'pwr_h7/PWR'),
+    ('STM32H7.*:PWR:.*', 'pwr_h7smps/PWR'),
+    ('STM32F4.*:PWR:.*', 'pwr_f4/PWR'),
+    ('STM32F7.*:PWR:.*', 'pwr_f7/PWR'),
+    ('STM32L1.*:PWR:.*', 'pwr_l1/PWR'),
+    ('STM32U5.*:PWR:.*', 'pwr_u5/PWR'),
+    ('STM32WL.*:PWR:.*', 'pwr_wl5/PWR'),
+    ('STM32H7.*:FLASH:.*', 'flash_h7/FLASH'),
+    ('STM32F0.*:FLASH:.*', 'flash_f0/FLASH'),
+    ('STM32F1.*:FLASH:.*', 'flash_f1/FLASH'),
+    ('STM32F4.*:FLASH:.*', 'flash_f4/FLASH'),
+    ('STM32F7.*:FLASH:.*', 'flash_f7/FLASH'),
+    ('STM32L4.*:FLASH:.*', 'flash_l4/FLASH'),
+    ('STM32U5.*:FLASH:.*', 'flash_u5/FLASH'),
     ('STM32F7.*:ETH:ETH:ethermac110_v2_0', 'eth_v1c/ETH'),
     ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
 
@@ -205,35 +205,38 @@ perimap = [
     ('STM32F7.*:TIM8:.*', 'timer_v1/TIM_ADV'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
 
-    ('.*:STM32F0_dbgmcu_v1_0', 'dbgmcu_f0/DBGMCU'),
-    ('.*:STM32F1_dbgmcu_v1_0', 'dbgmcu_f1/DBGMCU'),
-    ('.*:STM32F2_dbgmcu_v1_0', 'dbgmcu_f2/DBGMCU'),
-    ('.*:STM32F3_dbgmcu_v1_0', 'dbgmcu_f3/DBGMCU'),
-    ('.*:STM32F4_dbgmcu_v1_0', 'dbgmcu_f4/DBGMCU'),
-    ('.*:STM32F7_dbgmcu_v1_0', 'dbgmcu_f7/DBGMCU'),
-    ('.*:STM32G0_dbgmcu_v1_0', 'dbgmcu_g0/DBGMCU'),
-    ('.*:STM32G4_dbgmcu_v1_0', 'dbgmcu_g4/DBGMCU'),
-    ('.*:STM32H7_dbgmcu_v1_0', 'dbgmcu_h7/DBGMCU'),
-    ('.*:STM32L0_dbgmcu_v1_0', 'dbgmcu_l0/DBGMCU'),
-    ('.*:STM32L1_dbgmcu_v1_0', 'dbgmcu_l1/DBGMCU'),
-    ('.*:STM32L4_dbgmcu_v1_0', 'dbgmcu_l4/DBGMCU'),
-    ('.*:STM32U5_dbgmcu_v1_0', 'dbgmcu_u5/DBGMCU'),
-    ('.*:STM32WB_dbgmcu_v1_0', 'dbgmcu_wb/DBGMCU'),
-    ('.*:STM32WL_dbgmcu_v1_0', 'dbgmcu_wl/DBGMCU'),
+    ('STM32F0.*:DBGMCU:.*', 'dbgmcu_f0/DBGMCU'),
+    ('STM32F1.*:DBGMCU:.*', 'dbgmcu_f1/DBGMCU'),
+    ('STM32F2.*:DBGMCU:.*', 'dbgmcu_f2/DBGMCU'),
+    ('STM32F3.*:DBGMCU:.*', 'dbgmcu_f3/DBGMCU'),
+    ('STM32F4.*:DBGMCU:.*', 'dbgmcu_f4/DBGMCU'),
+    ('STM32F7.*:DBGMCU:.*', 'dbgmcu_f7/DBGMCU'),
+    ('STM32G0.*:DBGMCU:.*', 'dbgmcu_g0/DBGMCU'),
+    ('STM32G4.*:DBGMCU:.*', 'dbgmcu_g4/DBGMCU'),
+    ('STM32H7.*:DBGMCU:.*', 'dbgmcu_h7/DBGMCU'),
+    ('STM32L0.*:DBGMCU:.*', 'dbgmcu_l0/DBGMCU'),
+    ('STM32L1.*:DBGMCU:.*', 'dbgmcu_l1/DBGMCU'),
+    ('STM32L4.*:DBGMCU:.*', 'dbgmcu_l4/DBGMCU'),
+    ('STM32U5.*:DBGMCU:.*', 'dbgmcu_u5/DBGMCU'),
+    ('STM32WB.*:DBGMCU:.*', 'dbgmcu_wb/DBGMCU'),
+    ('STM32WL.*:DBGMCU:.*', 'dbgmcu_wl/DBGMCU'),
+    
+    ('STM32F1.*:GPIO.*', 'gpio_v1/GPIO'),
+    ('.*:GPIO.*', 'gpio_v2/GPIO'),
 
     ('.*:IPCC:v1_0', 'ipcc_v1/IPCC'),
-    ('.*:DMAMUX:v1', 'dmamux_v1/DMAMUX'),
+    ('.*:DMAMUX.*', 'dmamux_v1/DMAMUX'),
 
-    ('.*:BDMA:DMA', 'bdma_v1/DMA'),
+    ('.*:BDMA:.*', 'bdma_v1/DMA'),
     ('STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0', 'dma2d_v2/DMA2D'),
     ('.*:DMA2D:dma2d1_v1_0', 'dma2d_v1/DMA2D'),
-    ('STM32L4[PQRS].*:.*:DMA', 'bdma_v1/DMA'),  # L4+
-    ('STM32L[04].*:.*:DMA', 'bdma_v2/DMA'),  # L0, L4 non-plus (since plus is handled above)
-    ('STM32F030.C.*:.*:DMA', 'bdma_v2/DMA'),  # Weird F0
-    ('STM32F09.*:.*:DMA', 'bdma_v2/DMA'),  # Weird F0
-    ('STM32F[247].*:.*:DMA', 'dma_v2/DMA'),
-    ('STM32H7.*:.*:DMA', 'dma_v1/DMA'),
-    ('.*:DMA', 'bdma_v1/DMA'),
+    ('STM32L4[PQRS].*:DMA.*', 'bdma_v1/DMA'),  # L4+
+    ('STM32L[04].*:DMA.*', 'bdma_v2/DMA'),  # L0, L4 non-plus (since plus is handled above)
+    ('STM32F030.C.*:DMA.*', 'bdma_v2/DMA'),  # Weird F0
+    ('STM32F09.*:DMA.*', 'bdma_v2/DMA'),  # Weird F0
+    ('STM32F[247].*:DMA.*', 'dma_v2/DMA'),
+    ('STM32H7.*:DMA.*', 'dma_v1/DMA'),
+    ('.*:DMA.*', 'bdma_v1/DMA'),
 
     ('.*:CAN:bxcan1_v1_1.*', 'can_bxcan/CAN'),
     # stm32F4 CRC peripheral
@@ -245,7 +248,12 @@ perimap = [
     ('STM32L[04].*:CRC:integtest1_v2_0', 'crc_v3/CRC'),
     ('.*:CRC:integtest1_v2_0', 'crc_v2/CRC'),
     ('.*:CRC:integtest1_v2_2', 'crc_v3/CRC'),
+]
 
+ghost_peris = [
+    'GPIOA', 'GPIOB', 'GPIOC', 'GPIOD', 'GPIOE', 'GPIOF', 'GPIOG', 'GPIOH', 'GPIOI', 'GPIOJ', 'GPIOK', 'GPIOL', 'GPIOM', 'GPION', 'GPIOO', 'GPIOP', 'GPIOQ', 'GPIOR', 'GPIOS', 'GPIOT',
+    'DMA1', 'DMA2', 'BDMA', 'DMAMUX', 'DMAMUX1', 'DMAMUX2',
+    'EXTI', 'FLASH', 'DBGMCU', 'CRS', 'PWR', 'AFIO',
 ]
 
 # Device address overrides, in case of missing from headers
@@ -595,6 +603,10 @@ def parse_chips():
                         peri_kinds['ADC_COMMON'] = 'ADC_COMMON:' + removesuffix(ip['@Version'], '_Cube')
 
                 peri_kinds[pname] = pkind
+            
+            for pname in ghost_peris:
+                if pname not in peri_kinds and (addr := defines.get(f'{pname}_BASE')):
+                    peri_kinds[pname] = 'unknown'
 
             peris = {}
             for pname, pkind in peri_kinds.items():
@@ -638,114 +650,6 @@ def parse_chips():
                     extra = yaml.load(extra_f)
                     for (extra_name, extra_p) in extra['peripherals'].items():
                         peris[extra_name] = extra_p
-
-            # Handle GPIO specially.
-            for p in range(20):
-                port = 'GPIO' + chr(ord('A') + p)
-                if addr := lookup_address(defines, chip_name, port + '_BASE'):
-                    block = 'gpio_v2/GPIO'
-                    if chip['family'] == 'STM32F1':
-                        block = 'gpio_v1/GPIO'
-
-                    p = OrderedDict({
-                        'address': addr,
-                        'block': block,
-                    })
-                    peris[port] = p
-
-            # Handle DMA specially.
-            for dma in ('DMA1', 'DMA2', 'BDMA'):
-                if addr := defines.get(dma + '_BASE'):
-                    p = OrderedDict({
-                        'address': addr,
-                    })
-                    if block := match_peri(chip_name + ':' + dma + ':DMA'):
-                        p['block'] = block
-
-                    if chip_nvic in chip_interrupts:
-                        if dma in chip_interrupts[chip_nvic]:
-                            # filter by available, because some are conditioned on <Die>
-                            p['interrupts'] = filter_interrupts(chip_interrupts[chip_nvic][dma], interrupts)
-
-                    peris[dma] = p
-
-            # DMAMUX is not in the cubedb XMLs
-            for dma in ('DMAMUX', 'DMAMUX1', "DMAMUX2"):
-                if addr := defines.get(dma + '_BASE'):
-                    kind = 'DMAMUX:v1'
-                    dbg_peri = OrderedDict({
-                        'address': addr,
-                        'kind': kind,
-                    })
-                    if block := match_peri(chip_name + ':' + dma + ':' + kind):
-                        dbg_peri['block'] = block
-                    peris[dma] = dbg_peri
-
-            # EXTI is not in the cubedb XMLs
-            if addr := defines.get('EXTI_BASE'):
-                peri = OrderedDict({
-                    'address': addr,
-                    'kind': 'EXTI',
-                })
-                if block := match_peri(chip_name + ':EXTI:EXTI:v1'):
-                    peri['block'] = block
-                peris['EXTI'] = peri
-
-            # FLASH is not in the cubedb XMLs
-            if addr := defines.get('FLASH_R_BASE'):
-                kind = 'FLASH:' + chip_name[:7] + '_flash_v1_0'
-                flash_peri = OrderedDict({
-                    'address': addr,
-                    'kind': kind,
-                })
-                if block := match_peri(kind):
-                    flash_peri['block'] = block
-                peris['FLASH'] = flash_peri
-
-            # DBGMCU is not in the cubedb XMLs
-            if addr := defines.get('DBGMCU_BASE') or defines.get('DBG_BASE'):
-                kind = 'DBGMCU:' + chip_name[:7] + '_dbgmcu_v1_0'
-                dbg_peri = OrderedDict({
-                    'address': addr,
-                    'kind': kind,
-                })
-                if block := match_peri(kind):
-                    dbg_peri['block'] = block
-                peris['DBGMCU'] = dbg_peri
-
-            # CRS is not in the cubedb XMLs
-            if addr := defines.get('CRS_BASE'):
-                kind = 'CRS:' + chip_name[:7] + '_crs_v1_0'
-                crs_peri = OrderedDict({
-                    'address': addr,
-                    'kind': kind,
-                })
-                if block := match_peri(kind):
-                    crs_peri['block'] = block
-                peris['CRS'] = crs_peri
-
-            # PWR is not in some XMLs
-            if 'PWR' not in peris:
-                if addr := defines.get('PWR_BASE'):
-                    kind = 'PWR:' + chip_name[:7] + '_pwr_v1_0'
-                    pwr_peri = OrderedDict({
-                        'address': addr,
-                        'kind': kind,
-                    })
-                    if block := match_peri(kind):
-                        pwr_peri['block'] = block
-                    peris['PWR'] = pwr_peri
-
-            # AFIO is not in the cubedb XMLs
-            if addr := defines.get('AFIO_BASE'):
-                kind = 'AFIO'
-                afio_peri = OrderedDict({
-                    'address': addr,
-                    'kind': kind,
-                })
-                if block := match_peri(chip_name[:7] + ':' + kind + ':'):
-                    afio_peri['block'] = block
-                peris['AFIO'] = afio_peri
 
             core['peripherals'] = peris
 
