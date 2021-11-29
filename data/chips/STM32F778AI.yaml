@@ -214,8 +214,12 @@ cores:
   peripherals:
     ADC1:
       address: 0x40012000
-      kind: ADC:aditf2_v1_1
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: ADC1EN
       block: adc_v2/ADC
       pins:
       - pin: PB1
@@ -252,8 +256,12 @@ cores:
           request: 0
     ADC2:
       address: 0x40012100
-      kind: ADC:aditf2_v1_1
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: ADC2EN
       block: adc_v2/ADC
       pins:
       - pin: PB1
@@ -290,8 +298,12 @@ cores:
           request: 1
     ADC3:
       address: 0x40012200
-      kind: ADC:aditf2_v1_1
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: ADC3EN
       block: adc_v2/ADC
       pins:
       - pin: PF3
@@ -324,12 +336,18 @@ cores:
           request: 2
     ADC_COMMON:
       address: 0x40012300
-      kind: ADC_COMMON:aditf2_v1_1
       block: adccommon_v2/ADC_COMMON
     CAN1:
       address: 0x40006400
-      kind: CAN:bxcan1_v1_1_F7
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: CAN1EN
+          reset:
+            register: APB1RSTR
+            field: CAN1RST
       block: can_bxcan/CAN
       pins:
       - pin: PA11
@@ -366,8 +384,15 @@ cores:
         TX: CAN1_TX
     CAN2:
       address: 0x40006800
-      kind: CAN:bxcan1_v1_1_F7
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: CAN2EN
+          reset:
+            register: APB1RSTR
+            field: CAN2RST
       block: can_bxcan/CAN
       pins:
       - pin: PB5
@@ -389,8 +414,15 @@ cores:
         TX: CAN2_TX
     CAN3:
       address: 0x40003400
-      kind: CAN:bxcan1_v1_1_F7
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: CAN3EN
+          reset:
+            register: APB1RSTR
+            field: CAN3RST
       block: can_bxcan/CAN
       pins:
       - pin: PA8
@@ -410,17 +442,42 @@ cores:
         RX1: CAN3_RX1
         SCE: CAN3_SCE
         TX: CAN3_TX
+    CEC:
+      address: 0x40006c00
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: CECEN
+          reset:
+            register: APB1RSTR
+            field: CECRST
     CRC:
       address: 0x40023000
-      kind: CRC:integtest1_v2_0
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: CRCEN
+          reset:
+            register: AHB1RSTR
+            field: CRCRST
       block: crc_v2/CRC
-      clock: AHB1
     CRYP:
       address: 0x50060000
-      kind: CRYP:cryp1_v2_2_MP1
+      rcc:
+        clock: AHB2
+        registers:
+          enable:
+            register: AHB2ENR
+            field: CRYPEN
+          reset:
+            register: AHB2RSTR
+            field: CRYPRST
       interrupts:
         GLOBAL: CRYP
-      clock: AHB2
       dma_channels:
         IN:
         - channel: DMA2_CH6
@@ -430,7 +487,15 @@ cores:
           request: 2
     DAC:
       address: 0x40007400
-      kind: DAC:dacif_v1_1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: DACEN
+          reset:
+            register: APB1RSTR
+            field: DACRST
       block: dac_v1/DAC
       pins:
       - pin: PA4
@@ -439,14 +504,20 @@ cores:
         signal: OUT2
       interrupts:
         GLOBAL: TIM6_DAC
-      clock: APB1
     DBGMCU:
       address: 0xe0042000
-      kind: DBGMCU:STM32F7_dbgmcu_v1_0
       block: dbgmcu_f7/DBGMCU
     DCMI:
       address: 0x50050000
-      kind: DCMI:cci_v2_0
+      rcc:
+        clock: AHB2
+        registers:
+          enable:
+            register: AHB2ENR
+            field: DCMIEN
+          reset:
+            register: AHB2RSTR
+            field: DCMIRST
       block: dcmi_v1/DCMI
       pins:
       - pin: PA4
@@ -598,15 +669,210 @@ cores:
         af: 13
       interrupts:
         GLOBAL: DCMI
-      clock: AHB2
       dma_channels:
         DCMI:
         - channel: DMA2_CH1
           request: 1
         - channel: DMA2_CH7
           request: 1
+    DFSDM1:
+      address: 0x40017400
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: DFSDM1EN
+          reset:
+            register: APB2RSTR
+            field: DFSDM1RST
+      pins:
+      - pin: PB0
+        signal: CKOUT
+        af: 6
+      - pin: PB1
+        signal: DATIN1
+        af: 6
+      - pin: PB2
+        signal: CKIN1
+        af: 10
+      - pin: PB6
+        signal: DATIN5
+        af: 6
+      - pin: PB7
+        signal: CKIN5
+        af: 6
+      - pin: PB8
+        signal: CKIN7
+        af: 6
+      - pin: PB9
+        signal: DATIN7
+        af: 6
+      - pin: PB10
+        signal: DATIN7
+        af: 6
+      - pin: PB11
+        signal: CKIN7
+        af: 6
+      - pin: PB12
+        signal: DATIN1
+        af: 6
+      - pin: PB13
+        signal: CKIN1
+        af: 6
+      - pin: PB14
+        signal: DATIN2
+        af: 6
+      - pin: PB15
+        signal: CKIN2
+        af: 6
+      - pin: PC0
+        signal: CKIN0
+        af: 3
+      - pin: PC0
+        signal: DATIN4
+        af: 6
+      - pin: PC1
+        signal: CKIN4
+        af: 10
+      - pin: PC1
+        signal: DATIN0
+        af: 3
+      - pin: PC2
+        signal: CKIN1
+        af: 3
+      - pin: PC2
+        signal: CKOUT
+        af: 6
+      - pin: PC3
+        signal: DATIN1
+        af: 3
+      - pin: PC4
+        signal: CKIN2
+        af: 3
+      - pin: PC5
+        signal: DATIN2
+        af: 3
+      - pin: PC6
+        signal: CKIN3
+        af: 7
+      - pin: PC7
+        signal: DATIN3
+        af: 7
+      - pin: PC10
+        signal: CKIN5
+        af: 3
+      - pin: PC11
+        signal: DATIN5
+        af: 3
+      - pin: PD0
+        signal: CKIN6
+        af: 3
+      - pin: PD0
+        signal: DATIN7
+        af: 6
+      - pin: PD1
+        signal: CKIN7
+        af: 6
+      - pin: PD1
+        signal: DATIN6
+        af: 3
+      - pin: PD3
+        signal: CKOUT
+        af: 3
+      - pin: PD3
+        signal: DATIN0
+        af: 6
+      - pin: PD4
+        signal: CKIN0
+        af: 6
+      - pin: PD6
+        signal: CKIN4
+        af: 3
+      - pin: PD6
+        signal: DATIN1
+        af: 10
+      - pin: PD7
+        signal: CKIN1
+        af: 6
+      - pin: PD7
+        signal: DATIN4
+        af: 3
+      - pin: PD8
+        signal: CKIN3
+        af: 3
+      - pin: PD9
+        signal: DATIN3
+        af: 3
+      - pin: PD10
+        signal: CKOUT
+        af: 3
+      - pin: PE4
+        signal: DATIN3
+        af: 10
+      - pin: PE5
+        signal: CKIN3
+        af: 10
+      - pin: PE7
+        signal: DATIN2
+        af: 6
+      - pin: PE8
+        signal: CKIN2
+        af: 6
+      - pin: PE9
+        signal: CKOUT
+        af: 6
+      - pin: PE10
+        signal: DATIN4
+        af: 6
+      - pin: PE11
+        signal: CKIN4
+        af: 6
+      - pin: PE12
+        signal: DATIN5
+        af: 6
+      - pin: PE13
+        signal: CKIN5
+        af: 6
+      - pin: PF13
+        signal: DATIN6
+        af: 6
+      - pin: PF14
+        signal: CKIN6
+        af: 6
+      interrupts: {}
+      dma_channels:
+        FLT0:
+        - channel: DMA2_CH0
+          request: 8
+        - channel: DMA2_CH4
+          request: 8
+        FLT1:
+        - channel: DMA2_CH1
+          request: 8
+        - channel: DMA2_CH5
+          request: 8
+        FLT2:
+        - channel: DMA2_CH2
+          request: 8
+        - channel: DMA2_CH6
+          request: 8
+        FLT3:
+        - channel: DMA2_CH3
+          request: 8
+        - channel: DMA2_CH7
+          request: 8
     DMA1:
       address: 0x40026000
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: DMA1EN
+          reset:
+            register: AHB1RSTR
+            field: DMA1RST
       block: dma_v2/DMA
       interrupts:
         DMA1_Stream0: DMA1_Stream0
@@ -617,9 +883,17 @@ cores:
         DMA1_Stream5: DMA1_Stream5
         DMA1_Stream6: DMA1_Stream6
         DMA1_Stream7: DMA1_Stream7
-      clock: AHB1
     DMA2:
       address: 0x40026400
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: DMA2EN
+          reset:
+            register: AHB1RSTR
+            field: DMA2RST
       block: dma_v2/DMA
       interrupts:
         DMA2_Stream0: DMA2_Stream0
@@ -630,79 +904,182 @@ cores:
         DMA2_Stream5: DMA2_Stream5
         DMA2_Stream6: DMA2_Stream6
         DMA2_Stream7: DMA2_Stream7
-      clock: AHB1
     DMA2D:
       address: 0x4002b000
-      kind: DMA2D:dma2d1_v1_0
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: DMA2DEN
+          reset:
+            register: AHB1RSTR
+            field: DMA2DRST
       block: dma2d_v1/DMA2D
       interrupts:
         GLOBAL: DMA2D
-      clock: AHB1
     EXTI:
       address: 0x40013c00
-      kind: EXTI
       block: exti_v1/EXTI
     FLASH:
       address: 0x40023c00
-      kind: FLASH:STM32F7_flash_v1_0
       block: flash_f7/FLASH
     GPIOA:
       address: 0x40020000
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOAEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOARST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOB:
       address: 0x40020400
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOBEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOBRST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOC:
       address: 0x40020800
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOCEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOCRST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOD:
       address: 0x40020c00
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIODEN
+          reset:
+            register: AHB1RSTR
+            field: GPIODRST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOE:
       address: 0x40021000
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOEEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOERST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOF:
       address: 0x40021400
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOFEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOFRST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOG:
       address: 0x40021800
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOGEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOGRST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOH:
       address: 0x40021c00
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOHEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOHRST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOI:
       address: 0x40022000
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOIEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOIRST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOJ:
       address: 0x40022400
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOJEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOJRST
       block: gpio_v2/GPIO
-      clock: AHB1
     GPIOK:
       address: 0x40022800
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: GPIOKEN
+          reset:
+            register: AHB1RSTR
+            field: GPIOKRST
       block: gpio_v2/GPIO
-      clock: AHB1
     HASH:
       address: 0x50060400
-      kind: HASH:hash1_v2_0
+      rcc:
+        clock: AHB2
+        registers:
+          enable:
+            register: AHB2ENR
+            field: HASHEN
       interrupts: {}
-      clock: AHB2
       dma_channels:
         IN:
         - channel: DMA2_CH7
           request: 2
     I2C1:
       address: 0x40005400
-      kind: I2C:i2c2_v1_1F7
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: I2C1EN
+          reset:
+            register: APB1RSTR
+            field: I2C1RST
       block: i2c_v2/I2C
       pins:
       - pin: PB5
@@ -736,8 +1113,15 @@ cores:
           request: 1
     I2C2:
       address: 0x40005800
-      kind: I2C:i2c2_v1_1F7
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: I2C2EN
+          reset:
+            register: APB1RSTR
+            field: I2C2RST
       block: i2c_v2/I2C
       pins:
       - pin: PB10
@@ -783,8 +1167,15 @@ cores:
           request: 7
     I2C3:
       address: 0x40005c00
-      kind: I2C:i2c2_v1_1F7
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: I2C3EN
+          reset:
+            register: APB1RSTR
+            field: I2C3RST
       block: i2c_v2/I2C
       pins:
       - pin: PA8
@@ -821,8 +1212,15 @@ cores:
           request: 3
     I2C4:
       address: 0x40006000
-      kind: I2C:i2c2_v1_1F7
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: I2C4EN
+          reset:
+            register: APB1RSTR
+            field: I2C4RST
       block: i2c_v2/I2C
       pins:
       - pin: PB6
@@ -883,15 +1281,18 @@ cores:
           request: 8
     IWDG:
       address: 0x40003000
-      kind: IWDG:iwdg1_v2_0
       block: iwdg_v2/IWDG
     JPEG:
       address: 0x50051000
-      kind: JPEG:jpeg1_v1_0
+      rcc:
+        clock: AHB2
+        registers:
+          enable:
+            register: AHB2ENR
+            field: JPEGEN
       block: jpeg_v1/JPEG
       interrupts:
         GLOBAL: JPEG
-      clock: AHB2
       dma_channels:
         IN:
         - channel: DMA2_CH0
@@ -905,7 +1306,15 @@ cores:
           request: 9
     LPTIM1:
       address: 0x40002400
-      kind: LPTIM:F7_lptimer1_v1_1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: LPTIM1EN
+          reset:
+            register: APB1RSTR
+            field: LPTIM1RST
       block: lptim_v1/LPTIM
       pins:
       - pin: PD12
@@ -934,10 +1343,17 @@ cores:
         af: 3
       interrupts:
         GLOBAL: LPTIM1
-      clock: APB1
     LTDC:
       address: 0x40016800
-      kind: LTDC:lcdtft1_v1_1
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: LTDCEN
+          reset:
+            register: APB2RSTR
+            field: LTDCRST
       block: ltdc_v1/LTDC
       pins:
       - pin: PA1
@@ -1257,10 +1673,17 @@ cores:
         af: 14
       interrupts:
         GLOBAL: LTDC
-      clock: APB2
     MDIOS:
       address: 0x40017800
-      kind: MDIOS:mdios1_v1_0
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: MDIOSEN
+          reset:
+            register: APB2RSTR
+            field: MDIOSRST
       block: mdios_v1/MDIOS
       pins:
       - pin: PA2
@@ -1277,15 +1700,29 @@ cores:
         af: 12
       interrupts:
         GLOBAL: MDIOS
-      clock: APB2
     PWR:
       address: 0x40007000
-      kind: PWR:STM32F7_pwr_v1_0
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: PWREN
+          reset:
+            register: APB1RSTR
+            field: PWRRST
       block: pwr_f7/PWR
-      clock: APB1
     QUADSPI:
       address: 0xa0001000
-      kind: QUADSPI:quadspi1_v1_0
+      rcc:
+        clock: AHB3
+        registers:
+          enable:
+            register: AHB3ENR
+            field: QUADSPIEN
+          reset:
+            register: AHB3RSTR
+            field: QUADSPIRST
       block: quadspi_v1/QUADSPI
       pins:
       - pin: PA1
@@ -1362,7 +1799,6 @@ cores:
         af: 9
       interrupts:
         GLOBAL: QUADSPI
-      clock: AHB3
       dma_channels:
         QUADSPI:
         - channel: DMA2_CH2
@@ -1371,7 +1807,6 @@ cores:
           request: 3
     RCC:
       address: 0x40023800
-      kind: RCC:STM32F777_rcc_v1_0
       block: rcc_f7/RCC
       pins:
       - pin: PA8
@@ -1384,14 +1819,26 @@ cores:
         GLOBAL: RCC
     RNG:
       address: 0x50060800
-      kind: RNG:rng1_v1_1
+      rcc:
+        clock: AHB2
+        registers:
+          enable:
+            register: AHB2ENR
+            field: RNGEN
+          reset:
+            register: AHB2RSTR
+            field: RNGRST
       block: rng_v1/RNG
       interrupts:
         GLOBAL: HASH_RNG
-      clock: AHB2
     RTC:
       address: 0x40002800
-      kind: RTC:rtc2_v2_6
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: RTCEN
       block: rtc_v2/RTC
       pins:
       - pin: PB15
@@ -1399,11 +1846,17 @@ cores:
         af: 0
       interrupts:
         GLOBAL: TAMP_STAMP
-      clock: APB1
     SAI1:
       address: 0x40015800
-      kind: SAI:sai1_v1_1
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: SAI1EN
+          reset:
+            register: APB2RSTR
+            field: SAI1RST
       block: sai_v1/SAI
       pins:
       - pin: PB2
@@ -1464,8 +1917,15 @@ cores:
           request: 0
     SAI2:
       address: 0x40015c00
-      kind: SAI:sai1_v1_1
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: SAI2EN
+          reset:
+            register: APB2RSTR
+            field: SAI2RST
       block: sai_v1/SAI
       pins:
       - pin: PA0
@@ -1554,8 +2014,15 @@ cores:
           request: 0
     SDMMC1:
       address: 0x40012c00
-      kind: SDMMC:sdmmc_v1_3
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: SDMMC1EN
+          reset:
+            register: APB2RSTR
+            field: SDMMC1RST
       block: sdmmc_v1/SDMMC
       pins:
       - pin: PB8
@@ -1608,8 +2075,15 @@ cores:
           request: 4
     SDMMC2:
       address: 0x40011c00
-      kind: SDMMC:sdmmc_v1_3
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: SDMMC2EN
+          reset:
+            register: APB2RSTR
+            field: SDMMC2RST
       block: sdmmc_v1/SDMMC
       pins:
       - pin: PB3
@@ -1674,8 +2148,15 @@ cores:
           request: 11
     SPDIFRX:
       address: 0x40004000
-      kind: SPDIFRX:spdifrx1_v1_0
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: SPDIFRXEN
+          reset:
+            register: APB1RSTR
+            field: SPDIFRXRST
       block: spdifrx_v1/SPDIFRX
       pins:
       - pin: PC4
@@ -1706,8 +2187,15 @@ cores:
         GLOBAL: SPDIF_RX
     SPI1:
       address: 0x40013000
-      kind: SPI:spi2s1_v3_2
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: SPI1EN
+          reset:
+            register: APB2RSTR
+            field: SPI1RST
       block: spi_v2/SPI
       pins:
       - pin: PA4
@@ -1761,8 +2249,15 @@ cores:
           request: 3
     SPI2:
       address: 0x40003800
-      kind: SPI:spi2s1_v3_2
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: SPI2EN
+          reset:
+            register: APB1RSTR
+            field: SPI2RST
       block: spi_v2/SPI
       pins:
       - pin: PA9
@@ -1834,8 +2329,15 @@ cores:
           request: 9
     SPI3:
       address: 0x40003c00
-      kind: SPI:spi2s1_v3_2
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: SPI3EN
+          reset:
+            register: APB1RSTR
+            field: SPI3RST
       block: spi_v2/SPI
       pins:
       - pin: PA4
@@ -1883,8 +2385,15 @@ cores:
           request: 0
     SPI4:
       address: 0x40013400
-      kind: SPI:spi2s1_v3_2
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: SPI4EN
+          reset:
+            register: APB2RSTR
+            field: SPI4RST
       block: spi_v2/SPI
       pins:
       - pin: PE2
@@ -1928,8 +2437,15 @@ cores:
           request: 5
     SPI6:
       address: 0x40015400
-      kind: SPI:spi2s1_v3_2
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: SPI6EN
+          reset:
+            register: APB2RSTR
+            field: SPI6RST
       block: spi_v2/SPI
       pins:
       - pin: PA4
@@ -1979,12 +2495,27 @@ cores:
           request: 1
     SYSCFG:
       address: 0x40013800
-      kind: SYS:STM32F7_sys_v1_0
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: SYSCFGEN
+          reset:
+            register: APB2RSTR
+            field: SYSCFGRST
       block: syscfg_f7/SYSCFG
-      clock: APB2
     TIM1:
       address: 0x40010000
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: TIM1EN
+          reset:
+            register: APB2RSTR
+            field: TIM1RST
       block: timer_v1/TIM_ADV
       pins:
       - pin: PA6
@@ -2061,7 +2592,6 @@ cores:
         COM: TIM1_TRG_COM_TIM11
         TRG: TIM1_TRG_COM_TIM11
         UP: TIM1_UP_TIM10
-      clock: APB2
       dma_channels:
         CH1:
         - channel: DMA2_CH1
@@ -2096,7 +2626,15 @@ cores:
           request: 6
     TIM10:
       address: 0x40014400
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: TIM10EN
+          reset:
+            register: APB2RSTR
+            field: TIM10RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PB8
@@ -2110,10 +2648,17 @@ cores:
         COM: TIM1_UP_TIM10
         TRG: TIM1_UP_TIM10
         UP: TIM1_UP_TIM10
-      clock: APB2
     TIM11:
       address: 0x40014800
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: TIM11EN
+          reset:
+            register: APB2RSTR
+            field: TIM11RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PB9
@@ -2127,10 +2672,17 @@ cores:
         COM: TIM1_TRG_COM_TIM11
         TRG: TIM1_TRG_COM_TIM11
         UP: TIM1_TRG_COM_TIM11
-      clock: APB2
     TIM12:
       address: 0x40001800
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM12EN
+          reset:
+            register: APB1RSTR
+            field: TIM12RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PB14
@@ -2150,10 +2702,17 @@ cores:
         COM: TIM8_BRK_TIM12
         TRG: TIM8_BRK_TIM12
         UP: TIM8_BRK_TIM12
-      clock: APB1
     TIM13:
       address: 0x40001c00
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM13EN
+          reset:
+            register: APB1RSTR
+            field: TIM13RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PA6
@@ -2167,10 +2726,17 @@ cores:
         COM: TIM8_UP_TIM13
         TRG: TIM8_UP_TIM13
         UP: TIM8_UP_TIM13
-      clock: APB1
     TIM14:
       address: 0x40002000
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM14EN
+          reset:
+            register: APB1RSTR
+            field: TIM14RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PA7
@@ -2184,10 +2750,17 @@ cores:
         COM: TIM8_TRG_COM_TIM14
         TRG: TIM8_TRG_COM_TIM14
         UP: TIM8_TRG_COM_TIM14
-      clock: APB1
     TIM2:
       address: 0x40000000
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM2EN
+          reset:
+            register: APB1RSTR
+            field: TIM2RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PA0
@@ -2231,7 +2804,6 @@ cores:
         COM: TIM2
         TRG: TIM2
         UP: TIM2
-      clock: APB1
       dma_channels:
         CH1:
         - channel: DMA1_CH5
@@ -2254,7 +2826,15 @@ cores:
           request: 3
     TIM3:
       address: 0x40000400
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM3EN
+          reset:
+            register: APB1RSTR
+            field: TIM3RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PA6
@@ -2295,7 +2875,6 @@ cores:
         COM: TIM3
         TRG: TIM3
         UP: TIM3
-      clock: APB1
       dma_channels:
         CH1:
         - channel: DMA1_CH4
@@ -2317,7 +2896,15 @@ cores:
           request: 5
     TIM4:
       address: 0x40000800
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM4EN
+          reset:
+            register: APB1RSTR
+            field: TIM4RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PB6
@@ -2352,7 +2939,6 @@ cores:
         COM: TIM4
         TRG: TIM4
         UP: TIM4
-      clock: APB1
       dma_channels:
         CH1:
         - channel: DMA1_CH0
@@ -2368,7 +2954,15 @@ cores:
           request: 2
     TIM5:
       address: 0x40000c00
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM5EN
+          reset:
+            register: APB1RSTR
+            field: TIM5RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PA0
@@ -2400,7 +2994,6 @@ cores:
         COM: TIM5
         TRG: TIM5
         UP: TIM5
-      clock: APB1
       dma_channels:
         CH1:
         - channel: DMA1_CH2
@@ -2428,24 +3021,38 @@ cores:
           request: 6
     TIM6:
       address: 0x40001000
-      kind: TIM6_7F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM6EN
+          reset:
+            register: APB1RSTR
+            field: TIM6RST
       block: timer_v1/TIM_GP16
       interrupts: {}
-      clock: APB1
       dma_channels:
         UP:
         - channel: DMA1_CH1
           request: 7
     TIM7:
       address: 0x40001400
-      kind: TIM6_7F77:gptimer2_v3_x
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: TIM7EN
+          reset:
+            register: APB1RSTR
+            field: TIM7RST
       block: timer_v1/TIM_GP16
       interrupts:
         BRK: TIM7
         COM: TIM7
         TRG: TIM7
         UP: TIM7
-      clock: APB1
       dma_channels:
         UP:
         - channel: DMA1_CH2
@@ -2454,7 +3061,15 @@ cores:
           request: 1
     TIM8:
       address: 0x40010400
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: TIM8EN
+          reset:
+            register: APB2RSTR
+            field: TIM8RST
       block: timer_v1/TIM_ADV
       pins:
       - pin: PA0
@@ -2531,7 +3146,6 @@ cores:
         COM: TIM8_TRG_COM_TIM14
         TRG: TIM8_TRG_COM_TIM14
         UP: TIM8_UP_TIM13
-      clock: APB2
       dma_channels:
         CH1:
         - channel: DMA2_CH2
@@ -2562,7 +3176,15 @@ cores:
           request: 7
     TIM9:
       address: 0x40014000
-      kind: TIM1_8F77:gptimer2_v3_x
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: TIM9EN
+          reset:
+            register: APB2RSTR
+            field: TIM9RST
       block: timer_v1/TIM_GP16
       pins:
       - pin: PA2
@@ -2582,11 +3204,17 @@ cores:
         COM: TIM1_BRK_TIM9
         TRG: TIM1_BRK_TIM9
         UP: TIM1_BRK_TIM9
-      clock: APB2
     UART4:
       address: 0x40004c00
-      kind: UART:sci2_v2_1
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: UART4EN
+          reset:
+            register: APB1RSTR
+            field: UART4RST
       block: usart_v2/USART
       pins:
       - pin: PA0
@@ -2651,8 +3279,15 @@ cores:
           request: 4
     UART5:
       address: 0x40005000
-      kind: UART:sci2_v2_1
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: UART5EN
+          reset:
+            register: APB1RSTR
+            field: UART5RST
       block: usart_v2/USART
       pins:
       - pin: PB5
@@ -2699,8 +3334,15 @@ cores:
           request: 4
     UART7:
       address: 0x40007800
-      kind: UART:sci2_v2_1
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: UART7EN
+          reset:
+            register: APB1RSTR
+            field: UART7RST
       block: usart_v2/USART
       pins:
       - pin: PA8
@@ -2756,8 +3398,15 @@ cores:
           request: 5
     UART8:
       address: 0x40007c00
-      kind: UART:sci2_v2_1
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: UART8EN
+          reset:
+            register: APB1RSTR
+            field: UART8RST
       block: usart_v2/USART
       pins:
       - pin: PD14
@@ -2786,8 +3435,15 @@ cores:
           request: 5
     USART1:
       address: 0x40011000
-      kind: USART:sci3_v1_1
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: USART1EN
+          reset:
+            register: APB2RSTR
+            field: USART1RST
       block: usart_v2/USART
       pins:
       - pin: PA8
@@ -2833,8 +3489,15 @@ cores:
           request: 4
     USART2:
       address: 0x40004400
-      kind: USART:sci3_v1_1
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: USART2EN
+          reset:
+            register: APB1RSTR
+            field: USART2RST
       block: usart_v2/USART
       pins:
       - pin: PA0
@@ -2884,8 +3547,15 @@ cores:
           request: 4
     USART3:
       address: 0x40004800
-      kind: USART:sci3_v1_1
-      clock: APB1
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: USART3EN
+          reset:
+            register: APB1RSTR
+            field: USART3RST
       block: usart_v2/USART
       pins:
       - pin: PB10
@@ -2946,8 +3616,15 @@ cores:
           request: 7
     USART6:
       address: 0x40011400
-      kind: USART:sci3_v1_1
-      clock: APB2
+      rcc:
+        clock: APB2
+        registers:
+          enable:
+            register: APB2ENR
+            field: USART6EN
+          reset:
+            register: APB2RSTR
+            field: USART6RST
       block: usart_v2/USART
       pins:
       - pin: PC6
@@ -3001,25 +3678,46 @@ cores:
           request: 5
     USB_OTG_FS:
       address: 0x50000000
-      kind: USB_OTG_FS:otgfs1_v1_2
+      rcc:
+        clock: AHB2
+        registers:
+          enable:
+            register: AHB2ENR
+            field: USB_OTG_FSEN
+          reset:
+            register: AHB2RSTR
+            field: USB_OTG_FSRST
       block: otgfs_v1/OTG_FS
       interrupts:
         GLOBAL: OTG_FS_WKUP
-      clock: AHB2
     USB_OTG_HS:
       address: 0x40040000
-      kind: USB_OTG_HS:otghs1_v1_1
+      rcc:
+        clock: AHB1
+        registers:
+          enable:
+            register: AHB1ENR
+            field: USB_OTG_HSEN
+          reset:
+            register: AHB1RSTR
+            field: USB_OTG_HSRST
       block: otghs_v1/OTG_HS
       interrupts:
         GLOBAL: OTG_HS_EP1_OUT
-      clock: AHB1
     WWDG:
       address: 0x40002c00
-      kind: WWDG:wwdg1_v1_0
+      rcc:
+        clock: APB1
+        registers:
+          enable:
+            register: APB1ENR
+            field: WWDGEN
+          reset:
+            register: APB1RSTR
+            field: WWDGRST
       block: wwdg_v1/WWDG
       interrupts:
         GLOBAL: WWDG
-      clock: APB1
   interrupts:
     ADC: 18
     CAN1_RX0: 20
