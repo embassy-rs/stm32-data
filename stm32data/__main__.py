@@ -123,7 +123,7 @@ perimap = [
     ('.*:ADC_COMMON:aditf2_v1_1', 'adccommon_v2/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf5_v2_0', 'adccommon_v3/ADC_COMMON'),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
-    ('.*:DCMI:cci_v2_0', 'dcmi_v1/DCMI'),
+    ('.*:DCMI:.*', 'dcmi_v1/DCMI'),
     ('STM32F0.*:SYSCFG:.*',  'syscfg_f0/SYSCFG'),
     ('STM32F4.*:SYSCFG:.*',  'syscfg_f4/SYSCFG'),
     ('STM32F7.*:SYSCFG:.*',  'syscfg_f7/SYSCFG'),
@@ -226,7 +226,7 @@ perimap = [
     ('STM32U5.*:DBGMCU:.*', 'dbgmcu_u5/DBGMCU'),
     ('STM32WB.*:DBGMCU:.*', 'dbgmcu_wb/DBGMCU'),
     ('STM32WL.*:DBGMCU:.*', 'dbgmcu_wl/DBGMCU'),
-    
+
     ('STM32F1.*:GPIO.*', 'gpio_v1/GPIO'),
     ('.*:GPIO.*', 'gpio_v2/GPIO'),
 
@@ -625,7 +625,7 @@ def parse_chips():
                         peri_kinds['ADC_COMMON'] = 'ADC_COMMON:' + removesuffix(ip['@Version'], '_Cube')
 
                 peri_kinds[pname] = pkind
-            
+
             for pname in ghost_peris:
                 if pname not in peri_kinds and (addr := get_peri_addr(defines, pname)):
                     peri_kinds[pname] = 'unknown'
