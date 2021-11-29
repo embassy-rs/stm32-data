@@ -51,6 +51,9 @@ FAKE_PERIPHERALS = [
     'GPIO',
     'DMA',
 
+    # IRTIM is just TIM16+TIM17
+    'IRTIM',
+
     # I2S is just SPI on disguise
     'I2S1',
     'I2S2',
@@ -61,11 +64,13 @@ FAKE_PERIPHERALS = [
     'I2S7',
     'I2S8',
 
+    # We add this as ghost peri
+    'SYS',
+
     # These are software libraries
     'FREERTOS',
     'PDM2PCM',
     'FATFS',
-    # 'CRC',
     'LIBJPEG',
     'MBEDTLS',
     'LWIP',
@@ -73,6 +78,7 @@ FAKE_PERIPHERALS = [
     'USB_DEVICE',
     'GUI_INTERFACE',
     'TRACER_EMB',
+    'TOUCHSENSING',
 ]
 
 perimap = [
@@ -250,11 +256,23 @@ perimap = [
     ('.*:CRC:integtest1_v2_2', 'crc_v3/CRC'),
 ]
 
+peri_rename = {
+    'HDMI_CEC': 'CEC',
+    'SUBGHZ': 'SUBGHZSPI',
+}
+
 ghost_peris = [
     'GPIOA', 'GPIOB', 'GPIOC', 'GPIOD', 'GPIOE', 'GPIOF', 'GPIOG', 'GPIOH', 'GPIOI', 'GPIOJ', 'GPIOK', 'GPIOL', 'GPIOM', 'GPION', 'GPIOO', 'GPIOP', 'GPIOQ', 'GPIOR', 'GPIOS', 'GPIOT',
     'DMA1', 'DMA2', 'BDMA', 'DMAMUX', 'DMAMUX1', 'DMAMUX2',
-    'EXTI', 'FLASH', 'DBGMCU', 'CRS', 'PWR', 'AFIO',
+    'SYSCFG', 'EXTI', 'FLASH', 'DBGMCU', 'CRS', 'PWR', 'AFIO',
 ]
+
+alt_peri_defines = {
+    'DBGMCU': ['DBGMCU_BASE', 'DBG_BASE'],
+    'FLASH': ['FLASH_R_BASE'],
+    'ADC_COMMON': ['ADC_COMMON', 'ADC1_COMMON', 'ADC12_COMMON', 'ADC123_COMMON'],
+    'CAN': ['CAN_BASE', 'CAN1_BASE'],
+}
 
 # Device address overrides, in case of missing from headers
 address_overrides = {
@@ -432,6 +450,12 @@ def parse_pin_name(pin_name):
 
     return port, pin
 
+def get_peri_addr(defines, pname):
+    possible_defines = alt_peri_defines.get(pname) or [f'{pname}_BASE', pname]
+    for d in possible_defines:
+        if addr := defines.get(d):
+            return addr
+    return None
 
 def parse_chips():
     os.makedirs('data/chips', exist_ok=True)
@@ -590,14 +614,11 @@ def parse_chips():
                 pkind = ip['@Name'] + ':' + ip['@Version']
                 pkind = removesuffix(pkind, '_Cube')
 
-                if pname == 'SYS':
-                    pname = 'SYSCFG'
-                if pname == 'SUBGHZ':
-                    pname = 'SUBGHZSPI'
-                if pname == 'SYSCFG_VREFBUF':
-                    pname = 'SYSCFG'
                 if pname in FAKE_PERIPHERALS:
                     continue
+
+                if rename := peri_rename.get(pname):
+                    pname = rename
 
                 if pname.startswith('ADC'):
                     if not 'ADC_COMMON' in peri_kinds:
@@ -606,19 +627,12 @@ def parse_chips():
                 peri_kinds[pname] = pkind
             
             for pname in ghost_peris:
-                if pname not in peri_kinds and (addr := defines.get(f'{pname}_BASE')):
+                if pname not in peri_kinds and (addr := get_peri_addr(defines, pname)):
                     peri_kinds[pname] = 'unknown'
 
             peris = {}
             for pname, pkind in peri_kinds.items():
-                addr = defines.get(pname)
-                if addr is None:
-                    if pname == 'ADC_COMMON':
-                        addr = defines.get('ADC1_COMMON')
-                        if addr is None:
-                            addr = defines.get('ADC12_COMMON')
-                            if addr is None:
-                                addr = defines.get('ADC123_COMMON')
+                addr = get_peri_addr(defines, pname)
                 if addr is None:
                     continue
 
