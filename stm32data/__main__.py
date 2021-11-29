@@ -207,6 +207,13 @@ perimap = [
 
     ('.*LPTIM\d.*:G0xx_lptimer1_v1_4', 'lptim_g0/LPTIM'),
 
+    ('STM32H7.*:TIM1:.*', 'timer_v1/TIM_ADV'),
+    ('STM32H7.*:TIM2:.*', 'timer_v1/TIM_GP32'),
+    ('STM32H7.*:TIM5:.*', 'timer_v1/TIM_GP32'),
+    ('STM32H7.*:TIM6:.*', 'timer_v1/TIM_BASIC'),
+    ('STM32H7.*:TIM7:.*', 'timer_v1/TIM_BASIC'),
+    ('STM32H7.*:TIM8:.*', 'timer_v1/TIM_ADV'),
+    
     ('STM32F7.*:TIM1:.*', 'timer_v1/TIM_ADV'),
     ('STM32F7.*:TIM8:.*', 'timer_v1/TIM_ADV'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
