@@ -626,16 +626,8 @@ def parse_chips():
                     'address': addr,
                 })
 
-                peri_clock = None
-                if chip_name.startswith('STM32G0') and pname.startswith('TIM'):
-                    peri_clock = 'APB'
-                elif chip_name.startswith('STM32G0') and pname.startswith('SYSCFG'):
-                    peri_clock = 'APB'
-                else:
-                    peri_clock = match_peri_clock(rcc_block, pname)
-
-                if peri_clock is not None:
-                    p['clock'] = peri_clock
+                if rcc_info := match_peri_clock(rcc_block, pname):
+                    p['rcc'] = rcc_info
 
                 if block := match_peri(chip_name + ':' + pname + ':' + pkind):
                     p['block'] = block
@@ -1029,24 +1021,38 @@ def parse_rcc_regs():
         family_clocks = {}
         with open(f, 'r') as yaml_file:
             y = yaml.load(yaml_file)
-            for (key, body) in y.items():
-                if 'SMENR' in key:
-                    continue
-                if m := re.match('^fieldset/(A[PH]B\d?)ENR\d?$', key):
-                    clock = m.group(1)
-                    for field in body['fields']:
-                        if field['name'].endswith('EN'):
-                            peri = removesuffix(field['name'], 'EN')
-                            family_clocks[peri] = clock
+
+        for (key, body) in y.items():
+            if m := re.match('^fieldset/(A[PH]B\d?)[LH]?ENR\d?$', key):
+                reg = removeprefix(key, 'fieldset/')
+                clock = m.group(1)
+                for field in body['fields']:
+                    if field['name'].endswith('EN'):
+                        peri = removesuffix(field['name'], 'EN')
+                        regs = {
+                            'enable': OrderedDict({
+                                'register': reg,
+                                'field': field['name'],
+                            })
+                        }
+                        if rstr := y[key.replace('ENR', 'RSTR')]:
+                            if field := next(filter(lambda f: f['name'] == f'{peri}RST', rstr['fields']), None):
+                                regs['reset'] = OrderedDict({
+                                    'register': reg.replace('ENR', 'RSTR'),
+                                    'field': f'{peri}RST',
+                                })
+                        family_clocks[peri] = {
+                            'clock': clock,
+                            'registers': regs
+                        }
+
         peripheral_to_clock['rcc_' + ff + '/RCC'] = family_clocks
 
 
 def match_peri_clock(rcc_block, peri_name):
     if rcc_block in peripheral_to_clock:
-        family_clocks = peripheral_to_clock[rcc_block]
-        if peri_name in family_clocks:
-            return family_clocks[peri_name]
-        # print("found no clock for ", peri_name)
+        if res := peripheral_to_clock[rcc_block].get(peri_name):
+            return res
         if peri_name.endswith("1"):
             return match_peri_clock(rcc_block, removesuffix(peri_name, "1"))
         return None
