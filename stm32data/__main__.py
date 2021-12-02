@@ -1037,7 +1037,9 @@ def parse_rcc_regs():
             y = yaml.load(yaml_file)
 
         for (key, body) in y.items():
-            if m := re.match('^fieldset/(A[PH]B\d?)[LH]?ENR\d?$', key):
+            # Some chip families have a separate bus for GPIO so its note attached to the AHB/APB
+            # bus but an IOPORT bus. Use the IOP as the clock for these chips
+            if m := re.match('^fieldset/((A[PH]B\d?)|IOP)[LH]?ENR\d?$', key):
                 reg = removeprefix(key, 'fieldset/')
                 clock = m.group(1)
                 for field in body['fields']:
