@@ -1,0 +1,85 @@
+block/PWR:
+  description: Power control
+  items:
+  - byte_offset: 0
+    description: power control register
+    fieldset: CR
+    name: CR
+  - byte_offset: 4
+    description: power control/status register
+    fieldset: CSR
+    name: CSR
+enum/PDDS:
+  bit_size: 1
+  variants:
+  - description: Enter Stop mode when the CPU enters deepsleep
+    name: STOP_MODE
+    value: 0
+  - description: Enter Standby mode when the CPU enters deepsleep
+    name: STANDBY_MODE
+    value: 1
+fieldset/CR:
+  description: power control register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Low-power deep sleep
+    name: LPDS
+  - bit_offset: 1
+    bit_size: 1
+    description: Power down deepsleep
+    enum: PDDS
+    name: PDDS
+  - bit_offset: 2
+    bit_size: 1
+    description: Clear wakeup flag
+    name: CWUF
+  - bit_offset: 3
+    bit_size: 1
+    description: Clear standby flag
+    name: CSBF
+  - bit_offset: 4
+    bit_size: 1
+    description: Power voltage detector enable
+    name: PVDE
+  - bit_offset: 5
+    bit_size: 3
+    description: PVD level selection
+    name: PLS
+  - bit_offset: 8
+    bit_size: 1
+    description: Disable backup domain write protection
+    name: DBP
+  - array:
+      len: 3
+      stride: 1
+    bit_offset: 9
+    bit_size: 1
+    description: ENable SD1 ADC
+    name: ENSD
+fieldset/CSR:
+  description: power control/status register
+  fields:
+  - bit_offset: 0
+    bit_size: 1
+    description: Wakeup flag
+    name: WUF
+  - bit_offset: 1
+    bit_size: 1
+    description: Standby flag
+    name: SBF
+  - bit_offset: 2
+    bit_size: 1
+    description: PVD output
+    name: PVDO
+  - bit_offset: 3
+    bit_size: 1
+    description: Internal voltage reference ready flag
+    name: VREFINTRDYF
+  - array:
+      len: 2
+      stride: 1
+    bit_offset: 8
+    bit_size: 1
+    description: Enable WKUP1 pin
+    name: EWUP
