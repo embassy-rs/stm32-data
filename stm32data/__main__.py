@@ -205,6 +205,8 @@ perimap = [
     ('STM32F7.*:ETH:ETH:ethermac110_v2_0', 'eth_v1c/ETH'),
     ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
 
+    ('STM32H7.*:FMC:.*', 'fmc_h7/FMC'),
+
     ('.*LPTIM\d.*:G0xx_lptimer1_v1_4', 'lptim_g0/LPTIM'),
 
     ('STM32H7.*:TIM1:.*', 'timer_v1/TIM_ADV'),
@@ -279,6 +281,7 @@ alt_peri_defines = {
     'FLASH': ['FLASH_R_BASE'],
     'ADC_COMMON': ['ADC_COMMON', 'ADC1_COMMON', 'ADC12_COMMON', 'ADC123_COMMON'],
     'CAN': ['CAN_BASE', 'CAN1_BASE'],
+    'FMC': ['FMC_BASE', 'FMC_R_BASE']
 }
 
 # Device address overrides, in case of missing from headers
