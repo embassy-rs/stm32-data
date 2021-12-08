@@ -60,7 +60,6 @@ fieldset/CR1:
       description: Send break
       bit_offset: 0
       bit_size: 1
-      enum: SBK
     - name: RWU
       description: Receiver wakeup
       bit_offset: 1
@@ -104,15 +103,15 @@ fieldset/CR1:
       bit_offset: 10
       bit_size: 1
     - name: WAKE
-      description: Wakeup method
+      description: Receiver wakeup method
       bit_offset: 11
       bit_size: 1
       enum: WAKE
-    - name: M
+    - name: M0
       description: Word length
       bit_offset: 12
       bit_size: 1
-      enum: M
+      enum: M0
     - name: UE
       description: USART enable
       bit_offset: 13
@@ -125,7 +124,7 @@ fieldset/CR2:
       bit_offset: 0
       bit_size: 4
     - name: LBDL
-      description: lin break detection length
+      description: Line break detection length
       bit_offset: 5
       bit_size: 1
       enum: LBDL
@@ -184,7 +183,6 @@ fieldset/CR3:
       description: Half-duplex selection
       bit_offset: 3
       bit_size: 1
-      enum: HDSEL
     - name: DMAR
       description: DMA enable receiver
       bit_offset: 6
@@ -255,7 +253,7 @@ fieldset/SR:
       bit_offset: 3
       bit_size: 1
     - name: IDLE
-      description: IDLE line detected
+      description: Idle line detected
       bit_offset: 4
       bit_size: 1
     - name: RXNE
@@ -300,15 +298,6 @@ enum/CPOL:
     - name: High
       description: Steady high value on CK pin outside transmission window
       value: 1
-enum/HDSEL:
-  bit_size: 1
-  variants:
-    - name: FullDuplex
-      description: Half duplex mode is not selected
-      value: 0
-    - name: HalfDuplex
-      description: Half duplex mode is selected
-      value: 1
 enum/IRLP:
   bit_size: 1
   variants:
@@ -321,20 +310,20 @@ enum/IRLP:
 enum/LBDL:
   bit_size: 1
   variants:
-    - name: LBDL10
+    - name: Bit10
       description: 10-bit break detection
       value: 0
-    - name: LBDL11
+    - name: Bit11
       description: 11-bit break detection
       value: 1
-enum/M:
+enum/M0:
   bit_size: 1
   variants:
-    - name: M8
-      description: 8 data bits
+    - name: Bit8
+      description: "1 start bit, 8 data bits, n stop bits"
       value: 0
-    - name: M9
-      description: 9 data bits
+    - name: Bit9
+      description: "1 start bit, 9 data bits, n stop bits"
       value: 1
 enum/PS:
   bit_size: 1
@@ -353,15 +342,6 @@ enum/RWU:
       value: 0
     - name: Mute
       description: Receiver in mute mode
-      value: 1
-enum/SBK:
-  bit_size: 1
-  variants:
-    - name: NoBreak
-      description: No break character is transmitted
-      value: 0
-    - name: Break
-      description: Break character transmitted
       value: 1
 enum/STOP:
   bit_size: 2

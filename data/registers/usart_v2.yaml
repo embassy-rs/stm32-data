@@ -90,7 +90,7 @@ fieldset/CR1:
       bit_offset: 6
       bit_size: 1
     - name: TXEIE
-      description: interrupt enable
+      description: TXE interrupt enable
       bit_offset: 7
       bit_size: 1
     - name: PEIE
@@ -165,7 +165,7 @@ fieldset/CR2:
         stride: 0
       enum: ADDM
     - name: LBDL
-      description: LIN break detection length
+      description: Line break detection length
       bit_offset: 5
       bit_size: 1
       enum: LBDL
@@ -177,7 +177,6 @@ fieldset/CR2:
       description: Last bit clock pulse
       bit_offset: 8
       bit_size: 1
-      enum: LBCL
     - name: CPHA
       description: Clock phase
       bit_offset: 9
@@ -205,22 +204,18 @@ fieldset/CR2:
       description: Swap TX/RX pins
       bit_offset: 15
       bit_size: 1
-      enum: SWAP
     - name: RXINV
       description: RX pin active level inversion
       bit_offset: 16
       bit_size: 1
-      enum: RXINV
     - name: TXINV
       description: TX pin active level inversion
       bit_offset: 17
       bit_size: 1
-      enum: TXINV
     - name: DATAINV
       description: Binary data inversion
       bit_offset: 18
       bit_size: 1
-      enum: DATAINV
     - name: MSBFIRST
       description: Most significant bit first
       bit_offset: 19
@@ -263,7 +258,6 @@ fieldset/CR3:
       description: Half-duplex selection
       bit_offset: 3
       bit_size: 1
-      enum: HDSEL
     - name: NACK
       description: Smartcard NACK enable
       bit_offset: 4
@@ -356,8 +350,8 @@ fieldset/IXR:
       description: Framing error
       bit_offset: 1
       bit_size: 1
-    - name: NF
-      description: Noise detected flag
+    - name: NE
+      description: Noise error flag
       bit_offset: 2
       bit_size: 1
     - name: ORE
@@ -380,7 +374,7 @@ fieldset/IXR:
       description: Transmit data register empty
       bit_offset: 7
       bit_size: 1
-    - name: LBDF
+    - name: LBD
       description: LIN break detection flag
       bit_offset: 8
       bit_size: 1
@@ -424,6 +418,7 @@ fieldset/IXR:
       description: Receiver wakeup from Mute mode
       bit_offset: 19
       bit_size: 1
+      enum: RWU
     - name: WUF
       description: Wakeup from Stop mode flag
       bit_offset: 20
@@ -512,15 +507,6 @@ enum/CPOL:
     - name: High
       description: Steady high value on CK pin outside transmission window
       value: 1
-enum/DATAINV:
-  bit_size: 1
-  variants:
-    - name: Positive
-      description: Logical data from the data register are send/received in positive/direct logic
-      value: 0
-    - name: Negative
-      description: Logical data from the data register are send/received in negative/inverse logic
-      value: 1
 enum/DEP:
   bit_size: 1
   variants:
@@ -530,15 +516,6 @@ enum/DEP:
     - name: Low
       description: DE signal is active low
       value: 1
-enum/HDSEL:
-  bit_size: 1
-  variants:
-    - name: NotSelected
-      description: Half duplex mode is not selected
-      value: 0
-    - name: Selected
-      description: Half duplex mode is selected
-      value: 1
 enum/IRLP:
   bit_size: 1
   variants:
@@ -547,15 +524,6 @@ enum/IRLP:
       value: 0
     - name: LowPower
       description: Low-power mode
-      value: 1
-enum/LBCL:
-  bit_size: 1
-  variants:
-    - name: NotOutput
-      description: The clock pulse of the last data bit is not output to the CK pin
-      value: 0
-    - name: Output
-      description: The clock pulse of the last data bit is output to the CK pin
       value: 1
 enum/LBDL:
   bit_size: 1
@@ -620,14 +588,14 @@ enum/PS:
     - name: Odd
       description: Odd parity
       value: 1
-enum/RXINV:
+enum/RWU:
   bit_size: 1
   variants:
-    - name: Standard
-      description: RX pin signal works using the standard logic levels
+    - name: Active
+      description: Receiver in active mode
       value: 0
-    - name: Inverted
-      description: RX pin signal values are inverted
+    - name: Mute
+      description: Receiver in mute mode
       value: 1
 enum/STOP:
   bit_size: 2
@@ -644,32 +612,14 @@ enum/STOP:
     - name: Stop1p5
       description: 1.5 stop bit
       value: 3
-enum/SWAP:
-  bit_size: 1
-  variants:
-    - name: Standard
-      description: TX/RX pins are used as defined in standard pinout
-      value: 0
-    - name: Swapped
-      description: The TX and RX pins functions are swapped
-      value: 1
-enum/TXINV:
-  bit_size: 1
-  variants:
-    - name: Standard
-      description: TX pin signal works using the standard logic levels
-      value: 0
-    - name: Inverted
-      description: TX pin signal values are inverted
-      value: 1
 enum/WAKE:
   bit_size: 1
   variants:
-    - name: Idle
-      description: Idle line
+    - name: IdleLine
+      description: USART wakeup on idle line
       value: 0
-    - name: Address
-      description: Address mask
+    - name: AddressMark
+      description: USART wakeup on address mark
       value: 1
 enum/WUS:
   bit_size: 2
