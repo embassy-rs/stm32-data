@@ -125,6 +125,7 @@ perimap = [
     ('.*:ADC_COMMON:aditf4_v3_0_WL', 'adccommon_v3/ADC_COMMON'),
     ('.*:DCMI:.*', 'dcmi_v1/DCMI'),
     ('STM32F0.*:SYSCFG:.*',  'syscfg_f0/SYSCFG'),
+    ('STM32F3.*:SYSCFG:.*',  'syscfg_f3/SYSCFG'),
     ('STM32F4.*:SYSCFG:.*',  'syscfg_f4/SYSCFG'),
     ('STM32F7.*:SYSCFG:.*',  'syscfg_f7/SYSCFG'),
     ('STM32L4.*:SYSCFG:.*',  'syscfg_l4/SYSCFG'),
@@ -173,6 +174,8 @@ perimap = [
     ('STM32WL5.*:RCC:.*', 'rcc_wl5/RCC'),
     ('STM32WLE.*:RCC:.*', 'rcc_wle/RCC'),
 
+    ('STM32F3.*:SPI[1234]:.*', 'spi_v2/SPI'),
+
     ('STM32F1.*:AFIO:.*', 'afio_f1/AFIO'),
 
     ('STM32L5.*:EXTI:.*', 'exti_l5/EXTI'),
@@ -190,6 +193,7 @@ perimap = [
     ('STM32G4.*:PWR:.*', 'pwr_g4/PWR'),
     ('STM32H7(42|43|53|50).*:PWR:.*', 'pwr_h7/PWR'),
     ('STM32H7.*:PWR:.*', 'pwr_h7smps/PWR'),
+    ('STM32F3.*:PWR:.*', 'pwr_f3/PWR'),
     ('STM32F4.*:PWR:.*', 'pwr_f4/PWR'),
     ('STM32F7.*:PWR:.*', 'pwr_f7/PWR'),
     ('STM32L1.*:PWR:.*', 'pwr_l1/PWR'),
@@ -198,6 +202,7 @@ perimap = [
     ('STM32H7.*:FLASH:.*', 'flash_h7/FLASH'),
     ('STM32F0.*:FLASH:.*', 'flash_f0/FLASH'),
     ('STM32F1.*:FLASH:.*', 'flash_f1/FLASH'),
+    ('STM32F3.*:FLASH:.*', 'flash_f3/FLASH'),
     ('STM32F4.*:FLASH:.*', 'flash_f4/FLASH'),
     ('STM32F7.*:FLASH:.*', 'flash_f7/FLASH'),
     ('STM32L4.*:FLASH:.*', 'flash_l4/FLASH'),
