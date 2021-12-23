@@ -361,7 +361,7 @@ def parse_document_type(t):
     if t == 'Datasheet':
         return 2, 'datahseet'
     if t == 'Errata sheet':
-        return 3, 'errata_sseet'
+        return 3, 'errata_sheet'
     if t == 'Application note':
         return 4, 'application_note'
     raise Exception(f'Unknown doc type {t}')
