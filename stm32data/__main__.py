@@ -226,7 +226,7 @@ perimap = [
     ('STM32F3.*:TIM(3|4|15|16|17){1}:.*', 'timer_v1/TIM_GP16'),
     ('STM32F3.*:TIM2:.*', 'timer_v1/TIM_GP32'),
     ('STM32F3.*:TIM(1|8|20){1}:.*', 'timer_v1/TIM_ADV'),
-    
+
     ('STM32F7.*:TIM1:.*', 'timer_v1/TIM_ADV'),
     ('STM32F7.*:TIM8:.*', 'timer_v1/TIM_ADV'),
     ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
@@ -471,12 +471,14 @@ def parse_pin_name(pin_name):
 
     return port, pin
 
+
 def get_peri_addr(defines, pname):
     possible_defines = alt_peri_defines.get(pname) or [f'{pname}_BASE', pname]
     for d in possible_defines:
         if addr := defines.get(d):
             return addr
     return None
+
 
 def parse_chips():
     os.makedirs('data/chips', exist_ok=True)
@@ -503,7 +505,7 @@ def parse_chips():
 
         print(f)
 
-        r = xmltodict.parse(open(f, 'rb'))['Mcu']
+        r = xmltodict.parse(open(f, 'rb'), force_list=['Signal'])['Mcu']
 
         package_names = expand_name(r['@RefName'])
         package_rams = r['Ram']
@@ -590,25 +592,6 @@ def parse_chips():
         chip_af = removesuffix(chip_af, '_gpio_v1_0')
         chip_af = af[chip_af]
 
-        # Analog pins are in the MCU XML, not in the GPIO XML.
-        analog_pins = {}
-        for pin_name, pin in chip['pins'].items():
-            for signal in children(pin, 'Signal'):
-                if p := parse_signal_name(signal['@Name']):
-                    peri_name, signal_name = p
-                    if peri_name.startswith('ADC') or peri_name.startswith('DAC') or peri_name.startswith('COMP') or peri_name.startswith('OPAMP'):
-                        if peri_name not in analog_pins:
-                            analog_pins[peri_name] = []
-                        analog_pins[peri_name].append(OrderedDict({
-                            'pin': pin_name,
-                            'signal': signal_name,
-                        }))
-
-        for pname, p in analog_pins.items():
-            p = remove_duplicates(p)
-            sort_pins(p)
-            analog_pins[pname] = p
-
         cores = []
         for core_xml in children(chip['xml'], 'Core'):
             core_name = corename(core_xml)
@@ -656,6 +639,25 @@ def parse_chips():
                 if pname not in peri_kinds and (addr := get_peri_addr(defines, pname)):
                     peri_kinds[pname] = 'unknown'
 
+            # get possible used GPIOs for each peripheral from the chip xml
+            # it's not the full info we would want (stuff like AFIO info which comes from GPIO xml),
+            #   but we actually need to use it because of F1 line
+            #       which doesn't include non-remappable peripherals in GPIO xml
+            #   and some weird edge cases like STM32F030C6 (see merge_periph_pins_info)
+            periph_pins = OrderedDict()
+            for pin_name, pin in chip['pins'].items():
+                for signal in pin['Signal']:
+                    signal = signal['@Name']
+                    # TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
+                    if signal not in {'GPIO', 'CEC', 'AUDIOCLK', 'VDDTCXO'} and 'EXTI' not in signal:
+                        periph, signal = signal.split('_', maxsplit=1)
+                        pins = periph_pins.setdefault(periph, [])
+                        pins.append(OrderedDict(pin=pin_name, signal=signal))
+            for periph, pins in periph_pins.items():
+                pins = remove_duplicates(pins)
+                sort_pins(pins)
+                periph_pins[periph] = pins
+
             peris = {}
             for pname, pkind in peri_kinds.items():
                 addr = get_peri_addr(defines, pname)
@@ -672,9 +674,12 @@ def parse_chips():
                 if block := match_peri(chip_name + ':' + pname + ':' + pkind):
                     p['block'] = block
 
-                if pins := chip_af.get(pname):
-                    p['pins'] = pins
-                elif pins := analog_pins.get(pname):
+                if pins := periph_pins.get(pname):
+                    # merge the core xml info with GPIO xml info to hopefully get the full picture
+                    # if the peripheral does not exist in the GPIO xml (one of the notable one is ADC)
+                    #   it probably doesn't need any AFIO writes to work
+                    if af_pins := chip_af.get(pname):
+                        pins = merge_periph_pins_info('STM32F1' in chip_name, pname, pins, af_pins)
                     p['pins'] = pins
 
                 if chip_nvic in chip_interrupts:
@@ -804,6 +809,44 @@ def parse_chips():
 
             with open('data/chips/' + chip_name + '.yaml', 'w') as f:
                 f.write(yaml.dump(chip, width=500))
+
+
+SIGNAL_REMAP = {
+    # for some godforsaken reason UART4's and UART5's CTS are called CTS_NSS in the GPIO xml
+    # so try to match with these
+    'CTS': 'CTS_NSS'
+}
+
+
+def merge_periph_pins_info(is_f1, periph_name, core_pins, af_pins):
+    if is_f1:
+        # TODO: actually handle the F1 AFIO information when it will be extracted
+        return core_pins
+
+    # covert to dict
+    af_pins = {(v['pin'], v['signal']): v for v in af_pins}
+    for pin in core_pins:
+        af = af_pins.get((pin['pin'], pin['signal']), {'af': None})['af']
+
+        # try to look for a signal with another name
+        if af is None and (remap := SIGNAL_REMAP.get(pin['signal'])):
+            af = af_pins.get((pin['pin'], remap), {'af': None})['af']
+
+        # it appears that for __some__ STM32 MCUs there is no AFIO specified in GPIO file
+        # (notably - STM32F030C6 with it's I2C1 on PF6 and PF7)
+        # but the peripheral can actually be mapped to different pins
+        # this breaks embassy's model, so we pretend that it's AF 0
+        # Reference Manual states that there's no GPIOF_AFR register
+        # but according to Cube-generated core it's OK to write to AFIO reg, it seems to be ignored
+        # TODO: are there any more signals that have this "feature"
+        if af is None and periph_name == 'I2C1':
+            af = 0
+
+        if af is not None:
+            # Kinda not nice to modify this dict, but doesn't seem to be a problem
+            pin['af'] = af
+    return core_pins
+    pass
 
 
 af = {}
