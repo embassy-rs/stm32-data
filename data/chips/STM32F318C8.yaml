@@ -233,8 +233,14 @@ cores:
       address: 0x40010020
       pins:
       - pin: PA2
+        signal: INM
+      - pin: PA2
         signal: OUT
         af: 8
+      - pin: PA4
+        signal: INM
+      - pin: PA7
+        signal: INP
       - pin: PA12
         signal: OUT
         af: 8
@@ -246,6 +252,10 @@ cores:
     COMP4:
       address: 0x40010028
       pins:
+      - pin: PA4
+        signal: INM
+      - pin: PB0
+        signal: INP
       - pin: PB1
         signal: OUT
         af: 8
@@ -253,12 +263,15 @@ cores:
     COMP6:
       address: 0x40010030
       pins:
+      - pin: PA4
+        signal: INM
       - pin: PA10
         signal: OUT
         af: 8
-      - pin: PC6
-        signal: OUT
-        af: 7
+      - pin: PB11
+        signal: INP
+      - pin: PB15
+        signal: INM
       interrupts:
         GLOBAL: COMP4_6
     CRC:
@@ -475,9 +488,6 @@ cores:
       - pin: PB5
         signal: SDA
         af: 8
-      - pin: PC9
-        signal: SDA
-        af: 3
       interrupts:
         ER: I2C3_ER
         EV: I2C3_EV
@@ -529,17 +539,35 @@ cores:
       - pin: PA8
         signal: MCO
         af: 0
+      - pin: PC14
+        signal: OSC32_IN
+      - pin: PC15
+        signal: OSC32_OUT
+      - pin: PF0
+        signal: OSC_IN
+      - pin: PF1
+        signal: OSC_OUT
       interrupts:
         GLOBAL: RCC
     RTC:
       address: 0x40002800
       pins:
+      - pin: PA0
+        signal: TAMP2
       - pin: PA1
         signal: REFIN
         af: 0
       - pin: PB15
         signal: REFIN
         af: 0
+      - pin: PC13
+        signal: OUT_ALARM
+      - pin: PC13
+        signal: OUT_CALIB
+      - pin: PC13
+        signal: TAMP1
+      - pin: PC13
+        signal: TS
       interrupts:
         GLOBAL: TAMP_STAMP
     SPI2:
@@ -612,15 +640,6 @@ cores:
         signal: MISO
         af: 6
       - pin: PB5
-        signal: MOSI
-        af: 6
-      - pin: PC10
-        signal: SCK
-        af: 6
-      - pin: PC11
-        signal: MISO
-        af: 6
-      - pin: PC12
         signal: MOSI
         af: 6
       interrupts:
@@ -712,24 +731,6 @@ cores:
       - pin: PB15
         signal: CH3N
         af: 4
-      - pin: PC0
-        signal: CH1
-        af: 2
-      - pin: PC1
-        signal: CH2
-        af: 2
-      - pin: PC2
-        signal: CH3
-        af: 2
-      - pin: PC3
-        signal: BKIN2
-        af: 6
-      - pin: PC3
-        signal: CH4
-        af: 2
-      - pin: PC4
-        signal: ETR
-        af: 2
       - pin: PC13
         signal: CH1N
         af: 4
@@ -790,9 +791,6 @@ cores:
       - pin: PB15
         signal: CH2
         af: 1
-      - pin: PC5
-        signal: BKIN
-        af: 2
       interrupts:
         BRK: TIM1_BRK_TIM15
         COM: TIM1_BRK_TIM15
@@ -1040,9 +1038,6 @@ cores:
       - pin: PB1
         signal: G3_IO3
         af: 3
-      - pin: PB2
-        signal: G3_IO4
-        af: 3
       - pin: PB3
         signal: G5_IO1
         af: 3
@@ -1072,9 +1067,6 @@ cores:
         af: 3
       - pin: PB14
         signal: G6_IO4
-        af: 3
-      - pin: PC5
-        signal: G3_IO1
         af: 3
       interrupts:
         GLOBAL: EXTI2_TSC
@@ -1113,12 +1105,6 @@ cores:
         signal: TX
         af: 7
       - pin: PB7
-        signal: RX
-        af: 7
-      - pin: PC4
-        signal: TX
-        af: 7
-      - pin: PC5
         signal: RX
         af: 7
       interrupts:
@@ -1220,15 +1206,6 @@ cores:
         af: 7
       - pin: PB14
         signal: RTS
-        af: 7
-      - pin: PC10
-        signal: TX
-        af: 7
-      - pin: PC11
-        signal: RX
-        af: 7
-      - pin: PC12
-        signal: CK
         af: 7
       interrupts:
         GLOBAL: USART3

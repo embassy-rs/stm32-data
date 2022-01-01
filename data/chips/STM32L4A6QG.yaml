@@ -450,12 +450,6 @@ cores:
       - pin: PD1
         signal: TX
         af: 9
-      - pin: PH13
-        signal: TX
-        af: 9
-      - pin: PI9
-        signal: RX
-        af: 9
       interrupts:
         RX0: CAN1_RX0
         RX1: CAN1_RX1
@@ -497,17 +491,33 @@ cores:
       - pin: PB0
         signal: OUT
         af: 12
+      - pin: PB1
+        signal: INM
+      - pin: PB2
+        signal: INP
       - pin: PB10
         signal: OUT
         af: 12
+      - pin: PC4
+        signal: INM
+      - pin: PC5
+        signal: INP
       interrupts:
         GLOBAL: COMP
     COMP2:
       address: 0x40010204
       pins:
+      - pin: PB3
+        signal: INM
+      - pin: PB4
+        signal: INP
       - pin: PB5
         signal: OUT
         af: 12
+      - pin: PB6
+        signal: INP
+      - pin: PB7
+        signal: INM
       - pin: PB11
         signal: OUT
         af: 12
@@ -656,71 +666,11 @@ cores:
       - pin: PE6
         signal: D7
         af: 10
-      - pin: PF10
-        signal: D11
-        af: 10
       - pin: PF11
         signal: D12
         af: 10
       - pin: PG15
         signal: D13
-        af: 10
-      - pin: PH5
-        signal: PIXCLK
-        af: 10
-      - pin: PH6
-        signal: D8
-        af: 10
-      - pin: PH7
-        signal: D9
-        af: 10
-      - pin: PH8
-        signal: HSYNC
-        af: 10
-      - pin: PH9
-        signal: D0
-        af: 10
-      - pin: PH10
-        signal: D1
-        af: 10
-      - pin: PH11
-        signal: D2
-        af: 10
-      - pin: PH12
-        signal: D3
-        af: 10
-      - pin: PH14
-        signal: D4
-        af: 10
-      - pin: PH15
-        signal: D11
-        af: 10
-      - pin: PI0
-        signal: D13
-        af: 10
-      - pin: PI1
-        signal: D8
-        af: 10
-      - pin: PI2
-        signal: D9
-        af: 10
-      - pin: PI3
-        signal: D10
-        af: 10
-      - pin: PI4
-        signal: D5
-        af: 10
-      - pin: PI5
-        signal: VSYNC
-        af: 10
-      - pin: PI6
-        signal: D6
-        af: 10
-      - pin: PI7
-        signal: D7
-        af: 10
-      - pin: PI8
-        signal: D12
         af: 10
       interrupts:
         GLOBAL: DCMI
@@ -990,9 +940,13 @@ cores:
       - pin: PD11
         signal: A16
         af: 12
+      - pin: PD11
+        signal: CLE
       - pin: PD12
         signal: A17
         af: 12
+      - pin: PD12
+        signal: ALE
       - pin: PD13
         signal: A18
         af: 12
@@ -1372,15 +1326,6 @@ cores:
       - pin: PF2
         signal: SMBA
         af: 4
-      - pin: PH4
-        signal: SCL
-        af: 4
-      - pin: PH5
-        signal: SDA
-        af: 4
-      - pin: PH6
-        signal: SMBA
-        af: 4
       interrupts:
         ER: I2C2_ER
         EV: I2C2_EV
@@ -1430,15 +1375,6 @@ cores:
         af: 4
       - pin: PG8
         signal: SDA
-        af: 4
-      - pin: PH7
-        signal: SCL
-        af: 4
-      - pin: PH8
-        signal: SDA
-        af: 4
-      - pin: PH9
-        signal: SMBA
         af: 4
       interrupts:
         ER: I2C3_ER
@@ -1974,24 +1910,6 @@ cores:
       - pin: PE15
         signal: BK1_IO3
         af: 10
-      - pin: PF6
-        signal: BK1_IO3
-        af: 10
-      - pin: PF7
-        signal: BK1_IO2
-        af: 10
-      - pin: PF8
-        signal: BK1_IO0
-        af: 10
-      - pin: PF9
-        signal: BK1_IO1
-        af: 10
-      - pin: PF10
-        signal: CLK
-        af: 3
-      - pin: PH2
-        signal: BK2_IO0
-        af: 3
       interrupts:
         GLOBAL: QUADSPI
       dma_channels:
@@ -2004,9 +1922,19 @@ cores:
       address: 0x40021000
       block: rcc_l4/RCC
       pins:
+      - pin: PA2
+        signal: LSCO
       - pin: PA8
         signal: MCO
         af: 0
+      - pin: PC14
+        signal: OSC32_IN
+      - pin: PC15
+        signal: OSC32_OUT
+      - pin: PH0
+        signal: OSC_IN
+      - pin: PH1
+        signal: OSC_OUT
       interrupts:
         GLOBAL: RCC
     RNG:
@@ -2026,6 +1954,8 @@ cores:
     RTC:
       address: 0x40002800
       pins:
+      - pin: PA0
+        signal: TAMP2
       - pin: PB2
         signal: OUT_ALARM
         af: 0
@@ -2035,6 +1965,16 @@ cores:
       - pin: PB15
         signal: REFIN
         af: 0
+      - pin: PC13
+        signal: OUT_ALARM
+      - pin: PC13
+        signal: OUT_CALIB
+      - pin: PC13
+        signal: TAMP1
+      - pin: PC13
+        signal: TS
+      - pin: PE6
+        signal: TAMP3
       interrupts:
         GLOBAL: TAMP_STAMP
     SAI1:
@@ -2132,18 +2072,6 @@ cores:
         af: 13
       - pin: PE10
         signal: MCLK_B
-        af: 13
-      - pin: PF6
-        signal: SD_B
-        af: 13
-      - pin: PF7
-        signal: MCLK_B
-        af: 13
-      - pin: PF8
-        signal: SCK_B
-        af: 13
-      - pin: PF9
-        signal: FS_B
         af: 13
       - pin: PG7
         signal: MCLK_A
@@ -2463,18 +2391,6 @@ cores:
       - pin: PD4
         signal: MOSI
         af: 5
-      - pin: PI0
-        signal: NSS
-        af: 5
-      - pin: PI1
-        signal: SCK
-        af: 5
-      - pin: PI2
-        signal: MISO
-        af: 5
-      - pin: PI3
-        signal: MOSI
-        af: 5
       interrupts:
         GLOBAL: SPI2
       dma_channels:
@@ -2754,12 +2670,6 @@ cores:
         signal: CH1
         af: 14
       - pin: PB15
-        signal: CH2
-        af: 14
-      - pin: PF9
-        signal: CH1
-        af: 14
-      - pin: PF10
         signal: CH2
         af: 14
       - pin: PG9
@@ -3115,33 +3025,6 @@ cores:
       - pin: PA3
         signal: CH4
         af: 2
-      - pin: PF6
-        signal: CH1
-        af: 2
-      - pin: PF6
-        signal: ETR
-        af: 1
-      - pin: PF7
-        signal: CH2
-        af: 2
-      - pin: PF8
-        signal: CH3
-        af: 2
-      - pin: PF9
-        signal: CH4
-        af: 2
-      - pin: PH10
-        signal: CH1
-        af: 2
-      - pin: PH11
-        signal: CH2
-        af: 2
-      - pin: PH12
-        signal: CH3
-        af: 2
-      - pin: PI0
-        signal: CH4
-        af: 2
       interrupts:
         BRK: TIM5
         COM: TIM5
@@ -3280,33 +3163,6 @@ cores:
         af: 14
       - pin: PC9
         signal: CH4
-        af: 3
-      - pin: PH13
-        signal: CH1N
-        af: 3
-      - pin: PH14
-        signal: CH2N
-        af: 3
-      - pin: PH15
-        signal: CH3N
-        af: 3
-      - pin: PI2
-        signal: CH4
-        af: 3
-      - pin: PI3
-        signal: ETR
-        af: 3
-      - pin: PI4
-        signal: BKIN
-        af: 3
-      - pin: PI5
-        signal: CH1
-        af: 3
-      - pin: PI6
-        signal: CH2
-        af: 3
-      - pin: PI7
-        signal: CH3
         af: 3
       interrupts:
         BRK: TIM8_BRK

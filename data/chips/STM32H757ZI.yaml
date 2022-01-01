@@ -241,7 +241,7 @@ cores:
   peripherals:
     ADC1:
       address: 0x40022000
-      pins: &id001
+      pins:
       - pin: PA0
         signal: INP16
       - pin: PA1
@@ -292,12 +292,12 @@ cores:
         GLOBAL: ADC
       dma_channels:
         ADC1:
-        - &id002
+        - &id001
           dmamux: DMAMUX1
           request: 9
     ADC2:
       address: 0x40022100
-      pins: &id003
+      pins:
       - pin: PA2
         signal: INP14
       - pin: PA3
@@ -342,12 +342,12 @@ cores:
         GLOBAL: ADC
       dma_channels:
         ADC2:
-        - &id004
+        - &id002
           dmamux: DMAMUX1
           request: 10
     ADC3:
       address: 0x58026000
-      rcc: &id005
+      rcc: &id003
         clock: AHB4
         registers:
           enable:
@@ -356,7 +356,7 @@ cores:
           reset:
             register: AHB4RSTR
             field: ADC3RST
-      pins: &id006
+      pins:
       - pin: PC0
         signal: INP10
       - pin: PC1
@@ -381,17 +381,17 @@ cores:
         GLOBAL: ADC3
       dma_channels:
         ADC3:
-        - &id007
+        - &id004
           dmamux: DMAMUX1
           request: 115
-        - &id008
+        - &id005
           dmamux: DMAMUX2
           request: 17
     ADC_COMMON:
       address: 0x40022300
     BDMA:
       address: 0x58025400
-      rcc: &id009
+      rcc: &id006
         clock: AHB4
         registers:
           enable:
@@ -412,7 +412,7 @@ cores:
         BDMA_Channel7: BDMA_Channel7
     CEC:
       address: 0x40006c00
-      rcc: &id010
+      rcc: &id007
         clock: APB1
         registers:
           enable:
@@ -423,7 +423,15 @@ cores:
             field: CECRST
     COMP1:
       address: 0x5800380c
-      pins: &id011
+      pins:
+      - pin: PB0
+        signal: INP
+      - pin: PB1
+        signal: INM
+      - pin: PB2
+        signal: INP
+      - pin: PC4
+        signal: INM
       - pin: PC5
         signal: OUT
         af: 13
@@ -433,17 +441,25 @@ cores:
       interrupts: {}
     COMP2:
       address: 0x58003810
-      pins: &id012
+      pins:
+      - pin: PE7
+        signal: INM
       - pin: PE8
         signal: OUT
         af: 13
+      - pin: PE9
+        signal: INP
+      - pin: PE10
+        signal: INM
+      - pin: PE11
+        signal: INP
       - pin: PE13
         signal: OUT
         af: 13
       interrupts: {}
     CRC:
       address: 0x58024c00
-      rcc: &id013
+      rcc: &id008
         clock: AHB4
         registers:
           enable:
@@ -455,7 +471,7 @@ cores:
       block: crc_v3/CRC
     CRS:
       address: 0x40008400
-      rcc: &id014
+      rcc: &id009
         clock: APB1
         registers:
           enable:
@@ -464,7 +480,7 @@ cores:
           reset:
             register: APB1HRSTR
             field: CRSRST
-      pins: &id015
+      pins:
       - pin: PB3
         signal: SYNC
         af: 10
@@ -474,17 +490,17 @@ cores:
         GLOBAL: CRYP
       dma_channels:
         IN:
-        - &id016
+        - &id010
           dmamux: DMAMUX1
           request: 76
         OUT:
-        - &id017
+        - &id011
           dmamux: DMAMUX1
           request: 77
     DAC1:
       address: 0x40007400
       block: dac_v2/DAC
-      pins: &id018
+      pins:
       - pin: PA4
         signal: OUT1
       - pin: PA5
@@ -493,11 +509,11 @@ cores:
         GLOBAL: TIM6_DAC
       dma_channels:
         CH1:
-        - &id019
+        - &id012
           dmamux: DMAMUX1
           request: 67
         CH2:
-        - &id020
+        - &id013
           dmamux: DMAMUX1
           request: 68
     DBGMCU:
@@ -505,7 +521,7 @@ cores:
       block: dbgmcu_h7/DBGMCU
     DCMI:
       address: 0x48020000
-      rcc: &id021
+      rcc: &id014
         clock: AHB2
         registers:
           enable:
@@ -515,7 +531,7 @@ cores:
             register: AHB2RSTR
             field: DCMIRST
       block: dcmi_v1/DCMI
-      pins: &id022
+      pins:
       - pin: PA4
         signal: HSYNC
         af: 13
@@ -588,91 +604,22 @@ cores:
       - pin: PE6
         signal: D7
         af: 13
-      - pin: PF10
-        signal: D11
-        af: 13
       - pin: PF11
         signal: D12
         af: 13
-      - pin: PG6
-        signal: D12
-        af: 13
-      - pin: PG7
-        signal: D13
-        af: 13
-      - pin: PG9
-        signal: VSYNC
-        af: 13
-      - pin: PG10
-        signal: D2
-        af: 13
-      - pin: PG11
-        signal: D3
-        af: 13
       - pin: PG15
         signal: D13
-        af: 13
-      - pin: PH6
-        signal: D8
-        af: 13
-      - pin: PH7
-        signal: D9
-        af: 13
-      - pin: PH8
-        signal: HSYNC
-        af: 13
-      - pin: PH9
-        signal: D0
-        af: 13
-      - pin: PH10
-        signal: D1
-        af: 13
-      - pin: PH11
-        signal: D2
-        af: 13
-      - pin: PH12
-        signal: D3
-        af: 13
-      - pin: PH14
-        signal: D4
-        af: 13
-      - pin: PH15
-        signal: D11
-        af: 13
-      - pin: PI0
-        signal: D13
-        af: 13
-      - pin: PI1
-        signal: D8
-        af: 13
-      - pin: PI2
-        signal: D9
-        af: 13
-      - pin: PI3
-        signal: D10
-        af: 13
-      - pin: PI4
-        signal: D5
-        af: 13
-      - pin: PI5
-        signal: VSYNC
-        af: 13
-      - pin: PI6
-        signal: D6
-        af: 13
-      - pin: PI7
-        signal: D7
         af: 13
       interrupts:
         GLOBAL: DCMI
       dma_channels:
         PSSI:
-        - &id023
+        - &id015
           dmamux: DMAMUX1
           request: 75
     DFSDM1:
       address: 0x40017000
-      rcc: &id024
+      rcc: &id016
         clock: APB2
         registers:
           enable:
@@ -681,7 +628,7 @@ cores:
           reset:
             register: APB2RSTR
             field: DFSDM1RST
-      pins: &id025
+      pins:
       - pin: PB0
         signal: CKOUT
         af: 6
@@ -826,24 +773,24 @@ cores:
       interrupts: {}
       dma_channels:
         FLT0:
-        - &id026
+        - &id017
           dmamux: DMAMUX1
           request: 101
         FLT1:
-        - &id027
+        - &id018
           dmamux: DMAMUX1
           request: 102
         FLT2:
-        - &id028
+        - &id019
           dmamux: DMAMUX1
           request: 103
         FLT3:
-        - &id029
+        - &id020
           dmamux: DMAMUX1
           request: 104
     DMA1:
       address: 0x40020000
-      rcc: &id030
+      rcc: &id021
         clock: AHB1
         registers:
           enable:
@@ -864,7 +811,7 @@ cores:
         DMA1_Stream7: DMA1_Stream7
     DMA2:
       address: 0x40020400
-      rcc: &id031
+      rcc: &id022
         clock: AHB1
         registers:
           enable:
@@ -885,7 +832,7 @@ cores:
         DMA2_Stream7: DMA2_Stream7
     DMA2D:
       address: 0x52001000
-      rcc: &id032
+      rcc: &id023
         clock: AHB3
         registers:
           enable:
@@ -906,7 +853,7 @@ cores:
     ETH:
       address: 0x40028000
       block: eth_v2/ETH
-      pins: &id033
+      pins:
       - pin: PA0
         signal: CRS
         af: 11
@@ -973,33 +920,6 @@ cores:
       - pin: PG8
         signal: PPS_OUT
         af: 11
-      - pin: PG11
-        signal: TX_EN
-        af: 11
-      - pin: PG12
-        signal: TXD1
-        af: 11
-      - pin: PG13
-        signal: TXD0
-        af: 11
-      - pin: PG14
-        signal: TXD1
-        af: 11
-      - pin: PH2
-        signal: CRS
-        af: 11
-      - pin: PH3
-        signal: COL
-        af: 11
-      - pin: PH6
-        signal: RXD2
-        af: 11
-      - pin: PH7
-        signal: RXD3
-        af: 11
-      - pin: PI10
-        signal: RX_ER
-        af: 11
       interrupts:
         GLOBAL: ETH
     EXTI:
@@ -1007,7 +927,7 @@ cores:
       block: exti_h7/EXTI
     FDCAN1:
       address: 0x4000a000
-      rcc: &id034
+      rcc: &id024
         clock: APB1
         registers:
           enable:
@@ -1016,7 +936,7 @@ cores:
           reset:
             register: APB1HRSTR
             field: FDCANRST
-      pins: &id035
+      pins:
       - pin: PA11
         signal: RX
         af: 9
@@ -1035,20 +955,11 @@ cores:
       - pin: PD1
         signal: TX
         af: 9
-      - pin: PH13
-        signal: TX
-        af: 9
-      - pin: PH14
-        signal: RX
-        af: 9
-      - pin: PI9
-        signal: RX
-        af: 9
       interrupts:
         GLOBAL: FDCAN_CAL
     FDCAN2:
       address: 0x4000a400
-      pins: &id036
+      pins:
       - pin: PB5
         signal: RX
         af: 9
@@ -1068,7 +979,7 @@ cores:
       block: flash_h7/FLASH
     FMC:
       address: 0x52004000
-      rcc: &id037
+      rcc: &id025
         clock: AHB3
         registers:
           enable:
@@ -1078,7 +989,7 @@ cores:
             register: AHB3RSTR
             field: FMCRST
       block: fmc_h7/FMC
-      pins: &id038
+      pins:
       - pin: PA7
         signal: SDNWE
         af: 12
@@ -1166,9 +1077,13 @@ cores:
       - pin: PD11
         signal: A16
         af: 12
+      - pin: PD11
+        signal: CLE
       - pin: PD12
         signal: A17
         af: 12
+      - pin: PD12
+        signal: ALE
       - pin: PD13
         signal: A18
         af: 12
@@ -1316,110 +1231,17 @@ cores:
       - pin: PG5
         signal: BA1
         af: 12
-      - pin: PG6
-        signal: NE3
-        af: 12
-      - pin: PG7
-        signal: INT
-        af: 12
       - pin: PG8
         signal: SDCLK
         af: 12
-      - pin: PG9
-        signal: NCE
-        af: 12
-      - pin: PG9
-        signal: NE2
-        af: 12
-      - pin: PG10
-        signal: NE3
-        af: 12
-      - pin: PG12
-        signal: NE4
-        af: 12
-      - pin: PG13
-        signal: A24
-        af: 12
-      - pin: PG14
-        signal: A25
-        af: 12
       - pin: PG15
         signal: SDNCAS
-        af: 12
-      - pin: PH2
-        signal: SDCKE0
-        af: 12
-      - pin: PH3
-        signal: SDNE0
-        af: 12
-      - pin: PH5
-        signal: SDNWE
-        af: 12
-      - pin: PH6
-        signal: SDNE1
-        af: 12
-      - pin: PH7
-        signal: SDCKE1
-        af: 12
-      - pin: PH8
-        signal: D16
-        af: 12
-      - pin: PH9
-        signal: D17
-        af: 12
-      - pin: PH10
-        signal: D18
-        af: 12
-      - pin: PH11
-        signal: D19
-        af: 12
-      - pin: PH12
-        signal: D20
-        af: 12
-      - pin: PH13
-        signal: D21
-        af: 12
-      - pin: PH14
-        signal: D22
-        af: 12
-      - pin: PH15
-        signal: D23
-        af: 12
-      - pin: PI0
-        signal: D24
-        af: 12
-      - pin: PI1
-        signal: D25
-        af: 12
-      - pin: PI2
-        signal: D26
-        af: 12
-      - pin: PI3
-        signal: D27
-        af: 12
-      - pin: PI4
-        signal: NBL2
-        af: 12
-      - pin: PI5
-        signal: NBL3
-        af: 12
-      - pin: PI6
-        signal: D28
-        af: 12
-      - pin: PI7
-        signal: D29
-        af: 12
-      - pin: PI9
-        signal: D30
-        af: 12
-      - pin: PI10
-        signal: D31
         af: 12
       interrupts:
         GLOBAL: FMC
     GPIOA:
       address: 0x58020000
-      rcc: &id039
+      rcc: &id026
         clock: AHB4
         registers:
           enable:
@@ -1431,7 +1253,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOB:
       address: 0x58020400
-      rcc: &id040
+      rcc: &id027
         clock: AHB4
         registers:
           enable:
@@ -1443,7 +1265,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOC:
       address: 0x58020800
-      rcc: &id041
+      rcc: &id028
         clock: AHB4
         registers:
           enable:
@@ -1455,7 +1277,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOD:
       address: 0x58020c00
-      rcc: &id042
+      rcc: &id029
         clock: AHB4
         registers:
           enable:
@@ -1467,7 +1289,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOE:
       address: 0x58021000
-      rcc: &id043
+      rcc: &id030
         clock: AHB4
         registers:
           enable:
@@ -1479,7 +1301,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOF:
       address: 0x58021400
-      rcc: &id044
+      rcc: &id031
         clock: AHB4
         registers:
           enable:
@@ -1491,7 +1313,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOG:
       address: 0x58021800
-      rcc: &id045
+      rcc: &id032
         clock: AHB4
         registers:
           enable:
@@ -1503,7 +1325,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOH:
       address: 0x58021c00
-      rcc: &id046
+      rcc: &id033
         clock: AHB4
         registers:
           enable:
@@ -1515,7 +1337,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOI:
       address: 0x58022000
-      rcc: &id047
+      rcc: &id034
         clock: AHB4
         registers:
           enable:
@@ -1527,7 +1349,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOJ:
       address: 0x58022400
-      rcc: &id048
+      rcc: &id035
         clock: AHB4
         registers:
           enable:
@@ -1539,7 +1361,7 @@ cores:
       block: gpio_v2/GPIO
     GPIOK:
       address: 0x58022800
-      rcc: &id049
+      rcc: &id036
         clock: AHB4
         registers:
           enable:
@@ -1551,7 +1373,7 @@ cores:
       block: gpio_v2/GPIO
     HASH:
       address: 0x48021400
-      rcc: &id050
+      rcc: &id037
         clock: AHB2
         registers:
           enable:
@@ -1563,12 +1385,12 @@ cores:
       interrupts: {}
       dma_channels:
         IN:
-        - &id051
+        - &id038
           dmamux: DMAMUX1
           request: 78
     I2C1:
       address: 0x40005400
-      rcc: &id052
+      rcc: &id039
         clock: APB1
         registers:
           enable:
@@ -1578,7 +1400,7 @@ cores:
             register: APB1LRSTR
             field: I2C1RST
       block: i2c_v2/I2C
-      pins: &id053
+      pins:
       - pin: PB5
         signal: SMBA
         af: 4
@@ -1599,16 +1421,16 @@ cores:
         EV: I2C1_EV
       dma_channels:
         RX:
-        - &id054
+        - &id040
           dmamux: DMAMUX1
           request: 33
         TX:
-        - &id055
+        - &id041
           dmamux: DMAMUX1
           request: 34
     I2C2:
       address: 0x40005800
-      rcc: &id056
+      rcc: &id042
         clock: APB1
         registers:
           enable:
@@ -1618,7 +1440,7 @@ cores:
             register: APB1LRSTR
             field: I2C2RST
       block: i2c_v2/I2C
-      pins: &id057
+      pins:
       - pin: PB10
         signal: SCL
         af: 4
@@ -1637,30 +1459,21 @@ cores:
       - pin: PF2
         signal: SMBA
         af: 4
-      - pin: PH4
-        signal: SCL
-        af: 4
-      - pin: PH5
-        signal: SDA
-        af: 4
-      - pin: PH6
-        signal: SMBA
-        af: 4
       interrupts:
         ER: I2C2_ER
         EV: I2C2_EV
       dma_channels:
         RX:
-        - &id058
+        - &id043
           dmamux: DMAMUX1
           request: 35
         TX:
-        - &id059
+        - &id044
           dmamux: DMAMUX1
           request: 36
     I2C3:
       address: 0x40005c00
-      rcc: &id060
+      rcc: &id045
         clock: APB1
         registers:
           enable:
@@ -1670,7 +1483,7 @@ cores:
             register: APB1LRSTR
             field: I2C3RST
       block: i2c_v2/I2C
-      pins: &id061
+      pins:
       - pin: PA8
         signal: SCL
         af: 4
@@ -1680,30 +1493,21 @@ cores:
       - pin: PC9
         signal: SDA
         af: 4
-      - pin: PH7
-        signal: SCL
-        af: 4
-      - pin: PH8
-        signal: SDA
-        af: 4
-      - pin: PH9
-        signal: SMBA
-        af: 4
       interrupts:
         ER: I2C3_ER
         EV: I2C3_EV
       dma_channels:
         RX:
-        - &id062
+        - &id046
           dmamux: DMAMUX1
           request: 73
         TX:
-        - &id063
+        - &id047
           dmamux: DMAMUX1
           request: 74
     I2C4:
       address: 0x58001c00
-      rcc: &id064
+      rcc: &id048
         clock: APB4
         registers:
           enable:
@@ -1713,7 +1517,7 @@ cores:
             register: APB4RSTR
             field: I2C4RST
       block: i2c_v2/I2C
-      pins: &id065
+      pins:
       - pin: PB5
         signal: SMBA
         af: 6
@@ -1750,25 +1554,16 @@ cores:
       - pin: PF15
         signal: SDA
         af: 4
-      - pin: PH10
-        signal: SMBA
-        af: 4
-      - pin: PH11
-        signal: SCL
-        af: 4
-      - pin: PH12
-        signal: SDA
-        af: 4
       interrupts:
         ER: I2C4_ER
         EV: I2C4_EV
       dma_channels:
         RX:
-        - &id066
+        - &id049
           dmamux: DMAMUX2
           request: 13
         TX:
-        - &id067
+        - &id050
           dmamux: DMAMUX2
           request: 14
     IWDG1:
@@ -1784,7 +1579,7 @@ cores:
         GLOBAL: JPEG
     LPTIM1:
       address: 0x40002400
-      rcc: &id068
+      rcc: &id051
         clock: APB1
         registers:
           enable:
@@ -1793,7 +1588,7 @@ cores:
           reset:
             register: APB1LRSTR
             field: LPTIM1RST
-      pins: &id069
+      pins:
       - pin: PD12
         signal: IN1
         af: 1
@@ -1806,26 +1601,11 @@ cores:
       - pin: PE1
         signal: IN2
         af: 1
-      - pin: PG11
-        signal: IN2
-        af: 1
-      - pin: PG12
-        signal: IN1
-        af: 1
-      - pin: PG13
-        signal: OUT
-        af: 1
-      - pin: PG14
-        signal: ETR
-        af: 1
-      - pin: PH2
-        signal: IN2
-        af: 1
       interrupts:
         GLOBAL: LPTIM1
     LPTIM2:
       address: 0x58002400
-      rcc: &id070
+      rcc: &id052
         clock: APB4
         registers:
           enable:
@@ -1834,7 +1614,7 @@ cores:
           reset:
             register: APB4RSTR
             field: LPTIM2RST
-      pins: &id071
+      pins:
       - pin: PB10
         signal: IN1
         af: 3
@@ -1857,7 +1637,7 @@ cores:
         GLOBAL: LPTIM2
     LPTIM3:
       address: 0x58002800
-      rcc: &id072
+      rcc: &id053
         clock: APB4
         registers:
           enable:
@@ -1866,7 +1646,7 @@ cores:
           reset:
             register: APB4RSTR
             field: LPTIM3RST
-      pins: &id073
+      pins:
       - pin: PA1
         signal: OUT
         af: 3
@@ -1874,7 +1654,7 @@ cores:
         GLOBAL: LPTIM3
     LPTIM4:
       address: 0x58002c00
-      rcc: &id074
+      rcc: &id054
         clock: APB4
         registers:
           enable:
@@ -1883,7 +1663,7 @@ cores:
           reset:
             register: APB4RSTR
             field: LPTIM4RST
-      pins: &id075
+      pins:
       - pin: PA2
         signal: OUT
         af: 3
@@ -1891,7 +1671,7 @@ cores:
         GLOBAL: LPTIM4
     LPTIM5:
       address: 0x58003000
-      rcc: &id076
+      rcc: &id055
         clock: APB4
         registers:
           enable:
@@ -1900,7 +1680,7 @@ cores:
           reset:
             register: APB4RSTR
             field: LPTIM5RST
-      pins: &id077
+      pins:
       - pin: PA3
         signal: OUT
         af: 3
@@ -1908,7 +1688,7 @@ cores:
         GLOBAL: LPTIM5
     LPUART1:
       address: 0x58000c00
-      rcc: &id078
+      rcc: &id056
         clock: APB4
         registers:
           enable:
@@ -1917,7 +1697,7 @@ cores:
           reset:
             register: APB4RSTR
             field: LPUART1RST
-      pins: &id079
+      pins:
       - pin: PA9
         signal: TX
         af: 3
@@ -1943,16 +1723,16 @@ cores:
         GLOBAL: LPUART1
       dma_channels:
         RX:
-        - &id080
+        - &id057
           dmamux: DMAMUX2
           request: 9
         TX:
-        - &id081
+        - &id058
           dmamux: DMAMUX2
           request: 10
     LTDC:
       address: 0x50001000
-      rcc: &id082
+      rcc: &id059
         clock: APB3
         registers:
           enable:
@@ -1961,7 +1741,7 @@ cores:
           reset:
             register: APB3RSTR
             field: LTDCRST
-      pins: &id083
+      pins:
       - pin: PA1
         signal: R2
         af: 14
@@ -2079,206 +1859,14 @@ cores:
       - pin: PE15
         signal: R7
         af: 14
-      - pin: PF10
-        signal: DE
-        af: 14
-      - pin: PG6
-        signal: R7
-        af: 14
-      - pin: PG7
-        signal: CLK
-        af: 14
       - pin: PG8
         signal: G7
-        af: 14
-      - pin: PG10
-        signal: B2
-        af: 14
-      - pin: PG10
-        signal: G3
-        af: 9
-      - pin: PG11
-        signal: B3
-        af: 14
-      - pin: PG12
-        signal: B1
-        af: 14
-      - pin: PG12
-        signal: B4
-        af: 9
-      - pin: PG13
-        signal: R0
-        af: 14
-      - pin: PG14
-        signal: B0
-        af: 14
-      - pin: PH2
-        signal: R0
-        af: 14
-      - pin: PH3
-        signal: R1
-        af: 14
-      - pin: PH4
-        signal: G4
-        af: 14
-      - pin: PH4
-        signal: G5
-        af: 9
-      - pin: PH8
-        signal: R2
-        af: 14
-      - pin: PH9
-        signal: R3
-        af: 14
-      - pin: PH10
-        signal: R4
-        af: 14
-      - pin: PH11
-        signal: R5
-        af: 14
-      - pin: PH12
-        signal: R6
-        af: 14
-      - pin: PH13
-        signal: G2
-        af: 14
-      - pin: PH14
-        signal: G3
-        af: 14
-      - pin: PH15
-        signal: G4
-        af: 14
-      - pin: PI0
-        signal: G5
-        af: 14
-      - pin: PI1
-        signal: G6
-        af: 14
-      - pin: PI2
-        signal: G7
-        af: 14
-      - pin: PI4
-        signal: B4
-        af: 14
-      - pin: PI5
-        signal: B5
-        af: 14
-      - pin: PI6
-        signal: B6
-        af: 14
-      - pin: PI7
-        signal: B7
-        af: 14
-      - pin: PI9
-        signal: VSYNC
-        af: 14
-      - pin: PI10
-        signal: HSYNC
-        af: 14
-      - pin: PI11
-        signal: G6
-        af: 9
-      - pin: PI12
-        signal: HSYNC
-        af: 14
-      - pin: PI13
-        signal: VSYNC
-        af: 14
-      - pin: PI14
-        signal: CLK
-        af: 14
-      - pin: PI15
-        signal: G2
-        af: 9
-      - pin: PI15
-        signal: R0
-        af: 14
-      - pin: PJ0
-        signal: R1
-        af: 14
-      - pin: PJ0
-        signal: R7
-        af: 9
-      - pin: PJ1
-        signal: R2
-        af: 14
-      - pin: PJ2
-        signal: R3
-        af: 14
-      - pin: PJ3
-        signal: R4
-        af: 14
-      - pin: PJ4
-        signal: R5
-        af: 14
-      - pin: PJ5
-        signal: R6
-        af: 14
-      - pin: PJ6
-        signal: R7
-        af: 14
-      - pin: PJ7
-        signal: G0
-        af: 14
-      - pin: PJ8
-        signal: G1
-        af: 14
-      - pin: PJ9
-        signal: G2
-        af: 14
-      - pin: PJ10
-        signal: G3
-        af: 14
-      - pin: PJ11
-        signal: G4
-        af: 14
-      - pin: PJ12
-        signal: B0
-        af: 14
-      - pin: PJ12
-        signal: G3
-        af: 9
-      - pin: PJ13
-        signal: B1
-        af: 14
-      - pin: PJ13
-        signal: B4
-        af: 9
-      - pin: PJ14
-        signal: B2
-        af: 14
-      - pin: PJ15
-        signal: B3
-        af: 14
-      - pin: PK0
-        signal: G5
-        af: 14
-      - pin: PK1
-        signal: G6
-        af: 14
-      - pin: PK2
-        signal: G7
-        af: 14
-      - pin: PK3
-        signal: B4
-        af: 14
-      - pin: PK4
-        signal: B5
-        af: 14
-      - pin: PK5
-        signal: B6
-        af: 14
-      - pin: PK6
-        signal: B7
-        af: 14
-      - pin: PK7
-        signal: DE
         af: 14
       interrupts:
         GLOBAL: LTDC
     MDIOS:
       address: 0x40009400
-      rcc: &id084
+      rcc: &id060
         clock: APB1
         registers:
           enable:
@@ -2288,7 +1876,7 @@ cores:
             register: APB1HRSTR
             field: MDIOSRST
       block: mdios_v1/MDIOS
-      pins: &id085
+      pins:
       - pin: PA2
         signal: MDIO
         af: 12
@@ -2305,7 +1893,7 @@ cores:
         GLOBAL: MDIOS
     MDMA:
       address: 0x52000000
-      rcc: &id086
+      rcc: &id061
         clock: AHB3
         registers:
           enable:
@@ -2318,7 +1906,7 @@ cores:
         GLOBAL: MDMA
     OPAMP1:
       address: 0x40009000
-      rcc: &id087
+      rcc: &id062
         clock: APB1
         registers:
           enable:
@@ -2327,7 +1915,7 @@ cores:
           reset:
             register: APB1HRSTR
             field: OPAMPRST
-      pins: &id088
+      pins:
       - pin: PA7
         signal: VINM
       - pin: PA7
@@ -2342,7 +1930,7 @@ cores:
         signal: VINM0
     OPAMP2:
       address: 0x40009010
-      pins: &id089
+      pins:
       - pin: PE7
         signal: VOUT
       - pin: PE8
@@ -2358,10 +1946,27 @@ cores:
     PWR:
       address: 0x58024800
       block: pwr_h7smps/PWR
+      pins:
+      - pin: PA0
+        signal: WKUP0
+      - pin: PA2
+        signal: WKUP1
+      - pin: PA5
+        signal: NDSTOP2
+      - pin: PB7
+        signal: PVD_IN
+      - pin: PC1
+        signal: WKUP5
+      - pin: PC2
+        signal: CSTOP
+      - pin: PC3
+        signal: CSLEEP
+      - pin: PC13
+        signal: WKUP2
     QUADSPI:
       address: 0x52005000
       block: quadspi_v1/QUADSPI
-      pins: &id090
+      pins:
       - pin: PA1
         signal: BK1_IO3
         af: 9
@@ -2407,53 +2012,31 @@ cores:
       - pin: PE10
         signal: BK2_IO3
         af: 10
-      - pin: PF6
-        signal: BK1_IO3
-        af: 9
-      - pin: PF7
-        signal: BK1_IO2
-        af: 9
-      - pin: PF8
-        signal: BK1_IO0
-        af: 10
-      - pin: PF9
-        signal: BK1_IO1
-        af: 10
-      - pin: PF10
-        signal: CLK
-        af: 9
-      - pin: PG6
-        signal: BK1_NCS
-        af: 10
-      - pin: PG9
-        signal: BK2_IO2
-        af: 9
-      - pin: PG14
-        signal: BK2_IO3
-        af: 9
-      - pin: PH2
-        signal: BK2_IO0
-        af: 9
-      - pin: PH3
-        signal: BK2_IO1
-        af: 9
       interrupts:
         GLOBAL: QUADSPI
     RCC:
       address: 0x58024400
       block: rcc_h7/RCC
-      pins: &id091
+      pins:
       - pin: PA8
         signal: MCO_1
         af: 0
       - pin: PC9
         signal: MCO_2
         af: 0
+      - pin: PC14
+        signal: OSC32_IN
+      - pin: PC15
+        signal: OSC32_OUT
+      - pin: PH0
+        signal: OSC_IN
+      - pin: PH1
+        signal: OSC_OUT
       interrupts:
         GLOBAL: RCC
     RNG:
       address: 0x48021800
-      rcc: &id092
+      rcc: &id063
         clock: AHB2
         registers:
           enable:
@@ -2467,7 +2050,7 @@ cores:
         GLOBAL: HASH_RNG
     RTC:
       address: 0x58004000
-      pins: &id093
+      pins:
       - pin: PB2
         signal: OUT_ALARM
         af: 0
@@ -2477,11 +2060,21 @@ cores:
       - pin: PB15
         signal: REFIN
         af: 0
+      - pin: PC1
+        signal: TAMP3
+      - pin: PC13
+        signal: OUT_ALARM
+      - pin: PC13
+        signal: OUT_CALIB
+      - pin: PC13
+        signal: TAMP1
+      - pin: PC13
+        signal: TS
       interrupts:
         GLOBAL: TAMP_STAMP
     SAI1:
       address: 0x40015800
-      rcc: &id094
+      rcc: &id064
         clock: APB2
         registers:
           enable:
@@ -2490,7 +2083,7 @@ cores:
           reset:
             register: APB2RSTR
             field: SAI1RST
-      pins: &id095
+      pins:
       - pin: PB2
         signal: D1
         af: 2
@@ -2539,38 +2132,20 @@ cores:
       - pin: PE6
         signal: SD_A
         af: 6
-      - pin: PF6
-        signal: SD_B
-        af: 6
-      - pin: PF7
-        signal: MCLK_B
-        af: 6
-      - pin: PF8
-        signal: SCK_B
-        af: 6
-      - pin: PF9
-        signal: FS_B
-        af: 6
-      - pin: PF10
-        signal: D3
-        af: 2
-      - pin: PG7
-        signal: MCLK_A
-        af: 6
       interrupts:
         GLOBAL: SAI1
       dma_channels:
         A:
-        - &id096
+        - &id065
           dmamux: DMAMUX1
           request: 87
         B:
-        - &id097
+        - &id066
           dmamux: DMAMUX1
           request: 88
     SAI2:
       address: 0x40015c00
-      rcc: &id098
+      rcc: &id067
         clock: APB2
         registers:
           enable:
@@ -2579,7 +2154,7 @@ cores:
           reset:
             register: APB2RSTR
             field: SAI2RST
-      pins: &id099
+      pins:
       - pin: PA0
         signal: SD_B
         af: 10
@@ -2625,44 +2200,20 @@ cores:
       - pin: PF11
         signal: SD_B
         af: 10
-      - pin: PG9
-        signal: FS_B
-        af: 10
-      - pin: PG10
-        signal: SD_B
-        af: 10
-      - pin: PH2
-        signal: SCK_B
-        af: 10
-      - pin: PH3
-        signal: MCLK_B
-        af: 10
-      - pin: PI4
-        signal: MCLK_A
-        af: 10
-      - pin: PI5
-        signal: SCK_A
-        af: 10
-      - pin: PI6
-        signal: SD_A
-        af: 10
-      - pin: PI7
-        signal: FS_A
-        af: 10
       interrupts:
         GLOBAL: SAI2
       dma_channels:
         A:
-        - &id100
+        - &id068
           dmamux: DMAMUX1
           request: 89
         B:
-        - &id101
+        - &id069
           dmamux: DMAMUX1
           request: 90
     SAI3:
       address: 0x40016000
-      rcc: &id102
+      rcc: &id070
         clock: APB2
         registers:
           enable:
@@ -2671,7 +2222,7 @@ cores:
           reset:
             register: APB2RSTR
             field: SAI3RST
-      pins: &id103
+      pins:
       - pin: PD0
         signal: SCK_A
         af: 6
@@ -2700,16 +2251,16 @@ cores:
         GLOBAL: SAI3
       dma_channels:
         A:
-        - &id104
+        - &id071
           dmamux: DMAMUX1
           request: 113
         B:
-        - &id105
+        - &id072
           dmamux: DMAMUX1
           request: 114
     SAI4:
       address: 0x58005400
-      rcc: &id106
+      rcc: &id073
         clock: APB4
         registers:
           enable:
@@ -2718,7 +2269,7 @@ cores:
           reset:
             register: APB4RSTR
             field: SAI4RST
-      pins: &id107
+      pins:
       - pin: PB2
         signal: D1
         af: 10
@@ -2767,35 +2318,20 @@ cores:
       - pin: PE6
         signal: SD_A
         af: 8
-      - pin: PF6
-        signal: SD_B
-        af: 8
-      - pin: PF7
-        signal: MCLK_B
-        af: 8
-      - pin: PF8
-        signal: SCK_B
-        af: 8
-      - pin: PF9
-        signal: FS_B
-        af: 8
-      - pin: PF10
-        signal: D3
-        af: 10
       interrupts:
         GLOBAL: SAI4
       dma_channels:
         A:
-        - &id108
+        - &id074
           dmamux: DMAMUX2
           request: 15
         B:
-        - &id109
+        - &id075
           dmamux: DMAMUX2
           request: 16
     SDMMC1:
       address: 0x52007000
-      rcc: &id110
+      rcc: &id076
         clock: AHB3
         registers:
           enable:
@@ -2805,7 +2341,7 @@ cores:
             register: AHB3RSTR
             field: SDMMC1RST
       block: sdmmc_v2/SDMMC
-      pins: &id111
+      pins:
       - pin: PB8
         signal: CKIN
         af: 7
@@ -2852,7 +2388,7 @@ cores:
         GLOBAL: SDMMC1
     SDMMC2:
       address: 0x48022400
-      rcc: &id112
+      rcc: &id077
         clock: AHB2
         registers:
           enable:
@@ -2862,7 +2398,7 @@ cores:
             register: AHB2RSTR
             field: SDMMC2RST
       block: sdmmc_v2/SDMMC
-      pins: &id113
+      pins:
       - pin: PA0
         signal: CMD
         af: 9
@@ -2899,14 +2435,11 @@ cores:
       - pin: PD7
         signal: CMD
         af: 11
-      - pin: PG11
-        signal: D2
-        af: 10
       interrupts:
         GLOBAL: SDMMC2
     SPI1:
       address: 0x40013000
-      rcc: &id114
+      rcc: &id078
         clock: APB2
         registers:
           enable:
@@ -2916,7 +2449,7 @@ cores:
             register: APB2RSTR
             field: SPI1RST
       block: spi_v3/SPI
-      pins: &id115
+      pins:
       - pin: PA4
         signal: NSS
         af: 5
@@ -2944,29 +2477,20 @@ cores:
       - pin: PD7
         signal: MOSI
         af: 5
-      - pin: PG9
-        signal: MISO
-        af: 5
-      - pin: PG10
-        signal: NSS
-        af: 5
-      - pin: PG11
-        signal: SCK
-        af: 5
       interrupts:
         GLOBAL: SPI1
       dma_channels:
         RX:
-        - &id116
+        - &id079
           dmamux: DMAMUX1
           request: 37
         TX:
-        - &id117
+        - &id080
           dmamux: DMAMUX1
           request: 38
     SPI2:
       address: 0x40003800
-      rcc: &id118
+      rcc: &id081
         clock: APB1
         registers:
           enable:
@@ -2976,7 +2500,7 @@ cores:
             register: APB1LRSTR
             field: SPI2RST
       block: spi_v3/SPI
-      pins: &id119
+      pins:
       - pin: PA9
         signal: SCK
         af: 5
@@ -3019,32 +2543,20 @@ cores:
       - pin: PD3
         signal: SCK
         af: 5
-      - pin: PI0
-        signal: NSS
-        af: 5
-      - pin: PI1
-        signal: SCK
-        af: 5
-      - pin: PI2
-        signal: MISO
-        af: 5
-      - pin: PI3
-        signal: MOSI
-        af: 5
       interrupts:
         GLOBAL: SPI2
       dma_channels:
         RX:
-        - &id120
+        - &id082
           dmamux: DMAMUX1
           request: 39
         TX:
-        - &id121
+        - &id083
           dmamux: DMAMUX1
           request: 40
     SPI3:
       address: 0x40003c00
-      rcc: &id122
+      rcc: &id084
         clock: APB1
         registers:
           enable:
@@ -3054,7 +2566,7 @@ cores:
             register: APB1LRSTR
             field: SPI3RST
       block: spi_v3/SPI
-      pins: &id123
+      pins:
       - pin: PA4
         signal: NSS
         af: 6
@@ -3089,16 +2601,16 @@ cores:
         GLOBAL: SPI3
       dma_channels:
         RX:
-        - &id124
+        - &id085
           dmamux: DMAMUX1
           request: 61
         TX:
-        - &id125
+        - &id086
           dmamux: DMAMUX1
           request: 62
     SPI4:
       address: 0x40013400
-      rcc: &id126
+      rcc: &id087
         clock: APB2
         registers:
           enable:
@@ -3108,7 +2620,7 @@ cores:
             register: APB2RSTR
             field: SPI4RST
       block: spi_v3/SPI
-      pins: &id127
+      pins:
       - pin: PE2
         signal: SCK
         af: 5
@@ -3137,16 +2649,16 @@ cores:
         GLOBAL: SPI4
       dma_channels:
         RX:
-        - &id128
+        - &id088
           dmamux: DMAMUX1
           request: 83
         TX:
-        - &id129
+        - &id089
           dmamux: DMAMUX1
           request: 84
     SPI6:
       address: 0x58001400
-      rcc: &id130
+      rcc: &id090
         clock: APB4
         registers:
           enable:
@@ -3156,7 +2668,7 @@ cores:
             register: APB4RSTR
             field: SPI6RST
       block: spi_v3/SPI
-      pins: &id131
+      pins:
       - pin: PA4
         signal: NSS
         af: 8
@@ -3184,29 +2696,22 @@ cores:
       - pin: PG8
         signal: NSS
         af: 5
-      - pin: PG12
-        signal: MISO
-        af: 5
-      - pin: PG13
-        signal: SCK
-        af: 5
-      - pin: PG14
-        signal: MOSI
-        af: 5
       interrupts:
         GLOBAL: SPI6
       dma_channels:
         RX:
-        - &id132
+        - &id091
           dmamux: DMAMUX2
           request: 11
         TX:
-        - &id133
+        - &id092
           dmamux: DMAMUX2
           request: 12
     SWPMI1:
       address: 0x40008800
-      pins: &id134
+      pins:
+      - pin: PC6
+        signal: IO
       - pin: PC7
         signal: TX
         af: 11
@@ -3220,7 +2725,7 @@ cores:
         GLOBAL: SWPMI1
     SYSCFG:
       address: 0x58000400
-      rcc: &id135
+      rcc: &id093
         clock: APB4
         registers:
           enable:
@@ -3232,7 +2737,7 @@ cores:
       block: syscfg_h7/SYSCFG
     TIM1:
       address: 0x40010000
-      rcc: &id136
+      rcc: &id094
         clock: APB2
         registers:
           enable:
@@ -3242,7 +2747,7 @@ cores:
             register: APB2RSTR
             field: TIM1RST
       block: timer_v1/TIM_ADV
-      pins: &id137
+      pins:
       - pin: PA6
         signal: BKIN
         af: 1
@@ -3348,33 +2853,6 @@ cores:
       - pin: PG5
         signal: ETR
         af: 1
-      - pin: PJ8
-        signal: CH3N
-        af: 1
-      - pin: PJ9
-        signal: CH3
-        af: 1
-      - pin: PJ10
-        signal: CH2N
-        af: 1
-      - pin: PJ11
-        signal: CH2
-        af: 1
-      - pin: PK0
-        signal: CH1N
-        af: 1
-      - pin: PK1
-        signal: CH1
-        af: 1
-      - pin: PK2
-        signal: BKIN
-        af: 1
-      - pin: PK2
-        signal: BKIN_COMP1
-        af: 11
-      - pin: PK2
-        signal: BKIN_COMP2
-        af: 11
       interrupts:
         BRK: TIM1_BRK
         COM: TIM1_TRG_COM
@@ -3382,36 +2860,36 @@ cores:
         UP: TIM1_UP
       dma_channels:
         CH1:
-        - &id138
+        - &id095
           dmamux: DMAMUX1
           request: 11
         CH2:
-        - &id139
+        - &id096
           dmamux: DMAMUX1
           request: 12
         CH3:
-        - &id140
+        - &id097
           dmamux: DMAMUX1
           request: 13
         CH4:
-        - &id141
+        - &id098
           dmamux: DMAMUX1
           request: 14
         COM:
-        - &id142
+        - &id099
           dmamux: DMAMUX1
           request: 17
         TRIG:
-        - &id143
+        - &id100
           dmamux: DMAMUX1
           request: 16
         UP:
-        - &id144
+        - &id101
           dmamux: DMAMUX1
           request: 15
     TIM12:
       address: 0x40001800
-      rcc: &id145
+      rcc: &id102
         clock: APB1
         registers:
           enable:
@@ -3421,17 +2899,11 @@ cores:
             register: APB1LRSTR
             field: TIM12RST
       block: timer_v1/TIM_GP16
-      pins: &id146
+      pins:
       - pin: PB14
         signal: CH1
         af: 2
       - pin: PB15
-        signal: CH2
-        af: 2
-      - pin: PH6
-        signal: CH1
-        af: 2
-      - pin: PH9
         signal: CH2
         af: 2
       interrupts:
@@ -3441,7 +2913,7 @@ cores:
         UP: TIM8_BRK_TIM12
     TIM13:
       address: 0x40001c00
-      rcc: &id147
+      rcc: &id103
         clock: APB1
         registers:
           enable:
@@ -3451,11 +2923,8 @@ cores:
             register: APB1LRSTR
             field: TIM13RST
       block: timer_v1/TIM_GP16
-      pins: &id148
+      pins:
       - pin: PA6
-        signal: CH1
-        af: 9
-      - pin: PF8
         signal: CH1
         af: 9
       interrupts:
@@ -3465,7 +2934,7 @@ cores:
         UP: TIM8_UP_TIM13
     TIM14:
       address: 0x40002000
-      rcc: &id149
+      rcc: &id104
         clock: APB1
         registers:
           enable:
@@ -3475,11 +2944,8 @@ cores:
             register: APB1LRSTR
             field: TIM14RST
       block: timer_v1/TIM_GP16
-      pins: &id150
+      pins:
       - pin: PA7
-        signal: CH1
-        af: 9
-      - pin: PF9
         signal: CH1
         af: 9
       interrupts:
@@ -3489,7 +2955,7 @@ cores:
         UP: TIM8_TRG_COM_TIM14
     TIM15:
       address: 0x40014000
-      rcc: &id151
+      rcc: &id105
         clock: APB2
         registers:
           enable:
@@ -3499,7 +2965,7 @@ cores:
             register: APB2RSTR
             field: TIM15RST
       block: timer_v1/TIM_GP16
-      pins: &id152
+      pins:
       - pin: PA0
         signal: BKIN
         af: 4
@@ -3531,24 +2997,24 @@ cores:
         UP: TIM15
       dma_channels:
         CH1:
-        - &id153
+        - &id106
           dmamux: DMAMUX1
           request: 105
         COM:
-        - &id154
+        - &id107
           dmamux: DMAMUX1
           request: 108
         TRIG:
-        - &id155
+        - &id108
           dmamux: DMAMUX1
           request: 107
         UP:
-        - &id156
+        - &id109
           dmamux: DMAMUX1
           request: 106
     TIM16:
       address: 0x40014400
-      rcc: &id157
+      rcc: &id110
         clock: APB2
         registers:
           enable:
@@ -3558,7 +3024,7 @@ cores:
             register: APB2RSTR
             field: TIM16RST
       block: timer_v1/TIM_GP16
-      pins: &id158
+      pins:
       - pin: PB4
         signal: BKIN
         af: 1
@@ -3568,15 +3034,6 @@ cores:
       - pin: PB8
         signal: CH1
         af: 1
-      - pin: PF6
-        signal: CH1
-        af: 1
-      - pin: PF8
-        signal: CH1N
-        af: 1
-      - pin: PF10
-        signal: BKIN
-        af: 1
       interrupts:
         BRK: TIM16
         COM: TIM16
@@ -3584,16 +3041,16 @@ cores:
         UP: TIM16
       dma_channels:
         CH1:
-        - &id159
+        - &id111
           dmamux: DMAMUX1
           request: 109
         UP:
-        - &id160
+        - &id112
           dmamux: DMAMUX1
           request: 110
     TIM17:
       address: 0x40014800
-      rcc: &id161
+      rcc: &id113
         clock: APB2
         registers:
           enable:
@@ -3603,7 +3060,7 @@ cores:
             register: APB2RSTR
             field: TIM17RST
       block: timer_v1/TIM_GP16
-      pins: &id162
+      pins:
       - pin: PB5
         signal: BKIN
         af: 1
@@ -3613,15 +3070,6 @@ cores:
       - pin: PB9
         signal: CH1
         af: 1
-      - pin: PF7
-        signal: CH1
-        af: 1
-      - pin: PF9
-        signal: CH1N
-        af: 1
-      - pin: PG6
-        signal: BKIN
-        af: 1
       interrupts:
         BRK: TIM17
         COM: TIM17
@@ -3629,16 +3077,16 @@ cores:
         UP: TIM17
       dma_channels:
         CH1:
-        - &id163
+        - &id114
           dmamux: DMAMUX1
           request: 111
         UP:
-        - &id164
+        - &id115
           dmamux: DMAMUX1
           request: 112
     TIM2:
       address: 0x40000000
-      rcc: &id165
+      rcc: &id116
         clock: APB1
         registers:
           enable:
@@ -3648,7 +3096,7 @@ cores:
             register: APB1LRSTR
             field: TIM2RST
       block: timer_v1/TIM_GP32
-      pins: &id166
+      pins:
       - pin: PA0
         signal: CH1
         af: 1
@@ -3692,28 +3140,28 @@ cores:
         UP: TIM2
       dma_channels:
         CH1:
-        - &id167
+        - &id117
           dmamux: DMAMUX1
           request: 18
         CH2:
-        - &id168
+        - &id118
           dmamux: DMAMUX1
           request: 19
         CH3:
-        - &id169
+        - &id119
           dmamux: DMAMUX1
           request: 20
         CH4:
-        - &id170
+        - &id120
           dmamux: DMAMUX1
           request: 21
         UP:
-        - &id171
+        - &id121
           dmamux: DMAMUX1
           request: 22
     TIM3:
       address: 0x40000400
-      rcc: &id172
+      rcc: &id122
         clock: APB1
         registers:
           enable:
@@ -3723,7 +3171,7 @@ cores:
             register: APB1LRSTR
             field: TIM3RST
       block: timer_v1/TIM_GP16
-      pins: &id173
+      pins:
       - pin: PA6
         signal: CH1
         af: 2
@@ -3764,32 +3212,32 @@ cores:
         UP: TIM3
       dma_channels:
         CH1:
-        - &id174
+        - &id123
           dmamux: DMAMUX1
           request: 23
         CH2:
-        - &id175
+        - &id124
           dmamux: DMAMUX1
           request: 24
         CH3:
-        - &id176
+        - &id125
           dmamux: DMAMUX1
           request: 25
         CH4:
-        - &id177
+        - &id126
           dmamux: DMAMUX1
           request: 26
         TRIG:
-        - &id178
+        - &id127
           dmamux: DMAMUX1
           request: 28
         UP:
-        - &id179
+        - &id128
           dmamux: DMAMUX1
           request: 27
     TIM4:
       address: 0x40000800
-      rcc: &id180
+      rcc: &id129
         clock: APB1
         registers:
           enable:
@@ -3799,7 +3247,7 @@ cores:
             register: APB1LRSTR
             field: TIM4RST
       block: timer_v1/TIM_GP16
-      pins: &id181
+      pins:
       - pin: PB6
         signal: CH1
         af: 2
@@ -3834,24 +3282,24 @@ cores:
         UP: TIM4
       dma_channels:
         CH1:
-        - &id182
+        - &id130
           dmamux: DMAMUX1
           request: 29
         CH2:
-        - &id183
+        - &id131
           dmamux: DMAMUX1
           request: 30
         CH3:
-        - &id184
+        - &id132
           dmamux: DMAMUX1
           request: 31
         UP:
-        - &id185
+        - &id133
           dmamux: DMAMUX1
           request: 32
     TIM5:
       address: 0x40000c00
-      rcc: &id186
+      rcc: &id134
         clock: APB1
         registers:
           enable:
@@ -3861,7 +3309,7 @@ cores:
             register: APB1LRSTR
             field: TIM5RST
       block: timer_v1/TIM_GP32
-      pins: &id187
+      pins:
       - pin: PA0
         signal: CH1
         af: 2
@@ -3877,21 +3325,6 @@ cores:
       - pin: PA4
         signal: ETR
         af: 2
-      - pin: PH8
-        signal: ETR
-        af: 2
-      - pin: PH10
-        signal: CH1
-        af: 2
-      - pin: PH11
-        signal: CH2
-        af: 2
-      - pin: PH12
-        signal: CH3
-        af: 2
-      - pin: PI0
-        signal: CH4
-        af: 2
       interrupts:
         BRK: TIM5
         COM: TIM5
@@ -3899,32 +3332,32 @@ cores:
         UP: TIM5
       dma_channels:
         CH1:
-        - &id188
+        - &id135
           dmamux: DMAMUX1
           request: 55
         CH2:
-        - &id189
+        - &id136
           dmamux: DMAMUX1
           request: 56
         CH3:
-        - &id190
+        - &id137
           dmamux: DMAMUX1
           request: 57
         CH4:
-        - &id191
+        - &id138
           dmamux: DMAMUX1
           request: 58
         TRIG:
-        - &id192
+        - &id139
           dmamux: DMAMUX1
           request: 60
         UP:
-        - &id193
+        - &id140
           dmamux: DMAMUX1
           request: 59
     TIM6:
       address: 0x40001000
-      rcc: &id194
+      rcc: &id141
         clock: APB1
         registers:
           enable:
@@ -3937,12 +3370,12 @@ cores:
       interrupts: {}
       dma_channels:
         UP:
-        - &id195
+        - &id142
           dmamux: DMAMUX1
           request: 69
     TIM7:
       address: 0x40001400
-      rcc: &id196
+      rcc: &id143
         clock: APB1
         registers:
           enable:
@@ -3959,12 +3392,12 @@ cores:
         UP: TIM7
       dma_channels:
         UP:
-        - &id197
+        - &id144
           dmamux: DMAMUX1
           request: 70
     TIM8:
       address: 0x40010400
-      rcc: &id198
+      rcc: &id145
         clock: APB2
         registers:
           enable:
@@ -3974,7 +3407,7 @@ cores:
             register: APB2RSTR
             field: TIM8RST
       block: timer_v1/TIM_ADV
-      pins: &id199
+      pins:
       - pin: PA0
         signal: ETR
         af: 3
@@ -4047,81 +3480,6 @@ cores:
       - pin: PG8
         signal: ETR
         af: 3
-      - pin: PH13
-        signal: CH1N
-        af: 3
-      - pin: PH14
-        signal: CH2N
-        af: 3
-      - pin: PH15
-        signal: CH3N
-        af: 3
-      - pin: PI1
-        signal: BKIN2
-        af: 3
-      - pin: PI1
-        signal: BKIN2_COMP1
-        af: 11
-      - pin: PI1
-        signal: BKIN2_COMP2
-        af: 11
-      - pin: PI2
-        signal: CH4
-        af: 3
-      - pin: PI3
-        signal: ETR
-        af: 3
-      - pin: PI4
-        signal: BKIN
-        af: 3
-      - pin: PI4
-        signal: BKIN_COMP1
-        af: 11
-      - pin: PI4
-        signal: BKIN_COMP2
-        af: 11
-      - pin: PI5
-        signal: CH1
-        af: 3
-      - pin: PI6
-        signal: CH2
-        af: 3
-      - pin: PI7
-        signal: CH3
-        af: 3
-      - pin: PJ6
-        signal: CH2
-        af: 3
-      - pin: PJ7
-        signal: CH2N
-        af: 3
-      - pin: PJ8
-        signal: CH1
-        af: 3
-      - pin: PJ9
-        signal: CH1N
-        af: 3
-      - pin: PJ10
-        signal: CH2
-        af: 3
-      - pin: PJ11
-        signal: CH2N
-        af: 3
-      - pin: PK0
-        signal: CH3
-        af: 3
-      - pin: PK1
-        signal: CH3N
-        af: 3
-      - pin: PK2
-        signal: BKIN
-        af: 3
-      - pin: PK2
-        signal: BKIN_COMP1
-        af: 10
-      - pin: PK2
-        signal: BKIN_COMP2
-        af: 10
       interrupts:
         BRK: TIM8_BRK_TIM12
         COM: TIM8_TRG_COM_TIM14
@@ -4129,36 +3487,36 @@ cores:
         UP: TIM8_UP_TIM13
       dma_channels:
         CH1:
-        - &id200
+        - &id146
           dmamux: DMAMUX1
           request: 47
         CH2:
-        - &id201
+        - &id147
           dmamux: DMAMUX1
           request: 48
         CH3:
-        - &id202
+        - &id148
           dmamux: DMAMUX1
           request: 49
         CH4:
-        - &id203
+        - &id149
           dmamux: DMAMUX1
           request: 50
         COM:
-        - &id204
+        - &id150
           dmamux: DMAMUX1
           request: 53
         TRIG:
-        - &id205
+        - &id151
           dmamux: DMAMUX1
           request: 52
         UP:
-        - &id206
+        - &id152
           dmamux: DMAMUX1
           request: 51
     UART4:
       address: 0x40004c00
-      rcc: &id207
+      rcc: &id153
         clock: APB1
         registers:
           enable:
@@ -4168,7 +3526,7 @@ cores:
             register: APB1LRSTR
             field: UART4RST
       block: usart_v2/USART
-      pins: &id208
+      pins:
       - pin: PA0
         signal: TX
         af: 8
@@ -4217,29 +3575,20 @@ cores:
       - pin: PD1
         signal: TX
         af: 8
-      - pin: PH13
-        signal: TX
-        af: 8
-      - pin: PH14
-        signal: RX
-        af: 8
-      - pin: PI9
-        signal: RX
-        af: 8
       interrupts:
         GLOBAL: UART4
       dma_channels:
         RX:
-        - &id209
+        - &id154
           dmamux: DMAMUX1
           request: 63
         TX:
-        - &id210
+        - &id155
           dmamux: DMAMUX1
           request: 64
     UART5:
       address: 0x40005000
-      rcc: &id211
+      rcc: &id156
         clock: APB1
         registers:
           enable:
@@ -4249,7 +3598,7 @@ cores:
             register: APB1LRSTR
             field: UART5RST
       block: usart_v2/USART
-      pins: &id212
+      pins:
       - pin: PB5
         signal: RX
         af: 14
@@ -4281,16 +3630,16 @@ cores:
         GLOBAL: UART5
       dma_channels:
         RX:
-        - &id213
+        - &id157
           dmamux: DMAMUX1
           request: 65
         TX:
-        - &id214
+        - &id158
           dmamux: DMAMUX1
           request: 66
     UART7:
       address: 0x40007800
-      rcc: &id215
+      rcc: &id159
         clock: APB1
         registers:
           enable:
@@ -4300,7 +3649,7 @@ cores:
             register: APB1LRSTR
             field: UART7RST
       block: usart_v2/USART
-      pins: &id216
+      pins:
       - pin: PA8
         signal: RX
         af: 11
@@ -4328,35 +3677,20 @@ cores:
       - pin: PE10
         signal: CTS
         af: 7
-      - pin: PF6
-        signal: RX
-        af: 7
-      - pin: PF7
-        signal: TX
-        af: 7
-      - pin: PF8
-        signal: DE
-        af: 7
-      - pin: PF8
-        signal: RTS
-        af: 7
-      - pin: PF9
-        signal: CTS
-        af: 7
       interrupts:
         GLOBAL: UART7
       dma_channels:
         RX:
-        - &id217
+        - &id160
           dmamux: DMAMUX1
           request: 79
         TX:
-        - &id218
+        - &id161
           dmamux: DMAMUX1
           request: 80
     UART8:
       address: 0x40007c00
-      rcc: &id219
+      rcc: &id162
         clock: APB1
         registers:
           enable:
@@ -4366,7 +3700,7 @@ cores:
             register: APB1LRSTR
             field: UART8RST
       block: usart_v2/USART
-      pins: &id220
+      pins:
       - pin: PD14
         signal: CTS
         af: 8
@@ -4382,26 +3716,20 @@ cores:
       - pin: PE1
         signal: TX
         af: 8
-      - pin: PJ8
-        signal: TX
-        af: 8
-      - pin: PJ9
-        signal: RX
-        af: 8
       interrupts:
         GLOBAL: UART8
       dma_channels:
         RX:
-        - &id221
+        - &id163
           dmamux: DMAMUX1
           request: 81
         TX:
-        - &id222
+        - &id164
           dmamux: DMAMUX1
           request: 82
     USART1:
       address: 0x40011000
-      rcc: &id223
+      rcc: &id165
         clock: APB2
         registers:
           enable:
@@ -4411,7 +3739,7 @@ cores:
             register: APB2RSTR
             field: USART1RST
       block: usart_v2/USART
-      pins: &id224
+      pins:
       - pin: PA8
         signal: CK
         af: 7
@@ -4449,16 +3777,16 @@ cores:
         GLOBAL: USART1
       dma_channels:
         RX:
-        - &id225
+        - &id166
           dmamux: DMAMUX1
           request: 41
         TX:
-        - &id226
+        - &id167
           dmamux: DMAMUX1
           request: 42
     USART2:
       address: 0x40004400
-      rcc: &id227
+      rcc: &id168
         clock: APB1
         registers:
           enable:
@@ -4468,7 +3796,7 @@ cores:
             register: APB1LRSTR
             field: USART2RST
       block: usart_v2/USART
-      pins: &id228
+      pins:
       - pin: PA0
         signal: CTS
         af: 7
@@ -4515,16 +3843,16 @@ cores:
         GLOBAL: USART2
       dma_channels:
         RX:
-        - &id229
+        - &id169
           dmamux: DMAMUX1
           request: 43
         TX:
-        - &id230
+        - &id170
           dmamux: DMAMUX1
           request: 44
     USART3:
       address: 0x40004800
-      rcc: &id231
+      rcc: &id171
         clock: APB1
         registers:
           enable:
@@ -4534,7 +3862,7 @@ cores:
             register: APB1LRSTR
             field: USART3RST
       block: usart_v2/USART
-      pins: &id232
+      pins:
       - pin: PB10
         signal: TX
         af: 7
@@ -4590,16 +3918,16 @@ cores:
         GLOBAL: USART3
       dma_channels:
         RX:
-        - &id233
+        - &id172
           dmamux: DMAMUX1
           request: 45
         TX:
-        - &id234
+        - &id173
           dmamux: DMAMUX1
           request: 46
     USART6:
       address: 0x40011400
-      rcc: &id235
+      rcc: &id174
         clock: APB2
         registers:
           enable:
@@ -4609,7 +3937,7 @@ cores:
             register: APB2RSTR
             field: USART6RST
       block: usart_v2/USART
-      pins: &id236
+      pins:
       - pin: PC6
         signal: TX
         af: 7
@@ -4619,32 +3947,11 @@ cores:
       - pin: PC8
         signal: CK
         af: 7
-      - pin: PG7
-        signal: CK
-        af: 7
       - pin: PG8
         signal: DE
         af: 7
       - pin: PG8
         signal: RTS
-        af: 7
-      - pin: PG9
-        signal: RX
-        af: 7
-      - pin: PG12
-        signal: DE
-        af: 7
-      - pin: PG12
-        signal: RTS
-        af: 7
-      - pin: PG13
-        signal: CTS
-        af: 7
-      - pin: PG13
-        signal: NSS
-        af: 7
-      - pin: PG14
-        signal: TX
         af: 7
       - pin: PG15
         signal: CTS
@@ -4656,11 +3963,11 @@ cores:
         GLOBAL: USART6
       dma_channels:
         RX:
-        - &id237
+        - &id175
           dmamux: DMAMUX1
           request: 71
         TX:
-        - &id238
+        - &id176
           dmamux: DMAMUX1
           request: 72
     USB_OTG_FS:
@@ -4675,7 +3982,7 @@ cores:
       address: 0x58003c00
     WWDG1:
       address: 0x50003000
-      rcc: &id239
+      rcc: &id177
         clock: APB3
         registers:
           enable:
@@ -4685,7 +3992,7 @@ cores:
         GLOBAL: WWDG
     WWDG2:
       address: 0x40002c00
-      rcc: &id240
+      rcc: &id178
         clock: APB1
         registers:
           enable:
@@ -4956,35 +4263,141 @@ cores:
   peripherals:
     ADC1:
       address: 0x40022000
-      pins: *id001
+      pins:
+      - pin: PA0
+        signal: INP16
+      - pin: PA1
+        signal: INN16
+      - pin: PA1
+        signal: INP17
+      - pin: PA2
+        signal: INP14
+      - pin: PA3
+        signal: INP15
+      - pin: PA4
+        signal: INP18
+      - pin: PA5
+        signal: INN18
+      - pin: PA5
+        signal: INP19
+      - pin: PA6
+        signal: INP3
+      - pin: PA7
+        signal: INN3
+      - pin: PA7
+        signal: INP7
+      - pin: PB0
+        signal: INN5
+      - pin: PB0
+        signal: INP9
+      - pin: PB1
+        signal: INP5
+      - pin: PC0
+        signal: INP10
+      - pin: PC1
+        signal: INN10
+      - pin: PC1
+        signal: INP11
+      - pin: PC4
+        signal: INP4
+      - pin: PC5
+        signal: INN4
+      - pin: PC5
+        signal: INP8
+      - pin: PF11
+        signal: INP2
+      - pin: PF12
+        signal: INN2
+      - pin: PF12
+        signal: INP6
       interrupts:
         GLOBAL: ADC
       dma_channels:
         ADC1:
-        - *id002
+        - *id001
     ADC2:
       address: 0x40022100
-      pins: *id003
+      pins:
+      - pin: PA2
+        signal: INP14
+      - pin: PA3
+        signal: INP15
+      - pin: PA4
+        signal: INP18
+      - pin: PA5
+        signal: INN18
+      - pin: PA5
+        signal: INP19
+      - pin: PA6
+        signal: INP3
+      - pin: PA7
+        signal: INN3
+      - pin: PA7
+        signal: INP7
+      - pin: PB0
+        signal: INN5
+      - pin: PB0
+        signal: INP9
+      - pin: PB1
+        signal: INP5
+      - pin: PC0
+        signal: INP10
+      - pin: PC1
+        signal: INN10
+      - pin: PC1
+        signal: INP11
+      - pin: PC4
+        signal: INP4
+      - pin: PC5
+        signal: INN4
+      - pin: PC5
+        signal: INP8
+      - pin: PF13
+        signal: INP2
+      - pin: PF14
+        signal: INN2
+      - pin: PF14
+        signal: INP6
       interrupts:
         GLOBAL: ADC
       dma_channels:
         ADC2:
-        - *id004
+        - *id002
     ADC3:
       address: 0x58026000
-      rcc: *id005
-      pins: *id006
+      rcc: *id003
+      pins:
+      - pin: PC0
+        signal: INP10
+      - pin: PC1
+        signal: INN10
+      - pin: PC1
+        signal: INP11
+      - pin: PC2
+        signal: INN1
+      - pin: PC2
+        signal: INP0
+      - pin: PC3
+        signal: INP1
+      - pin: PF3
+        signal: INP5
+      - pin: PF4
+        signal: INN5
+      - pin: PF4
+        signal: INP9
+      - pin: PF5
+        signal: INP4
       interrupts:
         GLOBAL: ADC3
       dma_channels:
         ADC3:
-        - *id007
-        - *id008
+        - *id004
+        - *id005
     ADC_COMMON:
       address: 0x40022300
     BDMA:
       address: 0x58025400
-      rcc: *id009
+      rcc: *id006
       block: bdma_v1/DMA
       interrupts:
         BDMA_Channel0: BDMA_Channel0
@@ -4997,73 +4410,327 @@ cores:
         BDMA_Channel7: BDMA_Channel7
     CEC:
       address: 0x40006c00
-      rcc: *id010
+      rcc: *id007
     COMP1:
       address: 0x5800380c
-      pins: *id011
+      pins:
+      - pin: PB0
+        signal: INP
+      - pin: PB1
+        signal: INM
+      - pin: PB2
+        signal: INP
+      - pin: PC4
+        signal: INM
+      - pin: PC5
+        signal: OUT
+        af: 13
+      - pin: PE12
+        signal: OUT
+        af: 13
       interrupts: {}
     COMP2:
       address: 0x58003810
-      pins: *id012
+      pins:
+      - pin: PE7
+        signal: INM
+      - pin: PE8
+        signal: OUT
+        af: 13
+      - pin: PE9
+        signal: INP
+      - pin: PE10
+        signal: INM
+      - pin: PE11
+        signal: INP
+      - pin: PE13
+        signal: OUT
+        af: 13
       interrupts: {}
     CRC:
       address: 0x58024c00
-      rcc: *id013
+      rcc: *id008
       block: crc_v3/CRC
     CRS:
       address: 0x40008400
-      rcc: *id014
-      pins: *id015
+      rcc: *id009
+      pins:
+      - pin: PB3
+        signal: SYNC
+        af: 10
     CRYP:
       address: 0x48021000
       interrupts:
         GLOBAL: CRYP
       dma_channels:
         IN:
-        - *id016
+        - *id010
         OUT:
-        - *id017
+        - *id011
     DAC1:
       address: 0x40007400
       block: dac_v2/DAC
-      pins: *id018
+      pins:
+      - pin: PA4
+        signal: OUT1
+      - pin: PA5
+        signal: OUT2
       interrupts:
         GLOBAL: TIM6_DAC
       dma_channels:
         CH1:
-        - *id019
+        - *id012
         CH2:
-        - *id020
+        - *id013
     DBGMCU:
       address: 0x5c001000
       block: dbgmcu_h7/DBGMCU
     DCMI:
       address: 0x48020000
-      rcc: *id021
+      rcc: *id014
       block: dcmi_v1/DCMI
-      pins: *id022
+      pins:
+      - pin: PA4
+        signal: HSYNC
+        af: 13
+      - pin: PA6
+        signal: PIXCLK
+        af: 13
+      - pin: PA9
+        signal: D0
+        af: 13
+      - pin: PA10
+        signal: D1
+        af: 13
+      - pin: PB5
+        signal: D10
+        af: 13
+      - pin: PB6
+        signal: D5
+        af: 13
+      - pin: PB7
+        signal: VSYNC
+        af: 13
+      - pin: PB8
+        signal: D6
+        af: 13
+      - pin: PB9
+        signal: D7
+        af: 13
+      - pin: PC6
+        signal: D0
+        af: 13
+      - pin: PC7
+        signal: D1
+        af: 13
+      - pin: PC8
+        signal: D2
+        af: 13
+      - pin: PC9
+        signal: D3
+        af: 13
+      - pin: PC10
+        signal: D8
+        af: 13
+      - pin: PC11
+        signal: D4
+        af: 13
+      - pin: PC12
+        signal: D9
+        af: 13
+      - pin: PD2
+        signal: D11
+        af: 13
+      - pin: PD3
+        signal: D5
+        af: 13
+      - pin: PD6
+        signal: D10
+        af: 13
+      - pin: PE0
+        signal: D2
+        af: 13
+      - pin: PE1
+        signal: D3
+        af: 13
+      - pin: PE4
+        signal: D4
+        af: 13
+      - pin: PE5
+        signal: D6
+        af: 13
+      - pin: PE6
+        signal: D7
+        af: 13
+      - pin: PF11
+        signal: D12
+        af: 13
+      - pin: PG15
+        signal: D13
+        af: 13
       interrupts:
         GLOBAL: DCMI
       dma_channels:
         PSSI:
-        - *id023
+        - *id015
     DFSDM1:
       address: 0x40017000
-      rcc: *id024
-      pins: *id025
+      rcc: *id016
+      pins:
+      - pin: PB0
+        signal: CKOUT
+        af: 6
+      - pin: PB1
+        signal: DATIN1
+        af: 6
+      - pin: PB2
+        signal: CKIN1
+        af: 4
+      - pin: PB6
+        signal: DATIN5
+        af: 11
+      - pin: PB7
+        signal: CKIN5
+        af: 11
+      - pin: PB8
+        signal: CKIN7
+        af: 3
+      - pin: PB9
+        signal: DATIN7
+        af: 3
+      - pin: PB10
+        signal: DATIN7
+        af: 6
+      - pin: PB11
+        signal: CKIN7
+        af: 6
+      - pin: PB12
+        signal: DATIN1
+        af: 6
+      - pin: PB13
+        signal: CKIN1
+        af: 6
+      - pin: PB14
+        signal: DATIN2
+        af: 6
+      - pin: PB15
+        signal: CKIN2
+        af: 6
+      - pin: PC0
+        signal: CKIN0
+        af: 3
+      - pin: PC0
+        signal: DATIN4
+        af: 6
+      - pin: PC1
+        signal: CKIN4
+        af: 4
+      - pin: PC1
+        signal: DATIN0
+        af: 3
+      - pin: PC2
+        signal: CKIN1
+        af: 3
+      - pin: PC2
+        signal: CKOUT
+        af: 6
+      - pin: PC3
+        signal: DATIN1
+        af: 3
+      - pin: PC4
+        signal: CKIN2
+        af: 3
+      - pin: PC5
+        signal: DATIN2
+        af: 3
+      - pin: PC6
+        signal: CKIN3
+        af: 4
+      - pin: PC7
+        signal: DATIN3
+        af: 4
+      - pin: PC10
+        signal: CKIN5
+        af: 3
+      - pin: PC11
+        signal: DATIN5
+        af: 3
+      - pin: PD0
+        signal: CKIN6
+        af: 3
+      - pin: PD1
+        signal: DATIN6
+        af: 3
+      - pin: PD3
+        signal: CKOUT
+        af: 3
+      - pin: PD6
+        signal: CKIN4
+        af: 3
+      - pin: PD6
+        signal: DATIN1
+        af: 4
+      - pin: PD7
+        signal: CKIN1
+        af: 6
+      - pin: PD7
+        signal: DATIN4
+        af: 3
+      - pin: PD8
+        signal: CKIN3
+        af: 3
+      - pin: PD9
+        signal: DATIN3
+        af: 3
+      - pin: PD10
+        signal: CKOUT
+        af: 3
+      - pin: PE4
+        signal: DATIN3
+        af: 3
+      - pin: PE5
+        signal: CKIN3
+        af: 3
+      - pin: PE7
+        signal: DATIN2
+        af: 3
+      - pin: PE8
+        signal: CKIN2
+        af: 3
+      - pin: PE9
+        signal: CKOUT
+        af: 3
+      - pin: PE10
+        signal: DATIN4
+        af: 3
+      - pin: PE11
+        signal: CKIN4
+        af: 3
+      - pin: PE12
+        signal: DATIN5
+        af: 3
+      - pin: PE13
+        signal: CKIN5
+        af: 3
+      - pin: PF13
+        signal: DATIN6
+        af: 3
+      - pin: PF14
+        signal: CKIN6
+        af: 3
       interrupts: {}
       dma_channels:
         FLT0:
-        - *id026
+        - *id017
         FLT1:
-        - *id027
+        - *id018
         FLT2:
-        - *id028
+        - *id019
         FLT3:
-        - *id029
+        - *id020
     DMA1:
       address: 0x40020000
-      rcc: *id030
+      rcc: *id021
       block: dma_v1/DMA
       interrupts:
         DMA1_Stream0: DMA1_Stream0
@@ -5076,7 +4743,7 @@ cores:
         DMA1_Stream7: DMA1_Stream7
     DMA2:
       address: 0x40020400
-      rcc: *id031
+      rcc: *id022
       block: dma_v1/DMA
       interrupts:
         DMA2_Stream0: DMA2_Stream0
@@ -5089,7 +4756,7 @@ cores:
         DMA2_Stream7: DMA2_Stream7
     DMA2D:
       address: 0x52001000
-      rcc: *id032
+      rcc: *id023
       block: dma2d_v2/DMA2D
       interrupts:
         GLOBAL: DMA2D
@@ -5102,7 +4769,73 @@ cores:
     ETH:
       address: 0x40028000
       block: eth_v2/ETH
-      pins: *id033
+      pins:
+      - pin: PA0
+        signal: CRS
+        af: 11
+      - pin: PA1
+        signal: REF_CLK
+        af: 11
+      - pin: PA1
+        signal: RX_CLK
+        af: 11
+      - pin: PA2
+        signal: MDIO
+        af: 11
+      - pin: PA3
+        signal: COL
+        af: 11
+      - pin: PA7
+        signal: CRS_DV
+        af: 11
+      - pin: PA7
+        signal: RX_DV
+        af: 11
+      - pin: PB0
+        signal: RXD2
+        af: 11
+      - pin: PB1
+        signal: RXD3
+        af: 11
+      - pin: PB5
+        signal: PPS_OUT
+        af: 11
+      - pin: PB8
+        signal: TXD3
+        af: 11
+      - pin: PB10
+        signal: RX_ER
+        af: 11
+      - pin: PB11
+        signal: TX_EN
+        af: 11
+      - pin: PB12
+        signal: TXD0
+        af: 11
+      - pin: PB13
+        signal: TXD1
+        af: 11
+      - pin: PC1
+        signal: MDC
+        af: 11
+      - pin: PC2
+        signal: TXD2
+        af: 11
+      - pin: PC3
+        signal: TX_CLK
+        af: 11
+      - pin: PC4
+        signal: RXD0
+        af: 11
+      - pin: PC5
+        signal: RXD1
+        af: 11
+      - pin: PE2
+        signal: TXD3
+        af: 11
+      - pin: PG8
+        signal: PPS_OUT
+        af: 11
       interrupts:
         GLOBAL: ETH
     EXTI:
@@ -5110,13 +4843,43 @@ cores:
       block: exti_h7/EXTI
     FDCAN1:
       address: 0x4000a000
-      rcc: *id034
-      pins: *id035
+      rcc: *id024
+      pins:
+      - pin: PA11
+        signal: RX
+        af: 9
+      - pin: PA12
+        signal: TX
+        af: 9
+      - pin: PB8
+        signal: RX
+        af: 9
+      - pin: PB9
+        signal: TX
+        af: 9
+      - pin: PD0
+        signal: RX
+        af: 9
+      - pin: PD1
+        signal: TX
+        af: 9
       interrupts:
         GLOBAL: FDCAN_CAL
     FDCAN2:
       address: 0x4000a400
-      pins: *id036
+      pins:
+      - pin: PB5
+        signal: RX
+        af: 9
+      - pin: PB6
+        signal: TX
+        af: 9
+      - pin: PB12
+        signal: RX
+        af: 9
+      - pin: PB13
+        signal: TX
+        af: 9
       interrupts:
         GLOBAL: FDCAN_CAL
     FLASH:
@@ -5124,114 +4887,439 @@ cores:
       block: flash_h7/FLASH
     FMC:
       address: 0x52004000
-      rcc: *id037
+      rcc: *id025
       block: fmc_h7/FMC
-      pins: *id038
+      pins:
+      - pin: PA7
+        signal: SDNWE
+        af: 12
+      - pin: PB5
+        signal: SDCKE1
+        af: 12
+      - pin: PB6
+        signal: SDNE1
+        af: 12
+      - pin: PB7
+        signal: NL
+        af: 12
+      - pin: PC0
+        signal: SDNWE
+        af: 12
+      - pin: PC2
+        signal: SDNE0
+        af: 12
+      - pin: PC3
+        signal: SDCKE0
+        af: 12
+      - pin: PC4
+        signal: SDNE0
+        af: 12
+      - pin: PC5
+        signal: SDCKE0
+        af: 12
+      - pin: PC6
+        signal: NWAIT
+        af: 9
+      - pin: PC7
+        signal: NE1
+        af: 9
+      - pin: PC8
+        signal: NCE
+        af: 9
+      - pin: PC8
+        signal: NE2
+        af: 9
+      - pin: PD0
+        signal: D2
+        af: 12
+      - pin: PD0
+        signal: DA2
+        af: 12
+      - pin: PD1
+        signal: D3
+        af: 12
+      - pin: PD1
+        signal: DA3
+        af: 12
+      - pin: PD3
+        signal: CLK
+        af: 12
+      - pin: PD4
+        signal: NOE
+        af: 12
+      - pin: PD5
+        signal: NWE
+        af: 12
+      - pin: PD6
+        signal: NWAIT
+        af: 12
+      - pin: PD7
+        signal: NE1
+        af: 12
+      - pin: PD8
+        signal: D13
+        af: 12
+      - pin: PD8
+        signal: DA13
+        af: 12
+      - pin: PD9
+        signal: D14
+        af: 12
+      - pin: PD9
+        signal: DA14
+        af: 12
+      - pin: PD10
+        signal: D15
+        af: 12
+      - pin: PD10
+        signal: DA15
+        af: 12
+      - pin: PD11
+        signal: A16
+        af: 12
+      - pin: PD11
+        signal: CLE
+      - pin: PD12
+        signal: A17
+        af: 12
+      - pin: PD12
+        signal: ALE
+      - pin: PD13
+        signal: A18
+        af: 12
+      - pin: PD14
+        signal: D0
+        af: 12
+      - pin: PD14
+        signal: DA0
+        af: 12
+      - pin: PD15
+        signal: D1
+        af: 12
+      - pin: PD15
+        signal: DA1
+        af: 12
+      - pin: PE0
+        signal: NBL0
+        af: 12
+      - pin: PE1
+        signal: NBL1
+        af: 12
+      - pin: PE2
+        signal: A23
+        af: 12
+      - pin: PE3
+        signal: A19
+        af: 12
+      - pin: PE4
+        signal: A20
+        af: 12
+      - pin: PE5
+        signal: A21
+        af: 12
+      - pin: PE6
+        signal: A22
+        af: 12
+      - pin: PE7
+        signal: D4
+        af: 12
+      - pin: PE7
+        signal: DA4
+        af: 12
+      - pin: PE8
+        signal: D5
+        af: 12
+      - pin: PE8
+        signal: DA5
+        af: 12
+      - pin: PE9
+        signal: D6
+        af: 12
+      - pin: PE9
+        signal: DA6
+        af: 12
+      - pin: PE10
+        signal: D7
+        af: 12
+      - pin: PE10
+        signal: DA7
+        af: 12
+      - pin: PE11
+        signal: D8
+        af: 12
+      - pin: PE11
+        signal: DA8
+        af: 12
+      - pin: PE12
+        signal: D9
+        af: 12
+      - pin: PE12
+        signal: DA9
+        af: 12
+      - pin: PE13
+        signal: D10
+        af: 12
+      - pin: PE13
+        signal: DA10
+        af: 12
+      - pin: PE14
+        signal: D11
+        af: 12
+      - pin: PE14
+        signal: DA11
+        af: 12
+      - pin: PE15
+        signal: D12
+        af: 12
+      - pin: PE15
+        signal: DA12
+        af: 12
+      - pin: PF0
+        signal: A0
+        af: 12
+      - pin: PF1
+        signal: A1
+        af: 12
+      - pin: PF2
+        signal: A2
+        af: 12
+      - pin: PF3
+        signal: A3
+        af: 12
+      - pin: PF4
+        signal: A4
+        af: 12
+      - pin: PF5
+        signal: A5
+        af: 12
+      - pin: PF11
+        signal: SDNRAS
+        af: 12
+      - pin: PF12
+        signal: A6
+        af: 12
+      - pin: PF13
+        signal: A7
+        af: 12
+      - pin: PF14
+        signal: A8
+        af: 12
+      - pin: PF15
+        signal: A9
+        af: 12
+      - pin: PG0
+        signal: A10
+        af: 12
+      - pin: PG1
+        signal: A11
+        af: 12
+      - pin: PG2
+        signal: A12
+        af: 12
+      - pin: PG3
+        signal: A13
+        af: 12
+      - pin: PG4
+        signal: A14
+        af: 12
+      - pin: PG4
+        signal: BA0
+        af: 12
+      - pin: PG5
+        signal: A15
+        af: 12
+      - pin: PG5
+        signal: BA1
+        af: 12
+      - pin: PG8
+        signal: SDCLK
+        af: 12
+      - pin: PG15
+        signal: SDNCAS
+        af: 12
       interrupts:
         GLOBAL: FMC
     GPIOA:
       address: 0x58020000
-      rcc: *id039
+      rcc: *id026
       block: gpio_v2/GPIO
     GPIOB:
       address: 0x58020400
-      rcc: *id040
+      rcc: *id027
       block: gpio_v2/GPIO
     GPIOC:
       address: 0x58020800
-      rcc: *id041
+      rcc: *id028
       block: gpio_v2/GPIO
     GPIOD:
       address: 0x58020c00
-      rcc: *id042
+      rcc: *id029
       block: gpio_v2/GPIO
     GPIOE:
       address: 0x58021000
-      rcc: *id043
+      rcc: *id030
       block: gpio_v2/GPIO
     GPIOF:
       address: 0x58021400
-      rcc: *id044
+      rcc: *id031
       block: gpio_v2/GPIO
     GPIOG:
       address: 0x58021800
-      rcc: *id045
+      rcc: *id032
       block: gpio_v2/GPIO
     GPIOH:
       address: 0x58021c00
-      rcc: *id046
+      rcc: *id033
       block: gpio_v2/GPIO
     GPIOI:
       address: 0x58022000
-      rcc: *id047
+      rcc: *id034
       block: gpio_v2/GPIO
     GPIOJ:
       address: 0x58022400
-      rcc: *id048
+      rcc: *id035
       block: gpio_v2/GPIO
     GPIOK:
       address: 0x58022800
-      rcc: *id049
+      rcc: *id036
       block: gpio_v2/GPIO
     HASH:
       address: 0x48021400
-      rcc: *id050
+      rcc: *id037
       interrupts: {}
       dma_channels:
         IN:
-        - *id051
+        - *id038
     I2C1:
       address: 0x40005400
-      rcc: *id052
+      rcc: *id039
       block: i2c_v2/I2C
-      pins: *id053
+      pins:
+      - pin: PB5
+        signal: SMBA
+        af: 4
+      - pin: PB6
+        signal: SCL
+        af: 4
+      - pin: PB7
+        signal: SDA
+        af: 4
+      - pin: PB8
+        signal: SCL
+        af: 4
+      - pin: PB9
+        signal: SDA
+        af: 4
       interrupts:
         ER: I2C1_ER
         EV: I2C1_EV
       dma_channels:
         RX:
-        - *id054
+        - *id040
         TX:
-        - *id055
+        - *id041
     I2C2:
       address: 0x40005800
-      rcc: *id056
+      rcc: *id042
       block: i2c_v2/I2C
-      pins: *id057
+      pins:
+      - pin: PB10
+        signal: SCL
+        af: 4
+      - pin: PB11
+        signal: SDA
+        af: 4
+      - pin: PB12
+        signal: SMBA
+        af: 4
+      - pin: PF0
+        signal: SDA
+        af: 4
+      - pin: PF1
+        signal: SCL
+        af: 4
+      - pin: PF2
+        signal: SMBA
+        af: 4
       interrupts:
         ER: I2C2_ER
         EV: I2C2_EV
       dma_channels:
         RX:
-        - *id058
+        - *id043
         TX:
-        - *id059
+        - *id044
     I2C3:
       address: 0x40005c00
-      rcc: *id060
+      rcc: *id045
       block: i2c_v2/I2C
-      pins: *id061
+      pins:
+      - pin: PA8
+        signal: SCL
+        af: 4
+      - pin: PA9
+        signal: SMBA
+        af: 4
+      - pin: PC9
+        signal: SDA
+        af: 4
       interrupts:
         ER: I2C3_ER
         EV: I2C3_EV
       dma_channels:
         RX:
-        - *id062
+        - *id046
         TX:
-        - *id063
+        - *id047
     I2C4:
       address: 0x58001c00
-      rcc: *id064
+      rcc: *id048
       block: i2c_v2/I2C
-      pins: *id065
+      pins:
+      - pin: PB5
+        signal: SMBA
+        af: 6
+      - pin: PB6
+        signal: SCL
+        af: 6
+      - pin: PB7
+        signal: SDA
+        af: 6
+      - pin: PB8
+        signal: SCL
+        af: 6
+      - pin: PB9
+        signal: SDA
+        af: 6
+      - pin: PB9
+        signal: SMBA
+        af: 11
+      - pin: PD11
+        signal: SMBA
+        af: 4
+      - pin: PD12
+        signal: SCL
+        af: 4
+      - pin: PD13
+        signal: SDA
+        af: 4
+      - pin: PF13
+        signal: SMBA
+        af: 4
+      - pin: PF14
+        signal: SCL
+        af: 4
+      - pin: PF15
+        signal: SDA
+        af: 4
       interrupts:
         ER: I2C4_ER
         EV: I2C4_EV
       dma_channels:
         RX:
-        - *id066
+        - *id049
         TX:
-        - *id067
+        - *id050
     IWDG1:
       address: 0x58004800
       block: iwdg_v2/IWDG
@@ -5245,228 +5333,1048 @@ cores:
         GLOBAL: JPEG
     LPTIM1:
       address: 0x40002400
-      rcc: *id068
-      pins: *id069
+      rcc: *id051
+      pins:
+      - pin: PD12
+        signal: IN1
+        af: 1
+      - pin: PD13
+        signal: OUT
+        af: 1
+      - pin: PE0
+        signal: ETR
+        af: 1
+      - pin: PE1
+        signal: IN2
+        af: 1
       interrupts:
         GLOBAL: LPTIM1
     LPTIM2:
       address: 0x58002400
-      rcc: *id070
-      pins: *id071
+      rcc: *id052
+      pins:
+      - pin: PB10
+        signal: IN1
+        af: 3
+      - pin: PB11
+        signal: ETR
+        af: 3
+      - pin: PB13
+        signal: OUT
+        af: 3
+      - pin: PD11
+        signal: IN2
+        af: 3
+      - pin: PD12
+        signal: IN1
+        af: 3
+      - pin: PE0
+        signal: ETR
+        af: 4
       interrupts:
         GLOBAL: LPTIM2
     LPTIM3:
       address: 0x58002800
-      rcc: *id072
-      pins: *id073
+      rcc: *id053
+      pins:
+      - pin: PA1
+        signal: OUT
+        af: 3
       interrupts:
         GLOBAL: LPTIM3
     LPTIM4:
       address: 0x58002c00
-      rcc: *id074
-      pins: *id075
+      rcc: *id054
+      pins:
+      - pin: PA2
+        signal: OUT
+        af: 3
       interrupts:
         GLOBAL: LPTIM4
     LPTIM5:
       address: 0x58003000
-      rcc: *id076
-      pins: *id077
+      rcc: *id055
+      pins:
+      - pin: PA3
+        signal: OUT
+        af: 3
       interrupts:
         GLOBAL: LPTIM5
     LPUART1:
       address: 0x58000c00
-      rcc: *id078
-      pins: *id079
+      rcc: *id056
+      pins:
+      - pin: PA9
+        signal: TX
+        af: 3
+      - pin: PA10
+        signal: RX
+        af: 3
+      - pin: PA11
+        signal: CTS
+        af: 3
+      - pin: PA12
+        signal: DE
+        af: 3
+      - pin: PA12
+        signal: RTS
+        af: 3
+      - pin: PB6
+        signal: TX
+        af: 8
+      - pin: PB7
+        signal: RX
+        af: 8
       interrupts:
         GLOBAL: LPUART1
       dma_channels:
         RX:
-        - *id080
+        - *id057
         TX:
-        - *id081
+        - *id058
     LTDC:
       address: 0x50001000
-      rcc: *id082
-      pins: *id083
+      rcc: *id059
+      pins:
+      - pin: PA1
+        signal: R2
+        af: 14
+      - pin: PA2
+        signal: R1
+        af: 14
+      - pin: PA3
+        signal: B2
+        af: 9
+      - pin: PA3
+        signal: B5
+        af: 14
+      - pin: PA4
+        signal: VSYNC
+        af: 14
+      - pin: PA5
+        signal: R4
+        af: 14
+      - pin: PA6
+        signal: G2
+        af: 14
+      - pin: PA8
+        signal: B3
+        af: 13
+      - pin: PA8
+        signal: R6
+        af: 14
+      - pin: PA9
+        signal: R5
+        af: 14
+      - pin: PA10
+        signal: B1
+        af: 14
+      - pin: PA10
+        signal: B4
+        af: 12
+      - pin: PA11
+        signal: R4
+        af: 14
+      - pin: PA12
+        signal: R5
+        af: 14
+      - pin: PB0
+        signal: G1
+        af: 14
+      - pin: PB0
+        signal: R3
+        af: 9
+      - pin: PB1
+        signal: G0
+        af: 14
+      - pin: PB1
+        signal: R6
+        af: 9
+      - pin: PB8
+        signal: B6
+        af: 14
+      - pin: PB9
+        signal: B7
+        af: 14
+      - pin: PB10
+        signal: G4
+        af: 14
+      - pin: PB11
+        signal: G5
+        af: 14
+      - pin: PC0
+        signal: R5
+        af: 14
+      - pin: PC6
+        signal: HSYNC
+        af: 14
+      - pin: PC7
+        signal: G6
+        af: 14
+      - pin: PC9
+        signal: B2
+        af: 14
+      - pin: PC9
+        signal: G3
+        af: 10
+      - pin: PC10
+        signal: R2
+        af: 14
+      - pin: PD3
+        signal: G7
+        af: 14
+      - pin: PD6
+        signal: B2
+        af: 14
+      - pin: PD10
+        signal: B3
+        af: 14
+      - pin: PE4
+        signal: B0
+        af: 14
+      - pin: PE5
+        signal: G0
+        af: 14
+      - pin: PE6
+        signal: G1
+        af: 14
+      - pin: PE11
+        signal: G3
+        af: 14
+      - pin: PE12
+        signal: B4
+        af: 14
+      - pin: PE13
+        signal: DE
+        af: 14
+      - pin: PE14
+        signal: CLK
+        af: 14
+      - pin: PE15
+        signal: R7
+        af: 14
+      - pin: PG8
+        signal: G7
+        af: 14
       interrupts:
         GLOBAL: LTDC
     MDIOS:
       address: 0x40009400
-      rcc: *id084
+      rcc: *id060
       block: mdios_v1/MDIOS
-      pins: *id085
+      pins:
+      - pin: PA2
+        signal: MDIO
+        af: 12
+      - pin: PA6
+        signal: MDC
+        af: 11
+      - pin: PA10
+        signal: MDIO
+        af: 11
+      - pin: PC1
+        signal: MDC
+        af: 12
       interrupts:
         GLOBAL: MDIOS
     MDMA:
       address: 0x52000000
-      rcc: *id086
+      rcc: *id061
       interrupts:
         GLOBAL: MDMA
     OPAMP1:
       address: 0x40009000
-      rcc: *id087
-      pins: *id088
+      rcc: *id062
+      pins:
+      - pin: PA7
+        signal: VINM
+      - pin: PA7
+        signal: VINM1
+      - pin: PB0
+        signal: VINP
+      - pin: PC4
+        signal: VOUT
+      - pin: PC5
+        signal: VINM
+      - pin: PC5
+        signal: VINM0
     OPAMP2:
       address: 0x40009010
-      pins: *id089
+      pins:
+      - pin: PE7
+        signal: VOUT
+      - pin: PE8
+        signal: VINM
+      - pin: PE8
+        signal: VINM0
+      - pin: PE9
+        signal: VINP
+      - pin: PG1
+        signal: VINM
+      - pin: PG1
+        signal: VINM1
     PWR:
       address: 0x58024800
       block: pwr_h7smps/PWR
+      pins:
+      - pin: PA0
+        signal: WKUP0
+      - pin: PA2
+        signal: WKUP1
+      - pin: PA5
+        signal: NDSTOP2
+      - pin: PB7
+        signal: PVD_IN
+      - pin: PC1
+        signal: WKUP5
+      - pin: PC2
+        signal: CSTOP
+      - pin: PC3
+        signal: CSLEEP
+      - pin: PC13
+        signal: WKUP2
     QUADSPI:
       address: 0x52005000
       block: quadspi_v1/QUADSPI
-      pins: *id090
+      pins:
+      - pin: PA1
+        signal: BK1_IO3
+        af: 9
+      - pin: PB2
+        signal: CLK
+        af: 9
+      - pin: PB6
+        signal: BK1_NCS
+        af: 10
+      - pin: PB10
+        signal: BK1_NCS
+        af: 9
+      - pin: PC9
+        signal: BK1_IO0
+        af: 9
+      - pin: PC10
+        signal: BK1_IO1
+        af: 9
+      - pin: PC11
+        signal: BK2_NCS
+        af: 9
+      - pin: PD11
+        signal: BK1_IO0
+        af: 9
+      - pin: PD12
+        signal: BK1_IO1
+        af: 9
+      - pin: PD13
+        signal: BK1_IO3
+        af: 9
+      - pin: PE2
+        signal: BK1_IO2
+        af: 9
+      - pin: PE7
+        signal: BK2_IO0
+        af: 10
+      - pin: PE8
+        signal: BK2_IO1
+        af: 10
+      - pin: PE9
+        signal: BK2_IO2
+        af: 10
+      - pin: PE10
+        signal: BK2_IO3
+        af: 10
       interrupts:
         GLOBAL: QUADSPI
     RCC:
       address: 0x58024400
       block: rcc_h7/RCC
-      pins: *id091
+      pins:
+      - pin: PA8
+        signal: MCO_1
+        af: 0
+      - pin: PC9
+        signal: MCO_2
+        af: 0
+      - pin: PC14
+        signal: OSC32_IN
+      - pin: PC15
+        signal: OSC32_OUT
+      - pin: PH0
+        signal: OSC_IN
+      - pin: PH1
+        signal: OSC_OUT
       interrupts:
         GLOBAL: RCC
     RNG:
       address: 0x48021800
-      rcc: *id092
+      rcc: *id063
       block: rng_v1/RNG
       interrupts:
         GLOBAL: HASH_RNG
     RTC:
       address: 0x58004000
-      pins: *id093
+      pins:
+      - pin: PB2
+        signal: OUT_ALARM
+        af: 0
+      - pin: PB2
+        signal: OUT_CALIB
+        af: 0
+      - pin: PB15
+        signal: REFIN
+        af: 0
+      - pin: PC1
+        signal: TAMP3
+      - pin: PC13
+        signal: OUT_ALARM
+      - pin: PC13
+        signal: OUT_CALIB
+      - pin: PC13
+        signal: TAMP1
+      - pin: PC13
+        signal: TS
       interrupts:
         GLOBAL: TAMP_STAMP
     SAI1:
       address: 0x40015800
-      rcc: *id094
-      pins: *id095
+      rcc: *id064
+      pins:
+      - pin: PB2
+        signal: D1
+        af: 2
+      - pin: PB2
+        signal: SD_A
+        af: 6
+      - pin: PC1
+        signal: D1
+        af: 2
+      - pin: PC1
+        signal: SD_A
+        af: 6
+      - pin: PC5
+        signal: D3
+        af: 2
+      - pin: PD6
+        signal: D1
+        af: 2
+      - pin: PD6
+        signal: SD_A
+        af: 6
+      - pin: PE2
+        signal: CK1
+        af: 2
+      - pin: PE2
+        signal: MCLK_A
+        af: 6
+      - pin: PE3
+        signal: SD_B
+        af: 6
+      - pin: PE4
+        signal: D2
+        af: 2
+      - pin: PE4
+        signal: FS_A
+        af: 6
+      - pin: PE5
+        signal: CK2
+        af: 2
+      - pin: PE5
+        signal: SCK_A
+        af: 6
+      - pin: PE6
+        signal: D1
+        af: 2
+      - pin: PE6
+        signal: SD_A
+        af: 6
       interrupts:
         GLOBAL: SAI1
       dma_channels:
         A:
-        - *id096
+        - *id065
         B:
-        - *id097
+        - *id066
     SAI2:
       address: 0x40015c00
-      rcc: *id098
-      pins: *id099
+      rcc: *id067
+      pins:
+      - pin: PA0
+        signal: SD_B
+        af: 10
+      - pin: PA1
+        signal: MCLK_B
+        af: 10
+      - pin: PA2
+        signal: SCK_B
+        af: 8
+      - pin: PA12
+        signal: FS_B
+        af: 8
+      - pin: PC0
+        signal: FS_B
+        af: 8
+      - pin: PD11
+        signal: SD_A
+        af: 10
+      - pin: PD12
+        signal: FS_A
+        af: 10
+      - pin: PD13
+        signal: SCK_A
+        af: 10
+      - pin: PE0
+        signal: MCLK_A
+        af: 10
+      - pin: PE6
+        signal: MCLK_B
+        af: 10
+      - pin: PE11
+        signal: SD_B
+        af: 10
+      - pin: PE12
+        signal: SCK_B
+        af: 10
+      - pin: PE13
+        signal: FS_B
+        af: 10
+      - pin: PE14
+        signal: MCLK_B
+        af: 10
+      - pin: PF11
+        signal: SD_B
+        af: 10
       interrupts:
         GLOBAL: SAI2
       dma_channels:
         A:
-        - *id100
+        - *id068
         B:
-        - *id101
+        - *id069
     SAI3:
       address: 0x40016000
-      rcc: *id102
-      pins: *id103
+      rcc: *id070
+      pins:
+      - pin: PD0
+        signal: SCK_A
+        af: 6
+      - pin: PD1
+        signal: SD_A
+        af: 6
+      - pin: PD4
+        signal: FS_A
+        af: 6
+      - pin: PD8
+        signal: SCK_B
+        af: 6
+      - pin: PD9
+        signal: SD_B
+        af: 6
+      - pin: PD10
+        signal: FS_B
+        af: 6
+      - pin: PD14
+        signal: MCLK_B
+        af: 6
+      - pin: PD15
+        signal: MCLK_A
+        af: 6
       interrupts:
         GLOBAL: SAI3
       dma_channels:
         A:
-        - *id104
+        - *id071
         B:
-        - *id105
+        - *id072
     SAI4:
       address: 0x58005400
-      rcc: *id106
-      pins: *id107
+      rcc: *id073
+      pins:
+      - pin: PB2
+        signal: D1
+        af: 10
+      - pin: PB2
+        signal: SD_A
+        af: 8
+      - pin: PC1
+        signal: D1
+        af: 10
+      - pin: PC1
+        signal: SD_A
+        af: 8
+      - pin: PC5
+        signal: D3
+        af: 10
+      - pin: PD6
+        signal: D1
+        af: 10
+      - pin: PD6
+        signal: SD_A
+        af: 8
+      - pin: PE2
+        signal: CK1
+        af: 10
+      - pin: PE2
+        signal: MCLK_A
+        af: 8
+      - pin: PE3
+        signal: SD_B
+        af: 8
+      - pin: PE4
+        signal: D2
+        af: 10
+      - pin: PE4
+        signal: FS_A
+        af: 8
+      - pin: PE5
+        signal: CK2
+        af: 10
+      - pin: PE5
+        signal: SCK_A
+        af: 8
+      - pin: PE6
+        signal: D1
+        af: 9
+      - pin: PE6
+        signal: SD_A
+        af: 8
       interrupts:
         GLOBAL: SAI4
       dma_channels:
         A:
-        - *id108
+        - *id074
         B:
-        - *id109
+        - *id075
     SDMMC1:
       address: 0x52007000
-      rcc: *id110
+      rcc: *id076
       block: sdmmc_v2/SDMMC
-      pins: *id111
+      pins:
+      - pin: PB8
+        signal: CKIN
+        af: 7
+      - pin: PB8
+        signal: D4
+        af: 12
+      - pin: PB9
+        signal: CDIR
+        af: 7
+      - pin: PB9
+        signal: D5
+        af: 12
+      - pin: PC6
+        signal: D0DIR
+        af: 8
+      - pin: PC6
+        signal: D6
+        af: 12
+      - pin: PC7
+        signal: D123DIR
+        af: 8
+      - pin: PC7
+        signal: D7
+        af: 12
+      - pin: PC8
+        signal: D0
+        af: 12
+      - pin: PC9
+        signal: D1
+        af: 12
+      - pin: PC10
+        signal: D2
+        af: 12
+      - pin: PC11
+        signal: D3
+        af: 12
+      - pin: PC12
+        signal: CK
+        af: 12
+      - pin: PD2
+        signal: CMD
+        af: 12
       interrupts:
         GLOBAL: SDMMC1
     SDMMC2:
       address: 0x48022400
-      rcc: *id112
+      rcc: *id077
       block: sdmmc_v2/SDMMC
-      pins: *id113
+      pins:
+      - pin: PA0
+        signal: CMD
+        af: 9
+      - pin: PB3
+        signal: D2
+        af: 9
+      - pin: PB4
+        signal: D3
+        af: 9
+      - pin: PB8
+        signal: D4
+        af: 10
+      - pin: PB9
+        signal: D5
+        af: 10
+      - pin: PB14
+        signal: D0
+        af: 9
+      - pin: PB15
+        signal: D1
+        af: 9
+      - pin: PC1
+        signal: CK
+        af: 9
+      - pin: PC6
+        signal: D6
+        af: 10
+      - pin: PC7
+        signal: D7
+        af: 10
+      - pin: PD6
+        signal: CK
+        af: 11
+      - pin: PD7
+        signal: CMD
+        af: 11
       interrupts:
         GLOBAL: SDMMC2
     SPI1:
       address: 0x40013000
-      rcc: *id114
+      rcc: *id078
       block: spi_v3/SPI
-      pins: *id115
+      pins:
+      - pin: PA4
+        signal: NSS
+        af: 5
+      - pin: PA5
+        signal: SCK
+        af: 5
+      - pin: PA6
+        signal: MISO
+        af: 5
+      - pin: PA7
+        signal: MOSI
+        af: 5
+      - pin: PA15
+        signal: NSS
+        af: 5
+      - pin: PB3
+        signal: SCK
+        af: 5
+      - pin: PB4
+        signal: MISO
+        af: 5
+      - pin: PB5
+        signal: MOSI
+        af: 5
+      - pin: PD7
+        signal: MOSI
+        af: 5
       interrupts:
         GLOBAL: SPI1
       dma_channels:
         RX:
-        - *id116
+        - *id079
         TX:
-        - *id117
+        - *id080
     SPI2:
       address: 0x40003800
-      rcc: *id118
+      rcc: *id081
       block: spi_v3/SPI
-      pins: *id119
+      pins:
+      - pin: PA9
+        signal: SCK
+        af: 5
+      - pin: PA11
+        signal: NSS
+        af: 5
+      - pin: PA12
+        signal: SCK
+        af: 5
+      - pin: PB4
+        signal: NSS
+        af: 7
+      - pin: PB9
+        signal: NSS
+        af: 5
+      - pin: PB10
+        signal: SCK
+        af: 5
+      - pin: PB12
+        signal: NSS
+        af: 5
+      - pin: PB13
+        signal: SCK
+        af: 5
+      - pin: PB14
+        signal: MISO
+        af: 5
+      - pin: PB15
+        signal: MOSI
+        af: 5
+      - pin: PC1
+        signal: MOSI
+        af: 5
+      - pin: PC2
+        signal: MISO
+        af: 5
+      - pin: PC3
+        signal: MOSI
+        af: 5
+      - pin: PD3
+        signal: SCK
+        af: 5
       interrupts:
         GLOBAL: SPI2
       dma_channels:
         RX:
-        - *id120
+        - *id082
         TX:
-        - *id121
+        - *id083
     SPI3:
       address: 0x40003c00
-      rcc: *id122
+      rcc: *id084
       block: spi_v3/SPI
-      pins: *id123
+      pins:
+      - pin: PA4
+        signal: NSS
+        af: 6
+      - pin: PA15
+        signal: NSS
+        af: 6
+      - pin: PB2
+        signal: MOSI
+        af: 7
+      - pin: PB3
+        signal: SCK
+        af: 6
+      - pin: PB4
+        signal: MISO
+        af: 6
+      - pin: PB5
+        signal: MOSI
+        af: 7
+      - pin: PC10
+        signal: SCK
+        af: 6
+      - pin: PC11
+        signal: MISO
+        af: 6
+      - pin: PC12
+        signal: MOSI
+        af: 6
+      - pin: PD6
+        signal: MOSI
+        af: 5
       interrupts:
         GLOBAL: SPI3
       dma_channels:
         RX:
-        - *id124
+        - *id085
         TX:
-        - *id125
+        - *id086
     SPI4:
       address: 0x40013400
-      rcc: *id126
+      rcc: *id087
       block: spi_v3/SPI
-      pins: *id127
+      pins:
+      - pin: PE2
+        signal: SCK
+        af: 5
+      - pin: PE4
+        signal: NSS
+        af: 5
+      - pin: PE5
+        signal: MISO
+        af: 5
+      - pin: PE6
+        signal: MOSI
+        af: 5
+      - pin: PE11
+        signal: NSS
+        af: 5
+      - pin: PE12
+        signal: SCK
+        af: 5
+      - pin: PE13
+        signal: MISO
+        af: 5
+      - pin: PE14
+        signal: MOSI
+        af: 5
       interrupts:
         GLOBAL: SPI4
       dma_channels:
         RX:
-        - *id128
+        - *id088
         TX:
-        - *id129
+        - *id089
     SPI6:
       address: 0x58001400
-      rcc: *id130
+      rcc: *id090
       block: spi_v3/SPI
-      pins: *id131
+      pins:
+      - pin: PA4
+        signal: NSS
+        af: 8
+      - pin: PA5
+        signal: SCK
+        af: 8
+      - pin: PA6
+        signal: MISO
+        af: 8
+      - pin: PA7
+        signal: MOSI
+        af: 8
+      - pin: PA15
+        signal: NSS
+        af: 7
+      - pin: PB3
+        signal: SCK
+        af: 8
+      - pin: PB4
+        signal: MISO
+        af: 8
+      - pin: PB5
+        signal: MOSI
+        af: 8
+      - pin: PG8
+        signal: NSS
+        af: 5
       interrupts:
         GLOBAL: SPI6
       dma_channels:
         RX:
-        - *id132
+        - *id091
         TX:
-        - *id133
+        - *id092
     SWPMI1:
       address: 0x40008800
-      pins: *id134
+      pins:
+      - pin: PC6
+        signal: IO
+      - pin: PC7
+        signal: TX
+        af: 11
+      - pin: PC8
+        signal: RX
+        af: 11
+      - pin: PC9
+        signal: SUSPEND
+        af: 11
       interrupts:
         GLOBAL: SWPMI1
     SYSCFG:
       address: 0x58000400
-      rcc: *id135
+      rcc: *id093
       block: syscfg_h7/SYSCFG
     TIM1:
       address: 0x40010000
-      rcc: *id136
+      rcc: *id094
       block: timer_v1/TIM_ADV
-      pins: *id137
+      pins:
+      - pin: PA6
+        signal: BKIN
+        af: 1
+      - pin: PA6
+        signal: BKIN_COMP1
+        af: 12
+      - pin: PA6
+        signal: BKIN_COMP2
+        af: 12
+      - pin: PA7
+        signal: CH1N
+        af: 1
+      - pin: PA8
+        signal: CH1
+        af: 1
+      - pin: PA9
+        signal: CH2
+        af: 1
+      - pin: PA10
+        signal: CH3
+        af: 1
+      - pin: PA11
+        signal: CH4
+        af: 1
+      - pin: PA12
+        signal: ETR
+        af: 1
+      - pin: PB0
+        signal: CH2N
+        af: 1
+      - pin: PB1
+        signal: CH3N
+        af: 1
+      - pin: PB12
+        signal: BKIN
+        af: 1
+      - pin: PB12
+        signal: BKIN_COMP1
+        af: 13
+      - pin: PB12
+        signal: BKIN_COMP2
+        af: 13
+      - pin: PB13
+        signal: CH1N
+        af: 1
+      - pin: PB14
+        signal: CH2N
+        af: 1
+      - pin: PB15
+        signal: CH3N
+        af: 1
+      - pin: PE6
+        signal: BKIN2
+        af: 1
+      - pin: PE6
+        signal: BKIN2_COMP1
+        af: 11
+      - pin: PE6
+        signal: BKIN2_COMP2
+        af: 11
+      - pin: PE7
+        signal: ETR
+        af: 1
+      - pin: PE8
+        signal: CH1N
+        af: 1
+      - pin: PE9
+        signal: CH1
+        af: 1
+      - pin: PE10
+        signal: CH2N
+        af: 1
+      - pin: PE11
+        signal: CH2
+        af: 1
+      - pin: PE12
+        signal: CH3N
+        af: 1
+      - pin: PE13
+        signal: CH3
+        af: 1
+      - pin: PE14
+        signal: CH4
+        af: 1
+      - pin: PE15
+        signal: BKIN
+        af: 1
+      - pin: PE15
+        signal: BKIN_COMP1
+        af: 13
+      - pin: PE15
+        signal: BKIN_COMP2
+        af: 13
+      - pin: PG4
+        signal: BKIN2
+        af: 1
+      - pin: PG4
+        signal: BKIN2_COMP1
+        af: 11
+      - pin: PG4
+        signal: BKIN2_COMP2
+        af: 11
+      - pin: PG5
+        signal: ETR
+        af: 1
       interrupts:
         BRK: TIM1_BRK
         COM: TIM1_TRG_COM
@@ -5474,24 +6382,30 @@ cores:
         UP: TIM1_UP
       dma_channels:
         CH1:
-        - *id138
+        - *id095
         CH2:
-        - *id139
+        - *id096
         CH3:
-        - *id140
+        - *id097
         CH4:
-        - *id141
+        - *id098
         COM:
-        - *id142
+        - *id099
         TRIG:
-        - *id143
+        - *id100
         UP:
-        - *id144
+        - *id101
     TIM12:
       address: 0x40001800
-      rcc: *id145
+      rcc: *id102
       block: timer_v1/TIM_GP16
-      pins: *id146
+      pins:
+      - pin: PB14
+        signal: CH1
+        af: 2
+      - pin: PB15
+        signal: CH2
+        af: 2
       interrupts:
         BRK: TIM8_BRK_TIM12
         COM: TIM8_BRK_TIM12
@@ -5499,9 +6413,12 @@ cores:
         UP: TIM8_BRK_TIM12
     TIM13:
       address: 0x40001c00
-      rcc: *id147
+      rcc: *id103
       block: timer_v1/TIM_GP16
-      pins: *id148
+      pins:
+      - pin: PA6
+        signal: CH1
+        af: 9
       interrupts:
         BRK: TIM8_UP_TIM13
         COM: TIM8_UP_TIM13
@@ -5509,9 +6426,12 @@ cores:
         UP: TIM8_UP_TIM13
     TIM14:
       address: 0x40002000
-      rcc: *id149
+      rcc: *id104
       block: timer_v1/TIM_GP16
-      pins: *id150
+      pins:
+      - pin: PA7
+        signal: CH1
+        af: 9
       interrupts:
         BRK: TIM8_TRG_COM_TIM14
         COM: TIM8_TRG_COM_TIM14
@@ -5519,9 +6439,33 @@ cores:
         UP: TIM8_TRG_COM_TIM14
     TIM15:
       address: 0x40014000
-      rcc: *id151
+      rcc: *id105
       block: timer_v1/TIM_GP16
-      pins: *id152
+      pins:
+      - pin: PA0
+        signal: BKIN
+        af: 4
+      - pin: PA1
+        signal: CH1N
+        af: 4
+      - pin: PA2
+        signal: CH1
+        af: 4
+      - pin: PA3
+        signal: CH2
+        af: 4
+      - pin: PE3
+        signal: BKIN
+        af: 4
+      - pin: PE4
+        signal: CH1N
+        af: 4
+      - pin: PE5
+        signal: CH1
+        af: 4
+      - pin: PE6
+        signal: CH2
+        af: 4
       interrupts:
         BRK: TIM15
         COM: TIM15
@@ -5529,18 +6473,27 @@ cores:
         UP: TIM15
       dma_channels:
         CH1:
-        - *id153
+        - *id106
         COM:
-        - *id154
+        - *id107
         TRIG:
-        - *id155
+        - *id108
         UP:
-        - *id156
+        - *id109
     TIM16:
       address: 0x40014400
-      rcc: *id157
+      rcc: *id110
       block: timer_v1/TIM_GP16
-      pins: *id158
+      pins:
+      - pin: PB4
+        signal: BKIN
+        af: 1
+      - pin: PB6
+        signal: CH1N
+        af: 1
+      - pin: PB8
+        signal: CH1
+        af: 1
       interrupts:
         BRK: TIM16
         COM: TIM16
@@ -5548,14 +6501,23 @@ cores:
         UP: TIM16
       dma_channels:
         CH1:
-        - *id159
+        - *id111
         UP:
-        - *id160
+        - *id112
     TIM17:
       address: 0x40014800
-      rcc: *id161
+      rcc: *id113
       block: timer_v1/TIM_GP16
-      pins: *id162
+      pins:
+      - pin: PB5
+        signal: BKIN
+        af: 1
+      - pin: PB7
+        signal: CH1N
+        af: 1
+      - pin: PB9
+        signal: CH1
+        af: 1
       interrupts:
         BRK: TIM17
         COM: TIM17
@@ -5563,14 +6525,50 @@ cores:
         UP: TIM17
       dma_channels:
         CH1:
-        - *id163
+        - *id114
         UP:
-        - *id164
+        - *id115
     TIM2:
       address: 0x40000000
-      rcc: *id165
+      rcc: *id116
       block: timer_v1/TIM_GP32
-      pins: *id166
+      pins:
+      - pin: PA0
+        signal: CH1
+        af: 1
+      - pin: PA0
+        signal: ETR
+        af: 1
+      - pin: PA1
+        signal: CH2
+        af: 1
+      - pin: PA2
+        signal: CH3
+        af: 1
+      - pin: PA3
+        signal: CH4
+        af: 1
+      - pin: PA5
+        signal: CH1
+        af: 1
+      - pin: PA5
+        signal: ETR
+        af: 1
+      - pin: PA15
+        signal: CH1
+        af: 1
+      - pin: PA15
+        signal: ETR
+        af: 1
+      - pin: PB3
+        signal: CH2
+        af: 1
+      - pin: PB10
+        signal: CH3
+        af: 1
+      - pin: PB11
+        signal: CH4
+        af: 1
       interrupts:
         BRK: TIM2
         COM: TIM2
@@ -5578,20 +6576,53 @@ cores:
         UP: TIM2
       dma_channels:
         CH1:
-        - *id167
+        - *id117
         CH2:
-        - *id168
+        - *id118
         CH3:
-        - *id169
+        - *id119
         CH4:
-        - *id170
+        - *id120
         UP:
-        - *id171
+        - *id121
     TIM3:
       address: 0x40000400
-      rcc: *id172
+      rcc: *id122
       block: timer_v1/TIM_GP16
-      pins: *id173
+      pins:
+      - pin: PA6
+        signal: CH1
+        af: 2
+      - pin: PA7
+        signal: CH2
+        af: 2
+      - pin: PB0
+        signal: CH3
+        af: 2
+      - pin: PB1
+        signal: CH4
+        af: 2
+      - pin: PB4
+        signal: CH1
+        af: 2
+      - pin: PB5
+        signal: CH2
+        af: 2
+      - pin: PC6
+        signal: CH1
+        af: 2
+      - pin: PC7
+        signal: CH2
+        af: 2
+      - pin: PC8
+        signal: CH3
+        af: 2
+      - pin: PC9
+        signal: CH4
+        af: 2
+      - pin: PD2
+        signal: ETR
+        af: 2
       interrupts:
         BRK: TIM3
         COM: TIM3
@@ -5599,22 +6630,49 @@ cores:
         UP: TIM3
       dma_channels:
         CH1:
-        - *id174
+        - *id123
         CH2:
-        - *id175
+        - *id124
         CH3:
-        - *id176
+        - *id125
         CH4:
-        - *id177
+        - *id126
         TRIG:
-        - *id178
+        - *id127
         UP:
-        - *id179
+        - *id128
     TIM4:
       address: 0x40000800
-      rcc: *id180
+      rcc: *id129
       block: timer_v1/TIM_GP16
-      pins: *id181
+      pins:
+      - pin: PB6
+        signal: CH1
+        af: 2
+      - pin: PB7
+        signal: CH2
+        af: 2
+      - pin: PB8
+        signal: CH3
+        af: 2
+      - pin: PB9
+        signal: CH4
+        af: 2
+      - pin: PD12
+        signal: CH1
+        af: 2
+      - pin: PD13
+        signal: CH2
+        af: 2
+      - pin: PD14
+        signal: CH3
+        af: 2
+      - pin: PD15
+        signal: CH4
+        af: 2
+      - pin: PE0
+        signal: ETR
+        af: 2
       interrupts:
         BRK: TIM4
         COM: TIM4
@@ -5622,18 +6680,33 @@ cores:
         UP: TIM4
       dma_channels:
         CH1:
-        - *id182
+        - *id130
         CH2:
-        - *id183
+        - *id131
         CH3:
-        - *id184
+        - *id132
         UP:
-        - *id185
+        - *id133
     TIM5:
       address: 0x40000c00
-      rcc: *id186
+      rcc: *id134
       block: timer_v1/TIM_GP32
-      pins: *id187
+      pins:
+      - pin: PA0
+        signal: CH1
+        af: 2
+      - pin: PA1
+        signal: CH2
+        af: 2
+      - pin: PA2
+        signal: CH3
+        af: 2
+      - pin: PA3
+        signal: CH4
+        af: 2
+      - pin: PA4
+        signal: ETR
+        af: 2
       interrupts:
         BRK: TIM5
         COM: TIM5
@@ -5641,28 +6714,28 @@ cores:
         UP: TIM5
       dma_channels:
         CH1:
-        - *id188
+        - *id135
         CH2:
-        - *id189
+        - *id136
         CH3:
-        - *id190
+        - *id137
         CH4:
-        - *id191
+        - *id138
         TRIG:
-        - *id192
+        - *id139
         UP:
-        - *id193
+        - *id140
     TIM6:
       address: 0x40001000
-      rcc: *id194
+      rcc: *id141
       block: timer_v1/TIM_BASIC
       interrupts: {}
       dma_channels:
         UP:
-        - *id195
+        - *id142
     TIM7:
       address: 0x40001400
-      rcc: *id196
+      rcc: *id143
       block: timer_v1/TIM_BASIC
       interrupts:
         BRK: TIM7
@@ -5671,12 +6744,84 @@ cores:
         UP: TIM7
       dma_channels:
         UP:
-        - *id197
+        - *id144
     TIM8:
       address: 0x40010400
-      rcc: *id198
+      rcc: *id145
       block: timer_v1/TIM_ADV
-      pins: *id199
+      pins:
+      - pin: PA0
+        signal: ETR
+        af: 3
+      - pin: PA5
+        signal: CH1N
+        af: 3
+      - pin: PA6
+        signal: BKIN
+        af: 3
+      - pin: PA6
+        signal: BKIN_COMP1
+        af: 10
+      - pin: PA6
+        signal: BKIN_COMP2
+        af: 10
+      - pin: PA7
+        signal: CH1N
+        af: 3
+      - pin: PA8
+        signal: BKIN2
+        af: 3
+      - pin: PA8
+        signal: BKIN2_COMP1
+        af: 12
+      - pin: PA8
+        signal: BKIN2_COMP2
+        af: 12
+      - pin: PB0
+        signal: CH2N
+        af: 3
+      - pin: PB1
+        signal: CH3N
+        af: 3
+      - pin: PB14
+        signal: CH2N
+        af: 3
+      - pin: PB15
+        signal: CH3N
+        af: 3
+      - pin: PC6
+        signal: CH1
+        af: 3
+      - pin: PC7
+        signal: CH2
+        af: 3
+      - pin: PC8
+        signal: CH3
+        af: 3
+      - pin: PC9
+        signal: CH4
+        af: 3
+      - pin: PG2
+        signal: BKIN
+        af: 3
+      - pin: PG2
+        signal: BKIN_COMP1
+        af: 11
+      - pin: PG2
+        signal: BKIN_COMP2
+        af: 11
+      - pin: PG3
+        signal: BKIN2
+        af: 3
+      - pin: PG3
+        signal: BKIN2_COMP1
+        af: 11
+      - pin: PG3
+        signal: BKIN2_COMP2
+        af: 11
+      - pin: PG8
+        signal: ETR
+        af: 3
       interrupts:
         BRK: TIM8_BRK_TIM12
         COM: TIM8_TRG_COM_TIM14
@@ -5684,115 +6829,379 @@ cores:
         UP: TIM8_UP_TIM13
       dma_channels:
         CH1:
-        - *id200
+        - *id146
         CH2:
-        - *id201
+        - *id147
         CH3:
-        - *id202
+        - *id148
         CH4:
-        - *id203
+        - *id149
         COM:
-        - *id204
+        - *id150
         TRIG:
-        - *id205
+        - *id151
         UP:
-        - *id206
+        - *id152
     UART4:
       address: 0x40004c00
-      rcc: *id207
+      rcc: *id153
       block: usart_v2/USART
-      pins: *id208
+      pins:
+      - pin: PA0
+        signal: TX
+        af: 8
+      - pin: PA1
+        signal: RX
+        af: 8
+      - pin: PA11
+        signal: RX
+        af: 6
+      - pin: PA12
+        signal: TX
+        af: 6
+      - pin: PA15
+        signal: DE
+        af: 8
+      - pin: PA15
+        signal: RTS
+        af: 8
+      - pin: PB0
+        signal: CTS
+        af: 8
+      - pin: PB8
+        signal: RX
+        af: 8
+      - pin: PB9
+        signal: TX
+        af: 8
+      - pin: PB14
+        signal: DE
+        af: 8
+      - pin: PB14
+        signal: RTS
+        af: 8
+      - pin: PB15
+        signal: CTS
+        af: 8
+      - pin: PC10
+        signal: TX
+        af: 8
+      - pin: PC11
+        signal: RX
+        af: 8
+      - pin: PD0
+        signal: RX
+        af: 8
+      - pin: PD1
+        signal: TX
+        af: 8
       interrupts:
         GLOBAL: UART4
       dma_channels:
         RX:
-        - *id209
+        - *id154
         TX:
-        - *id210
+        - *id155
     UART5:
       address: 0x40005000
-      rcc: *id211
+      rcc: *id156
       block: usart_v2/USART
-      pins: *id212
+      pins:
+      - pin: PB5
+        signal: RX
+        af: 14
+      - pin: PB6
+        signal: TX
+        af: 14
+      - pin: PB12
+        signal: RX
+        af: 14
+      - pin: PB13
+        signal: TX
+        af: 14
+      - pin: PC8
+        signal: DE
+        af: 8
+      - pin: PC8
+        signal: RTS
+        af: 8
+      - pin: PC9
+        signal: CTS
+        af: 8
+      - pin: PC12
+        signal: TX
+        af: 8
+      - pin: PD2
+        signal: RX
+        af: 8
       interrupts:
         GLOBAL: UART5
       dma_channels:
         RX:
-        - *id213
+        - *id157
         TX:
-        - *id214
+        - *id158
     UART7:
       address: 0x40007800
-      rcc: *id215
+      rcc: *id159
       block: usart_v2/USART
-      pins: *id216
+      pins:
+      - pin: PA8
+        signal: RX
+        af: 11
+      - pin: PA15
+        signal: TX
+        af: 11
+      - pin: PB3
+        signal: RX
+        af: 11
+      - pin: PB4
+        signal: TX
+        af: 11
+      - pin: PE7
+        signal: RX
+        af: 7
+      - pin: PE8
+        signal: TX
+        af: 7
+      - pin: PE9
+        signal: DE
+        af: 7
+      - pin: PE9
+        signal: RTS
+        af: 7
+      - pin: PE10
+        signal: CTS
+        af: 7
       interrupts:
         GLOBAL: UART7
       dma_channels:
         RX:
-        - *id217
+        - *id160
         TX:
-        - *id218
+        - *id161
     UART8:
       address: 0x40007c00
-      rcc: *id219
+      rcc: *id162
       block: usart_v2/USART
-      pins: *id220
+      pins:
+      - pin: PD14
+        signal: CTS
+        af: 8
+      - pin: PD15
+        signal: DE
+        af: 8
+      - pin: PD15
+        signal: RTS
+        af: 8
+      - pin: PE0
+        signal: RX
+        af: 8
+      - pin: PE1
+        signal: TX
+        af: 8
       interrupts:
         GLOBAL: UART8
       dma_channels:
         RX:
-        - *id221
+        - *id163
         TX:
-        - *id222
+        - *id164
     USART1:
       address: 0x40011000
-      rcc: *id223
+      rcc: *id165
       block: usart_v2/USART
-      pins: *id224
+      pins:
+      - pin: PA8
+        signal: CK
+        af: 7
+      - pin: PA9
+        signal: TX
+        af: 7
+      - pin: PA10
+        signal: RX
+        af: 7
+      - pin: PA11
+        signal: CTS
+        af: 7
+      - pin: PA11
+        signal: NSS
+        af: 7
+      - pin: PA12
+        signal: DE
+        af: 7
+      - pin: PA12
+        signal: RTS
+        af: 7
+      - pin: PB6
+        signal: TX
+        af: 7
+      - pin: PB7
+        signal: RX
+        af: 7
+      - pin: PB14
+        signal: TX
+        af: 4
+      - pin: PB15
+        signal: RX
+        af: 4
       interrupts:
         GLOBAL: USART1
       dma_channels:
         RX:
-        - *id225
+        - *id166
         TX:
-        - *id226
+        - *id167
     USART2:
       address: 0x40004400
-      rcc: *id227
+      rcc: *id168
       block: usart_v2/USART
-      pins: *id228
+      pins:
+      - pin: PA0
+        signal: CTS
+        af: 7
+      - pin: PA0
+        signal: NSS
+        af: 7
+      - pin: PA1
+        signal: DE
+        af: 7
+      - pin: PA1
+        signal: RTS
+        af: 7
+      - pin: PA2
+        signal: TX
+        af: 7
+      - pin: PA3
+        signal: RX
+        af: 7
+      - pin: PA4
+        signal: CK
+        af: 7
+      - pin: PD3
+        signal: CTS
+        af: 7
+      - pin: PD3
+        signal: NSS
+        af: 7
+      - pin: PD4
+        signal: DE
+        af: 7
+      - pin: PD4
+        signal: RTS
+        af: 7
+      - pin: PD5
+        signal: TX
+        af: 7
+      - pin: PD6
+        signal: RX
+        af: 7
+      - pin: PD7
+        signal: CK
+        af: 7
       interrupts:
         GLOBAL: USART2
       dma_channels:
         RX:
-        - *id229
+        - *id169
         TX:
-        - *id230
+        - *id170
     USART3:
       address: 0x40004800
-      rcc: *id231
+      rcc: *id171
       block: usart_v2/USART
-      pins: *id232
+      pins:
+      - pin: PB10
+        signal: TX
+        af: 7
+      - pin: PB11
+        signal: RX
+        af: 7
+      - pin: PB12
+        signal: CK
+        af: 7
+      - pin: PB13
+        signal: CTS
+        af: 7
+      - pin: PB13
+        signal: NSS
+        af: 7
+      - pin: PB14
+        signal: DE
+        af: 7
+      - pin: PB14
+        signal: RTS
+        af: 7
+      - pin: PC10
+        signal: TX
+        af: 7
+      - pin: PC11
+        signal: RX
+        af: 7
+      - pin: PC12
+        signal: CK
+        af: 7
+      - pin: PD8
+        signal: TX
+        af: 7
+      - pin: PD9
+        signal: RX
+        af: 7
+      - pin: PD10
+        signal: CK
+        af: 7
+      - pin: PD11
+        signal: CTS
+        af: 7
+      - pin: PD11
+        signal: NSS
+        af: 7
+      - pin: PD12
+        signal: DE
+        af: 7
+      - pin: PD12
+        signal: RTS
+        af: 7
       interrupts:
         GLOBAL: USART3
       dma_channels:
         RX:
-        - *id233
+        - *id172
         TX:
-        - *id234
+        - *id173
     USART6:
       address: 0x40011400
-      rcc: *id235
+      rcc: *id174
       block: usart_v2/USART
-      pins: *id236
+      pins:
+      - pin: PC6
+        signal: TX
+        af: 7
+      - pin: PC7
+        signal: RX
+        af: 7
+      - pin: PC8
+        signal: CK
+        af: 7
+      - pin: PG8
+        signal: DE
+        af: 7
+      - pin: PG8
+        signal: RTS
+        af: 7
+      - pin: PG15
+        signal: CTS
+        af: 7
+      - pin: PG15
+        signal: NSS
+        af: 7
       interrupts:
         GLOBAL: USART6
       dma_channels:
         RX:
-        - *id237
+        - *id175
         TX:
-        - *id238
+        - *id176
     USB_OTG_FS:
       address: 0x40080000
       interrupts:
@@ -5805,12 +7214,12 @@ cores:
       address: 0x58003c00
     WWDG1:
       address: 0x50003000
-      rcc: *id239
+      rcc: *id177
       interrupts:
         GLOBAL: WWDG
     WWDG2:
       address: 0x40002c00
-      rcc: *id240
+      rcc: *id178
       interrupts: {}
   interrupts:
     ADC: 18
