@@ -649,7 +649,7 @@ def parse_chips():
                 for signal in pin['Signal']:
                     signal = signal['@Name']
                     # TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
-                    if signal not in {'GPIO', 'CEC', 'AUDIOCLK', 'VDDTCXO'}:
+                    if signal not in {'GPIO', 'CEC', 'AUDIOCLK', 'VDDTCXO'} and 'EXTI' not in signal:
                         periph, signal = signal.split('_', maxsplit=1)
                         pins = periph_pins.setdefault(periph, [])
                         pins.append(OrderedDict(pin=pin_name, signal=signal))
