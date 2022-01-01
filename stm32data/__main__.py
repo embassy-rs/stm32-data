@@ -116,6 +116,7 @@ perimap = [
     ('.*:DAC:dacif_v1_1', 'dac_v1/DAC'),
     ('.*:DAC:dacif_v2_0', 'dac_v2/DAC'),
     ('.*:DAC:dacif_v3_0', 'dac_v2/DAC'),
+    ('.*:ADC:aditf_v2_5F1', 'adc_f1/ADC'),
     ('.*:ADC:aditf2_v1_1', 'adc_v2/ADC'),
     ('.*:ADC:aditf5_v2_0', 'adc_v3/ADC'),
     ('STM32G0.*:ADC:.*', 'adc_g0/ADC'),
