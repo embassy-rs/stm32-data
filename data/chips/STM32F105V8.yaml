@@ -494,6 +494,8 @@ cores:
             field: I2C1RST
       block: i2c_v1/I2C
       pins:
+      - pin: PB5
+        signal: SMBA
       - pin: PB6
         signal: SCL
       - pin: PB7
@@ -522,6 +524,13 @@ cores:
             register: APB1RSTR
             field: I2C2RST
       block: i2c_v1/I2C
+      pins:
+      - pin: PB10
+        signal: SCL
+      - pin: PB11
+        signal: SDA
+      - pin: PB12
+        signal: SMBA
       interrupts:
         ER: I2C2_ER
         EV: I2C2_EV
@@ -546,10 +555,22 @@ cores:
     RCC:
       address: 0x40021000
       block: rcc_f1/RCC
+      pins:
+      - pin: PA8
+        signal: MCO
+      - pin: PC14
+        signal: OSC32_IN
+      - pin: PC15
+        signal: OSC32_OUT
       interrupts:
         GLOBAL: RCC
     RTC:
       address: 0x40002800
+      pins:
+      - pin: PC13
+        signal: OUT
+      - pin: PC13
+        signal: TAMPER
       interrupts:
         GLOBAL: TAMPER
     SPI1:
@@ -598,6 +619,15 @@ cores:
           reset:
             register: APB1RSTR
             field: SPI2RST
+      pins:
+      - pin: PB12
+        signal: NSS
+      - pin: PB13
+        signal: SCK
+      - pin: PB14
+        signal: MISO
+      - pin: PB15
+        signal: MOSI
       interrupts:
         GLOBAL: SPI2
       dma_channels:
@@ -799,6 +829,8 @@ cores:
         signal: CH3
       - pin: PC9
         signal: CH4
+      - pin: PD2
+        signal: ETR
       interrupts:
         BRK: TIM3
         COM: TIM3
@@ -844,6 +876,8 @@ cores:
         signal: CH3
       - pin: PD15
         signal: CH4
+      - pin: PE0
+        signal: ETR
       interrupts:
         BRK: TIM4
         COM: TIM4
@@ -870,6 +904,15 @@ cores:
             register: APB1RSTR
             field: TIM5RST
       block: timer_v1/TIM_GP16
+      pins:
+      - pin: PA0
+        signal: CH1
+      - pin: PA1
+        signal: CH2
+      - pin: PA2
+        signal: CH3
+      - pin: PA3
+        signal: CH4
       interrupts:
         BRK: TIM5
         COM: TIM5
@@ -939,6 +982,11 @@ cores:
           reset:
             register: APB1RSTR
             field: UART4RST
+      pins:
+      - pin: PC10
+        signal: TX
+      - pin: PC11
+        signal: RX
       interrupts:
         GLOBAL: UART4
       dma_channels:
@@ -957,6 +1005,11 @@ cores:
           reset:
             register: APB1RSTR
             field: UART5RST
+      pins:
+      - pin: PC12
+        signal: TX
+      - pin: PD2
+        signal: RX
       interrupts:
         GLOBAL: UART5
     USART1:
@@ -972,10 +1025,16 @@ cores:
             field: USART1RST
       block: usart_v1/USART
       pins:
+      - pin: PA8
+        signal: CK
       - pin: PA9
         signal: TX
       - pin: PA10
         signal: RX
+      - pin: PA11
+        signal: CTS
+      - pin: PA12
+        signal: RTS
       - pin: PB6
         signal: TX
       - pin: PB7

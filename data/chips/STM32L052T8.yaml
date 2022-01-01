@@ -265,8 +265,16 @@ cores:
       address: 0x40010018
       pins:
       - pin: PA0
+        signal: INM
+      - pin: PA0
         signal: OUT
         af: 7
+      - pin: PA1
+        signal: INP
+      - pin: PA4
+        signal: INM
+      - pin: PA5
+        signal: INM
       - pin: PA6
         signal: OUT
         af: 7
@@ -279,14 +287,32 @@ cores:
       address: 0x4001001c
       pins:
       - pin: PA2
+        signal: INM
+      - pin: PA2
         signal: OUT
         af: 7
+      - pin: PA3
+        signal: INP
+      - pin: PA4
+        signal: INM
+      - pin: PA5
+        signal: INM
       - pin: PA7
         signal: OUT
         af: 7
       - pin: PA12
         signal: OUT
         af: 7
+      - pin: PB3
+        signal: INM
+      - pin: PB4
+        signal: INP
+      - pin: PB5
+        signal: INP
+      - pin: PB6
+        signal: INP
+      - pin: PB7
+        signal: INP
       interrupts:
         GLOBAL: ADC1_COMP
     CRC:
@@ -317,9 +343,6 @@ cores:
       - pin: PA8
         signal: SYNC
         af: 2
-      - pin: PH0
-        signal: SYNC
-        af: 0
     DAC:
       address: 0x40007400
       rcc:
@@ -449,9 +472,6 @@ cores:
       - pin: PB8
         signal: SCL
         af: 4
-      - pin: PB9
-        signal: SDA
-        af: 4
       interrupts:
         ER: I2C1
         EV: I2C1
@@ -485,15 +505,6 @@ cores:
       - pin: PB11
         signal: SDA
         af: 6
-      - pin: PB12
-        signal: SMBA
-        af: 5
-      - pin: PB13
-        signal: SCL
-        af: 5
-      - pin: PB14
-        signal: SDA
-        af: 5
       interrupts:
         ER: I2C2
         EV: I2C2
@@ -531,18 +542,6 @@ cores:
       - pin: PB7
         signal: IN2
         af: 2
-      - pin: PC0
-        signal: IN1
-        af: 0
-      - pin: PC1
-        signal: OUT
-        af: 0
-      - pin: PC2
-        signal: IN2
-        af: 0
-      - pin: PC3
-        signal: ETR
-        af: 0
       interrupts:
         GLOBAL: LPTIM1
     LPUART1:
@@ -572,39 +571,6 @@ cores:
       - pin: PB11
         signal: RX
         af: 4
-      - pin: PB12
-        signal: DE
-        af: 2
-      - pin: PB12
-        signal: RTS
-        af: 2
-      - pin: PB13
-        signal: CTS
-        af: 4
-      - pin: PB14
-        signal: DE
-        af: 4
-      - pin: PB14
-        signal: RTS
-        af: 4
-      - pin: PC4
-        signal: TX
-        af: 2
-      - pin: PC5
-        signal: RX
-        af: 2
-      - pin: PC10
-        signal: TX
-        af: 0
-      - pin: PC11
-        signal: RX
-        af: 0
-      - pin: PD2
-        signal: DE
-        af: 0
-      - pin: PD2
-        signal: RTS
-        af: 0
       interrupts:
         GLOBAL: RNG_LPUART1
       dma_channels:
@@ -639,6 +605,10 @@ cores:
       - pin: PA9
         signal: MCO
         af: 0
+      - pin: PC14
+        signal: OSC32_IN
+      - pin: PC15
+        signal: OSC32_OUT
       interrupts: {}
     RNG:
       address: 0x40025000
@@ -656,15 +626,8 @@ cores:
     RTC:
       address: 0x40002800
       pins:
-      - pin: PB14
-        signal: OUT_ALARM
-        af: 2
-      - pin: PB14
-        signal: OUT_CALIB
-        af: 2
-      - pin: PB15
-        signal: REFIN
-        af: 2
+      - pin: PA0
+        signal: TAMP2
       interrupts:
         GLOBAL: RTC
     SPI1:
@@ -827,15 +790,6 @@ cores:
       - pin: PA3
         signal: CH2
         af: 0
-      - pin: PB13
-        signal: CH1
-        af: 6
-      - pin: PB14
-        signal: CH2
-        af: 6
-      - pin: PC9
-        signal: ETR
-        af: 0
       interrupts:
         BRK: TIM21
         COM: TIM21
@@ -869,15 +823,6 @@ cores:
       - pin: PB5
         signal: CH2
         af: 4
-      - pin: PC6
-        signal: CH1
-        af: 0
-      - pin: PC7
-        signal: CH2
-        af: 0
-      - pin: PC8
-        signal: ETR
-        af: 0
       interrupts:
         BRK: TIM22
         COM: TIM22
@@ -968,42 +913,6 @@ cores:
         af: 3
       - pin: PB11
         signal: G6_IO1
-        af: 3
-      - pin: PB12
-        signal: G6_IO2
-        af: 3
-      - pin: PB13
-        signal: G6_IO3
-        af: 3
-      - pin: PB14
-        signal: G6_IO4
-        af: 3
-      - pin: PC0
-        signal: G7_IO1
-        af: 3
-      - pin: PC1
-        signal: G7_IO2
-        af: 3
-      - pin: PC2
-        signal: G7_IO3
-        af: 3
-      - pin: PC3
-        signal: G7_IO4
-        af: 3
-      - pin: PC5
-        signal: G3_IO1
-        af: 3
-      - pin: PC6
-        signal: G8_IO1
-        af: 3
-      - pin: PC7
-        signal: G8_IO2
-        af: 3
-      - pin: PC8
-        signal: G8_IO3
-        af: 3
-      - pin: PC9
-        signal: G8_IO4
         af: 3
       interrupts:
         GLOBAL: TSC
@@ -1119,10 +1028,11 @@ cores:
             register: APB1RSTR
             field: USBRST
       pins:
+      - pin: PA11
+        signal: DM
+      - pin: PA12
+        signal: DP
       - pin: PA13
-        signal: NOE
-        af: 2
-      - pin: PC9
         signal: NOE
         af: 2
       interrupts:

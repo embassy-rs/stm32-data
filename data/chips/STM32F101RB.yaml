@@ -364,6 +364,8 @@ cores:
             field: I2C1RST
       block: i2c_v1/I2C
       pins:
+      - pin: PB5
+        signal: SMBA
       - pin: PB6
         signal: SCL
       - pin: PB7
@@ -392,6 +394,13 @@ cores:
             register: APB1RSTR
             field: I2C2RST
       block: i2c_v1/I2C
+      pins:
+      - pin: PB10
+        signal: SCL
+      - pin: PB11
+        signal: SDA
+      - pin: PB12
+        signal: SMBA
       interrupts:
         ER: I2C2_ER
         EV: I2C2_EV
@@ -416,10 +425,26 @@ cores:
     RCC:
       address: 0x40021000
       block: rcc_f1/RCC
+      pins:
+      - pin: PA8
+        signal: MCO
+      - pin: PC14
+        signal: OSC32_IN
+      - pin: PC15
+        signal: OSC32_OUT
+      - pin: PD0
+        signal: OSC_IN
+      - pin: PD1
+        signal: OSC_OUT
       interrupts:
         GLOBAL: RCC
     RTC:
       address: 0x40002800
+      pins:
+      - pin: PC13
+        signal: OUT
+      - pin: PC13
+        signal: TAMPER
       interrupts:
         GLOBAL: TAMPER
     SPI1:
@@ -470,6 +495,15 @@ cores:
             register: APB1RSTR
             field: SPI2RST
       block: spi_f1/SPI
+      pins:
+      - pin: PB12
+        signal: NSS
+      - pin: PB13
+        signal: SCK
+      - pin: PB14
+        signal: MISO
+      - pin: PB15
+        signal: MOSI
       interrupts:
         GLOBAL: SPI2
       dma_channels:
@@ -559,6 +593,8 @@ cores:
         signal: CH3
       - pin: PC9
         signal: CH4
+      - pin: PD2
+        signal: ETR
       interrupts:
         BRK: TIM3
         COM: TIM3
@@ -596,14 +632,6 @@ cores:
         signal: CH3
       - pin: PB9
         signal: CH4
-      - pin: PD12
-        signal: CH1
-      - pin: PD13
-        signal: CH2
-      - pin: PD14
-        signal: CH3
-      - pin: PD15
-        signal: CH4
       interrupts:
         BRK: TIM4
         COM: TIM4
@@ -631,10 +659,16 @@ cores:
             field: USART1RST
       block: usart_v1/USART
       pins:
+      - pin: PA8
+        signal: CK
       - pin: PA9
         signal: TX
       - pin: PA10
         signal: RX
+      - pin: PA11
+        signal: CTS
+      - pin: PA12
+        signal: RTS
       - pin: PB6
         signal: TX
       - pin: PB7
@@ -668,16 +702,6 @@ cores:
       - pin: PA3
         signal: RX
       - pin: PA4
-        signal: CK
-      - pin: PD3
-        signal: CTS
-      - pin: PD4
-        signal: RTS
-      - pin: PD5
-        signal: TX
-      - pin: PD6
-        signal: RX
-      - pin: PD7
         signal: CK
       interrupts:
         GLOBAL: USART2
@@ -715,16 +739,6 @@ cores:
         signal: RX
       - pin: PC12
         signal: CK
-      - pin: PD8
-        signal: TX
-      - pin: PD9
-        signal: RX
-      - pin: PD10
-        signal: CK
-      - pin: PD11
-        signal: CTS
-      - pin: PD12
-        signal: RTS
       interrupts:
         GLOBAL: USART3
       dma_channels:
