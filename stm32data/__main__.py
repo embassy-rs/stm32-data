@@ -648,6 +648,8 @@ def parse_chips():
             for pin_name, pin in chip['pins'].items():
                 for signal in pin['Signal']:
                     signal = signal['@Name']
+                    if signal.startswith('DEBUG_SUBGHZSPI-'):
+                        signal = 'SUBGHZSPI_' + signal[16:-3]
                     # TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
                     if signal not in {'GPIO', 'CEC', 'AUDIOCLK', 'VDDTCXO'} and 'EXTI' not in signal:
                         periph, signal = signal.split('_', maxsplit=1)
