@@ -604,6 +604,11 @@ def parse_chips():
                             'signal': signal_name,
                         }))
 
+        for pname, p in analog_pins.items():
+            p = remove_duplicates(p)
+            sort_pins(p)
+            analog_pins[pname] = p
+
         cores = []
         for core_xml in children(chip['xml'], 'Core'):
             core_name = corename(core_xml)
