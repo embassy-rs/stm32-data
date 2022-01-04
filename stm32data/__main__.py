@@ -292,7 +292,7 @@ ghost_peris = [
 
 alt_peri_defines = {
     'DBGMCU': ['DBGMCU_BASE', 'DBG_BASE'],
-    'FLASH': ['FLASH_R_BASE'],
+    'FLASH': ['FLASH_R_BASE', 'FLASH_REG_BASE'],
     'ADC_COMMON': ['ADC_COMMON', 'ADC1_COMMON', 'ADC12_COMMON', 'ADC123_COMMON'],
     'CAN': ['CAN_BASE', 'CAN1_BASE'],
     'FMC': ['FMC_BASE', 'FMC_R_BASE']
