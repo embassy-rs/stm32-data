@@ -1101,6 +1101,7 @@ fieldset/BDCR:
       description: SE oscillator drive capability
       bit_offset: 3
       bit_size: 2
+      enum: LSEDRV
     - name: LSECSSON
       description: LSECSSON
       bit_offset: 5
@@ -1113,6 +1114,7 @@ fieldset/BDCR:
       description: RTC clock source selection
       bit_offset: 8
       bit_size: 2
+      enum: RTCSEL
     - name: RTCEN
       description: RTC clock enable
       bit_offset: 15
@@ -1246,34 +1248,42 @@ fieldset/CFGR:
       description: System clock switch
       bit_offset: 0
       bit_size: 2
+      enum: SW
     - name: SWS
       description: System clock switch status
       bit_offset: 2
       bit_size: 2
+      enum: SW
     - name: HPRE
       description: AHB prescaler
       bit_offset: 4
       bit_size: 4
+      enum: HPRE
     - name: PPRE1
-      description: PB low-speed prescaler (APB1)
+      description: APB low-speed prescaler (APB1)
       bit_offset: 8
       bit_size: 3
+      enum: PPRE
     - name: PPRE2
       description: APB high-speed prescaler (APB2)
       bit_offset: 11
       bit_size: 3
+      enum: PPRE
     - name: STOPWUCK
       description: Wakeup from Stop and CSS backup clock selection
       bit_offset: 15
       bit_size: 1
+      enum: STOPWUCK
     - name: MCOSEL
-      description: Microcontroller clock output
+      description: Microcontroller clock output selection
       bit_offset: 24
-      bit_size: 3
+      bit_size: 4
+      enum: MCOSEL
     - name: MCOPRE
       description: Microcontroller clock output prescaler
       bit_offset: 28
       bit_size: 3
+      enum: MCOPRE
 fieldset/CICR:
   description: Clock interrupt clear register
   fields:
@@ -1587,6 +1597,7 @@ fieldset/PLLCFGR:
       description: "Main PLL, PLLSAI1 and PLLSAI2 entry clock source"
       bit_offset: 0
       bit_size: 2
+      enum: PLLSRC
     - name: PLLM
       description: Division factor for the main PLL and audio PLL (PLLSAI1 and PLLSAI2) input clock
       bit_offset: 4
@@ -1701,6 +1712,99 @@ fieldset/PLLSAI2CFGR:
       description: PLLSAI2 division factor for PLLSAI2CLK
       bit_offset: 27
       bit_size: 5
+enum/HPRE:
+  bit_size: 4
+  variants:
+    - name: Div1
+      description: system clock not divided
+      value: 0
+    - name: Div2
+      description: system clock divided by 2
+      value: 8
+    - name: Div4
+      description: system clock divided by 4
+      value: 9
+    - name: Div8
+      description: system clock divided by 8
+      value: 10
+    - name: Div16
+      description: system clock divided by 16
+      value: 11
+    - name: Div64
+      description: system clock divided by 64
+      value: 12
+    - name: Div128
+      description: system clock divided by 128
+      value: 13
+    - name: Div256
+      description: system clock divided by 256
+      value: 14
+    - name: Div512
+      description: system clock divided by 512
+      value: 15
+enum/LSEDRV:
+  bit_size: 2
+  variants:
+    - name: Low
+      description: Lowest drive
+      value: 0
+    - name: MediumLow
+      description: Medium low drive
+      value: 1
+    - name: MediumHigh
+      description: Medium high drive
+      value: 2
+    - name: High
+      description: Highest drive
+      value: 3
+enum/MCOPRE:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: No division
+      value: 0
+    - name: Div2
+      description: Division by 2
+      value: 1
+    - name: Div4
+      description: Division by 4
+      value: 2
+    - name: Div8
+      description: Division by 8
+      value: 3
+    - name: Div16
+      description: Division by 16
+      value: 4
+enum/MCOSEL:
+  bit_size: 4
+  variants:
+    - name: NoClock
+      description: No clock
+      value: 0
+    - name: SYSCLK
+      description: SYSCLK clock selected
+      value: 1
+    - name: HSI16
+      description: HSI oscillator clock selected
+      value: 2
+    - name: MSI
+      description: MSI oscillator clock selected
+      value: 3
+    - name: HSE
+      description: HSE oscillator clock selected
+      value: 4
+    - name: PLL
+      description: PLL clock selected
+      value: 5
+    - name: LSI
+      description: LSI oscillator clock selected
+      value: 6
+    - name: LSE
+      description: LSE oscillator clock selected
+      value: 7
+    - name: HSI48
+      description: HSI48 oscillator clock selected
+      value: 8
 enum/MSIRANGE:
   bit_size: 4
   variants:
@@ -1740,3 +1844,75 @@ enum/MSIRANGE:
     - name: Range48M
       description: range 11 around 48 MHz
       value: 11
+enum/PLLSRC:
+  bit_size: 2
+  variants:
+    - name: None
+      description: No clock sent to PLL
+      value: 0
+    - name: MSI
+      description: MSI selected as PLL input clock
+      value: 1
+    - name: HSI16
+      description: HSI selected as PLL input clock
+      value: 2
+    - name: HSE
+      description: HSE selected as PLL input clock
+      value: 3
+enum/PPRE:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: HCLK not divided
+      value: 0
+    - name: Div2
+      description: HCLK divided by 2
+      value: 4
+    - name: Div4
+      description: HCLK divided by 4
+      value: 5
+    - name: Div8
+      description: HCLK divided by 8
+      value: 6
+    - name: Div16
+      description: HCLK divided by 16
+      value: 7
+enum/RTCSEL:
+  bit_size: 2
+  variants:
+    - name: NoClock
+      description: No clock
+      value: 0
+    - name: LSE
+      description: LSE oscillator clock used as RTC clock
+      value: 1
+    - name: LSI
+      description: LSI oscillator clock used as RTC clock
+      value: 2
+    - name: HSE
+      description: HSE oscillator clock divided by 32 used as the RTC clock
+      value: 3
+enum/STOPWUCK:
+  bit_size: 1
+  variants:
+    - name: MSI
+      description: Internal 64 KHz to 4 MHz (MSI) oscillator selected as wake-up from Stop clock
+      value: 0
+    - name: HSI16
+      description: Internal 16 MHz (HSI) oscillator selected as wake-up from Stop clock (or HSI16/4 if HSI16DIVEN=1)
+      value: 1
+enum/SW:
+  bit_size: 2
+  variants:
+    - name: MSI
+      description: MSI oscillator used as system clock
+      value: 0
+    - name: HSI16
+      description: HSI oscillator used as system clock
+      value: 1
+    - name: HSE
+      description: HSE oscillator used as system clock
+      value: 2
+    - name: PLL
+      description: PLL used as system clock
+      value: 3
