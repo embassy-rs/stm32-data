@@ -2,15 +2,15 @@
 block/PWR:
   description: Power control
   items:
-    - name: CR
+    - name: CR1
       description: power control register
       byte_offset: 0
-      fieldset: CR
-    - name: CSR
+      fieldset: CR1
+    - name: CSR1
       description: power control/status register
       byte_offset: 4
-      fieldset: CSR
-fieldset/CR:
+      fieldset: CSR1
+fieldset/CR1:
   description: power control register
   fields:
     - name: LPDS
@@ -21,6 +21,7 @@ fieldset/CR:
       description: Power down deepsleep
       bit_offset: 1
       bit_size: 1
+      enum: PDDS
     - name: CWUF
       description: Clear wakeup flag
       bit_offset: 2
@@ -61,16 +62,17 @@ fieldset/CR:
       description: Regulator voltage scaling output selection
       bit_offset: 14
       bit_size: 2
+      enum: VOS
     - name: ODEN
-      description: Over-drive enable
+      description: Over-drive enable (STM32F4[23] ONLY)
       bit_offset: 16
       bit_size: 1
     - name: ODSWEN
-      description: Over-drive switching enabled
+      description: Over-drive switching enabled (STM32F4[23] ONLY)
       bit_offset: 17
       bit_size: 1
     - name: UDEN
-      description: Under-drive enable in stop mode
+      description: Under-drive enable in stop mode (STM32F4[23] ONLY)
       bit_offset: 18
       bit_size: 2
     - name: FMSSR
@@ -81,7 +83,7 @@ fieldset/CR:
       description: Flash Interface Stop while System Run
       bit_offset: 21
       bit_size: 1
-fieldset/CSR:
+fieldset/CSR1:
   description: power control/status register
   fields:
     - name: WUF
@@ -113,18 +115,39 @@ fieldset/CSR:
       bit_offset: 9
       bit_size: 1
     - name: VOSRDY
-      description: Regulator voltage scaling output selection ready bit
+      description: Regulator voltage scaling output selection ready bit (STM32F4[23] ONLY)
       bit_offset: 14
       bit_size: 1
     - name: ODRDY
-      description: Over-drive mode ready
+      description: Over-drive mode ready (STM32F4[23] ONLY)
       bit_offset: 16
       bit_size: 1
     - name: ODSWRDY
-      description: Over-drive mode switching ready
+      description: Over-drive mode switching ready (STM32F4[23] ONLY)
       bit_offset: 17
       bit_size: 1
     - name: UDRDY
       description: Under-drive ready flag
       bit_offset: 18
       bit_size: 2
+enum/PDDS:
+  bit_size: 1
+  variants:
+    - name: STOP_MODE
+      description: Enter Stop mode when the CPU enters deepsleep
+      value: 0
+    - name: STANDBY_MODE
+      description: Enter Standby mode when the CPU enters deepsleep
+      value: 1
+enum/VOS:
+  bit_size: 2
+  variants:
+    - name: SCALE3
+      description: Scale 3 mode (STM32F4[23] ONLY)
+      value: 1
+    - name: SCALE2
+      description: Scale 2 mode
+      value: 2
+    - name: SCALE1
+      description: Scale 1 mode (reset value)
+      value: 3
