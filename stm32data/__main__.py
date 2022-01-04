@@ -148,6 +148,7 @@ perimap = [
     ('.*:MDIOS:mdios1_v1_0', 'mdios_v1/MDIOS'),
     ('.*:QUADSPI:quadspi1_v1_0', 'quadspi_v1/QUADSPI'),
     ('.*:RTC:rtc2_v2_6', 'rtc_v2/RTC'),
+    ('.*:RTC:rtc2_v2_WB', 'rtc_wb/RTC'),
     ('.*:SAI:sai1_v1_1', 'sai_v1/SAI'),
     ('.*:SDMMC:sdmmc_v1_3', 'sdmmc_v1/SDMMC'),
     ('.*:SPDIFRX:spdifrx1_v1_0', 'spdifrx_v1/SPDIFRX'),
@@ -200,6 +201,7 @@ perimap = [
     ('STM32L1.*:PWR:.*', 'pwr_l1/PWR'),
     ('STM32U5.*:PWR:.*', 'pwr_u5/PWR'),
     ('STM32WL.*:PWR:.*', 'pwr_wl5/PWR'),
+    ('STM32WB.*:PWR:.*', 'pwr_wb55/PWR'),
     ('STM32H7.*:FLASH:.*', 'flash_h7/FLASH'),
     ('STM32F0.*:FLASH:.*', 'flash_f0/FLASH'),
     ('STM32F1.*:FLASH:.*', 'flash_f1/FLASH'),
@@ -208,6 +210,7 @@ perimap = [
     ('STM32F7.*:FLASH:.*', 'flash_f7/FLASH'),
     ('STM32L4.*:FLASH:.*', 'flash_l4/FLASH'),
     ('STM32U5.*:FLASH:.*', 'flash_u5/FLASH'),
+    ('STM32WB.*:FLASH:.*', 'flash_wb55/FLASH'),
     ('STM32F7.*:ETH:ETH:ethermac110_v2_0', 'eth_v1c/ETH'),
     ('.*ETH:ethermac110_v3_0', 'eth_v2/ETH'),
 
