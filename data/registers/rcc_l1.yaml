@@ -568,42 +568,52 @@ fieldset/CFGR:
       description: System clock switch
       bit_offset: 0
       bit_size: 2
+      enum: SW
     - name: SWS
       description: System clock switch status
       bit_offset: 2
       bit_size: 2
+      enum: SW
     - name: HPRE
       description: AHB prescaler
       bit_offset: 4
       bit_size: 4
+      enum: HPRE
     - name: PPRE1
       description: APB low-speed prescaler (APB1)
       bit_offset: 8
       bit_size: 3
+      enum: PPRE
     - name: PPRE2
       description: APB high-speed prescaler (APB2)
       bit_offset: 11
       bit_size: 3
+      enum: PPRE
     - name: PLLSRC
       description: PLL entry clock source
       bit_offset: 16
       bit_size: 1
+      enum: PLLSRC
     - name: PLLMUL
       description: PLL multiplication factor
       bit_offset: 18
       bit_size: 4
+      enum: PLLMUL
     - name: PLLDIV
       description: PLL output division
       bit_offset: 22
       bit_size: 2
+      enum: PLLDIV
     - name: MCOSEL
       description: Microcontroller clock output selection
       bit_offset: 24
       bit_size: 3
+      enum: MCOSEL
     - name: MCOPRE
       description: Microcontroller clock output prescaler
       bit_offset: 28
       bit_size: 3
+      enum: MCOPRE
 fieldset/CIR:
   description: Clock interrupt register
   fields:
@@ -730,16 +740,13 @@ fieldset/CR:
       description: Clock security system enable
       bit_offset: 28
       bit_size: 1
-    - name: RTCPRE0
-      description: RTCPRE0
+    - name: RTCPRE
+      description: RTC/LCD prescaler
       bit_offset: 29
-      bit_size: 1
-    - name: RTCPRE1
-      description: TC/LCD prescaler
-      bit_offset: 30
-      bit_size: 1
+      bit_size: 2
+      enum: RTCPRE
 fieldset/CSR:
-  description: Control/status register
+  description: Control and status register
   fields:
     - name: LSION
       description: Internal low-speed oscillator enable
@@ -765,6 +772,7 @@ fieldset/CSR:
       description: RTC and LCD clock source selection
       bit_offset: 16
       bit_size: 2
+      enum: RTCSEL
     - name: RTCEN
       description: RTC clock enable
       bit_offset: 22
@@ -816,6 +824,7 @@ fieldset/ICSCR:
       description: MSI clock ranges
       bit_offset: 13
       bit_size: 3
+      enum: MSIRANGE
     - name: MSICAL
       description: MSI clock calibration
       bit_offset: 16
@@ -824,3 +833,219 @@ fieldset/ICSCR:
       description: MSI clock trimming
       bit_offset: 24
       bit_size: 8
+enum/HPRE:
+  bit_size: 4
+  variants:
+    - name: Div1
+      description: system clock not divided
+      value: 0
+    - name: Div2
+      description: system clock divided by 2
+      value: 8
+    - name: Div4
+      description: system clock divided by 4
+      value: 9
+    - name: Div8
+      description: system clock divided by 8
+      value: 10
+    - name: Div16
+      description: system clock divided by 16
+      value: 11
+    - name: Div64
+      description: system clock divided by 64
+      value: 12
+    - name: Div128
+      description: system clock divided by 128
+      value: 13
+    - name: Div256
+      description: system clock divided by 256
+      value: 14
+    - name: Div512
+      description: system clock divided by 512
+      value: 15
+enum/MCOPRE:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: No division
+      value: 0
+    - name: Div2
+      description: Division by 2
+      value: 1
+    - name: Div4
+      description: Division by 4
+      value: 2
+    - name: Div8
+      description: Division by 8
+      value: 3
+    - name: Div16
+      description: Division by 16
+      value: 4
+enum/MCOSEL:
+  bit_size: 4
+  variants:
+    - name: NoClock
+      description: No clock
+      value: 0
+    - name: SYSCLK
+      description: SYSCLK clock selected
+      value: 1
+    - name: HSI
+      description: HSI oscillator clock selected
+      value: 2
+    - name: MSI
+      description: MSI oscillator clock selected
+      value: 3
+    - name: HSE
+      description: HSE oscillator clock selected
+      value: 4
+    - name: PLL
+      description: PLL clock selected
+      value: 5
+    - name: LSI
+      description: LSI oscillator clock selected
+      value: 6
+    - name: LSE
+      description: LSE oscillator clock selected
+      value: 7
+enum/MSIRANGE:
+  bit_size: 3
+  variants:
+    - name: Range0
+      description: range 0 around 65.536 kHz
+      value: 0
+    - name: Range1
+      description: range 1 around 131.072 kHz
+      value: 1
+    - name: Range2
+      description: range 2 around 262.144 kHz
+      value: 2
+    - name: Range3
+      description: range 3 around 524.288 kHz
+      value: 3
+    - name: Range4
+      description: range 4 around 1.048 MHz
+      value: 4
+    - name: Range5
+      description: range 5 around 2.097 MHz (reset value)
+      value: 5
+    - name: Range6
+      description: range 6 around 4.194 MHz
+      value: 6
+    - name: Range7
+      description: not allowed
+      value: 7
+enum/PLLDIV:
+  bit_size: 2
+  variants:
+    - name: Div2
+      description: PLLVCO / 2
+      value: 1
+    - name: Div3
+      description: PLLVCO / 3
+      value: 2
+    - name: Div4
+      description: PLLVCO / 4
+      value: 3
+enum/PLLMUL:
+  bit_size: 4
+  variants:
+    - name: Mul3
+      description: PLL clock entry x 3
+      value: 0
+    - name: Mul4
+      description: PLL clock entry x 4
+      value: 1
+    - name: Mul6
+      description: PLL clock entry x 6
+      value: 2
+    - name: Mul8
+      description: PLL clock entry x 8
+      value: 3
+    - name: Mul12
+      description: PLL clock entry x 12
+      value: 4
+    - name: Mul16
+      description: PLL clock entry x 16
+      value: 5
+    - name: Mul24
+      description: PLL clock entry x 24
+      value: 6
+    - name: Mul32
+      description: PLL clock entry x 32
+      value: 7
+    - name: Mul48
+      description: PLL clock entry x 48
+      value: 8
+enum/PLLSRC:
+  bit_size: 1
+  variants:
+    - name: HSI
+      description: HSI selected as PLL input clock
+      value: 0
+    - name: HSE
+      description: HSE selected as PLL input clock
+      value: 1
+enum/PPRE:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: HCLK not divided
+      value: 0
+    - name: Div2
+      description: HCLK divided by 2
+      value: 4
+    - name: Div4
+      description: HCLK divided by 4
+      value: 5
+    - name: Div8
+      description: HCLK divided by 8
+      value: 6
+    - name: Div16
+      description: HCLK divided by 16
+      value: 7
+enum/RTCPRE:
+  bit_size: 2
+  variants:
+    - name: Div2
+      description: HSE divided by 2
+      value: 0
+    - name: Div4
+      description: HSE divided by 4
+      value: 1
+    - name: Div8
+      description: HSE divided by 8
+      value: 2
+    - name: Div16
+      description: HSE divided by 16
+      value: 3
+enum/RTCSEL:
+  bit_size: 2
+  variants:
+    - name: NoClock
+      description: No clock
+      value: 0
+    - name: LSE
+      description: LSE oscillator clock used as RTC clock
+      value: 1
+    - name: LSI
+      description: LSI oscillator clock used as RTC clock
+      value: 2
+    - name: HSE
+      description: "HSE oscillator clock divided by a programmable prescaler (selection through the RTCPRE[1:0] bits in the RCC clock control register (RCC_CR)) used as the RTC clock"
+      value: 3
+enum/SW:
+  bit_size: 2
+  variants:
+    - name: MSI
+      description: MSI oscillator used as system clock
+      value: 0
+    - name: HSI
+      description: HSI oscillator used as system clock
+      value: 1
+    - name: HSE
+      description: HSE oscillator used as system clock
+      value: 2
+    - name: PLL
+      description: PLL used as system clock
+      value: 3
