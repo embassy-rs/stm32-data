@@ -617,6 +617,11 @@ def parse_chips():
             interrupts = h['interrupts'][core_name]
             defines = h['defines'][core_name]
 
+            # F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
+            # to the same IRQ number.
+            if chip_name.startswith('STM32F100') and 'DMA2_Channel4_5' in interrupts:
+                del interrupts['DMA2_Channel4_5']
+
             core['interrupts'] = interrupts
 
             peri_kinds = {}
@@ -1173,6 +1178,12 @@ def parse_interrupts():
             value = irq['@Value']
             parts = value.split(':')
             irq_name = removesuffix(parts[0], "_IRQn")
+
+            # F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
+            # to the same IRQ number.
+            if ff == 'STM32F100E' and irq_name == 'DMA2_Channel4_5':
+                continue
+
             peri_names = parts[2].split(',')
             if len(peri_names) == 1 and peri_names[0] == '':
                 continue
