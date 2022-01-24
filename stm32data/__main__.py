@@ -9,9 +9,9 @@ import os
 from collections import OrderedDict
 from glob import glob
 
-from stm32data import yaml, header
+from stm32data import yaml, header, interrupts
 from stm32data.yaml import DecimalInt, HexInt
-from stm32data.util import removeprefix, removesuffix
+from stm32data.util import *
 
 
 def corename(d):
@@ -580,9 +580,11 @@ def parse_chips():
         chip['die'] = chip['xml']['Die']
 
         chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC', chip['ips'].values()), None)
-        if chip_nvic is None:
+        # L5, U5 have NVIC1=S, NVIC2=NS. Use NS.
+        if chip_nvic is None and not chip_name.startswith('STM32L5') and not chip_name.startswith('STM32U5'):
             chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC1', chip['ips'].values()), None)
-        chip_nvic = chip_nvic['@Version']
+        if chip_nvic is None:
+            chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC2', chip['ips'].values()), None)
 
         chip_dma = next(filter(lambda x: x['@Name'] == 'DMA', chip['ips'].values()), None)
         if chip_dma is not None:
@@ -614,25 +616,23 @@ def parse_chips():
             })
             cores.append(core)
 
-            if (chip_nvic + '-' + core_name) in chip_interrupts:
-                # if there's a more specific set of irqs...
-                chip_nvic = chip_nvic + '-' + core_name
-
             if not core_name in h['interrupts'] or not core_name in h['defines']:
                 core_name = 'all'
             # print("Defining for core", core_name)
 
             # Gather all interrupts and defines for this core
 
-            interrupts = h['interrupts'][core_name]
+            header_irqs = h['interrupts'][core_name]
+            chip_irqs = interrupts.get(chip_nvic['@Name'], chip_nvic['@Version'], core_name)
+
             defines = h['defines'][core_name]
 
             # F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
             # to the same IRQ number.
-            if chip_name.startswith('STM32F100') and 'DMA2_Channel4_5' in interrupts:
-                del interrupts['DMA2_Channel4_5']
+            if chip_name.startswith('STM32F100') and 'DMA2_Channel4_5' in header_irqs:
+                del header_irqs['DMA2_Channel4_5']
 
-            core['interrupts'] = interrupts
+            core['interrupts'] = header_irqs
 
             peri_kinds = {}
 
@@ -707,10 +707,9 @@ def parse_chips():
                         pins = merge_periph_pins_info('STM32F1' in chip_name, pname, pins, af_pins)
                     p['pins'] = pins
 
-                if chip_nvic in chip_interrupts:
-                    if pname in chip_interrupts[chip_nvic]:
-                        # filter by available, because some are conditioned on <Die>
-                        p['interrupts'] = filter_interrupts(chip_interrupts[chip_nvic][pname], interrupts)
+                if pname in chip_irqs:
+                    # filter by available, because some are conditioned on <Die>
+                    p['interrupts'] = interrupts.filter_interrupts(chip_irqs[pname], header_irqs)
 
                 peris[pname] = p
 
@@ -1173,127 +1172,6 @@ def match_peri_clock(rcc_block, peri_name):
         return None
 
 
-chip_interrupts = {}
-
-
-def parse_interrupts():
-    print("parsing interrupts")
-    for f in glob('sources/cubedb/mcu/IP/NVIC*_Modes.xml'):
-        f = f.replace(os.path.sep, '/')
-        ff = removeprefix(f, 'sources/cubedb/mcu/IP/NVIC')
-        ff = removesuffix(ff, '_Modes.xml')
-
-        chip_irqs = {}
-        r = xmltodict.parse(open(f, 'rb'))
-
-        if ff.startswith('1') or ff.startswith('2'):
-            ff = removeprefix(ff, '1')
-            ff = removeprefix(ff, '2')
-            core = corename(next(filter(lambda x: x['@Name'] == 'CoreName', r['IP']['RefParameter']))['@DefaultValue'])
-            ff = ff + "-" + core
-
-        ff = removeprefix(ff, '-')
-
-        irqs = next(filter(lambda x: x['@Name'] == 'IRQn', r['IP']['RefParameter']))
-        for irq in irqs['PossibleValue']:
-            value = irq['@Value']
-            parts = value.split(':')
-            irq_name = removesuffix(parts[0], "_IRQn")
-
-            # F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
-            # to the same IRQ number.
-            if ff == 'STM32F100E' and irq_name == 'DMA2_Channel4_5':
-                continue
-
-            peri_names = parts[2].split(',')
-            if len(peri_names) == 1 and peri_names[0] == '':
-                continue
-            elif len(peri_names) == 1 and (peri_names[0] == 'DMA' or peri_names[0].startswith("DMAL")):
-                peri_names = [parts[3]]
-            split = split_interrupts(peri_names, irq_name)
-            for p in peri_names:
-                if p not in chip_irqs:
-                    chip_irqs[p] = {}
-                merge_peri_irq_signals(chip_irqs[p], split[p])
-        chip_interrupts[ff] = chip_irqs
-
-
-def merge_peri_irq_signals(peri_irqs, additional):
-    for key, value in additional.items():
-        if key not in peri_irqs:
-            peri_irqs[key] = []
-        peri_irqs[key].append(value)
-
-
-def split_interrupts(peri_names, irq_name):
-    split = {}
-    for p in peri_names:
-        split[p] = remap_interrupt_signals(p, irq_name)
-
-    return split
-
-
-irq_signals_map = {
-    'CAN': ['TX', 'RX0', 'RX1', 'SCE'],
-    'I2C': ['ER', 'EV'],
-    'TIM': ['BRK', 'UP', 'TRG', 'COM'],
-    'HRTIM': ['Master', 'TIMA', 'TIMB', 'TIMC', 'TIMD', 'TIME', 'TIMF']
-}
-
-
-def remap_interrupt_signals(peri_name, irq_name):
-    if peri_name == irq_name:
-        return expand_all_irq_signals(peri_name, irq_name)
-    if (peri_name.startswith('DMA') or peri_name.startswith('BDMA')) and irq_name.startswith(peri_name):
-        return {irq_name: irq_name}
-    if peri_name.startswith('USART') and irq_name.startswith(peri_name):
-        return {'GLOBAL': irq_name}
-    if peri_name in irq_name:
-        signals = {}
-        start = irq_name.index(peri_name)
-        regexp = re.compile('(_[^_]+)')
-        if match := regexp.findall(irq_name, start):
-            for m in match:
-                signal = removeprefix(m, '_').strip()
-                if is_valid_irq_signal(peri_name, signal):
-                    signals[signal] = irq_name
-        else:
-            signals = expand_all_irq_signals(peri_name, irq_name)
-        return signals
-    else:
-        return {'GLOBAL': irq_name}
-
-
-def is_valid_irq_signal(peri_name, signal):
-    for prefix, signals in irq_signals_map.items():
-        if peri_name.startswith(prefix):
-            return signal in signals
-    return False
-
-
-def expand_all_irq_signals(peri_name, irq_name):
-    expanded = {}
-    for prefix, signals in irq_signals_map.items():
-        if peri_name.startswith(prefix):
-            for s in irq_signals_map[prefix]:
-                expanded[s] = irq_name
-            return expanded
-
-    return {'GLOBAL': irq_name}
-
-
-def filter_interrupts(peri_irqs, all_irqs):
-    filtered = {}
-
-    for signal, irqs in peri_irqs.items():
-        for irq in all_irqs:
-            if irq in irqs:
-                filtered[signal] = irq
-                break
-
-    return filtered
-
-
 memories = []
 
 
@@ -1336,7 +1214,7 @@ def is_chip_name_match(pattern, chip_name):
 
 
 parse_memories()
-parse_interrupts()
+interrupts.parse()
 parse_rcc_regs()
 parse_documentations()
 parse_dma()
