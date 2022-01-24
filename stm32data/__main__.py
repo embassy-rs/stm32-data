@@ -1118,8 +1118,8 @@ def parse_rcc_regs():
 
         for (key, body) in y.items():
             # Some chip families have a separate bus for GPIO so it's not attached to the AHB/APB
-            # bus but an IOPORT bus. Use the IOP as the clock for these chips.
-            if m := re.match('^fieldset/((A[PH]B\d?)|IOP)[LH]?ENR\d?$', key):
+            # bus but an GPIO bus. Use the GPIO as the clock for these chips.
+            if m := re.match('^fieldset/((A[PH]B\d?)|GPIO)[LH]?ENR\d?$', key):
                 reg = removeprefix(key, 'fieldset/')
                 clock = m.group(1)
                 for field in body['fields']:
