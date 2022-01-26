@@ -1,0 +1,822 @@
+---
+block/LPUART:
+  description: Lower power Universal asynchronous receiver transmitter
+  items:
+    - name: CR1
+      description: Control register 1
+      byte_offset: 0
+      fieldset: CR1
+    - name: CR2
+      description: Control register 2
+      byte_offset: 4
+      fieldset: CR2
+    - name: CR3
+      description: Control register 3
+      byte_offset: 8
+      fieldset: CR3
+    - name: BRR
+      description: Baud rate register
+      byte_offset: 12
+      fieldset: BRR
+    - name: RQR
+      description: Request register
+      byte_offset: 24
+      access: Write
+      fieldset: RQR
+    - name: ISR
+      description: Interrupt & status register
+      byte_offset: 28
+      access: Read
+      fieldset: ISR
+    - name: ICR
+      description: Interrupt flag clear register
+      byte_offset: 32
+      access: Write
+      fieldset: ICR
+    - name: RDR
+      description: Receive data register
+      byte_offset: 36
+      access: Read
+      fieldset: RDR
+    - name: TDR
+      description: Transmit data register
+      byte_offset: 40
+      fieldset: TDR
+fieldset/BRR:
+  description: Baud rate register
+  fields:
+    - name: BRR
+      description: BRR
+      bit_offset: 0
+      bit_size: 20
+fieldset/CR1:
+  description: Control register 1
+  fields:
+    - name: UE
+      description: USART enable
+      bit_offset: 0
+      bit_size: 1
+      enum: UE
+    - name: UESM
+      description: USART enable in Stop mode
+      bit_offset: 1
+      bit_size: 1
+      enum: UESM
+    - name: RE
+      description: Receiver enable
+      bit_offset: 2
+      bit_size: 1
+      enum: RE
+    - name: TE
+      description: Transmitter enable
+      bit_offset: 3
+      bit_size: 1
+      enum: TE
+    - name: IDLEIE
+      description: IDLE interrupt enable
+      bit_offset: 4
+      bit_size: 1
+      enum: IDLEIE
+    - name: RXNEIE
+      description: RXNE interrupt enable
+      bit_offset: 5
+      bit_size: 1
+      enum: RXNEIE
+    - name: TCIE
+      description: Transmission complete interrupt enable
+      bit_offset: 6
+      bit_size: 1
+      enum: TCIE
+    - name: TXEIE
+      description: interrupt enable
+      bit_offset: 7
+      bit_size: 1
+      enum: TXEIE
+    - name: PEIE
+      description: PE interrupt enable
+      bit_offset: 8
+      bit_size: 1
+      enum: PEIE
+    - name: PS
+      description: Parity selection
+      bit_offset: 9
+      bit_size: 1
+      enum: PS
+    - name: PCE
+      description: Parity control enable
+      bit_offset: 10
+      bit_size: 1
+      enum: PCE
+    - name: WAKE
+      description: Receiver wakeup method
+      bit_offset: 11
+      bit_size: 1
+      enum: WAKE
+    - name: M0
+      description: Word length
+      bit_offset: 12
+      bit_size: 1
+      enum: M0
+    - name: MME
+      description: Mute mode enable
+      bit_offset: 13
+      bit_size: 1
+      enum: MME
+    - name: CMIE
+      description: Character match interrupt enable
+      bit_offset: 14
+      bit_size: 1
+      enum: CMIE
+    - name: DEDT
+      description: Driver Enable de-assertion time
+      bit_offset: 16
+      bit_size: 5
+    - name: DEAT
+      description: Driver Enable assertion time
+      bit_offset: 21
+      bit_size: 5
+    - name: M1
+      description: Word length
+      bit_offset: 28
+      bit_size: 1
+      enum: M1
+fieldset/CR2:
+  description: Control register 2
+  fields:
+    - name: ADDM7
+      description: 7-bit Address Detection/4-bit Address Detection
+      bit_offset: 4
+      bit_size: 1
+      enum: ADDM7
+    - name: CLKEN
+      description: Clock enable
+      bit_offset: 11
+      bit_size: 1
+      enum: CLKEN
+    - name: STOP
+      description: STOP bits
+      bit_offset: 12
+      bit_size: 2
+      enum: STOP
+    - name: SWAP
+      description: Swap TX/RX pins
+      bit_offset: 15
+      bit_size: 1
+      enum: SWAP
+    - name: RXINV
+      description: RX pin active level inversion
+      bit_offset: 16
+      bit_size: 1
+      enum: RXINV
+    - name: TXINV
+      description: TX pin active level inversion
+      bit_offset: 17
+      bit_size: 1
+      enum: TXINV
+    - name: DATAINV
+      description: Binary data inversion
+      bit_offset: 18
+      bit_size: 1
+      enum: DATAINV
+    - name: MSBFIRST
+      description: Most significant bit first
+      bit_offset: 19
+      bit_size: 1
+      enum: MSBFIRST
+    - name: ADD
+      description: Address of the USART node
+      bit_offset: 24
+      bit_size: 8
+fieldset/CR3:
+  description: Control register 3
+  fields:
+    - name: EIE
+      description: Error interrupt enable
+      bit_offset: 0
+      bit_size: 1
+      enum: EIE
+    - name: HDSEL
+      description: Half-duplex selection
+      bit_offset: 3
+      bit_size: 1
+      enum: HDSEL
+    - name: DMAR
+      description: DMA enable receiver
+      bit_offset: 6
+      bit_size: 1
+      enum: DMAR
+    - name: DMAT
+      description: DMA enable transmitter
+      bit_offset: 7
+      bit_size: 1
+      enum: DMAT
+    - name: RTSE
+      description: RTS enable
+      bit_offset: 8
+      bit_size: 1
+      enum: RTSE
+    - name: CTSE
+      description: CTS enable
+      bit_offset: 9
+      bit_size: 1
+      enum: CTSE
+    - name: CTSIE
+      description: CTS interrupt enable
+      bit_offset: 10
+      bit_size: 1
+      enum: CTSIE
+    - name: OVRDIS
+      description: Overrun Disable
+      bit_offset: 12
+      bit_size: 1
+      enum: OVRDIS
+    - name: DDRE
+      description: DMA Disable on Reception Error
+      bit_offset: 13
+      bit_size: 1
+      enum: DDRE
+    - name: DEM
+      description: Driver enable mode
+      bit_offset: 14
+      bit_size: 1
+      enum: DEM
+    - name: DEP
+      description: Driver enable polarity selection
+      bit_offset: 15
+      bit_size: 1
+      enum: DEP
+    - name: WUS
+      description: Wakeup from Stop mode interrupt flag selection
+      bit_offset: 20
+      bit_size: 2
+      enum: WUS
+    - name: WUFIE
+      description: Wakeup from Stop mode interrupt enable
+      bit_offset: 22
+      bit_size: 1
+      enum: WUFIE
+fieldset/ICR:
+  description: Interrupt flag clear register
+  fields:
+    - name: PECF
+      description: Parity error clear flag
+      bit_offset: 0
+      bit_size: 1
+      enum: PECF
+    - name: FECF
+      description: Framing error clear flag
+      bit_offset: 1
+      bit_size: 1
+      enum: FECF
+    - name: NCF
+      description: Noise detected clear flag
+      bit_offset: 2
+      bit_size: 1
+      enum: NCF
+    - name: ORECF
+      description: Overrun error clear flag
+      bit_offset: 3
+      bit_size: 1
+      enum: ORECF
+    - name: IDLECF
+      description: Idle line detected clear flag
+      bit_offset: 4
+      bit_size: 1
+      enum: IDLECF
+    - name: TCCF
+      description: Transmission complete clear flag
+      bit_offset: 6
+      bit_size: 1
+      enum: TCCF
+    - name: CTSCF
+      description: CTS clear flag
+      bit_offset: 9
+      bit_size: 1
+      enum: CTSCF
+    - name: CMCF
+      description: Character match clear flag
+      bit_offset: 17
+      bit_size: 1
+      enum: CMCF
+    - name: WUCF
+      description: Wakeup from Stop mode clear flag
+      bit_offset: 20
+      bit_size: 1
+      enum: WUCF
+fieldset/ISR:
+  description: Interrupt & status register
+  fields:
+    - name: PE
+      description: PE
+      bit_offset: 0
+      bit_size: 1
+    - name: FE
+      description: FE
+      bit_offset: 1
+      bit_size: 1
+    - name: NF
+      description: NF
+      bit_offset: 2
+      bit_size: 1
+    - name: ORE
+      description: ORE
+      bit_offset: 3
+      bit_size: 1
+    - name: IDLE
+      description: IDLE
+      bit_offset: 4
+      bit_size: 1
+    - name: RXNE
+      description: RXNE
+      bit_offset: 5
+      bit_size: 1
+    - name: TC
+      description: TC
+      bit_offset: 6
+      bit_size: 1
+    - name: TXE
+      description: TXE
+      bit_offset: 7
+      bit_size: 1
+    - name: CTSIF
+      description: CTSIF
+      bit_offset: 9
+      bit_size: 1
+    - name: CTS
+      description: CTS
+      bit_offset: 10
+      bit_size: 1
+    - name: BUSY
+      description: BUSY
+      bit_offset: 16
+      bit_size: 1
+    - name: CMF
+      description: CMF
+      bit_offset: 17
+      bit_size: 1
+    - name: SBKF
+      description: SBKF
+      bit_offset: 18
+      bit_size: 1
+    - name: RWU
+      description: RWU
+      bit_offset: 19
+      bit_size: 1
+    - name: WUF
+      description: WUF
+      bit_offset: 20
+      bit_size: 1
+    - name: TEACK
+      description: TEACK
+      bit_offset: 21
+      bit_size: 1
+    - name: REACK
+      description: REACK
+      bit_offset: 22
+      bit_size: 1
+fieldset/RDR:
+  description: Receive data register
+  fields:
+    - name: RDR
+      description: Receive data value
+      bit_offset: 0
+      bit_size: 9
+fieldset/RQR:
+  description: Request register
+  fields:
+    - name: SBKRQ
+      description: Send break request
+      bit_offset: 1
+      bit_size: 1
+      enum: SBKRQ
+    - name: MMRQ
+      description: Mute mode request
+      bit_offset: 2
+      bit_size: 1
+      enum: MMRQ
+    - name: RXFRQ
+      description: Receive data flush request
+      bit_offset: 3
+      bit_size: 1
+      enum: RXFRQ
+fieldset/TDR:
+  description: Transmit data register
+  fields:
+    - name: TDR
+      description: Transmit data value
+      bit_offset: 0
+      bit_size: 9
+enum/ADDM7:
+  bit_size: 1
+  variants:
+    - name: Bit4
+      description: 4-bit address detection
+      value: 0
+    - name: Bit7
+      description: 7-bit address detection
+      value: 1
+enum/CLKEN:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: CK pin disabled
+      value: 0
+    - name: Enabled
+      description: CK pin enabled
+      value: 1
+enum/CMCF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the CMF flag in the ISR register
+      value: 1
+enum/CMIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is disabled
+      value: 0
+    - name: Enabled
+      description: Interrupt is generated when the CMF bit is set in the ISR register
+      value: 1
+enum/CTSCF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the CTSIF flag in the ISR register
+      value: 1
+enum/CTSE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: CTS hardware flow control disabled
+      value: 0
+    - name: Enabled
+      description: "CTS mode enabled, data is only transmitted when the CTS input is asserted"
+      value: 1
+enum/CTSIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is inhibited
+      value: 0
+    - name: Enabled
+      description: An interrupt is generated whenever CTSIF=1 in the ISR register
+      value: 1
+enum/DATAINV:
+  bit_size: 1
+  variants:
+    - name: Positive
+      description: Logical data from the data register are send/received in positive/direct logic
+      value: 0
+    - name: Negative
+      description: Logical data from the data register are send/received in negative/inverse logic
+      value: 1
+enum/DDRE:
+  bit_size: 1
+  variants:
+    - name: NotDisabled
+      description: DMA is not disabled in case of reception error
+      value: 0
+    - name: Disabled
+      description: DMA is disabled following a reception error
+      value: 1
+enum/DEM:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: DE function is disabled
+      value: 0
+    - name: Enabled
+      description: The DE signal is output on the RTS pin
+      value: 1
+enum/DEP:
+  bit_size: 1
+  variants:
+    - name: High
+      description: DE signal is active high
+      value: 0
+    - name: Low
+      description: DE signal is active low
+      value: 1
+enum/DMAR:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: DMA mode is disabled for reception
+      value: 0
+    - name: Enabled
+      description: DMA mode is enabled for reception
+      value: 1
+enum/DMAT:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: DMA mode is disabled for transmission
+      value: 0
+    - name: Enabled
+      description: DMA mode is enabled for transmission
+      value: 1
+enum/EIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is inhibited
+      value: 0
+    - name: Enabled
+      description: An interrupt is generated when FE=1 or ORE=1 or NF=1 in the ISR register
+      value: 1
+enum/FECF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the FE flag in the ISR register
+      value: 1
+enum/HDSEL:
+  bit_size: 1
+  variants:
+    - name: NotSelected
+      description: Half duplex mode is not selected
+      value: 0
+    - name: Selected
+      description: Half duplex mode is selected
+      value: 1
+enum/IDLECF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the IDLE flag in the ISR register
+      value: 1
+enum/IDLEIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is disabled
+      value: 0
+    - name: Enabled
+      description: Interrupt is generated whenever IDLE=1 in the ISR register
+      value: 1
+enum/M0:
+  bit_size: 1
+  variants:
+    - name: Bit8
+      description: "1 start bit, 8 data bits, n stop bits"
+      value: 0
+    - name: Bit9
+      description: "1 start bit, 9 data bits, n stop bits"
+      value: 1
+enum/M1:
+  bit_size: 1
+  variants:
+    - name: M0
+      description: Use M0 to set the data bits
+      value: 0
+    - name: Bit7
+      description: "1 start bit, 7 data bits, n stop bits"
+      value: 1
+enum/MME:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Receiver in active mode permanently
+      value: 0
+    - name: Enabled
+      description: Receiver can switch between mute mode and active mode
+      value: 1
+enum/MMRQ:
+  bit_size: 1
+  variants:
+    - name: Mute
+      description: Puts the USART in mute mode and sets the RWU flag
+      value: 1
+enum/MSBFIRST:
+  bit_size: 1
+  variants:
+    - name: LSB
+      description: "data is transmitted/received with data bit 0 first, following the start bit"
+      value: 0
+    - name: MSB
+      description: "data is transmitted/received with MSB (bit 7/8/9) first, following the start bit"
+      value: 1
+enum/NCF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the NF flag in the ISR register
+      value: 1
+enum/ORECF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the ORE flag in the ISR register
+      value: 1
+enum/OVRDIS:
+  bit_size: 1
+  variants:
+    - name: Enabled
+      description: "Overrun Error Flag, ORE, is set when received data is not read before receiving new data"
+      value: 0
+    - name: Disabled
+      description: Overrun functionality is disabled. If new data is received while the RXNE flag is still set the ORE flag is not set and the new received data overwrites the previous content of the RDR register
+      value: 1
+enum/PCE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Parity control disabled
+      value: 0
+    - name: Enabled
+      description: Parity control enabled
+      value: 1
+enum/PECF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the PE flag in the ISR register
+      value: 1
+enum/PEIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is disabled
+      value: 0
+    - name: Enabled
+      description: Interrupt is generated whenever PE=1 in the ISR register
+      value: 1
+enum/PS:
+  bit_size: 1
+  variants:
+    - name: Even
+      description: Even parity
+      value: 0
+    - name: Odd
+      description: Odd parity
+      value: 1
+enum/RE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Receiver is disabled
+      value: 0
+    - name: Enabled
+      description: Receiver is enabled
+      value: 1
+enum/RTSE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: RTS hardware flow control disabled
+      value: 0
+    - name: Enabled
+      description: "RTS output enabled, data is only requested when there is space in the receive buffer"
+      value: 1
+enum/RXFRQ:
+  bit_size: 1
+  variants:
+    - name: Discard
+      description: "clears the RXNE flag. This allows to discard the received data without reading it, and avoid an overrun condition"
+      value: 1
+enum/RXINV:
+  bit_size: 1
+  variants:
+    - name: Standard
+      description: RX pin signal works using the standard logic levels
+      value: 0
+    - name: Inverted
+      description: RX pin signal values are inverted
+      value: 1
+enum/RXNEIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is disabled
+      value: 0
+    - name: Enabled
+      description: Interrupt is generated whenever ORE=1 or RXNE=1 in the ISR register
+      value: 1
+enum/SBKRQ:
+  bit_size: 1
+  variants:
+    - name: Break
+      description: "sets the SBKF flag and request to send a BREAK on the line, as soon as the transmit machine is available"
+      value: 1
+enum/STOP:
+  bit_size: 2
+  variants:
+    - name: Stop1
+      description: 1 stop bit
+      value: 0
+    - name: Stop0p5
+      description: 0.5 stop bit
+      value: 1
+    - name: Stop2
+      description: 2 stop bit
+      value: 2
+    - name: Stop1p5
+      description: 1.5 stop bit
+      value: 3
+enum/SWAP:
+  bit_size: 1
+  variants:
+    - name: Standard
+      description: TX/RX pins are used as defined in standard pinout
+      value: 0
+    - name: Swapped
+      description: The TX and RX pins functions are swapped
+      value: 1
+enum/TCCF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the TC flag in the ISR register
+      value: 1
+enum/TCIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is disabled
+      value: 0
+    - name: Enabled
+      description: Interrupt is generated whenever TC=1 in the ISR register
+      value: 1
+enum/TE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Transmitter is disabled
+      value: 0
+    - name: Enabled
+      description: Transmitter is enabled
+      value: 1
+enum/TXEIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is disabled
+      value: 0
+    - name: Enabled
+      description: Interrupt is generated whenever TXE=1 in the ISR register
+      value: 1
+enum/TXINV:
+  bit_size: 1
+  variants:
+    - name: Standard
+      description: TX pin signal works using the standard logic levels
+      value: 0
+    - name: Inverted
+      description: TX pin signal values are inverted
+      value: 1
+enum/UE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: UART is disabled
+      value: 0
+    - name: Enabled
+      description: UART is enabled
+      value: 1
+enum/UESM:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: USART not able to wake up the MCU from Stop mode
+      value: 0
+    - name: Enabled
+      description: USART able to wake up the MCU from Stop mode
+      value: 1
+enum/WAKE:
+  bit_size: 1
+  variants:
+    - name: Idle
+      description: Idle line
+      value: 0
+    - name: Address
+      description: Address mask
+      value: 1
+enum/WUCF:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears the WUF flag in the ISR register
+      value: 1
+enum/WUFIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt is inhibited
+      value: 0
+    - name: Enabled
+      description: An USART interrupt is generated whenever WUF=1 in the ISR register
+      value: 1
+enum/WUS:
+  bit_size: 2
+  variants:
+    - name: Address
+      description: WUF active on address match
+      value: 0
+    - name: Start
+      description: WuF active on Start bit detection
+      value: 2
+    - name: RXNE
+      description: WUF active on RXNE
+      value: 3
