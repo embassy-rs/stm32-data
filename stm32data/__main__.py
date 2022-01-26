@@ -96,6 +96,10 @@ perimap = [
     ('.*:UART:sci2_v2_1', 'usart_v2/USART'),
     ('.*:UART:sci2_v3_0', 'usart_v2/USART'),
     ('.*:UART:sci2_v3_1', 'usart_v2/USART'),
+    ('.*:LPUART:sci3_v1_1', 'lpuart_v1/LPUART'),
+    ('.*:LPUART:sci3_v1_2', 'lpuart_v2/LPUART'),
+    ('.*:LPUART:sci3_v1_3', 'lpuart_v3/LPUART'),
+    ('.*:LPUART:sci3_v1_4', 'lpuart_v2/LPUART'),
     ('.*:RNG:rng1_v1_1', 'rng_v1/RNG'),
     ('.*:RNG:rng1_v2_0', 'rng_v1/RNG'),
     ('.*:RNG:rng1_v2_1', 'rng_v1/RNG'),
@@ -1019,7 +1023,6 @@ def parse_dma():
                             request = target_peri_name
                         else:
                             request = parts[1]
-
                         if target_peri_name not in chip_dma['peripherals']:
                             chip_dma['peripherals'][target_peri_name] = {}
                         peri_dma = chip_dma['peripherals'][target_peri_name]
@@ -1094,6 +1097,8 @@ def parse_dma():
                         else:
                             target_requests = target_name.split('_')[1].split('/')
                         if target_name != 'MEMTOMEM':
+                            if target_peri_name == "LPUART": 
+                                target_peri_name = "LPUART1"
                             if target_peri_name not in chip_dma['peripherals']:
                                 chip_dma['peripherals'][target_peri_name] = {}
                             peri_dma = chip_dma['peripherals'][target_peri_name]
