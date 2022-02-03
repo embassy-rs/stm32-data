@@ -502,6 +502,7 @@ def parse_chips():
     chip_groups = []
 
     for f in sorted(glob('sources/cubedb/mcu/STM32*.xml')):
+        f = f.replace(os.path.sep, '/')
         if 'STM32MP' in f:
             continue
         if 'STM32GBK' in f:
@@ -879,6 +880,7 @@ def remove_duplicates(item_list):
 def parse_gpio_af():
     # os.makedirs('data/gpio_af', exist_ok=True)
     for f in glob('sources/cubedb/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
+        f = f.replace(os.path.sep, '/')
 
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/GPIO-')
         ff = removesuffix(ff, '_gpio_v1_0_Modes.xml')
@@ -963,6 +965,7 @@ dma_channels = {}
 
 def parse_dma():
     for f in glob('sources/cubedb/mcu/IP/*DMA-*Modes.xml'):
+        f = f.replace(os.path.sep, '/')
         is_explicitly_bdma = False
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/')
         if not (ff.startswith('B') or ff.startswith('D')):
@@ -994,6 +997,7 @@ def parse_dma():
                 if ff.startswith('STM32L4S'):
                     dmamux_file = 'L4RS'
                 for mf in sorted(glob('data/dmamux/{}_*.yaml'.format(dmamux_file))):
+                    mf = mf.replace(os.path.sep, '/')
                     with open(mf, 'r') as yaml_file:
                         y = yaml.load(yaml_file)
                     mf = removesuffix(mf, '.yaml')
@@ -1110,6 +1114,7 @@ peripheral_to_clock = {}
 def parse_rcc_regs():
     print("parsing RCC registers")
     for f in glob('data/registers/rcc_*'):
+        f = f.replace(os.path.sep, '/')
         ff = removeprefix(f, 'data/registers/rcc_')
         ff = removesuffix(ff, '.yaml')
         family_clocks = {}
@@ -1160,6 +1165,7 @@ chip_interrupts = {}
 def parse_interrupts():
     print("parsing interrupts")
     for f in glob('sources/cubedb/mcu/IP/NVIC*_Modes.xml'):
+        f = f.replace(os.path.sep, '/')
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/NVIC')
         ff = removesuffix(ff, '_Modes.xml')
 

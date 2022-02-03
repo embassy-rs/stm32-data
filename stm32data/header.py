@@ -189,6 +189,7 @@ def parse_headers():
     os.makedirs('sources/headers_parsed', exist_ok=True)
     print('loading headers...')
     for f in glob('sources/headers/*.h'):
+        f = f.replace(os.path.sep, '/')
         # if 'stm32f4' not in f: continue
         ff = removeprefix(f, 'sources/headers/')
         ff = removesuffix(ff, '.h')
