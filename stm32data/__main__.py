@@ -662,9 +662,14 @@ def parse_chips():
                         signal = 'SUBGHZSPI_' + signal[16:-3]
                     # TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
                     if signal not in {'GPIO', 'CEC', 'AUDIOCLK', 'VDDTCXO'} and 'EXTI' not in signal:
-                        periph, signal = signal.split('_', maxsplit=1)
-                        pins = periph_pins.setdefault(periph, [])
-                        pins.append(OrderedDict(pin=pin_name, signal=signal))
+                        # both peripherals and signals can have underscores in their names so there is no easy way to split
+                        # check if signal name starts with one of the peripheral names
+                        for periph in peri_kinds.keys():
+                            if signal.startswith(periph + '_'):
+                                signal = removeprefix(signal, periph + '_')
+                                pins = periph_pins.setdefault(periph, [])
+                                pins.append(OrderedDict(pin=pin_name, signal=signal))
+                                break
             for periph, pins in periph_pins.items():
                 pins = remove_duplicates(pins)
                 sort_pins(pins)
