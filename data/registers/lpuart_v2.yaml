@@ -1,6 +1,6 @@
 ---
-block/LPUART1:
-  description: Universal synchronous asynchronous receiver transmitter
+block/LPUART:
+  description: Lower power Universal asynchronous receiver transmitter
   items:
     - name: CR1
       description: Control register 1
@@ -96,6 +96,7 @@ fieldset/CR1:
       description: Parity selection
       bit_offset: 9
       bit_size: 1
+      enum: PS
     - name: PCE
       description: Parity control enable
       bit_offset: 10
@@ -104,10 +105,12 @@ fieldset/CR1:
       description: Receiver wakeup method
       bit_offset: 11
       bit_size: 1
+      enum: WAKE
     - name: M0
       description: Word length
       bit_offset: 12
       bit_size: 1
+      enum: M0
     - name: MME
       description: Mute mode enable
       bit_offset: 13
@@ -116,60 +119,29 @@ fieldset/CR1:
       description: Character match interrupt enable
       bit_offset: 14
       bit_size: 1
-    - name: DEDT0
-      description: DEDT0
-      bit_offset: 16
-      bit_size: 1
-    - name: DEDT1
-      description: DEDT1
-      bit_offset: 17
-      bit_size: 1
-    - name: DEDT2
-      description: DEDT2
-      bit_offset: 18
-      bit_size: 1
-    - name: DEDT3
-      description: DEDT3
-      bit_offset: 19
-      bit_size: 1
-    - name: DEDT4
+    - name: DEDT
       description: Driver Enable de-assertion time
-      bit_offset: 20
-      bit_size: 1
-    - name: DEAT0
-      description: DEAT0
-      bit_offset: 21
-      bit_size: 1
-    - name: DEAT1
-      description: DEAT1
-      bit_offset: 22
-      bit_size: 1
-    - name: DEAT2
-      description: DEAT2
-      bit_offset: 23
-      bit_size: 1
-    - name: DEAT3
-      description: DEAT3
-      bit_offset: 24
-      bit_size: 1
-    - name: DEAT4
+      bit_offset: 16
+      bit_size: 5
+    - name: DEAT
       description: Driver Enable assertion time
-      bit_offset: 25
-      bit_size: 1
+      bit_offset: 21
+      bit_size: 5
     - name: M1
       description: Word length
       bit_offset: 28
       bit_size: 1
+      enum: M1
     - name: FIFOEN
-      description: FIFOEN
+      description: FIFO mode enable
       bit_offset: 29
       bit_size: 1
     - name: TXFEIE
-      description: TXFEIE
+      description: TXFIFO empty interrupt enable
       bit_offset: 30
       bit_size: 1
     - name: RXFFIE
-      description: RXFFIE
+      description: RXFIFO Full interrupt enable
       bit_offset: 31
       bit_size: 1
 fieldset/CR2:
@@ -179,10 +151,12 @@ fieldset/CR2:
       description: 7-bit Address Detection/4-bit Address Detection
       bit_offset: 4
       bit_size: 1
+      enum: ADDM7
     - name: STOP
       description: STOP bits
       bit_offset: 12
       bit_size: 2
+      enum: STOP
     - name: SWAP
       description: Swap TX/RX pins
       bit_offset: 15
@@ -195,7 +169,7 @@ fieldset/CR2:
       description: TX pin active level inversion
       bit_offset: 17
       bit_size: 1
-    - name: TAINV
+    - name: DATAINV
       description: Binary data inversion
       bit_offset: 18
       bit_size: 1
@@ -203,14 +177,11 @@ fieldset/CR2:
       description: Most significant bit first
       bit_offset: 19
       bit_size: 1
-    - name: ADD0_3
+      enum: MSBFIRST
+    - name: ADD
       description: Address of the USART node
       bit_offset: 24
-      bit_size: 4
-    - name: ADD4_7
-      description: Address of the USART node
-      bit_offset: 28
-      bit_size: 4
+      bit_size: 8
 fieldset/CR3:
   description: Control register 3
   fields:
@@ -258,28 +229,30 @@ fieldset/CR3:
       description: Driver enable polarity selection
       bit_offset: 15
       bit_size: 1
+      enum: DEP
     - name: WUS
       description: Wakeup from Stop mode interrupt flag selection
       bit_offset: 20
       bit_size: 2
+      enum: WUS
     - name: WUFIE
       description: Wakeup from Stop mode interrupt enable
       bit_offset: 22
       bit_size: 1
     - name: TXFTIE
-      description: TXFTIE
+      description: TXFIFO threshold interrupt enable
       bit_offset: 23
       bit_size: 1
     - name: RXFTCFG
-      description: RXFTCFG
+      description: Receive FIFO threshold configuration
       bit_offset: 25
       bit_size: 3
     - name: RXFTIE
-      description: RXFTIE
+      description: RXFIFO threshold interrupt enable
       bit_offset: 28
       bit_size: 1
     - name: TXFTCFG
-      description: TXFTCFG
+      description: TXFIFO threshold configuration
       bit_offset: 29
       bit_size: 3
 fieldset/ICR:
@@ -332,8 +305,8 @@ fieldset/ISR:
       description: FE
       bit_offset: 1
       bit_size: 1
-    - name: NF
-      description: NF
+    - name: NE
+      description: NE
       bit_offset: 2
       bit_size: 1
     - name: ORE
@@ -393,26 +366,26 @@ fieldset/ISR:
       bit_offset: 22
       bit_size: 1
     - name: TXFE
-      description: TXFE
+      description: TXFIFO Empty
       bit_offset: 23
       bit_size: 1
     - name: RXFF
-      description: RXFF
+      description: RXFIFO Full
       bit_offset: 24
       bit_size: 1
     - name: RXFT
-      description: RXFT
+      description: RXFIFO threshold flag
       bit_offset: 26
       bit_size: 1
     - name: TXFT
-      description: TXFT
+      description: TXFIFO threshold flag
       bit_offset: 27
       bit_size: 1
 fieldset/PRESC:
   description: Prescaler register
   fields:
     - name: PRESCALER
-      description: PRESCALER
+      description: Clock prescaler
       bit_offset: 0
       bit_size: 4
 fieldset/RDR:
@@ -438,7 +411,7 @@ fieldset/RQR:
       bit_offset: 3
       bit_size: 1
     - name: TXFRQ
-      description: TXFRQ
+      description: Transmit data flush request
       bit_offset: 4
       bit_size: 1
 fieldset/TDR:
@@ -448,3 +421,93 @@ fieldset/TDR:
       description: Transmit data value
       bit_offset: 0
       bit_size: 9
+enum/ADDM7:
+  bit_size: 1
+  variants:
+    - name: Bit4
+      description: 4-bit address detection
+      value: 0
+    - name: Bit7
+      description: 7-bit address detection
+      value: 1
+enum/DEP:
+  bit_size: 1
+  variants:
+    - name: High
+      description: DE signal is active high
+      value: 0
+    - name: Low
+      description: DE signal is active low
+      value: 1
+enum/M0:
+  bit_size: 1
+  variants:
+    - name: Bit8
+      description: "1 start bit, 8 data bits, n stop bits"
+      value: 0
+    - name: Bit9
+      description: "1 start bit, 9 data bits, n stop bits"
+      value: 1
+enum/M1:
+  bit_size: 1
+  variants:
+    - name: M0
+      description: Use M0 to set the data bits
+      value: 0
+    - name: Bit7
+      description: "1 start bit, 7 data bits, n stop bits"
+      value: 1
+enum/MSBFIRST:
+  bit_size: 1
+  variants:
+    - name: LSB
+      description: "data is transmitted/received with data bit 0 first, following the start bit"
+      value: 0
+    - name: MSB
+      description: "data is transmitted/received with MSB (bit 7/8/9) first, following the start bit"
+      value: 1
+enum/PS:
+  bit_size: 1
+  variants:
+    - name: Even
+      description: Even parity
+      value: 0
+    - name: Odd
+      description: Odd parity
+      value: 1
+enum/STOP:
+  bit_size: 2
+  variants:
+    - name: Stop1
+      description: 1 stop bit
+      value: 0
+    - name: Stop0p5
+      description: 0.5 stop bit
+      value: 1
+    - name: Stop2
+      description: 2 stop bit
+      value: 2
+    - name: Stop1p5
+      description: 1.5 stop bit
+      value: 3
+enum/WAKE:
+  bit_size: 1
+  variants:
+    - name: Idle
+      description: Idle line
+      value: 0
+    - name: Address
+      description: Address mask
+      value: 1
+enum/WUS:
+  bit_size: 2
+  variants:
+    - name: Address
+      description: WUF active on address match
+      value: 0
+    - name: Start
+      description: WuF active on Start bit detection
+      value: 2
+    - name: RXNE
+      description: WUF active on RXNE
+      value: 3
