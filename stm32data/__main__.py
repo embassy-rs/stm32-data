@@ -438,7 +438,11 @@ def cleanup_pin_name(pin_name):
 
 
 def parse_signal_name(signal_name):
-    parts = signal_name.split('_', 1)
+    if signal_name.startswith('USB_OTG_FS') or signal_name.startswith('USB_OTG_HS'):
+        parts = [signal_name[:10], signal_name[11:]]
+    else:
+        parts = signal_name.split('_', 1)
+
     if len(parts) == 1:
         return None
     peri_name = parts[0]
