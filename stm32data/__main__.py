@@ -336,7 +336,7 @@ per_mcu_files = {}
 
 def parse_documentations():
     print("linking files and documents")
-    with open('sources/mcufinder/files.json', 'r') as j:
+    with open('sources/mcufinder/files.json', 'r', encoding='utf-8') as j:
         files = json.load(j)
         for file in files['Files']:
             file_id = file['id_file']
@@ -348,7 +348,7 @@ def parse_documentations():
                     'type': file['type'],
                 })
 
-    with open('sources/mcufinder/mcus.json', 'r') as j:
+    with open('sources/mcufinder/mcus.json', 'r', encoding='utf-8') as j:
         mcus = json.load(j)
         for mcu in mcus['MCUs']:
             rpn = mcu['RPN']
@@ -438,7 +438,11 @@ def cleanup_pin_name(pin_name):
 
 
 def parse_signal_name(signal_name):
-    parts = signal_name.split('_', 1)
+    if signal_name.startswith('USB_OTG_FS') or signal_name.startswith('USB_OTG_HS'):
+        parts = [signal_name[:10], signal_name[11:]]
+    else:
+        parts = signal_name.split('_', 1)
+
     if len(parts) == 1:
         return None
     peri_name = parts[0]
@@ -502,6 +506,7 @@ def parse_chips():
     chip_groups = []
 
     for f in sorted(glob('sources/cubedb/mcu/STM32*.xml')):
+        f = f.replace(os.path.sep, '/')
         if 'STM32MP' in f:
             continue
         if 'STM32GBK' in f:
@@ -661,9 +666,14 @@ def parse_chips():
                         signal = 'SUBGHZSPI_' + signal[16:-3]
                     # TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
                     if signal not in {'GPIO', 'CEC', 'AUDIOCLK', 'VDDTCXO'} and 'EXTI' not in signal:
-                        periph, signal = signal.split('_', maxsplit=1)
-                        pins = periph_pins.setdefault(periph, [])
-                        pins.append(OrderedDict(pin=pin_name, signal=signal))
+                        # both peripherals and signals can have underscores in their names so there is no easy way to split
+                        # check if signal name starts with one of the peripheral names
+                        for periph in peri_kinds.keys():
+                            if signal.startswith(periph + '_'):
+                                signal = removeprefix(signal, periph + '_')
+                                pins = periph_pins.setdefault(periph, [])
+                                pins.append(OrderedDict(pin=pin_name, signal=signal))
+                                break
             for periph, pins in periph_pins.items():
                 pins = remove_duplicates(pins)
                 sort_pins(pins)
@@ -879,6 +889,7 @@ def remove_duplicates(item_list):
 def parse_gpio_af():
     # os.makedirs('data/gpio_af', exist_ok=True)
     for f in glob('sources/cubedb/mcu/IP/GPIO-*_gpio_v1_0_Modes.xml'):
+        f = f.replace(os.path.sep, '/')
 
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/GPIO-')
         ff = removesuffix(ff, '_gpio_v1_0_Modes.xml')
@@ -963,6 +974,7 @@ dma_channels = {}
 
 def parse_dma():
     for f in glob('sources/cubedb/mcu/IP/*DMA-*Modes.xml'):
+        f = f.replace(os.path.sep, '/')
         is_explicitly_bdma = False
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/')
         if not (ff.startswith('B') or ff.startswith('D')):
@@ -994,6 +1006,7 @@ def parse_dma():
                 if ff.startswith('STM32L4S'):
                     dmamux_file = 'L4RS'
                 for mf in sorted(glob('data/dmamux/{}_*.yaml'.format(dmamux_file))):
+                    mf = mf.replace(os.path.sep, '/')
                     with open(mf, 'r') as yaml_file:
                         y = yaml.load(yaml_file)
                     mf = removesuffix(mf, '.yaml')
@@ -1110,6 +1123,7 @@ peripheral_to_clock = {}
 def parse_rcc_regs():
     print("parsing RCC registers")
     for f in glob('data/registers/rcc_*'):
+        f = f.replace(os.path.sep, '/')
         ff = removeprefix(f, 'data/registers/rcc_')
         ff = removesuffix(ff, '.yaml')
         family_clocks = {}
@@ -1160,6 +1174,7 @@ chip_interrupts = {}
 def parse_interrupts():
     print("parsing interrupts")
     for f in glob('sources/cubedb/mcu/IP/NVIC*_Modes.xml'):
+        f = f.replace(os.path.sep, '/')
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/NVIC')
         ff = removesuffix(ff, '_Modes.xml')
 
