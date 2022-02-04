@@ -336,7 +336,7 @@ per_mcu_files = {}
 
 def parse_documentations():
     print("linking files and documents")
-    with open('sources/mcufinder/files.json', 'r') as j:
+    with open('sources/mcufinder/files.json', 'r', encoding='utf-8') as j:
         files = json.load(j)
         for file in files['Files']:
             file_id = file['id_file']
@@ -348,7 +348,7 @@ def parse_documentations():
                     'type': file['type'],
                 })
 
-    with open('sources/mcufinder/mcus.json', 'r') as j:
+    with open('sources/mcufinder/mcus.json', 'r', encoding='utf-8') as j:
         mcus = json.load(j)
         for mcu in mcus['MCUs']:
             rpn = mcu['RPN']
