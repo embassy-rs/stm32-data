@@ -799,14 +799,14 @@ cores:
             field: DMA1RST
       block: dma_v2/DMA
       interrupts:
-        DMA1_Stream0: DMA1_Stream0
-        DMA1_Stream1: DMA1_Stream1
-        DMA1_Stream2: DMA1_Stream2
-        DMA1_Stream3: DMA1_Stream3
-        DMA1_Stream4: DMA1_Stream4
-        DMA1_Stream5: DMA1_Stream5
-        DMA1_Stream6: DMA1_Stream6
-        DMA1_Stream7: DMA1_Stream7
+        CH0: DMA1_Stream0
+        CH1: DMA1_Stream1
+        CH2: DMA1_Stream2
+        CH3: DMA1_Stream3
+        CH4: DMA1_Stream4
+        CH5: DMA1_Stream5
+        CH6: DMA1_Stream6
+        CH7: DMA1_Stream7
     DMA2:
       address: 0x40026400
       rcc:
@@ -820,14 +820,14 @@ cores:
             field: DMA2RST
       block: dma_v2/DMA
       interrupts:
-        DMA2_Stream0: DMA2_Stream0
-        DMA2_Stream1: DMA2_Stream1
-        DMA2_Stream2: DMA2_Stream2
-        DMA2_Stream3: DMA2_Stream3
-        DMA2_Stream4: DMA2_Stream4
-        DMA2_Stream5: DMA2_Stream5
-        DMA2_Stream6: DMA2_Stream6
-        DMA2_Stream7: DMA2_Stream7
+        CH0: DMA2_Stream0
+        CH1: DMA2_Stream1
+        CH2: DMA2_Stream2
+        CH3: DMA2_Stream3
+        CH4: DMA2_Stream4
+        CH5: DMA2_Stream5
+        CH6: DMA2_Stream6
+        CH7: DMA2_Stream7
     DMA2D:
       address: 0x4002b000
       rcc:
@@ -920,12 +920,32 @@ cores:
         af: 11
       interrupts:
         GLOBAL: ETH
+        WKUP: ETH
     EXTI:
       address: 0x40013c00
       block: exti_v1/EXTI
+      interrupts:
+        EXTI0: EXTI0
+        EXTI1: EXTI1
+        EXTI10: EXTI15_10
+        EXTI11: EXTI15_10
+        EXTI12: EXTI15_10
+        EXTI13: EXTI15_10
+        EXTI14: EXTI15_10
+        EXTI15: EXTI15_10
+        EXTI2: EXTI2
+        EXTI3: EXTI3
+        EXTI4: EXTI4
+        EXTI5: EXTI9_5
+        EXTI6: EXTI9_5
+        EXTI7: EXTI9_5
+        EXTI8: EXTI9_5
+        EXTI9: EXTI9_5
     FLASH:
       address: 0x40023c00
       block: flash_f7/FLASH
+      interrupts:
+        GLOBAL: FLASH
     FMC:
       address: 0xa0000000
       rcc:
@@ -1266,7 +1286,8 @@ cores:
           enable:
             register: AHB2ENR
             field: HASHEN
-      interrupts: {}
+      interrupts:
+        GLOBAL: HASH_RNG
       dma_channels:
         IN:
         - channel: DMA2_CH7
@@ -1622,6 +1643,7 @@ cores:
         signal: R7
         af: 14
       interrupts:
+        ER: LTDC
         GLOBAL: LTDC
     MDIOS:
       address: 0x40017800
@@ -1650,6 +1672,7 @@ cores:
         af: 12
       interrupts:
         GLOBAL: MDIOS
+        WKUP: MDIOS
     PWR:
       address: 0x40007000
       rcc:
@@ -1786,7 +1809,10 @@ cores:
       - pin: PC13
         signal: TS
       interrupts:
-        GLOBAL: TAMP_STAMP
+        ALARM: RTC_Alarm
+        STAMP: TAMP_STAMP
+        TAMP: TAMP_STAMP
+        WKUP: RTC_WKUP
     SAI1:
       address: 0x40015800
       rcc:
@@ -2431,6 +2457,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM1_BRK_TIM9
+        CC: TIM1_CC
         COM: TIM1_TRG_COM_TIM11
         TRG: TIM1_TRG_COM_TIM11
         UP: TIM1_UP_TIM10
@@ -2484,6 +2511,7 @@ cores:
         af: 3
       interrupts:
         BRK: TIM1_UP_TIM10
+        CC: TIM1_UP_TIM10
         COM: TIM1_UP_TIM10
         TRG: TIM1_UP_TIM10
         UP: TIM1_UP_TIM10
@@ -2505,6 +2533,7 @@ cores:
         af: 3
       interrupts:
         BRK: TIM1_TRG_COM_TIM11
+        CC: TIM1_TRG_COM_TIM11
         COM: TIM1_TRG_COM_TIM11
         TRG: TIM1_TRG_COM_TIM11
         UP: TIM1_TRG_COM_TIM11
@@ -2529,6 +2558,7 @@ cores:
         af: 9
       interrupts:
         BRK: TIM8_BRK_TIM12
+        CC: TIM8_BRK_TIM12
         COM: TIM8_BRK_TIM12
         TRG: TIM8_BRK_TIM12
         UP: TIM8_BRK_TIM12
@@ -2550,6 +2580,7 @@ cores:
         af: 9
       interrupts:
         BRK: TIM8_UP_TIM13
+        CC: TIM8_UP_TIM13
         COM: TIM8_UP_TIM13
         TRG: TIM8_UP_TIM13
         UP: TIM8_UP_TIM13
@@ -2571,6 +2602,7 @@ cores:
         af: 9
       interrupts:
         BRK: TIM8_TRG_COM_TIM14
+        CC: TIM8_TRG_COM_TIM14
         COM: TIM8_TRG_COM_TIM14
         TRG: TIM8_TRG_COM_TIM14
         UP: TIM8_TRG_COM_TIM14
@@ -2625,6 +2657,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM2
+        CC: TIM2
         COM: TIM2
         TRG: TIM2
         UP: TIM2
@@ -2696,6 +2729,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM3
+        CC: TIM3
         COM: TIM3
         TRG: TIM3
         UP: TIM3
@@ -2760,6 +2794,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM4
+        CC: TIM4
         COM: TIM4
         TRG: TIM4
         UP: TIM4
@@ -2803,6 +2838,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM5
+        CC: TIM5
         COM: TIM5
         TRG: TIM5
         UP: TIM5
@@ -2843,7 +2879,12 @@ cores:
             register: APB1RSTR
             field: TIM6RST
       block: timer_v1/TIM_GP16
-      interrupts: {}
+      interrupts:
+        BRK: TIM6_DAC
+        CC: TIM6_DAC
+        COM: TIM6_DAC
+        TRG: TIM6_DAC
+        UP: TIM6_DAC
       dma_channels:
         UP:
         - channel: DMA1_CH1
@@ -2862,6 +2903,7 @@ cores:
       block: timer_v1/TIM_GP16
       interrupts:
         BRK: TIM7
+        CC: TIM7
         COM: TIM7
         TRG: TIM7
         UP: TIM7
@@ -2925,6 +2967,7 @@ cores:
         af: 3
       interrupts:
         BRK: TIM8_BRK_TIM12
+        CC: TIM8_CC
         COM: TIM8_TRG_COM_TIM14
         TRG: TIM8_TRG_COM_TIM14
         UP: TIM8_UP_TIM13
@@ -2983,6 +3026,7 @@ cores:
         af: 3
       interrupts:
         BRK: TIM1_BRK_TIM9
+        CC: TIM1_BRK_TIM9
         COM: TIM1_BRK_TIM9
         TRG: TIM1_BRK_TIM9
         UP: TIM1_BRK_TIM9
@@ -3435,7 +3479,10 @@ cores:
         signal: DP
         af: 10
       interrupts:
-        GLOBAL: OTG_FS_WKUP
+        EP1_IN: OTG_FS
+        EP1_OUT: OTG_FS
+        GLOBAL: OTG_FS
+        WKUP: OTG_FS_WKUP
     USB_OTG_HS:
       address: 0x40040000
       rcc:
@@ -3500,7 +3547,10 @@ cores:
         signal: ULPI_NXT
         af: 10
       interrupts:
-        GLOBAL: OTG_HS_EP1_OUT
+        EP1_IN: OTG_HS_EP1_IN
+        EP1_OUT: OTG_HS_EP1_OUT
+        GLOBAL: OTG_HS
+        WKUP: OTG_HS_WKUP
     WWDG:
       address: 0x40002c00
       rcc:
@@ -3515,6 +3565,7 @@ cores:
       block: wwdg_v1/WWDG
       interrupts:
         GLOBAL: WWDG
+        RST: WWDG
   interrupts:
     ADC: 18
     CAN1_RX0: 20

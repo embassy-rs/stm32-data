@@ -187,7 +187,8 @@ cores:
         signal: IN9
       - pin: PF0
         signal: IN10
-      interrupts: {}
+      interrupts:
+        GLOBAL: ADC1_2
       dma_channels:
         ADC1:
         - dmamux: DMAMUX1
@@ -321,7 +322,8 @@ cores:
       - pin: PB8
         signal: OUT
         af: 8
-      interrupts: {}
+      interrupts:
+        WKUP: COMP1_2_3
     COMP2:
       address: 0x40010204
       pins:
@@ -346,7 +348,7 @@ cores:
         signal: OUT
         af: 8
       interrupts:
-        GLOBAL: COMP1_2_3
+        WKUP: COMP1_2_3
     COMP3:
       address: 0x40010208
       pins:
@@ -368,7 +370,7 @@ cores:
       - pin: PF1
         signal: INM
       interrupts:
-        GLOBAL: COMP1_2_3
+        WKUP: COMP1_2_3
     COMP4:
       address: 0x4001020c
       pins:
@@ -385,7 +387,8 @@ cores:
       - pin: PB14
         signal: OUT
         af: 8
-      interrupts: {}
+      interrupts:
+        WKUP: COMP4_5_6
     COMP5:
       address: 0x40010210
       pins:
@@ -400,7 +403,7 @@ cores:
         signal: OUT
         af: 7
       interrupts:
-        GLOBAL: COMP4_5_6
+        WKUP: COMP4_5_6
     COMP6:
       address: 0x40010214
       pins:
@@ -415,7 +418,7 @@ cores:
         signal: OUT
         af: 7
       interrupts:
-        GLOBAL: COMP4_5_6
+        WKUP: COMP4_5_6
     COMP7:
       address: 0x40010218
       pins:
@@ -430,7 +433,7 @@ cores:
         signal: OUT
         af: 7
       interrupts:
-        GLOBAL: COMP7
+        WKUP: COMP7
     CORDIC:
       address: 0x40020c00
       rcc:
@@ -582,14 +585,14 @@ cores:
             field: DMA1RST
       block: bdma_v1/DMA
       interrupts:
-        DMA1_Channel1: DMA1_Channel1
-        DMA1_Channel2: DMA1_Channel2
-        DMA1_Channel3: DMA1_Channel3
-        DMA1_Channel4: DMA1_Channel4
-        DMA1_Channel5: DMA1_Channel5
-        DMA1_Channel6: DMA1_Channel6
-        DMA1_Channel7: DMA1_Channel7
-        DMA1_Channel8: DMA1_Channel8
+        CH1: DMA1_Channel1
+        CH2: DMA1_Channel2
+        CH3: DMA1_Channel3
+        CH4: DMA1_Channel4
+        CH5: DMA1_Channel5
+        CH6: DMA1_Channel6
+        CH7: DMA1_Channel7
+        CH8: DMA1_Channel8
     DMA2:
       address: 0x40020400
       rcc:
@@ -603,14 +606,14 @@ cores:
             field: DMA2RST
       block: bdma_v1/DMA
       interrupts:
-        DMA2_Channel1: DMA2_Channel1
-        DMA2_Channel2: DMA2_Channel2
-        DMA2_Channel3: DMA2_Channel3
-        DMA2_Channel4: DMA2_Channel4
-        DMA2_Channel5: DMA2_Channel5
-        DMA2_Channel6: DMA2_Channel6
-        DMA2_Channel7: DMA2_Channel7
-        DMA2_Channel8: DMA2_Channel8
+        CH1: DMA2_Channel1
+        CH2: DMA2_Channel2
+        CH3: DMA2_Channel3
+        CH4: DMA2_Channel4
+        CH5: DMA2_Channel5
+        CH6: DMA2_Channel6
+        CH7: DMA2_Channel7
+        CH8: DMA2_Channel8
     DMAMUX1:
       address: 0x40020800
       rcc:
@@ -620,9 +623,28 @@ cores:
             register: AHB1ENR
             field: DMAMUXEN
       block: dmamux_v1/DMAMUX
+      interrupts:
+        OVR: DMAMUX_OVR
     EXTI:
       address: 0x40010400
       block: exti_v1/EXTI
+      interrupts:
+        EXTI0: EXTI0
+        EXTI1: EXTI1
+        EXTI10: EXTI15_10
+        EXTI11: EXTI15_10
+        EXTI12: EXTI15_10
+        EXTI13: EXTI15_10
+        EXTI14: EXTI15_10
+        EXTI15: EXTI15_10
+        EXTI2: EXTI2
+        EXTI3: EXTI3
+        EXTI4: EXTI4
+        EXTI5: EXTI9_5
+        EXTI6: EXTI9_5
+        EXTI7: EXTI9_5
+        EXTI8: EXTI9_5
+        EXTI9: EXTI9_5
     FDCAN1:
       address: 0x40006400
       rcc:
@@ -647,7 +669,9 @@ cores:
       - pin: PB9
         signal: TX
         af: 9
-      interrupts: {}
+      interrupts:
+        IT0: FDCAN1_IT0
+        IT1: FDCAN1_IT1
     FDCAN2:
       address: 0x40006800
       pins:
@@ -663,7 +687,9 @@ cores:
       - pin: PB13
         signal: TX
         af: 9
-      interrupts: {}
+      interrupts:
+        IT0: FDCAN2_IT0
+        IT1: FDCAN2_IT1
     FDCAN3:
       address: 0x40006c00
       pins:
@@ -679,7 +705,9 @@ cores:
       - pin: PB4
         signal: TX
         af: 11
-      interrupts: {}
+      interrupts:
+        IT0: FDCAN3_IT0
+        IT1: FDCAN3_IT1
     FLASH:
       address: 0x40022000
       rcc:
@@ -691,6 +719,8 @@ cores:
           reset:
             register: AHB1RSTR
             field: FLASHRST
+      interrupts:
+        GLOBAL: FLASH
     FMAC:
       address: 0x40021400
       rcc:
@@ -1253,7 +1283,9 @@ cores:
         signal: MCO
         af: 0
       interrupts:
+        CRS: CRS
         GLOBAL: RCC
+        LSECSS: RTC_TAMP_LSECSS
     RNG:
       address: 0x50060800
       rcc:
@@ -1288,7 +1320,10 @@ cores:
         signal: TAMP1
       - pin: PC13
         signal: TS
-      interrupts: {}
+      interrupts:
+        ALARM: RTC_Alarm
+        TAMP: RTC_TAMP_LSECSS
+        WKUP: RTC_WKUP
     SAI1:
       address: 0x40015400
       rcc:
@@ -1637,6 +1672,7 @@ cores:
         af: 6
       interrupts:
         BRK: TIM1_BRK_TIM15
+        CC: TIM1_CC
         COM: TIM1_TRG_COM_TIM17
         TRG: TIM1_TRG_COM_TIM17
         UP: TIM1_UP_TIM16
@@ -1701,6 +1737,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM1_BRK_TIM15
+        CC: TIM1_BRK_TIM15
         COM: TIM1_BRK_TIM15
         TRG: TIM1_BRK_TIM15
         UP: TIM1_BRK_TIM15
@@ -1753,6 +1790,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM1_UP_TIM16
+        CC: TIM1_UP_TIM16
         COM: TIM1_UP_TIM16
         TRG: TIM1_UP_TIM16
         UP: TIM1_UP_TIM16
@@ -1796,6 +1834,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM1_TRG_COM_TIM17
+        CC: TIM1_TRG_COM_TIM17
         COM: TIM1_TRG_COM_TIM17
         TRG: TIM1_TRG_COM_TIM17
         UP: TIM1_TRG_COM_TIM17
@@ -1863,6 +1902,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM2
+        CC: TIM2
         COM: TIM2
         TRG: TIM2
         UP: TIM2
@@ -1906,6 +1946,7 @@ cores:
         af: 6
       interrupts:
         BRK: TIM20_BRK
+        CC: TIM20_CC
         COM: TIM20_TRG_COM
         TRG: TIM20_TRG_COM
         UP: TIM20_UP
@@ -1988,6 +2029,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM3
+        CC: TIM3
         COM: TIM3
         TRG: TIM3
         UP: TIM3
@@ -2052,6 +2094,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM4
+        CC: TIM4
         COM: TIM4
         TRG: TIM4
         UP: TIM4
@@ -2107,6 +2150,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM5
+        CC: TIM5
         COM: TIM5
         TRG: TIM5
         UP: TIM5
@@ -2141,7 +2185,12 @@ cores:
             register: APB1RSTR1
             field: TIM6RST
       block: timer_v1/TIM_GP16
-      interrupts: {}
+      interrupts:
+        BRK: TIM6_DAC
+        CC: TIM6_DAC
+        COM: TIM6_DAC
+        TRG: TIM6_DAC
+        UP: TIM6_DAC
       dma_channels:
         UP:
         - dmamux: DMAMUX1
@@ -2158,7 +2207,12 @@ cores:
             register: APB1RSTR1
             field: TIM7RST
       block: timer_v1/TIM_GP16
-      interrupts: {}
+      interrupts:
+        BRK: TIM7_DAC
+        CC: TIM7_DAC
+        COM: TIM7_DAC
+        TRG: TIM7_DAC
+        UP: TIM7_DAC
       dma_channels:
         UP:
         - dmamux: DMAMUX1
@@ -2262,6 +2316,7 @@ cores:
         af: 4
       interrupts:
         BRK: TIM8_BRK
+        CC: TIM8_CC
         COM: TIM8_TRG_COM
         TRG: TIM8_TRG_COM
         UP: TIM8_UP
@@ -2614,7 +2669,9 @@ cores:
       - pin: PA12
         signal: DP
       interrupts:
-        GLOBAL: USBWakeUp
+        HP: USB_HP
+        LP: USB_LP
+        WKUP: USBWakeUp
     WWDG:
       address: 0x40002c00
       rcc:
@@ -2625,6 +2682,7 @@ cores:
             field: WWDGEN
       interrupts:
         GLOBAL: WWDG
+        RST: WWDG
   interrupts:
     ADC1_2: 18
     ADC3: 47

@@ -400,14 +400,14 @@ cores:
             field: BDMARST
       block: bdma_v1/DMA
       interrupts:
-        BDMA_Channel0: BDMA_Channel0
-        BDMA_Channel1: BDMA_Channel1
-        BDMA_Channel2: BDMA_Channel2
-        BDMA_Channel3: BDMA_Channel3
-        BDMA_Channel4: BDMA_Channel4
-        BDMA_Channel5: BDMA_Channel5
-        BDMA_Channel6: BDMA_Channel6
-        BDMA_Channel7: BDMA_Channel7
+        CH0: BDMA_Channel0
+        CH1: BDMA_Channel1
+        CH2: BDMA_Channel2
+        CH3: BDMA_Channel3
+        CH4: BDMA_Channel4
+        CH5: BDMA_Channel5
+        CH6: BDMA_Channel6
+        CH7: BDMA_Channel7
     CEC:
       address: 0x40006c00
       rcc: &id007
@@ -811,14 +811,14 @@ cores:
             field: DMA1RST
       block: dma_v1/DMA
       interrupts:
-        DMA1_Stream0: DMA1_Stream0
-        DMA1_Stream1: DMA1_Stream1
-        DMA1_Stream2: DMA1_Stream2
-        DMA1_Stream3: DMA1_Stream3
-        DMA1_Stream4: DMA1_Stream4
-        DMA1_Stream5: DMA1_Stream5
-        DMA1_Stream6: DMA1_Stream6
-        DMA1_Stream7: DMA1_Stream7
+        CH0: DMA1_Stream0
+        CH1: DMA1_Stream1
+        CH2: DMA1_Stream2
+        CH3: DMA1_Stream3
+        CH4: DMA1_Stream4
+        CH5: DMA1_Stream5
+        CH6: DMA1_Stream6
+        CH7: DMA1_Stream7
     DMA2:
       address: 0x40020400
       rcc: &id022
@@ -832,14 +832,14 @@ cores:
             field: DMA2RST
       block: dma_v1/DMA
       interrupts:
-        DMA2_Stream0: DMA2_Stream0
-        DMA2_Stream1: DMA2_Stream1
-        DMA2_Stream2: DMA2_Stream2
-        DMA2_Stream3: DMA2_Stream3
-        DMA2_Stream4: DMA2_Stream4
-        DMA2_Stream5: DMA2_Stream5
-        DMA2_Stream6: DMA2_Stream6
-        DMA2_Stream7: DMA2_Stream7
+        CH0: DMA2_Stream0
+        CH1: DMA2_Stream1
+        CH2: DMA2_Stream2
+        CH3: DMA2_Stream3
+        CH4: DMA2_Stream4
+        CH5: DMA2_Stream5
+        CH6: DMA2_Stream6
+        CH7: DMA2_Stream7
     DMA2D:
       address: 0x52001000
       rcc: &id023
@@ -857,9 +857,11 @@ cores:
     DMAMUX1:
       address: 0x40020800
       block: dmamux_v1/DMAMUX
+      interrupts: {}
     DMAMUX2:
       address: 0x58025800
       block: dmamux_v1/DMAMUX
+      interrupts: {}
     ETH:
       address: 0x40028000
       block: eth_v2/ETH
@@ -944,9 +946,27 @@ cores:
         af: 11
       interrupts:
         GLOBAL: ETH
+        WKUP: ETH
     EXTI:
       address: 0x58000000
       block: exti_h7/EXTI
+      interrupts:
+        EXTI0: EXTI0
+        EXTI1: EXTI1
+        EXTI10: EXTI15_10
+        EXTI11: EXTI15_10
+        EXTI12: EXTI15_10
+        EXTI13: EXTI15_10
+        EXTI14: EXTI15_10
+        EXTI15: EXTI15_10
+        EXTI2: EXTI2
+        EXTI3: EXTI3
+        EXTI4: EXTI4
+        EXTI5: EXTI9_5
+        EXTI6: EXTI9_5
+        EXTI7: EXTI9_5
+        EXTI8: EXTI9_5
+        EXTI9: EXTI9_5
     FDCAN1:
       address: 0x4000a000
       rcc: &id024
@@ -978,7 +998,9 @@ cores:
         signal: TX
         af: 9
       interrupts:
-        GLOBAL: FDCAN_CAL
+        CAL: FDCAN_CAL
+        IT0: FDCAN1_IT0
+        IT1: FDCAN1_IT1
     FDCAN2:
       address: 0x4000a400
       pins:
@@ -995,10 +1017,14 @@ cores:
         signal: TX
         af: 9
       interrupts:
-        GLOBAL: FDCAN_CAL
+        CAL: FDCAN_CAL
+        IT0: FDCAN2_IT0
+        IT1: FDCAN2_IT1
     FLASH:
       address: 0x52002000
       block: flash_h7/FLASH
+      interrupts:
+        GLOBAL: FLASH
     FMC:
       address: 0x52004000
       rcc: &id025
@@ -1377,7 +1403,8 @@ cores:
           reset:
             register: AHB2RSTR
             field: HASHRST
-      interrupts: {}
+      interrupts:
+        GLOBAL: HASH_RNG
       dma_channels:
         IN:
         - &id038
@@ -1889,6 +1916,7 @@ cores:
         signal: B0
         af: 14
       interrupts:
+        ER: LTDC
         GLOBAL: LTDC
     MDIOS:
       address: 0x40009400
@@ -1917,6 +1945,7 @@ cores:
         af: 12
       interrupts:
         GLOBAL: MDIOS
+        WKUP: MDIOS_WKUP
     MDMA:
       address: 0x52000000
       rcc: &id061
@@ -2079,6 +2108,7 @@ cores:
       - pin: PH1
         signal: OSC_OUT
       interrupts:
+        CRS: CRS
         GLOBAL: RCC
     RNG:
       address: 0x48021800
@@ -2117,7 +2147,10 @@ cores:
       - pin: PC13
         signal: TS
       interrupts:
-        GLOBAL: TAMP_STAMP
+        ALARM: RTC_Alarm
+        STAMP: TAMP_STAMP
+        TAMP: TAMP_STAMP
+        WKUP: RTC_WKUP
     SAI1:
       address: 0x40015800
       rcc: &id064
@@ -2988,6 +3021,7 @@ cores:
         af: 13
       interrupts:
         BRK: TIM1_BRK
+        CC: TIM1_CC
         COM: TIM1_TRG_COM
         TRG: TIM1_TRG_COM
         UP: TIM1_UP
@@ -3041,6 +3075,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM8_BRK_TIM12
+        CC: TIM8_BRK_TIM12
         COM: TIM8_BRK_TIM12
         TRG: TIM8_BRK_TIM12
         UP: TIM8_BRK_TIM12
@@ -3065,6 +3100,7 @@ cores:
         af: 9
       interrupts:
         BRK: TIM8_UP_TIM13
+        CC: TIM8_UP_TIM13
         COM: TIM8_UP_TIM13
         TRG: TIM8_UP_TIM13
         UP: TIM8_UP_TIM13
@@ -3089,6 +3125,7 @@ cores:
         af: 9
       interrupts:
         BRK: TIM8_TRG_COM_TIM14
+        CC: TIM8_TRG_COM_TIM14
         COM: TIM8_TRG_COM_TIM14
         TRG: TIM8_TRG_COM_TIM14
         UP: TIM8_TRG_COM_TIM14
@@ -3131,6 +3168,7 @@ cores:
         af: 4
       interrupts:
         BRK: TIM15
+        CC: TIM15
         COM: TIM15
         TRG: TIM15
         UP: TIM15
@@ -3184,6 +3222,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM16
+        CC: TIM16
         COM: TIM16
         TRG: TIM16
         UP: TIM16
@@ -3229,6 +3268,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM17
+        CC: TIM17
         COM: TIM17
         TRG: TIM17
         UP: TIM17
@@ -3292,6 +3332,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM2
+        CC: TIM2
         COM: TIM2
         TRG: TIM2
         UP: TIM2
@@ -3364,6 +3405,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM3
+        CC: TIM3
         COM: TIM3
         TRG: TIM3
         UP: TIM3
@@ -3434,6 +3476,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM4
+        CC: TIM4
         COM: TIM4
         TRG: TIM4
         UP: TIM4
@@ -3484,6 +3527,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM5
+        CC: TIM5
         COM: TIM5
         TRG: TIM5
         UP: TIM5
@@ -3524,7 +3568,12 @@ cores:
             register: APB1LRSTR
             field: TIM6RST
       block: timer_v1/TIM_BASIC
-      interrupts: {}
+      interrupts:
+        BRK: TIM6_DAC
+        CC: TIM6_DAC
+        COM: TIM6_DAC
+        TRG: TIM6_DAC
+        UP: TIM6_DAC
       dma_channels:
         UP:
         - &id145
@@ -3544,6 +3593,7 @@ cores:
       block: timer_v1/TIM_BASIC
       interrupts:
         BRK: TIM7
+        CC: TIM7
         COM: TIM7
         TRG: TIM7
         UP: TIM7
@@ -3621,6 +3671,7 @@ cores:
         af: 3
       interrupts:
         BRK: TIM8_BRK_TIM12
+        CC: TIM8_CC
         COM: TIM8_TRG_COM_TIM14
         TRG: TIM8_TRG_COM_TIM14
         UP: TIM8_UP_TIM13
@@ -4157,7 +4208,10 @@ cores:
         signal: DP
         af: 10
       interrupts:
-        GLOBAL: OTG_FS_EP1_OUT
+        EP1_IN: OTG_FS_EP1_IN
+        EP1_OUT: OTG_FS_EP1_OUT
+        GLOBAL: OTG_FS
+        WKUP: OTG_FS_WKUP
     USB_OTG_HS:
       address: 0x40040000
       pins:
@@ -4212,7 +4266,10 @@ cores:
         signal: ULPI_NXT
         af: 10
       interrupts:
-        GLOBAL: OTG_HS_EP1_OUT
+        EP1_IN: OTG_HS_EP1_IN
+        EP1_OUT: OTG_HS_EP1_OUT
+        GLOBAL: OTG_HS
+        WKUP: OTG_HS_WKUP
     VREFBUF:
       address: 0x58003c00
     WWDG1:
@@ -4225,6 +4282,7 @@ cores:
             field: WWDG1EN
       interrupts:
         GLOBAL: WWDG
+        RST: WWDG
     WWDG2:
       address: 0x40002c00
       rcc: &id181
@@ -4636,14 +4694,14 @@ cores:
       rcc: *id006
       block: bdma_v1/DMA
       interrupts:
-        BDMA_Channel0: BDMA_Channel0
-        BDMA_Channel1: BDMA_Channel1
-        BDMA_Channel2: BDMA_Channel2
-        BDMA_Channel3: BDMA_Channel3
-        BDMA_Channel4: BDMA_Channel4
-        BDMA_Channel5: BDMA_Channel5
-        BDMA_Channel6: BDMA_Channel6
-        BDMA_Channel7: BDMA_Channel7
+        CH0: BDMA_Channel0
+        CH1: BDMA_Channel1
+        CH2: BDMA_Channel2
+        CH3: BDMA_Channel3
+        CH4: BDMA_Channel4
+        CH5: BDMA_Channel5
+        CH6: BDMA_Channel6
+        CH7: BDMA_Channel7
     CEC:
       address: 0x40006c00
       rcc: *id007
@@ -4981,27 +5039,27 @@ cores:
       rcc: *id021
       block: dma_v1/DMA
       interrupts:
-        DMA1_Stream0: DMA1_Stream0
-        DMA1_Stream1: DMA1_Stream1
-        DMA1_Stream2: DMA1_Stream2
-        DMA1_Stream3: DMA1_Stream3
-        DMA1_Stream4: DMA1_Stream4
-        DMA1_Stream5: DMA1_Stream5
-        DMA1_Stream6: DMA1_Stream6
-        DMA1_Stream7: DMA1_Stream7
+        CH0: DMA1_Stream0
+        CH1: DMA1_Stream1
+        CH2: DMA1_Stream2
+        CH3: DMA1_Stream3
+        CH4: DMA1_Stream4
+        CH5: DMA1_Stream5
+        CH6: DMA1_Stream6
+        CH7: DMA1_Stream7
     DMA2:
       address: 0x40020400
       rcc: *id022
       block: dma_v1/DMA
       interrupts:
-        DMA2_Stream0: DMA2_Stream0
-        DMA2_Stream1: DMA2_Stream1
-        DMA2_Stream2: DMA2_Stream2
-        DMA2_Stream3: DMA2_Stream3
-        DMA2_Stream4: DMA2_Stream4
-        DMA2_Stream5: DMA2_Stream5
-        DMA2_Stream6: DMA2_Stream6
-        DMA2_Stream7: DMA2_Stream7
+        CH0: DMA2_Stream0
+        CH1: DMA2_Stream1
+        CH2: DMA2_Stream2
+        CH3: DMA2_Stream3
+        CH4: DMA2_Stream4
+        CH5: DMA2_Stream5
+        CH6: DMA2_Stream6
+        CH7: DMA2_Stream7
     DMA2D:
       address: 0x52001000
       rcc: *id023
@@ -5011,9 +5069,11 @@ cores:
     DMAMUX1:
       address: 0x40020800
       block: dmamux_v1/DMAMUX
+      interrupts: {}
     DMAMUX2:
       address: 0x58025800
       block: dmamux_v1/DMAMUX
+      interrupts: {}
     ETH:
       address: 0x40028000
       block: eth_v2/ETH
@@ -5098,9 +5158,27 @@ cores:
         af: 11
       interrupts:
         GLOBAL: ETH
+        WKUP: ETH
     EXTI:
       address: 0x58000000
       block: exti_h7/EXTI
+      interrupts:
+        EXTI0: EXTI0
+        EXTI1: EXTI1
+        EXTI10: EXTI15_10
+        EXTI11: EXTI15_10
+        EXTI12: EXTI15_10
+        EXTI13: EXTI15_10
+        EXTI14: EXTI15_10
+        EXTI15: EXTI15_10
+        EXTI2: EXTI2
+        EXTI3: EXTI3
+        EXTI4: EXTI4
+        EXTI5: EXTI9_5
+        EXTI6: EXTI9_5
+        EXTI7: EXTI9_5
+        EXTI8: EXTI9_5
+        EXTI9: EXTI9_5
     FDCAN1:
       address: 0x4000a000
       rcc: *id024
@@ -5124,7 +5202,9 @@ cores:
         signal: TX
         af: 9
       interrupts:
-        GLOBAL: FDCAN_CAL
+        CAL: FDCAN_CAL
+        IT0: FDCAN1_IT0
+        IT1: FDCAN1_IT1
     FDCAN2:
       address: 0x4000a400
       pins:
@@ -5141,10 +5221,14 @@ cores:
         signal: TX
         af: 9
       interrupts:
-        GLOBAL: FDCAN_CAL
+        CAL: FDCAN_CAL
+        IT0: FDCAN2_IT0
+        IT1: FDCAN2_IT1
     FLASH:
       address: 0x52002000
       block: flash_h7/FLASH
+      interrupts:
+        GLOBAL: FLASH
     FMC:
       address: 0x52004000
       rcc: *id025
@@ -5419,7 +5503,8 @@ cores:
     HASH:
       address: 0x48021400
       rcc: *id037
-      interrupts: {}
+      interrupts:
+        GLOBAL: HASH_RNG
       dma_channels:
         IN:
         - *id038
@@ -5821,6 +5906,7 @@ cores:
         signal: B0
         af: 14
       interrupts:
+        ER: LTDC
         GLOBAL: LTDC
     MDIOS:
       address: 0x40009400
@@ -5841,6 +5927,7 @@ cores:
         af: 12
       interrupts:
         GLOBAL: MDIOS
+        WKUP: MDIOS_WKUP
     MDMA:
       address: 0x52000000
       rcc: *id061
@@ -5987,6 +6074,7 @@ cores:
       - pin: PH1
         signal: OSC_OUT
       interrupts:
+        CRS: CRS
         GLOBAL: RCC
     RNG:
       address: 0x48021800
@@ -6017,7 +6105,10 @@ cores:
       - pin: PC13
         signal: TS
       interrupts:
-        GLOBAL: TAMP_STAMP
+        ALARM: RTC_Alarm
+        STAMP: TAMP_STAMP
+        TAMP: TAMP_STAMP
+        WKUP: RTC_WKUP
     SAI1:
       address: 0x40015800
       rcc: *id064
@@ -6736,6 +6827,7 @@ cores:
         af: 13
       interrupts:
         BRK: TIM1_BRK
+        CC: TIM1_CC
         COM: TIM1_TRG_COM
         TRG: TIM1_TRG_COM
         UP: TIM1_UP
@@ -6767,6 +6859,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM8_BRK_TIM12
+        CC: TIM8_BRK_TIM12
         COM: TIM8_BRK_TIM12
         TRG: TIM8_BRK_TIM12
         UP: TIM8_BRK_TIM12
@@ -6783,6 +6876,7 @@ cores:
         af: 9
       interrupts:
         BRK: TIM8_UP_TIM13
+        CC: TIM8_UP_TIM13
         COM: TIM8_UP_TIM13
         TRG: TIM8_UP_TIM13
         UP: TIM8_UP_TIM13
@@ -6799,6 +6893,7 @@ cores:
         af: 9
       interrupts:
         BRK: TIM8_TRG_COM_TIM14
+        CC: TIM8_TRG_COM_TIM14
         COM: TIM8_TRG_COM_TIM14
         TRG: TIM8_TRG_COM_TIM14
         UP: TIM8_TRG_COM_TIM14
@@ -6833,6 +6928,7 @@ cores:
         af: 4
       interrupts:
         BRK: TIM15
+        CC: TIM15
         COM: TIM15
         TRG: TIM15
         UP: TIM15
@@ -6870,6 +6966,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM16
+        CC: TIM16
         COM: TIM16
         TRG: TIM16
         UP: TIM16
@@ -6903,6 +7000,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM17
+        CC: TIM17
         COM: TIM17
         TRG: TIM17
         UP: TIM17
@@ -6954,6 +7052,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM2
+        CC: TIM2
         COM: TIM2
         TRG: TIM2
         UP: TIM2
@@ -7008,6 +7107,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM3
+        CC: TIM3
         COM: TIM3
         TRG: TIM3
         UP: TIM3
@@ -7058,6 +7158,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM4
+        CC: TIM4
         COM: TIM4
         TRG: TIM4
         UP: TIM4
@@ -7092,6 +7193,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM5
+        CC: TIM5
         COM: TIM5
         TRG: TIM5
         UP: TIM5
@@ -7112,7 +7214,12 @@ cores:
       address: 0x40001000
       rcc: *id144
       block: timer_v1/TIM_BASIC
-      interrupts: {}
+      interrupts:
+        BRK: TIM6_DAC
+        CC: TIM6_DAC
+        COM: TIM6_DAC
+        TRG: TIM6_DAC
+        UP: TIM6_DAC
       dma_channels:
         UP:
         - *id145
@@ -7122,6 +7229,7 @@ cores:
       block: timer_v1/TIM_BASIC
       interrupts:
         BRK: TIM7
+        CC: TIM7
         COM: TIM7
         TRG: TIM7
         UP: TIM7
@@ -7189,6 +7297,7 @@ cores:
         af: 3
       interrupts:
         BRK: TIM8_BRK_TIM12
+        CC: TIM8_CC
         COM: TIM8_TRG_COM_TIM14
         TRG: TIM8_TRG_COM_TIM14
         UP: TIM8_UP_TIM13
@@ -7615,7 +7724,10 @@ cores:
         signal: DP
         af: 10
       interrupts:
-        GLOBAL: OTG_FS_EP1_OUT
+        EP1_IN: OTG_FS_EP1_IN
+        EP1_OUT: OTG_FS_EP1_OUT
+        GLOBAL: OTG_FS
+        WKUP: OTG_FS_WKUP
     USB_OTG_HS:
       address: 0x40040000
       pins:
@@ -7670,7 +7782,10 @@ cores:
         signal: ULPI_NXT
         af: 10
       interrupts:
-        GLOBAL: OTG_HS_EP1_OUT
+        EP1_IN: OTG_HS_EP1_IN
+        EP1_OUT: OTG_HS_EP1_OUT
+        GLOBAL: OTG_HS
+        WKUP: OTG_HS_WKUP
     VREFBUF:
       address: 0x58003c00
     WWDG1:
@@ -7678,6 +7793,7 @@ cores:
       rcc: *id180
       interrupts:
         GLOBAL: WWDG
+        RST: WWDG
     WWDG2:
       address: 0x40002c00
       rcc: *id181

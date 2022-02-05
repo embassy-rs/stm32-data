@@ -262,7 +262,8 @@ cores:
         signal: IN14
       - pin: PC5
         signal: IN15
-      interrupts: {}
+      interrupts:
+        GLOBAL: ADC1_COMP
       dma_channels:
         ADC:
         - channel: DMA1_CH1
@@ -273,7 +274,8 @@ cores:
       address: 0x40012708
     AES:
       address: 0x40026000
-      interrupts: {}
+      interrupts:
+        GLOBAL: AES_RNG_LPUART1
       dma_channels:
         IN:
         - channel: DMA1_CH1
@@ -306,7 +308,7 @@ cores:
         signal: OUT
         af: 7
       interrupts:
-        GLOBAL: ADC1_COMP
+        WKUP: ADC1_COMP
     COMP2:
       address: 0x4001001c
       pins:
@@ -338,7 +340,7 @@ cores:
       - pin: PB7
         signal: INP
       interrupts:
-        GLOBAL: ADC1_COMP
+        WKUP: ADC1_COMP
     CRC:
       address: 0x40023000
       rcc:
@@ -406,14 +408,37 @@ cores:
             field: DMA1RST
       block: bdma_v2/DMA
       interrupts:
-        DMA1_Channel1: DMA1_Channel1
-        DMA1_Channel2_3: DMA1_Channel2_3
-        DMA1_Channel4_5_6_7: DMA1_Channel4_5_6_7
+        CH1: DMA1_Channel1
+        CH2: DMA1_Channel2_3
+        CH3: DMA1_Channel2_3
+        CH4: DMA1_Channel4_5_6_7
+        CH5: DMA1_Channel4_5_6_7
+        CH6: DMA1_Channel4_5_6_7
+        CH7: DMA1_Channel4_5_6_7
     EXTI:
       address: 0x40010400
       block: exti_v1/EXTI
+      interrupts:
+        EXTI0: EXTI0_1
+        EXTI1: EXTI0_1
+        EXTI10: EXTI4_15
+        EXTI11: EXTI4_15
+        EXTI12: EXTI4_15
+        EXTI13: EXTI4_15
+        EXTI14: EXTI4_15
+        EXTI15: EXTI4_15
+        EXTI2: EXTI2_3
+        EXTI3: EXTI2_3
+        EXTI4: EXTI4_15
+        EXTI5: EXTI4_15
+        EXTI6: EXTI4_15
+        EXTI7: EXTI4_15
+        EXTI8: EXTI4_15
+        EXTI9: EXTI4_15
     FLASH:
       address: 0x40022000
+      interrupts:
+        GLOBAL: FLASH
     GPIOA:
       address: 0x50000000
       rcc:
@@ -826,7 +851,9 @@ cores:
         signal: OSC_IN
       - pin: PH1
         signal: OSC_OUT
-      interrupts: {}
+      interrupts:
+        CRS: RCC_CRS
+        RCC: RCC_CRS
     RNG:
       address: 0x40025000
       rcc:
@@ -839,7 +866,8 @@ cores:
             register: AHBRSTR
             field: RNGRST
       block: rng_v1/RNG
-      interrupts: {}
+      interrupts:
+        GLOBAL: AES_RNG_LPUART1
     RTC:
       address: 0x40002800
       pins:
@@ -863,7 +891,11 @@ cores:
       - pin: PC13
         signal: TS
       interrupts:
-        GLOBAL: RTC
+        ALARM: RTC
+        SSRU: RTC
+        STAMP: RTC
+        TAMP: RTC
+        WKUP: RTC
     SPI1:
       address: 0x40013000
       rcc:
@@ -1029,6 +1061,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM2
+        CC: TIM2
         COM: TIM2
         TRG: TIM2
         UP: TIM2
@@ -1085,6 +1118,7 @@ cores:
         af: 0
       interrupts:
         BRK: TIM21
+        CC: TIM21
         COM: TIM21
         TRG: TIM21
         UP: TIM21
@@ -1127,6 +1161,7 @@ cores:
         af: 0
       interrupts:
         BRK: TIM22
+        CC: TIM22
         COM: TIM22
         TRG: TIM22
         UP: TIM22
@@ -1142,7 +1177,12 @@ cores:
             register: APB1RSTR
             field: TIM6RST
       block: timer_v1/TIM_GP16
-      interrupts: {}
+      interrupts:
+        BRK: TIM6_DAC
+        CC: TIM6_DAC
+        COM: TIM6_DAC
+        TRG: TIM6_DAC
+        UP: TIM6_DAC
       dma_channels:
         UP:
         - channel: DMA1_CH2
@@ -1377,7 +1417,9 @@ cores:
         signal: NOE
         af: 2
       interrupts:
-        GLOBAL: USB
+        HP: USB
+        LP: USB
+        WKUP: USB
     WWDG:
       address: 0x40002c00
       rcc:
@@ -1392,6 +1434,7 @@ cores:
       block: wwdg_v1/WWDG
       interrupts:
         GLOBAL: WWDG
+        RST: WWDG
   interrupts:
     ADC1_COMP: 12
     AES_RNG_LPUART1: 29

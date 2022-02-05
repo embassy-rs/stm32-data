@@ -237,7 +237,7 @@ cores:
         signal: OUT
         af: 8
       interrupts:
-        GLOBAL: COMP2
+        WKUP: COMP2
     COMP4:
       address: 0x40010028
       pins:
@@ -245,7 +245,8 @@ cores:
         signal: INM
       - pin: PB0
         signal: INP
-      interrupts: {}
+      interrupts:
+        WKUP: COMP4_6
     CRC:
       address: 0x40023000
       rcc:
@@ -284,19 +285,37 @@ cores:
             field: DMA1EN
       block: bdma_v1/DMA
       interrupts:
-        DMA1_Channel1: DMA1_Channel1
-        DMA1_Channel2: DMA1_Channel2
-        DMA1_Channel3: DMA1_Channel3
-        DMA1_Channel4: DMA1_Channel4
-        DMA1_Channel5: DMA1_Channel5
-        DMA1_Channel6: DMA1_Channel6
-        DMA1_Channel7: DMA1_Channel7
+        CH1: DMA1_Channel1
+        CH2: DMA1_Channel2
+        CH3: DMA1_Channel3
+        CH4: DMA1_Channel4
+        CH5: DMA1_Channel5
+        CH6: DMA1_Channel6
+        CH7: DMA1_Channel7
     EXTI:
       address: 0x40010400
       block: exti_v1/EXTI
+      interrupts:
+        EXTI0: EXTI0
+        EXTI1: EXTI1
+        EXTI10: EXTI15_10
+        EXTI11: EXTI15_10
+        EXTI12: EXTI15_10
+        EXTI13: EXTI15_10
+        EXTI14: EXTI15_10
+        EXTI15: EXTI15_10
+        EXTI3: EXTI3
+        EXTI4: EXTI4
+        EXTI5: EXTI9_5
+        EXTI6: EXTI9_5
+        EXTI7: EXTI9_5
+        EXTI8: EXTI9_5
+        EXTI9: EXTI9_5
     FLASH:
       address: 0x40022000
       block: flash_f3/FLASH
+      interrupts:
+        GLOBAL: FLASH
     GPIOA:
       address: 0x48000000
       rcc:
@@ -510,7 +529,10 @@ cores:
         signal: REFIN
         af: 0
       interrupts:
-        GLOBAL: TAMP_STAMP
+        ALARM: RTC_Alarm
+        STAMP: TAMP_STAMP
+        TAMP: TAMP_STAMP
+        WKUP: RTC_WKUP
     SPI2:
       address: 0x40003800
       rcc:
@@ -647,6 +669,7 @@ cores:
         af: 6
       interrupts:
         BRK: TIM1_BRK_TIM15
+        CC: TIM1_CC
         COM: TIM1_TRG_COM_TIM17
         TRG: TIM1_TRG_COM_TIM17
         UP: TIM1_UP_TIM16
@@ -692,6 +715,7 @@ cores:
         af: 9
       interrupts:
         BRK: TIM1_BRK_TIM15
+        CC: TIM1_BRK_TIM15
         COM: TIM1_BRK_TIM15
         TRG: TIM1_BRK_TIM15
         UP: TIM1_BRK_TIM15
@@ -737,6 +761,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM1_UP_TIM16
+        CC: TIM1_UP_TIM16
         COM: TIM1_UP_TIM16
         TRG: TIM1_UP_TIM16
         UP: TIM1_UP_TIM16
@@ -774,6 +799,7 @@ cores:
         af: 10
       interrupts:
         BRK: TIM1_TRG_COM_TIM17
+        CC: TIM1_TRG_COM_TIM17
         COM: TIM1_TRG_COM_TIM17
         TRG: TIM1_TRG_COM_TIM17
         UP: TIM1_TRG_COM_TIM17
@@ -835,6 +861,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM2
+        CC: TIM2
         COM: TIM2
         TRG: TIM2
         UP: TIM2
@@ -861,7 +888,12 @@ cores:
             register: APB1RSTR
             field: TIM6RST
       block: timer_v1/TIM_BASIC
-      interrupts: {}
+      interrupts:
+        BRK: TIM6_DAC
+        CC: TIM6_DAC
+        COM: TIM6_DAC
+        TRG: TIM6_DAC
+        UP: TIM6_DAC
       dma_channels:
         UP:
         - channel: DMA1_CH3
@@ -1038,6 +1070,7 @@ cores:
       block: wwdg_v1/WWDG
       interrupts:
         GLOBAL: WWDG
+        RST: WWDG
   interrupts:
     ADC1: 18
     COMP2: 64

@@ -189,7 +189,7 @@ cores:
       - pin: PC5
         signal: INP
       interrupts:
-        GLOBAL: COMP
+        WKUP: COMP
     COMP2:
       address: 0x46005404
       pins:
@@ -208,7 +208,7 @@ cores:
         signal: OUT
         af: 12
       interrupts:
-        GLOBAL: COMP
+        WKUP: COMP
     CORDIC:
       address: 0x40021000
       rcc:
@@ -377,7 +377,8 @@ cores:
       - pin: PG15
         signal: D13
         af: 10
-      interrupts: {}
+      interrupts:
+        GLOBAL: DCMI_PSSI
     DMA2D:
       address: 0x4002b000
       rcc:
@@ -395,6 +396,23 @@ cores:
     EXTI:
       address: 0x46022000
       block: exti_u5/EXTI
+      interrupts:
+        EXTI0: EXTI0
+        EXTI1: EXTI1
+        EXTI10: EXTI10
+        EXTI11: EXTI11
+        EXTI12: EXTI12
+        EXTI13: EXTI13
+        EXTI14: EXTI14
+        EXTI15: EXTI15
+        EXTI2: EXTI2
+        EXTI3: EXTI3
+        EXTI4: EXTI4
+        EXTI5: EXTI5
+        EXTI6: EXTI6
+        EXTI7: EXTI7
+        EXTI8: EXTI8
+        EXTI9: EXTI9
     FDCAN1:
       address: 0x4000a400
       rcc:
@@ -425,7 +443,9 @@ cores:
       - pin: PD1
         signal: TX
         af: 9
-      interrupts: {}
+      interrupts:
+        IT0: FDCAN1_IT0
+        IT1: FDCAN1_IT1
     FLASH:
       address: 0x40022000
       rcc:
@@ -435,6 +455,8 @@ cores:
             register: AHB1ENR
             field: FLASHEN
       block: flash_u5/FLASH
+      interrupts:
+        GLOBAL: FLASH
     FMAC:
       address: 0x40021400
       rcc:
@@ -687,7 +709,23 @@ cores:
           reset:
             register: AHB1RSTR
             field: GPDMA1RST
-      interrupts: {}
+      interrupts:
+        CH0: GPDMA1_Channel0
+        CH1: GPDMA1_Channel1
+        CH10: GPDMA1_Channel10
+        CH11: GPDMA1_Channel11
+        CH12: GPDMA1_Channel12
+        CH13: GPDMA1_Channel13
+        CH14: GPDMA1_Channel14
+        CH15: GPDMA1_Channel15
+        CH2: GPDMA1_Channel2
+        CH3: GPDMA1_Channel3
+        CH4: GPDMA1_Channel4
+        CH5: GPDMA1_Channel5
+        CH6: GPDMA1_Channel6
+        CH7: GPDMA1_Channel7
+        CH8: GPDMA1_Channel8
+        CH9: GPDMA1_Channel9
     GPIOA:
       address: 0x42020000
       rcc:
@@ -1006,7 +1044,11 @@ cores:
           reset:
             register: AHB3RSTR
             field: LPDMA1RST
-      interrupts: {}
+      interrupts:
+        CH0: LPDMA1_Channel0
+        CH1: LPDMA1_Channel1
+        CH2: LPDMA1_Channel2
+        CH3: LPDMA1_Channel3
     LPTIM1:
       address: 0x46004400
       rcc:
@@ -1393,7 +1435,13 @@ cores:
       - pin: PG7
         signal: CCK0
         af: 6
-      interrupts: {}
+      interrupts:
+        FLT0: MDF1_FLT0
+        FLT1: MDF1_FLT1
+        FLT2: MDF1_FLT2
+        FLT3: MDF1_FLT3
+        FLT4: MDF1_FLT4
+        FLT5: MDF1_FLT5
     OCTOSPI1:
       address: 0x90000000
       rcc:
@@ -1791,7 +1839,8 @@ cores:
         signal: WKUP7
       - pin: PF2
         signal: WKUP8
-      interrupts: {}
+      interrupts:
+        S3WU: PWR_S3WU
     RCC:
       address: 0x46020c00
       block: rcc_u5/RCC
@@ -1810,6 +1859,7 @@ cores:
       - pin: PH1
         signal: OSC_OUT
       interrupts:
+        CRS: CRS
         GLOBAL: RCC
     RNG:
       address: 0x420c0800
@@ -1837,7 +1887,11 @@ cores:
       - pin: PC13
         signal: TS
       interrupts:
-        GLOBAL: RTC
+        ALARM: RTC
+        SSRU: RTC
+        STAMP: RTC
+        TAMP: RTC
+        WKUP: RTC
     SAI1:
       address: 0x40015400
       rcc:
@@ -2525,6 +2579,7 @@ cores:
         af: 3
       interrupts:
         BRK: TIM1_BRK
+        CC: TIM1_CC
         COM: TIM1_TRG_COM
         TRG: TIM1_TRG_COM
         UP: TIM1_UP
@@ -2576,6 +2631,7 @@ cores:
         af: 14
       interrupts:
         BRK: TIM15
+        CC: TIM15
         COM: TIM15
         TRG: TIM15
         UP: TIM15
@@ -2609,6 +2665,7 @@ cores:
         af: 14
       interrupts:
         BRK: TIM16
+        CC: TIM16
         COM: TIM16
         TRG: TIM16
         UP: TIM16
@@ -2645,6 +2702,7 @@ cores:
         af: 14
       interrupts:
         BRK: TIM17
+        CC: TIM17
         COM: TIM17
         TRG: TIM17
         UP: TIM17
@@ -2699,6 +2757,7 @@ cores:
         af: 1
       interrupts:
         BRK: TIM2
+        CC: TIM2
         COM: TIM2
         TRG: TIM2
         UP: TIM2
@@ -2765,6 +2824,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM3
+        CC: TIM3
         COM: TIM3
         TRG: TIM3
         UP: TIM3
@@ -2810,6 +2870,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM4
+        CC: TIM4
         COM: TIM4
         TRG: TIM4
         UP: TIM4
@@ -2840,6 +2901,7 @@ cores:
         af: 2
       interrupts:
         BRK: TIM5
+        CC: TIM5
         COM: TIM5
         TRG: TIM5
         UP: TIM5
@@ -2857,6 +2919,7 @@ cores:
       block: timer_v1/TIM_GP16
       interrupts:
         BRK: TIM6
+        CC: TIM6
         COM: TIM6
         TRG: TIM6
         UP: TIM6
@@ -2874,6 +2937,7 @@ cores:
       block: timer_v1/TIM_GP16
       interrupts:
         BRK: TIM7
+        CC: TIM7
         COM: TIM7
         TRG: TIM7
         UP: TIM7
@@ -2943,6 +3007,7 @@ cores:
         af: 3
       interrupts:
         BRK: TIM8_BRK
+        CC: TIM8_CC
         COM: TIM8_TRG_COM
         TRG: TIM8_TRG_COM
         UP: TIM8_UP
@@ -3423,7 +3488,10 @@ cores:
         signal: NOE
         af: 10
       interrupts:
+        EP1_IN: OTG_FS
+        EP1_OUT: OTG_FS
         GLOBAL: OTG_FS
+        WKUP: OTG_FS
     VREFBUF:
       address: 0x46007400
     WWDG:
@@ -3436,6 +3504,7 @@ cores:
             field: WWDGEN
       interrupts:
         GLOBAL: WWDG
+        RST: WWDG
   interrupts:
     ADC1: 37
     ADC4: 113
