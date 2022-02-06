@@ -612,7 +612,7 @@ def parse_chips():
             core_name = corename(core_xml)
             core = OrderedDict({
                 'name': core_name,
-                'peripherals': {},
+                'peripherals': [],
             })
             cores.append(core)
 
@@ -689,13 +689,14 @@ def parse_chips():
                 sort_pins(pins)
                 periph_pins[periph] = pins
 
-            peris = {}
+            peris = []
             for pname, pkind in peri_kinds.items():
                 addr = get_peri_addr(defines, pname)
                 if addr is None:
                     continue
 
                 p = OrderedDict({
+                    'name': pname,
                     'address': addr,
                 })
 
@@ -717,15 +718,17 @@ def parse_chips():
                     # filter by available, because some are conditioned on <Die>
                     p['interrupts'] = interrupts.filter_interrupts(chip_irqs[pname], header_irqs)
 
-                peris[pname] = p
+                peris.append(p)
 
             family_extra = "data/extra/family/" + chip['family'] + ".yaml"
             if os.path.exists(family_extra):
                 with open(family_extra) as extra_f:
                     extra = yaml.load(extra_f)
-                    for (extra_name, extra_p) in extra['peripherals'].items():
-                        peris[extra_name] = extra_p
+                    for p in extra['peripherals']:
+                        peris.append(p)
 
+            peris.sort(key=lambda x: x['name'])
+            have_peris = set((p['name'] for p in peris))
             core['peripherals'] = peris
 
             # Process DMA channels
@@ -737,15 +740,15 @@ def parse_chips():
 
             # The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
             # so we have to filter it.
-            chs = [ch for ch in chs if ch['dma'] in peris]
+            chs = [ch for ch in chs if ch['dma'] in have_peris]
             core['dma_channels'] = chs
 
             have_chs = set((ch['name'] for ch in chs))
 
             # Process peripheral - DMA channel associations
             if chip_dma is not None:
-                for pname, p in peris.items():
-                    if peri_chs := dma_channels[chip_dma]['peripherals'].get(pname):
+                for p in peris:
+                    if peri_chs := dma_channels[chip_dma]['peripherals'].get(p['name']):
                         p['dma_channels'] = [
                             ch
                             for ch in peri_chs
