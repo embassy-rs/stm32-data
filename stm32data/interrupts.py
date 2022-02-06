@@ -159,7 +159,10 @@ def parse():
         irqs2 = {}
         for name, signals in irqs.items():
             for (p, s) in signals:
-                irqs2.setdefault(p, {}).setdefault(s, []).append(name)
+                irqs2.setdefault(p, []).append({
+                    'interrupt': name,
+                    'signal': s,
+                })
 
         chip_interrupts[(nvic_name, nvic_version)] = irqs2
 
@@ -272,12 +275,6 @@ def valid_signals(peri):
 
 
 def filter_interrupts(peri_irqs, all_irqs):
-    filtered = {}
-
-    for signal, irqs in peri_irqs.items():
-        for irq in all_irqs:
-            if irq in irqs:
-                filtered[signal] = irq
-                break
-
-    return filtered
+    return [
+        i for i in peri_irqs if i['interrupt'] in all_irqs
+    ]
