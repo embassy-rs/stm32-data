@@ -632,7 +632,13 @@ def parse_chips():
             if chip_name.startswith('STM32F100') and 'DMA2_Channel4_5' in header_irqs:
                 del header_irqs['DMA2_Channel4_5']
 
-            core['interrupts'] = header_irqs
+            core['interrupts'] = [
+                {
+                    'name': k,
+                    'number': v,
+                }
+                for k, v in header_irqs.items()
+            ]
 
             peri_kinds = {}
 
