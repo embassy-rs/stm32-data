@@ -729,33 +729,28 @@ def parse_chips():
             core['peripherals'] = peris
 
             # Process DMA channels
-            chs = {}
-            if chip_dma in dma_channels:
-                chs.update(dma_channels[chip_dma]['channels'])
-            if chip_bdma in dma_channels:
-                chs.update(dma_channels[chip_bdma]['channels'])
+            chs = []
+            if x := dma_channels.get(chip_dma):
+                chs.extend(x['channels'])
+            if x := dma_channels.get(chip_bdma):
+                chs.extend(x['channels'])
 
             # The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
             # so we have to filter it.
-            chs = {
-                name: ch
-                for (name, ch) in chs.items()
-                if ch['dma'] in peris
-            }
+            chs = [ch for ch in chs if ch['dma'] in peris]
             core['dma_channels'] = chs
+
+            have_chs = set((ch['name'] for ch in chs))
 
             # Process peripheral - DMA channel associations
             if chip_dma is not None:
                 for pname, p in peris.items():
-                    if (peri_chs := dma_channels[chip_dma]['peripherals'].get(pname)) is not None:
-                        p['dma_channels'] = {
-                            req: [
-                                ch
-                                for ch in req_chs
-                                if ('channel' not in ch) or ch['channel'] in chs
-                            ]
-                            for req, req_chs in peri_chs.items()
-                        }
+                    if peri_chs := dma_channels[chip_dma]['peripherals'].get(pname):
+                        p['dma_channels'] = [
+                            ch
+                            for ch in peri_chs
+                            if 'channel' not in ch or ch['channel'] in have_chs
+                        ]
 
         # Now that we've processed everything common to the entire group,
         # process each chip in the group.
@@ -845,6 +840,8 @@ SIGNAL_REMAP = {
     # for some godforsaken reason UART4's and UART5's CTS are called CTS_NSS in the GPIO xml
     # so try to match with these
     'CTS': 'CTS_NSS'
+
+
 }
 
 
@@ -997,7 +994,7 @@ def parse_dma():
         r = xmltodict.parse(open(f, 'rb'), force_list={'Mode', 'RefMode'})
 
         chip_dma = {
-            'channels': {},
+            'channels': [],
             'peripherals': {},
         }
 
@@ -1028,12 +1025,8 @@ def parse_dma():
                             request = target_peri_name
                         else:
                             request = parts[1]
-                        if target_peri_name not in chip_dma['peripherals']:
-                            chip_dma['peripherals'][target_peri_name] = {}
-                        peri_dma = chip_dma['peripherals'][target_peri_name]
-                        if request not in peri_dma:
-                            peri_dma[request] = []
-                        peri_dma[request].append({
+                        chip_dma['peripherals'].setdefault(target_peri_name, []).append({
+                            'signal': request,
                             "dmamux": dmamux,
                             "request": request_num,
                         })
@@ -1053,12 +1046,13 @@ def parse_dma():
                             low -= 1
                             high -= 1
                         for i in range(low, high + 1):
-                            chip_dma['channels'][n + '_CH' + str(i)] = OrderedDict({
+                            chip_dma['channels'].append(OrderedDict({
+                                'name': n + '_CH' + str(i),
                                 'dma': n,
                                 'channel': i,
                                 'dmamux': dmamux,
                                 'dmamux_channel': dmamux_channel,
-                            })
+                            }))
                             dmamux_channel += 1
 
             else:
@@ -1086,10 +1080,11 @@ def parse_dma():
                     channel_name = removeprefix(channel_name, "Stream")
 
                     channel_names.append(channel_name)
-                    chip_dma['channels'][dma_peri_name + '_CH' + channel_name] = OrderedDict({
+                    chip_dma['channels'].append(OrderedDict({
+                        'name': dma_peri_name + '_CH' + channel_name,
                         'dma': dma_peri_name,
                         'channel': int(channel_name),
-                    })
+                    }))
                     for target in channel['ModeLogicOperator']['Mode']:
                         target_name = target['@Name']
                         original_target_name = target_name
@@ -1104,25 +1099,22 @@ def parse_dma():
                         if target_name != 'MEMTOMEM':
                             if target_peri_name == "LPUART":
                                 target_peri_name = "LPUART1"
-                            if target_peri_name not in chip_dma['peripherals']:
-                                chip_dma['peripherals'][target_peri_name] = {}
-                            peri_dma = chip_dma['peripherals'][target_peri_name]
                             for request in target_requests:
                                 if ':' in request:
                                     request = request.split(':')[0]
-                                if request not in peri_dma:
-                                    peri_dma[request] = []
                                 entry = OrderedDict({
+                                    'signal': request,
                                     'channel': dma_peri_name + '_CH' + channel_name,
                                 })
                                 if original_target_name in requests:
                                     entry['request'] = requests[original_target_name]
-                                peri_dma[request].append(entry)
+                                chip_dma['peripherals'].setdefault(target_peri_name, []).append(entry)
 
                 # Make sure all channels numbers start at 0
                 if min(map(int, channel_names)) != 0:
-                    for name in channel_names:
-                        chip_dma['channels'][dma_peri_name + '_CH' + name]['channel'] -= 1
+                    for ch in chip_dma['channels']:
+                        if ch['dma'] == dma_peri_name:
+                            ch['channel'] -= 1
 
         dma_channels[ff] = chip_dma
 
