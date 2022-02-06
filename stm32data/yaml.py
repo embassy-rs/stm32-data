@@ -12,11 +12,8 @@ class DecimalInt:
         self.val = val
 
 
-def represent_decimal_int(dumper, data):
+def represent_decimalint(dumper, data):
     return dumper.represent_int(data.val)
-
-
-yaml.add_representer(DecimalInt, represent_decimal_int)
 
 
 class HexInt:
@@ -24,11 +21,15 @@ class HexInt:
         self.val = val
 
 
-def represent_hex_int(dumper, data):
+def represent_hexint(dumper, data):
     return dumper.represent_int(hex(data.val))
 
 
-yaml.add_representer(HexInt, represent_hex_int)
+def represent_int(dumper, data):
+    if data > 0x10000:
+        return dumper.represent_int(hex(data))
+    else:
+        return dumper.represent_int(data)
 
 
 def represent_ordereddict(dumper, data):
@@ -43,17 +44,10 @@ def represent_ordereddict(dumper, data):
     return yaml.nodes.MappingNode(u'tag:yaml.org,2002:map', value)
 
 
+yaml.add_representer(DecimalInt, represent_decimalint)
+yaml.add_representer(HexInt, represent_hexint)
+yaml.add_representer(int, represent_int)
 yaml.add_representer(OrderedDict, represent_ordereddict)
-
-
-def hexint_presenter(dumper, data):
-    if data > 0x10000:
-        return dumper.represent_int(hex(data))
-    else:
-        return dumper.represent_int(data)
-
-
-yaml.add_representer(int, hexint_presenter)
 
 
 def load(*args, **kwargs):
