@@ -764,16 +764,12 @@ def parse_chips():
         for chip_name in group['chip_names']:
             chip = chips[chip_name]
 
-            flash = {
-                'bytes': int(chip['flash']) * 1024,
-                'regions': {},
-            }
-            ram = {
-                'bytes': int(chip['ram']) * 1024,
-                'regions': {},
-            }
+            flash_total = int(chip['flash']) * 1024
+            ram_total = int(chip['ram']) * 1024
 
-            found = []
+            memory_regions = []
+
+            found = set()
             for each in memories_map['flash']:
                 if each + '_BASE' in h['defines']['all']:
                     if each == 'FLASH':
@@ -787,17 +783,21 @@ def parse_chips():
 
                     if key in found:
                         continue
-                    found.append(key)
-                    flash['regions'][key] = {
-                        'base': h['defines']['all'][each + '_BASE']
-                    }
+                    found.add(key)
+
+                    size = 0
                     if key == 'BANK_1' or key == 'BANK_2':
-                        flash_size = memory.determine_flash_size(chip_name)
-                        if flash_size is not None:
-                            if flash_size > flash['bytes']:
-                                flash_size = flash['bytes']
-                            flash['regions'][key]['bytes'] = flash_size
-            found = []
+                        if size2 := memory.determine_flash_size(chip_name):
+                            size = min(size2, flash_total)
+
+                    memory_regions.append({
+                        'name': key,
+                        'kind': 'flash',
+                        'address': h['defines']['all'][each + '_BASE'],
+                        'size': size,
+                    })
+
+            found = set()
             for each in memories_map['ram']:
                 if each + '_BASE' in h['defines']['all']:
                     if each == 'D1_AXISRAM':
@@ -806,16 +806,22 @@ def parse_chips():
                         key = 'SRAM'
                     else:
                         key = each
+
                     if key in found:
                         continue
-                    found.append(key)
-                    ram['regions'][key] = {
-                        'base': h['defines']['all'][each + '_BASE']
-                    }
+                    found.add(key)
+
+                    size = 0
                     if key == 'SRAM':
-                        ram_size = memory.determine_ram_size(chip_name)
-                        if ram_size is not None:
-                            ram['regions'][key]['bytes'] = ram_size
+                        if size2 := memory.determine_ram_size(chip_name):
+                            size = min(size2, ram_total)
+
+                    memory_regions.append({
+                        'name': key,
+                        'kind': 'ram',
+                        'address': h['defines']['all'][each + '_BASE'],
+                        'size': size,
+                    })
 
             docs = documents_for(chip_name)
 
@@ -828,8 +834,7 @@ def parse_chips():
                 'die': group['die'],
                 'device_id': device_id,
                 'packages': chip['packages'],
-                'flash': flash,
-                'ram': ram,
+                'memory': memory_regions,
                 'docs': docs,
                 'cores': cores,
             }
