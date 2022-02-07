@@ -1153,7 +1153,9 @@ def parse_rcc_regs():
                 for field in body['fields']:
                     if field['name'].endswith('EN'):
                         peri = removesuffix(field['name'], 'EN')
-                        regs = {
+
+                        res = {
+                            'clock': clock,
                             'enable': {
                                 'register': reg,
                                 'field': field['name'],
@@ -1161,14 +1163,11 @@ def parse_rcc_regs():
                         }
                         if rstr := y[key.replace('ENR', 'RSTR')]:
                             if field := next(filter(lambda f: f['name'] == f'{peri}RST', rstr['fields']), None):
-                                regs['reset'] = {
+                                res['reset'] = {
                                     'register': reg.replace('ENR', 'RSTR'),
                                     'field': f'{peri}RST',
                                 }
-                        family_clocks[peri] = {
-                            'clock': clock,
-                            'registers': regs
-                        }
+                        family_clocks[peri] = res
 
         peripheral_to_clock[('rcc', ff, 'RCC')] = family_clocks
 
