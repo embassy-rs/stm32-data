@@ -1,44 +1,20 @@
-#!/usr/bin/env python3
-
 import sys
+import re
 import xmltodict
-import yaml
 from collections import OrderedDict
 from glob import glob
+from stm32data.util import *
 
-try:
-    from yaml import CSafeLoader as SafeLoader
-except ImportError:
-    from yaml import SafeLoader
-
-
-def represent_ordereddict(dumper, data):
-    value = []
-
-    for item_key, item_value in data.items():
-        node_key = dumper.represent_data(item_key)
-        node_value = dumper.represent_data(item_value)
-
-        value.append((node_key, node_value))
-
-    return yaml.nodes.MappingNode(u'tag:yaml.org,2002:map', value)
-
-yaml.add_representer(OrderedDict, represent_ordereddict)
-
-def represent_int(dumper, data):
-    return dumper.represent_int(hex(data))
-
-yaml.add_representer(int, represent_int)
 
 def splat_names(base, parts):
     names = []
     for part in parts:
         if part.startswith("STM32"):
-            names.append( base )
-        elif part.startswith( base[5]):
+            names.append(base)
+        elif part.startswith(base[5]):
             names.append('STM32' + part)
         else:
-            names.append( base[0: len(base) - len(part)] + part)
+            names.append(base[0: len(base) - len(part)] + part)
 
     return names
 
@@ -52,22 +28,24 @@ def split_names(str):
         if '-' in name:
             parts = name.split('-')
             current_base = parts[0]
-            splatted = splat_names(current_base, parts )
+            splatted = splat_names(current_base, parts)
             current_base = splatted[0]
             cleaned = cleaned + splatted
         elif name.startswith("STM32"):
             current_base = name
             cleaned.append(name)
-        elif name.startswith( current_base[5]):
+        elif name.startswith(current_base[5]):
             names.append('STM32' + name)
         else:
-            cleaned.append( current_base[0: len(current_base) - len(name)] + name)
+            cleaned.append(current_base[0: len(current_base) - len(name)] + name)
     return cleaned
+
 
 memories = []
 
-def parse_files(dir):
-    for f in sorted(glob(dir + '/*.xml')):
+
+def parse():
+    for f in sorted(glob('sources/cubeprogdb/db/*.xml')):
         #print("parsing ", f);
         device = xmltodict.parse(open(f, 'rb'))['Root']['Device']
         device_id = device['DeviceID']
@@ -82,42 +60,64 @@ def parse_files(dir):
             if peripheral['Name'] == 'Embedded SRAM' and ram_size is None:
                 configs = peripheral['Configuration']
                 if type(configs) != list:
-                    configs = [ configs ]
+                    configs = [configs]
                 ram_addr = int(configs[0]['Parameters']['@address'], 16)
                 ram_size = int(configs[0]['Parameters']['@size'], 16)
                 #print( f'ram {addr} {size}')
             if peripheral['Name'] == 'Embedded Flash' and flash_size is None:
                 configs = peripheral['Configuration']
                 if type(configs) != list:
-                    configs = [ configs ]
+                    configs = [configs]
                 flash_addr = int(configs[0]['Parameters']['@address'], 16)
                 flash_size = int(configs[0]['Parameters']['@size'], 16)
                 #print( f'flash {addr} {size}')
 
-        chunk = OrderedDict( {
+        chunk = OrderedDict({
             'device-id': int(device_id, 16),
             'names': names,
         })
 
         if ram_size is not None:
-            chunk['ram'] = OrderedDict( {
+            chunk['ram'] = OrderedDict({
                 'address': ram_addr,
                 'bytes': ram_size,
             })
 
         if flash_size is not None:
-            chunk['flash'] = OrderedDict( {
+            chunk['flash'] = OrderedDict({
                 'address': flash_addr,
                 'bytes': flash_size,
             })
 
-        memories.append( chunk )
+        memories.append(chunk)
 
-dir = "sources/cubeprogdb/db"
 
-parse_files(dir)
+def determine_ram_size(chip_name):
+    for each in memories:
+        for name in each['names']:
+            if is_chip_name_match(name, chip_name):
+                return each['ram']['bytes']
 
-with open('data/memories.yaml', 'w') as f:
-    f.write(yaml.dump(memories, width=500))
+    return None
 
-#print(yaml.dump(memories, width=500))
+
+def determine_flash_size(chip_name):
+    for each in memories:
+        for name in each['names']:
+            if is_chip_name_match(name, chip_name):
+                return each['flash']['bytes']
+
+    return None
+
+
+def determine_device_id(chip_name):
+    for each in memories:
+        for name in each['names']:
+            if is_chip_name_match(name, chip_name):
+                return each['device-id']
+    return None
+
+
+def is_chip_name_match(pattern, chip_name):
+    pattern = pattern.replace('x', '.')
+    return re.match(pattern + ".*", chip_name)
