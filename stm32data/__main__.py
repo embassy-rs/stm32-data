@@ -9,7 +9,7 @@ import os
 from collections import OrderedDict
 from glob import glob
 
-from stm32data import yaml, header, interrupts
+from stm32data import yaml, header, interrupts, memory
 from stm32data.yaml import DecimalInt, HexInt
 from stm32data.util import *
 
@@ -791,7 +791,7 @@ def parse_chips():
                         'base': HexInt(h['defines']['all'][each + '_BASE'])
                     })
                     if key == 'BANK_1' or key == 'BANK_2':
-                        flash_size = determine_flash_size(chip_name)
+                        flash_size = memory.determine_flash_size(chip_name)
                         if flash_size is not None:
                             if flash_size > flash['bytes'].val:
                                 flash_size = flash['bytes'].val
@@ -812,13 +812,13 @@ def parse_chips():
                         'base': HexInt(h['defines']['all'][each + '_BASE'])
                     })
                     if key == 'SRAM':
-                        ram_size = determine_ram_size(chip_name)
+                        ram_size = memory.determine_ram_size(chip_name)
                         if ram_size is not None:
                             ram['regions'][key]['bytes'] = DecimalInt(ram_size)
 
             docs = documents_for(chip_name)
 
-            device_id = determine_device_id(chip_name)
+            device_id = memory.determine_device_id(chip_name)
             if device_id is not None:
                 device_id = HexInt(device_id)
 
@@ -1173,48 +1173,7 @@ def match_peri_clock(rcc_block, peri_name):
         return None
 
 
-memories = []
-
-
-def parse_memories():
-    with open('data/memories.yaml', 'r') as yaml_file:
-        m = yaml.load(yaml_file)
-        for each in m:
-            memories.append(each)
-
-
-def determine_ram_size(chip_name):
-    for each in memories:
-        for name in each['names']:
-            if is_chip_name_match(name, chip_name):
-                return each['ram']['bytes']
-
-    return None
-
-
-def determine_flash_size(chip_name):
-    for each in memories:
-        for name in each['names']:
-            if is_chip_name_match(name, chip_name):
-                return each['flash']['bytes']
-
-    return None
-
-
-def determine_device_id(chip_name):
-    for each in memories:
-        for name in each['names']:
-            if is_chip_name_match(name, chip_name):
-                return each['device-id']
-    return None
-
-
-def is_chip_name_match(pattern, chip_name):
-    pattern = pattern.replace('x', '.')
-    return re.match(pattern + ".*", chip_name)
-
-
-parse_memories()
+memory.parse()
 interrupts.parse()
 parse_rcc_regs()
 parse_documentations()
