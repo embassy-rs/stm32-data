@@ -6,14 +6,16 @@ import re
 import json
 import sys
 import os
-from collections import OrderedDict
 from glob import glob
+
 
 def item_key(a):
     return int(a["byte_offset"])
 
+
 def field_key(a):
     return int(a["bit_offset"])
+
 
 def merge_block(origin, new):
     for newval in new:
@@ -25,6 +27,7 @@ def merge_block(origin, new):
             origin.append(newval)
     origin.sort(key=item_key)
 
+
 def merge_fields(origin, new):
     for newval in new:
         found = False
@@ -34,6 +37,7 @@ def merge_fields(origin, new):
         if not found:
             origin.append(newval)
     origin.sort(key=field_key)
+
 
 def merge_dicts(origin, new):
     for k, v in new.items():
@@ -50,8 +54,9 @@ def merge_dicts(origin, new):
         else:
             origin[k] = v
 
-first=True
-reg_map={}
+
+first = True
+reg_map = {}
 for regfile in sys.argv[1:]:
     print("Loading", regfile)
     with open(regfile, 'r') as f:

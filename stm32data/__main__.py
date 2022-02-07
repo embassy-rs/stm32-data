@@ -6,11 +6,9 @@ import xmltodict
 import re
 import json
 import os
-from collections import OrderedDict
 from glob import glob
 
 from stm32data import yaml, header, interrupts, memory
-from stm32data.yaml import DecimalInt, HexInt
 from stm32data.util import *
 
 
@@ -345,12 +343,12 @@ def parse_documentations():
         for file in files['Files']:
             file_id = file['id_file']
             if file_id not in all_mcu_files:
-                all_mcu_files[file_id] = OrderedDict({
+                all_mcu_files[file_id] = {
                     'name': file['name'],
                     'title': file['title'],
                     'url': file['URL'],
                     'type': file['type'],
-                })
+                }
 
     with open('sources/mcufinder/mcus.json', 'r', encoding='utf-8') as j:
         mcus = json.load(j)
@@ -383,13 +381,13 @@ def documents_for(chip_name):
             if file := all_mcu_files.get(id):
                 file = all_mcu_files[id]
                 order, doc_type = parse_document_type(file['type'])
-                docs.append(OrderedDict({
+                docs.append({
                     'order': order,
                     'type': doc_type,
                     'title': file['title'],
                     'name': file['name'],
                     'url': file['url'],
-                }))
+                })
     docs.sort(key=lambda x: (x['order'], x['name']))
     for doc in docs:
         del doc['order']
@@ -554,10 +552,10 @@ def parse_chips():
                     'group_idx': group_idx,
                     'packages': [],
                 }
-            chips[chip_name]['packages'].append(OrderedDict({
+            chips[chip_name]['packages'].append({
                 'name': package_name,
                 'package': r['@Package'],
-            }))
+            })
 
         # Some packages have some peripehrals removed because the package had to
         # remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
@@ -610,10 +608,10 @@ def parse_chips():
         cores = []
         for core_xml in children(chip['xml'], 'Core'):
             core_name = corename(core_xml)
-            core = OrderedDict({
+            core = {
                 'name': core_name,
                 'peripherals': [],
-            })
+            }
             cores.append(core)
 
             if not core_name in h['interrupts'] or not core_name in h['defines']:
@@ -668,7 +666,7 @@ def parse_chips():
             #   but we actually need to use it because of F1 line
             #       which doesn't include non-remappable peripherals in GPIO xml
             #   and some weird edge cases like STM32F030C6 (see merge_periph_pins_info)
-            periph_pins = OrderedDict()
+            periph_pins = {}
             for pin_name, pin in chip['pins'].items():
                 for signal in pin['Signal']:
                     signal = signal['@Name']
@@ -682,7 +680,10 @@ def parse_chips():
                             if signal.startswith(periph + '_'):
                                 signal = removeprefix(signal, periph + '_')
                                 pins = periph_pins.setdefault(periph, [])
-                                pins.append(OrderedDict(pin=pin_name, signal=signal))
+                                pins.append({
+                                    'pin': pin_name,
+                                    'signal': signal,
+                                })
                                 break
             for periph, pins in periph_pins.items():
                 pins = remove_duplicates(pins)
@@ -695,10 +696,10 @@ def parse_chips():
                 if addr is None:
                     continue
 
-                p = OrderedDict({
+                p = {
                     'name': pname,
                     'address': addr,
-                })
+                }
 
                 if rcc_info := match_peri_clock(rcc_block, pname):
                     p['rcc'] = rcc_info
@@ -763,14 +764,14 @@ def parse_chips():
         for chip_name in group['chip_names']:
             chip = chips[chip_name]
 
-            flash = OrderedDict({
-                'bytes': DecimalInt(int(chip['flash']) * 1024),
+            flash = {
+                'bytes': int(chip['flash']) * 1024,
                 'regions': {},
-            })
-            ram = OrderedDict({
-                'bytes': DecimalInt(int(chip['ram']) * 1024),
+            }
+            ram = {
+                'bytes': int(chip['ram']) * 1024,
                 'regions': {},
-            })
+            }
 
             found = []
             for each in memories_map['flash']:
@@ -787,15 +788,15 @@ def parse_chips():
                     if key in found:
                         continue
                     found.append(key)
-                    flash['regions'][key] = OrderedDict({
-                        'base': HexInt(h['defines']['all'][each + '_BASE'])
-                    })
+                    flash['regions'][key] = {
+                        'base': h['defines']['all'][each + '_BASE']
+                    }
                     if key == 'BANK_1' or key == 'BANK_2':
                         flash_size = memory.determine_flash_size(chip_name)
                         if flash_size is not None:
-                            if flash_size > flash['bytes'].val:
-                                flash_size = flash['bytes'].val
-                            flash['regions'][key]['bytes'] = DecimalInt(flash_size)
+                            if flash_size > flash['bytes']:
+                                flash_size = flash['bytes']
+                            flash['regions'][key]['bytes'] = flash_size
             found = []
             for each in memories_map['ram']:
                 if each + '_BASE' in h['defines']['all']:
@@ -808,21 +809,19 @@ def parse_chips():
                     if key in found:
                         continue
                     found.append(key)
-                    ram['regions'][key] = OrderedDict({
-                        'base': HexInt(h['defines']['all'][each + '_BASE'])
-                    })
+                    ram['regions'][key] = {
+                        'base': h['defines']['all'][each + '_BASE']
+                    }
                     if key == 'SRAM':
                         ram_size = memory.determine_ram_size(chip_name)
                         if ram_size is not None:
-                            ram['regions'][key]['bytes'] = DecimalInt(ram_size)
+                            ram['regions'][key]['bytes'] = ram_size
 
             docs = documents_for(chip_name)
 
             device_id = memory.determine_device_id(chip_name)
-            if device_id is not None:
-                device_id = HexInt(device_id)
 
-            chip = OrderedDict({
+            chip = {
                 'name': chip_name,
                 'family': group['family'],
                 'line': group['line'],
@@ -833,10 +832,10 @@ def parse_chips():
                 'ram': ram,
                 'docs': docs,
                 'cores': cores,
-            })
+            }
 
-            with open('data/chips/' + chip_name + '.yaml', 'w') as f:
-                f.write(yaml.dump(chip, width=500))
+            with open('data/chips/' + chip_name + '.json', 'w') as f:
+                json.dump(chip, f, indent=4)
 
 
 SIGNAL_REMAP = {
@@ -930,10 +929,10 @@ def parse_gpio_af_f1(xml):
 
             if peri_name not in peris:
                 peris[peri_name] = []
-            peris[peri_name].append(OrderedDict({
+            peris[peri_name].append({
                 'pin': pin_name,
                 'signal': signal_name,
-            }))
+            })
 
     for pname, p in peris.items():
         p = remove_duplicates(p)
@@ -965,11 +964,11 @@ def parse_gpio_af_nonf1(xml):
 
             if peri_name not in peris:
                 peris[peri_name] = []
-            peris[peri_name].append(OrderedDict({
+            peris[peri_name].append({
                 'pin': pin_name,
                 'signal': signal_name,
                 'af': afn,
-            }))
+            })
 
     for pname, p in peris.items():
         p = remove_duplicates(p)
@@ -1049,13 +1048,13 @@ def parse_dma():
                             low -= 1
                             high -= 1
                         for i in range(low, high + 1):
-                            chip_dma['channels'].append(OrderedDict({
+                            chip_dma['channels'].append({
                                 'name': n + '_CH' + str(i),
                                 'dma': n,
                                 'channel': i,
                                 'dmamux': dmamux,
                                 'dmamux_channel': dmamux_channel,
-                            }))
+                            })
                             dmamux_channel += 1
 
             else:
@@ -1083,11 +1082,11 @@ def parse_dma():
                     channel_name = removeprefix(channel_name, "Stream")
 
                     channel_names.append(channel_name)
-                    chip_dma['channels'].append(OrderedDict({
+                    chip_dma['channels'].append({
                         'name': dma_peri_name + '_CH' + channel_name,
                         'dma': dma_peri_name,
                         'channel': int(channel_name),
-                    }))
+                    })
                     for target in channel['ModeLogicOperator']['Mode']:
                         target_name = target['@Name']
                         original_target_name = target_name
@@ -1105,10 +1104,10 @@ def parse_dma():
                             for request in target_requests:
                                 if ':' in request:
                                     request = request.split(':')[0]
-                                entry = OrderedDict({
+                                entry = {
                                     'signal': request,
                                     'channel': dma_peri_name + '_CH' + channel_name,
-                                })
+                                }
                                 if original_target_name in requests:
                                     entry['request'] = requests[original_target_name]
                                 chip_dma['peripherals'].setdefault(target_peri_name, []).append(entry)
@@ -1145,17 +1144,17 @@ def parse_rcc_regs():
                     if field['name'].endswith('EN'):
                         peri = removesuffix(field['name'], 'EN')
                         regs = {
-                            'enable': OrderedDict({
+                            'enable': {
                                 'register': reg,
                                 'field': field['name'],
-                            })
+                            }
                         }
                         if rstr := y[key.replace('ENR', 'RSTR')]:
                             if field := next(filter(lambda f: f['name'] == f'{peri}RST', rstr['fields']), None):
-                                regs['reset'] = OrderedDict({
+                                regs['reset'] = {
                                     'register': reg.replace('ENR', 'RSTR'),
                                     'field': f'{peri}RST',
-                                })
+                                }
                         family_clocks[peri] = {
                             'clock': clock,
                             'registers': regs
