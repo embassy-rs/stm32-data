@@ -1,7 +1,6 @@
 import sys
 import re
 import xmltodict
-from collections import OrderedDict
 from glob import glob
 from stm32data.util import *
 
@@ -72,22 +71,22 @@ def parse():
                 flash_size = int(configs[0]['Parameters']['@size'], 16)
                 #print( f'flash {addr} {size}')
 
-        chunk = OrderedDict({
+        chunk = {
             'device-id': int(device_id, 16),
             'names': names,
-        })
+        }
 
         if ram_size is not None:
-            chunk['ram'] = OrderedDict({
+            chunk['ram'] = {
                 'address': ram_addr,
                 'bytes': ram_size,
-            })
+            }
 
         if flash_size is not None:
-            chunk['flash'] = OrderedDict({
+            chunk['flash'] = {
                 'address': flash_addr,
                 'bytes': flash_size,
-            })
+            }
 
         memories.append(chunk)
 
