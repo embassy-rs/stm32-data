@@ -157,7 +157,6 @@ perimap = [
     ('.*:USB_OTG_FS:otgfs1_v1_2', ('otgfs', 'v1', 'OTG_FS')),
     ('.*:USB_OTG_HS:otghs1_v1_1', ('otghs', 'v1', 'OTG_HS')),
 
-    ('STM32F0.0.*:RCC:.*', ('rcc', 'f0x0', 'RCC')),
     ('STM32F0.*:RCC:.*', ('rcc', 'f0', 'RCC')),
     ('STM32F1.*:RCC:.*', ('rcc', 'f1', 'RCC')),
     ('STM32F2.*:RCC:.*', ('rcc', 'f2', 'RCC')),
