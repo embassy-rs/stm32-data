@@ -57,14 +57,6 @@ fieldset/AFR:
 fieldset/BSRR:
   description: GPIO port bit set/reset register
   fields:
-    - name: BR
-      description: Port x set bit y (y= 0..15)
-      bit_offset: 16
-      bit_size: 1
-      array:
-        len: 16
-        stride: 1
-      enum_write: BRW
     - name: BS
       description: Port x set bit y (y= 0..15)
       bit_offset: 0
@@ -73,6 +65,14 @@ fieldset/BSRR:
         len: 16
         stride: 1
       enum_write: BSW
+    - name: BR
+      description: Port x set bit y (y= 0..15)
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 16
+        stride: 1
+      enum_write: BRW
 fieldset/IDR:
   description: GPIO port input data register
   fields:
@@ -87,11 +87,6 @@ fieldset/IDR:
 fieldset/LCKR:
   description: GPIO port configuration lock register
   fields:
-    - name: LCKK
-      description: Port x lock bit y (y= 0..15)
-      bit_offset: 16
-      bit_size: 1
-      enum: LCKK
     - name: LCK
       description: Port x lock bit y (y= 0..15)
       bit_offset: 0
@@ -100,6 +95,11 @@ fieldset/LCKR:
         len: 16
         stride: 1
       enum: LCK
+    - name: LCKK
+      description: Port x lock bit y (y= 0..15)
+      bit_offset: 16
+      bit_size: 1
+      enum: LCKK
 fieldset/MODER:
   description: GPIO port mode register
   fields:
@@ -221,12 +221,12 @@ enum/BSW:
 enum/IDR:
   bit_size: 1
   variants:
-    - name: High
-      description: Input is logic high
-      value: 1
     - name: Low
       description: Input is logic low
       value: 0
+    - name: High
+      description: Input is logic high
+      value: 1
 enum/LCK:
   bit_size: 1
   variants:
@@ -263,12 +263,12 @@ enum/MODER:
 enum/ODR:
   bit_size: 1
   variants:
-    - name: High
-      description: Set output to logic high
-      value: 1
     - name: Low
       description: Set output to logic low
       value: 0
+    - name: High
+      description: Set output to logic high
+      value: 1
 enum/OSPEEDR:
   bit_size: 2
   variants:

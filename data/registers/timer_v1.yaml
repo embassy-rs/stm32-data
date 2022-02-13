@@ -3,18 +3,6 @@ block/TIM_ADV:
   extends: TIM_GP16
   description: Advanced-timers
   items:
-    - name: RCR
-      description: repetition counter register
-      byte_offset: 48
-      fieldset: RCR
-    - name: BDTR
-      description: break and dead-time register
-      byte_offset: 68
-      fieldset: BDTR
-    - name: CCER
-      description: capture/compare enable register
-      byte_offset: 32
-      fieldset: CCER_ADV
     - name: CR2
       description: control register 2
       byte_offset: 4
@@ -32,6 +20,18 @@ block/TIM_ADV:
       byte_offset: 20
       access: Write
       fieldset: EGR_ADV
+    - name: CCER
+      description: capture/compare enable register
+      byte_offset: 32
+      fieldset: CCER_ADV
+    - name: RCR
+      description: repetition counter register
+      byte_offset: 48
+      fieldset: RCR
+    - name: BDTR
+      description: break and dead-time register
+      byte_offset: 68
+      fieldset: BDTR
 block/TIM_BASIC:
   description: Basic timer
   items:
@@ -119,6 +119,13 @@ block/TIM_GP16:
       description: prescaler
       byte_offset: 40
       fieldset: PSC
+    - name: CCR
+      description: capture/compare register
+      array:
+        len: 4
+        stride: 4
+      byte_offset: 52
+      fieldset: CCR_16
     - name: DCR
       description: DMA control register
       byte_offset: 72
@@ -127,13 +134,6 @@ block/TIM_GP16:
       description: DMA address for full transfer
       byte_offset: 76
       fieldset: DMAR
-    - name: CCR
-      description: capture/compare register
-      array:
-        len: 4
-        stride: 4
-      byte_offset: 52
-      fieldset: CCR_16
 block/TIM_GP32:
   extends: TIM_GP16
   description: General purpose 32-bit timer

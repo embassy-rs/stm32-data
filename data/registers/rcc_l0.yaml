@@ -10,6 +10,10 @@ block/RCC:
       description: Internal clock sources calibration register
       byte_offset: 4
       fieldset: ICSCR
+    - name: CRRCR
+      description: Clock recovery RC register
+      byte_offset: 8
+      fieldset: CRRCR
     - name: CFGR
       description: Clock configuration register
       byte_offset: 12
@@ -85,10 +89,6 @@ block/RCC:
       description: Control and status register
       byte_offset: 80
       fieldset: CSR
-    - name: CRRCR
-      description: Clock recovery RC register
-      byte_offset: 8
-      fieldset: CRRCR
 fieldset/AHBENR:
   description: AHB peripheral clock enable register
   fields:
@@ -104,10 +104,6 @@ fieldset/AHBENR:
       description: CRC clock enable
       bit_offset: 12
       bit_size: 1
-    - name: CRYPEN
-      description: Crypto clock enable
-      bit_offset: 24
-      bit_size: 1
     - name: TOUCHEN
       description: Touch Sensing clock enable
       bit_offset: 16
@@ -115,6 +111,10 @@ fieldset/AHBENR:
     - name: RNGEN
       description: Random Number Generator clock enable
       bit_offset: 20
+      bit_size: 1
+    - name: CRYPEN
+      description: Crypto clock enable
+      bit_offset: 24
       bit_size: 1
 fieldset/AHBRSTR:
   description: AHB peripheral reset register
@@ -131,10 +131,6 @@ fieldset/AHBRSTR:
       description: Test integration module reset
       bit_offset: 12
       bit_size: 1
-    - name: CRYPRST
-      description: Crypto module reset
-      bit_offset: 24
-      bit_size: 1
     - name: TOUCHRST
       description: Touch Sensing reset
       bit_offset: 16
@@ -142,6 +138,10 @@ fieldset/AHBRSTR:
     - name: RNGRST
       description: Random Number Generator module reset
       bit_offset: 20
+      bit_size: 1
+    - name: CRYPRST
+      description: Crypto module reset
+      bit_offset: 24
       bit_size: 1
 fieldset/AHBSMENR:
   description: AHB peripheral clock enable in sleep mode register
@@ -162,10 +162,6 @@ fieldset/AHBSMENR:
       description: CRC clock enable during sleep mode
       bit_offset: 12
       bit_size: 1
-    - name: CRYPSMEN
-      description: Crypto clock enable during sleep mode
-      bit_offset: 24
-      bit_size: 1
     - name: TOUCHSMEN
       description: Touch Sensing clock enable during sleep mode
       bit_offset: 16
@@ -174,12 +170,20 @@ fieldset/AHBSMENR:
       description: Random Number Generator clock enable during sleep mode
       bit_offset: 20
       bit_size: 1
+    - name: CRYPSMEN
+      description: Crypto clock enable during sleep mode
+      bit_offset: 24
+      bit_size: 1
 fieldset/APB1ENR:
   description: APB1 peripheral clock enable register
   fields:
     - name: TIM2EN
       description: Timer2 clock enable
       bit_offset: 0
+      bit_size: 1
+    - name: TIM3EN
+      description: Timer 3 clock enbale
+      bit_offset: 1
       bit_size: 1
     - name: TIM6EN
       description: Timer 6 clock enable
@@ -221,22 +225,6 @@ fieldset/APB1ENR:
       description: I2C2 clock enable
       bit_offset: 22
       bit_size: 1
-    - name: PWREN
-      description: Power interface clock enable
-      bit_offset: 28
-      bit_size: 1
-    - name: I2C3EN
-      description: I2C3 clock enable
-      bit_offset: 30
-      bit_size: 1
-    - name: LPTIM1EN
-      description: Low power timer clock enable
-      bit_offset: 31
-      bit_size: 1
-    - name: TIM3EN
-      description: Timer 3 clock enbale
-      bit_offset: 1
-      bit_size: 1
     - name: USBEN
       description: USB clock enable
       bit_offset: 23
@@ -245,9 +233,21 @@ fieldset/APB1ENR:
       description: Clock recovery system clock enable
       bit_offset: 27
       bit_size: 1
+    - name: PWREN
+      description: Power interface clock enable
+      bit_offset: 28
+      bit_size: 1
     - name: DACEN
       description: DAC interface clock enable
       bit_offset: 29
+      bit_size: 1
+    - name: I2C3EN
+      description: I2C3 clock enable
+      bit_offset: 30
+      bit_size: 1
+    - name: LPTIM1EN
+      description: Low power timer clock enable
+      bit_offset: 31
       bit_size: 1
 fieldset/APB1RSTR:
   description: APB1 peripheral reset register
@@ -300,18 +300,6 @@ fieldset/APB1RSTR:
       description: I2C2 reset
       bit_offset: 22
       bit_size: 1
-    - name: PWRRST
-      description: Power interface reset
-      bit_offset: 28
-      bit_size: 1
-    - name: LPTIM1RST
-      description: Low power timer reset
-      bit_offset: 31
-      bit_size: 1
-    - name: I2C3RST
-      description: I2C3 reset
-      bit_offset: 30
-      bit_size: 1
     - name: USBRST
       description: USB reset
       bit_offset: 23
@@ -320,9 +308,21 @@ fieldset/APB1RSTR:
       description: Clock recovery system reset
       bit_offset: 27
       bit_size: 1
+    - name: PWRRST
+      description: Power interface reset
+      bit_offset: 28
+      bit_size: 1
     - name: DACRST
       description: DAC interface reset
       bit_offset: 29
+      bit_size: 1
+    - name: I2C3RST
+      description: I2C3 reset
+      bit_offset: 30
+      bit_size: 1
+    - name: LPTIM1RST
+      description: Low power timer reset
+      bit_offset: 31
       bit_size: 1
 fieldset/APB1SMENR:
   description: APB1 peripheral clock enable in sleep mode register
@@ -375,6 +375,10 @@ fieldset/APB1SMENR:
       description: I2C2 clock enable during sleep mode
       bit_offset: 22
       bit_size: 1
+    - name: USBSMEN
+      description: USB clock enable during sleep mode
+      bit_offset: 23
+      bit_size: 1
     - name: CRSSMEN
       description: Clock recovery system clock enable during sleep mode
       bit_offset: 27
@@ -383,6 +387,10 @@ fieldset/APB1SMENR:
       description: Power interface clock enable during sleep mode
       bit_offset: 28
       bit_size: 1
+    - name: DACSMEN
+      description: DAC interface clock enable during sleep mode
+      bit_offset: 29
+      bit_size: 1
     - name: I2C3SMEN
       description: I2C3 clock enable during sleep mode
       bit_offset: 30
@@ -390,14 +398,6 @@ fieldset/APB1SMENR:
     - name: LPTIM1SMEN
       description: Low power timer clock enable during sleep mode
       bit_offset: 31
-      bit_size: 1
-    - name: USBSMEN
-      description: USB clock enable during sleep mode
-      bit_offset: 23
-      bit_size: 1
-    - name: DACSMEN
-      description: DAC interface clock enable during sleep mode
-      bit_offset: 29
       bit_size: 1
 fieldset/APB2ENR:
   description: APB2 peripheral clock enable register
@@ -418,6 +418,10 @@ fieldset/APB2ENR:
       description: Firewall clock enable
       bit_offset: 7
       bit_size: 1
+    - name: MIFIEN
+      description: MiFaRe Firewall clock enable
+      bit_offset: 7
+      bit_size: 1
     - name: ADCEN
       description: ADC clock enable
       bit_offset: 9
@@ -433,10 +437,6 @@ fieldset/APB2ENR:
     - name: DBGEN
       description: DBG clock enable
       bit_offset: 22
-      bit_size: 1
-    - name: MIFIEN
-      description: MiFaRe Firewall clock enable
-      bit_offset: 7
       bit_size: 1
 fieldset/APB2RSTR:
   description: APB2 peripheral reset register
@@ -622,6 +622,10 @@ fieldset/CICR:
       description: MSI ready Interrupt clear
       bit_offset: 5
       bit_size: 1
+    - name: HSI48RDYC
+      description: HSI48 ready Interrupt clear
+      bit_offset: 6
+      bit_size: 1
     - name: CSSLSEC
       description: LSE Clock Security System Interrupt clear
       bit_offset: 7
@@ -629,10 +633,6 @@ fieldset/CICR:
     - name: CSSHSEC
       description: Clock Security System Interrupt clear
       bit_offset: 8
-      bit_size: 1
-    - name: HSI48RDYC
-      description: HSI48 ready Interrupt clear
-      bit_offset: 6
       bit_size: 1
 fieldset/CIER:
   description: Clock interrupt enable register
@@ -661,13 +661,13 @@ fieldset/CIER:
       description: MSI ready interrupt flag
       bit_offset: 5
       bit_size: 1
-    - name: CSSLSE
-      description: LSE CSS interrupt flag
-      bit_offset: 7
-      bit_size: 1
     - name: HSI48RDYIE
       description: HSI48 ready interrupt flag
       bit_offset: 6
+      bit_size: 1
+    - name: CSSLSE
+      description: LSE CSS interrupt flag
+      bit_offset: 7
       bit_size: 1
 fieldset/CIFR:
   description: Clock interrupt flag register
@@ -696,6 +696,10 @@ fieldset/CIFR:
       description: MSI ready interrupt flag
       bit_offset: 5
       bit_size: 1
+    - name: HSI48RDYF
+      description: HSI48 ready interrupt flag
+      bit_offset: 6
+      bit_size: 1
     - name: CSSLSEF
       description: LSE Clock Security System Interrupt flag
       bit_offset: 7
@@ -703,10 +707,6 @@ fieldset/CIFR:
     - name: CSSHSEF
       description: Clock Security System Interrupt flag
       bit_offset: 8
-      bit_size: 1
-    - name: HSI48RDYF
-      description: HSI48 ready interrupt flag
-      bit_offset: 6
       bit_size: 1
 fieldset/CR:
   description: Clock control register
