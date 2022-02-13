@@ -1134,6 +1134,12 @@ def parse_dma():
 peripheral_to_clock = {}
 
 
+clock_renames = {
+    'AHB': 'AHB1',
+    'APB': 'APB1',
+}
+
+
 def parse_rcc_regs():
     print("parsing RCC registers")
     for f in glob('data/registers/rcc_*'):
@@ -1150,6 +1156,7 @@ def parse_rcc_regs():
             if m := re.match('^fieldset/((A[PH]B\d?)|GPIO)[LH]?ENR\d?$', key):
                 reg = removeprefix(key, 'fieldset/')
                 clock = m.group(1)
+                clock = clock_renames.get(clock, clock)
                 for field in body['fields']:
                     if field['name'].endswith('EN'):
                         peri = removesuffix(field['name'], 'EN')
