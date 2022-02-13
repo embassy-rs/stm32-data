@@ -23,7 +23,7 @@ block/I2C:
       byte_offset: 16
       fieldset: TIMINGR
     - name: TIMEOUTR
-      description: Status register 1
+      description: Timeout register
       byte_offset: 20
       fieldset: TIMEOUTR
     - name: ISR
@@ -33,17 +33,14 @@ block/I2C:
     - name: ICR
       description: Interrupt clear register
       byte_offset: 28
-      access: Write
       fieldset: ICR
     - name: PECR
       description: PEC register
       byte_offset: 32
-      access: Read
       fieldset: PECR
     - name: RXDR
       description: Receive data register
       byte_offset: 36
-      access: Read
       fieldset: RXDR
     - name: TXDR
       description: Transmit data register
@@ -136,16 +133,16 @@ fieldset/CR2:
       description: Slave address bit (master mode)
       bit_offset: 0
       bit_size: 10
-    - name: RD_WRN
+    - name: DIR
       description: Transfer direction (master mode)
       bit_offset: 10
       bit_size: 1
-      enum: RD_WRN
+      enum: DIR
     - name: ADD10
       description: 10-bit addressing mode (master mode)
       bit_offset: 11
       bit_size: 1
-      enum: ADD
+      enum: ADDMODE
     - name: HEAD10R
       description: 10-bit address header only read direction (master receiver mode)
       bit_offset: 12
@@ -155,17 +152,14 @@ fieldset/CR2:
       description: Start generation
       bit_offset: 13
       bit_size: 1
-      enum: START
     - name: STOP
       description: Stop generation (master mode)
       bit_offset: 14
       bit_size: 1
-      enum: STOP
     - name: NACK
       description: NACK generation (slave mode)
       bit_offset: 15
       bit_size: 1
-      enum: NACK
     - name: NBYTES
       description: Number of bytes
       bit_offset: 16
@@ -184,7 +178,6 @@ fieldset/CR2:
       description: Packet error checking byte
       bit_offset: 26
       bit_size: 1
-      enum: PECBYTE
 fieldset/ICR:
   description: Interrupt clear register
   fields:
@@ -275,7 +268,6 @@ fieldset/ISR:
       description: PEC Error in reception
       bit_offset: 11
       bit_size: 1
-      enum: PECERR
     - name: TIMEOUT
       description: Timeout or t_low detection flag
       bit_offset: 12
@@ -308,7 +300,7 @@ fieldset/OAR1:
       description: Own Address 1 10-bit mode
       bit_offset: 10
       bit_size: 1
-      enum: OAMODE
+      enum: ADDMODE
     - name: OA1EN
       description: Own Address 1 enable
       bit_offset: 15
@@ -344,7 +336,7 @@ fieldset/RXDR:
       bit_offset: 0
       bit_size: 8
 fieldset/TIMEOUTR:
-  description: Status register 1
+  description: Timeout register
   fields:
     - name: TIMEOUTA
       description: Bus timeout A
@@ -396,14 +388,14 @@ fieldset/TXDR:
       description: 8-bit transmit data
       bit_offset: 0
       bit_size: 8
-enum/ADD:
+enum/ADDMODE:
   bit_size: 1
   variants:
     - name: Bit7
-      description: The master operates in 7-bit addressing mode
+      description: 7-bit addressing mode
       value: 0
     - name: Bit10
-      description: The master operates in 10-bit addressing mode
+      description: 10-bit addressing mode
       value: 1
 enum/AUTOEND:
   bit_size: 1
@@ -483,24 +475,6 @@ enum/HEADR:
     - name: Partial
       description: "The master only sends the 1st 7 bits of the 10 bit address, followed by Read direction"
       value: 1
-enum/NACK:
-  bit_size: 1
-  variants:
-    - name: Ack
-      description: an ACK is sent after current received byte
-      value: 0
-    - name: Nack
-      description: a NACK is sent after current received byte
-      value: 1
-enum/OAMODE:
-  bit_size: 1
-  variants:
-    - name: Bit7
-      description: Own address 1 is a 7-bit address
-      value: 0
-    - name: Bit10
-      description: Own address 1 is a 10-bit address
-      value: 1
 enum/OAMSK:
   bit_size: 3
   variants:
@@ -528,33 +502,6 @@ enum/OAMSK:
     - name: Mask7
       description: "OA2[7:1] are masked and don’t care. No comparison is done, and all (except reserved) 7-bit received addresses are acknowledged"
       value: 7
-enum/PECBYTE:
-  bit_size: 1
-  variants:
-    - name: NoPec
-      description: No PEC transfer
-      value: 0
-    - name: Pec
-      description: PEC transmission/reception is requested
-      value: 1
-enum/PECERR:
-  bit_size: 1
-  variants:
-    - name: Match
-      description: Received PEC does match with PEC register
-      value: 0
-    - name: NoMatch
-      description: Received PEC does not match with PEC register
-      value: 1
-enum/RD_WRN:
-  bit_size: 1
-  variants:
-    - name: Write
-      description: Master requests a write transfer
-      value: 0
-    - name: Read
-      description: Master requests a read transfer
-      value: 1
 enum/RELOAD:
   bit_size: 1
   variants:
@@ -563,22 +510,4 @@ enum/RELOAD:
       value: 0
     - name: NotCompleted
       description: The transfer is not completed after the NBYTES data transfer (NBYTES will be reloaded)
-      value: 1
-enum/START:
-  bit_size: 1
-  variants:
-    - name: NoStart
-      description: No Start generation
-      value: 0
-    - name: Start
-      description: Restart/Start generation
-      value: 1
-enum/STOP:
-  bit_size: 1
-  variants:
-    - name: NoStop
-      description: No Stop generation
-      value: 0
-    - name: Stop
-      description: Stop generation after current byte transfer
       value: 1

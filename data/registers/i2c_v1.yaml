@@ -29,7 +29,6 @@ block/I2C:
     - name: SR2
       description: Status register 2
       byte_offset: 24
-      access: Read
       fieldset: SR2
     - name: CCR
       description: Clock control register
@@ -97,12 +96,10 @@ fieldset/CR1:
       description: Start generation
       bit_offset: 8
       bit_size: 1
-      enum: START
     - name: STOP
       description: Stop generation
       bit_offset: 9
       bit_size: 1
-      enum: STOP
     - name: ACK
       description: Acknowledge enable
       bit_offset: 10
@@ -120,7 +117,6 @@ fieldset/CR1:
       description: SMBus alert
       bit_offset: 13
       bit_size: 1
-      enum: ALERT
     - name: SWRST
       description: Software reset
       bit_offset: 15
@@ -198,11 +194,10 @@ fieldset/OAR2:
 fieldset/SR1:
   description: Status register 1
   fields:
-    - name: SB
+    - name: START
       description: Start bit (Master mode)
       bit_offset: 0
       bit_size: 1
-      enum: SB
     - name: ADDR
       description: Address sent (master mode)/matched (slave mode)
       bit_offset: 1
@@ -219,11 +214,11 @@ fieldset/SR1:
       description: Stop detection (slave mode)
       bit_offset: 4
       bit_size: 1
-    - name: RxNE
+    - name: RXNE
       description: Data register not empty (receivers)
       bit_offset: 6
       bit_size: 1
-    - name: TxE
+    - name: TXE
       description: Data register empty (transmitters)
       bit_offset: 7
       bit_size: 1
@@ -248,10 +243,10 @@ fieldset/SR1:
       bit_offset: 12
       bit_size: 1
     - name: TIMEOUT
-      description: Timeout or Tlow error
+      description: Timeout or t_low detection flag
       bit_offset: 14
       bit_size: 1
-    - name: SMBALERT
+    - name: ALERT
       description: SMBus alert
       bit_offset: 15
       bit_size: 1
@@ -287,7 +282,7 @@ fieldset/SR2:
       bit_offset: 7
       bit_size: 1
     - name: PEC
-      description: acket error checking register
+      description: Packet error checking register
       bit_offset: 8
       bit_size: 8
 fieldset/TRISE:
@@ -300,20 +295,11 @@ fieldset/TRISE:
 enum/ADDMODE:
   bit_size: 1
   variants:
-    - name: ADD7
-      description: 7-bit slave address
+    - name: Bit7
+      description: 7-bit addressing mode
       value: 0
-    - name: ADD10
-      description: 10-bit slave address
-      value: 1
-enum/ALERT:
-  bit_size: 1
-  variants:
-    - name: Release
-      description: SMBA pin released high
-      value: 0
-    - name: Drive
-      description: SMBA pin driven low
+    - name: Bit10
+      description: 10-bit addressing mode
       value: 1
 enum/DNF:
   bit_size: 4
@@ -402,15 +388,6 @@ enum/POS:
     - name: Next
       description: ACK bit controls the (N)ACK of the next byte to be received
       value: 1
-enum/SB:
-  bit_size: 1
-  variants:
-    - name: NoStart
-      description: No Start condition
-      value: 0
-    - name: Start
-      description: Start condition generated
-      value: 1
 enum/SMBTYPE:
   bit_size: 1
   variants:
@@ -428,22 +405,4 @@ enum/SMBUS:
       value: 0
     - name: SMBus
       description: SMBus
-      value: 1
-enum/START:
-  bit_size: 1
-  variants:
-    - name: NoStart
-      description: No Start generation
-      value: 0
-    - name: Start
-      description: "In master mode: repeated start generation, in slave mode: start generation when bus is free"
-      value: 1
-enum/STOP:
-  bit_size: 1
-  variants:
-    - name: NoStop
-      description: No Stop generation
-      value: 0
-    - name: Stop
-      description: "In master mode: stop generation after current byte/start, in slave mode: release SCL and SDA after current byte"
       value: 1
