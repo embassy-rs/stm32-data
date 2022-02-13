@@ -1273,12 +1273,10 @@ fieldset/BDCR:
       description: LSE oscillator ready
       bit_offset: 1
       bit_size: 1
-      enum_read: LSERDYR
     - name: LSEBYP
       description: LSE oscillator bypass
       bit_offset: 2
       bit_size: 1
-      enum: LSEBYP
     - name: LSEDRV
       description: " SE oscillator drive capability "
       bit_offset: 3
@@ -1292,7 +1290,6 @@ fieldset/BDCR:
       description: LSECSSD
       bit_offset: 6
       bit_size: 1
-      enum_read: LSECSSDR
     - name: LSESYSEN
       description: LSESYSEN
       bit_offset: 7
@@ -1306,7 +1303,6 @@ fieldset/BDCR:
       description: LSESYSRDY
       bit_offset: 11
       bit_size: 1
-      enum_read: LSESYSRDYR
     - name: RTCEN
       description: RTC clock enable
       bit_offset: 15
@@ -1609,7 +1605,6 @@ fieldset/CR:
       description: MSI clock ready flag
       bit_offset: 1
       bit_size: 1
-      enum_read: PLLSAIRDYR
     - name: MSIPLLEN
       description: MSI clock PLL enable
       bit_offset: 2
@@ -1634,7 +1629,6 @@ fieldset/CR:
       description: HSI clock ready flag
       bit_offset: 10
       bit_size: 1
-      enum_read: PLLSAIRDYR
     - name: HSIASFS
       description: " HSI automatic start from Stop "
       bit_offset: 11
@@ -1647,12 +1641,10 @@ fieldset/CR:
       description: HSE clock ready flag
       bit_offset: 17
       bit_size: 1
-      enum_read: PLLSAIRDYR
     - name: HSEBYP
       description: " HSE crystal oscillator bypass "
       bit_offset: 18
       bit_size: 1
-      enum: HSEBYP
     - name: CSSON
       description: " Clock security system enable "
       bit_offset: 19
@@ -1665,7 +1657,6 @@ fieldset/CR:
       description: Main PLL clock ready flag
       bit_offset: 25
       bit_size: 1
-      enum_read: PLLSAIRDYR
     - name: PLLSAI1ON
       description: SAI1 PLL enable
       bit_offset: 26
@@ -1674,7 +1665,6 @@ fieldset/CR:
       description: SAI1 PLL clock ready flag
       bit_offset: 27
       bit_size: 1
-      enum_read: PLLSAIRDYR
     - name: PLLSAI2ON
       description: SAI2 PLL enable
       bit_offset: 28
@@ -1683,7 +1673,6 @@ fieldset/CR:
       description: SAI2 PLL clock ready flag
       bit_offset: 29
       bit_size: 1
-      enum_read: PLLSAIRDYR
     - name: PRIV
       description: PRIV
       bit_offset: 31
@@ -1714,7 +1703,6 @@ fieldset/CSR:
       description: LSI oscillator ready
       bit_offset: 1
       bit_size: 1
-      enum_read: LSIRDYR
     - name: LSIPREDIV
       description: LSIPREDIV
       bit_offset: 4
@@ -1727,42 +1715,34 @@ fieldset/CSR:
       description: Remove reset flag
       bit_offset: 23
       bit_size: 1
-      enum_write: RMVFW
     - name: OBLRSTF
       description: " Option byte loader reset flag "
       bit_offset: 25
       bit_size: 1
-      enum_read: LPWRSTFR
     - name: PINRSTF
       description: Pin reset flag
       bit_offset: 26
       bit_size: 1
-      enum_read: LPWRSTFR
     - name: BORRSTF
       description: BOR flag
       bit_offset: 27
       bit_size: 1
-      enum_read: LPWRSTFR
     - name: SFTRSTF
       description: Software reset flag
       bit_offset: 28
       bit_size: 1
-      enum_read: LPWRSTFR
     - name: IWWDGRSTF
       description: " Independent window watchdog reset flag "
       bit_offset: 29
       bit_size: 1
-      enum_read: LPWRSTFR
     - name: WWDGRSTF
       description: Window watchdog reset flag
       bit_offset: 30
       bit_size: 1
-      enum_read: LPWRSTFR
     - name: LPWRSTF
       description: Low-power reset flag
       bit_offset: 31
       bit_size: 1
-      enum_read: LPWRSTFR
 fieldset/ICSCR:
   description: " Internal clock sources calibration register "
   fields:
@@ -2035,24 +2015,6 @@ enum/HPRE:
     - name: Div512
       description: SYSCLK divided by 512
       value: 15
-enum/HSEBYP:
-  bit_size: 1
-  variants:
-    - name: NotBypassed
-      description: HSE crystal oscillator not bypassed
-      value: 0
-    - name: Bypassed
-      description: HSE crystal oscillator bypassed with external clock
-      value: 1
-enum/LPWRSTFR:
-  bit_size: 1
-  variants:
-    - name: NoReset
-      description: No reset has occured
-      value: 0
-    - name: Reset
-      description: A reset has occured
-      value: 1
 enum/LSCOSEL:
   bit_size: 1
   variants:
@@ -2061,24 +2023,6 @@ enum/LSCOSEL:
       value: 0
     - name: LSE
       description: LSE clock selected
-      value: 1
-enum/LSEBYP:
-  bit_size: 1
-  variants:
-    - name: NotBypassed
-      description: LSE crystal oscillator not bypassed
-      value: 0
-    - name: Bypassed
-      description: LSE crystal oscillator bypassed with external clock
-      value: 1
-enum/LSECSSDR:
-  bit_size: 1
-  variants:
-    - name: NoFailure
-      description: No failure detected on LSE (32 kHz oscillator)
-      value: 0
-    - name: Failure
-      description: Failure detected on LSE (32 kHz oscillator)
       value: 1
 enum/LSEDRV:
   bit_size: 2
@@ -2095,33 +2039,6 @@ enum/LSEDRV:
     - name: Higher
       description: "'Xtal mode' higher driving capability"
       value: 3
-enum/LSERDYR:
-  bit_size: 1
-  variants:
-    - name: NotReady
-      description: LSE oscillator not ready
-      value: 0
-    - name: Ready
-      description: LSE oscillator ready
-      value: 1
-enum/LSESYSRDYR:
-  bit_size: 1
-  variants:
-    - name: NotReady
-      description: LSESYS clock not ready
-      value: 0
-    - name: Ready
-      description: LSESYS clock ready
-      value: 1
-enum/LSIRDYR:
-  bit_size: 1
-  variants:
-    - name: NotReady
-      description: LSI oscillator not ready
-      value: 0
-    - name: Ready
-      description: LSI oscillator ready
-      value: 1
 enum/MCOPRE:
   bit_size: 3
   variants:
@@ -2170,15 +2087,6 @@ enum/MCOSEL:
     - name: HSI48
       description: Internal HSI48 clock selected
       value: 8
-enum/PLLSAIRDYR:
-  bit_size: 1
-  variants:
-    - name: NotReady
-      description: Clock not ready
-      value: 0
-    - name: Ready
-      description: Clock ready
-      value: 1
 enum/PPRE:
   bit_size: 3
   variants:
@@ -2197,12 +2105,6 @@ enum/PPRE:
     - name: Div16
       description: HCLK divided by 16
       value: 7
-enum/RMVFW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears the reset flag
-      value: 1
 enum/RTCSEL:
   bit_size: 2
   variants:
