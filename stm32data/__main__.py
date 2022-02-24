@@ -258,7 +258,7 @@ perimap = [
     ('.*:IPCC:v1_0', ('ipcc', 'v1', 'IPCC')),
     ('.*:DMAMUX.*', ('dmamux', 'v1', 'DMAMUX')),
 
-    ('.*:BDMA:.*', ('bdma', 'v1', 'DMA')),
+    ('.*:BDMA\d?:.*', ('bdma', 'v1', 'DMA')),
     ('STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0', ('dma2d', 'v2', 'DMA2D')),
     ('.*:DMA2D:dma2d1_v1_0', ('dma2d', 'v1', 'DMA2D')),
     ('STM32L4[PQRS].*:DMA.*', ('bdma', 'v1', 'DMA')),  # L4+
@@ -584,14 +584,6 @@ def parse_chips():
         if chip_nvic is None:
             chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC2', chip['ips'].values()), None)
 
-        chip_dma = next(filter(lambda x: x['@Name'] == 'DMA', chip['ips'].values()), None)
-        if chip_dma is not None:
-            chip_dma = chip_dma['@Version']
-
-        chip_bdma = next(filter(lambda x: x['@Name'] == 'BDMA', chip['ips'].values()), None)
-        if chip_bdma is not None:
-            chip_bdma = chip_bdma['@Version']
-
         rcc_kind = next(filter(lambda x: x['@Name'] == 'RCC', chip['ips'].values()))['@Version']
         assert rcc_kind is not None
         rcc_block = match_peri(f'{chip_name}:RCC:{rcc_kind}')
@@ -660,6 +652,9 @@ def parse_chips():
             for pname in ghost_peris:
                 if pname not in peri_kinds and (addr := get_peri_addr(defines, pname)):
                     peri_kinds[pname] = 'unknown'
+
+            if 'BDMA1' in peri_kinds and 'BDMA' in peri_kinds:
+                del peri_kinds['BDMA']
 
             # get possible used GPIOs for each peripheral from the chip xml
             # it's not the full info we would want (stuff like AFIO info which comes from GPIO xml),
@@ -736,12 +731,19 @@ def parse_chips():
             have_peris = set((p['name'] for p in peris))
             core['peripherals'] = peris
 
+            # Collect DMA versions in the chip
+            chip_dmas = []
+            for want_kind in ('DMA', 'BDMA', 'BDMA1', 'BDMA2'):
+                for ip in chip['ips'].values():
+                    pkind = ip['@Name']
+                    version = ip['@Version']
+                    if pkind == want_kind and version in dma_channels and version not in chip_dmas:
+                        chip_dmas.append(version)
+
             # Process DMA channels
             chs = []
-            if x := dma_channels.get(chip_dma):
-                chs.extend(x['channels'])
-            if x := dma_channels.get(chip_bdma):
-                chs.extend(x['channels'])
+            for dma in chip_dmas:
+                chs.extend(dma_channels[dma]['channels'])
 
             # The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
             # so we have to filter it.
@@ -751,14 +753,17 @@ def parse_chips():
             have_chs = set((ch['name'] for ch in chs))
 
             # Process peripheral - DMA channel associations
-            if chip_dma is not None:
-                for p in peris:
-                    if peri_chs := dma_channels[chip_dma]['peripherals'].get(p['name']):
-                        p['dma_channels'] = [
+            for p in peris:
+                chs = []
+                for dma in chip_dmas:
+                    if peri_chs := dma_channels[dma]['peripherals'].get(p['name']):
+                        chs.extend([
                             ch
                             for ch in peri_chs
                             if 'channel' not in ch or ch['channel'] in have_chs
-                        ]
+                        ])
+                if chs:
+                    p['dma_channels'] = chs
 
         # Now that we've processed everything common to the entire group,
         # process each chip in the group.
@@ -990,7 +995,7 @@ dma_channels = {}
 
 
 def parse_dma():
-    for f in glob('sources/cubedb/mcu/IP/*DMA-*Modes.xml'):
+    for f in glob('sources/cubedb/mcu/IP/DMA*Modes.xml') + glob('sources/cubedb/mcu/IP/BDMA*Modes.xml'):
         f = f.replace(os.path.sep, '/')
         is_explicitly_bdma = False
         ff = removeprefix(f, 'sources/cubedb/mcu/IP/')
@@ -1000,7 +1005,10 @@ def parse_dma():
             is_explicitly_bdma = True
         ff = removeprefix(ff, 'DMA-')
         ff = removeprefix(ff, 'BDMA-')
+        ff = removeprefix(ff, 'BDMA1-')
+        ff = removeprefix(ff, 'BDMA2-')
         ff = removesuffix(ff, '_Modes.xml')
+        print(ff)
 
         r = xmltodict.parse(open(f, 'rb'), force_list={'Mode', 'RefMode'})
 
@@ -1022,29 +1030,31 @@ def parse_dma():
                     dmamux_file = 'L4PQ'
                 if ff.startswith('STM32L4S'):
                     dmamux_file = 'L4RS'
+
+                dmamux = 'DMAMUX1'
+                if is_explicitly_bdma:
+                    dmamux = 'DMAMUX2'
+
                 for mf in sorted(glob('data/dmamux/{}_*.yaml'.format(dmamux_file))):
                     mf = mf.replace(os.path.sep, '/')
                     with open(mf, 'r') as yaml_file:
                         y = yaml.load(yaml_file)
                     mf = removesuffix(mf, '.yaml')
-                    dmamux = mf[mf.index('_') + 1:]  # DMAMUX1 or DMAMUX2
+                    req_dmamux = mf[mf.index('_') + 1:]  # DMAMUX1 or DMAMUX2
 
-                    for (request_name, request_num) in y.items():
-                        parts = request_name.split('_')
-                        target_peri_name = parts[0]
-                        if len(parts) < 2:
-                            request = target_peri_name
-                        else:
-                            request = parts[1]
-                        chip_dma['peripherals'].setdefault(target_peri_name, []).append({
-                            'signal': request,
-                            "dmamux": dmamux,
-                            "request": request_num,
-                        })
-
-                dmamux = 'DMAMUX1'
-                if is_explicitly_bdma:
-                    dmamux = 'DMAMUX2'
+                    if req_dmamux == dmamux:
+                        for (request_name, request_num) in y.items():
+                            parts = request_name.split('_')
+                            target_peri_name = parts[0]
+                            if len(parts) < 2:
+                                request = target_peri_name
+                            else:
+                                request = parts[1]
+                            chip_dma['peripherals'].setdefault(target_peri_name, []).append({
+                                'signal': request,
+                                "dmamux": req_dmamux,
+                                "request": request_num,
+                            })
 
                 dmamux_channel = 0
                 for n in dma_peri_name.split(","):
@@ -1079,6 +1089,8 @@ def parse_dma():
                     request_num = next(filter(lambda x: x['@Name'] in ('Channel', 'Request'), block['Parameter']), None)
                     if request_num is not None:
                         request_num = request_num['PossibleValue']
+                        if request_num.startswith('BDMA1_REQUEST_'):
+                            continue
                         request_num = removeprefix(request_num, "DMA_CHANNEL_")
                         request_num = removeprefix(request_num, "DMA_REQUEST_")
                         requests[name] = int(request_num)
@@ -1126,6 +1138,9 @@ def parse_dma():
                     for ch in chip_dma['channels']:
                         if ch['dma'] == dma_peri_name:
                             ch['channel'] -= 1
+
+        with open('tmp/dmas/' + ff + '.json', 'w') as f:
+            json.dump(chip_dma, f, indent=4)
 
         dma_channels[ff] = chip_dma
 
