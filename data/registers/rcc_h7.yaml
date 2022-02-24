@@ -131,7 +131,7 @@ block/RCC:
       byte_offset: 156
       fieldset: APB4RSTR
     - name: GCR
-      description: RCC Global Control Register
+      description: Global Control Register
       byte_offset: 160
       fieldset: GCR
     - name: D3AMR
@@ -776,7 +776,7 @@ fieldset/AHB4ENR:
       description: HSEM peripheral clock enable
       bit_offset: 25
       bit_size: 1
-    - name: BKPRAMEN
+    - name: BKPSRAMEN
       description: Backup RAM Clock Enable
       bit_offset: 28
       bit_size: 1
@@ -839,7 +839,7 @@ fieldset/AHB4LPENR:
       description: ADC3 Peripheral Clocks Enable During CSleep Mode
       bit_offset: 24
       bit_size: 1
-    - name: BKPRAMLPEN
+    - name: BKPSRAMLPEN
       description: Backup RAM Clock Enable During CSleep Mode
       bit_offset: 28
       bit_size: 1
@@ -1601,6 +1601,10 @@ fieldset/APB4ENR:
       description: LPTIM5 Peripheral Clocks Enable
       bit_offset: 12
       bit_size: 1
+    - name: DAC2EN
+      description: DAC2 (containing one converter) peripheral clock enable
+      bit_offset: 13
+      bit_size: 1
     - name: COMP12EN
       description: COMP1/2 peripheral clock enable
       bit_offset: 14
@@ -1656,6 +1660,10 @@ fieldset/APB4LPENR:
       description: LPTIM5 Peripheral Clocks Enable During CSleep Mode
       bit_offset: 12
       bit_size: 1
+    - name: DAC2LPEN
+      description: DAC2 (containing one converter) peripheral clock enable during CSleep mode
+      bit_offset: 13
+      bit_size: 1
     - name: COMP12LPEN
       description: COMP1/2 peripheral clock enable during CSleep mode
       bit_offset: 14
@@ -1710,6 +1718,10 @@ fieldset/APB4RSTR:
     - name: LPTIM5RST
       description: LPTIM5 block reset
       bit_offset: 12
+      bit_size: 1
+    - name: DAC2RST
+      description: DAC2 (containing one converter) reset
+      bit_offset: 13
       bit_size: 1
     - name: COMP12RST
       description: COMP12 Blocks Reset
@@ -2093,7 +2105,7 @@ fieldset/C1_AHB4ENR:
       description: HSEM peripheral clock enable
       bit_offset: 25
       bit_size: 1
-    - name: BKPRAMEN
+    - name: BKPSRAMEN
       description: Backup RAM Clock Enable
       bit_offset: 28
       bit_size: 1
@@ -2156,7 +2168,7 @@ fieldset/C1_AHB4LPENR:
       description: ADC3 Peripheral Clocks Enable During CSleep Mode
       bit_offset: 24
       bit_size: 1
-    - name: BKPRAMLPEN
+    - name: BKPSRAMLPEN
       description: Backup RAM Clock Enable During CSleep Mode
       bit_offset: 28
       bit_size: 1
@@ -3105,11 +3117,11 @@ fieldset/D2CCIP1R:
       bit_offset: 16
       bit_size: 3
       enum: SPI45SEL
-    - name: SPDIFSEL
+    - name: SPDIFRXSEL
       description: SPDIFRX kernel clock source selection
       bit_offset: 20
       bit_size: 2
-      enum: SPDIFSEL
+      enum: SPDIFRXSEL
     - name: DFSDM1SEL
       description: DFSDM1 kernel Clk clock source selection
       bit_offset: 24
@@ -3134,7 +3146,7 @@ fieldset/D2CCIP2R:
       bit_size: 3
       enum: USART234578SEL
     - name: USART16910SEL
-      description: USART1 and 6 kernel clock source selection
+      description: "USART1, 6, 9 and 10 kernel clock source selection"
       bit_offset: 3
       bit_size: 3
       enum: USART16910SEL
@@ -3211,6 +3223,10 @@ fieldset/D3AMR:
       description: LPTIM5 Autonomous mode enable
       bit_offset: 12
       bit_size: 1
+    - name: DAC2AMEN
+      description: DAC2 (containing one converter) Autonomous mode enable
+      bit_offset: 13
+      bit_size: 1
     - name: COMP12AMEN
       description: COMP12 Autonomous mode enable
       bit_offset: 14
@@ -3285,6 +3301,10 @@ fieldset/D3CCIPR:
       bit_offset: 24
       bit_size: 3
       enum: SAIASEL
+    - name: DFSDM2SEL
+      description: DFSDM2 kernel clock source selection
+      bit_offset: 27
+      bit_size: 1
     - name: SPI6SEL
       description: SPI6 kernel clock source selection
       bit_offset: 28
@@ -3299,7 +3319,7 @@ fieldset/D3CFGR:
       bit_size: 3
       enum: DPPRE
 fieldset/GCR:
-  description: RCC Global Control Register
+  description: Global Control Register
   fields:
     - name: WW1RSC
       description: WWDG1 reset scope control
@@ -3495,7 +3515,6 @@ fieldset/RSR:
       description: Remove reset flag
       bit_offset: 16
       bit_size: 1
-      enum: RSR_RMVF
     - name: CPURSTF
       description: CPU reset flag
       bit_offset: 17
@@ -4079,15 +4098,6 @@ enum/RNGSEL:
     - name: LSI
       description: LSI selected as peripheral clock
       value: 3
-enum/RSR_RMVF:
-  bit_size: 1
-  variants:
-    - name: NotActive
-      description: Not clearing the the reset flags
-      value: 0
-    - name: Clear
-      description: Clear the reset flags
-      value: 1
 enum/RTCSEL:
   bit_size: 2
   variants:
@@ -4148,7 +4158,7 @@ enum/SDMMCSEL:
     - name: PLL2_R
       description: pll2_r selected as peripheral clock
       value: 1
-enum/SPDIFSEL:
+enum/SPDIFRXSEL:
   bit_size: 2
   variants:
     - name: PLL1_Q
