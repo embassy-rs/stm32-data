@@ -53,7 +53,6 @@ fieldset/BSRR:
       array:
         len: 16
         stride: 1
-      enum_write: BSW
     - name: BR
       description: Reset bit
       bit_offset: 16
@@ -61,7 +60,6 @@ fieldset/BSRR:
       array:
         len: 16
         stride: 1
-      enum_write: BRW
 fieldset/CR:
   description: Port configuration register (GPIOn_CRx)
   fields:
@@ -73,14 +71,22 @@ fieldset/CR:
         len: 8
         stride: 4
       enum: MODE
-    - name: CNF
-      description: Port n configuration bits
+    - name: CNF_IN
+      description: Port n configuration bits, for input mode
       bit_offset: 2
       bit_size: 2
       array:
         len: 8
         stride: 4
-      enum: CNF
+      enum: CNF_IN
+    - name: CNF_OUT
+      description: Port n configuration bits, for output mode
+      bit_offset: 2
+      bit_size: 2
+      array:
+        len: 8
+        stride: 4
+      enum: CNF_OUT
 fieldset/IDR:
   description: Port input data register (GPIOn_IDR)
   fields:
@@ -119,35 +125,29 @@ fieldset/ODR:
         len: 16
         stride: 1
       enum: ODR
-enum/BRW:
-  bit_size: 1
+enum/CNF_IN:
+  bit_size: 2
   variants:
-    - name: NoAction
-      description: No action on the corresponding ODx bit
+    - name: Analog
+      description: Analog mode
       value: 0
-    - name: Reset
-      description: Reset the ODx bit
+    - name: Floating
+      description: Floating input (reset state)
       value: 1
-enum/BSW:
-  bit_size: 1
-  variants:
-    - name: NoAction
-      description: No action on the corresponding ODx bit
-      value: 0
-    - name: Set
-      description: Sets the corresponding ODRx bit
-      value: 1
-enum/CNF:
+    - name: Pull
+      description: Input with pull-up/pull-down
+      value: 2
+enum/CNF_OUT:
   bit_size: 2
   variants:
     - name: PushPull
-      description: Analog mode / Push-Pull mode
+      description: Push-Pull mode
       value: 0
     - name: OpenDrain
-      description: Floating input (reset state) / Open Drain-Mode
+      description: Open Drain-Mode
       value: 1
     - name: AltPushPull
-      description: Input with pull-up/pull-down / Alternate Function Push-Pull Mode
+      description: Alternate Function Push-Pull Mode
       value: 2
     - name: AltOpenDrain
       description: Alternate Function Open-Drain Mode
@@ -185,13 +185,13 @@ enum/MODE:
     - name: Input
       description: Input mode (reset state)
       value: 0
-    - name: Output
+    - name: Output10Mhz
       description: Output mode 10 MHz
       value: 1
-    - name: Output2
+    - name: Output2Mhz
       description: Output mode 2 MHz
       value: 2
-    - name: Output50
+    - name: Output50Mhz
       description: Output mode 50 MHz
       value: 3
 enum/ODR:
