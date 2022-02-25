@@ -577,13 +577,6 @@ def parse_chips():
         chip['line'] = chip['xml']['@Line']
         chip['die'] = chip['xml']['Die']
 
-        chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC', chip['ips'].values()), None)
-        # L5, U5 have NVIC1=S, NVIC2=NS. Use NS.
-        if chip_nvic is None and not chip_name.startswith('STM32L5') and not chip_name.startswith('STM32U5'):
-            chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC1', chip['ips'].values()), None)
-        if chip_nvic is None:
-            chip_nvic = next(filter(lambda x: x['@Name'] == 'NVIC2', chip['ips'].values()), None)
-
         rcc_kind = next(filter(lambda x: x['@Name'] == 'RCC', chip['ips'].values()))['@Version']
         assert rcc_kind is not None
         rcc_block = match_peri(f'{chip_name}:RCC:{rcc_kind}')
@@ -610,12 +603,32 @@ def parse_chips():
                 core_name = 'all'
             # print("Defining for core", core_name)
 
-            # Gather all interrupts and defines for this core
+            # C header defines for this core.
+            defines = h['defines'][core_name]
 
+            # Interrupts!
+            # Most chips have a single NVIC, named "NVIC"
+            want_nvic_name = 'NVIC'
+
+            # Exception 1: Multicore: NVIC1 is the first core, NVIC2 is the second. We have to pick the right one.
+            if chip_name[5:9] in ('H745', 'H747', 'H755', 'H757', 'WL54', 'WL55'):
+                if core_name == 'cm7':
+                    want_nvic_name = 'NVIC1'
+                else:
+                    want_nvic_name = 'NVIC2'
+            if chip_name[5:8] == 'WL5':
+                if core_name == 'cm4':
+                    want_nvic_name = 'NVIC1'
+                else:
+                    want_nvic_name = 'NVIC2'
+
+            # Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
+            if chip_name[5:7] in ('L5', 'U5'):
+                want_nvic_name = 'NVIC2'
+
+            chip_nvic = next(filter(lambda x: x['@Name'] == want_nvic_name, chip['ips'].values()))
             header_irqs = h['interrupts'][core_name]
             chip_irqs = interrupts.get(chip_nvic['@Name'], chip_nvic['@Version'], core_name)
-
-            defines = h['defines'][core_name]
 
             # F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
             # to the same IRQ number.
