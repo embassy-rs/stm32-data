@@ -117,17 +117,23 @@ perimap = [
     ('.*:I2C:i2c2_v1_1', ('i2c', 'v2', 'I2C')),
     ('.*:I2C:i2c2_v1_1F7', ('i2c', 'v2', 'I2C')),
     ('.*:I2C:i2c2_v1_1U5', ('i2c', 'v2', 'I2C')),
+
     ('.*:DAC:dacif_v1_1', ('dac', 'v1', 'DAC')),
     ('.*:DAC:dacif_v2_0', ('dac', 'v2', 'DAC')),
     ('.*:DAC:dacif_v3_0', ('dac', 'v2', 'DAC')),
+
     ('.*:ADC:aditf_v2_5F1', ('adc', 'f1', 'ADC')),
+    ('.*:ADC:aditf4_v1_1', ('adc', 'v1', 'ADC')),
     ('.*:ADC:aditf2_v1_1', ('adc', 'v2', 'ADC')),
     ('.*:ADC:aditf5_v2_0', ('adc', 'v3', 'ADC')),
+    ('.*:ADC:aditf5_v3_0', ('adc', 'v4', 'ADC')),
     ('STM32G0.*:ADC:.*', ('adc', 'g0', 'ADC')),
     ('STM32G0.*:ADC_COMMON:.*', ('adccommon', 'v3', 'ADC_COMMON')),
     ('.*:ADC_COMMON:aditf2_v1_1', ('adccommon', 'v2', 'ADC_COMMON')),
     ('.*:ADC_COMMON:aditf5_v2_0', ('adccommon', 'v3', 'ADC_COMMON')),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', ('adccommon', 'v3', 'ADC_COMMON')),
+    ('STM32H7.*:ADC_COMMON:.*', ('adccommon', 'v4', 'ADC_COMMON')),
+
     ('.*:DCMI:.*', ('dcmi', 'v1', 'DCMI')),
     ('STM32F0.*:SYSCFG:.*',  ('syscfg', 'f0', 'SYSCFG')),
     ('STM32F2.*:SYSCFG:.*',  ('syscfg', 'f2', 'SYSCFG')),
