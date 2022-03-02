@@ -1,0 +1,454 @@
+---
+block/FLASH:
+  description: Flash
+  items:
+    - name: ACR
+      description: Access control register
+      byte_offset: 0
+      fieldset: ACR
+    - name: KEYR
+      description: Flash key register
+      byte_offset: 8
+      access: Write
+      fieldset: KEYR
+    - name: OPTKEYR
+      description: Option byte key register
+      byte_offset: 12
+      access: Write
+      fieldset: OPTKEYR
+    - name: SR
+      description: Status register
+      byte_offset: 16
+      fieldset: SR
+    - name: CR
+      description: Flash control register
+      byte_offset: 20
+      fieldset: CR
+    - name: ECCR
+      description: Flash ECC register
+      byte_offset: 24
+      fieldset: ECCR
+    - name: OPTR
+      description: Flash option register
+      byte_offset: 32
+      fieldset: OPTR
+    - name: PCROP1ASR
+      description: Flash PCROP zone A Start address register
+      byte_offset: 36
+      access: Read
+      fieldset: PCROP1ASR
+    - name: PCROP1AER
+      description: Flash PCROP zone A End address register
+      byte_offset: 40
+      access: Read
+      fieldset: PCROP1AER
+    - name: WRP1AR
+      description: Flash WRP area A address register
+      byte_offset: 44
+      access: Read
+      fieldset: WRP1AR
+    - name: WRP1BR
+      description: Flash WRP area B address register
+      byte_offset: 48
+      access: Read
+      fieldset: WRP1BR
+    - name: PCROP1BSR
+      description: Flash PCROP zone B Start address register
+      byte_offset: 52
+      access: Read
+      fieldset: PCROP1BSR
+    - name: PCROP1BER
+      description: Flash PCROP zone B End address register
+      byte_offset: 56
+      access: Read
+      fieldset: PCROP1BER
+    - name: SECR
+      description: Flash Security register
+      byte_offset: 128
+      access: Read
+      fieldset: SECR
+fieldset/ACR:
+  description: Access control register
+  fields:
+    - name: LATENCY
+      description: Latency
+      bit_offset: 0
+      bit_size: 3
+      enum: LATENCY
+    - name: PRFTEN
+      description: Prefetch enable
+      bit_offset: 8
+      bit_size: 1
+    - name: ICEN
+      description: Instruction cache enable
+      bit_offset: 9
+      bit_size: 1
+    - name: ICRST
+      description: Instruction cache reset
+      bit_offset: 11
+      bit_size: 1
+    - name: EMPTY
+      description: Flash User area empty
+      bit_offset: 16
+      bit_size: 1
+    - name: DBG_SWEN
+      description: Debug access software enable
+      bit_offset: 18
+      bit_size: 1
+fieldset/CR:
+  description: Flash control register
+  fields:
+    - name: PG
+      description: Programming
+      bit_offset: 0
+      bit_size: 1
+    - name: PER
+      description: Page erase
+      bit_offset: 1
+      bit_size: 1
+    - name: MER
+      description: Mass erase
+      bit_offset: 2
+      bit_size: 1
+    - name: PNB
+      description: Page number
+      bit_offset: 3
+      bit_size: 6
+    - name: STRT
+      description: Start
+      bit_offset: 16
+      bit_size: 1
+    - name: OPTSTRT
+      description: Options modification start
+      bit_offset: 17
+      bit_size: 1
+    - name: FSTPG
+      description: Fast programming
+      bit_offset: 18
+      bit_size: 1
+    - name: EOPIE
+      description: End of operation interrupt enable
+      bit_offset: 24
+      bit_size: 1
+    - name: ERRIE
+      description: Error interrupt enable
+      bit_offset: 25
+      bit_size: 1
+    - name: RDERRIE
+      description: PCROP read error interrupt enable
+      bit_offset: 26
+      bit_size: 1
+    - name: OBL_LAUNCH
+      description: Force the option byte loading
+      bit_offset: 27
+      bit_size: 1
+    - name: SEC_PROT
+      description: Securable memory area protection enable
+      bit_offset: 28
+      bit_size: 1
+    - name: OPTLOCK
+      description: Options Lock
+      bit_offset: 30
+      bit_size: 1
+    - name: LOCK
+      description: FLASH_CR Lock
+      bit_offset: 31
+      bit_size: 1
+fieldset/ECCR:
+  description: Flash ECC register
+  fields:
+    - name: ADDR_ECC
+      description: ECC fail address
+      bit_offset: 0
+      bit_size: 14
+    - name: SYSF_ECC
+      description: ECC fail for Corrected ECC Error or Double ECC Error in info block
+      bit_offset: 20
+      bit_size: 1
+    - name: ECCIE
+      description: ECC correction interrupt enable
+      bit_offset: 24
+      bit_size: 1
+    - name: ECCC
+      description: ECC correction
+      bit_offset: 30
+      bit_size: 1
+    - name: ECCD
+      description: ECC detection
+      bit_offset: 31
+      bit_size: 1
+fieldset/KEYR:
+  description: Flash key register
+  fields:
+    - name: KEYR
+      description: KEYR
+      bit_offset: 0
+      bit_size: 32
+fieldset/OPTKEYR:
+  description: Option byte key register
+  fields:
+    - name: OPTKEYR
+      description: Option byte key
+      bit_offset: 0
+      bit_size: 32
+fieldset/OPTR:
+  description: Flash option register
+  fields:
+    - name: RDP
+      description: Read protection level
+      bit_offset: 0
+      bit_size: 8
+      enum: RDP
+    - name: BOREN
+      description: BOR reset Level
+      bit_offset: 8
+      bit_size: 1
+    - name: BORF_LEV
+      description: These bits contain the VDD supply level threshold that activates the reset
+      bit_offset: 9
+      bit_size: 2
+      enum: BORF_LEV
+    - name: BORR_LEV
+      description: These bits contain the VDD supply level threshold that releases the reset.
+      bit_offset: 11
+      bit_size: 2
+      enum: BORR_LEV
+    - name: nRST_STOP
+      description: nRST_STOP
+      bit_offset: 13
+      bit_size: 1
+    - name: nRST_STDBY
+      description: nRST_STDBY
+      bit_offset: 14
+      bit_size: 1
+    - name: nRSTS_HDW
+      description: nRSTS_HDW
+      bit_offset: 15
+      bit_size: 1
+    - name: IDWG_SW
+      description: Independent watchdog selection
+      bit_offset: 16
+      bit_size: 1
+    - name: IWDG_STOP
+      description: Independent watchdog counter freeze in Stop mode
+      bit_offset: 17
+      bit_size: 1
+    - name: IWDG_STDBY
+      description: Independent watchdog counter freeze in Standby mode
+      bit_offset: 18
+      bit_size: 1
+    - name: WWDG_SW
+      description: Window watchdog selection
+      bit_offset: 19
+      bit_size: 1
+    - name: RAM_PARITY_CHECK
+      description: SRAM parity check control
+      bit_offset: 22
+      bit_size: 1
+    - name: nBOOT_SEL
+      description: nBOOT_SEL
+      bit_offset: 24
+      bit_size: 1
+    - name: nBOOT1
+      description: Boot configuration
+      bit_offset: 25
+      bit_size: 1
+    - name: nBOOT0
+      description: nBOOT0 option bit
+      bit_offset: 26
+      bit_size: 1
+    - name: NRST_MODE
+      description: NRST_MODE
+      bit_offset: 27
+      bit_size: 2
+      enum: NRST_MODE
+    - name: IRHEN
+      description: Internal reset holder enable bit
+      bit_offset: 29
+      bit_size: 1
+fieldset/PCROP1AER:
+  description: Flash PCROP zone A End address register
+  fields:
+    - name: PCROP1A_END
+      description: PCROP1A area end offset
+      bit_offset: 0
+      bit_size: 8
+    - name: PCROP_RDP
+      description: PCROP area preserved when RDP level decreased
+      bit_offset: 31
+      bit_size: 1
+fieldset/PCROP1ASR:
+  description: Flash PCROP zone A Start address register
+  fields:
+    - name: PCROP1A_STRT
+      description: PCROP1A area start offset
+      bit_offset: 0
+      bit_size: 8
+fieldset/PCROP1BER:
+  description: Flash PCROP zone B End address register
+  fields:
+    - name: PCROP1B_END
+      description: PCROP1B area end offset
+      bit_offset: 0
+      bit_size: 8
+fieldset/PCROP1BSR:
+  description: Flash PCROP zone B Start address register
+  fields:
+    - name: PCROP1B_STRT
+      description: PCROP1B area start offset
+      bit_offset: 0
+      bit_size: 8
+fieldset/SECR:
+  description: Flash Security register
+  fields:
+    - name: SEC_SIZE
+      description: Securable memory area size
+      bit_offset: 0
+      bit_size: 7
+    - name: BOOT_LOCK
+      description: used to force boot from user area
+      bit_offset: 16
+      bit_size: 1
+fieldset/SR:
+  description: Status register
+  fields:
+    - name: EOP
+      description: End of operation
+      bit_offset: 0
+      bit_size: 1
+    - name: OPERR
+      description: Operation error
+      bit_offset: 1
+      bit_size: 1
+    - name: PROGERR
+      description: Programming error
+      bit_offset: 3
+      bit_size: 1
+    - name: WRPERR
+      description: Write protected error
+      bit_offset: 4
+      bit_size: 1
+    - name: PGAERR
+      description: Programming alignment error
+      bit_offset: 5
+      bit_size: 1
+    - name: SIZERR
+      description: Size error
+      bit_offset: 6
+      bit_size: 1
+    - name: PGSERR
+      description: Programming sequence error
+      bit_offset: 7
+      bit_size: 1
+    - name: MISERR
+      description: Fast programming data miss error
+      bit_offset: 8
+      bit_size: 1
+    - name: FASTERR
+      description: Fast programming error
+      bit_offset: 9
+      bit_size: 1
+    - name: RDERR
+      description: PCROP read error
+      bit_offset: 14
+      bit_size: 1
+    - name: OPTVERR
+      description: Option and Engineering bits loading validity error
+      bit_offset: 15
+      bit_size: 1
+    - name: BSY
+      description: Busy
+      bit_offset: 16
+      bit_size: 1
+    - name: CFGBSY
+      description: Programming or erase configuration busy.
+      bit_offset: 18
+      bit_size: 1
+fieldset/WRP1AR:
+  description: Flash WRP area A address register
+  fields:
+    - name: WRP1A_STRT
+      description: WRP area A start offset
+      bit_offset: 0
+      bit_size: 6
+    - name: WRP1A_END
+      description: WRP area A end offset
+      bit_offset: 16
+      bit_size: 6
+fieldset/WRP1BR:
+  description: Flash WRP area B address register
+  fields:
+    - name: WRP1B_STRT
+      description: WRP area B start offset
+      bit_offset: 0
+      bit_size: 6
+    - name: WRP1B_END
+      description: WRP area B end offset
+      bit_offset: 16
+      bit_size: 6
+enum/LATENCY:
+  bit_size: 3
+  variants:
+    - name: WS0
+      description: Zero wait states
+      value: 0b000
+    - name: WS1
+      description: One wait state
+      value: 0b001
+    - name: WS2
+      description: Two wait states
+      value: 0b010
+enum/NRST_MODE:
+  bit_size: 2
+  variants:
+    - name: INPUT_ONLY
+      description: Reset pin is in reset input mode only
+      value: 0b01
+    - name: GPIO
+      description: Reset pin is in GPIO mode only
+      value: 0b10
+    - name: INPUT_OUTPUT
+      description: Reset pin is in resety input and output mode
+      value: 0b11
+enum/BORR_LEV:
+  bit_size: 2
+  variants:
+    - name: RISING_0
+      description: BOR rising level 1 with threshold around 2.1V
+      value: 0b00
+    - name: RISING_1
+      description: BOR rising level 2 with threshold around 2.3V
+      value: 0b01
+    - name: RISING_2
+      description: BOR rising level 3 with threshold around 2.6V
+      value: 0b10
+    - name: RISING_3
+      description: BOR rising level 4 with threshold around 2.9V
+      value: 0b11
+enum/BORF_LEV:
+  bit_size: 2
+  variants:
+    - name: FALLING_0
+      description: BOR falling level 1 with threshold around 2.0V
+      value: 0b00
+    - name: FALLING_1
+      description: BOR falling level 2 with threshold around 2.2V
+      value: 0b01
+    - name: FALLING_2
+      description: BOR falling level 3 with threshold around 2.5V
+      value: 0b10
+    - name: FALLING_3
+      description: BOR falling level 4 with threshold around 2.8V
+      value: 0b11
+enum/RDP:
+  bit_size: 8
+  variants:
+    - name: LEVEL_0
+      value: 0xAA
+      description: Read protection not active
+    - name: LEVEL_1
+      value: 0xBB
+      description: Memories read protection active
+    - name: LEVEL_2
+      value: 0xCC
+      description: Chip read protection active
