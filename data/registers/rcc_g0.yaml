@@ -683,6 +683,7 @@ fieldset/BDCR:
       description: LSE oscillator drive capability
       bit_offset: 3
       bit_size: 2
+      enum: LSEDRV
     - name: LSECSSON
       description: CSS on LSE enable
       bit_offset: 5
@@ -695,6 +696,7 @@ fieldset/BDCR:
       description: RTC clock source selection
       bit_offset: 8
       bit_size: 2
+      enum: RTCSEL
     - name: RTCEN
       description: RTC clock enable
       bit_offset: 15
@@ -718,62 +720,77 @@ fieldset/CCIPR:
       description: USART1 clock source selection
       bit_offset: 0
       bit_size: 2
+      enum: USART1SEL
     - name: USART2SEL
       description: USART2 clock source selection
       bit_offset: 2
       bit_size: 2
+      enum: USART2SEL
     - name: USART3SEL
       description: USART3 clock source selection
       bit_offset: 4
       bit_size: 2
+      enum: USART3SEL
     - name: CECSEL
       description: HDMI CEC clock source selection
       bit_offset: 6
       bit_size: 1
+      enum: CECSEL
     - name: LPUART2SEL
       description: LPUART2 clock source selection
       bit_offset: 8
       bit_size: 2
+      enum: LPUART2SEL
     - name: LPUART1SEL
       description: LPUART1 clock source selection
       bit_offset: 10
       bit_size: 2
+      enum: LPUART1SEL
     - name: I2C1SEL
       description: I2C1 clock source selection
       bit_offset: 12
       bit_size: 2
+      enum: I2C1SEL
     - name: I2S2SEL
       description: I2S1 clock source selection
       bit_offset: 14
       bit_size: 2
+      enum: I2C2I2S1SEL
     - name: LPTIM1SEL
       description: LPTIM1 clock source selection
       bit_offset: 18
       bit_size: 2
+      enum: LPTIM1SEL
     - name: LPTIM2SEL
       description: LPTIM2 clock source selection
       bit_offset: 20
       bit_size: 2
+      enum: LPTIM2SEL
     - name: TIM1SEL
       description: TIM1 clock source selection
       bit_offset: 22
       bit_size: 1
+      enum: TIM1SEL
     - name: TIM15SEL
       description: TIM15 clock source selection
       bit_offset: 24
       bit_size: 1
+      enum: TIM15SEL
     - name: RNGSEL
       description: RNG clock source selection
       bit_offset: 26
       bit_size: 2
+      enum: RNGSEL
     - name: RNGDIV
       description: Division factor of RNG clock divider
       bit_offset: 28
       bit_size: 2
+      enum: RNGDIV
     - name: ADCSEL
       description: ADCs clock source selection
       bit_offset: 30
       bit_size: 2
+      enum: ADCSEL
 fieldset/CCIPR2:
   description: Peripherals independent clock configuration register 2
   fields:
@@ -781,18 +798,22 @@ fieldset/CCIPR2:
       description: I2S1SEL
       bit_offset: 0
       bit_size: 2
+      enum: I2S1SEL
     - name: I2S2SEL
       description: I2S2SEL
       bit_offset: 2
       bit_size: 2
+      enum: I2S2SEL
     - name: FDCANSEL
       description: FDCANSEL
       bit_offset: 8
       bit_size: 2
+      enum: FDCANSEL
     - name: USBSEL
       description: USBSEL
       bit_offset: 12
       bit_size: 2
+      enum: USBSEL
 fieldset/CFGR:
   description: Clock configuration register
   fields:
@@ -800,34 +821,42 @@ fieldset/CFGR:
       description: System clock switch
       bit_offset: 0
       bit_size: 3
+      enum: SW
     - name: SWS
       description: System clock switch status
       bit_offset: 3
       bit_size: 3
+      enum: SWS
     - name: HPRE
       description: AHB prescaler
       bit_offset: 8
       bit_size: 4
+      enum: HPRE
     - name: PPRE
       description: APB prescaler
       bit_offset: 12
       bit_size: 3
+      enum: PPRE
     - name: MCO2SEL
       description: MCO2SEL
       bit_offset: 16
       bit_size: 4
+      enum: MCO2SEL
     - name: MCO2PRE
       description: MCO2PRE
       bit_offset: 20
       bit_size: 4
+      enum: MCO2PRE
     - name: MCOSEL
       description: Microcontroller clock output
       bit_offset: 24
       bit_size: 3
+      enum: MCOSEL
     - name: MCOPRE
       description: Microcontroller clock output prescaler
       bit_offset: 28
       bit_size: 3
+      enum: MCOPRE
 fieldset/CICR:
   description: Clock interrupt clear register
   fields:
@@ -940,6 +969,7 @@ fieldset/CR:
       description: HSI16 clock division factor
       bit_offset: 11
       bit_size: 3
+      enum: HSIDIV
     - name: HSEON
       description: HSE clock enable
       bit_offset: 16
@@ -1109,6 +1139,7 @@ fieldset/PLLSYSCFGR:
       description: PLL input clock source
       bit_offset: 0
       bit_size: 2
+      enum: PLLSRC
     - name: PLLM
       description: Division factor M of the PLL input clock divider
       bit_offset: 4
@@ -1141,3 +1172,561 @@ fieldset/PLLSYSCFGR:
       description: PLL VCO division factor R for PLLRCLK clock output
       bit_offset: 29
       bit_size: 3
+enum/HSIDIV:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: HSI clock is not divided
+      value: 0b000
+    - name: Div2
+      description: HSI clock is divided by 2
+      value: 0b001
+    - name: Div4
+      description: HSI clock is divided by 4
+      value: 0b010
+    - name: Div8
+      description: HSI clock is divided by 8
+      value: 0b011
+    - name: Div16
+      description: HSI clock is divided by 16
+      value: 0b100
+    - name: Div32
+      description: HSI clock is divided by 32
+      value: 0b101
+    - name: Div64
+      description: HSI clock is divided by 64
+      value: 0b110
+    - name: Div128
+      description: HSI clock is divided by 128
+      value: 0b111
+enum/MCOPRE:
+  bit_size: 4
+  variants:
+    - name: Div1
+      description: MCO1 not divided
+      value: 0b0000
+    - name: Div2
+      description: MCO1 clock is divided by 2
+      value: 0b0001
+    - name: Div4
+      description: MCO1 clock is divided by 4
+      value: 0b0010
+    - name: Div8
+      description: MCO1 clock is divided by 8
+      value: 0b0011
+    - name: Div16
+      description: MCO1 clock is divided divided by 16
+      value: 0b0100
+    - name: Div32
+      description: MCO1 clock is divided divided by 32
+      value: 0b0101
+    - name: Div64
+      description: MCO1 clock is divided divided by 64
+      value: 0b0110
+    - name: Div128
+      description: MCO1 clock is divided divided by 128
+      value: 0b0111
+    - name: Div256
+      description: MCO1 clock is divided divided by 256
+      value: 0b1000
+    - name: Div512
+      description: MCO1 clock is divided divided by 512
+      value: 0b1001
+    - name: Div1024
+      description: MCO1 clock is divided divided by 1024
+      value: 0b1010
+enum/MCOSEL:
+  bit_size: 4
+  variants:
+    - name: NoClock
+      description: No clock, MCO output disabled
+      value: 0b0000
+    - name: SYSCLK
+      description: SYSCLK selected as MCO1 source
+      value: 0b0001
+    - name: HSI48
+      description: HSI48 selected as MCO1 source
+      value: 0b0010
+    - name: HSI16
+      description: HSI16 selected as MCO1 source
+      value: 0b0011
+    - name: HSE
+      description: HSE selected as MCO1 source
+      value: 0b0100
+    - name: PLLRCLK
+      description: PLLRCLK selected as MCO1 source
+      value: 0b0101
+    - name: LSI
+      description: LSI selected as MCO1 source
+      value: 0b0110
+    - name: LSE
+      description: LSE selected as MCO1 source
+      value: 0b0111
+    - name: PLLPCLK
+      description: PLLPCLK selected as MCO1 source
+      value: 0b1000
+    - name: PLLQCLK
+      description: PLLQCLK selected as MCO1 source
+      value: 0b1001
+    - name: RTCCLK
+      description: RTCCLK selected as MCO1 source
+      value: 0b1010
+    - name: RTC_WKUP
+      description: RTC_Wakeup selected as MCO1 source
+      value: 0b1011
+enum/MCO2PRE:
+  bit_size: 4
+  variants:
+    - name: Div1
+      description: MCO2 not divided
+      value: 0b0000
+    - name: Div2
+      description: MCO2 clock is divided by 2
+      value: 0b0001
+    - name: Div4
+      description: MCO2 clock is divided by 4
+      value: 0b0010
+    - name: Div8
+      description: MCO2 clock is divided by 8
+      value: 0b0011
+    - name: Div16
+      description: MCO2 clock is divided divided by 16
+      value: 0b0100
+    - name: Div32
+      description: MCO2 clock is divided divided by 32
+      value: 0b0101
+    - name: Div64
+      description: MCO2 clock is divided divided by 64
+      value: 0b0110
+    - name: Div128
+      description: MCO2 clock is divided divided by 128
+      value: 0b0111
+    - name: Div256
+      description: MCO2 clock is divided divided by 256
+      value: 0b1000
+    - name: Div512
+      description: MCO2 clock is divided divided by 512
+      value: 0b1001
+    - name: Div1024
+      description: MCO2 clock is divided divided by 1024
+      value: 0b1010
+enum/MCO2SEL:
+  bit_size: 4
+  variants:
+    - name: NoClock
+      description: No clock, MCO2 output disabled
+      value: 0b0000
+    - name: SYSCLK
+      description: SYSCLK selected as MCO2 source
+      value: 0b0001
+    - name: HSI48
+      description: HSI48 selected as MCO2 source
+      value: 0b0010
+    - name: HSI16
+      description: HSI16 selected as MCO2 source
+      value: 0b0011
+    - name: HSE
+      description: HSE selected as MCO2 source
+      value: 0b0100
+    - name: PLLRCLK
+      description: PLLRCLK selected as MCO2 source
+      value: 0b0101
+    - name: LSI
+      description: LSI selected as MCO2 source
+      value: 0b0110
+    - name: LSE
+      description: LSE selected as MCO2 source
+      value: 0b0111
+    - name: PLLPCLK
+      description: PLLPCLK selected as MCO2 source
+      value: 0b1000
+    - name: PLLQCLK
+      description: PLLQCLK selected as MCO2 source
+      value: 0b1001
+    - name: RTCCLK
+      description: RTCCLK selected as MCO2 source
+      value: 0b1010
+    - name: RTC_WKUP
+      description: RTC_Wakeup selected as MCO2 source
+      value: 0b1011
+enum/PPRE:
+  bit_size: 4
+  variants:
+    - name: Div1
+      description: HCLK not divided
+      value: 0b00
+    - name: Div2
+      description: HCLK is divided by 2
+      value: 0b100
+    - name: Div4
+      description: HCLK is divided by 4
+      value: 0b101
+    - name: Div8
+      description: HCLK is divided by 8
+      value: 0b110
+    - name: Div16
+      description: HCLK is divided by 16
+      value: 0b111
+enum/HPRE:
+  bit_size: 4
+  variants:
+    - name: Div1
+      description: SYSCLK not divided
+      value: 0b0000
+    - name: Div2
+      description: SYSCLK is divided by 2
+      value: 0b1000
+    - name: Div4
+      description: SYSCLK is divided by 4
+      value: 0b1001
+    - name: Div8
+      description: SYSCLK is divided by 8
+      value: 0b1010
+    - name: Div16
+      description: SYSCLK is divided by 16
+      value: 0b1011
+    - name: Div64
+      description: SYSCLK is divided by 64
+      value: 0b1100
+    - name: Div128
+      description: SYSCLK is divided by 128
+      value: 0b1101
+    - name: Div256
+      description: SYSCLK is divided by 256
+      value: 0b1110
+    - name: Div512
+      description: SYSCLK is divided by 512
+      value: 0b1111
+enum/SWS:
+  bit_size: 3
+  variants:
+    - name: HSI
+      description: HSI used as system clock
+      value: 0b000
+    - name: HSE
+      description: HSE used as system clock
+      value: 0b001
+    - name: PLLRCLK
+      description: PLLRCLK used as system clock
+      value: 0b010
+    - name: LSI
+      description: LSI used as system clock
+      value: 0b011
+    - name: LSE
+      description: LSE used as system clock
+      value: 0b100
+enum/SW:
+  bit_size: 3
+  variants:
+    - name: HSI
+      description: HSI selected as system clock
+      value: 0b000
+    - name: HSE
+      description: HSE selected as system clock
+      value: 0b001
+    - name: PLLRCLK
+      description: PLLRCLK selected as system clock
+      value: 0b010
+    - name: LSI
+      description: LSI selected as system clock
+      value: 0b011
+    - name: LSE
+      description: LSE selected as system clock
+      value: 0b100
+enum/PLLSRC:
+  bit_size: 2
+  variants:
+    - name: NoClock
+      description: No clock selected as PLL entry clock source
+      value: 0b00
+    - name: HSI16
+      description: HSI16 selected as PLL entry clock source
+      value: 0b10
+    - name: HSE
+      description: HSE selected as PLL entry clock source
+      value: 0b11
+enum/ADCSEL:
+  bit_size: 2
+  variants:
+    - name: SYSCLK
+      description: SYSCLK used as ADC clock source
+      value: 0b00
+    - name: PLLPCLK
+      description: PLLPCLK used as ADC clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as ADC clock source
+      value: 0b10
+enum/RNGDIV:
+  bit_size: 2
+  variants:
+    - name: Div1
+      description: RNG clock is not divided
+      value: 0b00
+    - name: Div2
+      description: RNG clock is divided by 2
+      value: 0b01
+    - name: Div4
+      description: RNG clock is divided by 4
+      value: 0b10
+    - name: Div8
+      description: RNG clock is divided by 8
+      value: 0b11
+enum/RNGSEL:
+  bit_size: 2
+  variants:
+    - name: NoClock
+      description: No clock used as RNG clock source
+      value: 0b00
+    - name: HSI16_Div8
+      description: HSI divided by 8 used as RNG clock source
+      value: 0b01
+    - name: SYSCLK
+      description: SYSCLK used as RNG clock source
+      value: 0b10
+    - name: PLLQCLK
+      description: PLLQCLK used as RNG clock source
+      value: 0b11
+enum/TIM15SEL:
+  bit_size: 1
+  variants:
+    - name: TIMPCLK
+      description: TIMPCLK used as TIM15 clock source
+      value: 0
+    - name: PLLQCLK
+      description: PLLQCLK used as TIM15 clock source
+      value: 1
+enum/TIM1SEL:
+  bit_size: 1
+  variants:
+    - name: TIMPCLK
+      description: TIMPCLK used as TIM1 clock source
+      value: 0b0
+    - name: PLLQCLK
+      description: PLLQCLK used as TIM1 clock source
+      value: 0b1
+enum/LPTIM2SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as LPTIM2 clock source
+      value: 0b00
+    - name: LSI
+      description: LSI used as LPTIM2 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as LPTIM2 clock source
+      value: 0b10
+    - name: LSE
+      description: LSE used as LPTIM2 clock source
+      value: 0b11
+enum/LPTIM1SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as LPTIM1 clock source
+      value: 0b00
+    - name: LSI
+      description: LSI used as LPTIM1 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as LPTIM1 clock source
+      value: 0b10
+    - name: LSE
+      description: LSE used as LPTIM1 clock source
+      value: 0b11
+enum/I2C2I2S1SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as I2C2/I2S2 clock source
+      value: 0b00
+    - name: SYSCLK
+      description: SYSCLK used as I2C2/I2S2 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as I2C2/I2S2 clock source
+      value: 0b10
+    - name: I2S_CKIN
+      description: External clock used as I2C2/I2S2 clock source
+      value: 0b11
+enum/I2C1SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as I2C1 clock source
+      value: 0b00
+    - name: SYSCLK
+      description: SYSCLK used as I2C1 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as I2C1 clock source
+      value: 0b10
+enum/LPUART1SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as LPUART1 clock source
+      value: 0b00
+    - name: SYSCLK
+      description: SYSCLK used as LPUART1 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as LPUART1 clock source
+      value: 0b10
+    - name: LSE
+      description: LSE used as LPUART1 clock source
+      value: 0b11
+enum/LPUART2SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as LPUART2 clock source
+      value: 0b00
+    - name: SYSCLK
+      description: SYSCLK used as LPUART2 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as LPUART2 clock source
+      value: 0b10
+    - name: LSE
+      description: LSE used as LPUART2 clock source
+      value: 0b11
+enum/CECSEL:
+  bit_size: 1
+  variants:
+    - name: HSI16_Div488
+      description: HSI16 divided by 488 used as CEC clock
+      value: 0b0
+    - name: LSE
+      description: LSE used as CEC clock
+      value: 0b1
+enum/USART3SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as USART3 clock source
+      value: 0b00
+    - name: SYSCLK
+      description: SYSCLK used as USART3 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as USART3 clock source
+      value: 0b10
+    - name: LSE
+      description: LSE used as USART3 clock source
+      value: 0b11
+enum/USART2SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as USART2 clock source
+      value: 0b00
+    - name: SYSCLK
+      description: SYSCLK used as USART2 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as USART2 clock source
+      value: 0b10
+    - name: LSE
+      description: LSE used as USART2 clock source
+      value: 0b11
+enum/USART1SEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as USART1 clock source
+      value: 0b00
+    - name: SYSCLK
+      description: SYSCLK used as USART1 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI16 used as USART1 clock source
+      value: 0b10
+    - name: LSE
+      description: LSE used as USART1 clock source
+      value: 0b11
+enum/USBSEL:
+  bit_size: 2
+  variants:
+    - name: HSI48
+      description: HSI48 used as USB clock source
+      value: 0b00
+    - name: PLLQCLK
+      description: PLLQCLK used as USB clock source
+      value: 0b01
+    - name: HSE
+      description: HSE used as USB clock source
+      value: 0b10
+enum/FDCANSEL:
+  bit_size: 2
+  variants:
+    - name: PCLK
+      description: PCLK used as FDCAN clock source
+      value: 0b00
+    - name: PLLQCLK
+      description: PLLQCLK used as FDCAN clock source
+      value: 0b01
+    - name: HSE
+      description: HSE used as FDCAN clock source
+      value: 0b10
+enum/I2S2SEL:
+  bit_size: 2
+  variants:
+    - name: SYSCLK
+      description: SYSCLK used as I2S2 clock source
+      value: 0b00
+    - name: PLLPCLK
+      description: PLLPCLK used as I2S2 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI used as I2S2 clock source
+      value: 0b10
+    - name: I2S_CKIN
+      description: External clock used as I2S2 clock source
+      value: 0b11
+enum/I2S1SEL:
+  bit_size: 2
+  variants:
+    - name: SYSCLK
+      description: SYSCLK used as I2S1 clock source
+      value: 0b00
+    - name: PLLPCLK
+      description: PLLPCLK used as I2S1 clock source
+      value: 0b01
+    - name: HSI16
+      description: HSI used as I2S1 clock source
+      value: 0b10
+    - name: I2S_CKIN
+      description: External clock used as I2S1 clock source
+      value: 0b11
+enum/RTCSEL:
+  bit_size: 2
+  variants:
+    - name: NoClock
+      description: No clock used as RTC clock
+      value: 0b00
+    - name: LSE
+      description: LSE used as RTC clock
+      value: 0b01
+    - name: LSI
+      description: LSI used as RTC clock
+      value: 0b10
+    - name: HSE_Div32
+      description: HSE divided by 32 used as RTC clock
+      value: 0b11
+enum/LSEDRV:
+  bit_size: 2
+  variants:
+    - name: Low
+      description: Low driving capability
+      value: 0b00
+    - name: MediumLow
+      description: Medium low driving capability
+      value: 0b01
+    - name: MediumHigh
+      description: Medium high driving capability
+      value: 0b10
+    - name: High
+      description: High driving capability
+      value: 0b11
