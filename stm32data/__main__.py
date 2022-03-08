@@ -7,6 +7,7 @@ import re
 import json
 import os
 from glob import glob
+from pathlib import Path
 
 from stm32data import yaml, header, interrupts, memory
 from stm32data.util import *
@@ -1153,6 +1154,7 @@ def parse_dma():
                         if ch['dma'] == dma_peri_name:
                             ch['channel'] -= 1
 
+        Path('tmp/dmas').mkdir(parents=True, exist_ok=True)
         with open('tmp/dmas/' + ff + '.json', 'w') as f:
             json.dump(chip_dma, f, indent=4)
 
