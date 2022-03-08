@@ -1077,15 +1077,12 @@ def parse_dma():
                     if result := re.match('.*' + n + '_(Channel|Stream)\[(\d+)-(\d+)\]', channels[0]['@Name']):
                         low = int(result.group(2))
                         high = int(result.group(3))
-                        # Make sure all channels numbers start at 0
-                        if low == 1:
-                            low -= 1
-                            high -= 1
                         for i in range(low, high + 1):
                             chip_dma['channels'].append({
                                 'name': n + '_CH' + str(i),
                                 'dma': n,
-                                'channel': i,
+                                # Make sure all channels numbers start at 0
+                                'channel': i - low,
                                 'dmamux': dmamux,
                                 'dmamux_channel': dmamux_channel,
                             })
