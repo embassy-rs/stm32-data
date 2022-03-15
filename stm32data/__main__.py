@@ -178,6 +178,7 @@ perimap = [
     ('STM32WL5.*:RCC:.*', ('rcc', 'wl5', 'RCC')),
     ('STM32WLE.*:RCC:.*', ('rcc', 'wle', 'RCC')),
 
+    ('STM32F1.*:SPI[1234]:.*', ('spi', 'f1', 'SPI')),
     ('STM32F3.*:SPI[1234]:.*', ('spi', 'v2', 'SPI')),
 
     ('STM32F1.*:AFIO:.*', ('afio', 'f1', 'AFIO')),
