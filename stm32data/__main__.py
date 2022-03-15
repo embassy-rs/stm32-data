@@ -1188,8 +1188,10 @@ def parse_rcc_regs():
                     if field['name'].endswith('EN'):
                         peri = removesuffix(field['name'], 'EN')
 
+                        # Timers are a bit special, they may have a x2 freq
+                        peri_clock = f'{clock}_TIM' if re.match('^TIM\d+$', peri) else clock
                         res = {
-                            'clock': clock,
+                            'clock': peri_clock,
                             'enable': {
                                 'register': reg,
                                 'field': field['name'],
