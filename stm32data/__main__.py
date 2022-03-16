@@ -153,6 +153,7 @@ perimap = [
     ('.*:RTC:rtc2_v2_6', ('rtc', 'v2', 'RTC')),
     ('.*:RTC:rtc2_v2_WB', ('rtc', 'wb', 'RTC')),
     ('.*:SAI:sai1_v1_1', ('sai', 'v1', 'SAI')),
+    ('.*:SDIO:sdmmc_v1_2', ('sdmmc', 'v1', 'SDMMC')),
     ('.*:SDMMC:sdmmc_v1_3', ('sdmmc', 'v1', 'SDMMC')),
     ('.*:SPDIFRX:spdifrx1_v1_0', ('spdifrx', 'v1', 'SPDIFRX')),
     ('.*:USB_OTG_FS:otgfs1_v1_2', ('otgfs', 'v1', 'OTG_FS')),
