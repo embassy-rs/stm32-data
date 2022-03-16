@@ -10,66 +10,54 @@ block/SDMMC:
       description: SDI clock control register
       byte_offset: 4
       fieldset: CLKCR
-    - name: ARG
+    - name: ARGR
       description: argument register
       byte_offset: 8
-      fieldset: ARG
-    - name: CMD
+      fieldset: ARGR
+    - name: CMDR
       description: command register
       byte_offset: 12
-      fieldset: CMD
-    - name: RESPCMD
+      fieldset: CMDR
+    - name: RESPCMDR
       description: command response register
       byte_offset: 16
       access: Read
-      fieldset: RESPCMD
-    - name: RESP1
+      fieldset: RESPCMDR
+    - name: RESPR
       description: response 1..4 register
+      array:
+        len: 4
+        stride: 4
       byte_offset: 20
       access: Read
-      fieldset: RESP1
-    - name: RESP2
-      description: response 1..4 register
-      byte_offset: 24
-      access: Read
-      fieldset: RESP2
-    - name: RESP3
-      description: response 1..4 register
-      byte_offset: 28
-      access: Read
-      fieldset: RESP3
-    - name: RESP4
-      description: response 1..4 register
-      byte_offset: 32
-      access: Read
-      fieldset: RESP4
+      fieldset: RESP1R
     - name: DTIMER
       description: data timer register
       byte_offset: 36
       fieldset: DTIMER
-    - name: DLEN
+    - name: DLENR
       description: data length register
       byte_offset: 40
-      fieldset: DLEN
+      fieldset: DLENR
     - name: DCTRL
       description: data control register
       byte_offset: 44
       fieldset: DCTRL
-    - name: DCOUNT
+    - name: DCNTR
       description: data counter register
       byte_offset: 48
       access: Read
-      fieldset: DCOUNT
-    - name: STA
+      fieldset: DCNTR
+    - name: STAR
       description: status register
       byte_offset: 52
       access: Read
-      fieldset: STA
+      fieldset: STAR
     - name: ICR
       description: interrupt clear register
       byte_offset: 56
       fieldset: ICR
-    - name: MASK
+    - name: MASKR
       description: mask register
       byte_offset: 60
       fieldset: MASK
@@ -78,14 +66,14 @@ block/SDMMC:
       byte_offset: 72
       access: Read
       fieldset: FIFOCNT
-    - name: FIFO
+    - name: FIFOR
       description: data FIFO register
       byte_offset: 128
-      fieldset: FIFO
-fieldset/ARG:
+      fieldset: FIFOR
+fieldset/ARGR:
   description: argument register
   fields:
-    - name: CMDARG
+    - name: CMDARGR
       description: Command argument
       bit_offset: 0
       bit_size: 32
@@ -120,7 +108,7 @@ fieldset/CLKCR:
       description: HW Flow Control enable
       bit_offset: 14
       bit_size: 1
-fieldset/CMD:
+fieldset/CMDR:
   description: command register
   fields:
     - name: CMDINDEX
@@ -147,7 +135,7 @@ fieldset/CMD:
       description: SD I/O suspend command
       bit_offset: 11
       bit_size: 1
-fieldset/DCOUNT:
+fieldset/DCNTR:
   description: data counter register
   fields:
     - name: DATACOUNT
@@ -193,7 +181,7 @@ fieldset/DCTRL:
       description: SD I/O enable functions
       bit_offset: 11
       bit_size: 1
-fieldset/DLEN:
+fieldset/DLENR:
   description: data length register
   fields:
     - name: DATALENGTH
@@ -207,7 +195,7 @@ fieldset/DTIMER:
       description: Data timeout period
       bit_offset: 0
       bit_size: 32
-fieldset/FIFO:
+fieldset/FIFOR:
   description: data FIFO register
   fields:
     - name: FIFOData
@@ -268,7 +256,7 @@ fieldset/ICR:
       description: SDIOIT flag clear bit
       bit_offset: 22
       bit_size: 1
-fieldset/MASK:
+fieldset/MASKR:
   description: mask register
   fields:
     - name: CCRCFAILIE
@@ -366,7 +354,7 @@ fieldset/POWER:
       description: PWRCTRL
       bit_offset: 0
       bit_size: 2
-fieldset/RESP1:
+fieldset/RESP1R:
   description: response 1..4 register
   fields:
     - name: CARDSTATUS
@@ -376,7 +364,7 @@ fieldset/RESP1:
       array:
         len: 1
         stride: 0
-fieldset/RESP2:
+fieldset/RESP2R:
   description: response 1..4 register
   fields:
     - name: CARDSTATUS
@@ -386,7 +374,7 @@ fieldset/RESP2:
       array:
         len: 1
         stride: 0
-fieldset/RESP3:
+fieldset/RESP3R:
   description: response 1..4 register
   fields:
     - name: CARDSTATUS
@@ -396,7 +384,7 @@ fieldset/RESP3:
       array:
         len: 1
         stride: 0
-fieldset/RESP4:
+fieldset/RESP4R:
   description: response 1..4 register
   fields:
     - name: CARDSTATUS
@@ -406,14 +394,14 @@ fieldset/RESP4:
       array:
         len: 1
         stride: 0
-fieldset/RESPCMD:
+fieldset/RESPCMDR:
   description: command response register
   fields:
     - name: RESPCMD
       description: Response command index
       bit_offset: 0
       bit_size: 6
-fieldset/STA:
+fieldset/STAR:
   description: status register
   fields:
     - name: CCRCFAIL
