@@ -1,0 +1,75 @@
+---
+block/SYSCFG:
+  description: System configuration controller
+  items:
+    - name: MEMRMP
+      description: memory remap register
+      byte_offset: 0
+      fieldset: MEMRMP
+    - name: PMC
+      description: peripheral mode configuration register
+      byte_offset: 4
+      fieldset: PMC
+    - name: EXTICR
+      description: external interrupt configuration register 1
+      array:
+        len: 4
+        stride: 4
+      byte_offset: 8
+      fieldset: EXTICR
+    - name: CMPCR
+      description: Compensation cell control register
+      byte_offset: 32
+      access: Read
+      fieldset: CMPCR
+fieldset/MEMRMP:
+  description: memory remap register
+  fields:
+    - name: MEM_MODE
+      description: Memory mapping selection
+      bit_offset: 0
+      bit_size: 2
+      enum: MEM_MODE
+fieldset/PMC:
+  description: peripheral mode configuration register
+  fields:
+    - name: MII_RMII_SEL
+      description: Ethernet PHY interface selection
+      bit_offset: 23
+      bit_size: 1
+fieldset/EXTICR:
+  description: external interrupt configuration register 1
+  fields:
+    - name: EXTI
+      description: EXTI x configuration (x = 0 to 3)
+      bit_offset: 0
+      bit_size: 4
+      array:
+        len: 4
+        stride: 4
+fieldset/CMPCR:
+  description: Compensation cell control register
+  fields:
+    - name: CMP_PD
+      description: Compensation cell power-down
+      bit_offset: 0
+      bit_size: 1
+    - name: READY
+      description: Compensation cell ready flag
+      bit_offset: 8
+      bit_size: 1
+enum/MEM_MODE:
+  bit_size: 2
+  variants:
+    - name: MainFlash
+      description: Main Flash memory mapped at 0x0000_0000
+      value: 0
+    - name: SystemFlash
+      description: System Flash memory mapped at 0x0000_0000
+      value: 1
+    - name: FSMC
+      description: FSMC Bank1 (NOR/PSRAM 1 and 2) mapped at 0x0000_0000
+      value: 2
+    - name: SRAM
+      description: Embedded SRAM mapped at 0x0000_0000
+      value: 3
