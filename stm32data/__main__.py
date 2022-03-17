@@ -209,6 +209,7 @@ perimap = [
     ('STM32H7.*:FLASH:.*', ('flash', 'h7', 'FLASH')),
     ('STM32F0.*:FLASH:.*', ('flash', 'f0', 'FLASH')),
     ('STM32F1.*:FLASH:.*', ('flash', 'f1', 'FLASH')),
+    ('STM32F2.*:FLASH:.*', ('flash', 'f2', 'FLASH')),
     ('STM32F3.*:FLASH:.*', ('flash', 'f3', 'FLASH')),
     ('STM32F4.*:FLASH:.*', ('flash', 'f4', 'FLASH')),
     ('STM32F7.*:FLASH:.*', ('flash', 'f7', 'FLASH')),
