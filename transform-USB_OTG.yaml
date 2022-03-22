@@ -1,0 +1,27 @@
+transforms:
+  # OTG_FS_HOST
+  - ModifyByteOffset:
+      block: OTG_FS_HOST
+      add_offset: 0x400
+  - MergeFieldsets:
+      from: (HCINT|HCCHAR|HCINTMSK|HCTSIZ)\d
+      to: $1
+  - MakeRegisterArray:
+      blocks: .*
+      from: (HCINT|HCCHAR|HCINTMSK|HCTSIZ)\d
+      to: $1
+  # OTG_FS_DEVICE
+  - ModifyByteOffset:
+      block: OTG_FS_DEVICE
+      add_offset: 0x800
+  # Excluding endpoint 0, it has special registers.
+  - MergeFieldsets:
+      from: (DIEPCTL|D[IO]EPINT|D[IO]EPTSIZ|DTXFSTS)[1-9]
+      to: $1
+  - MakeRegisterArray:
+      blocks: .*
+      from: (DIEPCTL|D[IO]EPINT|D[IO]EPTSIZ|DTXFSTS)[1-9]
+      to: $1
+  - ModifyByteOffset:
+      block: OTG_FS_PWRCLK
+      add_offset: 0xE00
