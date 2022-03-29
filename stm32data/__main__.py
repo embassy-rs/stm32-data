@@ -159,7 +159,7 @@ perimap = [
     ('.*:SDMMC:sdmmc_v1_3', ('sdmmc', 'v1', 'SDMMC')),
     ('.*:SPDIFRX:spdifrx1_v1_0', ('spdifrx', 'v1', 'SPDIFRX')),
     ('.*:USB_OTG_FS:otgfs1_v1_.*', ('otgfs', 'v1', 'OTG_FS')),
-    ('.*:USB_OTG_FS:otgfs1_v3_.*', ('otgfs', 'v3', 'OTG_FS')),
+    ('.*:USB_OTG_FS:otgfs1_v3_.*', ('otgfs', 'v1', 'OTG_FS')),
     ('.*:USB_OTG_HS:otghs1_v1_.*', ('otghs', 'v1', 'OTG_HS')),
 
     ('STM32F0.*:RCC:.*', ('rcc', 'f0', 'RCC')),
