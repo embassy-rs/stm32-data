@@ -1,0 +1,456 @@
+---
+block/SYSCFG:
+  description: System configuration controller
+  items:
+    - name: SECCFGR
+      description: SYSCFG secure configuration register
+      byte_offset: 0
+      fieldset: SECCFGR
+    - name: CFGR1
+      description: configuration register 1
+      byte_offset: 4
+      fieldset: CFGR1
+    - name: FPUIMR
+      description: FPU interrupt mask register
+      byte_offset: 8
+      fieldset: FPUIMR
+    - name: CNSLCKR
+      description: SYSCFG CPU non-secure lock register
+      byte_offset: 12
+      fieldset: CNSLCKR
+    - name: CSLOCKR
+      description: SYSCFG CPU secure lock register
+      byte_offset: 16
+      fieldset: CSLOCKR
+    - name: CFGR2
+      description: CFGR2
+      byte_offset: 20
+      fieldset: CFGR2
+    - name: SCSR
+      description: SCSR
+      byte_offset: 24
+      fieldset: SCSR
+    - name: SKR
+      description: SKR
+      byte_offset: 28
+      access: Write
+      fieldset: SKR
+    - name: SWPR
+      description: SWPR
+      byte_offset: 32
+      access: Write
+      fieldset: SWPR
+    - name: SWPR2
+      description: SWPR2
+      byte_offset: 36
+      access: Write
+      fieldset: SWPR2
+    - name: RSSCMDR
+      description: RSSCMDR
+      byte_offset: 44
+      fieldset: RSSCMDR
+fieldset/CFGR1:
+  description: configuration register 1
+  fields:
+    - name: BOOSTEN
+      description: I/O analog switch voltage booster enable
+      bit_offset: 8
+      bit_size: 1
+    - name: ANASWVDD
+      description: GPIO analog switch control voltage selection
+      bit_offset: 9
+      bit_size: 1
+    - name: I2C_PB6_FMP
+      description: Fast-mode Plus (Fm+) driving capability activation on PB6
+      bit_offset: 16
+      bit_size: 1
+    - name: I2C_PB7_FMP
+      description: Fast-mode Plus (Fm+) driving capability activation on PB7
+      bit_offset: 17
+      bit_size: 1
+    - name: I2C_PB8_FMP
+      description: Fast-mode Plus (Fm+) driving capability activation on PB8
+      bit_offset: 18
+      bit_size: 1
+    - name: I2C_PB9_FMP
+      description: Fast-mode Plus (Fm+) driving capability activation on PB9
+      bit_offset: 19
+      bit_size: 1
+    - name: I2C1_FMP
+      description: I2C1 Fast-mode Plus driving capability activation
+      bit_offset: 20
+      bit_size: 1
+    - name: I2C2_FMP
+      description: I2C2 Fast-mode Plus driving capability activation
+      bit_offset: 21
+      bit_size: 1
+    - name: I2C3_FMP
+      description: I2C3 Fast-mode Plus driving capability activation
+      bit_offset: 22
+      bit_size: 1
+    - name: I2C4_FMP
+      description: I2C4_FMP
+      bit_offset: 23
+      bit_size: 1
+fieldset/CFGR2:
+  description: CFGR2
+  fields:
+    - name: CLL
+      description: LOCKUP (hardfault) output enable bit
+      bit_offset: 0
+      bit_size: 1
+    - name: SPL
+      description: SRAM2 parity lock bit
+      bit_offset: 1
+      bit_size: 1
+    - name: PVDL
+      description: PVD lock enable bit
+      bit_offset: 2
+      bit_size: 1
+    - name: ECCL
+      description: ECC Lock
+      bit_offset: 3
+      bit_size: 1
+    - name: SPF
+      description: SRAM2 parity error flag
+      bit_offset: 8
+      bit_size: 1
+fieldset/CNSLCKR:
+  description: SYSCFG CPU non-secure lock register
+  fields:
+    - name: LOCKNSVTOR
+      description: VTOR_NS register lock
+      bit_offset: 0
+      bit_size: 1
+    - name: LOCKNSMPU
+      description: Non-secure MPU registers lock
+      bit_offset: 1
+      bit_size: 1
+fieldset/CSLOCKR:
+  description: SYSCFG CPU secure lock register
+  fields:
+    - name: LOCKSVTAIRCR
+      description: LOCKSVTAIRCR
+      bit_offset: 0
+      bit_size: 1
+    - name: LOCKSMPU
+      description: LOCKSMPU
+      bit_offset: 1
+      bit_size: 1
+    - name: LOCKSAU
+      description: LOCKSAU
+      bit_offset: 2
+      bit_size: 1
+fieldset/FPUIMR:
+  description: FPU interrupt mask register
+  fields:
+    - name: FPU_IE
+      description: Floating point unit interrupts enable bits
+      bit_offset: 0
+      bit_size: 6
+fieldset/RSSCMDR:
+  description: RSSCMDR
+  fields:
+    - name: RSSCMD
+      description: RSS commands
+      bit_offset: 0
+      bit_size: 8
+fieldset/SCSR:
+  description: SCSR
+  fields:
+    - name: SRAM2ER
+      description: SRAM2 Erase
+      bit_offset: 0
+      bit_size: 1
+    - name: SRAM2BSY
+      description: SRAM2 busy by erase operation
+      bit_offset: 1
+      bit_size: 1
+fieldset/SECCFGR:
+  description: SYSCFG secure configuration register
+  fields:
+    - name: SYSCFGSEC
+      description: SYSCFG clock control security
+      bit_offset: 0
+      bit_size: 1
+    - name: CLASSBSEC
+      description: ClassB security
+      bit_offset: 1
+      bit_size: 1
+    - name: SRAM2SEC
+      description: SRAM2 security
+      bit_offset: 2
+      bit_size: 1
+    - name: FPUSEC
+      description: FPUSEC
+      bit_offset: 3
+      bit_size: 1
+fieldset/SKR:
+  description: SKR
+  fields:
+    - name: KEY
+      description: SRAM2 write protection key for software erase
+      bit_offset: 0
+      bit_size: 8
+fieldset/SWPR:
+  description: SWPR
+  fields:
+    - name: P0WP
+      description: P0WP
+      bit_offset: 0
+      bit_size: 1
+    - name: P1WP
+      description: P1WP
+      bit_offset: 1
+      bit_size: 1
+    - name: P2WP
+      description: P2WP
+      bit_offset: 2
+      bit_size: 1
+    - name: P3WP
+      description: P3WP
+      bit_offset: 3
+      bit_size: 1
+    - name: P4WP
+      description: P4WP
+      bit_offset: 4
+      bit_size: 1
+    - name: P5WP
+      description: P5WP
+      bit_offset: 5
+      bit_size: 1
+    - name: P6WP
+      description: P6WP
+      bit_offset: 6
+      bit_size: 1
+    - name: P7WP
+      description: P7WP
+      bit_offset: 7
+      bit_size: 1
+    - name: P8WP
+      description: P8WP
+      bit_offset: 8
+      bit_size: 1
+    - name: P9WP
+      description: P9WP
+      bit_offset: 9
+      bit_size: 1
+    - name: P10WP
+      description: P10WP
+      bit_offset: 10
+      bit_size: 1
+    - name: P11WP
+      description: P11WP
+      bit_offset: 11
+      bit_size: 1
+    - name: P12WP
+      description: P12WP
+      bit_offset: 12
+      bit_size: 1
+    - name: P13WP
+      description: P13WP
+      bit_offset: 13
+      bit_size: 1
+    - name: P14WP
+      description: P14WP
+      bit_offset: 14
+      bit_size: 1
+    - name: P15WP
+      description: P15WP
+      bit_offset: 15
+      bit_size: 1
+    - name: P16WP
+      description: P16WP
+      bit_offset: 16
+      bit_size: 1
+    - name: P17WP
+      description: P17WP
+      bit_offset: 17
+      bit_size: 1
+    - name: P18WP
+      description: P18WP
+      bit_offset: 18
+      bit_size: 1
+    - name: P19WP
+      description: P19WP
+      bit_offset: 19
+      bit_size: 1
+    - name: P20WP
+      description: P20WP
+      bit_offset: 20
+      bit_size: 1
+    - name: P21WP
+      description: P21WP
+      bit_offset: 21
+      bit_size: 1
+    - name: P22WP
+      description: P22WP
+      bit_offset: 22
+      bit_size: 1
+    - name: P23WP
+      description: P23WP
+      bit_offset: 23
+      bit_size: 1
+    - name: P24WP
+      description: P24WP
+      bit_offset: 24
+      bit_size: 1
+    - name: P25WP
+      description: P25WP
+      bit_offset: 25
+      bit_size: 1
+    - name: P26WP
+      description: P26WP
+      bit_offset: 26
+      bit_size: 1
+    - name: P27WP
+      description: P27WP
+      bit_offset: 27
+      bit_size: 1
+    - name: P28WP
+      description: P28WP
+      bit_offset: 28
+      bit_size: 1
+    - name: P29WP
+      description: P29WP
+      bit_offset: 29
+      bit_size: 1
+    - name: P30WP
+      description: P30WP
+      bit_offset: 30
+      bit_size: 1
+    - name: P31WP
+      description: SRAM2 page 31 write protection
+      bit_offset: 31
+      bit_size: 1
+fieldset/SWPR2:
+  description: SWPR2
+  fields:
+    - name: P32WP
+      description: P32WP
+      bit_offset: 0
+      bit_size: 1
+    - name: P33WP
+      description: P33WP
+      bit_offset: 1
+      bit_size: 1
+    - name: P34WP
+      description: P34WP
+      bit_offset: 2
+      bit_size: 1
+    - name: P35WP
+      description: P35WP
+      bit_offset: 3
+      bit_size: 1
+    - name: P36WP
+      description: P36WP
+      bit_offset: 4
+      bit_size: 1
+    - name: P37WP
+      description: P37WP
+      bit_offset: 5
+      bit_size: 1
+    - name: P38WP
+      description: P38WP
+      bit_offset: 6
+      bit_size: 1
+    - name: P39WP
+      description: P39WP
+      bit_offset: 7
+      bit_size: 1
+    - name: P40WP
+      description: P40WP
+      bit_offset: 8
+      bit_size: 1
+    - name: P41WP
+      description: P41WP
+      bit_offset: 9
+      bit_size: 1
+    - name: P42WP
+      description: P42WP
+      bit_offset: 10
+      bit_size: 1
+    - name: P43WP
+      description: P43WP
+      bit_offset: 11
+      bit_size: 1
+    - name: P44WP
+      description: P44WP
+      bit_offset: 12
+      bit_size: 1
+    - name: P45WP
+      description: P45WP
+      bit_offset: 13
+      bit_size: 1
+    - name: P46WP
+      description: P46WP
+      bit_offset: 14
+      bit_size: 1
+    - name: P47WP
+      description: P47WP
+      bit_offset: 15
+      bit_size: 1
+    - name: P48WP
+      description: P48WP
+      bit_offset: 16
+      bit_size: 1
+    - name: P49WP
+      description: P49WP
+      bit_offset: 17
+      bit_size: 1
+    - name: P50WP
+      description: P50WP
+      bit_offset: 18
+      bit_size: 1
+    - name: P51WP
+      description: P51WP
+      bit_offset: 19
+      bit_size: 1
+    - name: P52WP
+      description: P52WP
+      bit_offset: 20
+      bit_size: 1
+    - name: P53WP
+      description: P53WP
+      bit_offset: 21
+      bit_size: 1
+    - name: P54WP
+      description: P54WP
+      bit_offset: 22
+      bit_size: 1
+    - name: P55WP
+      description: P55WP
+      bit_offset: 23
+      bit_size: 1
+    - name: P56WP
+      description: P56WP
+      bit_offset: 24
+      bit_size: 1
+    - name: P57WP
+      description: P57WP
+      bit_offset: 25
+      bit_size: 1
+    - name: P58WP
+      description: P58WP
+      bit_offset: 26
+      bit_size: 1
+    - name: P59WP
+      description: P59WP
+      bit_offset: 27
+      bit_size: 1
+    - name: P60WP
+      description: P60WP
+      bit_offset: 28
+      bit_size: 1
+    - name: P61WP
+      description: P61WP
+      bit_offset: 29
+      bit_size: 1
+    - name: P62WP
+      description: P62WP
+      bit_offset: 30
+      bit_size: 1
+    - name: P63WP
+      description: P63WP
+      bit_offset: 31
+      bit_size: 1
