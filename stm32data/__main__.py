@@ -213,6 +213,7 @@ perimap = [
     ('STM32F7.*:PWR:.*', ('pwr', 'f7', 'PWR')),
     ('STM32L1.*:PWR:.*', ('pwr', 'l1', 'PWR')),
     ('STM32L4.*:PWR:.*', ('pwr', 'l4', 'PWR')),
+    ('STM32L5.*:PWR:.*', ('pwr', 'l5', 'PWR')),
     ('STM32U5.*:PWR:.*', ('pwr', 'u5', 'PWR')),
     ('STM32WL.*:PWR:.*', ('pwr', 'wl5', 'PWR')),
     ('STM32WB.*:PWR:.*', ('pwr', 'wb55', 'PWR')),

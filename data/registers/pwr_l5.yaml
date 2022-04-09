@@ -47,6 +47,14 @@ block/PWR:
         stride: 8
       byte_offset: 36
       fieldset: PCR
+    - name: SECCFGR
+      description: Power secure configuration register
+      byte_offset: 120
+      fieldset: SECCFGR
+    - name: PRIVCFGR
+      description: Power privilege configuration register
+      byte_offset: 128
+      fieldset: PRIVCFGR
 fieldset/CR1:
   description: Power control register 1
   fields:
@@ -127,18 +135,25 @@ fieldset/CR3:
     - name: RRS
       description: SRAM2 retention in Standby mode
       bit_offset: 8
-      bit_size: 1
+      bit_size: 2
       enum: RRS
     - name: APC
       description: Apply pull-up and pull-down configuration
       bit_offset: 10
       bit_size: 1
       enum: APC
-    - name: EWF
-      description: Enable internal wakeup line
-      bit_offset: 15
+    - name: ULPMEN
+      description: ULPMEN
+      bit_offset: 11
       bit_size: 1
-      enum: EWF
+    - name: UCPD_STDBY
+      description: UCPD_STDBY
+      bit_offset: 13
+      bit_size: 1
+    - name: UCPD_DBDIS
+      description: UCPD_DBDIS
+      bit_offset: 14
+      bit_size: 1
 fieldset/CR4:
   description: Power control register 4
   fields:
@@ -170,6 +185,22 @@ fieldset/CR4:
       description: VBAT battery charging resistor selection
       bit_offset: 9
       bit_size: 1
+    - name: SMPSBYP
+      description: SMPSBYP
+      bit_offset: 12
+      bit_size: 1
+    - name: EXTSMPSEN
+      description: EXTSMPSEN
+      bit_offset: 13
+      bit_size: 1
+    - name: SMPSFSTEN
+      description: SMPSFSTEN
+      bit_offset: 14
+      bit_size: 1
+    - name: SMPSLPEN
+      description: SMPSLPEN
+      bit_offset: 15
+      bit_size: 1
 fieldset/PCR:
   description: Power Port pull control register
   fields:
@@ -180,6 +211,13 @@ fieldset/PCR:
       array:
         len: 16
         stride: 1
+fieldset/PRIVCFGR:
+  description: Power privilege configuration register
+  fields:
+    - name: PRIV
+      description: PRIV
+      bit_offset: 0
+      bit_size: 1
 fieldset/SCR:
   description: Power status clear register
   fields:
@@ -194,6 +232,45 @@ fieldset/SCR:
     - name: SBF
       description: Clear standby flag
       bit_offset: 8
+      bit_size: 1
+fieldset/SECCFGR:
+  description: Power secure configuration register
+  fields:
+    - name: WUP1SEC
+      description: WKUP1 pin security
+      bit_offset: 0
+      bit_size: 1
+    - name: WUP2SEC
+      description: WKUP2 pin security
+      bit_offset: 1
+      bit_size: 1
+    - name: WUP3SEC
+      description: WKUP3 pin security
+      bit_offset: 2
+      bit_size: 1
+    - name: WUP4SEC
+      description: WKUP4 pin security
+      bit_offset: 3
+      bit_size: 1
+    - name: WUP5SEC
+      description: WKUP5 pin security
+      bit_offset: 4
+      bit_size: 1
+    - name: LPMSEC
+      description: LPMSEC
+      bit_offset: 8
+      bit_size: 1
+    - name: VDMSEC
+      description: VDMSEC
+      bit_offset: 9
+      bit_size: 1
+    - name: VBSEC
+      description: VBSEC
+      bit_offset: 10
+      bit_size: 1
+    - name: APCSEC
+      description: APCSEC
+      bit_offset: 11
       bit_size: 1
 fieldset/SR1:
   description: Power status register 1
@@ -284,15 +361,6 @@ enum/DBP:
       value: 0
     - name: Enabled
       description: Access to RTC and backup registers enabled
-      value: 1
-enum/EWF:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Internal wakeup line disable
-      value: 0
-    - name: Enabled
-      description: Internal wakeup line enable
       value: 1
 enum/EWUP:
   bit_size: 1
@@ -385,7 +453,7 @@ enum/PVME:
       description: Peripheral voltage monitoring enable
       value: 1
 enum/RRS:
-  bit_size: 1
+  bit_size: 2
   variants:
     - name: PowerOff
       description: SRAM2 powered off in Standby mode (SRAM2 content lost)
@@ -393,6 +461,9 @@ enum/RRS:
     - name: OnLPR
       description: SRAM2 powered by the low-power regulator in Standby mode (SRAM2 content kept)
       value: 1
+    - name: OnLPRTop4kb
+      description: Only the upper 4 Kbytes of SRAM2 are powered by the low-power regulator in Standby mode (upper 4 Kbytes of SRAM2 content 0x2003 F000 - 0x2003 FFFF is kept).
+      value: 2
 enum/USV:
   bit_size: 1
   variants:
