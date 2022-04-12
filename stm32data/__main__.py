@@ -133,6 +133,7 @@ perimap = [
     ('.*:ADC_COMMON:aditf5_v2_0', ('adccommon', 'v3', 'ADC_COMMON')),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', ('adccommon', 'v3', 'ADC_COMMON')),
     ('STM32H7.*:ADC_COMMON:.*', ('adccommon', 'v4', 'ADC_COMMON')),
+    ('STM32H7.*:ADC3_COMMON:.*', ('adccommon', 'v4', 'ADC_COMMON')),
 
     ('.*:DCMI:.*', ('dcmi', 'v1', 'DCMI')),
     ('STM32F0.*:SYSCFG:.*',  ('syscfg', 'f0', 'SYSCFG')),
@@ -684,6 +685,9 @@ def parse_chips():
                 if pname.startswith('ADC'):
                     if not 'ADC_COMMON' in peri_kinds:
                         peri_kinds['ADC_COMMON'] = 'ADC_COMMON:' + removesuffix(ip['@Version'], '_Cube')
+                if pname.startswith('ADC3'):
+                    if chip_name.startswith("STM32H7") and not 'ADC_COMMON3' in peri_kinds:
+                        peri_kinds['ADC3_COMMON'] = 'ADC3_COMMON:' + removesuffix(ip['@Version'], '_Cube')
 
                 peri_kinds[pname] = pkind
 
