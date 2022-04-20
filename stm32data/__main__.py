@@ -229,6 +229,7 @@ perimap = [
     ('STM32L5.*:FLASH:.*', ('flash', 'l5', 'FLASH')),
     ('STM32U5.*:FLASH:.*', ('flash', 'u5', 'FLASH')),
     ('STM32WB.*:FLASH:.*', ('flash', 'wb55', 'FLASH')),
+    ('STM32WL.*:FLASH:.*', ('flash', 'wl55', 'FLASH')),
     ('STM32G0.*:FLASH:.*', ('flash', 'g0', 'FLASH')),
     ('STM32F7.*:ETH:ETH:ethermac110_v2_0', ('eth', 'v1c', 'ETH')),
     ('.*ETH:ethermac110_v3_0', ('eth', 'v2', 'ETH')),
