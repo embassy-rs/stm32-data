@@ -1,0 +1,630 @@
+---
+block/FLASH:
+  description: Flash
+  items:
+    - name: ACR
+      description: Access control register
+      byte_offset: 0
+      fieldset: ACR
+    - name: PECR
+      description: Program/erase control register
+      byte_offset: 4
+      fieldset: PECR
+    - name: PDKEYR
+      description: Power down key register
+      byte_offset: 8
+      access: Write
+      fieldset: PDKEYR
+    - name: PEKEYR
+      description: Program/erase key register
+      byte_offset: 12
+      access: Write
+      fieldset: PEKEYR
+    - name: PRGKEYR
+      description: Program memory key register
+      byte_offset: 16
+      access: Write
+      fieldset: PRGKEYR
+    - name: OPTKEYR
+      description: Option byte key register
+      byte_offset: 20
+      access: Write
+      fieldset: OPTKEYR
+    - name: SR
+      description: Status register
+      byte_offset: 24
+      fieldset: SR
+    - name: OPTR
+      description: Option byte register
+      byte_offset: 28
+      access: Read
+      fieldset: OPTR
+    - name: WRPROT1
+      description: Write Protection Register 1
+      byte_offset: 32
+      access: Read
+      fieldset: WRPROT1
+    - name: WRPROT2
+      description: Write Protection Register 2
+      byte_offset: 128
+      access: Read
+      fieldset: WRPROT2
+fieldset/ACR:
+  description: Access control register
+  fields:
+    - name: LATENCY
+      description: Latency
+      bit_offset: 0
+      bit_size: 1
+      enum: LATENCY
+    - name: PRFTEN
+      description: Prefetch enable
+      bit_offset: 1
+      bit_size: 1
+      enum: PRFTEN
+    - name: SLEEP_PD
+      description: Flash mode during Sleep
+      bit_offset: 3
+      bit_size: 1
+      enum: SLEEP_PD
+    - name: RUN_PD
+      description: Flash mode during Run
+      bit_offset: 4
+      bit_size: 1
+      enum: RUN_PD
+    - name: DISAB_BUF
+      description: Disable Buffer
+      bit_offset: 5
+      bit_size: 1
+      enum: DISAB_BUF
+    - name: PRE_READ
+      description: Pre-read data address
+      bit_offset: 6
+      bit_size: 1
+      enum: PRE_READ
+fieldset/OPTKEYR:
+  description: Option byte key register
+  fields:
+    - name: OPTKEYR
+      description: Option byte key
+      bit_offset: 0
+      bit_size: 32
+fieldset/OPTR:
+  description: Option byte register
+  fields:
+    - name: RDPROT
+      description: Read protection
+      bit_offset: 0
+      bit_size: 8
+      enum: RDPROT
+    - name: WPRMOD
+      description: Selection of protection mode of WPR bits
+      bit_offset: 8
+      bit_size: 1
+      enum: WPRMOD
+    - name: BOR_LEV
+      description: BOR_LEV
+      bit_offset: 16
+      bit_size: 4
+      enum: BOR_LEV
+fieldset/PDKEYR:
+  description: Power down key register
+  fields:
+    - name: PDKEYR
+      description: RUN_PD in FLASH_ACR key
+      bit_offset: 0
+      bit_size: 32
+fieldset/PECR:
+  description: Program/erase control register
+  fields:
+    - name: PELOCK
+      description: FLASH_PECR and data EEPROM lock
+      bit_offset: 0
+      bit_size: 1
+      enum: PELOCK
+    - name: PRGLOCK
+      description: Program memory lock
+      bit_offset: 1
+      bit_size: 1
+      enum: PRGLOCK
+    - name: OPTLOCK
+      description: Option bytes block lock
+      bit_offset: 2
+      bit_size: 1
+      enum: OPTLOCK
+    - name: PROG
+      description: Program memory selection
+      bit_offset: 3
+      bit_size: 1
+      enum: PROG
+    - name: DATA
+      description: Data EEPROM selection
+      bit_offset: 4
+      bit_size: 1
+      enum: DATA
+    - name: FIX
+      description: "Fixed time data write for Byte, Half Word and Word programming"
+      bit_offset: 8
+      bit_size: 1
+      enum: FIX
+    - name: ERASE
+      description: Page or Double Word erase mode
+      bit_offset: 9
+      bit_size: 1
+      enum: ERASE
+    - name: FPRG
+      description: Half Page/Double Word programming mode
+      bit_offset: 10
+      bit_size: 1
+      enum: FPRG
+    - name: PARALLELBANK
+      description: Parallel bank mode
+      bit_offset: 15
+      bit_size: 1
+      enum: PARALLELBANK
+    - name: EOPIE
+      description: End of programming interrupt enable
+      bit_offset: 16
+      bit_size: 1
+      enum: EOPIE
+    - name: ERRIE
+      description: Error interrupt enable
+      bit_offset: 17
+      bit_size: 1
+      enum: ERRIE
+    - name: OBL_LAUNCH
+      description: Launch the option byte loading
+      bit_offset: 18
+      bit_size: 1
+      enum_read: OBL_LAUNCHR
+      enum_write: OBL_LAUNCHW
+fieldset/PEKEYR:
+  description: Program/erase key register
+  fields:
+    - name: PEKEYR
+      description: FLASH_PEC and data EEPROM key
+      bit_offset: 0
+      bit_size: 32
+fieldset/PRGKEYR:
+  description: Program memory key register
+  fields:
+    - name: PRGKEYR
+      description: Program memory key
+      bit_offset: 0
+      bit_size: 32
+fieldset/SR:
+  description: Status register
+  fields:
+    - name: BSY
+      description: Write/erase operations in progress
+      bit_offset: 0
+      bit_size: 1
+      enum: BSY
+    - name: EOP
+      description: End of operation
+      bit_offset: 1
+      bit_size: 1
+      enum: EOP
+    - name: ENDHV
+      description: End of high voltage
+      bit_offset: 2
+      bit_size: 1
+      enum: ENDHV
+    - name: READY
+      description: Flash memory module ready after low power mode
+      bit_offset: 3
+      bit_size: 1
+      enum: READY
+    - name: WRPERR
+      description: Write protected error
+      bit_offset: 8
+      bit_size: 1
+      enum_read: WRPERRR
+      enum_write: WRPERRW
+    - name: PGAERR
+      description: Programming alignment error
+      bit_offset: 9
+      bit_size: 1
+      enum_read: PGAERRR
+      enum_write: PGAERRW
+    - name: SIZERR
+      description: Size error
+      bit_offset: 10
+      bit_size: 1
+      enum_read: SIZERRR
+      enum_write: SIZERRW
+    - name: OPTVERR
+      description: Option validity error
+      bit_offset: 11
+      bit_size: 1
+      enum_read: OPTVERRR
+      enum_write: OPTVERRW
+    - name: RDERR
+      description: RDERR
+      bit_offset: 14
+      bit_size: 1
+      enum_read: RDERRR
+      enum_write: RDERRW
+    - name: NOTZEROERR
+      description: NOTZEROERR
+      bit_offset: 16
+      bit_size: 1
+      enum_read: NOTZEROERRR
+      enum_write: NOTZEROERRW
+    - name: FWWERR
+      description: FWWERR
+      bit_offset: 17
+      bit_size: 1
+      enum_read: FWWERRR
+      enum_write: FWWERRW
+fieldset/WRPROT1:
+  description: Write Protection Register 1
+  fields:
+    - name: WRPROT
+      description: Write Protection
+      bit_offset: 0
+      bit_size: 32
+      array:
+        len: 1
+        stride: 0
+fieldset/WRPROT2:
+  description: Write Protection Register 2
+  fields:
+    - name: WRPROT
+      description: Write Protection
+      bit_offset: 0
+      bit_size: 16
+      array:
+        len: 1
+        stride: 0
+enum/BOR_LEV:
+  bit_size: 4
+  variants:
+    - name: BOR_Off
+      description: This is the reset threshold level for the 1.45 V - 1.55 V voltage range (power-down only)
+      value: 0
+    - name: BOR_Level1
+      description: Reset threshold level for VBOR0 (around 1.8 V)
+      value: 1
+    - name: BOR_Level2
+      description: Reset threshold level for VBOR1 (around 2.0 V)
+      value: 2
+    - name: BOR_Level3
+      description: Reset threshold level for VBOR2 (around 2.5 V)
+      value: 3
+    - name: BOR_Level4
+      description: Reset threshold level for VBOR3 (around 2.7 V)
+      value: 4
+    - name: BOR_Level5
+      description: Reset threshold level for VBOR4 (around 3.0 V)
+      value: 5
+enum/BSY:
+  bit_size: 1
+  variants:
+    - name: Inactive
+      description: No write/erase operation is in progress
+      value: 0
+    - name: Active
+      description: No write/erase operation is in progress
+      value: 1
+enum/DATA:
+  bit_size: 1
+  variants:
+    - name: NotSelected
+      description: Data EEPROM not selected
+      value: 0
+    - name: Selected
+      description: Data memory selected
+      value: 1
+enum/DISAB_BUF:
+  bit_size: 1
+  variants:
+    - name: Enabled
+      description: The buffers are enabled
+      value: 0
+    - name: Disabled
+      description: The buffers are disabled
+      value: 1
+enum/ENDHV:
+  bit_size: 1
+  variants:
+    - name: Active
+      description: High voltage is executing a write/erase operation in the NVM
+      value: 0
+    - name: Inactive
+      description: "High voltage is off, no write/erase operation is ongoing"
+      value: 1
+enum/EOP:
+  bit_size: 1
+  variants:
+    - name: NoEvent
+      description: No EOP operation occurred
+      value: 0
+    - name: Event
+      description: An EOP event occurred
+      value: 1
+enum/EOPIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: End of program interrupt disable
+      value: 0
+    - name: Enabled
+      description: End of program interrupt enable
+      value: 1
+enum/ERASE:
+  bit_size: 1
+  variants:
+    - name: NoErase
+      description: No erase operation requested
+      value: 0
+    - name: Erase
+      description: Erase operation requested
+      value: 1
+enum/ERRIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Error interrupt disable
+      value: 0
+    - name: Enabled
+      description: Error interrupt enable
+      value: 1
+enum/FIX:
+  bit_size: 1
+  variants:
+    - name: AutoErase
+      description: An erase phase is automatically performed
+      value: 0
+    - name: PrelimErase
+      description: The program operation is always performed with a preliminary erase
+      value: 1
+enum/FPRG:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Half Page programming disabled
+      value: 0
+    - name: Enabled
+      description: Half Page programming enabled
+      value: 1
+enum/FWWERRR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: No write/erase operation aborted to perform a fetch
+      value: 0
+    - name: Error
+      description: A write/erase operation aborted to perform a fetch
+      value: 1
+enum/FWWERRW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear the flag
+      value: 1
+enum/LATENCY:
+  bit_size: 1
+  variants:
+    - name: WS0
+      description: Zero wait state is used to read a word in the NVM
+      value: 0
+    - name: WS1
+      description: One wait state is used to read a word in the NVM
+      value: 1
+enum/NOTZEROERRR:
+  bit_size: 1
+  variants:
+    - name: NoEvent
+      description: The write operation is done in an erased region or the memory interface can apply an erase before a write
+      value: 0
+    - name: Event
+      description: The write operation is attempting to write to a not-erased region and the memory interface cannot apply an erase before a write
+      value: 1
+enum/NOTZEROERRW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear the flag
+      value: 1
+enum/OBL_LAUNCHR:
+  bit_size: 1
+  variants:
+    - name: Complete
+      description: Option byte loaded
+      value: 0
+    - name: NotComplete
+      description: Option byte loading to be done
+      value: 1
+enum/OBL_LAUNCHW:
+  bit_size: 1
+  variants:
+    - name: Reload
+      description: Reload option byte
+      value: 1
+enum/OPTLOCK:
+  bit_size: 1
+  variants:
+    - name: Unlocked
+      description: The write and erase operations in the Option bytes area are disabled
+      value: 0
+    - name: Locked
+      description: The write and erase operations in the Option bytes area are enabled
+      value: 1
+enum/OPTVERRR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: No error happened during the Option bytes loading
+      value: 0
+    - name: Error
+      description: One or more errors happened during the Option bytes loading
+      value: 1
+enum/OPTVERRW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear the flag
+      value: 1
+enum/PARALLELBANK:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Parallel bank mode disabled
+      value: 0
+    - name: Enabled
+      description: Parallel bank mode enabled
+      value: 1
+enum/PELOCK:
+  bit_size: 1
+  variants:
+    - name: Unlocked
+      description: The FLASH_PECR register is unlocked
+      value: 0
+    - name: Locked
+      description: The FLASH_PECR register is locked and no write/erase operation can start
+      value: 1
+enum/PGAERRR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: No alignment error happened
+      value: 0
+    - name: Error
+      description: One alignment error happened
+      value: 1
+enum/PGAERRW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear the flag
+      value: 1
+enum/PRE_READ:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: The pre-read is disabled
+      value: 0
+    - name: Enabled
+      description: The pre-read is enabled
+      value: 1
+enum/PRFTEN:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Prefetch is disabled
+      value: 0
+    - name: Enabled
+      description: Prefetch is enabled
+      value: 1
+enum/PRGLOCK:
+  bit_size: 1
+  variants:
+    - name: Unlocked
+      description: The write and erase operations in the Flash program memory are disabled
+      value: 0
+    - name: Locked
+      description: The write and erase operations in the Flash program memory are enabled
+      value: 1
+enum/PROG:
+  bit_size: 1
+  variants:
+    - name: NotSelected
+      description: The Flash program memory is not selected
+      value: 0
+    - name: Selected
+      description: The Flash program memory is selected
+      value: 1
+enum/RDERRR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: No read protection error happened.
+      value: 0
+    - name: Error
+      description: One read protection error happened
+      value: 1
+enum/RDERRW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear the flag
+      value: 1
+enum/RDPROT:
+  bit_size: 8
+  variants:
+    - name: Level1
+      description: Level 1
+      value: 0
+    - name: Level0
+      description: Level 0
+      value: 170
+    - name: Level2
+      description: Level 2
+      value: 204
+enum/READY:
+  bit_size: 1
+  variants:
+    - name: NotReady
+      description: The NVM is not ready
+      value: 0
+    - name: Ready
+      description: The NVM is ready
+      value: 1
+enum/RUN_PD:
+  bit_size: 1
+  variants:
+    - name: NVMIdleMode
+      description: "When the device is in Run mode, the NVM is in Idle mode"
+      value: 0
+    - name: NVMPwrDownMode
+      description: "When the device is in Run mode, the NVM is in power-down mode"
+      value: 1
+enum/SIZERRR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: No size error happened
+      value: 0
+    - name: Error
+      description: One size error happened
+      value: 1
+enum/SIZERRW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear the flag
+      value: 1
+enum/SLEEP_PD:
+  bit_size: 1
+  variants:
+    - name: NVMIdleMode
+      description: "When the device is in Sleep mode, the NVM is in Idle mode"
+      value: 0
+    - name: NVMPwrDownMode
+      description: "When the device is in Sleep mode, the NVM is in power-down mode"
+      value: 1
+enum/WPRMOD:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: PCROP disabled. The WRPROT bits are used as a write protection on a sector.
+      value: 0
+    - name: Enabled
+      description: PCROP enabled. The WRPROT bits are used as a read protection on a sector.
+      value: 1
+enum/WRPERRR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: No protection error happened
+      value: 0
+    - name: Error
+      description: One protection error happened
+      value: 1
+enum/WRPERRW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear the flag
+      value: 1
