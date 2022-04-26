@@ -168,7 +168,8 @@ perimap = [
     ('.*:USB_OTG_HS:otghs1_v1_.*', ('otghs', 'v1', 'OTG_HS')),
 
     ('STM32F0.*:RCC:.*', ('rcc', 'f0', 'RCC')),
-    ('STM32F1.*:RCC:.*', ('rcc', 'f1', 'RCC')),
+    ('STM32F10[0123].*:RCC:.*', ('rcc', 'f1', 'RCC')),
+    ('STM32F10[57].*:RCC:.*', ('rcc', 'f1cl', 'RCC')),
     ('STM32F2.*:RCC:.*', ('rcc', 'f2', 'RCC')),
     ('STM32F3.*:RCC:.*', ('rcc', 'f3', 'RCC')),
     ('STM32F410.*:RCC:.*', ('rcc', 'f410', 'RCC')),
