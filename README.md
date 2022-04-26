@@ -47,6 +47,7 @@ In order to run the generator, you will need to install the following tools:
 * `git`
 * `jq`
 * `svd` – `pip3 install svdtools` 
+* `xmltodict` - `pip3 install xmltodict`
 
 ## Generating the YAMLs
 

@@ -168,7 +168,8 @@ perimap = [
     ('.*:USB_OTG_HS:otghs1_v1_.*', ('otghs', 'v1', 'OTG_HS')),
 
     ('STM32F0.*:RCC:.*', ('rcc', 'f0', 'RCC')),
-    ('STM32F1.*:RCC:.*', ('rcc', 'f1', 'RCC')),
+    ('STM32F10[0123].*:RCC:.*', ('rcc', 'f1', 'RCC')),
+    ('STM32F10[57].*:RCC:.*', ('rcc', 'f1cl', 'RCC')),
     ('STM32F2.*:RCC:.*', ('rcc', 'f2', 'RCC')),
     ('STM32F3.*:RCC:.*', ('rcc', 'f3', 'RCC')),
     ('STM32F410.*:RCC:.*', ('rcc', 'f410', 'RCC')),
@@ -232,6 +233,8 @@ perimap = [
     ('STM32WB.*:FLASH:.*', ('flash', 'wb', 'FLASH')),
     ('STM32WL.*:FLASH:.*', ('flash', 'wl', 'FLASH')),
     ('STM32G0.*:FLASH:.*', ('flash', 'g0', 'FLASH')),
+    ('STM32F107.*:ETH:.*', ('eth', 'v1a', 'ETH')),
+    ('STM32F[24].*:ETH:.*', ('eth', 'v1b', 'ETH')),
     ('STM32F7.*:ETH:ETH:ethermac110_v2_0', ('eth', 'v1c', 'ETH')),
     ('.*ETH:ethermac110_v3_0', ('eth', 'v2', 'ETH')),
 
