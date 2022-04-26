@@ -114,6 +114,7 @@ perimap = [
     ('.*:SPI:spi2s1_v3_1', ('spi', 'v2', 'SPI')),
     ('.*:SPI:spi2s2_v1_1', ('spi', 'v3', 'SPI')),
     ('.*:SPI:spi2s2_v1_0', ('spi', 'v3', 'SPI')),
+    ('.*:SPI:spi2s3_v1_1', ('spi', 'v4', 'SPI')),
     ('.*:I2C:i2c1_v1_5', ('i2c', 'v1', 'I2C')),
     ('.*:I2C:i2c2_v1_1', ('i2c', 'v2', 'I2C')),
     ('.*:I2C:i2c2_v1_1F7', ('i2c', 'v2', 'I2C')),
@@ -282,6 +283,7 @@ perimap = [
     ('.*:IPCC:v1_0', ('ipcc', 'v1', 'IPCC')),
     ('.*:DMAMUX.*', ('dmamux', 'v1', 'DMAMUX')),
 
+    ('.*:GPDMA\d?:.*', ('gpdma', 'v1', 'GPDMA')),
     ('.*:BDMA\d?:.*', ('bdma', 'v1', 'DMA')),
     ('STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0', ('dma2d', 'v2', 'DMA2D')),
     ('.*:DMA2D:dma2d1_v1_0', ('dma2d', 'v1', 'DMA2D')),
@@ -771,12 +773,11 @@ def parse_chips():
 
             # Collect DMA versions in the chip
             chip_dmas = []
-            for want_kind in ('DMA', 'BDMA', 'BDMA1', 'BDMA2'):
-                for ip in chip['ips'].values():
-                    pkind = ip['@Name']
-                    version = ip['@Version']
-                    if pkind == want_kind and version in dma_channels and version not in chip_dmas:
-                        chip_dmas.append(version)
+            for ip in chip['ips'].values():
+                pkind = ip['@Name']
+                version = ip['@Version']
+                if pkind in ('DMA', 'BDMA', 'BDMA1', 'BDMA2', 'GPDMA') and version in dma_channels and version not in chip_dmas:
+                    chip_dmas.append(version)
 
             # Process DMA channels
             chs = []
@@ -1179,6 +1180,42 @@ def parse_dma():
             json.dump(chip_dma, f, indent=4)
 
         dma_channels[ff] = chip_dma
+
+    # STM32U5
+
+    chip_dma = {
+        'channels': [],
+        'peripherals': {},
+    }
+
+    with open('data/dmamux/U5_GPDMA1.yaml', 'r') as yaml_file:
+        y = yaml.load(yaml_file)
+
+    for (request_name, request_num) in y.items():
+        parts = request_name.split('_')
+        target_peri_name = parts[0]
+        if len(parts) < 2:
+            request = target_peri_name
+        else:
+            request = parts[1]
+        chip_dma['peripherals'].setdefault(target_peri_name, []).append({
+            'signal': request,
+            "dma": 'GPDMA1',
+            "request": request_num,
+        })
+
+    for i in range(16):
+        chip_dma['channels'].append({
+            'name': 'GPDMA1_CH' + str(i),
+            'dma': 'GPDMA1',
+            'channel': i,
+            'supports_2d': i >= 12,
+        })
+
+    ff = 'STM32U5_dma3_Cube'
+    with open('tmp/dmas/' + ff + '.json', 'w') as f:
+        json.dump(chip_dma, f, indent=4)
+    dma_channels[ff] = chip_dma
 
 
 peripheral_to_clock = {}
