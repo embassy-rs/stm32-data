@@ -1268,7 +1268,7 @@ def parse_rcc_regs():
                                 'field': field['name'],
                             }
                         }
-                        if rstr := y[key.replace('ENR', 'RSTR')]:
+                        if rstr := y.get(key.replace('ENR', 'RSTR')):
                             if field := next(filter(lambda f: f['name'] == f'{peri}RST', rstr['fields']), None):
                                 res['reset'] = {
                                     'register': reg.replace('ENR', 'RSTR'),
