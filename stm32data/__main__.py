@@ -853,6 +853,7 @@ def parse_chips():
                         'kind': 'flash',
                         'address': h['defines']['all'][each + '_BASE'],
                         'size': size,
+                        'settings': memory.determine_flash_settings(chip_name),
                     })
 
             found = set()
