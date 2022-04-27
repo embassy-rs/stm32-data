@@ -77,14 +77,15 @@ def parse():
                 bank = configs[0]['Bank']
                 if type(bank) != list:
                     bank = [bank]
-                field = bank[0]['Field']
-                if type(field) != list:
-                    field = [field]
-                # print("Field", field)
-                p = field[0]['Parameters']
-                print("pwrams", str(p))
-                erase_size = int(p['@size'], 16)
-                #print( f'flash {addr} {size}')
+                fields = bank[0]['Field']
+                if type(fields) != list:
+                    fields = [fields]
+
+                erase_size = int(fields[0]['Parameters']['@size'], 16)
+                for field in fields:
+                    # print("Field", field)
+                    erase_size = max(erase_size, int(field['Parameters']['@size'], 16))
+                    #print( f'flash {addr} {size}')
 
         chunk = {
             'device-id': int(device_id, 16),
