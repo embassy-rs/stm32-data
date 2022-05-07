@@ -177,7 +177,8 @@ perimap = [
     ('.*:USB_OTG_HS:otghs1_v1_.*', ('otghs', 'v1', 'OTG_HS')),
 
     ('STM32F0.*:RCC:.*', ('rcc', 'f0', 'RCC')),
-    ('STM32F10[0123].*:RCC:.*', ('rcc', 'f1', 'RCC')),
+    ('STM32F100.*:RCC:.*', ('rcc', 'f100', 'RCC')),
+    ('STM32F10[123].*:RCC:.*', ('rcc', 'f1', 'RCC')),
     ('STM32F10[57].*:RCC:.*', ('rcc', 'f1cl', 'RCC')),
     ('STM32F2.*:RCC:.*', ('rcc', 'f2', 'RCC')),
     ('STM32F3.*:RCC:.*', ('rcc', 'f3', 'RCC')),
@@ -1268,7 +1269,7 @@ def parse_rcc_regs():
                                 'field': field['name'],
                             }
                         }
-                        if rstr := y[key.replace('ENR', 'RSTR')]:
+                        if rstr := y.get(key.replace('ENR', 'RSTR')):
                             if field := next(filter(lambda f: f['name'] == f'{peri}RST', rstr['fields']), None):
                                 res['reset'] = {
                                     'register': reg.replace('ENR', 'RSTR'),
