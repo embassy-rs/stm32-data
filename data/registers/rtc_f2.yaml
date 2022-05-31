@@ -1,0 +1,504 @@
+---
+block/RTC:
+  description: Real-time clock
+  items:
+    - name: TR
+      description: time register
+      byte_offset: 0
+      fieldset: TR
+    - name: DR
+      description: date register
+      byte_offset: 4
+      fieldset: DR
+    - name: CR
+      description: control register
+      byte_offset: 8
+      fieldset: CR
+    - name: ISR
+      description: "initialization and status register"
+      byte_offset: 12
+      fieldset: ISR
+    - name: PRER
+      description: prescaler register
+      byte_offset: 16
+      fieldset: PRER
+    - name: WUTR
+      description: wakeup timer register
+      byte_offset: 20
+      fieldset: WUTR
+    - name: CALIBR
+      description: calibration register
+      byte_offset: 24
+      fieldset: CALIBR
+    - name: ALRMAR
+      description: alarm A register
+      byte_offset: 28
+      fieldset: ALRMAR
+    - name: ALRMBR
+      description: alarm B register
+      byte_offset: 32
+      fieldset: ALRMBR
+    - name: WPR
+      description: write protection register
+      byte_offset: 36
+      access: Write
+      fieldset: WPR
+    - name: TSTR
+      description: time stamp time register
+      byte_offset: 48
+      access: Read
+      fieldset: TSTR
+    - name: TSDR
+      description: time stamp date register
+      byte_offset: 52
+      access: Read
+      fieldset: TSDR
+    - name: TAFCR
+      description: "tamper and alternate function configuration register"
+      byte_offset: 64
+      fieldset: TAFCR
+    - name: BKPR
+      description: backup register
+      array:
+        len: 20
+        stride: 4
+      byte_offset: 80
+      fieldset: BKPR
+fieldset/ALRMAR:
+  description: alarm A register
+  fields:
+    - name: SU
+      description: Second units in BCD format
+      bit_offset: 0
+      bit_size: 4
+    - name: ST
+      description: Second tens in BCD format
+      bit_offset: 4
+      bit_size: 3
+    - name: MSK1
+      description: Alarm A seconds mask
+      bit_offset: 7
+      bit_size: 1
+    - name: MNU
+      description: Minute units in BCD format
+      bit_offset: 8
+      bit_size: 4
+    - name: MNT
+      description: Minute tens in BCD format
+      bit_offset: 12
+      bit_size: 3
+    - name: MSK2
+      description: Alarm A minutes mask
+      bit_offset: 15
+      bit_size: 1
+    - name: HU
+      description: Hour units in BCD format
+      bit_offset: 16
+      bit_size: 4
+    - name: HT
+      description: Hour tens in BCD format
+      bit_offset: 20
+      bit_size: 2
+    - name: PM
+      description: AM/PM notation
+      bit_offset: 22
+      bit_size: 1
+    - name: MSK3
+      description: Alarm A hours mask
+      bit_offset: 23
+      bit_size: 1
+    - name: DU
+      description: "Date units or day in BCD format"
+      bit_offset: 24
+      bit_size: 4
+    - name: DT
+      description: Date tens in BCD format
+      bit_offset: 28
+      bit_size: 2
+    - name: WDSEL
+      description: Week day selection
+      bit_offset: 30
+      bit_size: 1
+    - name: MSK4
+      description: Alarm A date mask
+      bit_offset: 31
+      bit_size: 1
+fieldset/ALRMBR:
+  description: alarm B register
+  fields:
+    - name: SU
+      description: Second units in BCD format
+      bit_offset: 0
+      bit_size: 4
+    - name: ST
+      description: Second tens in BCD format
+      bit_offset: 4
+      bit_size: 3
+    - name: MSK1
+      description: Alarm B seconds mask
+      bit_offset: 7
+      bit_size: 1
+    - name: MNU
+      description: Minute units in BCD format
+      bit_offset: 8
+      bit_size: 4
+    - name: MNT
+      description: Minute tens in BCD format
+      bit_offset: 12
+      bit_size: 3
+    - name: MSK2
+      description: Alarm B minutes mask
+      bit_offset: 15
+      bit_size: 1
+    - name: HU
+      description: Hour units in BCD format
+      bit_offset: 16
+      bit_size: 4
+    - name: HT
+      description: Hour tens in BCD format
+      bit_offset: 20
+      bit_size: 2
+    - name: PM
+      description: AM/PM notation
+      bit_offset: 22
+      bit_size: 1
+    - name: MSK3
+      description: Alarm B hours mask
+      bit_offset: 23
+      bit_size: 1
+    - name: DU
+      description: "Date units or day in BCD format"
+      bit_offset: 24
+      bit_size: 4
+    - name: DT
+      description: Date tens in BCD format
+      bit_offset: 28
+      bit_size: 2
+    - name: WDSEL
+      description: Week day selection
+      bit_offset: 30
+      bit_size: 1
+    - name: MSK4
+      description: Alarm B date mask
+      bit_offset: 31
+      bit_size: 1
+fieldset/BKPR:
+  description: backup register
+  fields:
+    - name: BKP
+      description: BKP
+      bit_offset: 0
+      bit_size: 32
+fieldset/CALIBR:
+  description: calibration register
+  fields:
+    - name: DC
+      description: Digital calibration
+      bit_offset: 0
+      bit_size: 5
+    - name: DCS
+      description: Digital calibration sign
+      bit_offset: 7
+      bit_size: 1
+fieldset/CR:
+  description: control register
+  fields:
+    - name: WUCKSEL
+      description: Wakeup clock selection
+      bit_offset: 0
+      bit_size: 3
+    - name: TSEDGE
+      description: "Time-stamp event active edge"
+      bit_offset: 3
+      bit_size: 1
+    - name: REFCKON
+      description: "Reference clock detection enable (50 or 60 Hz)"
+      bit_offset: 4
+      bit_size: 1
+    - name: FMT
+      description: Hour format
+      bit_offset: 6
+      bit_size: 1
+    - name: DCE
+      description: "Coarse digital calibration enable"
+      bit_offset: 7
+      bit_size: 1
+    - name: ALRAE
+      description: Alarm A enable
+      bit_offset: 8
+      bit_size: 1
+    - name: ALRBE
+      description: Alarm B enable
+      bit_offset: 9
+      bit_size: 1
+    - name: WUTE
+      description: Wakeup timer enable
+      bit_offset: 10
+      bit_size: 1
+    - name: TSE
+      description: Time stamp enable
+      bit_offset: 11
+      bit_size: 1
+    - name: ALRAIE
+      description: Alarm A interrupt enable
+      bit_offset: 12
+      bit_size: 1
+    - name: ALRBIE
+      description: Alarm B interrupt enable
+      bit_offset: 13
+      bit_size: 1
+    - name: WUTIE
+      description: "Wakeup timer interrupt enable"
+      bit_offset: 14
+      bit_size: 1
+    - name: TSIE
+      description: "Time-stamp interrupt enable"
+      bit_offset: 15
+      bit_size: 1
+    - name: ADD1H
+      description: "Add 1 hour (summer time change)"
+      bit_offset: 16
+      bit_size: 1
+    - name: SUB1H
+      description: "Subtract 1 hour (winter time change)"
+      bit_offset: 17
+      bit_size: 1
+    - name: BKP
+      description: Backup
+      bit_offset: 18
+      bit_size: 1
+    - name: POL
+      description: Output polarity
+      bit_offset: 20
+      bit_size: 1
+    - name: OSEL
+      description: Output selection
+      bit_offset: 21
+      bit_size: 2
+    - name: COE
+      description: Calibration output enable
+      bit_offset: 23
+      bit_size: 1
+fieldset/DR:
+  description: date register
+  fields:
+    - name: DU
+      description: Date units in BCD format
+      bit_offset: 0
+      bit_size: 4
+    - name: DT
+      description: Date tens in BCD format
+      bit_offset: 4
+      bit_size: 2
+    - name: MU
+      description: Month units in BCD format
+      bit_offset: 8
+      bit_size: 4
+    - name: MT
+      description: Month tens in BCD format
+      bit_offset: 12
+      bit_size: 1
+    - name: WDU
+      description: Week day units
+      bit_offset: 13
+      bit_size: 3
+    - name: YU
+      description: Year units in BCD format
+      bit_offset: 16
+      bit_size: 4
+    - name: YT
+      description: Year tens in BCD format
+      bit_offset: 20
+      bit_size: 4
+fieldset/ISR:
+  description: "initialization and status register"
+  fields:
+    - name: ALRAWF
+      description: Alarm A write flag
+      bit_offset: 0
+      bit_size: 1
+    - name: ALRBWF
+      description: Alarm B write flag
+      bit_offset: 1
+      bit_size: 1
+    - name: WUTWF
+      description: Wakeup timer write flag
+      bit_offset: 2
+      bit_size: 1
+    - name: INITS
+      description: Initialization status flag
+      bit_offset: 4
+      bit_size: 1
+    - name: RSF
+      description: "Registers synchronization flag"
+      bit_offset: 5
+      bit_size: 1
+    - name: INITF
+      description: Initialization flag
+      bit_offset: 6
+      bit_size: 1
+    - name: INIT
+      description: Initialization mode
+      bit_offset: 7
+      bit_size: 1
+    - name: ALRAF
+      description: Alarm A flag
+      bit_offset: 8
+      bit_size: 1
+    - name: ALRBF
+      description: Alarm B flag
+      bit_offset: 9
+      bit_size: 1
+    - name: WUTF
+      description: Wakeup timer flag
+      bit_offset: 10
+      bit_size: 1
+    - name: TSF
+      description: Time-stamp flag
+      bit_offset: 11
+      bit_size: 1
+    - name: TSOVF
+      description: Time-stamp overflow flag
+      bit_offset: 12
+      bit_size: 1
+    - name: TAMP1F
+      description: Tamper detection flag
+      bit_offset: 13
+      bit_size: 1
+fieldset/PRER:
+  description: prescaler register
+  fields:
+    - name: PREDIV_S
+      description: "Synchronous prescaler factor"
+      bit_offset: 0
+      bit_size: 13
+    - name: PREDIV_A
+      description: "Asynchronous prescaler factor"
+      bit_offset: 16
+      bit_size: 7
+fieldset/TAFCR:
+  description: "tamper and alternate function configuration register"
+  fields:
+    - name: TAMP1E
+      description: Tamper 1 detection enable
+      bit_offset: 0
+      bit_size: 1
+    - name: TAMP1TRG
+      description: Active level for tamper 1
+      bit_offset: 1
+      bit_size: 1
+    - name: TAMPIE
+      description: Tamper interrupt enable
+      bit_offset: 2
+      bit_size: 1
+    - name: TAMP1INSEL
+      description: TAMPER1 mapping
+      bit_offset: 16
+      bit_size: 1
+    - name: TSINSEL
+      description: TIMESTAMP mapping
+      bit_offset: 17
+      bit_size: 1
+    - name: ALARMOUTTYPE
+      description: AFO_ALARM output type
+      bit_offset: 18
+      bit_size: 1
+fieldset/TR:
+  description: time register
+  fields:
+    - name: SU
+      description: Second units in BCD format
+      bit_offset: 0
+      bit_size: 4
+    - name: ST
+      description: Second tens in BCD format
+      bit_offset: 4
+      bit_size: 3
+    - name: MNU
+      description: Minute units in BCD format
+      bit_offset: 8
+      bit_size: 4
+    - name: MNT
+      description: Minute tens in BCD format
+      bit_offset: 12
+      bit_size: 3
+    - name: HU
+      description: Hour units in BCD format
+      bit_offset: 16
+      bit_size: 4
+    - name: HT
+      description: Hour tens in BCD format
+      bit_offset: 20
+      bit_size: 2
+    - name: PM
+      description: AM/PM notation
+      bit_offset: 22
+      bit_size: 1
+fieldset/TSDR:
+  description: time stamp date register
+  fields:
+    - name: DU
+      description: Date units in BCD format
+      bit_offset: 0
+      bit_size: 4
+    - name: DT
+      description: Date tens in BCD format
+      bit_offset: 4
+      bit_size: 2
+    - name: MU
+      description: Month units in BCD format
+      bit_offset: 8
+      bit_size: 4
+    - name: MT
+      description: Month tens in BCD format
+      bit_offset: 12
+      bit_size: 1
+    - name: WDU
+      description: Week day units
+      bit_offset: 13
+      bit_size: 3
+fieldset/TSTR:
+  description: time stamp time register
+  fields:
+    - name: SU
+      description: Second units in BCD format
+      bit_offset: 0
+      bit_size: 4
+    - name: ST
+      description: Second tens in BCD format
+      bit_offset: 4
+      bit_size: 3
+    - name: MNU
+      description: Minute units in BCD format
+      bit_offset: 8
+      bit_size: 4
+    - name: MNT
+      description: Minute tens in BCD format
+      bit_offset: 12
+      bit_size: 3
+    - name: HU
+      description: Hour units in BCD format
+      bit_offset: 16
+      bit_size: 4
+    - name: HT
+      description: Hour tens in BCD format
+      bit_offset: 20
+      bit_size: 2
+    - name: PM
+      description: AM/PM notation
+      bit_offset: 22
+      bit_size: 1
+fieldset/WPR:
+  description: write protection register
+  fields:
+    - name: KEY
+      description: Write protection key
+      bit_offset: 0
+      bit_size: 8
+fieldset/WUTR:
+  description: wakeup timer register
+  fields:
+    - name: WUT
+      description: "Wakeup auto-reload value bits"
+      bit_offset: 0
+      bit_size: 16
