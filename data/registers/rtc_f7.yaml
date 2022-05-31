@@ -102,14 +102,11 @@ fieldset/ALRMAR:
       description: Second tens in BCD format
       bit_offset: 4
       bit_size: 3
-    - name: MSK
+    - name: MSK1
       description: Alarm A seconds mask
       bit_offset: 7
       bit_size: 1
-      array:
-        len: 4
-        stride: 8
-      enum: ALRMAR_MSK
+      enum: ALRMAR_MSK1
     - name: MNU
       description: Minute units in BCD format
       bit_offset: 8
@@ -118,6 +115,11 @@ fieldset/ALRMAR:
       description: Minute tens in BCD format
       bit_offset: 12
       bit_size: 3
+    - name: MSK2
+      description: Alarm A minutes mask
+      bit_offset: 15
+      bit_size: 1
+      enum: ALRMAR_MSK1
     - name: HU
       description: Hour units in BCD format
       bit_offset: 16
@@ -131,6 +133,11 @@ fieldset/ALRMAR:
       bit_offset: 22
       bit_size: 1
       enum: ALRMAR_PM
+    - name: MSK3
+      description: Alarm A hours mask
+      bit_offset: 23
+      bit_size: 1
+      enum: ALRMAR_MSK1
     - name: DU
       description: Date units or day in BCD format
       bit_offset: 24
@@ -144,6 +151,11 @@ fieldset/ALRMAR:
       bit_offset: 30
       bit_size: 1
       enum: ALRMAR_WDSEL
+    - name: MSK4
+      description: Alarm A date mask
+      bit_offset: 31
+      bit_size: 1
+      enum: ALRMAR_MSK1
 fieldset/ALRMASSR:
   description: alarm A sub second register
   fields:
@@ -166,14 +178,11 @@ fieldset/ALRMBR:
       description: Second tens in BCD format
       bit_offset: 4
       bit_size: 3
-    - name: MSK
+    - name: MSK1
       description: Alarm B seconds mask
       bit_offset: 7
       bit_size: 1
-      array:
-        len: 4
-        stride: 8
-      enum: ALRMBR_MSK
+      enum: ALRMBR_MSK1
     - name: MNU
       description: Minute units in BCD format
       bit_offset: 8
@@ -182,6 +191,11 @@ fieldset/ALRMBR:
       description: Minute tens in BCD format
       bit_offset: 12
       bit_size: 3
+    - name: MSK2
+      description: Alarm B minutes mask
+      bit_offset: 15
+      bit_size: 1
+      enum: ALRMBR_MSK1
     - name: HU
       description: Hour units in BCD format
       bit_offset: 16
@@ -195,6 +209,11 @@ fieldset/ALRMBR:
       bit_offset: 22
       bit_size: 1
       enum: ALRMBR_PM
+    - name: MSK3
+      description: Alarm B hours mask
+      bit_offset: 23
+      bit_size: 1
+      enum: ALRMBR_MSK1
     - name: DU
       description: Date units or day in BCD format
       bit_offset: 24
@@ -208,6 +227,11 @@ fieldset/ALRMBR:
       bit_offset: 30
       bit_size: 1
       enum: ALRMBR_WDSEL
+    - name: MSK4
+      description: Alarm B date mask
+      bit_offset: 31
+      bit_size: 1
+      enum: ALRMBR_MSK1
 fieldset/ALRMBSSR:
   description: alarm B sub second register
   fields:
@@ -233,14 +257,16 @@ fieldset/CALR:
       description: Calibration minus
       bit_offset: 0
       bit_size: 9
-    - name: CALW
+    - name: CALW16
       description: Use a 16-second calibration cycle period
       bit_offset: 13
       bit_size: 1
-      array:
-        len: 2
-        stride: 1
       enum: CALW16
+    - name: CALW8
+      description: Use an 8-second calibration cycle period
+      bit_offset: 14
+      bit_size: 1
+      enum: CALW8
     - name: CALP
       description: Increase frequency of RTC by 488.5 ppm
       bit_offset: 15
@@ -318,12 +344,12 @@ fieldset/CR:
       description: Add 1 hour (summer time change)
       bit_offset: 16
       bit_size: 1
-      enum_write: ADDHW
+      enum_write: ADD1HW
     - name: SUB1H
       description: Subtract 1 hour (winter time change)
       bit_offset: 17
       bit_size: 1
-      enum_write: SUBHW
+      enum_write: SUB1HW
     - name: BKP
       description: Backup
       bit_offset: 18
@@ -462,36 +488,32 @@ fieldset/ISR:
       description: Tamper detection flag
       bit_offset: 13
       bit_size: 1
-      enum_read: TAMPFR
-      enum_write: TAMPFW
+      enum_read: TAMP1FR
+      enum_write: TAMP1FW
     - name: TAMP2F
       description: RTC_TAMP2 detection flag
       bit_offset: 14
       bit_size: 1
-      enum_read: TAMPFR
-      enum_write: TAMPFW
+      enum_read: TAMP1FR
+      enum_write: TAMP1FW
     - name: TAMP3F
       description: RTC_TAMP3 detection flag
       bit_offset: 15
       bit_size: 1
-      enum_read: TAMPFR
-      enum_write: TAMPFW
+      enum_read: TAMP1FR
+      enum_write: TAMP1FW
     - name: RECALPF
       description: Recalibration pending Flag
       bit_offset: 16
       bit_size: 1
       enum_read: RECALPFR
     - name: ITSF
-      description: Internal tTime-stamp flag
+      description: Internal time-stamp flag
       bit_offset: 17
       bit_size: 1
 fieldset/OR:
   description: option register
   fields:
-    - name: RTC_OUT_RMP
-      description: RTC_OUT remap
-      bit_offset: 1
-      bit_size: 1
     - name: TSINSEL
       description: TIMESTAMP mapping
       bit_offset: 1
@@ -522,7 +544,7 @@ fieldset/SHIFTR:
       description: Add one second
       bit_offset: 31
       bit_size: 1
-      enum_write: ADDSW
+      enum_write: ADD1SW
 fieldset/SSR:
   description: sub second register
   fields:
@@ -724,13 +746,13 @@ fieldset/WUTR:
       description: Wakeup auto-reload value bits
       bit_offset: 0
       bit_size: 16
-enum/ADDHW:
+enum/ADD1HW:
   bit_size: 1
   variants:
     - name: Add1
       description: Adds 1 hour to the current time. This can be used for summer time change outside initialization mode
       value: 1
-enum/ADDSW:
+enum/ADD1SW:
   bit_size: 1
   variants:
     - name: Add1
@@ -805,7 +827,7 @@ enum/ALRBIE:
     - name: Enabled
       description: Alarm B Interrupt enabled
       value: 1
-enum/ALRMAR_MSK:
+enum/ALRMAR_MSK1:
   bit_size: 1
   variants:
     - name: Mask
@@ -832,7 +854,7 @@ enum/ALRMAR_WDSEL:
     - name: WeekDay
       description: "DU[3:0] represents the week day. DT[1:0] is don’t care."
       value: 1
-enum/ALRMBR_MSK:
+enum/ALRMBR_MSK1:
   bit_size: 1
   variants:
     - name: Mask
@@ -1015,19 +1037,19 @@ enum/SHPFR:
     - name: ShiftPending
       description: A shift operation is pending
       value: 1
-enum/SUBHW:
+enum/SUB1HW:
   bit_size: 1
   variants:
     - name: Sub1
       description: Subtracts 1 hour to the current time. This can be used for winter time change outside initialization mode
       value: 1
-enum/TAMPFR:
+enum/TAMP1FR:
   bit_size: 1
   variants:
     - name: Tampered
       description: This flag is set by hardware when a tamper detection event is detected on the RTC_TAMPx input
       value: 1
-enum/TAMPFW:
+enum/TAMP1FW:
   bit_size: 1
   variants:
     - name: Clear
