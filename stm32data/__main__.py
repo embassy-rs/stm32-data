@@ -173,8 +173,8 @@ perimap = [
     ('STM32L0.*:RTC:rtc2_.*', ('rtc', 'v2-l0', 'RTC')),
     ('STM32L1.*:RTC:rtc2_.*', ('rtc', 'v2-l1', 'RTC')),
     ('STM32L4.*:RTC:rtc2_.*', ('rtc', 'v2-l4', 'RTC')),
-    ('STM32U5.*:RTC:rtc2_.*', ('rtc', 'v2-u5', 'RTC')),
     ('STM32WB.*:RTC:rtc2_.*', ('rtc', 'v2-wb', 'RTC')),
+    ('STM32U5.*:RTC:rtc2_.*', ('rtc', 'v3-u5', 'RTC')), # Cube says v2, but it's v3 with security stuff
     ('.*:RTC:rtc3_v1_0_Cube', ('rtc', 'v3', 'RTC')),
     ('.*:RTC:rtc3_v1_1_Cube', ('rtc', 'v3', 'RTC')),
     ('.*:RTC:rtc3_v2_0_Cube', ('rtc', 'v3', 'RTC')),
