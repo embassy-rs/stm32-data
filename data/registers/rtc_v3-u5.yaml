@@ -31,6 +31,14 @@ block/RTC:
       description: Control register
       byte_offset: 24
       fieldset: CR
+    - name: PRIVCR
+      description: Privilege mode control register
+      byte_offset: 28
+      fieldset: PRIVCR
+    - name: SECCFGR
+      description: Secure mode control register
+      byte_offset: 32
+      fieldset: SECCFGR
     - name: WPR
       description: Write protection register
       byte_offset: 36
@@ -84,6 +92,11 @@ block/RTC:
       byte_offset: 84
       access: Read
       fieldset: MISR
+    - name: SMISR
+      description: Secure masked interrupt status register
+      byte_offset: 88
+      access: Read
+      fieldset: SMISR
     - name: SCR
       description: Status clear register
       byte_offset: 92
@@ -315,6 +328,13 @@ fieldset/CR:
       description: Tamper detection output enable on TAMPALRM
       bit_offset: 26
       bit_size: 1
+    - name: ALRFCLR
+      description: ALRFCLR
+      array:
+        len: 2
+        stride: 1
+      bit_offset: 27
+      bit_size: 1
     - name: TAMPALRM_PU
       description: TAMPALRM pull-up enable
       bit_offset: 29
@@ -455,6 +475,37 @@ fieldset/PRER:
       description: Asynchronous prescaler factor
       bit_offset: 16
       bit_size: 7
+fieldset/PRIVCR:
+  description: Privilege mode control register
+  fields:
+    - name: ALRAPRIV
+      description: ALRAPRIV
+      bit_offset: 0
+      bit_size: 1
+    - name: ALRBPRIV
+      description: ALRBPRIV
+      bit_offset: 1
+      bit_size: 1
+    - name: WUTPRIV
+      description: WUTPRIV
+      bit_offset: 2
+      bit_size: 1
+    - name: TSPRIV
+      description: TSPRIV
+      bit_offset: 3
+      bit_size: 1
+    - name: CALPRIV
+      description: CALPRIV
+      bit_offset: 13
+      bit_size: 1
+    - name: INITPRIV
+      description: INITPRIV
+      bit_offset: 14
+      bit_size: 1
+    - name: PRIV
+      description: PRIV
+      bit_offset: 15
+      bit_size: 1
 fieldset/SCR:
   description: Status clear register
   fields:
@@ -491,6 +542,37 @@ fieldset/SCR:
       bit_offset: 6
       bit_size: 1
       enum: CALRF
+fieldset/SECCFGR:
+  description: Secure mode control register
+  fields:
+    - name: ALRASEC
+      description: ALRASEC
+      bit_offset: 0
+      bit_size: 1
+    - name: ALRBSEC
+      description: ALRBSEC
+      bit_offset: 1
+      bit_size: 1
+    - name: WUTSEC
+      description: WUTSEC
+      bit_offset: 2
+      bit_size: 1
+    - name: TSSEC
+      description: TSSEC
+      bit_offset: 3
+      bit_size: 1
+    - name: CALSEC
+      description: CALSEC
+      bit_offset: 13
+      bit_size: 1
+    - name: INITSEC
+      description: INITSEC
+      bit_offset: 14
+      bit_size: 1
+    - name: SEC
+      description: SEC
+      bit_offset: 15
+      bit_size: 1
 fieldset/SHIFTR:
   description: Shift control register
   fields:
@@ -501,6 +583,37 @@ fieldset/SHIFTR:
     - name: ADD1S
       description: Add one second
       bit_offset: 31
+      bit_size: 1
+fieldset/SMISR:
+  description: Secure masked interrupt status register
+  fields:
+    - name: ALRAMF
+      description: ALRAMF
+      bit_offset: 0
+      bit_size: 1
+    - name: ALRBMF
+      description: ALRBMF
+      bit_offset: 1
+      bit_size: 1
+    - name: WUTMF
+      description: WUTMF
+      bit_offset: 2
+      bit_size: 1
+    - name: TSMF
+      description: TSMF
+      bit_offset: 3
+      bit_size: 1
+    - name: TSOVMF
+      description: TSOVMF
+      bit_offset: 4
+      bit_size: 1
+    - name: ITSMF
+      description: ITSMF
+      bit_offset: 5
+      bit_size: 1
+    - name: SSRUMF
+      description: SSRUMF
+      bit_offset: 6
       bit_size: 1
 fieldset/SR:
   description: Status register
