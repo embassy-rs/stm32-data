@@ -105,6 +105,7 @@ perimap = [
     ('.*:RNG:rng1_v2_1', ('rng', 'v1', 'RNG')),
     ('.*:RNG:rng1_v3_1', ('rng', 'v1', 'RNG')),
     ('.*:SPI:spi2_v1_4', ('spi', 'f1', 'SPI')),
+    ('.*:SPI:spi2s1_v2_1', ('spi', 'v1', 'SPI')),
     ('.*:SPI:spi2s1_v2_2', ('spi', 'v1', 'SPI')),
     ('.*:SPI:spi2s1_v3_2', ('spi', 'v2', 'SPI')),
     ('.*:SPI:spi2s1_v3_3', ('spi', 'v2', 'SPI')),
@@ -113,30 +114,39 @@ perimap = [
     ('.*:SPI:spi2s1_v3_1', ('spi', 'v2', 'SPI')),
     ('.*:SPI:spi2s2_v1_1', ('spi', 'v3', 'SPI')),
     ('.*:SPI:spi2s2_v1_0', ('spi', 'v3', 'SPI')),
+    ('.*:SPI:spi2s3_v1_1', ('spi', 'v4', 'SPI')),
     ('.*:I2C:i2c1_v1_5', ('i2c', 'v1', 'I2C')),
     ('.*:I2C:i2c2_v1_1', ('i2c', 'v2', 'I2C')),
     ('.*:I2C:i2c2_v1_1F7', ('i2c', 'v2', 'I2C')),
     ('.*:I2C:i2c2_v1_1U5', ('i2c', 'v2', 'I2C')),
+
     ('.*:DAC:dacif_v1_1', ('dac', 'v1', 'DAC')),
     ('.*:DAC:dacif_v2_0', ('dac', 'v2', 'DAC')),
     ('.*:DAC:dacif_v3_0', ('dac', 'v2', 'DAC')),
+
     ('.*:ADC:aditf_v2_5F1', ('adc', 'f1', 'ADC')),
+    ('.*:ADC:aditf4_v1_1', ('adc', 'v1', 'ADC')),
     ('.*:ADC:aditf2_v1_1', ('adc', 'v2', 'ADC')),
     ('.*:ADC:aditf5_v2_0', ('adc', 'v3', 'ADC')),
+    ('.*:ADC:aditf5_v3_0', ('adc', 'v4', 'ADC')),
     ('STM32G0.*:ADC:.*', ('adc', 'g0', 'ADC')),
     ('STM32G0.*:ADC_COMMON:.*', ('adccommon', 'v3', 'ADC_COMMON')),
     ('.*:ADC_COMMON:aditf2_v1_1', ('adccommon', 'v2', 'ADC_COMMON')),
     ('.*:ADC_COMMON:aditf5_v2_0', ('adccommon', 'v3', 'ADC_COMMON')),
     ('.*:ADC_COMMON:aditf4_v3_0_WL', ('adccommon', 'v3', 'ADC_COMMON')),
+    ('STM32H7.*:ADC_COMMON:.*', ('adccommon', 'v4', 'ADC_COMMON')),
+    ('STM32H7.*:ADC3_COMMON:.*', ('adccommon', 'v4', 'ADC_COMMON')),
+
     ('.*:DCMI:.*', ('dcmi', 'v1', 'DCMI')),
     ('STM32F0.*:SYSCFG:.*',  ('syscfg', 'f0', 'SYSCFG')),
     ('STM32F2.*:SYSCFG:.*',  ('syscfg', 'f2', 'SYSCFG')),
     ('STM32F3.*:SYSCFG:.*',  ('syscfg', 'f3', 'SYSCFG')),
     ('STM32F4.*:SYSCFG:.*',  ('syscfg', 'f4', 'SYSCFG')),
     ('STM32F7.*:SYSCFG:.*',  ('syscfg', 'f7', 'SYSCFG')),
-    ('STM32L4.*:SYSCFG:.*',  ('syscfg', 'l4', 'SYSCFG')),
     ('STM32L0.*:SYSCFG:.*',  ('syscfg', 'l0', 'SYSCFG')),
     ('STM32L1.*:SYSCFG:.*',  ('syscfg', 'l1', 'SYSCFG')),
+    ('STM32L4.*:SYSCFG:.*',  ('syscfg', 'l4', 'SYSCFG')),
+    ('STM32L5.*:SYSCFG:.*',  ('syscfg', 'l5', 'SYSCFG')),
     ('STM32G0.*:SYSCFG:.*',  ('syscfg', 'g0', 'SYSCFG')),
     ('STM32G4.*:SYSCFG:.*',  ('syscfg', 'g4', 'SYSCFG')),
     ('STM32H7.*:SYSCFG:.*',  ('syscfg', 'h7', 'SYSCFG')),
@@ -159,12 +169,18 @@ perimap = [
     ('.*:SDIO:sdmmc_v1_2', ('sdmmc', 'v1', 'SDMMC')),
     ('.*:SDMMC:sdmmc_v1_3', ('sdmmc', 'v1', 'SDMMC')),
     ('.*:SPDIFRX:spdifrx1_v1_0', ('spdifrx', 'v1', 'SPDIFRX')),
+
+    # USB
+    ('STM32(F1|L1|F3).*:USB:.*', ('usb', 'v1', 'USB')),
+    ('.*:USB:.*', ('usb', 'v2', 'USB')),
     ('.*:USB_OTG_FS:otgfs1_v1_.*', ('otgfs', 'v1', 'OTG_FS')),
-    ('.*:USB_OTG_FS:otgfs1_v3_.*', ('otgfs', 'v3', 'OTG_FS')),
+    ('.*:USB_OTG_FS:otgfs1_v3_.*', ('otgfs', 'v1', 'OTG_FS')),
     ('.*:USB_OTG_HS:otghs1_v1_.*', ('otghs', 'v1', 'OTG_HS')),
 
     ('STM32F0.*:RCC:.*', ('rcc', 'f0', 'RCC')),
-    ('STM32F1.*:RCC:.*', ('rcc', 'f1', 'RCC')),
+    ('STM32F100.*:RCC:.*', ('rcc', 'f100', 'RCC')),
+    ('STM32F10[123].*:RCC:.*', ('rcc', 'f1', 'RCC')),
+    ('STM32F10[57].*:RCC:.*', ('rcc', 'f1cl', 'RCC')),
     ('STM32F2.*:RCC:.*', ('rcc', 'f2', 'RCC')),
     ('STM32F3.*:RCC:.*', ('rcc', 'f3', 'RCC')),
     ('STM32F410.*:RCC:.*', ('rcc', 'f410', 'RCC')),
@@ -208,6 +224,8 @@ perimap = [
     ('STM32F4.*:PWR:.*', ('pwr', 'f4', 'PWR')),
     ('STM32F7.*:PWR:.*', ('pwr', 'f7', 'PWR')),
     ('STM32L1.*:PWR:.*', ('pwr', 'l1', 'PWR')),
+    ('STM32L4.*:PWR:.*', ('pwr', 'l4', 'PWR')),
+    ('STM32L5.*:PWR:.*', ('pwr', 'l5', 'PWR')),
     ('STM32U5.*:PWR:.*', ('pwr', 'u5', 'PWR')),
     ('STM32WL.*:PWR:.*', ('pwr', 'wl5', 'PWR')),
     ('STM32WB.*:PWR:.*', ('pwr', 'wb55', 'PWR')),
@@ -218,11 +236,16 @@ perimap = [
     ('STM32F3.*:FLASH:.*', ('flash', 'f3', 'FLASH')),
     ('STM32F4.*:FLASH:.*', ('flash', 'f4', 'FLASH')),
     ('STM32F7.*:FLASH:.*', ('flash', 'f7', 'FLASH')),
+    ('STM32L0[0-9]2.*:FLASH:.*', ('flash', 'l0', 'FLASH')),
     ('STM32L1.*:FLASH:.*', ('flash', 'l1', 'FLASH')),
     ('STM32L4.*:FLASH:.*', ('flash', 'l4', 'FLASH')),
+    ('STM32L5.*:FLASH:.*', ('flash', 'l5', 'FLASH')),
     ('STM32U5.*:FLASH:.*', ('flash', 'u5', 'FLASH')),
-    ('STM32WB.*:FLASH:.*', ('flash', 'wb55', 'FLASH')),
+    ('STM32WB.*:FLASH:.*', ('flash', 'wb', 'FLASH')),
+    ('STM32WL.*:FLASH:.*', ('flash', 'wl', 'FLASH')),
     ('STM32G0.*:FLASH:.*', ('flash', 'g0', 'FLASH')),
+    ('STM32F107.*:ETH:.*', ('eth', 'v1a', 'ETH')),
+    ('STM32F[24].*:ETH:.*', ('eth', 'v1b', 'ETH')),
     ('STM32F7.*:ETH:ETH:ethermac110_v2_0', ('eth', 'v1c', 'ETH')),
     ('.*ETH:ethermac110_v3_0', ('eth', 'v2', 'ETH')),
 
@@ -269,6 +292,7 @@ perimap = [
     ('.*:IPCC:v1_0', ('ipcc', 'v1', 'IPCC')),
     ('.*:DMAMUX.*', ('dmamux', 'v1', 'DMAMUX')),
 
+    ('.*:GPDMA\d?:.*', ('gpdma', 'v1', 'GPDMA')),
     ('.*:BDMA\d?:.*', ('bdma', 'v1', 'DMA')),
     ('STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0', ('dma2d', 'v2', 'DMA2D')),
     ('.*:DMA2D:dma2d1_v1_0', ('dma2d', 'v1', 'DMA2D')),
@@ -671,6 +695,9 @@ def parse_chips():
                 if pname.startswith('ADC'):
                     if not 'ADC_COMMON' in peri_kinds:
                         peri_kinds['ADC_COMMON'] = 'ADC_COMMON:' + removesuffix(ip['@Version'], '_Cube')
+                if pname.startswith('ADC3'):
+                    if chip_name.startswith("STM32H7") and not 'ADC_COMMON3' in peri_kinds:
+                        peri_kinds['ADC3_COMMON'] = 'ADC3_COMMON:' + removesuffix(ip['@Version'], '_Cube')
 
                 peri_kinds[pname] = pkind
 
@@ -758,12 +785,11 @@ def parse_chips():
 
             # Collect DMA versions in the chip
             chip_dmas = []
-            for want_kind in ('DMA', 'BDMA', 'BDMA1', 'BDMA2'):
-                for ip in chip['ips'].values():
-                    pkind = ip['@Name']
-                    version = ip['@Version']
-                    if pkind == want_kind and version in dma_channels and version not in chip_dmas:
-                        chip_dmas.append(version)
+            for ip in chip['ips'].values():
+                pkind = ip['@Name']
+                version = ip['@Version']
+                if pkind in ('DMA', 'BDMA', 'BDMA1', 'BDMA2', 'GPDMA') and version in dma_channels and version not in chip_dmas:
+                    chip_dmas.append(version)
 
             # Process DMA channels
             chs = []
@@ -829,6 +855,7 @@ def parse_chips():
                         'kind': 'flash',
                         'address': h['defines']['all'][each + '_BASE'],
                         'size': size,
+                        'settings': memory.determine_flash_settings(chip_name),
                     })
 
             found = set()
@@ -1167,6 +1194,42 @@ def parse_dma():
 
         dma_channels[ff] = chip_dma
 
+    # STM32U5
+
+    chip_dma = {
+        'channels': [],
+        'peripherals': {},
+    }
+
+    with open('data/dmamux/U5_GPDMA1.yaml', 'r') as yaml_file:
+        y = yaml.load(yaml_file)
+
+    for (request_name, request_num) in y.items():
+        parts = request_name.split('_')
+        target_peri_name = parts[0]
+        if len(parts) < 2:
+            request = target_peri_name
+        else:
+            request = parts[1]
+        chip_dma['peripherals'].setdefault(target_peri_name, []).append({
+            'signal': request,
+            "dma": 'GPDMA1',
+            "request": request_num,
+        })
+
+    for i in range(16):
+        chip_dma['channels'].append({
+            'name': 'GPDMA1_CH' + str(i),
+            'dma': 'GPDMA1',
+            'channel': i,
+            'supports_2d': i >= 12,
+        })
+
+    ff = 'STM32U5_dma3_Cube'
+    with open('tmp/dmas/' + ff + '.json', 'w') as f:
+        json.dump(chip_dma, f, indent=4)
+    dma_channels[ff] = chip_dma
+
 
 peripheral_to_clock = {}
 
@@ -1207,7 +1270,7 @@ def parse_rcc_regs():
                                 'field': field['name'],
                             }
                         }
-                        if rstr := y[key.replace('ENR', 'RSTR')]:
+                        if rstr := y.get(key.replace('ENR', 'RSTR')):
                             if field := next(filter(lambda f: f['name'] == f'{peri}RST', rstr['fields']), None):
                                 res['reset'] = {
                                     'register': reg.replace('ENR', 'RSTR'),

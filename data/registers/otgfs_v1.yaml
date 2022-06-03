@@ -1,8 +1,3 @@
-# The OTG registers are provided in 4 different sub-blocks (GLOBAL, HOST,
-# DEVICE, PWRCLK), which doesn't make much sense from a usability perspective.
-# On top of that, there are offsets for the FIFO at different addresses that are
-# not part any register blocks, but should be.
-# This register definition merges all these different sub-register blocks.
 ---
 block/OTG_FS:
   description: USB on the go full speed
@@ -281,8 +276,6 @@ block/OTG_FS:
         stride: 4096
       byte_offset: 4096
       fieldset: FIFO
-    # Omitting the Debug FIFO regions
-
 fieldset/CID:
   description: Core ID register
   fields:
@@ -290,6 +283,302 @@ fieldset/CID:
       description: Product ID field
       bit_offset: 0
       bit_size: 32
+fieldset/DAINT:
+  description: Device all endpoints interrupt register
+  fields:
+    - name: IEPINT
+      description: IN endpoint interrupt bits
+      bit_offset: 0
+      bit_size: 16
+    - name: OEPINT
+      description: OUT endpoint interrupt bits
+      bit_offset: 16
+      bit_size: 16
+fieldset/DAINTMSK:
+  description: All endpoints interrupt mask register
+  fields:
+    - name: IEPM
+      description: IN EP interrupt mask bits
+      bit_offset: 0
+      bit_size: 16
+    - name: OEPM
+      description: OUT EP interrupt mask bits
+      bit_offset: 16
+      bit_size: 16
+fieldset/DCFG:
+  description: Device configuration register
+  fields:
+    - name: DSPD
+      description: Device speed
+      bit_offset: 0
+      bit_size: 2
+    - name: NZLSOHSK
+      description: Non-zero-length status OUT handshake
+      bit_offset: 2
+      bit_size: 1
+    - name: DAD
+      description: Device address
+      bit_offset: 4
+      bit_size: 7
+    - name: PFIVL
+      description: Periodic frame interval
+      bit_offset: 11
+      bit_size: 2
+fieldset/DCTL:
+  description: Device control register
+  fields:
+    - name: RWUSIG
+      description: Remote wakeup signaling
+      bit_offset: 0
+      bit_size: 1
+    - name: SDIS
+      description: Soft disconnect
+      bit_offset: 1
+      bit_size: 1
+    - name: GINSTS
+      description: Global IN NAK status
+      bit_offset: 2
+      bit_size: 1
+    - name: GONSTS
+      description: Global OUT NAK status
+      bit_offset: 3
+      bit_size: 1
+    - name: TCTL
+      description: Test control
+      bit_offset: 4
+      bit_size: 3
+    - name: SGINAK
+      description: Set global IN NAK
+      bit_offset: 7
+      bit_size: 1
+    - name: CGINAK
+      description: Clear global IN NAK
+      bit_offset: 8
+      bit_size: 1
+    - name: SGONAK
+      description: Set global OUT NAK
+      bit_offset: 9
+      bit_size: 1
+    - name: CGONAK
+      description: Clear global OUT NAK
+      bit_offset: 10
+      bit_size: 1
+    - name: POPRGDNE
+      description: Power-on programming done
+      bit_offset: 11
+      bit_size: 1
+fieldset/DIEPCTL:
+  description: Device endpoint control register
+  fields:
+    - name: MPSIZ
+      description: MPSIZ
+      bit_offset: 0
+      bit_size: 11
+    - name: USBAEP
+      description: USBAEP
+      bit_offset: 15
+      bit_size: 1
+    - name: EONUM_DPID
+      description: EONUM/DPID
+      bit_offset: 16
+      bit_size: 1
+    - name: NAKSTS
+      description: NAKSTS
+      bit_offset: 17
+      bit_size: 1
+    - name: EPTYP
+      description: EPTYP
+      bit_offset: 18
+      bit_size: 2
+    - name: STALL
+      description: STALL
+      bit_offset: 21
+      bit_size: 1
+    - name: TXFNUM
+      description: TXFNUM
+      bit_offset: 22
+      bit_size: 4
+    - name: CNAK
+      description: CNAK
+      bit_offset: 26
+      bit_size: 1
+    - name: SNAK
+      description: SNAK
+      bit_offset: 27
+      bit_size: 1
+    - name: SD0PID_SEVNFRM
+      description: SD0PID/SEVNFRM
+      bit_offset: 28
+      bit_size: 1
+    - name: SODDFRM_SD1PID
+      description: SODDFRM/SD1PID
+      bit_offset: 29
+      bit_size: 1
+    - name: EPDIS
+      description: EPDIS
+      bit_offset: 30
+      bit_size: 1
+    - name: EPENA
+      description: EPENA
+      bit_offset: 31
+      bit_size: 1
+fieldset/DIEPCTL0:
+  description: Device control IN endpoint 0 control register
+  fields:
+    - name: MPSIZ
+      description: Maximum packet size
+      bit_offset: 0
+      bit_size: 2
+    - name: USBAEP
+      description: USB active endpoint
+      bit_offset: 15
+      bit_size: 1
+    - name: NAKSTS
+      description: NAK status
+      bit_offset: 17
+      bit_size: 1
+    - name: EPTYP
+      description: Endpoint type
+      bit_offset: 18
+      bit_size: 2
+    - name: STALL
+      description: STALL handshake
+      bit_offset: 21
+      bit_size: 1
+    - name: TXFNUM
+      description: TxFIFO number
+      bit_offset: 22
+      bit_size: 4
+    - name: CNAK
+      description: Clear NAK
+      bit_offset: 26
+      bit_size: 1
+    - name: SNAK
+      description: Set NAK
+      bit_offset: 27
+      bit_size: 1
+    - name: EPDIS
+      description: Endpoint disable
+      bit_offset: 30
+      bit_size: 1
+    - name: EPENA
+      description: Endpoint enable
+      bit_offset: 31
+      bit_size: 1
+fieldset/DIEPEMPMSK:
+  description: Device IN endpoint FIFO empty interrupt mask register
+  fields:
+    - name: INEPTXFEM
+      description: IN EP Tx FIFO empty interrupt mask bits
+      bit_offset: 0
+      bit_size: 16
+fieldset/DIEPINT:
+  description: Device endpoint interrupt register
+  fields:
+    - name: XFRC
+      description: XFRC
+      bit_offset: 0
+      bit_size: 1
+    - name: EPDISD
+      description: EPDISD
+      bit_offset: 1
+      bit_size: 1
+    - name: TOC
+      description: TOC
+      bit_offset: 3
+      bit_size: 1
+    - name: ITTXFE
+      description: ITTXFE
+      bit_offset: 4
+      bit_size: 1
+    - name: INEPNE
+      description: INEPNE
+      bit_offset: 6
+      bit_size: 1
+    - name: TXFE
+      description: TXFE
+      bit_offset: 7
+      bit_size: 1
+fieldset/DIEPINT0:
+  description: Device endpoint 0 interrupt register
+  fields:
+    - name: XFRC
+      description: XFRC
+      bit_offset: 0
+      bit_size: 1
+    - name: EPDISD
+      description: EPDISD
+      bit_offset: 1
+      bit_size: 1
+    - name: TOC
+      description: TOC
+      bit_offset: 3
+      bit_size: 1
+    - name: ITTXFE
+      description: ITTXFE
+      bit_offset: 4
+      bit_size: 1
+    - name: INEPNE
+      description: INEPNE
+      bit_offset: 6
+      bit_size: 1
+    - name: TXFE
+      description: TXFE
+      bit_offset: 7
+      bit_size: 1
+fieldset/DIEPMSK:
+  description: Device IN endpoint common interrupt mask register
+  fields:
+    - name: XFRCM
+      description: Transfer completed interrupt mask
+      bit_offset: 0
+      bit_size: 1
+    - name: EPDM
+      description: Endpoint disabled interrupt mask
+      bit_offset: 1
+      bit_size: 1
+    - name: TOM
+      description: Timeout condition mask (Non-isochronous endpoints)
+      bit_offset: 3
+      bit_size: 1
+    - name: ITTXFEMSK
+      description: IN token received when TxFIFO empty mask
+      bit_offset: 4
+      bit_size: 1
+    - name: INEPNMM
+      description: IN token received with EP mismatch mask
+      bit_offset: 5
+      bit_size: 1
+    - name: INEPNEM
+      description: IN endpoint NAK effective mask
+      bit_offset: 6
+      bit_size: 1
+fieldset/DIEPTSIZ:
+  description: Device endpoint transfer size register
+  fields:
+    - name: XFRSIZ
+      description: Transfer size
+      bit_offset: 0
+      bit_size: 19
+    - name: PKTCNT
+      description: Packet count
+      bit_offset: 19
+      bit_size: 10
+    - name: MCNT
+      description: Multi count
+      bit_offset: 29
+      bit_size: 2
+fieldset/DIEPTSIZ0:
+  description: Device endpoint 0 transfer size register
+  fields:
+    - name: XFRSIZ
+      description: Transfer size
+      bit_offset: 0
+      bit_size: 7
+    - name: PKTCNT
+      description: Packet count
+      bit_offset: 19
+      bit_size: 2
 fieldset/DIEPTXF:
   description: Device IN endpoint transmit FIFO size register
   fields:
@@ -312,6 +601,253 @@ fieldset/DIEPTXF0:
       description: Endpoint 0 TxFIFO depth
       bit_offset: 16
       bit_size: 16
+fieldset/DOEPCTL:
+  description: Device endpoint control register
+  fields:
+    - name: MPSIZ
+      description: MPSIZ
+      bit_offset: 0
+      bit_size: 11
+    - name: USBAEP
+      description: USBAEP
+      bit_offset: 15
+      bit_size: 1
+    - name: EONUM_DPID
+      description: EONUM/DPID
+      bit_offset: 16
+      bit_size: 1
+    - name: NAKSTS
+      description: NAKSTS
+      bit_offset: 17
+      bit_size: 1
+    - name: EPTYP
+      description: EPTYP
+      bit_offset: 18
+      bit_size: 2
+    - name: SNPM
+      description: SNPM
+      bit_offset: 20
+      bit_size: 1
+    - name: STALL
+      description: STALL
+      bit_offset: 21
+      bit_size: 1
+    - name: CNAK
+      description: CNAK
+      bit_offset: 26
+      bit_size: 1
+    - name: SNAK
+      description: SNAK
+      bit_offset: 27
+      bit_size: 1
+    - name: SD0PID_SEVNFRM
+      description: SD0PID/SEVNFRM
+      bit_offset: 28
+      bit_size: 1
+    - name: SODDFRM
+      description: SODDFRM
+      bit_offset: 29
+      bit_size: 1
+    - name: EPDIS
+      description: EPDIS
+      bit_offset: 30
+      bit_size: 1
+    - name: EPENA
+      description: EPENA
+      bit_offset: 31
+      bit_size: 1
+fieldset/DOEPCTL0:
+  description: Device endpoint 0 control register
+  fields:
+    - name: MPSIZ
+      description: MPSIZ
+      bit_offset: 0
+      bit_size: 2
+    - name: USBAEP
+      description: USBAEP
+      bit_offset: 15
+      bit_size: 1
+    - name: NAKSTS
+      description: NAKSTS
+      bit_offset: 17
+      bit_size: 1
+    - name: EPTYP
+      description: EPTYP
+      bit_offset: 18
+      bit_size: 2
+    - name: SNPM
+      description: SNPM
+      bit_offset: 20
+      bit_size: 1
+    - name: STALL
+      description: STALL
+      bit_offset: 21
+      bit_size: 1
+    - name: CNAK
+      description: CNAK
+      bit_offset: 26
+      bit_size: 1
+    - name: SNAK
+      description: SNAK
+      bit_offset: 27
+      bit_size: 1
+    - name: EPDIS
+      description: EPDIS
+      bit_offset: 30
+      bit_size: 1
+    - name: EPENA
+      description: EPENA
+      bit_offset: 31
+      bit_size: 1
+fieldset/DOEPINT:
+  description: Device endpoint interrupt register
+  fields:
+    - name: XFRC
+      description: XFRC
+      bit_offset: 0
+      bit_size: 1
+    - name: EPDISD
+      description: EPDISD
+      bit_offset: 1
+      bit_size: 1
+    - name: STUP
+      description: STUP
+      bit_offset: 3
+      bit_size: 1
+    - name: OTEPDIS
+      description: OTEPDIS
+      bit_offset: 4
+      bit_size: 1
+    - name: B2BSTUP
+      description: B2BSTUP
+      bit_offset: 6
+      bit_size: 1
+fieldset/DOEPINT0:
+  description: Device endpoint 0 interrupt register
+  fields:
+    - name: XFRC
+      description: XFRC
+      bit_offset: 0
+      bit_size: 1
+    - name: EPDISD
+      description: EPDISD
+      bit_offset: 1
+      bit_size: 1
+    - name: STUP
+      description: STUP
+      bit_offset: 3
+      bit_size: 1
+    - name: OTEPDIS
+      description: OTEPDIS
+      bit_offset: 4
+      bit_size: 1
+    - name: B2BSTUP
+      description: B2BSTUP
+      bit_offset: 6
+      bit_size: 1
+fieldset/DOEPMSK:
+  description: Device OUT endpoint common interrupt mask register
+  fields:
+    - name: XFRCM
+      description: Transfer completed interrupt mask
+      bit_offset: 0
+      bit_size: 1
+    - name: EPDM
+      description: Endpoint disabled interrupt mask
+      bit_offset: 1
+      bit_size: 1
+    - name: STUPM
+      description: SETUP phase done mask
+      bit_offset: 3
+      bit_size: 1
+    - name: OTEPDM
+      description: OUT token received when endpoint disabled mask
+      bit_offset: 4
+      bit_size: 1
+fieldset/DOEPTSIZ:
+  description: Device OUT endpoint transfer size register
+  fields:
+    - name: XFRSIZ
+      description: Transfer size
+      bit_offset: 0
+      bit_size: 19
+    - name: PKTCNT
+      description: Packet count
+      bit_offset: 19
+      bit_size: 10
+    - name: RXDPID_STUPCNT
+      description: Received data PID/SETUP packet count
+      bit_offset: 29
+      bit_size: 2
+fieldset/DOEPTSIZ0:
+  description: Device OUT endpoint 0 transfer size register
+  fields:
+    - name: XFRSIZ
+      description: Transfer size
+      bit_offset: 0
+      bit_size: 7
+    - name: PKTCNT
+      description: Packet count
+      bit_offset: 19
+      bit_size: 1
+    - name: STUPCNT
+      description: SETUP packet count
+      bit_offset: 29
+      bit_size: 2
+fieldset/DSTS:
+  description: Device status register
+  fields:
+    - name: SUSPSTS
+      description: Suspend status
+      bit_offset: 0
+      bit_size: 1
+    - name: ENUMSPD
+      description: Enumerated speed
+      bit_offset: 1
+      bit_size: 2
+    - name: EERR
+      description: Erratic error
+      bit_offset: 3
+      bit_size: 1
+    - name: FNSOF
+      description: Frame number of the received SOF
+      bit_offset: 8
+      bit_size: 14
+fieldset/DTXFSTS:
+  description: Device IN endpoint transmit FIFO status register
+  fields:
+    - name: INEPTFSAV
+      description: IN endpoint TxFIFO space available
+      bit_offset: 0
+      bit_size: 16
+fieldset/DTXFSTS0:
+  description: Device IN endpoint transmit FIFO status register
+  fields:
+    - name: INEPTFSAV
+      description: IN endpoint TxFIFO space available
+      bit_offset: 0
+      bit_size: 16
+fieldset/DVBUSDIS:
+  description: Device VBUS discharge time register
+  fields:
+    - name: VBUSDT
+      description: Device VBUS discharge time
+      bit_offset: 0
+      bit_size: 16
+fieldset/DVBUSPULSE:
+  description: Device VBUS pulsing time register
+  fields:
+    - name: DVBUSP
+      description: Device VBUS pulsing time
+      bit_offset: 0
+      bit_size: 12
+fieldset/FIFO:
+  description: Fifo register
+  fields:
+    - name: DATA
+      description: Data
+      bit_offset: 0
+      bit_size: 32
 fieldset/GAHBCFG:
   description: AHB configuration register
   fields:
@@ -756,28 +1292,6 @@ fieldset/GUSBCFG:
       description: Corrupt Tx packet
       bit_offset: 31
       bit_size: 1
-fieldset/HNPTXFSIZ:
-  description: Non-periodic transmit FIFO size register (Host mode)
-  fields:
-    - name: NPTXFSA
-      description: Non-periodic transmit RAM start address
-      bit_offset: 0
-      bit_size: 16
-    - name: NPTXFD
-      description: Non-periodic TxFIFO depth
-      bit_offset: 16
-      bit_size: 16
-fieldset/HPTXFSIZ:
-  description: Host periodic transmit FIFO size register
-  fields:
-    - name: PTXSA
-      description: Host periodic TxFIFO start address
-      bit_offset: 0
-      bit_size: 16
-    - name: PTXFSIZ
-      description: Host periodic TxFIFO depth
-      bit_offset: 16
-      bit_size: 16
 fieldset/HAINT:
   description: Host all channels interrupt register
   fields:
@@ -962,6 +1476,17 @@ fieldset/HFNUM:
       description: Frame time remaining
       bit_offset: 16
       bit_size: 16
+fieldset/HNPTXFSIZ:
+  description: Non-periodic transmit FIFO size register (Host mode)
+  fields:
+    - name: NPTXFSA
+      description: Non-periodic transmit RAM start address
+      bit_offset: 0
+      bit_size: 16
+    - name: NPTXFD
+      description: Non-periodic TxFIFO depth
+      bit_offset: 16
+      bit_size: 16
 fieldset/HPRT:
   description: Host port control and status register
   fields:
@@ -1018,6 +1543,17 @@ fieldset/HPRT:
       bit_offset: 17
       bit_size: 2
       enum: SPEED
+fieldset/HPTXFSIZ:
+  description: Host periodic transmit FIFO size register
+  fields:
+    - name: PTXSA
+      description: Host periodic TxFIFO start address
+      bit_offset: 0
+      bit_size: 16
+    - name: PTXFSIZ
+      description: Host periodic TxFIFO depth
+      bit_offset: 16
+      bit_size: 16
 fieldset/HPTXSTS:
   description: Periodic transmit FIFO/queue status register
   fields:
@@ -1033,542 +1569,6 @@ fieldset/HPTXSTS:
       description: Top of the periodic transmit request queue
       bit_offset: 24
       bit_size: 8
-fieldset/DAINT:
-  description: Device all endpoints interrupt register
-  fields:
-    - name: IEPINT
-      description: IN endpoint interrupt bits
-      bit_offset: 0
-      bit_size: 16
-    - name: OEPINT
-      description: OUT endpoint interrupt bits
-      bit_offset: 16
-      bit_size: 16
-fieldset/DAINTMSK:
-  description: All endpoints interrupt mask register
-  fields:
-    - name: IEPM
-      description: IN EP interrupt mask bits
-      bit_offset: 0
-      bit_size: 16
-    - name: OEPM
-      description: OUT EP interrupt mask bits
-      bit_offset: 16
-      bit_size: 16
-fieldset/DCFG:
-  description: Device configuration register
-  fields:
-    - name: DSPD
-      description: Device speed
-      bit_offset: 0
-      bit_size: 2
-    - name: NZLSOHSK
-      description: Non-zero-length status OUT handshake
-      bit_offset: 2
-      bit_size: 1
-    - name: DAD
-      description: Device address
-      bit_offset: 4
-      bit_size: 7
-    - name: PFIVL
-      description: Periodic frame interval
-      bit_offset: 11
-      bit_size: 2
-fieldset/DCTL:
-  description: Device control register
-  fields:
-    - name: RWUSIG
-      description: Remote wakeup signaling
-      bit_offset: 0
-      bit_size: 1
-    - name: SDIS
-      description: Soft disconnect
-      bit_offset: 1
-      bit_size: 1
-    - name: GINSTS
-      description: Global IN NAK status
-      bit_offset: 2
-      bit_size: 1
-    - name: GONSTS
-      description: Global OUT NAK status
-      bit_offset: 3
-      bit_size: 1
-    - name: TCTL
-      description: Test control
-      bit_offset: 4
-      bit_size: 3
-    - name: SGINAK
-      description: Set global IN NAK
-      bit_offset: 7
-      bit_size: 1
-    - name: CGINAK
-      description: Clear global IN NAK
-      bit_offset: 8
-      bit_size: 1
-    - name: SGONAK
-      description: Set global OUT NAK
-      bit_offset: 9
-      bit_size: 1
-    - name: CGONAK
-      description: Clear global OUT NAK
-      bit_offset: 10
-      bit_size: 1
-    - name: POPRGDNE
-      description: Power-on programming done
-      bit_offset: 11
-      bit_size: 1
-fieldset/DIEPCTL:
-  description: Device endpoint control register
-  fields:
-    - name: MPSIZ
-      description: MPSIZ
-      bit_offset: 0
-      bit_size: 11
-    - name: USBAEP
-      description: USBAEP
-      bit_offset: 15
-      bit_size: 1
-    - name: EONUM_DPID
-      description: EONUM/DPID
-      bit_offset: 16
-      bit_size: 1
-    - name: NAKSTS
-      description: NAKSTS
-      bit_offset: 17
-      bit_size: 1
-    - name: EPTYP
-      description: EPTYP
-      bit_offset: 18
-      bit_size: 2
-    - name: STALL
-      description: STALL
-      bit_offset: 21
-      bit_size: 1
-    - name: TXFNUM
-      description: TXFNUM
-      bit_offset: 22
-      bit_size: 4
-    - name: CNAK
-      description: CNAK
-      bit_offset: 26
-      bit_size: 1
-    - name: SNAK
-      description: SNAK
-      bit_offset: 27
-      bit_size: 1
-    - name: SD0PID_SEVNFRM
-      description: SD0PID/SEVNFRM
-      bit_offset: 28
-      bit_size: 1
-    - name: SODDFRM_SD1PID
-      description: SODDFRM/SD1PID
-      bit_offset: 29
-      bit_size: 1
-    - name: EPDIS
-      description: EPDIS
-      bit_offset: 30
-      bit_size: 1
-    - name: EPENA
-      description: EPENA
-      bit_offset: 31
-      bit_size: 1
-fieldset/DIEPCTL0:
-  description: Device control IN endpoint 0 control register
-  fields:
-    - name: MPSIZ
-      description: Maximum packet size
-      bit_offset: 0
-      bit_size: 2
-    - name: USBAEP
-      description: USB active endpoint
-      bit_offset: 15
-      bit_size: 1
-    - name: NAKSTS
-      description: NAK status
-      bit_offset: 17
-      bit_size: 1
-    - name: EPTYP
-      description: Endpoint type
-      bit_offset: 18
-      bit_size: 2
-    - name: STALL
-      description: STALL handshake
-      bit_offset: 21
-      bit_size: 1
-    - name: TXFNUM
-      description: TxFIFO number
-      bit_offset: 22
-      bit_size: 4
-    - name: CNAK
-      description: Clear NAK
-      bit_offset: 26
-      bit_size: 1
-    - name: SNAK
-      description: Set NAK
-      bit_offset: 27
-      bit_size: 1
-    - name: EPDIS
-      description: Endpoint disable
-      bit_offset: 30
-      bit_size: 1
-    - name: EPENA
-      description: Endpoint enable
-      bit_offset: 31
-      bit_size: 1
-fieldset/DIEPEMPMSK:
-  description: Device IN endpoint FIFO empty interrupt mask register
-  fields:
-    - name: INEPTXFEM
-      description: IN EP Tx FIFO empty interrupt mask bits
-      bit_offset: 0
-      bit_size: 16
-fieldset/DIEPINT:
-  description: Device endpoint interrupt register
-  fields:
-    - name: XFRC
-      description: XFRC
-      bit_offset: 0
-      bit_size: 1
-    - name: EPDISD
-      description: EPDISD
-      bit_offset: 1
-      bit_size: 1
-    - name: TOC
-      description: TOC
-      bit_offset: 3
-      bit_size: 1
-    - name: ITTXFE
-      description: ITTXFE
-      bit_offset: 4
-      bit_size: 1
-    - name: INEPNE
-      description: INEPNE
-      bit_offset: 6
-      bit_size: 1
-    - name: TXFE
-      description: TXFE
-      bit_offset: 7
-      bit_size: 1
-fieldset/DIEPINT0:
-  description: Device endpoint 0 interrupt register
-  fields:
-    - name: XFRC
-      description: XFRC
-      bit_offset: 0
-      bit_size: 1
-    - name: EPDISD
-      description: EPDISD
-      bit_offset: 1
-      bit_size: 1
-    - name: TOC
-      description: TOC
-      bit_offset: 3
-      bit_size: 1
-    - name: ITTXFE
-      description: ITTXFE
-      bit_offset: 4
-      bit_size: 1
-    - name: INEPNE
-      description: INEPNE
-      bit_offset: 6
-      bit_size: 1
-    - name: TXFE
-      description: TXFE
-      bit_offset: 7
-      bit_size: 1
-fieldset/DIEPMSK:
-  description: Device IN endpoint common interrupt mask register
-  fields:
-    - name: XFRCM
-      description: Transfer completed interrupt mask
-      bit_offset: 0
-      bit_size: 1
-    - name: EPDM
-      description: Endpoint disabled interrupt mask
-      bit_offset: 1
-      bit_size: 1
-    - name: TOM
-      description: Timeout condition mask (Non-isochronous endpoints)
-      bit_offset: 3
-      bit_size: 1
-    - name: ITTXFEMSK
-      description: IN token received when TxFIFO empty mask
-      bit_offset: 4
-      bit_size: 1
-    - name: INEPNMM
-      description: IN token received with EP mismatch mask
-      bit_offset: 5
-      bit_size: 1
-    - name: INEPNEM
-      description: IN endpoint NAK effective mask
-      bit_offset: 6
-      bit_size: 1
-fieldset/DIEPTSIZ:
-  description: Device endpoint transfer size register
-  fields:
-    - name: XFRSIZ
-      description: Transfer size
-      bit_offset: 0
-      bit_size: 19
-    - name: PKTCNT
-      description: Packet count
-      bit_offset: 19
-      bit_size: 10
-    - name: MCNT
-      description: Multi count
-      bit_offset: 29
-      bit_size: 2
-fieldset/DIEPTSIZ0:
-  description: Device endpoint 0 transfer size register
-  fields:
-    - name: XFRSIZ
-      description: Transfer size
-      bit_offset: 0
-      bit_size: 7
-    - name: PKTCNT
-      description: Packet count
-      bit_offset: 19
-      bit_size: 2
-fieldset/DOEPCTL:
-  description: Device endpoint control register
-  fields:
-    - name: MPSIZ
-      description: MPSIZ
-      bit_offset: 0
-      bit_size: 11
-    - name: USBAEP
-      description: USBAEP
-      bit_offset: 15
-      bit_size: 1
-    - name: EONUM_DPID
-      description: EONUM/DPID
-      bit_offset: 16
-      bit_size: 1
-    - name: NAKSTS
-      description: NAKSTS
-      bit_offset: 17
-      bit_size: 1
-    - name: EPTYP
-      description: EPTYP
-      bit_offset: 18
-      bit_size: 2
-    - name: SNPM
-      description: SNPM
-      bit_offset: 20
-      bit_size: 1
-    - name: STALL
-      description: STALL
-      bit_offset: 21
-      bit_size: 1
-    - name: CNAK
-      description: CNAK
-      bit_offset: 26
-      bit_size: 1
-    - name: SNAK
-      description: SNAK
-      bit_offset: 27
-      bit_size: 1
-    - name: SD0PID_SEVNFRM
-      description: SD0PID/SEVNFRM
-      bit_offset: 28
-      bit_size: 1
-    - name: SODDFRM
-      description: SODDFRM
-      bit_offset: 29
-      bit_size: 1
-    - name: EPDIS
-      description: EPDIS
-      bit_offset: 30
-      bit_size: 1
-    - name: EPENA
-      description: EPENA
-      bit_offset: 31
-      bit_size: 1
-fieldset/DOEPCTL0:
-  description: Device endpoint 0 control register
-  fields:
-    - name: MPSIZ
-      description: MPSIZ
-      bit_offset: 0
-      bit_size: 2
-    - name: USBAEP
-      description: USBAEP
-      bit_offset: 15
-      bit_size: 1
-    - name: NAKSTS
-      description: NAKSTS
-      bit_offset: 17
-      bit_size: 1
-    - name: EPTYP
-      description: EPTYP
-      bit_offset: 18
-      bit_size: 2
-    - name: SNPM
-      description: SNPM
-      bit_offset: 20
-      bit_size: 1
-    - name: STALL
-      description: STALL
-      bit_offset: 21
-      bit_size: 1
-    - name: CNAK
-      description: CNAK
-      bit_offset: 26
-      bit_size: 1
-    - name: SNAK
-      description: SNAK
-      bit_offset: 27
-      bit_size: 1
-    - name: EPDIS
-      description: EPDIS
-      bit_offset: 30
-      bit_size: 1
-    - name: EPENA
-      description: EPENA
-      bit_offset: 31
-      bit_size: 1
-fieldset/DOEPINT:
-  description: Device endpoint interrupt register
-  fields:
-    - name: XFRC
-      description: XFRC
-      bit_offset: 0
-      bit_size: 1
-    - name: EPDISD
-      description: EPDISD
-      bit_offset: 1
-      bit_size: 1
-    - name: STUP
-      description: STUP
-      bit_offset: 3
-      bit_size: 1
-    - name: OTEPDIS
-      description: OTEPDIS
-      bit_offset: 4
-      bit_size: 1
-    - name: B2BSTUP
-      description: B2BSTUP
-      bit_offset: 6
-      bit_size: 1
-fieldset/DOEPINT0:
-  description: Device endpoint 0 interrupt register
-  fields:
-    - name: XFRC
-      description: XFRC
-      bit_offset: 0
-      bit_size: 1
-    - name: EPDISD
-      description: EPDISD
-      bit_offset: 1
-      bit_size: 1
-    - name: STUP
-      description: STUP
-      bit_offset: 3
-      bit_size: 1
-    - name: OTEPDIS
-      description: OTEPDIS
-      bit_offset: 4
-      bit_size: 1
-    - name: B2BSTUP
-      description: B2BSTUP
-      bit_offset: 6
-      bit_size: 1
-fieldset/DOEPMSK:
-  description: Device OUT endpoint common interrupt mask register
-  fields:
-    - name: XFRCM
-      description: Transfer completed interrupt mask
-      bit_offset: 0
-      bit_size: 1
-    - name: EPDM
-      description: Endpoint disabled interrupt mask
-      bit_offset: 1
-      bit_size: 1
-    - name: STUPM
-      description: SETUP phase done mask
-      bit_offset: 3
-      bit_size: 1
-    - name: OTEPDM
-      description: OUT token received when endpoint disabled mask
-      bit_offset: 4
-      bit_size: 1
-fieldset/DOEPTSIZ:
-  description: Device OUT endpoint transfer size register
-  fields:
-    - name: XFRSIZ
-      description: Transfer size
-      bit_offset: 0
-      bit_size: 19
-    - name: PKTCNT
-      description: Packet count
-      bit_offset: 19
-      bit_size: 10
-    - name: RXDPID_STUPCNT
-      description: Received data PID/SETUP packet count
-      bit_offset: 29
-      bit_size: 2
-fieldset/DOEPTSIZ0:
-  description: Device OUT endpoint 0 transfer size register
-  fields:
-    - name: XFRSIZ
-      description: Transfer size
-      bit_offset: 0
-      bit_size: 7
-    - name: PKTCNT
-      description: Packet count
-      bit_offset: 19
-      bit_size: 1
-    - name: STUPCNT
-      description: SETUP packet count
-      bit_offset: 29
-      bit_size: 2
-fieldset/DSTS:
-  description: Device status register
-  fields:
-    - name: SUSPSTS
-      description: Suspend status
-      bit_offset: 0
-      bit_size: 1
-    - name: ENUMSPD
-      description: Enumerated speed
-      bit_offset: 1
-      bit_size: 2
-    - name: EERR
-      description: Erratic error
-      bit_offset: 3
-      bit_size: 1
-    - name: FNSOF
-      description: Frame number of the received SOF
-      bit_offset: 8
-      bit_size: 14
-fieldset/DTXFSTS:
-  description: Device IN endpoint transmit FIFO status register
-  fields:
-    - name: INEPTFSAV
-      description: IN endpoint TxFIFO space available
-      bit_offset: 0
-      bit_size: 16
-fieldset/DTXFSTS0:
-  description: Device IN endpoint transmit FIFO status register
-  fields:
-    - name: INEPTFSAV
-      description: IN endpoint TxFIFO space available
-      bit_offset: 0
-      bit_size: 16
-fieldset/DVBUSDIS:
-  description: Device VBUS discharge time register
-  fields:
-    - name: VBUSDT
-      description: Device VBUS discharge time
-      bit_offset: 0
-      bit_size: 16
-fieldset/DVBUSPULSE:
-  description: Device VBUS pulsing time register
-  fields:
-    - name: DVBUSP
-      description: Device VBUS pulsing time
-      bit_offset: 0
-      bit_size: 12
 fieldset/PCGCCTL:
   description: Power and clock gating control register
   fields:
@@ -1584,67 +1584,59 @@ fieldset/PCGCCTL:
       description: PHY Suspended
       bit_offset: 4
       bit_size: 1
-fieldset/FIFO:
-  description: Fifo register
-  fields:
-    - name: DATA
-      description: Data
-      bit_offset: 0
-      bit_size: 32
-
-enum/SPEED:
-  bit_size: 2
-  variants:
-    - name: FULL_SPEED
-      value: 0b01
-    - name: LOW_SPEED
-      value: 0b10
-enum/TXFNUM:
-  bit_size: 5
-  variants:
-    - name: ALL
-      value: 0b10000
 enum/DPID:
   bit_size: 2
   variants:
     - name: DATA0
-      value: 0b00
-    - name: DATA1
-      value: 0b10
+      value: 0
     - name: DATA2
-      value: 0b01
+      value: 1
+    - name: DATA1
+      value: 2
     - name: MDATA
-      value: 0b11
+      value: 3
 enum/PKTSTSD:
   bit_size: 4
   variants:
     - name: OUT_NAK
       description: Global OUT NAK (triggers an interrupt)
-      value: 0b0001
+      value: 1
     - name: OUT_DATA_RX
       description: OUT data packet received
-      value: 0b0010
+      value: 2
     - name: OUT_DATA_DONE
       description: OUT transfer completed (triggers an interrupt)
-      value: 0b0011
-    - name: SETUP_DATA_RX
-      description: SETUP data packet received
-      value: 0b0110
+      value: 3
     - name: SETUP_DATA_DONE
       description: SETUP transaction completed (triggers an interrupt)
-      value: 0b0100
+      value: 4
+    - name: SETUP_DATA_RX
+      description: SETUP data packet received
+      value: 6
 enum/PKTSTSH:
   bit_size: 4
   variants:
     - name: IN_DATA_RX
       description: IN data packet received
-      value: 0b0010
+      value: 2
     - name: IN_DATA_DONE
       description: IN transfer completed (triggers an interrupt)
-      value: 0b0011
+      value: 3
     - name: DATA_TOGGLE_ERR
       description: Data toggle error (triggers an interrupt)
-      value: 0b0101
+      value: 5
     - name: CHANNEL_HALTED
       description: Channel halted (triggers an interrupt)
-      value: 0b0111
+      value: 7
+enum/SPEED:
+  bit_size: 2
+  variants:
+    - name: FULL_SPEED
+      value: 1
+    - name: LOW_SPEED
+      value: 2
+enum/TXFNUM:
+  bit_size: 5
+  variants:
+    - name: ALL
+      value: 16
