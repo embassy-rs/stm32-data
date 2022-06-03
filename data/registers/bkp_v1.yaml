@@ -1,0 +1,144 @@
+---
+block/BKP:
+  description: Backup registers
+  items:
+    - name: DR1
+      description: Data register bank 1
+      array:
+        len: 10
+        stride: 4
+      byte_offset: 0
+      fieldset: DR
+    - name: RTCCR
+      description: RTC clock calibration register
+      byte_offset: 40
+      fieldset: RTCCR
+    - name: CR
+      description: Control register
+      byte_offset: 44
+      fieldset: CR
+    - name: CSR
+      description: Control/status register
+      byte_offset: 48
+      fieldset: CSR
+    - name: DR2
+      description: Data register bank 2
+      array:
+        len: 32
+        stride: 4
+      byte_offset: 60
+      fieldset: DR
+fieldset/DR:
+  description: Data register
+  fields:
+    - name: D
+      description: Backup data
+      bit_offset: 0
+      bit_size: 16
+fieldset/CR:
+  description: Control register
+  fields:
+    - name: TPE
+      description: Tamper pin enable
+      bit_offset: 0
+      bit_size: 1
+      enum: TPE
+    - name: TPAL
+      description: Tamper pin active level
+      bit_offset: 1
+      bit_size: 1
+      enum: TPAL
+fieldset/CSR:
+  description: Control/status register
+  fields:
+    - name: CTE
+      description: Clear Tamper event
+      bit_offset: 0
+      bit_size: 1
+      enum_write: CTEW
+    - name: CTI
+      description: Clear Tamper Interrupt
+      bit_offset: 1
+      bit_size: 1
+      enum_write: CTIW
+    - name: TPIE
+      description: "Tamper Pin interrupt\r enable"
+      bit_offset: 2
+      bit_size: 1
+      enum: TPIE
+    - name: TEF
+      description: Tamper Event Flag
+      bit_offset: 8
+      bit_size: 1
+    - name: TIF
+      description: Tamper Interrupt Flag
+      bit_offset: 9
+      bit_size: 1
+fieldset/RTCCR:
+  description: RTC clock calibration register
+  fields:
+    - name: CAL
+      description: Calibration value
+      bit_offset: 0
+      bit_size: 7
+    - name: CCO
+      description: Calibration Clock Output
+      bit_offset: 7
+      bit_size: 1
+    - name: ASOE
+      description: Alarm or second output enable
+      bit_offset: 8
+      bit_size: 1
+    - name: ASOS
+      description: Alarm or second output selection
+      bit_offset: 9
+      bit_size: 1
+      enum: ASOS
+enum/ASOS:
+  bit_size: 1
+  variants:
+    - name: Alarm
+      description: RTC Alarm pulse output selected
+      value: 0
+    - name: Second
+      description: RTC Second pulse output selected
+      value: 1
+enum/CTEW:
+  bit_size: 1
+  variants:
+    - name: Reset
+      description: Reset the TEF Tamper event flag (and the Tamper detector)
+      value: 1
+enum/CTIW:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear the Tamper interrupt and the TIF Tamper interrupt flag
+      value: 1
+enum/TPAL:
+  bit_size: 1
+  variants:
+    - name: High
+      description: A high level on the TAMPER pin resets all data backup registers (if TPE bit is set)
+      value: 0
+    - name: Low
+      description: A low level on the TAMPER pin resets all data backup registers (if TPE bit is set)
+      value: 1
+enum/TPE:
+  bit_size: 1
+  variants:
+    - name: General
+      description: The TAMPER pin is free for general purpose I/O
+      value: 0
+    - name: Alternate
+      description: Tamper alternate I/O function is activated
+      value: 1
+enum/TPIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Tamper interrupt disabled
+      value: 0
+    - name: Enabled
+      description: Tamper interrupt enabled (the TPE bit must also be set in the BKP_CR register)
+      value: 1
