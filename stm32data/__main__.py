@@ -313,6 +313,10 @@ perimap = [
     ('STM32L[04].*:CRC:integtest1_v2_0', ('crc', 'v3', 'CRC')),
     ('.*:CRC:integtest1_v2_0', ('crc', 'v2', 'CRC')),
     ('.*:CRC:integtest1_v2_2', ('crc', 'v3', 'CRC')),
+
+    ('.*:LCD:lcdc1_v1.0.*', ('lcd', 'v1', 'LCD')),
+    ('.*:LCD:lcdc1_v1.2.*', ('lcd', 'v2', 'LCD')),
+    ('.*:LCD:lcdc1_v1.3.*', ('lcd', 'v2', 'LCD')),
 ]
 
 peri_rename = {
