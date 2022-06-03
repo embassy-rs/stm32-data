@@ -1,0 +1,240 @@
+---
+block/FLASH:
+  description: Flash
+  items:
+    - name: ACR
+      description: Access control register
+      byte_offset: 0
+      fieldset: ACR
+    - name: PECR
+      description: Program/erase control register
+      byte_offset: 4
+      fieldset: PECR
+    - name: PDKEYR
+      description: Power down key register
+      byte_offset: 8
+      access: Write
+      fieldset: PDKEYR
+    - name: PEKEYR
+      description: Program/erase key register
+      byte_offset: 12
+      access: Write
+      fieldset: PEKEYR
+    - name: PRGKEYR
+      description: Program memory key register
+      byte_offset: 16
+      access: Write
+      fieldset: PRGKEYR
+    - name: OPTKEYR
+      description: Option byte key register
+      byte_offset: 20
+      access: Write
+      fieldset: OPTKEYR
+    - name: SR
+      description: Status register
+      byte_offset: 24
+      fieldset: SR
+    - name: OPTR
+      description: Option byte register
+      byte_offset: 28
+      access: Read
+      fieldset: OPTR
+    - name: WRPROT1
+      description: Write Protection Register 1
+      byte_offset: 32
+      access: Read
+      fieldset: WRPROT1
+    - name: WRPROT2
+      description: Write Protection Register 2
+      byte_offset: 128
+      access: Read
+      fieldset: WRPROT2
+fieldset/ACR:
+  description: Access control register
+  fields:
+    - name: LATENCY
+      description: Latency
+      bit_offset: 0
+      bit_size: 1
+    - name: PRFTEN
+      description: Prefetch enable
+      bit_offset: 1
+      bit_size: 1
+    - name: SLEEP_PD
+      description: Flash mode during Sleep
+      bit_offset: 3
+      bit_size: 1
+    - name: RUN_PD
+      description: Flash mode during Run
+      bit_offset: 4
+      bit_size: 1
+    - name: DISAB_BUF
+      description: Disable Buffer
+      bit_offset: 5
+      bit_size: 1
+    - name: PRE_READ
+      description: Pre-read data address
+      bit_offset: 6
+      bit_size: 1
+fieldset/OPTKEYR:
+  description: Option byte key register
+  fields:
+    - name: OPTKEYR
+      description: Option byte key
+      bit_offset: 0
+      bit_size: 32
+fieldset/OPTR:
+  description: Option byte register
+  fields:
+    - name: RDPROT
+      description: Read protection
+      bit_offset: 0
+      bit_size: 8
+    - name: WPRMOD
+      description: Selection of protection mode of WPR bits
+      bit_offset: 8
+      bit_size: 1
+    - name: BOR_LEV
+      description: BOR_LEV
+      bit_offset: 16
+      bit_size: 4
+fieldset/PDKEYR:
+  description: Power down key register
+  fields:
+    - name: PDKEYR
+      description: RUN_PD in FLASH_ACR key
+      bit_offset: 0
+      bit_size: 32
+fieldset/PECR:
+  description: Program/erase control register
+  fields:
+    - name: PELOCK
+      description: FLASH_PECR and data EEPROM lock
+      bit_offset: 0
+      bit_size: 1
+    - name: PRGLOCK
+      description: Program memory lock
+      bit_offset: 1
+      bit_size: 1
+    - name: OPTLOCK
+      description: Option bytes block lock
+      bit_offset: 2
+      bit_size: 1
+    - name: PROG
+      description: Program memory selection
+      bit_offset: 3
+      bit_size: 1
+    - name: DATA
+      description: Data EEPROM selection
+      bit_offset: 4
+      bit_size: 1
+    - name: FIX
+      description: "Fixed time data write for Byte, Half Word and Word programming"
+      bit_offset: 8
+      bit_size: 1
+    - name: ERASE
+      description: Page or Double Word erase mode
+      bit_offset: 9
+      bit_size: 1
+    - name: FPRG
+      description: Half Page/Double Word programming mode
+      bit_offset: 10
+      bit_size: 1
+    - name: PARALLELBANK
+      description: Parallel bank mode
+      bit_offset: 15
+      bit_size: 1
+    - name: EOPIE
+      description: End of programming interrupt enable
+      bit_offset: 16
+      bit_size: 1
+    - name: ERRIE
+      description: Error interrupt enable
+      bit_offset: 17
+      bit_size: 1
+    - name: OBL_LAUNCH
+      description: Launch the option byte loading
+      bit_offset: 18
+      bit_size: 1
+      enum_write: OBL_LAUNCHW
+fieldset/PEKEYR:
+  description: Program/erase key register
+  fields:
+    - name: PEKEYR
+      description: FLASH_PEC and data EEPROM key
+      bit_offset: 0
+      bit_size: 32
+fieldset/PRGKEYR:
+  description: Program memory key register
+  fields:
+    - name: PRGKEYR
+      description: Program memory key
+      bit_offset: 0
+      bit_size: 32
+fieldset/SR:
+  description: Status register
+  fields:
+    - name: BSY
+      description: Write/erase operations in progress
+      bit_offset: 0
+      bit_size: 1
+    - name: EOP
+      description: End of operation
+      bit_offset: 1
+      bit_size: 1
+    - name: ENDHV
+      description: End of high voltage
+      bit_offset: 2
+      bit_size: 1
+    - name: READY
+      description: Flash memory module ready after low power mode
+      bit_offset: 3
+      bit_size: 1
+    - name: WRPERR
+      description: Write protected error
+      bit_offset: 8
+      bit_size: 1
+    - name: PGAERR
+      description: Programming alignment error
+      bit_offset: 9
+      bit_size: 1
+    - name: SIZERR
+      description: Size error
+      bit_offset: 10
+      bit_size: 1
+    - name: OPTVERR
+      description: Option validity error
+      bit_offset: 11
+      bit_size: 1
+    - name: RDERR
+      description: RDERR
+      bit_offset: 14
+      bit_size: 1
+    - name: NOTZEROERR
+      description: NOTZEROERR
+      bit_offset: 16
+      bit_size: 1
+    - name: FWWERR
+      description: FWWERR
+      bit_offset: 17
+      bit_size: 1
+fieldset/WRPROT1:
+  description: Write Protection Register 1
+  fields:
+    - name: WRPROT
+      description: Write Protection
+      bit_offset: 0
+      bit_size: 32
+      array:
+        len: 1
+        stride: 0
+fieldset/WRPROT2:
+  description: Write Protection Register 2
+  fields:
+    - name: WRPROT
+      description: Write Protection
+      bit_offset: 0
+      bit_size: 16
+      array:
+        len: 1
+        stride: 0

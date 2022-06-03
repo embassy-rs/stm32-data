@@ -42,6 +42,10 @@ block/RCC:
       description: Control/status register (RCC_CSR)
       byte_offset: 36
       fieldset: CSR
+    - name: CFGR2
+      description: Clock configuration register 2
+      byte_offset: 44
+      fieldset: CFGR2
 fieldset/AHBENR:
   description: AHB Peripheral Clock enable register (RCC_AHBENR)
   fields:
@@ -68,10 +72,6 @@ fieldset/AHBENR:
     - name: FSMCEN
       description: FSMC clock enable
       bit_offset: 8
-      bit_size: 1
-    - name: SDIOEN
-      description: SDIO clock enable
-      bit_offset: 10
       bit_size: 1
 fieldset/APB1ENR:
   description: APB1 peripheral clock enable register (RCC_APB1ENR)
@@ -148,14 +148,6 @@ fieldset/APB1ENR:
       description: I2C 2 clock enable
       bit_offset: 22
       bit_size: 1
-    - name: USBEN
-      description: USB clock enable
-      bit_offset: 23
-      bit_size: 1
-    - name: CANEN
-      description: CAN clock enable
-      bit_offset: 25
-      bit_size: 1
     - name: BKPEN
       description: Backup interface clock enable
       bit_offset: 27
@@ -167,6 +159,10 @@ fieldset/APB1ENR:
     - name: DACEN
       description: DAC interface clock enable
       bit_offset: 29
+      bit_size: 1
+    - name: CECEN
+      description: CEC clock enable
+      bit_offset: 30
       bit_size: 1
 fieldset/APB1RSTR:
   description: APB1 peripheral reset register (RCC_APB1RSTR)
@@ -243,14 +239,6 @@ fieldset/APB1RSTR:
       description: I2C2 reset
       bit_offset: 22
       bit_size: 1
-    - name: USBRST
-      description: USB reset
-      bit_offset: 23
-      bit_size: 1
-    - name: CANRST
-      description: CAN reset
-      bit_offset: 25
-      bit_size: 1
     - name: BKPRST
       description: Backup interface reset
       bit_offset: 27
@@ -262,6 +250,10 @@ fieldset/APB1RSTR:
     - name: DACRST
       description: DAC interface reset
       bit_offset: 29
+      bit_size: 1
+    - name: CECRST
+      description: CEC reset
+      bit_offset: 30
       bit_size: 1
 fieldset/APB2ENR:
   description: APB2 peripheral clock enable register (RCC_APB2ENR)
@@ -302,10 +294,6 @@ fieldset/APB2ENR:
       description: ADC 1 interface clock enable
       bit_offset: 9
       bit_size: 1
-    - name: ADC2EN
-      description: ADC 2 interface clock enable
-      bit_offset: 10
-      bit_size: 1
     - name: TIM1EN
       description: TIM1 Timer clock enable
       bit_offset: 11
@@ -314,29 +302,21 @@ fieldset/APB2ENR:
       description: SPI 1 clock enable
       bit_offset: 12
       bit_size: 1
-    - name: TIM8EN
-      description: TIM8 Timer clock enable
-      bit_offset: 13
-      bit_size: 1
     - name: USART1EN
       description: USART1 clock enable
       bit_offset: 14
       bit_size: 1
-    - name: ADC3EN
-      description: ADC3 interface clock enable
-      bit_offset: 15
+    - name: TIM15EN
+      description: TIM15 Timer clock enable
+      bit_offset: 16
       bit_size: 1
-    - name: TIM9EN
-      description: TIM9 Timer clock enable
-      bit_offset: 19
+    - name: TIM16EN
+      description: TIM16 Timer clock enable
+      bit_offset: 17
       bit_size: 1
-    - name: TIM10EN
-      description: TIM10 Timer clock enable
-      bit_offset: 20
-      bit_size: 1
-    - name: TIM11EN
-      description: TIM11 Timer clock enable
-      bit_offset: 21
+    - name: TIM17EN
+      description: TIM17 Timer clock enable
+      bit_offset: 18
       bit_size: 1
 fieldset/APB2RSTR:
   description: APB2 peripheral reset register (RCC_APB2RSTR)
@@ -377,10 +357,6 @@ fieldset/APB2RSTR:
       description: ADC 1 interface reset
       bit_offset: 9
       bit_size: 1
-    - name: ADC2RST
-      description: ADC 2 interface reset
-      bit_offset: 10
-      bit_size: 1
     - name: TIM1RST
       description: TIM1 timer reset
       bit_offset: 11
@@ -389,29 +365,21 @@ fieldset/APB2RSTR:
       description: SPI 1 reset
       bit_offset: 12
       bit_size: 1
-    - name: TIM8RST
-      description: TIM8 timer reset
-      bit_offset: 13
-      bit_size: 1
     - name: USART1RST
       description: USART1 reset
       bit_offset: 14
       bit_size: 1
-    - name: ADC3RST
-      description: ADC 3 interface reset
-      bit_offset: 15
+    - name: TIM15RST
+      description: TIM15 timer reset
+      bit_offset: 16
       bit_size: 1
-    - name: TIM9RST
-      description: TIM9 timer reset
-      bit_offset: 19
+    - name: TIM16RST
+      description: TIM16 timer reset
+      bit_offset: 17
       bit_size: 1
-    - name: TIM10RST
-      description: TIM10 timer reset
-      bit_offset: 20
-      bit_size: 1
-    - name: TIM11RST
-      description: TIM11 timer reset
-      bit_offset: 21
+    - name: TIM17RST
+      description: TIM17 timer reset
+      bit_offset: 18
       bit_size: 1
 fieldset/BDCR:
   description: Backup domain control register (RCC_BDCR)
@@ -489,16 +457,19 @@ fieldset/CFGR:
       bit_offset: 18
       bit_size: 4
       enum: PLLMUL
-    - name: USBPRE
-      description: USB prescaler
-      bit_offset: 22
-      bit_size: 1
-      enum: USBPRE
     - name: MCO
       description: Microcontroller clock output
       bit_offset: 24
       bit_size: 3
       enum: MCO
+fieldset/CFGR2:
+  description: Clock configuration register 2
+  fields:
+    - name: PREDIV1
+      description: PREDIV1 division factor
+      bit_offset: 0
+      bit_size: 4
+      enum: PREDIV1
 fieldset/CIR:
   description: Clock interrupt register (RCC_CIR)
   fields:
@@ -802,6 +773,57 @@ enum/PPRE1:
     - name: Div16
       description: HCLK divided by 16
       value: 7
+enum/PREDIV1:
+  bit_size: 4
+  variants:
+    - name: Div1
+      description: PREDIV input clock not divided
+      value: 0
+    - name: Div2
+      description: PREDIV input clock divided by 2
+      value: 1
+    - name: Div3
+      description: PREDIV input clock divided by 3
+      value: 2
+    - name: Div4
+      description: PREDIV input clock divided by 4
+      value: 3
+    - name: Div5
+      description: PREDIV input clock divided by 5
+      value: 4
+    - name: Div6
+      description: PREDIV input clock divided by 6
+      value: 5
+    - name: Div7
+      description: PREDIV input clock divided by 7
+      value: 6
+    - name: Div8
+      description: PREDIV input clock divided by 8
+      value: 7
+    - name: Div9
+      description: PREDIV input clock divided by 9
+      value: 8
+    - name: Div10
+      description: PREDIV input clock divided by 10
+      value: 9
+    - name: Div11
+      description: PREDIV input clock divided by 11
+      value: 10
+    - name: Div12
+      description: PREDIV input clock divided by 12
+      value: 11
+    - name: Div13
+      description: PREDIV input clock divided by 13
+      value: 12
+    - name: Div14
+      description: PREDIV input clock divided by 14
+      value: 13
+    - name: Div15
+      description: PREDIV input clock divided by 15
+      value: 14
+    - name: Div16
+      description: PREDIV input clock divided by 16
+      value: 15
 enum/RTCSEL:
   bit_size: 2
   variants:
@@ -841,12 +863,3 @@ enum/SWSR:
     - name: PLL
       description: PLL used as system clock
       value: 2
-enum/USBPRE:
-  bit_size: 1
-  variants:
-    - name: DIV1_5
-      description: PLL clock is divided by 1.5
-      value: 0
-    - name: DIV1
-      description: PLL clock is not divided
-      value: 1
