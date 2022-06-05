@@ -162,6 +162,7 @@ perimap = [
     ('.*:LTDC:lcdtft1_v1_1', ('ltdc', 'v1', 'LTDC')),
     ('.*:MDIOS:mdios1_v1_0', ('mdios', 'v1', 'MDIOS')),
     ('.*:QUADSPI:quadspi1_v1_0', ('quadspi', 'v1', 'QUADSPI')),
+    ('STM32F1.*:BKP.*', ('bkp', 'v1', 'BKP')),
     ('.*:RTC:rtc2_v2_6', ('rtc', 'v2', 'RTC')),
     ('.*:RTC:rtc2_v2_WB', ('rtc', 'wb', 'RTC')),
     ('.*:SAI:sai1_v1_1', ('sai', 'v1', 'SAI')),
@@ -327,7 +328,7 @@ peri_rename = {
 ghost_peris = [
     'GPIOA', 'GPIOB', 'GPIOC', 'GPIOD', 'GPIOE', 'GPIOF', 'GPIOG', 'GPIOH', 'GPIOI', 'GPIOJ', 'GPIOK', 'GPIOL', 'GPIOM', 'GPION', 'GPIOO', 'GPIOP', 'GPIOQ', 'GPIOR', 'GPIOS', 'GPIOT',
     'DMA1', 'DMA2', 'BDMA', 'DMAMUX', 'DMAMUX1', 'DMAMUX2',
-    'SYSCFG', 'EXTI', 'FLASH', 'DBGMCU', 'CRS', 'PWR', 'AFIO',
+    'SYSCFG', 'EXTI', 'FLASH', 'DBGMCU', 'CRS', 'PWR', 'AFIO', 'BKP',
 ]
 
 alt_peri_defines = {
