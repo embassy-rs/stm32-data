@@ -1,0 +1,168 @@
+---
+block/RTC:
+  description: Real-time clock
+  items:
+    - name: CRH
+      description: Control Register High
+      byte_offset: 0
+      fieldset: CRH
+    - name: CRL
+      description: Control Register Low
+      byte_offset: 4
+      fieldset: CRL
+    - name: PRLH
+      description: Prescaler Load Register High
+      byte_offset: 8
+      access: Write
+      fieldset: PRLH
+    - name: PRLL
+      description: Prescaler Load Register Low
+      byte_offset: 12
+      access: Write
+      fieldset: PRLL
+    - name: DIVH
+      description: Prescaler Divider Register High
+      byte_offset: 16
+      access: Read
+      fieldset: DIVH
+    - name: DIVL
+      description: Prescaler Divider Register Low
+      byte_offset: 20
+      access: Read
+      fieldset: DIVL
+    - name: CNTH
+      description: Counter Register High
+      byte_offset: 24
+      fieldset: CNTH
+    - name: CNTL
+      description: Counter Register Low
+      byte_offset: 28
+      fieldset: CNTL
+    - name: ALRH
+      description: Alarm Register High
+      byte_offset: 32
+      access: Write
+      fieldset: ALRH
+    - name: ALRL
+      description: Alarm Register Low
+      byte_offset: 36
+      access: Write
+      fieldset: ALRL
+fieldset/ALRH:
+  description: Alarm Register High
+  fields:
+    - name: ALRH
+      description: Alarm register high
+      bit_offset: 0
+      bit_size: 16
+fieldset/ALRL:
+  description: Alarm Register Low
+  fields:
+    - name: ALRL
+      description: Alarm register low
+      bit_offset: 0
+      bit_size: 16
+fieldset/CNTH:
+  description: Counter Register High
+  fields:
+    - name: CNTH
+      description: Counter register high
+      bit_offset: 0
+      bit_size: 16
+fieldset/CNTL:
+  description: Counter Register Low
+  fields:
+    - name: CNTL
+      description: Counter register low
+      bit_offset: 0
+      bit_size: 16
+fieldset/CRH:
+  description: Control Register High
+  fields:
+    - name: SECIE
+      description: Second interrupt enable
+      bit_offset: 0
+      bit_size: 1
+    - name: ALRIE
+      description: Alarm interrupt enable
+      bit_offset: 1
+      bit_size: 1
+    - name: OWIE
+      description: Overflow interrupt enable
+      bit_offset: 2
+      bit_size: 1
+fieldset/CRL:
+  description: Control Register Low
+  fields:
+    - name: SECF
+      description: Second flag
+      bit_offset: 0
+      bit_size: 1
+    - name: ALRF
+      description: Alarm flag
+      bit_offset: 1
+      bit_size: 1
+    - name: OWF
+      description: Overflow flag
+      bit_offset: 2
+      bit_size: 1
+    - name: RSF
+      description: Registers synchronized flag
+      bit_offset: 3
+      bit_size: 1
+    - name: CNF
+      description: Configuration flag
+      bit_offset: 4
+      bit_size: 1
+      enum: CNF
+    - name: RTOFF
+      description: RTC operation OFF
+      bit_offset: 5
+      bit_size: 1
+      enum: RTOFF
+fieldset/DIVH:
+  description: Prescaler Divider Register High
+  fields:
+    - name: DIVH
+      description: Prescaler divider register high
+      bit_offset: 0
+      bit_size: 4
+fieldset/DIVL:
+  description: Prescaler Divider Register Low
+  fields:
+    - name: DIVL
+      description: Prescaler divider register low
+      bit_offset: 0
+      bit_size: 16
+fieldset/PRLH:
+  description: Prescaler Load Register High
+  fields:
+    - name: PRLH
+      description: Prescaler load register high
+      bit_offset: 0
+      bit_size: 4
+fieldset/PRLL:
+  description: Prescaler Load Register Low
+  fields:
+    - name: PRLL
+      description: Prescaler divider register low
+      bit_offset: 0
+      bit_size: 16
+enum/CNF:
+  bit_size: 1
+  variants:
+    - name: Exit
+      description: Exit configuration mode (start update of RTC registers)
+      value: 0
+    - name: Enter
+      description: Enter configuration mode
+      value: 1
+enum/RTOFF:
+  bit_size: 1
+  variants:
+    - name: Enabled
+      description: Last write operation on RTC registers is still ongoing
+      value: 0
+    - name: Disabled
+      description: Last write operation on RTC registers terminated
+      value: 1
