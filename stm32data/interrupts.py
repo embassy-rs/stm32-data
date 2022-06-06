@@ -57,6 +57,10 @@ def parse():
             if nvic_version == 'STM32F100E' and name == 'DMA2_Channel4_5':
                 continue
 
+            # F3 can remap USB IRQs, ignore them.
+            if nvic_version.startswith('STM32F3') and 'remap' in irq['@Comment']:
+                continue
+
             signals = set()
 
             if name in ['NonMaskableInt', 'HardFault', 'MemoryManagement', 'BusFault', 'UsageFault', 'SVCall', 'DebugMonitor', 'PendSV', 'SysTick']:
