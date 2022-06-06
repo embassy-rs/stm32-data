@@ -14,7 +14,7 @@ def get(nvic_name, nvic_version, core):
 
 def parse():
     print("parsing interrupts")
-    for f in glob('sources/cubedb/mcu/IP/NVIC*_Modes.xml'):
+    for f in sorted(glob('sources/cubedb/mcu/IP/NVIC*_Modes.xml')):
         if 'STM32MP1' in f:
             continue
         f = f.replace(os.path.sep, '/')
@@ -57,7 +57,7 @@ def parse():
             if nvic_version == 'STM32F100E' and name == 'DMA2_Channel4_5':
                 continue
 
-            signals = []
+            signals = set()
 
             if name in ['NonMaskableInt', 'HardFault', 'MemoryManagement', 'BusFault', 'UsageFault', 'SVCall', 'DebugMonitor', 'PendSV', 'SysTick']:
                 pass
@@ -75,28 +75,28 @@ def parse():
                     ch_from = int(ch_from)
                     ch_to = int(ch_to)
                     for ch in range(ch_from, ch_to+1):
-                        signals.append((dma, f'CH{ch}'))
+                        signals.add((dma, f'CH{ch}'))
             elif name == 'DMAMUX1':  # TODO does DMAMUX have more irq signals? seen in U5
-                signals.append(('DMAMUX1', 'OVR'))
+                signals.add(('DMAMUX1', 'OVR'))
             elif name == 'DMAMUX1_S':  # TODO does DMAMUX have more irq signals? seen in U5
-                signals.append(('DMAMUX1', 'OVR'))
+                signals.add(('DMAMUX1', 'OVR'))
             elif name == 'DMAMUX_OVR':
-                signals.append(('DMAMUX1', 'OVR'))
+                signals.add(('DMAMUX1', 'OVR'))
             elif name == 'DMAMUX1_OVR':
-                signals.append(('DMAMUX1', 'OVR'))
+                signals.add(('DMAMUX1', 'OVR'))
             elif name == 'DMAMUX2_OVR':
-                signals.append(('DMAMUX2', 'OVR'))
+                signals.add(('DMAMUX2', 'OVR'))
             elif 'DMAMUX' in flags:
                 assert False  # should've been handled above
             elif 'EXTI' in flags:
                 for signal in parts[2].split(','):
-                    signals.append(('EXTI', signal))
+                    signals.add(('EXTI', signal))
             elif name == 'FLASH':
-                signals.append(('FLASH', 'GLOBAL'))
+                signals.add(('FLASH', 'GLOBAL'))
             elif name == 'CRS':
-                signals.append(('RCC', 'CRS'))
+                signals.add(('RCC', 'CRS'))
             elif name == 'RCC':
-                signals.append(('RCC', 'GLOBAL'))
+                signals.add(('RCC', 'GLOBAL'))
             else:
                 if parts[2] == '':
                     continue
@@ -123,13 +123,13 @@ def parse():
                         part = 'TAMP'
 
                     if part == 'LSECSS':
-                        signals.append(('RCC', 'LSECSS'))
+                        signals.add(('RCC', 'LSECSS'))
                     elif part == 'CSS':
-                        signals.append(('RCC', 'CSS'))
+                        signals.add(('RCC', 'CSS'))
                     elif part == 'LSE':
-                        signals.append(('RCC', 'LSE'))
+                        signals.add(('RCC', 'LSE'))
                     elif part == 'CRS':
-                        signals.append(('RCC', 'CRS'))
+                        signals.add(('RCC', 'CRS'))
                     elif pp := match_peris(peri_names, part):
                         curr_peris = pp
                     else:
@@ -150,7 +150,7 @@ def parse():
                     for s in ss:
                         if s not in known:
                             raise Exception(f'Unknown signal {s} for peri {p}, known={known}')
-                        signals.append((p, s))
+                        signals.add((p, s))
 
             for (peri, signal) in signals:
                 print(f'    {peri}:{signal}')
@@ -163,6 +163,14 @@ def parse():
                     'signal': s,
                     'interrupt': name,
                 })
+
+        for p, pirqs in irqs2.items():
+            psirqs = {}
+            for irq in pirqs:
+                psirqs.setdefault(irq['signal'], []).append(irq['interrupt'])
+            for s, irqs in psirqs.items():
+                if len(irqs) != 1:
+                    print(f'DUPE: {p} {s} {irqs}')
 
         chip_interrupts[(nvic_name, nvic_version)] = irqs2
 
@@ -184,37 +192,32 @@ def tokenize_name(name):
     return res
 
 
+PERI_OVERRIDE = {
+    'USB_FS':   ['USB'],
+    'OTG_HS':   ['USB_OTG_HS'],
+    'OTG_FS':   ['USB_OTG_FS'],
+    'USB':      ['USB_DRD_FS'],
+    'UCPD1_2':  ['UCPD1', 'UCPD2'],
+    'ADC1':     ['ADC'],
+    'CEC':      ['HDMI_CEC'],
+    'SPDIF_RX': ['SPDIFRX1', 'SPDIFRX'],
+    'CAN1':     ['CAN'],
+    'TEMP':     ['TEMPSENS'],
+    'DSI':      ['DSIHOST'],
+    'HRTIM1':   ['HRTIM'],
+    'GTZC':     ['GTZC_S'],
+    'TZIC':     ['GTZC_S'],
+}
+
+
 def match_peris(peris, name):
-    if name == 'USB_FS' and 'USB' in peris:
-        return ['USB']
-    if name == 'OTG_HS' and 'USB_OTG_HS' in peris:
-        return ['USB_OTG_HS']
-    if name == 'OTG_FS' and 'USB_OTG_FS' in peris:
-        return ['USB_OTG_FS']
-    if name == 'USB' and 'USB_DRD_FS' in peris:
-        return ['USB_DRD_FS']
-    if name == 'UCPD1_2' and 'UCPD1' in peris and 'UCPD2' in peris:
-        return ['UCPD1', 'UCPD2']
-    if name == 'ADC1' and 'ADC' in peris:
-        return ['ADC']
-    if name == 'CEC' and 'HDMI_CEC' in peris:
-        return ['HDMI_CEC']
-    if name == 'SPDIF_RX' and 'SPDIFRX1' in peris:
-        return ['SPDIFRX1']
-    if name == 'SPDIF_RX' and 'SPDIFRX' in peris:
-        return ['SPDIFRX']
-    if name == 'CAN1' and 'CAN' in peris:
-        return ['CAN']
-    if name == 'TEMP' and 'TEMPSENS' in peris:
-        return ['TEMPSENS']
-    if name == 'DSI' and 'DSIHOST' in peris:
-        return ['DSIHOST']
-    if name == 'HRTIM1' and 'HRTIM' in peris:
-        return ['HRTIM']
-    if name == 'GTZC' and 'GTZC_S' in peris:
-        return ['GTZC_S']
-    if name == 'TZIC' and 'GTZC_S' in peris:
-        return ['GTZC_S']
+    if over := PERI_OVERRIDE.get(name):
+        res = []
+        for p in over:
+            if p in peris:
+                res.append(p)
+        if len(res) != 0:
+            return res
 
     res = []
     if m := re.fullmatch('(I2C|[A-Z]+)(\d+(_\d+)*)', name):
