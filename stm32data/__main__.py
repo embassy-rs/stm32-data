@@ -185,8 +185,15 @@ perimap = [
     ('.*:SPDIFRX:spdifrx1_v1_0', ('spdifrx', 'v1', 'SPDIFRX')),
 
     # USB
-    ('STM32(F1|L1|F3).*:USB:.*', ('usb', 'v1', 'USB')),
-    ('.*:USB:.*', ('usb', 'v2', 'USB')),
+    ('STM32F302.[BC].*:USB:.*', ('usb', 'v1_x1', 'USB')),
+    ('STM32F302.[68DE].*:USB:.*', ('usb', 'v2', 'USB')),
+    ('STM32F303.[BC].*:USB:.*', ('usb', 'v1_x1', 'USB')),
+    ('STM32F303.[DE].*:USB:.*', ('usb', 'v2', 'USB')),
+    ('STM32F373.*:USB:.*', ('usb', 'v1_x2', 'USB')),
+    ('STM32(F1|L1).*:USB:.*', ('usb', 'v1_x1', 'USB')),
+    ('.*:USB:.*', ('usb', 'v3', 'USB')),
+
+    # USB OTG
     ('.*:USB_OTG_FS:otgfs1_v1_.*', ('otgfs', 'v1', 'OTG_FS')),
     ('.*:USB_OTG_FS:otgfs1_v3_.*', ('otgfs', 'v1', 'OTG_FS')),
     ('.*:USB_OTG_HS:otghs1_v1_.*', ('otghs', 'v1', 'OTG_HS')),

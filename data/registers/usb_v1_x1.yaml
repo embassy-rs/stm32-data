@@ -30,17 +30,13 @@ block/USB:
       description: Buffer table address
       byte_offset: 80
       fieldset: BTABLE
-    - name: LPMCSR
-      description: LPM control and status register
-      byte_offset: 84
-      fieldset: LPMCSR
     - name: EP_MEM
       description: USB Endpoint memory
       byte_offset: 1024
       bit_size: 16
       array:
-        len: 1024
-        stride: 2
+        len: 512
+        stride: 4
 fieldset/BTABLE:
   description: Buffer table address
   fields:
@@ -70,14 +66,6 @@ fieldset/CNTR:
     - name: RESUME
       description: Resume request
       bit_offset: 4
-      bit_size: 1
-    - name: L1RESUME
-      description: LPM L1 request request
-      bit_offset: 5
-      bit_size: 1
-    - name: L1REQM
-      description: "L1REQ Interrupt enabled, an interrupt request is generated when the corresponding bit in the USB_ISTR register is set"
-      bit_offset: 7
       bit_size: 1
     - name: ESOFM
       description: "ESOF Interrupt enabled, an interrupt request is generated when the corresponding bit in the USB_ISTR register is set"
@@ -203,10 +191,6 @@ fieldset/ISTR:
       bit_offset: 4
       bit_size: 1
       enum: DIR
-    - name: L1REQ
-      description: LPM command to enter the L1 state is successfully received and acknowledged
-      bit_offset: 7
-      bit_size: 1
     - name: ESOF
       description: an SOF packet is expected but not received
       bit_offset: 8
@@ -239,26 +223,6 @@ fieldset/ISTR:
       description: endpoint has successfully completed a transaction
       bit_offset: 15
       bit_size: 1
-fieldset/LPMCSR:
-  description: LPM control and status register
-  fields:
-    - name: LPMEN
-      description: enable the LPM support within the USB device
-      bit_offset: 0
-      bit_size: 1
-    - name: LPMACK
-      description: LPMACK
-      bit_offset: 1
-      bit_size: 1
-      enum: LPMACK
-    - name: REMWAKE
-      description: REMWAKE
-      bit_offset: 3
-      bit_size: 1
-    - name: BESL
-      description: BESL
-      bit_offset: 4
-      bit_size: 4
 enum/DIR:
   bit_size: 1
   variants:
@@ -283,15 +247,6 @@ enum/EP_TYPE:
     - name: Interrupt
       description: Interrupt endpoint
       value: 3
-enum/LPMACK:
-  bit_size: 1
-  variants:
-    - name: Nyet
-      description: the valid LPM Token will be NYET
-      value: 0
-    - name: Ack
-      description: the valid LPM Token will be ACK
-      value: 1
 enum/STAT:
   bit_size: 2
   variants:
