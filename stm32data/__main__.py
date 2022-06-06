@@ -786,7 +786,9 @@ def parse_chips():
 
                 if pname in chip_irqs:
                     # filter by available, because some are conditioned on <Die>
-                    p['interrupts'] = interrupts.filter_interrupts(chip_irqs[pname], header_irqs)
+                    irqs = interrupts.filter_interrupts(chip_irqs[pname], header_irqs)
+                    irqs = sorted(irqs, key=lambda x: (x['signal'], x['interrupt']))
+                    p['interrupts'] = irqs
 
                 peris.append(p)
 
