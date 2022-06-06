@@ -160,8 +160,8 @@ def parse():
         for name, signals in irqs.items():
             for (p, s) in signals:
                 irqs2.setdefault(p, []).append({
-                    'interrupt': name,
                     'signal': s,
+                    'interrupt': name,
                 })
 
         chip_interrupts[(nvic_name, nvic_version)] = irqs2
