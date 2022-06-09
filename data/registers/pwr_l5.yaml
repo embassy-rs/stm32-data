@@ -67,7 +67,6 @@ fieldset/CR1:
       description: Disable backup domain write protection
       bit_offset: 8
       bit_size: 1
-      enum: DBP
     - name: VOS
       description: Voltage scaling range selection
       bit_offset: 9
@@ -85,7 +84,6 @@ fieldset/CR2:
       description: Power voltage detector enable
       bit_offset: 0
       bit_size: 1
-      enum: PVDE
     - name: PLS
       description: Power voltage detector level selection
       bit_offset: 1
@@ -95,32 +93,26 @@ fieldset/CR2:
       description: "Peripheral voltage monitoring 1 enable: VDDUSB vs. 1.2V"
       bit_offset: 4
       bit_size: 1
-      enum: PVME
     - name: PVME2
       description: "Peripheral voltage monitoring 2 enable: VDDIO2 vs. 0.9V"
       bit_offset: 5
       bit_size: 1
-      enum: PVME
     - name: PVME3
       description: "Peripheral voltage monitoring 3 enable: VDDA vs. 1.62V"
       bit_offset: 6
       bit_size: 1
-      enum: PVME
     - name: PVME4
       description: "Peripheral voltage monitoring 4 enable: VDDA vs. 2.2V"
       bit_offset: 7
       bit_size: 1
-      enum: PVME
     - name: IOSV
       description: VDDIO2 Independent I/Os supply valid
       bit_offset: 9
       bit_size: 1
-      enum: IOSV
     - name: USV
       description: VDDUSB USB supply valid
       bit_offset: 10
       bit_size: 1
-      enum: USV
 fieldset/CR3:
   description: Power control register 3
   fields:
@@ -131,7 +123,6 @@ fieldset/CR3:
       array:
         len: 5
         stride: 1
-      enum: EWUP
     - name: RRS
       description: SRAM2 retention in Standby mode
       bit_offset: 8
@@ -141,7 +132,6 @@ fieldset/CR3:
       description: Apply pull-up and pull-down configuration
       bit_offset: 10
       bit_size: 1
-      enum: APC
     - name: ULPMEN
       description: ULPMEN
       bit_offset: 11
@@ -228,7 +218,6 @@ fieldset/SCR:
       array:
         len: 5
         stride: 1
-      enum_write: CWUFW
     - name: SBF
       description: Clear standby flag
       bit_offset: 8
@@ -338,48 +327,6 @@ fieldset/SR2:
       description: "Peripheral voltage monitoring output: VDDA vs. 2.2 V"
       bit_offset: 15
       bit_size: 1
-enum/APC:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: PWR_PUCRx and PWR_PDCRx registers are NOT applied to the I/Os
-      value: 0
-    - name: Enabled
-      description: I/O pull-up and pull-down configurations defined in the PWR_PUCRx and PWR_PDCRx registers are applied
-      value: 1
-enum/CWUFW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Setting this bit clears the WUF flag in the PWR_SR1 register. This bit is always read as 0.
-      value: 1
-enum/DBP:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Access to RTC and backup registers disabled
-      value: 0
-    - name: Enabled
-      description: Access to RTC and backup registers enabled
-      value: 1
-enum/EWUP:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: WKUP pin x is used for general purpose I/Os. An event on the WKUP pin x does not wakeup the device from Standby mode
-      value: 0
-    - name: Enabled
-      description: WKUP pin x is used for wakeup from Standby mode and forced in input pull down configuration (rising edge on WKUP pin x wakes-up the system from Standby mode)
-      value: 1
-enum/IOSV:
-  bit_size: 1
-  variants:
-    - name: Invalid
-      description: VDDIO2 is not present. Logical and electrical isolation is applied to ignore this supply
-      value: 0
-    - name: Valid
-      description: VDDIO2 is valid
-      value: 1
 enum/LPMS:
   bit_size: 3
   variants:
@@ -434,24 +381,6 @@ enum/PLS:
     - name: External
       description: External input analog voltage PVD_IN (compared internally to VREFINT)
       value: 7
-enum/PVDE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: PVD Disabled
-      value: 0
-    - name: Enabled
-      description: PVD Enabled
-      value: 1
-enum/PVME:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Peripheral voltage monitoring disable
-      value: 0
-    - name: Enabled
-      description: Peripheral voltage monitoring enable
-      value: 1
 enum/RRS:
   bit_size: 2
   variants:
@@ -464,15 +393,6 @@ enum/RRS:
     - name: OnLPRTop4kb
       description: Only the upper 4 Kbytes of SRAM2 are powered by the low-power regulator in Standby mode (upper 4 Kbytes of SRAM2 content 0x2003 F000 - 0x2003 FFFF is kept).
       value: 2
-enum/USV:
-  bit_size: 1
-  variants:
-    - name: Invalid
-      description: VDDUSB is not present. Logical and electrical isolation is applied to ignore this supply
-      value: 0
-    - name: Valid
-      description: VDDUSB is valid
-      value: 1
 enum/VOS:
   bit_size: 2
   variants:
