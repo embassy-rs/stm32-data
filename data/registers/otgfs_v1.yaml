@@ -57,11 +57,11 @@ block/OTG_FS:
     - name: DIEPTXF0
       description: Non-periodic transmit FIFO size register (Device mode)
       byte_offset: 40
-      fieldset: DIEPTXF0
+      fieldset: FSIZ
     - name: HNPTXFSIZ
       description: Non-periodic transmit FIFO size register (Host mode)
       byte_offset: 40
-      fieldset: HNPTXFSIZ
+      fieldset: FSIZ
     - name: GNPTXSTS
       description: Non-periodic transmit FIFO/queue status register
       byte_offset: 44
@@ -78,14 +78,14 @@ block/OTG_FS:
     - name: HPTXFSIZ
       description: Host periodic transmit FIFO size register
       byte_offset: 256
-      fieldset: HPTXFSIZ
+      fieldset: FSIZ
     - name: DIEPTXF
       description: Device IN endpoint transmit FIFO size register
       array:
         len: 7
         stride: 4
       byte_offset: 260
-      fieldset: DIEPTXF
+      fieldset: FSIZ
     - name: HCFG
       description: Host configuration register
       byte_offset: 1024
@@ -579,28 +579,6 @@ fieldset/DIEPTSIZ0:
       description: Packet count
       bit_offset: 19
       bit_size: 2
-fieldset/DIEPTXF:
-  description: Device IN endpoint transmit FIFO size register
-  fields:
-    - name: INEPTXSA
-      description: IN endpoint FIFO2 transmit RAM start address
-      bit_offset: 0
-      bit_size: 16
-    - name: INEPTXFD
-      description: IN endpoint TxFIFO depth
-      bit_offset: 16
-      bit_size: 16
-fieldset/DIEPTXF0:
-  description: Non-periodic transmit FIFO size register (Device mode)
-  fields:
-    - name: TX0FSA
-      description: Endpoint 0 transmit RAM start address
-      bit_offset: 0
-      bit_size: 16
-    - name: TX0FD
-      description: Endpoint 0 TxFIFO depth
-      bit_offset: 16
-      bit_size: 16
 fieldset/DOEPCTL:
   description: Device endpoint control register
   fields:
@@ -1476,15 +1454,15 @@ fieldset/HFNUM:
       description: Frame time remaining
       bit_offset: 16
       bit_size: 16
-fieldset/HNPTXFSIZ:
-  description: Non-periodic transmit FIFO size register (Host mode)
+fieldset/FSIZ:
+  description: FIFO size register
   fields:
-    - name: NPTXFSA
-      description: Non-periodic transmit RAM start address
+    - name: SA
+      description: RAM start address
       bit_offset: 0
       bit_size: 16
-    - name: NPTXFD
-      description: Non-periodic TxFIFO depth
+    - name: FD
+      description: FIFO depth
       bit_offset: 16
       bit_size: 16
 fieldset/HPRT:
@@ -1543,17 +1521,6 @@ fieldset/HPRT:
       bit_offset: 17
       bit_size: 2
       enum: SPEED
-fieldset/HPTXFSIZ:
-  description: Host periodic transmit FIFO size register
-  fields:
-    - name: PTXSA
-      description: Host periodic TxFIFO start address
-      bit_offset: 0
-      bit_size: 16
-    - name: PTXFSIZ
-      description: Host periodic TxFIFO depth
-      bit_offset: 16
-      bit_size: 16
 fieldset/HPTXSTS:
   description: Periodic transmit FIFO/queue status register
   fields:
