@@ -15,7 +15,7 @@ from stm32data.util import *
 
 def corename(d):
     # print("CHECKING CORENAME", d)
-    if m := re.match('.*Cortex-M(\d+)(\+?)\s*(.*)', d):
+    if m := re.match(r'.*Cortex-M(\d+)(\+?)\s*(.*)', d):
         name = "cm" + str(m.group(1))
         if m.group(2) == "+":
             name += "p"
@@ -273,7 +273,7 @@ perimap = [
     ('.*:FSMC:.*', ('fsmc', 'v1', 'FSMC')),
     ('STM32H7.*:FMC:.*', ('fmc', 'h7', 'FMC')),
 
-    ('.*LPTIM\d.*:G0xx_lptimer1_v1_4', ('lptim', 'g0', 'LPTIM')),
+    (r'.*LPTIM\d.*:G0xx_lptimer1_v1_4', ('lptim', 'g0', 'LPTIM')),
 
     ('STM32H7.*:TIM1:.*', ('timer', 'v1', 'TIM_ADV')),
     ('STM32H7.*:TIM2:.*', ('timer', 'v1', 'TIM_GP32')),
@@ -289,7 +289,7 @@ perimap = [
 
     ('STM32F7.*:TIM1:.*', ('timer', 'v1', 'TIM_ADV')),
     ('STM32F7.*:TIM8:.*', ('timer', 'v1', 'TIM_ADV')),
-    ('.*TIM\d.*:gptimer.*', ('timer', 'v1', 'TIM_GP16')),
+    (r'.*TIM\d.*:gptimer.*', ('timer', 'v1', 'TIM_GP16')),
 
     ('STM32F0.*:DBGMCU:.*', ('dbgmcu', 'f0', 'DBGMCU')),
     ('STM32F1.*:DBGMCU:.*', ('dbgmcu', 'f1', 'DBGMCU')),
@@ -313,8 +313,8 @@ perimap = [
     ('.*:IPCC:v1_0', ('ipcc', 'v1', 'IPCC')),
     ('.*:DMAMUX.*', ('dmamux', 'v1', 'DMAMUX')),
 
-    ('.*:GPDMA\d?:.*', ('gpdma', 'v1', 'GPDMA')),
-    ('.*:BDMA\d?:.*', ('bdma', 'v1', 'DMA')),
+    (r'.*:GPDMA\d?:.*', ('gpdma', 'v1', 'GPDMA')),
+    (r'.*:BDMA\d?:.*', ('bdma', 'v1', 'DMA')),
     ('STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0', ('dma2d', 'v2', 'DMA2D')),
     ('.*:DMA2D:dma2d1_v1_0', ('dma2d', 'v1', 'DMA2D')),
     ('STM32L4[PQRS].*:DMA.*', ('bdma', 'v1', 'DMA')),  # L4+
@@ -1138,7 +1138,7 @@ def parse_dma():
                 dmamux_channel = 0
                 for n in dma_peri_name.split(","):
                     n = n.strip()
-                    if result := re.match('.*' + n + '_(Channel|Stream)\[(\d+)-(\d+)\]', channels[0]['@Name']):
+                    if result := re.match('.*' + n + r'_(Channel|Stream)\[(\d+)-(\d+)\]', channels[0]['@Name']):
                         low = int(result.group(2))
                         high = int(result.group(3))
                         for i in range(low, high + 1):
@@ -1280,7 +1280,7 @@ def parse_rcc_regs():
         for (key, body) in y.items():
             # Some chip families have a separate bus for GPIO so it's not attached to the AHB/APB
             # bus but an GPIO bus. Use the GPIO as the clock for these chips.
-            if m := re.match('^fieldset/((A[PH]B\d?)|GPIO)[LH]?ENR\d?$', key):
+            if m := re.match(r'^fieldset/((A[PH]B\d?)|GPIO)[LH]?ENR\d?$', key):
                 reg = removeprefix(key, 'fieldset/')
                 clock = m.group(1)
                 clock = clock_renames.get(clock, clock)
@@ -1289,7 +1289,7 @@ def parse_rcc_regs():
                         peri = removesuffix(field['name'], 'EN')
 
                         # Timers are a bit special, they may have a x2 freq
-                        peri_clock = f'{clock}_TIM' if re.match('^TIM\d+$', peri) else clock
+                        peri_clock = f'{clock}_TIM' if re.match(r'^TIM\d+$', peri) else clock
                         res = {
                             'clock': peri_clock,
                             'enable': {
