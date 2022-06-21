@@ -275,20 +275,17 @@ perimap = [
 
     (r'.*LPTIM\d.*:G0xx_lptimer1_v1_4', ('lptim', 'g0', 'LPTIM')),
 
-    ('STM32H7.*:TIM1:.*', ('timer', 'v1', 'TIM_ADV')),
-    ('STM32H7.*:TIM2:.*', ('timer', 'v1', 'TIM_GP32')),
-    ('STM32H7.*:TIM5:.*', ('timer', 'v1', 'TIM_GP32')),
-    ('STM32H7.*:TIM6:.*', ('timer', 'v1', 'TIM_BASIC')),
-    ('STM32H7.*:TIM7:.*', ('timer', 'v1', 'TIM_BASIC')),
-    ('STM32H7.*:TIM8:.*', ('timer', 'v1', 'TIM_ADV')),
+    ('STM32F1.*:TIM(1|8):.*', ('timer', 'v1', 'TIM_ADV')),
+    ('STM32F1.*:TIM(2|5):.*', ('timer', 'v1', 'TIM_GP16')),
+    ('STM32F1.*:TIM(6|7):.*', ('timer', 'v1', 'TIM_BASIC')),
 
-    ('STM32F3.*:TIM(6|7){1}:.*', ('timer', 'v1', 'TIM_BASIC')),
-    ('STM32F3.*:TIM(3|4|15|16|17){1}:.*', ('timer', 'v1', 'TIM_GP16')),
-    ('STM32F3.*:TIM2:.*', ('timer', 'v1', 'TIM_GP32')),
-    ('STM32F3.*:TIM(1|8|20){1}:.*', ('timer', 'v1', 'TIM_ADV')),
+    ('STM32L0.*:TIM2:.*', ('timer', 'v1', 'TIM_GP16')),
 
-    ('STM32F7.*:TIM1:.*', ('timer', 'v1', 'TIM_ADV')),
-    ('STM32F7.*:TIM8:.*', ('timer', 'v1', 'TIM_ADV')),
+    ('STM32U5.*:TIM(2|3|4|5):.*', ('timer', 'v1', 'TIM_GP32')),
+
+    ('STM32.*:TIM(1|8|20):.*', ('timer', 'v1', 'TIM_ADV')),
+    ('STM32.*:TIM(2|5|23|24):.*', ('timer', 'v1', 'TIM_GP32')),
+    ('STM32.*:TIM(6|7|18):.*', ('timer', 'v1', 'TIM_BASIC')),
     (r'.*TIM\d.*:gptimer.*', ('timer', 'v1', 'TIM_GP16')),
 
     ('STM32F0.*:DBGMCU:.*', ('dbgmcu', 'f0', 'DBGMCU')),
