@@ -109,14 +109,60 @@ def parse():
 
         memories.append(chunk)
 
+    # The chips below are missing from cubeprogdb
+    memories.append({
+        'device-id': 0,
+        'names': ['STM32F302xD'],
+        'ram': {
+            'address': 0x20000000,
+            'bytes': 64*1024,
+        },
+        'flash': {
+            'address': 0x08000000,
+            'bytes': 384*1024,
+            'erase_value': 0xFF,
+            'write_size': 8,
+            'erase_size': 2048,
+        }
+    })
+    memories.append({
+        'device-id': 0,
+        'names': ['STM32F303xD'],
+        'ram': {
+            'address': 0x20000000,
+            'bytes': 80*1024,
+        },
+        'flash': {
+            'address': 0x08000000,
+            'bytes': 384*1024,
+            'erase_value': 0xFF,
+            'write_size': 8,
+            'erase_size': 2048,
+        }
+    })
+    memories.append({
+        'device-id': 0,
+        'names': ['STM32L100x6'],
+        'ram': {
+            'address': 0x20000000,
+            'bytes': 32*1024,
+        },
+        'flash': {
+            'address': 0x08000000,
+            'bytes': 4*1024,
+            'erase_value': 0xFF,
+            'write_size': 4,
+            'erase_size': 256,
+        }
+    })
+
 
 def determine_ram_size(chip_name):
     for each in memories:
         for name in each['names']:
             if is_chip_name_match(name, chip_name):
                 return each['ram']['bytes']
-
-    return None
+    raise Exception(f'could not find ram size for {chip_name}')
 
 
 def determine_flash_size(chip_name):
@@ -124,8 +170,8 @@ def determine_flash_size(chip_name):
         for name in each['names']:
             if is_chip_name_match(name, chip_name):
                 return each['flash']['bytes']
+    raise Exception(f'could not find flash size for {chip_name}')
 
-    return None
 
 def determine_flash_settings(chip_name):
     for each in memories:
@@ -136,8 +182,7 @@ def determine_flash_settings(chip_name):
                     'write_size': each['flash']['write_size'],
                     'erase_value': each['flash']['erase_value'],
                 }
-
-    return None
+    raise Exception(f'could not find flash settings for {chip_name}')
 
 
 def determine_device_id(chip_name):
@@ -149,5 +194,13 @@ def determine_device_id(chip_name):
 
 
 def is_chip_name_match(pattern, chip_name):
+    chip_name = chip_name.replace("STM32F479", "STM32F469")  # F479 is missing, it's the same as F469.
+    chip_name = chip_name.replace("STM32G050", "STM32G051")  # same...
+    chip_name = chip_name.replace("STM32G060", "STM32G061")  # same...
+    chip_name = chip_name.replace("STM32G070", "STM32G071")  # same...
+    chip_name = chip_name.replace("STM32G0B0", "STM32G0B1")  # same...
+    chip_name = chip_name.replace("STM32G4A", "STM32G49")  # same...
+    chip_name = chip_name.replace("STM32L422", "STM32L412")  # same...
+    chip_name = chip_name.replace("STM32WB30", "STM32WB35")  # same...
     pattern = pattern.replace('x', '.')
     return re.match(pattern + ".*", chip_name)
