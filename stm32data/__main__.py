@@ -567,9 +567,15 @@ def parse_chips():
 
     for f in sorted(glob('sources/cubedb/mcu/STM32*.xml')):
         f = f.replace(os.path.sep, '/')
+
+        # Not supported
         if 'STM32MP' in f:
             continue
+
+        # Does not exist in ST website. No datasheet, no RM.
         if 'STM32GBK' in f:
+            continue
+        if 'STM32L485' in f:
             continue
 
         print(f)
