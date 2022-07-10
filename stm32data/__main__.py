@@ -155,6 +155,7 @@ perimap = [
     ('STM32WL5.*:SYSCFG:.*', ('syscfg', 'wl5', 'SYSCFG')),
     ('STM32WLE.*:SYSCFG:.*', ('syscfg', 'wle', 'SYSCFG')),
 
+    ('.*:IWDG:iwdg1_v1_1', ('iwdg', 'v1', 'IWDG')),
     ('.*:IWDG:iwdg1_v2_0', ('iwdg', 'v2', 'IWDG')),
     ('.*:WWDG:wwdg1_v1_0', ('wwdg', 'v1', 'WWDG')),
     ('.*:JPEG:jpeg1_v1_0', ('jpeg', 'v1', 'JPEG')),
