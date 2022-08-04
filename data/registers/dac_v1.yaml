@@ -11,30 +11,27 @@ block/DAC:
       byte_offset: 4
       access: Write
       fieldset: SWTRIGR
-    - name: DHR12R1
-      description: channel1 12-bit right-aligned data holding register
+    - name: DHR12R
+      description: channel 12-bit right-aligned data holding register
       byte_offset: 8
-      fieldset: DHR12R1
-    - name: DHR12L1
-      description: channel1 12-bit left aligned data holding register
+      fieldset: DHR12R
+      array:
+        len: 2
+        stride: 12
+    - name: DHR12L
+      description: channel 12-bit left-aligned data holding register
       byte_offset: 12
-      fieldset: DHR12L1
-    - name: DHR8R1
-      description: channel1 8-bit right aligned data holding register
+      fieldset: DHR12L
+      array:
+        len: 2
+        stride: 12
+    - name: DHR8R
+      description: channel 8-bit right-aligned data holding register
       byte_offset: 16
-      fieldset: DHR8R1
-    - name: DHR12R2
-      description: channel2 12-bit right aligned data holding register
-      byte_offset: 20
-      fieldset: DHR12R2
-    - name: DHR12L2
-      description: channel2 12-bit left aligned data holding register
-      byte_offset: 24
-      fieldset: DHR12L2
-    - name: DHR8R2
-      description: channel2 8-bit right-aligned data holding register
-      byte_offset: 28
-      fieldset: DHR8R2
+      fieldset: DHR8R
+      array:
+        len: 2
+        stride: 12
     - name: DHR12RD
       description: Dual DAC 12-bit right-aligned data holding register
       byte_offset: 32
@@ -47,16 +44,14 @@ block/DAC:
       description: DUAL DAC 8-bit right aligned data holding register
       byte_offset: 40
       fieldset: DHR8RD
-    - name: DOR1
-      description: channel1 data output register
+    - name: DOR
+      description: channel data output register
       byte_offset: 44
       access: Read
-      fieldset: DOR1
-    - name: DOR2
-      description: channel2 data output register
-      byte_offset: 48
-      access: Read
-      fieldset: DOR2
+      fieldset: DOR
+      array:
+        len: 2
+        stride: 4
     - name: SR
       description: status register
       byte_offset: 52
@@ -65,39 +60,28 @@ fieldset/CR:
   description: control register
   fields:
     - name: EN
-      description: DAC channel1 enable
+      description: DAC channel enable
       bit_offset: 0
       bit_size: 1
       array:
         len: 2
         stride: 16
-      enum: EN
     - name: BOFF
-      description: DAC channel1 output buffer disable
+      description: DAC channel output buffer disable
       bit_offset: 1
       bit_size: 1
       array:
         len: 2
         stride: 16
-      enum: BOFF
     - name: TEN
-      description: DAC channel1 trigger enable
+      description: DAC channel trigger enable
       bit_offset: 2
       bit_size: 1
       array:
         len: 2
         stride: 16
-      enum: TEN
-    - name: TSEL
-      description: DAC channel1 trigger selection
-      bit_offset: 3
-      bit_size: 3
-      array:
-        len: 2
-        stride: 16
-      enum: TSEL1
     - name: WAVE
-      description: DAC channel1 noise/triangle wave generation enable
+      description: DAC channel noise/triangle wave generation enable
       bit_offset: 6
       bit_size: 2
       array:
@@ -105,202 +89,114 @@ fieldset/CR:
         stride: 16
       enum: WAVE
     - name: MAMP
-      description: DAC channel1 mask/amplitude selector
+      description: DAC channel mask/amplitude selector
       bit_offset: 8
       bit_size: 4
       array:
         len: 2
         stride: 16
     - name: DMAEN
-      description: DAC channel1 DMA enable
+      description: DAC channel DMA enable
       bit_offset: 12
       bit_size: 1
       array:
         len: 2
         stride: 16
-      enum: DMAEN
     - name: DMAUDRIE
-      description: DAC channel1 DMA Underrun Interrupt enable
+      description: DAC channel DMA Underrun Interrupt enable
       bit_offset: 13
       bit_size: 1
       array:
         len: 2
         stride: 16
-      enum: DMAUDRIE
-fieldset/DHR12L1:
-  description: channel1 12-bit left aligned data holding register
+    - name: TSEL1
+      description: DAC channel 1 trigger selection
+      bit_offset: 3
+      bit_size: 3
+      enum: TSEL1
+    - name: TSEL2
+      description: DAC channel 2 trigger selection
+      bit_offset: 19
+      bit_size: 3
+      enum: TSEL2
+fieldset/DHR12L:
+  description: channel 12-bit left-aligned data holding register
   fields:
-    - name: DACC1DHR
-      description: DAC channel1 12-bit left-aligned data
-      bit_offset: 4
-      bit_size: 12
-fieldset/DHR12L2:
-  description: channel2 12-bit left aligned data holding register
-  fields:
-    - name: DACC2DHR
-      description: DAC channel2 12-bit left-aligned data
+    - name: DHR
+      description: DAC channel 12-bit left-aligned data
       bit_offset: 4
       bit_size: 12
 fieldset/DHR12LD:
   description: DUAL DAC 12-bit left aligned data holding register
   fields:
-    - name: DACC1DHR
-      description: DAC channel1 12-bit left-aligned data
+    - name: DHR
+      description: DAC channel 12-bit left-aligned data
       bit_offset: 4
       bit_size: 12
-    - name: DACC2DHR
-      description: DAC channel2 12-bit left-aligned data
-      bit_offset: 20
-      bit_size: 12
-fieldset/DHR12R1:
-  description: channel1 12-bit right-aligned data holding register
+      array:
+        len: 2
+        stride: 16
+fieldset/DHR12R:
+  description: channel 12-bit right-aligned data holding register
   fields:
-    - name: DACC1DHR
-      description: DAC channel1 12-bit right-aligned data
-      bit_offset: 0
-      bit_size: 12
-fieldset/DHR12R2:
-  description: channel2 12-bit right aligned data holding register
-  fields:
-    - name: DACC2DHR
-      description: DAC channel2 12-bit right-aligned data
+    - name: DHR
+      description: DAC channel 12-bit right-aligned data
       bit_offset: 0
       bit_size: 12
 fieldset/DHR12RD:
   description: Dual DAC 12-bit right-aligned data holding register
   fields:
-    - name: DACC1DHR
-      description: DAC channel1 12-bit right-aligned data
+    - name: DHR
+      description: DAC channel 12-bit right-aligned data
       bit_offset: 0
       bit_size: 12
-    - name: DACC2DHR
-      description: DAC channel2 12-bit right-aligned data
-      bit_offset: 16
-      bit_size: 12
-fieldset/DHR8R1:
-  description: channel1 8-bit right aligned data holding register
+      array:
+        len: 2
+        stride: 16
+fieldset/DHR8R:
+  description: channel 8-bit right-aligned data holding register
   fields:
-    - name: DACC1DHR
-      description: DAC channel1 8-bit right-aligned data
-      bit_offset: 0
-      bit_size: 8
-fieldset/DHR8R2:
-  description: channel2 8-bit right-aligned data holding register
-  fields:
-    - name: DACC2DHR
-      description: DAC channel2 8-bit right-aligned data
+    - name: DHR
+      description: DAC channel 8-bit right-aligned data
       bit_offset: 0
       bit_size: 8
 fieldset/DHR8RD:
   description: DUAL DAC 8-bit right aligned data holding register
   fields:
-    - name: DACC1DHR
-      description: DAC channel1 8-bit right-aligned data
+    - name: DHR
+      description: DAC channel 8-bit right-aligned data
       bit_offset: 0
       bit_size: 8
-    - name: DACC2DHR
-      description: DAC channel2 8-bit right-aligned data
-      bit_offset: 8
-      bit_size: 8
-fieldset/DOR1:
-  description: channel1 data output register
+      array:
+        len: 2
+        stride: 8
+fieldset/DOR:
+  description: channel data output register
   fields:
-    - name: DACC1DOR
-      description: DAC channel1 data output
-      bit_offset: 0
-      bit_size: 12
-fieldset/DOR2:
-  description: channel2 data output register
-  fields:
-    - name: DACC2DOR
-      description: DAC channel2 data output
+    - name: DOR
+      description: DAC channel data output
       bit_offset: 0
       bit_size: 12
 fieldset/SR:
   description: status register
   fields:
     - name: DMAUDR
-      description: DAC channel1 DMA underrun flag
+      description: DAC channel DMA underrun flag
       bit_offset: 13
       bit_size: 1
       array:
         len: 2
         stride: 16
-      enum: DMAUDR
 fieldset/SWTRIGR:
   description: software trigger register
   fields:
     - name: SWTRIG
-      description: DAC channel1 software trigger
+      description: DAC channel software trigger
       bit_offset: 0
       bit_size: 1
       array:
         len: 2
         stride: 1
-      enum: SWTRIG
-enum/BOFF:
-  bit_size: 1
-  variants:
-    - name: Enabled
-      description: DAC channel X output buffer enabled
-      value: 0
-    - name: Disabled
-      description: DAC channel X output buffer disabled
-      value: 1
-enum/DMAEN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: DAC channel X DMA mode disabled
-      value: 0
-    - name: Enabled
-      description: DAC channel X DMA mode enabled
-      value: 1
-enum/DMAUDR:
-  bit_size: 1
-  variants:
-    - name: NoUnderrun
-      description: No DMA underrun error condition occurred for DAC channel X
-      value: 0
-    - name: Underrun
-      description: DMA underrun error condition occurred for DAC channel X
-      value: 1
-enum/DMAUDRIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: DAC channel X DMA Underrun Interrupt disabled
-      value: 0
-    - name: Enabled
-      description: DAC channel X DMA Underrun Interrupt enabled
-      value: 1
-enum/EN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: DAC channel X disabled
-      value: 0
-    - name: Enabled
-      description: DAC channel X enabled
-      value: 1
-enum/SWTRIG:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: DAC channel X software trigger disabled
-      value: 0
-    - name: Enabled
-      description: DAC channel X software trigger enabled
-      value: 1
-enum/TEN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: DAC channel X trigger disabled
-      value: 0
-    - name: Enabled
-      description: DAC channel X trigger enabled
-      value: 1
 enum/TSEL1:
   bit_size: 3
   variants:
