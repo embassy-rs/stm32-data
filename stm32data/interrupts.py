@@ -33,6 +33,11 @@ def parse():
 
             # Interrupt name
             name = removesuffix(parts[0], "_IRQn")
+
+            # Fix typo in STM32Lxx and L083 devices
+            if name == "AES_RNG_LPUART1" and "RNG" not in str(parts[1:]):
+                name = "AES_LPUART1"
+
             if name in irqs:
                 continue
 
