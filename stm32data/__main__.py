@@ -769,7 +769,10 @@ def parse_chips():
 
             peris = []
             for pname, pkind in peri_kinds.items():
-                addr = get_peri_addr(defines, pname)
+                if chip_name.startswith('STM32F0') and pname == 'ADC':
+                    addr = get_peri_addr(defines, 'ADC1')
+                else:
+                    addr = get_peri_addr(defines, pname)
                 if addr is None:
                     continue
 
