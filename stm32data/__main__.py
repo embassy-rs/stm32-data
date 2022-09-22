@@ -1194,6 +1194,13 @@ def parse_dma():
                         original_target_name = target_name
                         parts = target_name.split(':')
                         target_name = parts[0]
+
+                        # Chips with single DAC refer to channels by DAC1/DAC2
+                        if target_name == "DAC1":
+                            target_name = "DAC_CH1"
+                        if target_name == "DAC2":
+                            target_name = "DAC_CH2"
+
                         parts = target_name.split('_')
                         target_peri_name = parts[0]
                         if len(parts) < 2:
