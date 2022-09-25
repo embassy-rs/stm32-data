@@ -842,7 +842,13 @@ def parse_chips():
             for p in peris:
                 chs = []
                 for dma in chip_dmas:
-                    if peri_chs := dma_channels[dma]['peripherals'].get(p['name']):
+                    peri_chs = dma_channels[dma]['peripherals'].get(p['name'])
+
+                    # DAC1 is sometimes interchanged with DAC
+                    if not peri_chs and p['name'] == "DAC1":
+                        peri_chs = dma_channels[dma]['peripherals'].get("DAC")
+
+                    if peri_chs:
                         chs.extend([
                             ch
                             for ch in peri_chs
@@ -1197,6 +1203,13 @@ def parse_dma():
                         original_target_name = target_name
                         parts = target_name.split(':')
                         target_name = parts[0]
+
+                        # Chips with single DAC refer to channels by DAC1/DAC2
+                        if target_name == "DAC1":
+                            target_name = "DAC_CH1"
+                        if target_name == "DAC2":
+                            target_name = "DAC_CH2"
+
                         parts = target_name.split('_')
                         target_peri_name = parts[0]
                         if len(parts) < 2:
