@@ -52,7 +52,7 @@ In order to run the generator, you will need to install the following tools:
 ## Generating the YAMLs
 
 - Run `./d download-all`
-- Run `python3 -m stm32data`
+- Run `cargo run --release`
 
 This generates all the YAMLs in `data/` except those in `data/registers/`, which are manually extracted and cleaned up.
 
@@ -134,7 +134,7 @@ such mapping assignes the `rcc_g0/RCC` register block to the `RCC` peripheral in
 
 ## Peripheral mapping (perimap)
 
-The python scripts have a map to match peripherals to the right version in all chips, the [perimap](https://github.com/embassy-rs/stm32-data/blob/main/stm32data/__main__.py#L84).
+The script has a map to match peripherals to the right version in all chips, the [perimap](https://github.com/embassy-rs/stm32-data/blob/main/src/chips.rs#L109).
 
 When parsing a chip, for each peripheral a "key" string is constructed using this format: `CHIP:PERIPHERAL_NAME:IP_NAME:IP_VERSION`, where:
 - `CHIP`: full chip name, for example `STM32L443CC`
