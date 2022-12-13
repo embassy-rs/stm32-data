@@ -34,10 +34,7 @@ mod xml {
 
 #[derive(Debug)]
 pub struct ChipInterrupts(
-    pub  HashMap<
-        (String, String),
-        HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Interrupt>>,
-    >,
+    pub HashMap<(String, String), HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Interrupt>>>,
 );
 
 impl ChipInterrupts {
@@ -71,12 +68,7 @@ impl ChipInterrupts {
                     let name = parts[0].strip_suffix("_IRQn").unwrap();
 
                     // Fix typo in STM32Lxx and L083 devices
-                    let contains_rng = || {
-                        parts[2..]
-                            .iter()
-                            .flat_map(|x| x.split(','))
-                            .any(|x| x == "RNG")
-                    };
+                    let contains_rng = || parts[2..].iter().flat_map(|x| x.split(',')).any(|x| x == "RNG");
                     if name == "AES_RNG_LPUART1" && !contains_rng() {
                         "AES_LPUART1"
                     } else {
@@ -130,9 +122,7 @@ impl ChipInterrupts {
                     // pass
                 } else if flags
                     .iter()
-                    .map(|flag| {
-                        ["DMA", "DMAL0", "DMAF0", "DMAL0_DMAMUX", "DMAF0_DMAMUX"].contains(flag)
-                    })
+                    .map(|flag| ["DMA", "DMAL0", "DMAF0", "DMAL0_DMAMUX", "DMAF0_DMAMUX"].contains(flag))
                     .any(std::convert::identity)
                 {
                     let mut dmas_iter = parts[3].split(',');
@@ -154,11 +144,7 @@ impl ChipInterrupts {
                     }
                     assert!(dmas_iter.next().is_none());
                     assert!(chans_iter.next().is_none());
-                } else if name == "DMAMUX1"
-                    || name == "DMAMUX1_S"
-                    || name == "DMAMUX_OVR"
-                    || name == "DMAMUX1_OVR"
-                {
+                } else if name == "DMAMUX1" || name == "DMAMUX1_S" || name == "DMAMUX_OVR" || name == "DMAMUX1_OVR" {
                     signals.insert(("DMAMUX1".to_string(), "OVR".to_string()));
                 } else if name == "DMAMUX2_OVR" {
                     signals.insert(("DMAMUX2".to_string(), "OVR".to_string()));
@@ -224,10 +210,7 @@ impl ChipInterrupts {
                             } else {
                                 assert!(!curr_peris.is_empty());
                                 for p in &curr_peris {
-                                    peri_signals
-                                        .entry(p.clone())
-                                        .or_default()
-                                        .push(part.clone());
+                                    peri_signals.entry(p.clone()).or_default().push(part.clone());
                                 }
                             }
                         }
@@ -268,12 +251,13 @@ impl ChipInterrupts {
                     } else {
                         p
                     };
-                    irqs2.entry(key).or_default().push(
-                        stm32_data_serde::chip::core::peripheral::Interrupt {
+                    irqs2
+                        .entry(key)
+                        .or_default()
+                        .push(stm32_data_serde::chip::core::peripheral::Interrupt {
                             signal: s,
                             interrupt: name.clone(),
-                        },
-                    );
+                        });
                 }
             }
 
@@ -302,9 +286,7 @@ impl ChipInterrupts {
 fn tokenize_name(name: &str) -> Vec<String> {
     // Treat IRQ names are "tokens" separated by `_`, except some tokens
     // contain `_` themselves, such as `C1_RX`.
-    let r = regex!(
-        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*"
-    );
+    let r = regex!(r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*");
     let name = name.to_ascii_uppercase();
 
     r.captures_iter(&name)
@@ -356,9 +338,7 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         }
     } else {
         for p in peris {
-            if p == name || {
-                p.starts_with(name) && regex!(r"^\d+$").is_match(p.strip_prefix(name).unwrap_or(p))
-            } {
+            if p == name || { p.starts_with(name) && regex!(r"^\d+$").is_match(p.strip_prefix(name).unwrap_or(p)) } {
                 res.push(p.to_string());
             }
         }
@@ -380,9 +360,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("IPCC", &["C1_RX", "C1_TX", "C2_RX", "C2_TX"]),
         (
             "HRTIM",
-            &[
-                "MASTER", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF", "FLT",
-            ],
+            &["MASTER", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF", "FLT"],
         ),
         ("COMP", &["WKUP", "ACQ"]),
         ("RCC", &["RCC", "CRS"]),
@@ -391,16 +369,9 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("LTDC", &["GLOBAL", "ER"]),
         (
             "DFSDM",
-            &[
-                "FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7",
-            ],
+            &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
         ),
-        (
-            "MDF",
-            &[
-                "FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7",
-            ],
-        ),
+        ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
         ("PWR", &["S3WU"]),
         ("GTZC", &["GLOBAL", "ILA"]),
         ("WWDG", &["GLOBAL", "RST"]),
