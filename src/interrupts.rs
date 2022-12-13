@@ -246,11 +246,7 @@ impl ChipInterrupts {
             let mut irqs2 = HashMap::<_, Vec<_>>::new();
             for (name, signals) in irqs {
                 for (p, s) in signals {
-                    let key = if p == "USB_DRD_FS" {
-                        "USB".to_string()
-                    } else {
-                        p
-                    };
+                    let key = if p == "USB_DRD_FS" { "USB".to_string() } else { p };
                     irqs2
                         .entry(key)
                         .or_default()
