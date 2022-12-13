@@ -156,11 +156,23 @@ impl PeriMatcher {
             (".*:ADC:aditf5_v3_0", ("adc", "v4", "ADC")),
             ("STM32G0.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf2_v1_1", ("adccommon", "v2", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v2_0", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf4_v3_0_WL", ("adccommon", "v3", "ADC_COMMON")),
+            (
+                ".*:ADC_COMMON:aditf2_v1_1",
+                ("adccommon", "v2", "ADC_COMMON"),
+            ),
+            (
+                ".*:ADC_COMMON:aditf5_v2_0",
+                ("adccommon", "v3", "ADC_COMMON"),
+            ),
+            (
+                ".*:ADC_COMMON:aditf4_v3_0_WL",
+                ("adccommon", "v3", "ADC_COMMON"),
+            ),
             ("STM32H7.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-            ("STM32H7.*:ADC3_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
+            (
+                "STM32H7.*:ADC3_COMMON:.*",
+                ("adccommon", "v4", "ADC_COMMON"),
+            ),
             (".*:DCMI:.*", ("dcmi", "v1", "DCMI")),
             ("STM32F0.*:SYSCFG:.*", ("syscfg", "f0", "SYSCFG")),
             ("STM32F2.*:SYSCFG:.*", ("syscfg", "f2", "SYSCFG")),
@@ -214,6 +226,9 @@ impl PeriMatcher {
             ("STM32F303.[DE].*:USB:.*", ("usb", "v2", "USB")),
             ("STM32F373.*:USB:.*", ("usb", "v1_x2", "USB")),
             ("STM32(F1|L1).*:USB:.*", ("usb", "v1_x1", "USB")),
+            // change to :USB: after
+            // https://github.com/stm32-rs/stm32-rs/pull/789 merges
+            ("STM32G0[BC]1.*:USB:.*", ("usb", "v4", "USB")),
             (".*:USB:.*", ("usb", "v3", "USB")),
             // # USB OTG
             (".*:USB_OTG_FS:otgfs1_v1_.*", ("otgfs", "v1", "OTG_FS")),
@@ -319,12 +334,15 @@ impl PeriMatcher {
             (".*:DMAMUX.*", ("dmamux", "v1", "DMAMUX")),
             (r".*:GPDMA\d?:.*", ("gpdma", "v1", "GPDMA")),
             (r".*:BDMA\d?:.*", ("bdma", "v1", "DMA")),
-            ("STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0", ("dma2d", "v2", "DMA2D")),
+            (
+                "STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0",
+                ("dma2d", "v2", "DMA2D"),
+            ),
             (".*:DMA2D:dma2d1_v1_0", ("dma2d", "v1", "DMA2D")),
             ("STM32L4[PQRS].*:DMA.*", ("bdma", "v1", "DMA")), // L4+
-            ("STM32L[04].*:DMA.*", ("bdma", "v2", "DMA")),    // L0, L4 non-plus (since plus is handled above)
-            ("STM32F030.C.*:DMA.*", ("bdma", "v2", "DMA")),   // Weird F0
-            ("STM32F09.*:DMA.*", ("bdma", "v2", "DMA")),      // Weird F0
+            ("STM32L[04].*:DMA.*", ("bdma", "v2", "DMA")), // L0, L4 non-plus (since plus is handled above)
+            ("STM32F030.C.*:DMA.*", ("bdma", "v2", "DMA")), // Weird F0
+            ("STM32F09.*:DMA.*", ("bdma", "v2", "DMA")),   // Weird F0
             ("STM32F[247].*:DMA.*", ("dma", "v2", "DMA")),
             ("STM32H7.*:DMA.*", ("dma", "v1", "DMA")),
             (".*:DMA.*", ("bdma", "v1", "DMA")),
@@ -353,17 +371,23 @@ impl PeriMatcher {
     }
 
     fn match_peri(&mut self, peri: &str) -> Option<(&'static str, &'static str, &'static str)> {
-        *self
-            .cached
-            .entry(peri.to_string())
-            .or_insert_with(|| self.regexes.iter().find(|(r, _block)| r.is_match(peri)).map(|x| x.1))
+        *self.cached.entry(peri.to_string()).or_insert_with(|| {
+            self.regexes
+                .iter()
+                .find(|(r, _block)| r.is_match(peri))
+                .map(|x| x.1)
+        })
     }
 }
 
 fn corename(d: &str) -> String {
     let m = regex!(r".*Cortex-M(\d+)(\+?)\s*(.*)").captures(d).unwrap();
     let cm = m.get(1).unwrap().as_str();
-    let p = if m.get(2).unwrap().as_str() == "+" { "p" } else { "" };
+    let p = if m.get(2).unwrap().as_str() == "+" {
+        "p"
+    } else {
+        ""
+    };
     let s = if m.get(3).unwrap().as_str() == "secure" {
         "s"
     } else {
@@ -385,7 +409,10 @@ fn merge_periph_pins_info(
 
     // covert to hashmap
     let af_pins: HashMap<(stm32_data_serde::chip::core::peripheral::pin::Pin, &str), Option<u8>> =
-        af_pins.iter().map(|v| ((v.pin, v.signal.as_str()), v.af)).collect();
+        af_pins
+            .iter()
+            .map(|v| ((v.pin, v.signal.as_str()), v.af))
+            .collect();
 
     for pin in core_pins {
         let af = af_pins.get(&(pin.pin, &pin.signal)).copied().flatten();
@@ -441,7 +468,9 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
     }
 
     for (chip_name, chip) in &chips {
-        chip_groups[chip.group_idx].chip_names.push(chip_name.clone());
+        chip_groups[chip.group_idx]
+            .chip_names
+            .push(chip_name.clone());
     }
     Ok((chips, chip_groups))
 }
@@ -472,7 +501,10 @@ fn parse_group(
         } else {
             let (prefix, suffix) = name.split_once('(').unwrap();
             let (letters, suffix) = suffix.split_once(')').unwrap();
-            letters.split('-').map(|x| format!("{prefix}{x}{suffix}")).collect()
+            letters
+                .split('-')
+                .map(|x| format!("{prefix}{x}{suffix}"))
+                .collect()
         }
     };
 
@@ -565,10 +597,23 @@ fn process_group(
     group.family = Some(group.xml.family.clone());
     group.line = Some(group.xml.line.clone());
     group.die = Some(group.xml.die.clone());
-    let rcc_kind = group.ips.values().find(|x| x.name == "RCC").unwrap().version.clone();
-    let rcc_block = peri_matcher.match_peri(&format!("{chip_name}:RCC:{rcc_kind}")).unwrap();
+    let rcc_kind = group
+        .ips
+        .values()
+        .find(|x| x.name == "RCC")
+        .unwrap()
+        .version
+        .clone();
+    let rcc_block = peri_matcher
+        .match_peri(&format!("{chip_name}:RCC:{rcc_kind}"))
+        .unwrap();
     let h = headers.get_for_chip(&chip_name).unwrap();
-    let chip_af = &group.ips.values().find(|x| x.name == "GPIO").unwrap().version;
+    let chip_af = &group
+        .ips
+        .values()
+        .find(|x| x.name == "GPIO")
+        .unwrap()
+        .version;
     let chip_af = chip_af.strip_suffix("_gpio_v1_0").unwrap();
     let chip_af = af.0.get(chip_af);
     let cores: Vec<_> = group
@@ -613,7 +658,9 @@ fn process_core(
 ) -> stm32_data_serde::chip::Core {
     let real_core_name = corename(core_xml);
 
-    let core_name = if !h.interrupts.contains_key(&real_core_name) || !h.defines.contains_key(&real_core_name) {
+    let core_name = if !h.interrupts.contains_key(&real_core_name)
+        || !h.defines.contains_key(&real_core_name)
+    {
         "all"
     } else {
         &real_core_name
@@ -647,7 +694,11 @@ fn process_core(
 
         want_nvic_name
     };
-    let chip_nvic = group.ips.values().find(|x| x.name == want_nvic_name).unwrap();
+    let chip_nvic = group
+        .ips
+        .values()
+        .find(|x| x.name == want_nvic_name)
+        .unwrap();
     let mut header_irqs = h.interrupts.get(core_name).unwrap().clone();
     let chip_irqs = chip_interrupts
         .0
@@ -711,25 +762,33 @@ fn process_core(
         let pname = match pname.as_str() {
             "HDMI_CEC" => "CEC".to_string(),
             "SUBGHZ" => "SUBGHZSPI".to_string(),
+            "USB_DRD_FS" => "USB".to_string(),
             _ => pname,
         };
 
         if pname.starts_with("ADC") {
             if let Entry::Vacant(entry) = peri_kinds.entry("ADC_COMMON".to_string()) {
-                entry.insert(format!("ADC_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
+                entry.insert(format!(
+                    "ADC_COMMON:{}",
+                    ip.version.strip_suffix("_Cube").unwrap()
+                ));
             }
         }
         if pname.starts_with("ADC3") && chip_name.starts_with("STM32H7") {
             if let Entry::Vacant(entry) = peri_kinds.entry("ADC3_COMMON".to_string()) {
-                entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
+                entry.insert(format!(
+                    "ADC3_COMMON:{}",
+                    ip.version.strip_suffix("_Cube").unwrap()
+                ));
             }
         }
         peri_kinds.insert(pname, pkind.to_string());
     }
     const GHOST_PERIS: &[&str] = &[
-        "GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOE", "GPIOF", "GPIOG", "GPIOH", "GPIOI", "GPIOJ", "GPIOK", "GPIOL",
-        "GPIOM", "GPION", "GPIOO", "GPIOP", "GPIOQ", "GPIOR", "GPIOS", "GPIOT", "DMA1", "DMA2", "BDMA", "DMAMUX",
-        "DMAMUX1", "DMAMUX2", "SYSCFG", "EXTI", "FLASH", "DBGMCU", "CRS", "PWR", "AFIO", "BKP",
+        "GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOE", "GPIOF", "GPIOG", "GPIOH", "GPIOI", "GPIOJ",
+        "GPIOK", "GPIOL", "GPIOM", "GPION", "GPIOO", "GPIOP", "GPIOQ", "GPIOR", "GPIOS", "GPIOT",
+        "DMA1", "DMA2", "BDMA", "DMAMUX", "DMAMUX1", "DMAMUX2", "SYSCFG", "EXTI", "FLASH",
+        "DBGMCU", "CRS", "PWR", "AFIO", "BKP",
     ];
     for pname in GHOST_PERIS {
         if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
@@ -754,7 +813,9 @@ fn process_core(
                 signal = format!("SUBGHZSPI_{}", &signal[16..(signal.len() - 3)]);
             }
             // TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
-            if !["GPIO", "CEC", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) && !signal.contains("EXTI") {
+            if !["GPIO", "CEC", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str())
+                && !signal.contains("EXTI")
+            {
                 // both peripherals and signals can have underscores in their names so there is no easy way to split
                 // check if signal name starts with one of the peripheral names
                 for periph in peri_kinds.keys() {
@@ -822,7 +883,12 @@ fn process_core(
             // if the peripheral does not exist in the GPIO xml (one of the notable one is ADC)
             //   it probably doesn't need any AFIO writes to work
             if let Some(af_pins) = chip_af.and_then(|x| x.get(&pname)) {
-                merge_periph_pins_info(chip_name.contains("STM32F1"), &pname, pins, af_pins.as_slice());
+                merge_periph_pins_info(
+                    chip_name.contains("STM32F1"),
+                    &pname,
+                    pins,
+                    af_pins.as_slice(),
+                );
             }
             p.pins = pins.clone();
         }
@@ -838,7 +904,10 @@ fn process_core(
         }
         peripherals.push(p);
     }
-    if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family.as_ref().unwrap())) {
+    if let Ok(extra_f) = std::fs::read(format!(
+        "data/extra/family/{}.yaml",
+        group.family.as_ref().unwrap()
+    )) {
         #[derive(serde::Deserialize)]
         struct Extra {
             peripherals: Vec<stm32_data_serde::chip::core::Peripheral>,
@@ -874,7 +943,10 @@ fn process_core(
         .collect();
     chip_dmas.sort();
     chip_dmas.dedup();
-    let chip_dmas: Vec<_> = chip_dmas.into_iter().map(|(_sort, version)| version).collect();
+    let chip_dmas: Vec<_> = chip_dmas
+        .into_iter()
+        .map(|(_sort, version)| version)
+        .collect();
     // Process DMA channels
     let chs = chip_dmas
         .iter()
@@ -937,7 +1009,13 @@ fn process_chip(
     let ram_total = chip.ram * 1024;
     let mut memory_regions = Vec::new();
     let mut found = HashSet::<&str>::new();
-    for each in ["FLASH", "FLASH_BANK1", "FLASH_BANK2", "D1_AXIFLASH", "D1_AXIICP"] {
+    for each in [
+        "FLASH",
+        "FLASH_BANK1",
+        "FLASH_BANK2",
+        "D1_AXIFLASH",
+        "D1_AXIICP",
+    ] {
         if let Some(address) = h.defines.get("all").unwrap().0.get(&format!("{each}_BASE")) {
             let key = match each {
                 "FLASH" => "BANK_1",
