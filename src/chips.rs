@@ -214,6 +214,7 @@ impl PeriMatcher {
             ("STM32F303.[DE].*:USB:.*", ("usb", "v2", "USB")),
             ("STM32F373.*:USB:.*", ("usb", "v1_x2", "USB")),
             ("STM32(F1|L1).*:USB:.*", ("usb", "v1_x1", "USB")),
+            ("STM32G0[BC]1.*:USB:.*", ("usb", "v4", "USB")),
             (".*:USB:.*", ("usb", "v3", "USB")),
             // # USB OTG
             (".*:USB_OTG_FS:otgfs1_v1_.*", ("otgfs", "v1", "OTG_FS")),
@@ -711,6 +712,8 @@ fn process_core(
         let pname = match pname.as_str() {
             "HDMI_CEC" => "CEC".to_string(),
             "SUBGHZ" => "SUBGHZSPI".to_string(),
+            // remove when https://github.com/stm32-rs/stm32-rs/pull/789 merges
+            "USB_DRD_FS" => "USB".to_string(),
             _ => pname,
         };
 
