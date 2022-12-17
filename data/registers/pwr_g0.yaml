@@ -33,20 +33,54 @@ block/PWR:
       byte_offset: 24
       access: Write
       fieldset: SCR
-    - name: PUCR
-      description: Power Port pull-up control register
-      array:
-        len: 6
-        stride: 8
+    - name: PUCRA
+      description: Power Port A pull-up control register
       byte_offset: 32
-      fieldset: PCR
-    - name: PDCR
-      description: Power Port pull-down control register
-      array:
-        len: 6
-        stride: 8
+      fieldset: PUCR
+    - name: PDCRA
+      description: Power Port A pull-down control register
       byte_offset: 36
-      fieldset: PCR
+      fieldset: PDCR
+    - name: PUCRB
+      description: Power Port B pull-up control register
+      byte_offset: 40
+      fieldset: PUCR
+    - name: PDCRB
+      description: Power Port B pull-down control register
+      byte_offset: 44
+      fieldset: PDCR
+    - name: PUCRC
+      description: Power Port C pull-up control register
+      byte_offset: 48
+      fieldset: PUCR
+    - name: PDCRC
+      description: Power Port C pull-down control register
+      byte_offset: 52
+      fieldset: PDCR
+    - name: PUCRD
+      description: Power Port D pull-up control register
+      byte_offset: 56
+      fieldset: PUCR
+    - name: PDCRD
+      description: Power Port D pull-down control register
+      byte_offset: 60
+      fieldset: PDCR
+    - name: PUCRE
+      description: Power Port E pull-UP control register
+      byte_offset: 64
+      fieldset: PUCR
+    - name: PDCRE
+      description: Power Port E pull-down control register
+      byte_offset: 68
+      fieldset: PDCR
+    - name: PUCRF
+      description: Power Port F pull-up control register
+      byte_offset: 72
+      fieldset: PUCRF
+    - name: PDCRF
+      description: Power Port F pull-down control register
+      byte_offset: 76
+      fieldset: PDCRF
 fieldset/CR1:
   description: Power control register 1
   fields:
@@ -93,35 +127,38 @@ fieldset/CR2:
       description: Power voltage detector rising threshold selection
       bit_offset: 4
       bit_size: 3
+    - name: PVMENDAC
+      description: DAC supply voltage monitoring enable
+      bit_offset: 7
+      bit_size: 1
+    - name: PVMENUSB
+      description: USB supply voltage monitoring enable
+      bit_offset: 8
+      bit_size: 1
+    - name: IOSV
+      description: Setting the bit allows monitoring the V DDIO2 supply voltage through the PVMOUT flag in the PWR_SR2 register.
+      bit_offset: 9
+      bit_size: 1
+    - name: USV
+      description: USB supply enable
+      bit_offset: 10
+      bit_size: 1
 fieldset/CR3:
   description: Power control register 3
   fields:
-    - name: EWUP1
-      description: Enable Wakeup pin WKUP1
+    - name: WKUPEN
+      description: "Enable Wakeup Pin WKUPn+1 Each bit is set and cleared by software. Note: An additional wakeup event is detected if WKUPn+1 pin is enabled (by setting the WKUPENn+1 bit) when WKUPn+1 pin level is already high when WKUPPn+1 selects rising edge, or low when WKUPPn+1 selects falling edge."
       bit_offset: 0
       bit_size: 1
-    - name: EWUP2
-      description: Enable Wakeup pin WKUP2
-      bit_offset: 1
-      bit_size: 1
-    - name: EWUP4
-      description: Enable Wakeup pin WKUP4
-      bit_offset: 3
-      bit_size: 1
-    - name: EWUP5
-      description: Enable WKUP5 wakeup pin
-      bit_offset: 4
-      bit_size: 1
-    - name: EWUP6
-      description: Enable WKUP6 wakeup pin
-      bit_offset: 5
-      bit_size: 1
+      array:
+        len: 6
+        stride: 1
     - name: RRS
       description: SRAM retention in Standby mode
       bit_offset: 8
       bit_size: 1
-    - name: ULPEN
-      description: Enable the periodical sampling mode for PDR detection
+    - name: ENB_ULP
+      description: Ultra-low-power enable
       bit_offset: 9
       bit_size: 1
     - name: APC
@@ -135,26 +172,13 @@ fieldset/CR3:
 fieldset/CR4:
   description: Power control register 4
   fields:
-    - name: WP1
-      description: Wakeup pin WKUP1 polarity
-      bit_offset: 0
+    - name: WKUPP
+      description: Wakeup pin polarity bit for WKUPn-7 These bits define the polarity used for event detection on WKUPn-7 external wakeup pin.
+      bit_offset: 8
       bit_size: 1
-    - name: WP2
-      description: Wakeup pin WKUP2 polarity
-      bit_offset: 1
-      bit_size: 1
-    - name: WP4
-      description: Wakeup pin WKUP4 polarity
-      bit_offset: 3
-      bit_size: 1
-    - name: WP5
-      description: Wakeup pin WKUP5 polarity
-      bit_offset: 4
-      bit_size: 1
-    - name: WP6
-      description: WKUP6 wakeup pin polarity
-      bit_offset: 5
-      bit_size: 1
+      array:
+        len: 6
+        stride: 1
     - name: VBE
       description: VBAT battery charging enable
       bit_offset: 8
@@ -163,39 +187,56 @@ fieldset/CR4:
       description: VBAT battery charging resistor selection
       bit_offset: 9
       bit_size: 1
-fieldset/PCR:
-  description: Power Port pull control register
+fieldset/PDCR:
+  description: Pull-down control register
   fields:
-    - name: P
-      description: Port pull bit y (y=0..15)
+    - name: PDCR
+      description: pull-down bits
       bit_offset: 0
       bit_size: 1
       array:
         len: 16
         stride: 1
+fieldset/PUCR:
+  description: Pull-up control register
+  fields:
+  - name: PUCR
+    description: pull-up bits
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/PUCRF:
+  description: F ports Pull-up control register
+  fields:
+    - name: PDCR
+      description: pull-down bits
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 14
+        stride: 1
+fieldset/PDCRF:
+  description: F ports Pull-down control register
+  fields:
+    - name: PDCR
+      description: pull-down bits
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 14
+        stride: 1
 fieldset/SCR:
   description: Power status clear register
   fields:
-    - name: CWUF1
-      description: Clear wakeup flag 1
+    - name: CWUF
+      description: Clear wakeup flag
       bit_offset: 0
       bit_size: 1
-    - name: CWUF2
-      description: Clear wakeup flag 2
-      bit_offset: 1
-      bit_size: 1
-    - name: CWUF4
-      description: Clear wakeup flag 4
-      bit_offset: 3
-      bit_size: 1
-    - name: CWUF5
-      description: Clear wakeup flag 5
-      bit_offset: 4
-      bit_size: 1
-    - name: CWUF6
-      description: Clear wakeup flag 6
-      bit_offset: 5
-      bit_size: 1
+      array:
+        len: 6
+        stride: 1
     - name: CSBF
       description: Clear standby flag
       bit_offset: 8
@@ -203,26 +244,13 @@ fieldset/SCR:
 fieldset/SR1:
   description: Power status register 1
   fields:
-    - name: WUF1
-      description: Wakeup flag 1
+    - name: WUF
+      description: Wakeup flag
       bit_offset: 0
       bit_size: 1
-    - name: WUF2
-      description: Wakeup flag 2
-      bit_offset: 1
-      bit_size: 1
-    - name: WUF4
-      description: Wakeup flag 4
-      bit_offset: 3
-      bit_size: 1
-    - name: WUF5
-      description: Wakeup flag 5
-      bit_offset: 4
-      bit_size: 1
-    - name: WUF6
-      description: Wakeup flag 6
-      bit_offset: 5
-      bit_size: 1
+      array:
+        len: 6
+        stride: 1
     - name: SBF
       description: Standby flag
       bit_offset: 8
@@ -253,4 +281,12 @@ fieldset/SR2:
     - name: PVDO
       description: Power voltage detector output
       bit_offset: 11
+      bit_size: 1
+    - name: PVMOUSB
+      description: USB supply voltage monitoring output flag
+      bit_offset: 12
+      bit_size: 1
+    - name: PVMODAC
+      description: VDDA monitoring output flag
+      bit_offset: 15
       bit_size: 1
