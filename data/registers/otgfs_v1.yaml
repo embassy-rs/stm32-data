@@ -30,43 +30,33 @@ block/OTG_FS:
       description: Interrupt mask register
       byte_offset: 24
       fieldset: GINTMSK
-    - name: GRXSTSR_Device
-      description: Receive status debug read (Device mode)
+    - name: GRXSTSR
+      description: Receive status debug read register
       byte_offset: 28
       access: Read
-      fieldset: GRXSTS_Device
-    - name: GRXSTSR_Host
-      description: Receive status debug read (Host mode)
-      byte_offset: 28
-      access: Read
-      fieldset: GRXSTS_Host
-    - name: GRXSTSP_Device
-      description: Status read and pop (Device mode)
+      fieldset: GRXSTS
+    - name: GRXSTSP
+      description: Status read and pop register
       byte_offset: 32
       access: Read
-      fieldset: GRXSTS_Device
-    - name: GRXSTSP_Host
-      description: Status read and pop (Host mode)
-      byte_offset: 32
-      access: Read
-      fieldset: GRXSTS_Host
+      fieldset: GRXSTS
     - name: GRXFSIZ
       description: Receive FIFO size register
       byte_offset: 36
       fieldset: GRXFSIZ
     - name: DIEPTXF0
-      description: Non-periodic transmit FIFO size register (Device mode)
+      description: Endpoint 0 transmit FIFO size register (device mode)
       byte_offset: 40
       fieldset: FSIZ
     - name: HNPTXFSIZ
-      description: Non-periodic transmit FIFO size register (Host mode)
+      description: Non-periodic transmit FIFO size register (host mode)
       byte_offset: 40
       fieldset: FSIZ
-    - name: GNPTXSTS
-      description: Non-periodic transmit FIFO/queue status register
+    - name: HNPTXSTS
+      description: Non-periodic transmit FIFO/queue status register (host mode)
       byte_offset: 44
       access: Read
-      fieldset: GNPTXSTS
+      fieldset: HNPTXSTS
     - name: GCCFG
       description: General core configuration register
       byte_offset: 56
@@ -186,91 +176,62 @@ block/OTG_FS:
       description: Device IN endpoint FIFO empty interrupt mask register
       byte_offset: 2100
       fieldset: DIEPEMPMSK
-    - name: DIEPCTL0
-      description: Device IN endpoint 0 control register
-      byte_offset: 2304
-      fieldset: DIEPCTL0
-    - name: DIEPINT0
-      description: Device IN endpoint 0 interrupt register
-      byte_offset: 2312
-      fieldset: DIEPINT0
-    - name: DIEPTSIZ0
-      description: Device IN endpoint 0 transfer size register
-      byte_offset: 2320
-      fieldset: DIEPTSIZ0
-    - name: DTXFSTS0
-      description: Device IN endpoint 0 transmit FIFO status register
-      byte_offset: 2328
-      access: Read
-      fieldset: DTXFSTS0
     - name: DIEPCTL
-      description: Device IN endpoint 1-3 control register
+      description: Device IN endpoint control register
       array:
-        len: 7
+        len: 8
         stride: 32
-      byte_offset: 2336
+      byte_offset: 2304
       fieldset: DIEPCTL
     - name: DIEPINT
-      description: Device IN endpoint 1-3 interrupt register
+      description: Device IN endpoint interrupt register
       array:
-        len: 7
+        len: 8
         stride: 32
-      byte_offset: 2344
+      byte_offset: 2312
       fieldset: DIEPINT
     - name: DIEPTSIZ
-      description: Device IN endpoint 1-3 transfer size register
+      description: Device IN endpoint transfer size register
       array:
-        len: 7
+        len: 8
         stride: 32
-      byte_offset: 2352
+      byte_offset: 2320
       fieldset: DIEPTSIZ
     - name: DTXFSTS
-      description: Device IN endpoint 1-3 transmit FIFO status register
+      description: Device IN endpoint transmit FIFO status register
       array:
-        len: 7
+        len: 8
         stride: 32
-      byte_offset: 2360
+      byte_offset: 2328
       access: Read
       fieldset: DTXFSTS
-    - name: DOEPCTL0
-      description: Device OUT endpoint 0 control register
-      byte_offset: 2816
-      fieldset: DOEPCTL0
-    - name: DOEPINT0
-      description: Device OUT endpoint 0 interrupt register
-      byte_offset: 2824
-      fieldset: DOEPINT0
-    - name: DOEPTSIZ0
-      description: Device OUT endpoint 0 transfer size register
-      byte_offset: 2832
-      fieldset: DOEPTSIZ0
     - name: DOEPCTL
-      description: Device OUT endpoint 1-3 control register
+      description: Device OUT endpoint control register
       array:
-        len: 7
+        len: 8
         stride: 32
-      byte_offset: 2848
+      byte_offset: 2816
       fieldset: DOEPCTL
     - name: DOEPINT
-      description: Device OUT endpoint 1-3 interrupt register
+      description: Device OUT endpoint interrupt register
       array:
-        len: 7
+        len: 8
         stride: 32
-      byte_offset: 2856
+      byte_offset: 2824
       fieldset: DOEPINT
     - name: DOEPTSIZ
-      description: Device OUT endpoint 1-3 transfer size register
+      description: Device OUT endpoint transfer size register
       array:
-        len: 7
+        len: 8
         stride: 32
-      byte_offset: 2864
+      byte_offset: 2832
       fieldset: DOEPTSIZ
     - name: PCGCCTL
       description: Power and clock gating control register
       byte_offset: 3584
       fieldset: PCGCCTL
     - name: FIFO
-      description: Device endpoint 0-3 Fifo / Host channel 0-7 Fifo register
+      description: Device endpoint / host channel FIFO register
       array:
         len: 8
         stride: 4096
@@ -312,6 +273,7 @@ fieldset/DCFG:
       description: Device speed
       bit_offset: 0
       bit_size: 2
+      enum: DSPD
     - name: NZLSOHSK
       description: Non-zero-length status OUT handshake
       bit_offset: 2
@@ -324,6 +286,7 @@ fieldset/DCFG:
       description: Periodic frame interval
       bit_offset: 11
       bit_size: 2
+      enum: PFIVL
 fieldset/DCTL:
   description: Device control register
   fields:
@@ -390,6 +353,11 @@ fieldset/DIEPCTL:
       description: EPTYP
       bit_offset: 18
       bit_size: 2
+      enum: EPTYP
+    - name: SNPM
+      description: SNPM
+      bit_offset: 20
+      bit_size: 1
     - name: STALL
       description: STALL
       bit_offset: 21
@@ -422,49 +390,6 @@ fieldset/DIEPCTL:
       description: EPENA
       bit_offset: 31
       bit_size: 1
-fieldset/DIEPCTL0:
-  description: Device control IN endpoint 0 control register
-  fields:
-    - name: MPSIZ
-      description: Maximum packet size
-      bit_offset: 0
-      bit_size: 2
-    - name: USBAEP
-      description: USB active endpoint
-      bit_offset: 15
-      bit_size: 1
-    - name: NAKSTS
-      description: NAK status
-      bit_offset: 17
-      bit_size: 1
-    - name: EPTYP
-      description: Endpoint type
-      bit_offset: 18
-      bit_size: 2
-    - name: STALL
-      description: STALL handshake
-      bit_offset: 21
-      bit_size: 1
-    - name: TXFNUM
-      description: TxFIFO number
-      bit_offset: 22
-      bit_size: 4
-    - name: CNAK
-      description: Clear NAK
-      bit_offset: 26
-      bit_size: 1
-    - name: SNAK
-      description: Set NAK
-      bit_offset: 27
-      bit_size: 1
-    - name: EPDIS
-      description: Endpoint disable
-      bit_offset: 30
-      bit_size: 1
-    - name: EPENA
-      description: Endpoint enable
-      bit_offset: 31
-      bit_size: 1
 fieldset/DIEPEMPMSK:
   description: Device IN endpoint FIFO empty interrupt mask register
   fields:
@@ -474,33 +399,6 @@ fieldset/DIEPEMPMSK:
       bit_size: 16
 fieldset/DIEPINT:
   description: Device endpoint interrupt register
-  fields:
-    - name: XFRC
-      description: XFRC
-      bit_offset: 0
-      bit_size: 1
-    - name: EPDISD
-      description: EPDISD
-      bit_offset: 1
-      bit_size: 1
-    - name: TOC
-      description: TOC
-      bit_offset: 3
-      bit_size: 1
-    - name: ITTXFE
-      description: ITTXFE
-      bit_offset: 4
-      bit_size: 1
-    - name: INEPNE
-      description: INEPNE
-      bit_offset: 6
-      bit_size: 1
-    - name: TXFE
-      description: TXFE
-      bit_offset: 7
-      bit_size: 1
-fieldset/DIEPINT0:
-  description: Device endpoint 0 interrupt register
   fields:
     - name: XFRC
       description: XFRC
@@ -568,17 +466,6 @@ fieldset/DIEPTSIZ:
       description: Multi count
       bit_offset: 29
       bit_size: 2
-fieldset/DIEPTSIZ0:
-  description: Device endpoint 0 transfer size register
-  fields:
-    - name: XFRSIZ
-      description: Transfer size
-      bit_offset: 0
-      bit_size: 7
-    - name: PKTCNT
-      description: Packet count
-      bit_offset: 19
-      bit_size: 2
 fieldset/DOEPCTL:
   description: Device endpoint control register
   fields:
@@ -602,6 +489,7 @@ fieldset/DOEPCTL:
       description: EPTYP
       bit_offset: 18
       bit_size: 2
+      enum: EPTYP
     - name: SNPM
       description: SNPM
       bit_offset: 20
@@ -634,74 +522,8 @@ fieldset/DOEPCTL:
       description: EPENA
       bit_offset: 31
       bit_size: 1
-fieldset/DOEPCTL0:
-  description: Device endpoint 0 control register
-  fields:
-    - name: MPSIZ
-      description: MPSIZ
-      bit_offset: 0
-      bit_size: 2
-    - name: USBAEP
-      description: USBAEP
-      bit_offset: 15
-      bit_size: 1
-    - name: NAKSTS
-      description: NAKSTS
-      bit_offset: 17
-      bit_size: 1
-    - name: EPTYP
-      description: EPTYP
-      bit_offset: 18
-      bit_size: 2
-    - name: SNPM
-      description: SNPM
-      bit_offset: 20
-      bit_size: 1
-    - name: STALL
-      description: STALL
-      bit_offset: 21
-      bit_size: 1
-    - name: CNAK
-      description: CNAK
-      bit_offset: 26
-      bit_size: 1
-    - name: SNAK
-      description: SNAK
-      bit_offset: 27
-      bit_size: 1
-    - name: EPDIS
-      description: EPDIS
-      bit_offset: 30
-      bit_size: 1
-    - name: EPENA
-      description: EPENA
-      bit_offset: 31
-      bit_size: 1
 fieldset/DOEPINT:
   description: Device endpoint interrupt register
-  fields:
-    - name: XFRC
-      description: XFRC
-      bit_offset: 0
-      bit_size: 1
-    - name: EPDISD
-      description: EPDISD
-      bit_offset: 1
-      bit_size: 1
-    - name: STUP
-      description: STUP
-      bit_offset: 3
-      bit_size: 1
-    - name: OTEPDIS
-      description: OTEPDIS
-      bit_offset: 4
-      bit_size: 1
-    - name: B2BSTUP
-      description: B2BSTUP
-      bit_offset: 6
-      bit_size: 1
-fieldset/DOEPINT0:
-  description: Device endpoint 0 interrupt register
   fields:
     - name: XFRC
       description: XFRC
@@ -757,21 +579,6 @@ fieldset/DOEPTSIZ:
       description: Received data PID/SETUP packet count
       bit_offset: 29
       bit_size: 2
-fieldset/DOEPTSIZ0:
-  description: Device OUT endpoint 0 transfer size register
-  fields:
-    - name: XFRSIZ
-      description: Transfer size
-      bit_offset: 0
-      bit_size: 7
-    - name: PKTCNT
-      description: Packet count
-      bit_offset: 19
-      bit_size: 1
-    - name: STUPCNT
-      description: SETUP packet count
-      bit_offset: 29
-      bit_size: 2
 fieldset/DSTS:
   description: Device status register
   fields:
@@ -783,6 +590,7 @@ fieldset/DSTS:
       description: Enumerated speed
       bit_offset: 1
       bit_size: 2
+      enum: DSPD
     - name: EERR
       description: Erratic error
       bit_offset: 3
@@ -792,13 +600,6 @@ fieldset/DSTS:
       bit_offset: 8
       bit_size: 14
 fieldset/DTXFSTS:
-  description: Device IN endpoint transmit FIFO status register
-  fields:
-    - name: INEPTFSAV
-      description: IN endpoint TxFIFO space available
-      bit_offset: 0
-      bit_size: 16
-fieldset/DTXFSTS0:
   description: Device IN endpoint transmit FIFO status register
   fields:
     - name: INEPTFSAV
@@ -820,7 +621,7 @@ fieldset/DVBUSPULSE:
       bit_offset: 0
       bit_size: 12
 fieldset/FIFO:
-  description: Fifo register
+  description: FIFO register
   fields:
     - name: DATA
       description: Data
@@ -849,16 +650,24 @@ fieldset/GCCFG:
       bit_offset: 16
       bit_size: 1
     - name: VBUSASEN
-      description: Enable the VBUS sensing device
+      description: Enable the VBUS "A" sensing device
       bit_offset: 18
       bit_size: 1
     - name: VBUSBSEN
-      description: Enable the VBUS sensing device
+      description: Enable the VBUS "B" sensing device
       bit_offset: 19
       bit_size: 1
     - name: SOFOUTEN
       description: SOF output enable
       bit_offset: 20
+      bit_size: 1
+    - name: NOVBUSSENS
+      description: VBUS sensing disable
+      bit_offset: 21
+      bit_size: 1
+    - name: VBDEN
+      description: USB VBUS detection enable
+      bit_offset: 21
       bit_size: 1
 fieldset/GINTMSK:
   description: Interrupt mask register
@@ -932,7 +741,7 @@ fieldset/GINTMSK:
       bit_offset: 20
       bit_size: 1
     - name: IPXFRM_IISOOXFRM
-      description: Incomplete periodic transfer mask(Host mode)/Incomplete isochronous OUT transfer mask(Device mode)
+      description: Incomplete periodic transfer mask (host mode) / Incomplete isochronous OUT transfer mask (device mode)
       bit_offset: 21
       bit_size: 1
     - name: PRTIM
@@ -1035,7 +844,7 @@ fieldset/GINTSTS:
       bit_offset: 20
       bit_size: 1
     - name: IPXFR_INCOMPISOOUT
-      description: Incomplete periodic transfer(Host mode)/Incomplete isochronous OUT transfer(Device mode)
+      description: Incomplete periodic transfer (host mode) / Incomplete isochronous OUT transfer (device mode)
       bit_offset: 21
       bit_size: 1
     - name: HPRTINT
@@ -1091,6 +900,30 @@ fieldset/GOTGCTL:
     - name: SRQ
       description: Session request
       bit_offset: 1
+      bit_size: 1
+    - name: VBVALOEN
+      description: VBUS valid override enable
+      bit_offset: 2
+      bit_size: 1
+    - name: VBVALOVAL
+      description: VBUS valid override value
+      bit_offset: 3
+      bit_size: 1
+    - name: AVALOEN
+      description: A-peripheral session valid override enable
+      bit_offset: 4
+      bit_size: 1
+    - name: AVALOVAL
+      description: A-peripheral session valid override value
+      bit_offset: 5
+      bit_size: 1
+    - name: BVALOEN
+      description: B-peripheral session valid override enable
+      bit_offset: 6
+      bit_size: 1
+    - name: BVALOVAL
+      description: B-peripheral session valid override value
+      bit_offset: 7
       bit_size: 1
     - name: HNGSCS
       description: Host negotiation success
@@ -1178,7 +1011,6 @@ fieldset/GRSTCTL:
       description: TxFIFO number
       bit_offset: 6
       bit_size: 5
-      enum: TXFNUM
     - name: AHBIDL
       description: AHB master idle
       bit_offset: 31
@@ -1190,35 +1022,11 @@ fieldset/GRXFSIZ:
       description: RxFIFO depth
       bit_offset: 0
       bit_size: 16
-fieldset/GRXSTS_Device:
-  description: Receive status (Device mode)
+fieldset/GRXSTS:
+  description: Status read and pop register
   fields:
     - name: EPNUM
-      description: Endpoint number
-      bit_offset: 0
-      bit_size: 4
-    - name: BCNT
-      description: Byte count
-      bit_offset: 4
-      bit_size: 11
-    - name: DPID
-      description: Data PID
-      bit_offset: 15
-      bit_size: 2
-    - name: PKTSTS
-      description: Packet status
-      bit_offset: 17
-      bit_size: 4
-      enum: PKTSTSD
-    - name: FRMNUM
-      description: Frame number
-      bit_offset: 21
-      bit_size: 4
-fieldset/GRXSTS_Host:
-  description: Receive status (Host mode)
-  fields:
-    - name: CHNUM
-      description: Channel number
+      description: Endpoint number (device mode) / Channel number (host mode)
       bit_offset: 0
       bit_size: 4
     - name: BCNT
@@ -1230,11 +1038,20 @@ fieldset/GRXSTS_Host:
       bit_offset: 15
       bit_size: 2
       enum: DPID
-    - name: PKTSTS
-      description: Packet status
+    - name: PKTSTSD
+      description: Packet status (device mode)
+      bit_offset: 17
+      bit_size: 4
+      enum: PKTSTSD
+    - name: PKTSTSH
+      description: Packet status (host mode)
       bit_offset: 17
       bit_size: 4
       enum: PKTSTSH
+    - name: FRMNUM
+      description: Frame number (device mode)
+      bit_offset: 21
+      bit_size: 4
 fieldset/GUSBCFG:
   description: USB configuration register
   fields:
@@ -1243,7 +1060,7 @@ fieldset/GUSBCFG:
       bit_offset: 0
       bit_size: 3
     - name: PHYSEL
-      description: Full Speed serial transceiver select
+      description: Full-speed internal serial transceiver enable
       bit_offset: 6
       bit_size: 1
     - name: SRPCAP
@@ -1307,6 +1124,7 @@ fieldset/HCCHAR:
       description: Endpoint type
       bit_offset: 18
       bit_size: 2
+      enum: EPTYP
     - name: MCNT
       description: Multicount
       bit_offset: 20
@@ -1334,7 +1152,6 @@ fieldset/HCFG:
       description: FS/LS PHY clock select
       bit_offset: 0
       bit_size: 2
-      enum: SPEED
     - name: FSLSS
       description: FS- and LS-only support
       bit_offset: 2
@@ -1454,6 +1271,21 @@ fieldset/HFNUM:
       description: Frame time remaining
       bit_offset: 16
       bit_size: 16
+fieldset/HNPTXSTS:
+  description: Non-periodic transmit FIFO/queue status register
+  fields:
+    - name: NPTXFSAV
+      description: Non-periodic TxFIFO space available
+      bit_offset: 0
+      bit_size: 16
+    - name: NPTQXSAV
+      description: Non-periodic transmit request queue space available
+      bit_offset: 16
+      bit_size: 8
+    - name: NPTXQTOP
+      description: Top of the non-periodic transmit request queue
+      bit_offset: 24
+      bit_size: 7
 fieldset/FSIZ:
   description: FIFO size register
   fields:
@@ -1520,7 +1352,6 @@ fieldset/HPRT:
       description: Port speed
       bit_offset: 17
       bit_size: 2
-      enum: SPEED
 fieldset/HPTXSTS:
   description: Periodic transmit FIFO/queue status register
   fields:
@@ -1562,6 +1393,44 @@ enum/DPID:
       value: 2
     - name: MDATA
       value: 3
+enum/DSPD:
+  bit_size: 2
+  variants:
+    - name: HIGH_SPEED
+      description: High speed
+      value: 0
+    - name: FULL_SPEED_EXTERNAL
+      description: Full speed using external ULPI PHY
+      value: 1
+    - name: FULL_SPEED_INTERNAL
+      description: Full speed using internal embedded PHY
+      value: 3
+enum/EPTYP:
+  bit_size: 2
+  variants:
+    - name: CONTROL
+      value: 0
+    - name: ISOCHRONOUS
+      value: 1
+    - name: BULK
+      value: 2
+    - name: INTERRUPT
+      value: 3
+enum/PFIVL:
+  bit_size: 2
+  variants:
+    - name: FRAME_INTERVAL_80
+      description: 80% of the frame interval
+      value: 0
+    - name: FRAME_INTERVAL_85
+      description: 85% of the frame interval
+      value: 1
+    - name: FRAME_INTERVAL_90
+      description: 90% of the frame interval
+      value: 2
+    - name: FRAME_INTERVAL_95
+      description: 95% of the frame interval
+      value: 3
 enum/PKTSTSD:
   bit_size: 4
   variants:
@@ -1595,15 +1464,3 @@ enum/PKTSTSH:
     - name: CHANNEL_HALTED
       description: Channel halted (triggers an interrupt)
       value: 7
-enum/SPEED:
-  bit_size: 2
-  variants:
-    - name: FULL_SPEED
-      value: 1
-    - name: LOW_SPEED
-      value: 2
-enum/TXFNUM:
-  bit_size: 5
-  variants:
-    - name: ALL
-      value: 16
