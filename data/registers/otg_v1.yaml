@@ -1,6 +1,6 @@
 ---
-block/OTG_HS:
-  description: USB on the go high speed
+block/OTG:
+  description: USB on the go
   items:
     - name: GOTGCTL
       description: Control and status register
@@ -61,10 +61,14 @@ block/OTG_HS:
       description: OTG I2C access register
       byte_offset: 48
       fieldset: GI2CCTL
-    - name: GCCFG
-      description: General core configuration register
+    - name: GCCFG_V1
+      description: General core configuration register, for core_id 0x0000_1xxx
       byte_offset: 56
-      fieldset: GCCFG
+      fieldset: GCCFG_V1
+    - name: GCCFG_V2
+      description: General core configuration register, for core_id 0x0000_[23]xxx
+      byte_offset: 56
+      fieldset: GCCFG_V2
     - name: CID
       description: Core ID register
       byte_offset: 60
@@ -664,7 +668,30 @@ fieldset/GAHBCFG:
       description: Periodic TxFIFO empty level
       bit_offset: 8
       bit_size: 1
-fieldset/GCCFG:
+fieldset/GCCFG_V1:
+  description: General core configuration register
+  fields:
+    - name: PWRDWN
+      description: Power down
+      bit_offset: 16
+      bit_size: 1
+    - name: VBUSASEN
+      description: Enable the VBUS "A" sensing device
+      bit_offset: 18
+      bit_size: 1
+    - name: VBUSBSEN
+      description: Enable the VBUS "B" sensing device
+      bit_offset: 19
+      bit_size: 1
+    - name: SOFOUTEN
+      description: SOF output enable
+      bit_offset: 20
+      bit_size: 1
+    - name: NOVBUSSENS
+      description: VBUS sensing disable
+      bit_offset: 21
+      bit_size: 1
+fieldset/GCCFG_V2:
   description: General core configuration register
   fields:
     - name: DCDET
@@ -702,10 +729,6 @@ fieldset/GCCFG:
     - name: SDEN
       description: Secondary detection (SD) mode enable
       bit_offset: 20
-      bit_size: 1
-    - name: NOVBUSSENS
-      description: VBUS sensing disable
-      bit_offset: 21
       bit_size: 1
     - name: VBDEN
       description: USB VBUS detection enable
@@ -808,6 +831,10 @@ fieldset/GINTMSK:
     - name: EOPFM
       description: End of periodic frame interrupt mask
       bit_offset: 15
+      bit_size: 1
+    - name: EPMISM
+      description: Endpoint mismatch interrupt mask
+      bit_offset: 17
       bit_size: 1
     - name: IEPINT
       description: IN endpoints interrupt mask
@@ -1294,6 +1321,10 @@ fieldset/GUSBCFG:
     - name: FDMOD
       description: Force device mode
       bit_offset: 30
+      bit_size: 1
+    - name: CTXPKT
+      description: Corrupt Tx packet
+      bit_offset: 31
       bit_size: 1
 fieldset/HAINT:
   description: Host all channels interrupt register
