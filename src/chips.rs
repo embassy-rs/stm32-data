@@ -77,7 +77,7 @@ fn chip_name_from_package_name(x: &str) -> String {
         (regex!("^(STM32L1....).x([AX])$"), "$1-$2"),
         (regex!("^(STM32G0....).xN$"), "$1"),
         (regex!("^(STM32F412..).xP$"), "$1"),
-        (regex!("^(STM32L4....).xP$"), "$1"),
+        (regex!("^(STM32L4....).x[PS]$"), "$1"),
         (regex!("^(STM32WB....).x[AE]$"), "$1"),
         (regex!("^(STM32G0....).xN$"), "$1"),
         (regex!("^(STM32L5....).x[PQ]$"), "$1"),
@@ -163,6 +163,7 @@ impl PeriMatcher {
             ("STM32H7.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             ("STM32H7.*:ADC3_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (".*:DCMI:.*", ("dcmi", "v1", "DCMI")),
+            ("STM32C0.*:SYSCFG:.*", ("syscfg", "c0", "SYSCFG")),
             ("STM32F0.*:SYSCFG:.*", ("syscfg", "f0", "SYSCFG")),
             ("STM32F2.*:SYSCFG:.*", ("syscfg", "f2", "SYSCFG")),
             ("STM32F3.*:SYSCFG:.*", ("syscfg", "f3", "SYSCFG")),
@@ -220,6 +221,7 @@ impl PeriMatcher {
             // # USB OTG
             (".*:USB_OTG_FS:otgfs1_.*", ("otg", "v1", "OTG")),
             (".*:USB_OTG_HS:otghs1_.*", ("otg", "v1", "OTG")),
+            ("STM32C0.*:RCC:.*", ("rcc", "c0", "RCC")),
             ("STM32F0.*:RCC:.*", ("rcc", "f0", "RCC")),
             ("STM32F100.*:RCC:.*", ("rcc", "f100", "RCC")),
             ("STM32F10[123].*:RCC:.*", ("rcc", "f1", "RCC")),
@@ -245,6 +247,7 @@ impl PeriMatcher {
             ("STM32F3.*:SPI[1234]:.*", ("spi", "v2", "SPI")),
             ("STM32F1.*:AFIO:.*", ("afio", "f1", "AFIO")),
             ("STM32L5.*:EXTI:.*", ("exti", "l5", "EXTI")),
+            ("STM32C0.*:EXTI:.*", ("exti", "c0", "EXTI")),
             ("STM32G0.*:EXTI:.*", ("exti", "g0", "EXTI")),
             ("STM32H7.*:EXTI:.*", ("exti", "h7", "EXTI")),
             ("STM32U5.*:EXTI:.*", ("exti", "u5", "EXTI")),
@@ -254,6 +257,7 @@ impl PeriMatcher {
             (".*:EXTI:.*", ("exti", "v1", "EXTI")),
             ("STM32L0.*:CRS:.*", ("crs", "l0", "CRS")),
             (".*SDMMC:sdmmc2_v1_0", ("sdmmc", "v2", "SDMMC")),
+            ("STM32C0.*:PWR:.*", ("pwr", "c0", "PWR")),
             ("STM32G0.*:PWR:.*", ("pwr", "g0", "PWR")),
             ("STM32G4.*:PWR:.*", ("pwr", "g4", "PWR")),
             ("STM32H7(42|43|53|50).*:PWR:.*", ("pwr", "h7", "PWR")),
@@ -282,6 +286,7 @@ impl PeriMatcher {
             ("STM32U5.*:FLASH:.*", ("flash", "u5", "FLASH")),
             ("STM32WB.*:FLASH:.*", ("flash", "wb", "FLASH")),
             ("STM32WL.*:FLASH:.*", ("flash", "wl", "FLASH")),
+            ("STM32C0.*:FLASH:.*", ("flash", "c0", "FLASH")),
             ("STM32G0.*:FLASH:.*", ("flash", "g0", "FLASH")),
             ("STM32F107.*:ETH:.*", ("eth", "v1a", "ETH")),
             ("STM32F[24].*:ETH:.*", ("eth", "v1b", "ETH")),
@@ -305,6 +310,7 @@ impl PeriMatcher {
             ("STM32F3.*:DBGMCU:.*", ("dbgmcu", "f3", "DBGMCU")),
             ("STM32F4.*:DBGMCU:.*", ("dbgmcu", "f4", "DBGMCU")),
             ("STM32F7.*:DBGMCU:.*", ("dbgmcu", "f7", "DBGMCU")),
+            ("STM32C0.*:DBGMCU:.*", ("dbgmcu", "c0", "DBGMCU")),
             ("STM32G0.*:DBGMCU:.*", ("dbgmcu", "g0", "DBGMCU")),
             ("STM32G4.*:DBGMCU:.*", ("dbgmcu", "g4", "DBGMCU")),
             ("STM32H7.*:DBGMCU:.*", ("dbgmcu", "h7", "DBGMCU")),
@@ -447,6 +453,22 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
     Ok((chips, chip_groups))
 }
 
+static NOPELIST: &[&str] = &[
+    // Not supported
+    "STM32MP",
+    // Does not exist in ST website. No datasheet, no RM.
+    "STM32GBK",
+    "STM32L485",
+    "STM32U59",
+    "STM32U5A",
+    // STM32WxM modules. These are based on a chip that's supported on its own,
+    // not sure why we want a separate target for it.
+    "STM32WL5M",
+    "STM32WB1M",
+    "STM32WB3M",
+    "STM32WB5M",
+];
+
 fn parse_group(
     f: std::path::PathBuf,
     chips: &mut HashMap<String, Chip>,
@@ -454,14 +476,10 @@ fn parse_group(
 ) -> anyhow::Result<()> {
     let ff = f.file_name().unwrap().to_string_lossy();
 
-    // Not supported
-    if ff.contains("STM32MP") {
-        return Ok(());
-    }
-
-    // Does not exist in ST website. No datasheet, no RM.
-    if ff.contains("STM32GBK") || ff.contains("STM32L485") {
-        return Ok(());
+    for nope in NOPELIST {
+        if ff.contains(nope) {
+            return Ok(());
+        }
     }
 
     let parsed: xml::Mcu = quick_xml::de::from_str(&std::fs::read_to_string(f)?)?;
@@ -567,8 +585,12 @@ fn process_group(
     group.line = Some(group.xml.line.clone());
     group.die = Some(group.xml.die.clone());
     let rcc_kind = group.ips.values().find(|x| x.name == "RCC").unwrap().version.clone();
-    let rcc_block = peri_matcher.match_peri(&format!("{chip_name}:RCC:{rcc_kind}")).unwrap();
-    let h = headers.get_for_chip(&chip_name).unwrap();
+    let rcc_block = peri_matcher
+        .match_peri(&format!("{chip_name}:RCC:{rcc_kind}"))
+        .unwrap_or_else(|| panic!("could not get rcc for {}", &chip_name));
+    let h = headers
+        .get_for_chip(&chip_name)
+        .unwrap_or_else(|| panic!("could not get header for {}", &chip_name));
     let chip_af = &group.ips.values().find(|x| x.name == "GPIO").unwrap().version;
     let chip_af = chip_af.strip_suffix("_gpio_v1_0").unwrap();
     let chip_af = af.0.get(chip_af);

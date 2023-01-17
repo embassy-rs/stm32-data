@@ -1,0 +1,134 @@
+---
+block/PWR:
+  description: PWR address block description
+  items:
+    - name: CR1
+      description: PWR control register 1
+      byte_offset: 0
+      fieldset: CR1
+    - name: CR3
+      description: PWR control register 3
+      byte_offset: 8
+      fieldset: CR3
+    - name: CR4
+      description: PWR control register 4
+      byte_offset: 12
+      fieldset: CR4
+    - name: SR1
+      description: PWR status register 1
+      byte_offset: 16
+      fieldset: SR1
+    - name: SR2
+      description: PWR status register 2
+      byte_offset: 20
+      fieldset: SR2
+    - name: SCR
+      description: PWR status clear register
+      byte_offset: 24
+      fieldset: SCR
+    - name: PUCR
+      description: PWR Port pull-up control register
+      array:
+        len: 6
+        stride: 8
+      byte_offset: 32
+      fieldset: PCR
+    - name: PDCR
+      description: PWR Port pull-down control register
+      array:
+        len: 6
+        stride: 8
+      byte_offset: 36
+      fieldset: PCR
+fieldset/CR1:
+  description: PWR control register 1
+  fields:
+    - name: LPMS
+      description: "Low-power mode selection\r These bits select the low-power mode entered when CPU enters deepsleep mode.\r 1XX: Shutdown mode"
+      bit_offset: 0
+      bit_size: 3
+    - name: FPD_STOP
+      description: "Flash memory powered down during Stop mode\r This bit determines whether the Flash memory is put in power-down mode or remains in idle mode when the device enters Stop mode."
+      bit_offset: 3
+      bit_size: 1
+    - name: FPD_SLP
+      description: "Flash memory powered down during Sleep mode\r This bit determines whether the Flash memory is put in power-down mode or remains in idle mode when the device enters Sleep mode."
+      bit_offset: 5
+      bit_size: 1
+fieldset/CR3:
+  description: PWR control register 3
+  fields:
+    - name: EWUP
+      description: Enable Wakeup pin
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+    - name: APC
+      description: "Apply pull-up and pull-down configuration\r This bit determines whether the I/O pull-up and pull-down configurations defined in the PWR_PUCRx and PWR_PDCRx registers are applied."
+      bit_offset: 10
+      bit_size: 1
+    - name: EIWUL
+      description: "Enable internal wakeup line\r When set, a rising edge on the internal wakeup line triggers a wakeup event."
+      bit_offset: 15
+      bit_size: 1
+fieldset/CR4:
+  description: PWR control register 4
+  fields:
+    - name: WP
+      description: Wakeup pin WKUP1 polarity
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+fieldset/PCR:
+  description: Power Port pull control register
+  fields:
+    - name: P
+      description: Port pull bit y (y=0..15)
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 16
+        stride: 1
+fieldset/SCR:
+  description: PWR status clear register
+  fields:
+    - name: CWUF
+      description: Clear Wakeup flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+    - name: CSBF
+      description: "Clear standby flag\r Setting this bit clears the SBF flag in the PWR_SR1 register."
+      bit_offset: 8
+      bit_size: 1
+fieldset/SR1:
+  description: PWR status register 1
+  fields:
+    - name: WUF
+      description: Wakeup flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 6
+        stride: 1
+    - name: SBF
+      description: "Standby/Shutdown flag\r This bit is set by hardware when the device enters Standby or Shutdown mode and is cleared by setting the CSBF bit in the PWR_SCR register, or by a power-on reset. It is not cleared by the system reset."
+      bit_offset: 8
+      bit_size: 1
+    - name: WUFI
+      description: "Wakeup flag internal\r This bit is set when a wakeup condition is detected on the internal wakeup line. It is cleared when all internal wakeup sources are cleared."
+      bit_offset: 15
+      bit_size: 1
+fieldset/SR2:
+  description: PWR status register 2
+  fields:
+    - name: FLASH_RDY
+      description: "Flash ready flag\r This bit is set by hardware to indicate when the Flash memory is ready to be accessed after wakeup from power-down. To place the Flash memory in power-down, set either FPD_SLP or FPD_STP bit.\r Note: If the system boots from SRAM, the user application must wait till FLASH_RDY bit is set, prior to jumping to Flash memory."
+      bit_offset: 7
+      bit_size: 1
