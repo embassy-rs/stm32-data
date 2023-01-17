@@ -174,11 +174,11 @@ fieldset/CR:
       bit_size: 1
     - name: ALRE
       description: Alarm enable
+      bit_offset: 8
+      bit_size: 1
       array:
         len: 2
         stride: 1
-      bit_offset: 8
-      bit_size: 1
     - name: WUTE
       description: Wakeup timer enable
       bit_offset: 10
@@ -189,11 +189,11 @@ fieldset/CR:
       bit_size: 1
     - name: ALRIE
       description: Alarm interrupt enable
+      bit_offset: 12
+      bit_size: 1
       array:
         len: 2
         stride: 1
-      bit_offset: 12
-      bit_size: 1
     - name: WUTIE
       description: Wakeup timer interrupt enable
       bit_offset: 14
@@ -264,11 +264,11 @@ fieldset/ISR:
   fields:
     - name: ALRWF
       description: Alarm write flag
+      bit_offset: 0
+      bit_size: 1
       array:
         len: 2
         stride: 1
-      bit_offset: 0
-      bit_size: 1
       enum_read: ALRWFR
     - name: WUTWF
       description: Wakeup timer write flag
@@ -298,11 +298,11 @@ fieldset/ISR:
       enum: INIT
     - name: ALRF
       description: Alarm flag
+      bit_offset: 8
+      bit_size: 1
       array:
         len: 2
         stride: 1
-      bit_offset: 8
-      bit_size: 1
       enum_read: ALRFR
       enum_write: ALRFW
     - name: WUTF
@@ -325,11 +325,11 @@ fieldset/ISR:
       enum_write: TSOVFW
     - name: TAMPF
       description: Tamper detection flag
+      bit_offset: 13
+      bit_size: 1
       array:
         len: 1
         stride: 1
-      bit_offset: 13
-      bit_size: 1
       enum_read: TAMPFR
       enum_write: TAMPFW
 fieldset/PRER:
@@ -348,18 +348,18 @@ fieldset/TAFCR:
   fields:
     - name: TAMPE
       description: Tamper detection enable
-      array:
-        offsets:
-          - 0
       bit_offset: 0
       bit_size: 1
-    - name: TAMPTRG
-      description: Active level for tamper
       array:
         offsets:
           - 0
+    - name: TAMPTRG
+      description: Active level for tamper
       bit_offset: 1
       bit_size: 1
+      array:
+        offsets:
+          - 0
       enum: TAMPTRG
     - name: TAMPIE
       description: Tamper interrupt enable
@@ -490,15 +490,6 @@ enum/ALRFW:
     - name: Clear
       description: This flag is cleared by software by writing 0
       value: 0
-enum/ALRWFR:
-  bit_size: 1
-  variants:
-    - name: UpdateNotAllowed
-      description: Alarm update not allowed
-      value: 0
-    - name: UpdateAllowed
-      description: Alarm update allowed
-      value: 1
 enum/ALRMR_MSK:
   bit_size: 1
   variants:
@@ -521,10 +512,28 @@ enum/ALRMR_WDSEL:
   bit_size: 1
   variants:
     - name: DateUnits
-      description: DU[3:0] represents the date units
+      description: "DU[3:0] represents the date units"
       value: 0
     - name: WeekDay
-      description: DU[3:0] represents the week day. DT[1:0] is don’t care
+      description: "DU[3:0] represents the week day. DT[1:0] is don’t care"
+      value: 1
+enum/ALRWFR:
+  bit_size: 1
+  variants:
+    - name: UpdateNotAllowed
+      description: Alarm update not allowed
+      value: 0
+    - name: UpdateAllowed
+      description: Alarm update allowed
+      value: 1
+enum/AMPM:
+  bit_size: 1
+  variants:
+    - name: AM
+      description: AM or 24-hour format
+      value: 0
+    - name: PM
+      description: PM
       value: 1
 enum/CALP:
   bit_size: 1
@@ -539,13 +548,13 @@ enum/CALW16:
   bit_size: 1
   variants:
     - name: Sixteen_Second
-      description: When CALW16 is set to ‘1’, the 16-second calibration cycle period is selected.This bit must not be set to ‘1’ if CALW8=1
+      description: "When CALW16 is set to ‘1’, the 16-second calibration cycle period is selected.This bit must not be set to ‘1’ if CALW8=1"
       value: 1
 enum/CALW8:
   bit_size: 1
   variants:
     - name: Eight_Second
-      description: When CALW8 is set to ‘1’, the 8-second calibration cycle period is selected
+      description: "When CALW8 is set to ‘1’, the 8-second calibration cycle period is selected"
       value: 1
 enum/FMT:
   bit_size: 1
@@ -563,7 +572,7 @@ enum/INIT:
       description: Free running mode
       value: 0
     - name: InitMode
-      description: Initialization mode used to program time and date register (RTC_TR and RTC_DR), and prescaler register (RTC_PRER). Counters are stopped and start counting from the new value when INIT is reset.
+      description: "Initialization mode used to program time and date register (RTC_TR and RTC_DR), and prescaler register (RTC_PRER). Counters are stopped and start counting from the new value when INIT is reset."
       value: 1
 enum/INITFR:
   bit_size: 1
@@ -602,10 +611,10 @@ enum/POL:
   bit_size: 1
   variants:
     - name: High
-      description: The pin is high when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])
+      description: "The pin is high when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])"
       value: 0
     - name: Low
-      description: The pin is low when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])
+      description: "The pin is low when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])"
       value: 1
 enum/REFCKON:
   bit_size: 1
@@ -651,15 +660,6 @@ enum/TAMPTRG:
       value: 0
     - name: FallingEdge
       description: "If TAMPFLT = 00: RTC_TAMPx input staying high triggers a tamper detection event. If TAMPFLT ≠ 00: RTC_TAMPx input falling edge triggers a tamper detection event"
-      value: 1
-enum/AMPM:
-  bit_size: 1
-  variants:
-    - name: AM
-      description: AM or 24-hour format
-      value: 0
-    - name: PM
-      description: PM
       value: 1
 enum/TSEDGE:
   bit_size: 1
