@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use anyhow::Context;
+
 mod xml {
     use serde::Deserialize;
 
@@ -83,7 +85,11 @@ impl DmaChannels {
         for f in glob::glob("sources/cubedb/mcu/IP/DMA*Modes.xml")?
             .chain(glob::glob("sources/cubedb/mcu/IP/BDMA*Modes.xml")?)
         {
-            let parsed: xml::Ip = quick_xml::de::from_str(&std::fs::read_to_string(f?)?)?;
+            let f = f?;
+            if f.to_string_lossy().contains("DMAMUX") {
+                continue;
+            }
+            let parsed: xml::Ip = quick_xml::de::from_str(&std::fs::read_to_string(&f)?).context(format!("{:?}", f))?;
 
             let ff = parsed.version.clone();
             let is_explicitly_bdma = match parsed.name.as_str() {

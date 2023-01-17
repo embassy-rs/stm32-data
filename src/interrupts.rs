@@ -374,6 +374,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB", &["LP", "HP", "WKUP"]),
+        ("GPU2D", &["ER"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {

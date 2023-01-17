@@ -134,6 +134,7 @@ fn parse_document_type(t: &str) -> &'static str {
         "Errata sheet" => "errata_sheet",
         "Application note" => "application_note",
         "User manual" => "user_manual",
+        "Data brief" => "data_brief",
         _ => panic!("Unknown doc type {t}"),
     }
 }
@@ -145,6 +146,7 @@ fn order_doc_type(t: &str) -> u8 {
         "datahseet" => 2, // TODO: fix me
         "errata_sheet" => 3,
         "application_note" => 4,
+        "data_brief" => 5,
         _ => panic!("Unknown doc type {t}"),
     }
 }
