@@ -303,7 +303,7 @@ impl PeriMatcher {
             ("STM32F10[12357].*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
             ("STM32F2.*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
             ("STM32F3.*:FSMC:.*", ("fsmc", "v2x3", "FSMC")),
-            ("STM32L1.*:FSMC:.*", ("fsmc", "v1x1", "FSMC")),
+            ("STM32L1.*:FSMC:.*", ("fsmc", "v1x0", "FSMC")),
             ("STM32L4.*:FSMC:.*", ("fsmc", "v3x1", "FSMC")),
             ("STM32G4.*:FSMC:.*", ("fsmc", "v4x1", "FSMC")),
             ("STM32L5.*:FSMC:.*", ("fsmc", "v4x1", "FSMC")),
