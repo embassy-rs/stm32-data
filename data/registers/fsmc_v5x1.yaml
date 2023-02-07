@@ -1,19 +1,18 @@
-# stm32f101
-# stm32f102
-# stm32f103
-# stm32f105
-# stm32f107
-# stm32f2
+# stm32u5
 ---
 block/FSMC:
   description: Flexible static memory controller
   items:
-    - name: BCR
-      description: SRAM/NOR-Flash chip-select control register 1-4
-      array:
-        len: 4
-        stride: 8
+    - name: BCR1
+      description: SRAM/NOR-Flash chip-select control register 1
       byte_offset: 0
+      fieldset: BCR1
+    - name: BCR
+      description: SRAM/NOR-Flash chip-select control register 2-4
+      array:
+        len: 3
+        stride: 8
+      byte_offset: 8
       fieldset: BCR
     - name: BTR
       description: SRAM/NOR-Flash chip-select timing register 1-4
@@ -22,6 +21,10 @@ block/FSMC:
         stride: 8
       byte_offset: 4
       fieldset: BTR
+    - name: PCSCNTR
+      description: PSRAM chip select counter register
+      byte_offset: 32
+      fieldset: PCSCNTR
     - name: BWTR
       description: SRAM/NOR-Flash write timing registers 1-4
       array:
@@ -30,47 +33,28 @@ block/FSMC:
       byte_offset: 260
       fieldset: BWTR
     - name: PCR
-      description: PC Card/NAND Flash control register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 96
+      description: PC Card/NAND Flash control register
+      byte_offset: 128
       fieldset: PCR
     - name: SR
-      description: FIFO status and interrupt register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 100
+      description: FIFO status and interrupt register
+      byte_offset: 132
       fieldset: SR
     - name: PMEM
-      description: Common memory space timing register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 104
+      description: Common memory space timing register
+      byte_offset: 136
       fieldset: PMEM
     - name: PATT
-      description: Attribute memory space timing register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 108
+      description: Attribute memory space timing register
+      byte_offset: 140
       fieldset: PATT
-    - name: PIO4
-      description: I/O space timing register 4
-      byte_offset: 176
-      fieldset: PIO4
     - name: ECCR
-      description: ECC result register 2-3
-      array:
-        len: 2
-        stride: 32
-      byte_offset: 116
+      description: ECC result register
+      byte_offset: 148
       access: Read
       fieldset: ECCR
-fieldset/BCR:
-  description: SRAM/NOR-Flash chip-select control register
+fieldset/BCR1:
+  description: SRAM/NOR-Flash chip-select control register 1
   fields:
     - name: MBKEN
       description: Memory bank enable bit
@@ -103,10 +87,6 @@ fieldset/BCR:
       bit_offset: 9
       bit_size: 1
       enum: WAITPOL
-    - name: WRAPMOD
-      description: WRAPMOD
-      bit_offset: 10
-      bit_size: 1
     - name: WAITCFG
       description: Wait timing configuration
       bit_offset: 11
@@ -137,6 +117,90 @@ fieldset/BCR:
       description: Write burst enable
       bit_offset: 19
       bit_size: 1
+    - name: CCLKEN
+      description: Continuous clock enable
+      bit_offset: 20
+      bit_size: 1
+    - name: WFDIS
+      description: Write FIFO disable
+      bit_offset: 21
+      bit_size: 1
+    - name: NBLSET
+      description: Byte lane (NBL) setup
+      bit_offset: 22
+      bit_size: 2
+    - name: FMCEN
+      description: FMC controller enable
+      bit_offset: 31
+      bit_size: 1
+fieldset/BCR:
+  description: SRAM/NOR-Flash chip-select control register 2-4
+  fields:
+    - name: MBKEN
+      description: Memory bank enable bit
+      bit_offset: 0
+      bit_size: 1
+    - name: MUXEN
+      description: Address/data multiplexing enable bit
+      bit_offset: 1
+      bit_size: 1
+    - name: MTYP
+      description: Memory type
+      bit_offset: 2
+      bit_size: 2
+      enum: MTYP
+    - name: MWID
+      description: Memory data bus width
+      bit_offset: 4
+      bit_size: 2
+      enum: MWID
+    - name: FACCEN
+      description: Flash access enable
+      bit_offset: 6
+      bit_size: 1
+    - name: BURSTEN
+      description: Burst enable bit
+      bit_offset: 8
+      bit_size: 1
+    - name: WAITPOL
+      description: Wait signal polarity bit
+      bit_offset: 9
+      bit_size: 1
+      enum: WAITPOL
+    - name: WAITCFG
+      description: Wait timing configuration
+      bit_offset: 11
+      bit_size: 1
+      enum: WAITCFG
+    - name: WREN
+      description: Write enable bit
+      bit_offset: 12
+      bit_size: 1
+    - name: WAITEN
+      description: Wait enable bit
+      bit_offset: 13
+      bit_size: 1
+    - name: EXTMOD
+      description: Extended mode enable
+      bit_offset: 14
+      bit_size: 1
+    - name: ASYNCWAIT
+      description: Wait signal during asynchronous transfers
+      bit_offset: 15
+      bit_size: 1
+    - name: CPSIZE
+      description: CRAM page size
+      bit_offset: 16
+      bit_size: 3
+      enum: CPSIZE
+    - name: CBURSTRW
+      description: Write burst enable
+      bit_offset: 19
+      bit_size: 1
+    - name: NBLSET
+      description: Byte lane (NBL) setup
+      bit_offset: 22
+      bit_size: 2
 fieldset/BTR:
   description: SRAM/NOR-Flash chip-select timing register
   fields:
@@ -169,6 +233,33 @@ fieldset/BTR:
       bit_offset: 28
       bit_size: 2
       enum: ACCMOD
+    - name: DATAHLD
+      description: Data hold phase duration
+      bit_offset: 30
+      bit_size: 2
+fieldset/PCSCNTR:
+  description: PSRAM chip select counter register
+  fields:
+    - name: CSCOUNT
+      description: Chip select counter
+      bit_offset: 0
+      bit_size: 16
+    - name: CNTB1EN
+      description: Counter Bank 1 enable
+      bit_offset: 16
+      bit_size: 1
+    - name: CNTB2EN
+      description: Counter Bank 2 enable
+      bit_offset: 17
+      bit_size: 1
+    - name: CNTB3EN
+      description: Counter Bank 3 enable
+      bit_offset: 18
+      bit_size: 1
+    - name: CNTB4EN
+      description: Counter Bank 4 enable
+      bit_offset: 19
+      bit_size: 1
 fieldset/BWTR:
   description: SRAM/NOR-Flash write timing registers
   fields:
@@ -193,6 +284,10 @@ fieldset/BWTR:
       bit_offset: 28
       bit_size: 2
       enum: ACCMOD
+    - name: DATAHLD
+      description: Data hold phase duration
+      bit_offset: 30
+      bit_size: 2
 fieldset/PCR:
   description: PC Card/NAND Flash control register
   fields:
@@ -298,25 +393,6 @@ fieldset/PATT:
       bit_size: 8
     - name: ATTHIZ
       description: Attribute memory data bus Hi-Z time
-      bit_offset: 24
-      bit_size: 8
-fieldset/PIO4:
-  description: I/O space timing register 4
-  fields:
-    - name: IOSETx
-      description: IOSETx
-      bit_offset: 0
-      bit_size: 8
-    - name: IOWAITx
-      description: IOWAITx
-      bit_offset: 8
-      bit_size: 8
-    - name: IOHOLDx
-      description: IOHOLDx
-      bit_offset: 16
-      bit_size: 8
-    - name: IOHIZx
-      description: IOHIZx
       bit_offset: 24
       bit_size: 8
 fieldset/ECCR:

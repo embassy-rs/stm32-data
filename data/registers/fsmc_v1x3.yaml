@@ -1,18 +1,19 @@
-# stm32f3
+# stm32f101
+# stm32f102
+# stm32f103
+# stm32f105
+# stm32f107
+# stm32f2
 ---
 block/FSMC:
   description: Flexible static memory controller
   items:
-    - name: BCR1
-      description: SRAM/NOR-Flash chip-select control register 1
-      byte_offset: 0
-      fieldset: BCR1
     - name: BCR
-      description: SRAM/NOR-Flash chip-select control register 2-4
+      description: SRAM/NOR-Flash chip-select control register 1-4
       array:
-        len: 3
+        len: 4
         stride: 8
-      byte_offset: 8
+      byte_offset: 0
       fieldset: BCR
     - name: BTR
       description: SRAM/NOR-Flash chip-select timing register 1-4
@@ -68,75 +69,8 @@ block/FSMC:
       byte_offset: 116
       access: Read
       fieldset: ECCR
-fieldset/BCR1:
-  description: SRAM/NOR-Flash chip-select control register 1
-  fields:
-    - name: MBKEN
-      description: Memory bank enable bit
-      bit_offset: 0
-      bit_size: 1
-    - name: MUXEN
-      description: Address/data multiplexing enable bit
-      bit_offset: 1
-      bit_size: 1
-    - name: MTYP
-      description: Memory type
-      bit_offset: 2
-      bit_size: 2
-      enum: MTYP
-    - name: MWID
-      description: Memory data bus width
-      bit_offset: 4
-      bit_size: 2
-      enum: MWID
-    - name: FACCEN
-      description: Flash access enable
-      bit_offset: 6
-      bit_size: 1
-    - name: BURSTEN
-      description: Burst enable bit
-      bit_offset: 8
-      bit_size: 1
-    - name: WAITPOL
-      description: Wait signal polarity bit
-      bit_offset: 9
-      bit_size: 1
-      enum: WAITPOL
-    - name: WRAPMOD
-      description: WRAPMOD
-      bit_offset: 10
-      bit_size: 1
-    - name: WAITCFG
-      description: Wait timing configuration
-      bit_offset: 11
-      bit_size: 1
-      enum: WAITCFG
-    - name: WREN
-      description: Write enable bit
-      bit_offset: 12
-      bit_size: 1
-    - name: WAITEN
-      description: Wait enable bit
-      bit_offset: 13
-      bit_size: 1
-    - name: EXTMOD
-      description: Extended mode enable
-      bit_offset: 14
-      bit_size: 1
-    - name: ASYNCWAIT
-      description: Wait signal during asynchronous transfers
-      bit_offset: 15
-      bit_size: 1
-    - name: CBURSTRW
-      description: Write burst enable
-      bit_offset: 19
-      bit_size: 1
-    - name: CCLKEN
-      description: Continuous clock enable
-      bit_offset: 20
-      bit_size: 1
 fieldset/BCR:
-  description: SRAM/NOR-Flash chip-select control register 2-4
+  description: SRAM/NOR-Flash chip-select control register
   fields:
     - name: MBKEN
       description: Memory bank enable bit
@@ -194,6 +128,11 @@ fieldset/BCR:
       description: Wait signal during asynchronous transfers
       bit_offset: 15
       bit_size: 1
+    - name: CPSIZE
+      description: CRAM page size
+      bit_offset: 16
+      bit_size: 3
+      enum: CPSIZE
     - name: CBURSTRW
       description: Write burst enable
       bit_offset: 19
@@ -245,6 +184,10 @@ fieldset/BWTR:
       description: Data-phase duration
       bit_offset: 8
       bit_size: 8
+    - name: BUSTURN
+      description: Bus turnaround phase duration
+      bit_offset: 16
+      bit_size: 4
     - name: ACCMOD
       description: Access mode
       bit_offset: 28
@@ -398,6 +341,24 @@ enum/ACCMOD:
     - name: D
       description: Access mode D
       value: 3
+enum/CPSIZE:
+  bit_size: 3
+  variants:
+    - name: NoBurstSplit
+      description: No burst split when crossing page boundary
+      value: 0
+    - name: Bytes128
+      description: 128 bytes CRAM page size
+      value: 1
+    - name: Bytes256
+      description: 256 bytes CRAM page size
+      value: 2
+    - name: Bytes512
+      description: 512 bytes CRAM page size
+      value: 3
+    - name: Bytes1024
+      description: 1024 bytes CRAM page size
+      value: 4
 enum/ECCPS:
   bit_size: 3
   variants:
