@@ -1,4 +1,4 @@
-# stm32f429
+# stm32h7
 ---
 block/FMC:
   description: Flexible memory controller
@@ -29,43 +29,24 @@ block/FMC:
       byte_offset: 260
       fieldset: BWTR
     - name: PCR
-      description: PC Card/NAND Flash control register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 96
+      description: PC Card/NAND Flash control register
+      byte_offset: 128
       fieldset: PCR
     - name: SR
-      description: FIFO status and interrupt register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 100
+      description: FIFO status and interrupt register
+      byte_offset: 132
       fieldset: SR
     - name: PMEM
-      description: Common memory space timing register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 104
+      description: Common memory space timing register
+      byte_offset: 136
       fieldset: PMEM
     - name: PATT
-      description: Attribute memory space timing register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 108
+      description: Attribute memory space timing register
+      byte_offset: 140
       fieldset: PATT
-    - name: PIO4
-      description: I/O space timing register 4
-      byte_offset: 176
-      fieldset: PIO4
     - name: ECCR
-      description: ECC result register 2-3
-      array:
-        len: 2
-        stride: 32
-      byte_offset: 116
+      description: ECC result register
+      byte_offset: 148
       access: Read
       fieldset: ECCR
     - name: SDCR
@@ -129,10 +110,6 @@ fieldset/BCR1:
       bit_offset: 9
       bit_size: 1
       enum: WAITPOL
-    - name: WRAPMOD
-      description: WRAPMOD
-      bit_offset: 10
-      bit_size: 1
     - name: WAITCFG
       description: Wait timing configuration
       bit_offset: 11
@@ -166,6 +143,18 @@ fieldset/BCR1:
     - name: CCLKEN
       description: Continuous clock enable
       bit_offset: 20
+      bit_size: 1
+    - name: WFDIS
+      description: Write FIFO disable
+      bit_offset: 21
+      bit_size: 1
+    - name: BMAP
+      description: "FMC bank mapping These bits allows different to remap SDRAM bank2 or swap the FMC NOR/PSRAM and SDRAM banks.Refer to Table 10 for Note: The BMAP bits of the FMC_BCR2..4 registers are dont care. It is only enabled through the FMC_BCR1 register."
+      bit_offset: 24
+      bit_size: 2
+    - name: FMCEN
+      description: FMC controller enable
+      bit_offset: 31
       bit_size: 1
 fieldset/BCR:
   description: SRAM/NOR-Flash chip-select control register 2-4
@@ -201,10 +190,6 @@ fieldset/BCR:
       bit_offset: 9
       bit_size: 1
       enum: WAITPOL
-    - name: WRAPMOD
-      description: WRAPMOD
-      bit_offset: 10
-      bit_size: 1
     - name: WAITCFG
       description: Wait timing configuration
       bit_offset: 11
@@ -302,11 +287,6 @@ fieldset/PCR:
       description: NAND Flash memory bank enable bit
       bit_offset: 2
       bit_size: 1
-    - name: PTYP
-      description: Memory type
-      bit_offset: 3
-      bit_size: 1
-      enum: PTYP
     - name: PWID
       description: Data bus width
       bit_offset: 4
@@ -396,25 +376,6 @@ fieldset/PATT:
       bit_size: 8
     - name: ATTHIZ
       description: Attribute memory data bus Hi-Z time
-      bit_offset: 24
-      bit_size: 8
-fieldset/PIO4:
-  description: I/O space timing register 4
-  fields:
-    - name: IOSETx
-      description: IOSETx
-      bit_offset: 0
-      bit_size: 8
-    - name: IOWAITx
-      description: IOWAITx
-      bit_offset: 8
-      bit_size: 8
-    - name: IOHOLDx
-      description: IOHOLDx
-      bit_offset: 16
-      bit_size: 8
-    - name: IOHIZx
-      description: IOHIZx
       bit_offset: 24
       bit_size: 8
 fieldset/ECCR:
@@ -558,10 +519,6 @@ fieldset/SDSR:
       bit_offset: 3
       bit_size: 2
       enum_read: MODES
-    - name: BUSY
-      description: Busy status
-      bit_offset: 5
-      bit_size: 1
 enum/ACCMOD:
   bit_size: 2
   variants:
@@ -730,12 +687,6 @@ enum/NR:
     - name: Bits13
       description: 13 bits
       value: 2
-enum/PTYP:
-  bit_size: 1
-  variants:
-    - name: NANDFlash
-      description: NAND Flash
-      value: 1
 enum/PWID:
   bit_size: 2
   variants:
