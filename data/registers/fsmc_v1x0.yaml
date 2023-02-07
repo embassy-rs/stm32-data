@@ -1,9 +1,4 @@
-# stm32f101
-# stm32f102
-# stm32f103
-# stm32f105
-# stm32f107
-# stm32f2
+# stm32f100
 ---
 block/FSMC:
   description: Flexible static memory controller
@@ -29,46 +24,6 @@ block/FSMC:
         stride: 8
       byte_offset: 260
       fieldset: BWTR
-    - name: PCR
-      description: PC Card/NAND Flash control register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 96
-      fieldset: PCR
-    - name: SR
-      description: FIFO status and interrupt register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 100
-      fieldset: SR
-    - name: PMEM
-      description: Common memory space timing register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 104
-      fieldset: PMEM
-    - name: PATT
-      description: Attribute memory space timing register 2-4
-      array:
-        len: 3
-        stride: 32
-      byte_offset: 108
-      fieldset: PATT
-    - name: PIO4
-      description: I/O space timing register 4
-      byte_offset: 176
-      fieldset: PIO4
-    - name: ECCR
-      description: ECC result register 2-3
-      array:
-        len: 2
-        stride: 32
-      byte_offset: 116
-      access: Read
-      fieldset: ECCR
 fieldset/BCR:
   description: SRAM/NOR-Flash chip-select control register
   fields:
@@ -193,139 +148,6 @@ fieldset/BWTR:
       bit_offset: 28
       bit_size: 2
       enum: ACCMOD
-fieldset/PCR:
-  description: PC Card/NAND Flash control register
-  fields:
-    - name: PWAITEN
-      description: Wait feature enable bit
-      bit_offset: 1
-      bit_size: 1
-    - name: PBKEN
-      description: NAND Flash memory bank enable bit
-      bit_offset: 2
-      bit_size: 1
-    - name: PTYP
-      description: Memory type
-      bit_offset: 3
-      bit_size: 1
-      enum: PTYP
-    - name: PWID
-      description: Data bus width
-      bit_offset: 4
-      bit_size: 2
-      enum: PWID
-    - name: ECCEN
-      description: ECC computation logic enable bit
-      bit_offset: 6
-      bit_size: 1
-    - name: TCLR
-      description: CLE to RE delay
-      bit_offset: 9
-      bit_size: 4
-    - name: TAR
-      description: ALE to RE delay
-      bit_offset: 13
-      bit_size: 4
-    - name: ECCPS
-      description: ECC page size
-      bit_offset: 17
-      bit_size: 3
-      enum: ECCPS
-fieldset/SR:
-  description: FIFO status and interrupt register
-  fields:
-    - name: IRS
-      description: Interrupt rising edge status
-      bit_offset: 0
-      bit_size: 1
-    - name: ILS
-      description: Interrupt high-level status
-      bit_offset: 1
-      bit_size: 1
-    - name: IFS
-      description: Interrupt falling edge status
-      bit_offset: 2
-      bit_size: 1
-    - name: IREN
-      description: Interrupt rising edge detection enable bit
-      bit_offset: 3
-      bit_size: 1
-    - name: ILEN
-      description: Interrupt high-level detection enable bit
-      bit_offset: 4
-      bit_size: 1
-    - name: IFEN
-      description: Interrupt falling edge detection enable bit
-      bit_offset: 5
-      bit_size: 1
-    - name: FEMPT
-      description: FIFO empty status
-      bit_offset: 6
-      bit_size: 1
-fieldset/PMEM:
-  description: Common memory space timing register
-  fields:
-    - name: MEMSET
-      description: Common memory x setup time
-      bit_offset: 0
-      bit_size: 8
-    - name: MEMWAIT
-      description: Common memory wait time
-      bit_offset: 8
-      bit_size: 8
-    - name: MEMHOLD
-      description: Common memory hold time
-      bit_offset: 16
-      bit_size: 8
-    - name: MEMHIZ
-      description: Common memory x data bus Hi-Z time
-      bit_offset: 24
-      bit_size: 8
-fieldset/PATT:
-  description: Attribute memory space timing register
-  fields:
-    - name: ATTSET
-      description: Attribute memory setup time
-      bit_offset: 0
-      bit_size: 8
-    - name: ATTWAIT
-      description: Attribute memory wait time
-      bit_offset: 8
-      bit_size: 8
-    - name: ATTHOLD
-      description: Attribute memory hold time
-      bit_offset: 16
-      bit_size: 8
-    - name: ATTHIZ
-      description: Attribute memory data bus Hi-Z time
-      bit_offset: 24
-      bit_size: 8
-fieldset/PIO4:
-  description: I/O space timing register 4
-  fields:
-    - name: IOSETx
-      description: IOSETx
-      bit_offset: 0
-      bit_size: 8
-    - name: IOWAITx
-      description: IOWAITx
-      bit_offset: 8
-      bit_size: 8
-    - name: IOHOLDx
-      description: IOHOLDx
-      bit_offset: 16
-      bit_size: 8
-    - name: IOHIZx
-      description: IOHIZx
-      bit_offset: 24
-      bit_size: 8
-fieldset/ECCR:
-  description: ECC result register
-  fields:
-    - name: ECC
-      description: ECC computation result value
-      bit_offset: 0
-      bit_size: 32
 enum/ACCMOD:
   bit_size: 2
   variants:
@@ -359,27 +181,6 @@ enum/CPSIZE:
     - name: Bytes1024
       description: 1024 bytes CRAM page size
       value: 4
-enum/ECCPS:
-  bit_size: 3
-  variants:
-    - name: Bytes256
-      description: ECC page size 256 bytes
-      value: 0
-    - name: Bytes512
-      description: ECC page size 512 bytes
-      value: 1
-    - name: Bytes1024
-      description: ECC page size 1024 bytes
-      value: 2
-    - name: Bytes2048
-      description: ECC page size 2048 bytes
-      value: 3
-    - name: Bytes4096
-      description: ECC page size 4096 bytes
-      value: 4
-    - name: Bytes8192
-      description: ECC page size 8192 bytes
-      value: 5
 enum/MTYP:
   bit_size: 2
   variants:
@@ -404,21 +205,6 @@ enum/MWID:
     - name: Bits32
       description: Memory data bus width 32 bits
       value: 2
-enum/PTYP:
-  bit_size: 1
-  variants:
-    - name: NANDFlash
-      description: NAND Flash
-      value: 1
-enum/PWID:
-  bit_size: 2
-  variants:
-    - name: Bits8
-      description: External memory device width 8 bits
-      value: 0
-    - name: Bits16
-      description: External memory device width 16 bits
-      value: 1
 enum/WAITCFG:
   bit_size: 1
   variants:
