@@ -1,0 +1,515 @@
+# stm32u5
+---
+block/FSMC:
+  description: Flexible static memory controller
+  items:
+    - name: BCR1
+      description: SRAM/NOR-Flash chip-select control register 1
+      byte_offset: 0
+      fieldset: BCR1
+    - name: BCR
+      description: SRAM/NOR-Flash chip-select control register 2-4
+      array:
+        len: 3
+        stride: 8
+      byte_offset: 8
+      fieldset: BCR
+    - name: BTR
+      description: SRAM/NOR-Flash chip-select timing register 1-4
+      array:
+        len: 4
+        stride: 8
+      byte_offset: 4
+      fieldset: BTR
+    - name: PCSCNTR
+      description: PSRAM chip select counter register
+      byte_offset: 32
+      fieldset: PCSCNTR
+    - name: BWTR
+      description: SRAM/NOR-Flash write timing registers 1-4
+      array:
+        len: 4
+        stride: 8
+      byte_offset: 260
+      fieldset: BWTR
+    - name: PCR
+      description: PC Card/NAND Flash control register
+      byte_offset: 128
+      fieldset: PCR
+    - name: SR
+      description: FIFO status and interrupt register
+      byte_offset: 132
+      fieldset: SR
+    - name: PMEM
+      description: Common memory space timing register
+      byte_offset: 136
+      fieldset: PMEM
+    - name: PATT
+      description: Attribute memory space timing register
+      byte_offset: 140
+      fieldset: PATT
+    - name: ECCR
+      description: ECC result register
+      byte_offset: 148
+      access: Read
+      fieldset: ECCR
+fieldset/BCR1:
+  description: SRAM/NOR-Flash chip-select control register 1
+  fields:
+    - name: MBKEN
+      description: Memory bank enable bit
+      bit_offset: 0
+      bit_size: 1
+    - name: MUXEN
+      description: Address/data multiplexing enable bit
+      bit_offset: 1
+      bit_size: 1
+    - name: MTYP
+      description: Memory type
+      bit_offset: 2
+      bit_size: 2
+      enum: MTYP
+    - name: MWID
+      description: Memory data bus width
+      bit_offset: 4
+      bit_size: 2
+      enum: MWID
+    - name: FACCEN
+      description: Flash access enable
+      bit_offset: 6
+      bit_size: 1
+    - name: BURSTEN
+      description: Burst enable bit
+      bit_offset: 8
+      bit_size: 1
+    - name: WAITPOL
+      description: Wait signal polarity bit
+      bit_offset: 9
+      bit_size: 1
+      enum: WAITPOL
+    - name: WAITCFG
+      description: Wait timing configuration
+      bit_offset: 11
+      bit_size: 1
+      enum: WAITCFG
+    - name: WREN
+      description: Write enable bit
+      bit_offset: 12
+      bit_size: 1
+    - name: WAITEN
+      description: Wait enable bit
+      bit_offset: 13
+      bit_size: 1
+    - name: EXTMOD
+      description: Extended mode enable
+      bit_offset: 14
+      bit_size: 1
+    - name: ASYNCWAIT
+      description: Wait signal during asynchronous transfers
+      bit_offset: 15
+      bit_size: 1
+    - name: CPSIZE
+      description: CRAM page size
+      bit_offset: 16
+      bit_size: 3
+      enum: CPSIZE
+    - name: CBURSTRW
+      description: Write burst enable
+      bit_offset: 19
+      bit_size: 1
+    - name: CCLKEN
+      description: Continuous clock enable
+      bit_offset: 20
+      bit_size: 1
+    - name: WFDIS
+      description: Write FIFO disable
+      bit_offset: 21
+      bit_size: 1
+    - name: NBLSET
+      description: Byte lane (NBL) setup
+      bit_offset: 22
+      bit_size: 2
+    - name: FMCEN
+      description: FMC controller enable
+      bit_offset: 31
+      bit_size: 1
+fieldset/BCR:
+  description: SRAM/NOR-Flash chip-select control register 2-4
+  fields:
+    - name: MBKEN
+      description: Memory bank enable bit
+      bit_offset: 0
+      bit_size: 1
+    - name: MUXEN
+      description: Address/data multiplexing enable bit
+      bit_offset: 1
+      bit_size: 1
+    - name: MTYP
+      description: Memory type
+      bit_offset: 2
+      bit_size: 2
+      enum: MTYP
+    - name: MWID
+      description: Memory data bus width
+      bit_offset: 4
+      bit_size: 2
+      enum: MWID
+    - name: FACCEN
+      description: Flash access enable
+      bit_offset: 6
+      bit_size: 1
+    - name: BURSTEN
+      description: Burst enable bit
+      bit_offset: 8
+      bit_size: 1
+    - name: WAITPOL
+      description: Wait signal polarity bit
+      bit_offset: 9
+      bit_size: 1
+      enum: WAITPOL
+    - name: WAITCFG
+      description: Wait timing configuration
+      bit_offset: 11
+      bit_size: 1
+      enum: WAITCFG
+    - name: WREN
+      description: Write enable bit
+      bit_offset: 12
+      bit_size: 1
+    - name: WAITEN
+      description: Wait enable bit
+      bit_offset: 13
+      bit_size: 1
+    - name: EXTMOD
+      description: Extended mode enable
+      bit_offset: 14
+      bit_size: 1
+    - name: ASYNCWAIT
+      description: Wait signal during asynchronous transfers
+      bit_offset: 15
+      bit_size: 1
+    - name: CPSIZE
+      description: CRAM page size
+      bit_offset: 16
+      bit_size: 3
+      enum: CPSIZE
+    - name: CBURSTRW
+      description: Write burst enable
+      bit_offset: 19
+      bit_size: 1
+    - name: NBLSET
+      description: Byte lane (NBL) setup
+      bit_offset: 22
+      bit_size: 2
+fieldset/BTR:
+  description: SRAM/NOR-Flash chip-select timing register
+  fields:
+    - name: ADDSET
+      description: Address setup phase duration
+      bit_offset: 0
+      bit_size: 4
+    - name: ADDHLD
+      description: Address-hold phase duration
+      bit_offset: 4
+      bit_size: 4
+    - name: DATAST
+      description: Data-phase duration
+      bit_offset: 8
+      bit_size: 8
+    - name: BUSTURN
+      description: Bus turnaround phase duration
+      bit_offset: 16
+      bit_size: 4
+    - name: CLKDIV
+      description: Clock divide ratio (for FMC_CLK signal)
+      bit_offset: 20
+      bit_size: 4
+    - name: DATLAT
+      description: Data latency for synchronous memory
+      bit_offset: 24
+      bit_size: 4
+    - name: ACCMOD
+      description: Access mode
+      bit_offset: 28
+      bit_size: 2
+      enum: ACCMOD
+    - name: DATAHLD
+      description: Data hold phase duration
+      bit_offset: 30
+      bit_size: 2
+fieldset/PCSCNTR:
+  description: PSRAM chip select counter register
+  fields:
+    - name: CSCOUNT
+      description: Chip select counter
+      bit_offset: 0
+      bit_size: 16
+    - name: CNTB1EN
+      description: Counter Bank 1 enable
+      bit_offset: 16
+      bit_size: 1
+    - name: CNTB2EN
+      description: Counter Bank 2 enable
+      bit_offset: 17
+      bit_size: 1
+    - name: CNTB3EN
+      description: Counter Bank 3 enable
+      bit_offset: 18
+      bit_size: 1
+    - name: CNTB4EN
+      description: Counter Bank 4 enable
+      bit_offset: 19
+      bit_size: 1
+fieldset/BWTR:
+  description: SRAM/NOR-Flash write timing registers
+  fields:
+    - name: ADDSET
+      description: Address setup phase duration
+      bit_offset: 0
+      bit_size: 4
+    - name: ADDHLD
+      description: Address-hold phase duration
+      bit_offset: 4
+      bit_size: 4
+    - name: DATAST
+      description: Data-phase duration
+      bit_offset: 8
+      bit_size: 8
+    - name: BUSTURN
+      description: Bus turnaround phase duration
+      bit_offset: 16
+      bit_size: 4
+    - name: ACCMOD
+      description: Access mode
+      bit_offset: 28
+      bit_size: 2
+      enum: ACCMOD
+    - name: DATAHLD
+      description: Data hold phase duration
+      bit_offset: 30
+      bit_size: 2
+fieldset/PCR:
+  description: PC Card/NAND Flash control register
+  fields:
+    - name: PWAITEN
+      description: Wait feature enable bit
+      bit_offset: 1
+      bit_size: 1
+    - name: PBKEN
+      description: NAND Flash memory bank enable bit
+      bit_offset: 2
+      bit_size: 1
+    - name: PTYP
+      description: Memory type
+      bit_offset: 3
+      bit_size: 1
+      enum: PTYP
+    - name: PWID
+      description: Data bus width
+      bit_offset: 4
+      bit_size: 2
+      enum: PWID
+    - name: ECCEN
+      description: ECC computation logic enable bit
+      bit_offset: 6
+      bit_size: 1
+    - name: TCLR
+      description: CLE to RE delay
+      bit_offset: 9
+      bit_size: 4
+    - name: TAR
+      description: ALE to RE delay
+      bit_offset: 13
+      bit_size: 4
+    - name: ECCPS
+      description: ECC page size
+      bit_offset: 17
+      bit_size: 3
+      enum: ECCPS
+fieldset/SR:
+  description: FIFO status and interrupt register
+  fields:
+    - name: IRS
+      description: Interrupt rising edge status
+      bit_offset: 0
+      bit_size: 1
+    - name: ILS
+      description: Interrupt high-level status
+      bit_offset: 1
+      bit_size: 1
+    - name: IFS
+      description: Interrupt falling edge status
+      bit_offset: 2
+      bit_size: 1
+    - name: IREN
+      description: Interrupt rising edge detection enable bit
+      bit_offset: 3
+      bit_size: 1
+    - name: ILEN
+      description: Interrupt high-level detection enable bit
+      bit_offset: 4
+      bit_size: 1
+    - name: IFEN
+      description: Interrupt falling edge detection enable bit
+      bit_offset: 5
+      bit_size: 1
+    - name: FEMPT
+      description: FIFO empty status
+      bit_offset: 6
+      bit_size: 1
+fieldset/PMEM:
+  description: Common memory space timing register
+  fields:
+    - name: MEMSET
+      description: Common memory x setup time
+      bit_offset: 0
+      bit_size: 8
+    - name: MEMWAIT
+      description: Common memory wait time
+      bit_offset: 8
+      bit_size: 8
+    - name: MEMHOLD
+      description: Common memory hold time
+      bit_offset: 16
+      bit_size: 8
+    - name: MEMHIZ
+      description: Common memory x data bus Hi-Z time
+      bit_offset: 24
+      bit_size: 8
+fieldset/PATT:
+  description: Attribute memory space timing register
+  fields:
+    - name: ATTSET
+      description: Attribute memory setup time
+      bit_offset: 0
+      bit_size: 8
+    - name: ATTWAIT
+      description: Attribute memory wait time
+      bit_offset: 8
+      bit_size: 8
+    - name: ATTHOLD
+      description: Attribute memory hold time
+      bit_offset: 16
+      bit_size: 8
+    - name: ATTHIZ
+      description: Attribute memory data bus Hi-Z time
+      bit_offset: 24
+      bit_size: 8
+fieldset/ECCR:
+  description: ECC result register
+  fields:
+    - name: ECC
+      description: ECC computation result value
+      bit_offset: 0
+      bit_size: 32
+enum/ACCMOD:
+  bit_size: 2
+  variants:
+    - name: A
+      description: Access mode A
+      value: 0
+    - name: B
+      description: Access mode B
+      value: 1
+    - name: C
+      description: Access mode C
+      value: 2
+    - name: D
+      description: Access mode D
+      value: 3
+enum/CPSIZE:
+  bit_size: 3
+  variants:
+    - name: NoBurstSplit
+      description: No burst split when crossing page boundary
+      value: 0
+    - name: Bytes128
+      description: 128 bytes CRAM page size
+      value: 1
+    - name: Bytes256
+      description: 256 bytes CRAM page size
+      value: 2
+    - name: Bytes512
+      description: 512 bytes CRAM page size
+      value: 3
+    - name: Bytes1024
+      description: 1024 bytes CRAM page size
+      value: 4
+enum/ECCPS:
+  bit_size: 3
+  variants:
+    - name: Bytes256
+      description: ECC page size 256 bytes
+      value: 0
+    - name: Bytes512
+      description: ECC page size 512 bytes
+      value: 1
+    - name: Bytes1024
+      description: ECC page size 1024 bytes
+      value: 2
+    - name: Bytes2048
+      description: ECC page size 2048 bytes
+      value: 3
+    - name: Bytes4096
+      description: ECC page size 4096 bytes
+      value: 4
+    - name: Bytes8192
+      description: ECC page size 8192 bytes
+      value: 5
+enum/MTYP:
+  bit_size: 2
+  variants:
+    - name: SRAM
+      description: SRAM memory type
+      value: 0
+    - name: PSRAM
+      description: PSRAM (CRAM) memory type
+      value: 1
+    - name: Flash
+      description: NOR Flash/OneNAND Flash
+      value: 2
+enum/MWID:
+  bit_size: 2
+  variants:
+    - name: Bits8
+      description: Memory data bus width 8 bits
+      value: 0
+    - name: Bits16
+      description: Memory data bus width 16 bits
+      value: 1
+    - name: Bits32
+      description: Memory data bus width 32 bits
+      value: 2
+enum/PTYP:
+  bit_size: 1
+  variants:
+    - name: NANDFlash
+      description: NAND Flash
+      value: 1
+enum/PWID:
+  bit_size: 2
+  variants:
+    - name: Bits8
+      description: External memory device width 8 bits
+      value: 0
+    - name: Bits16
+      description: External memory device width 16 bits
+      value: 1
+enum/WAITCFG:
+  bit_size: 1
+  variants:
+    - name: BeforeWaitState
+      description: NWAIT signal is active one data cycle before wait state
+      value: 0
+    - name: DuringWaitState
+      description: NWAIT signal is active during wait state
+      value: 1
+enum/WAITPOL:
+  bit_size: 1
+  variants:
+    - name: ActiveLow
+      description: NWAIT active low
+      value: 0
+    - name: ActiveHigh
+      description: NWAIT active high
+      value: 1
