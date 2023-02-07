@@ -1,4 +1,4 @@
-# stm32l4
+# stm32f3
 ---
 block/FSMC:
   description: Flexible static memory controller
@@ -29,24 +29,43 @@ block/FSMC:
       byte_offset: 260
       fieldset: BWTR
     - name: PCR
-      description: PC Card/NAND Flash control register
-      byte_offset: 128
+      description: PC Card/NAND Flash control register 2-4
+      array:
+        len: 3
+        stride: 32
+      byte_offset: 96
       fieldset: PCR
     - name: SR
-      description: FIFO status and interrupt register
-      byte_offset: 132
+      description: FIFO status and interrupt register 2-4
+      array:
+        len: 3
+        stride: 32
+      byte_offset: 100
       fieldset: SR
     - name: PMEM
-      description: Common memory space timing register
-      byte_offset: 136
+      description: Common memory space timing register 2-4
+      array:
+        len: 3
+        stride: 32
+      byte_offset: 104
       fieldset: PMEM
     - name: PATT
-      description: Attribute memory space timing register
-      byte_offset: 140
+      description: Attribute memory space timing register 2-4
+      array:
+        len: 3
+        stride: 32
+      byte_offset: 108
       fieldset: PATT
+    - name: PIO4
+      description: I/O space timing register 4
+      byte_offset: 176
+      fieldset: PIO4
     - name: ECCR
-      description: ECC result register
-      byte_offset: 148
+      description: ECC result register 2-3
+      array:
+        len: 2
+        stride: 32
+      byte_offset: 116
       access: Read
       fieldset: ECCR
 fieldset/BCR1:
@@ -83,6 +102,10 @@ fieldset/BCR1:
       bit_offset: 9
       bit_size: 1
       enum: WAITPOL
+    - name: WRAPMOD
+      description: WRAPMOD
+      bit_offset: 10
+      bit_size: 1
     - name: WAITCFG
       description: Wait timing configuration
       bit_offset: 11
@@ -104,11 +127,6 @@ fieldset/BCR1:
       description: Wait signal during asynchronous transfers
       bit_offset: 15
       bit_size: 1
-    - name: CPSIZE
-      description: CRAM page size
-      bit_offset: 16
-      bit_size: 3
-      enum: CPSIZE
     - name: CBURSTRW
       description: Write burst enable
       bit_offset: 19
@@ -116,10 +134,6 @@ fieldset/BCR1:
     - name: CCLKEN
       description: Continuous clock enable
       bit_offset: 20
-      bit_size: 1
-    - name: WFDIS
-      description: Write FIFO disable
-      bit_offset: 21
       bit_size: 1
 fieldset/BCR:
   description: SRAM/NOR-Flash chip-select control register 2-4
@@ -155,6 +169,10 @@ fieldset/BCR:
       bit_offset: 9
       bit_size: 1
       enum: WAITPOL
+    - name: WRAPMOD
+      description: WRAPMOD
+      bit_offset: 10
+      bit_size: 1
     - name: WAITCFG
       description: Wait timing configuration
       bit_offset: 11
@@ -176,11 +194,6 @@ fieldset/BCR:
       description: Wait signal during asynchronous transfers
       bit_offset: 15
       bit_size: 1
-    - name: CPSIZE
-      description: CRAM page size
-      bit_offset: 16
-      bit_size: 3
-      enum: CPSIZE
     - name: CBURSTRW
       description: Write burst enable
       bit_offset: 19
@@ -232,10 +245,6 @@ fieldset/BWTR:
       description: Data-phase duration
       bit_offset: 8
       bit_size: 8
-    - name: BUSTURN
-      description: Bus turnaround phase duration
-      bit_offset: 16
-      bit_size: 4
     - name: ACCMOD
       description: Access mode
       bit_offset: 28
@@ -348,6 +357,25 @@ fieldset/PATT:
       description: Attribute memory data bus Hi-Z time
       bit_offset: 24
       bit_size: 8
+fieldset/PIO4:
+  description: I/O space timing register 4
+  fields:
+    - name: IOSETx
+      description: IOSETx
+      bit_offset: 0
+      bit_size: 8
+    - name: IOWAITx
+      description: IOWAITx
+      bit_offset: 8
+      bit_size: 8
+    - name: IOHOLDx
+      description: IOHOLDx
+      bit_offset: 16
+      bit_size: 8
+    - name: IOHIZx
+      description: IOHIZx
+      bit_offset: 24
+      bit_size: 8
 fieldset/ECCR:
   description: ECC result register
   fields:
@@ -370,24 +398,6 @@ enum/ACCMOD:
     - name: D
       description: Access mode D
       value: 3
-enum/CPSIZE:
-  bit_size: 3
-  variants:
-    - name: NoBurstSplit
-      description: No burst split when crossing page boundary
-      value: 0
-    - name: Bytes128
-      description: 128 bytes CRAM page size
-      value: 1
-    - name: Bytes256
-      description: 256 bytes CRAM page size
-      value: 2
-    - name: Bytes512
-      description: 512 bytes CRAM page size
-      value: 3
-    - name: Bytes1024
-      description: 1024 bytes CRAM page size
-      value: 4
 enum/ECCPS:
   bit_size: 3
   variants:
