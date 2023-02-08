@@ -129,7 +129,7 @@ impl PeriMatcher {
             (".*:RNG:rng1_v1_1", ("rng", "v1", "RNG")),
             (".*:RNG:rng1_v2_0", ("rng", "v1", "RNG")),
             (".*:RNG:rng1_v2_1", ("rng", "v1", "RNG")),
-            (".*:RNG:rng1_v3_1", ("rng", "v1", "RNG")),
+            (".*:RNG:rng1_v3_1", ("rng", "v2", "RNG")),
             (".*:SPI:spi2_v1_4", ("spi", "f1", "SPI")),
             (".*:SPI:spi2s1_v2_1", ("spi", "v1", "SPI")),
             (".*:SPI:spi2s1_v2_2", ("spi", "v1", "SPI")),
