@@ -314,6 +314,8 @@ impl PeriMatcher {
             ("STM32G4.*:FSMC:.*", ("fsmc", "v4x1", "FSMC")),
             ("STM32L5.*:FSMC:.*", ("fsmc", "v4x1", "FSMC")),
             ("STM32U5.*:FSMC:.*", ("fsmc", "v5x1", "FSMC")),
+            ("STM32WB.*:LPTIM1:.*", ("lptim", "v1c", "LPTIM1")),
+            ("STM32WB.*:LPTIM2:.*", ("lptim", "v1c", "LPTIM2")),
             (r".*LPTIM\d.*:G0xx_lptimer1_v1_4", ("lptim", "g0", "LPTIM")),
             ("STM32F1.*:TIM(1|8):.*", ("timer", "v1", "TIM_ADV")),
             ("STM32F1.*:TIM(2|5):.*", ("timer", "v1", "TIM_GP16")),
