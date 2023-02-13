@@ -294,7 +294,7 @@ impl PeriMatcher {
             ("STM32F[24].*:ETH:.*", ("eth", "v1b", "ETH")),
             ("STM32F7.*:ETH:.*", ("eth", "v1c", "ETH")),
             (".*ETH:ethermac110_v3_0", ("eth", "v2", "ETH")),
-            ("STM32F4[0123].*:FMC:.*", ("fmc", "v1x3", "FMC")),
+            ("STM32F4[23][79].*:FMC:.*", ("fmc", "v1x3", "FMC")),
             ("STM32F446.*:FMC:.*", ("fmc", "v2x1", "FMC")),
             ("STM32F469.*:FMC:.*", ("fmc", "v2x1", "FMC")),
             ("STM32F7.*:FMC:.*", ("fmc", "v2x1", "FMC")),
