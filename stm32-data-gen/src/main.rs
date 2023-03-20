@@ -6,6 +6,7 @@ mod header;
 mod interrupts;
 mod memory;
 mod rcc;
+mod registers;
 
 #[macro_export]
 macro_rules! regex {
@@ -62,6 +63,10 @@ fn main() -> anyhow::Result<()> {
 
     stopwatch.section("Parsing other stuff");
 
+    // stopwatch.section("Parsing registers");
+    let registers = registers::Registers::parse()?;
+    registers.write()?;
+
     // stopwatch.section("Parsing memories");
     let memories = memory::Memories::parse()?;
 
@@ -69,7 +74,7 @@ fn main() -> anyhow::Result<()> {
     let chip_interrupts = interrupts::ChipInterrupts::parse()?;
 
     // stopwatch.section("Parsing RCC registers");
-    let peripheral_to_clock = rcc::PeripheralToClock::parse()?;
+    let peripheral_to_clock = rcc::PeripheralToClock::parse(&registers)?;
 
     // stopwatch.section("Parsing docs");
     let docs = docs::Docs::parse()?;

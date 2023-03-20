@@ -1090,7 +1090,7 @@ fn process_chip(
         cleaned
     };
 
-    std::fs::write(format!("data/chips/{chip_name}.json"), dump)?;
+    std::fs::write(format!("build/data/chips/{chip_name}.json"), dump)?;
     Ok(())
 }
 
@@ -1106,7 +1106,7 @@ pub fn dump_all_chips(
     memories: memory::Memories,
     docs: docs::Docs,
 ) -> Result<(), anyhow::Error> {
-    std::fs::create_dir_all("data/chips")?;
+    std::fs::create_dir_all("build/data/chips")?;
 
     #[cfg(feature = "rayon")]
     {

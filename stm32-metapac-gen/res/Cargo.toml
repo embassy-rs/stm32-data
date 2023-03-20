@@ -1,0 +1,62 @@
+[package]
+name = "stm32-metapac"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/embassy-rs/stm32-data"
+description = "Peripheral Access Crate (PAC) for all STM32 chips, including metadata."
+
+# `cargo publish` is unable to figure out which .rs files are needed due to the include! magic.
+include = [
+    "**/*.rs",
+    "**/*.x",
+    "Cargo.toml",
+]
+
+[package.metadata.docs.rs]
+features = ["stm32h755zi-cm7", "pac", "metadata"]
+default-target = "thumbv7em-none-eabihf"
+targets = []
+
+[package.metadata.embassy_docs]
+features = ["pac", "metadata"]
+flavors = [
+    { regex_feature = "stm32f0.*", target = "thumbv6m-none-eabi" },
+    { regex_feature = "stm32f1.*", target = "thumbv7m-none-eabi" },
+    { regex_feature = "stm32f2.*", target = "thumbv7m-none-eabi" },
+    { regex_feature = "stm32f3.*", target = "thumbv7em-none-eabi" },
+    { regex_feature = "stm32f4.*", target = "thumbv7em-none-eabi" },
+    { regex_feature = "stm32f7.*", target = "thumbv7em-none-eabi" },
+    { regex_feature = "stm32c0.*", target = "thumbv6m-none-eabi" },
+    { regex_feature = "stm32g0.*", target = "thumbv6m-none-eabi" },
+    { regex_feature = "stm32g4.*", target = "thumbv7em-none-eabi" },
+    { regex_feature = "stm32h7.*", target = "thumbv7em-none-eabi" },
+    { regex_feature = "stm32l0.*", target = "thumbv6m-none-eabi" },
+    { regex_feature = "stm32l1.*", target = "thumbv7m-none-eabi" },
+    { regex_feature = "stm32l4.*", target = "thumbv7em-none-eabi" },
+    { regex_feature = "stm32l5.*", target = "thumbv8m.main-none-eabihf" },
+    { regex_feature = "stm32u5.*", target = "thumbv8m.main-none-eabihf" },
+    { regex_feature = "stm32wb.*", target = "thumbv7em-none-eabi" },
+    { regex_feature = "stm32wl.*", target = "thumbv7em-none-eabi" },
+]
+
+[dependencies]
+cortex-m = "0.7.6"
+cortex-m-rt = { version = ">=0.6.15,<0.8", optional = true }
+
+[features]
+default = ["pac"]
+
+# Build the actual PAC. Set by default.
+# If you just want the metadata, unset it with `default-features = false`. 
+pac = []
+
+# Build the chip metadata.
+# If set, a const `stm32_metapac::METADATA` will be exported, containing all the 
+# metadata for the currently selected chip.
+metadata = []
+
+rt = ["cortex-m-rt/device"]
+memory-x = []
+
+# Chip-selection features

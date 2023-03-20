@@ -1,0 +1,26 @@
+name: Rust
+
+on:
+  push:
+    branches: [main, new-repo-layout]
+  pull_request:
+    branches: [main]
+  merge_group:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Check fmt
+        run: cargo fmt -- --check
+      - name: Build
+        run: ./d ci

@@ -50,7 +50,7 @@ impl HeaderMap {
     pub fn parse() -> anyhow::Result<Self> {
         let mut res = HashMap::new();
         for (mut header, chips) in
-            serde_yaml::from_str::<HashMap<String, String>>(&std::fs::read_to_string("header_map.yaml")?)?
+            serde_yaml::from_str::<HashMap<String, String>>(&std::fs::read_to_string("data/header_map.yaml")?)?
         {
             header.make_ascii_lowercase();
             for chip in chips.split(',') {

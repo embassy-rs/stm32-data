@@ -3,12 +3,6 @@
 set -e
 cd $(dirname $0)
 
-die() { echo "$*" 1>&2; exit 1; }
-
-for i in jq wget svd git; do
-    command -v "$i" &>/dev/null || die "Missing the command line tool '$i'"
-done
-
 CMD=$1
 shift
 
@@ -40,6 +34,13 @@ case "$CMD" in
                 echo FAIL
             fi
         done
+    ;;
+    ci)
+        [ -d sources ] || ./d download-all
+        rm -rf build
+        cargo run --release --bin stm32-data-gen
+        cargo run --release --bin stm32-metapac-gen
+        (cd build/stm32-metapac && cargo check --features stm32h755zi-cm7,pac,metadata)
     ;;
     *)
         echo "unknown command"
