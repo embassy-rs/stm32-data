@@ -62,7 +62,8 @@ pub mod chip {
     pub struct Core {
         pub name: String,
         pub peripherals: Vec<core::Peripheral>,
-        pub nvic_priority_bits: u8,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub nvic_priority_bits: Option<u8>,
         pub interrupts: Vec<core::Interrupt>,
         pub dma_channels: Vec<core::DmaChannels>,
     }

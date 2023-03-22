@@ -195,7 +195,7 @@ impl Gen {
                 line: {:?},
                 memory: {},
                 peripherals: PERIPHERALS,
-                nvic_priority_bits: {},
+                nvic_priority_bits: {:?},
                 interrupts: INTERRUPTS,
                 dma_channels: DMA_CHANNELS,
             }};",
