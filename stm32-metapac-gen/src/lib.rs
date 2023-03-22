@@ -50,6 +50,7 @@ impl Gen {
         let mut ir = ir::IR::new();
 
         let mut dev = ir::Device {
+            nvic_priority_bits: core.nvic_priority_bits,
             interrupts: Vec::new(),
             peripherals: Vec::new(),
         };
@@ -194,6 +195,7 @@ impl Gen {
                 line: {:?},
                 memory: {},
                 peripherals: PERIPHERALS,
+                nvic_priority_bits: {},
                 interrupts: INTERRUPTS,
                 dma_channels: DMA_CHANNELS,
             }};",
@@ -202,6 +204,7 @@ impl Gen {
             &chip.family,
             &chip.line,
             stringify(&chip.memory),
+            &core.nvic_priority_bits,
         );
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();

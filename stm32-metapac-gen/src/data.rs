@@ -38,6 +38,7 @@ pub enum MemoryRegionKind {
 pub struct Core {
     pub name: String,
     pub peripherals: Vec<Peripheral>,
+    pub nvic_priority_bits: u8,
     pub interrupts: Vec<Interrupt>,
     pub dma_channels: Vec<DmaChannel>,
 }
