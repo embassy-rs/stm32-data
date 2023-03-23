@@ -691,6 +691,10 @@ fn process_core(
         want_nvic_name
     };
     let chip_nvic = group.ips.values().find(|x| x.name == want_nvic_name).unwrap();
+
+    // With the current data sources, this value is always either 2 or 4, and never resolves to None
+    let nvic_priority_bits = defines.0.get("__NVIC_PRIO_BITS").map(|bits| *bits as u8);
+
     let mut header_irqs = h.interrupts.get(core_name).unwrap().clone();
     let chip_irqs = chip_interrupts
         .0
@@ -963,6 +967,7 @@ fn process_core(
     stm32_data_serde::chip::Core {
         name: real_core_name.clone(),
         peripherals,
+        nvic_priority_bits,
         interrupts,
         dma_channels: core_dma_channels,
     }

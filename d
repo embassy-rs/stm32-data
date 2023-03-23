@@ -10,6 +10,9 @@ case "$CMD" in
     download-all)
         rm -rf ./sources/
         git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
+        # The following is a temporary workaround until https://github.com/embassy-rs/stm32-data/pull/175 is merged.
+        cd ./sources/
+        git checkout 3d60b46
     ;;
     install-chiptool)
         cargo install --git https://github.com/embassy-rs/chiptool

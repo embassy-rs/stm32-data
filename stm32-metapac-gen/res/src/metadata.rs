@@ -5,6 +5,7 @@ pub struct Metadata {
     pub line: &'static str,
     pub memory: &'static [MemoryRegion],
     pub peripherals: &'static [Peripheral],
+    pub nvic_priority_bits: Option<u8>,
     pub interrupts: &'static [Interrupt],
     pub dma_channels: &'static [DmaChannel],
 }
