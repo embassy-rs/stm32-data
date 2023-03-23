@@ -108,22 +108,22 @@ impl Gen {
 
         for (module, version) in &peripheral_versions {
             self.all_peripheral_versions.insert((module.clone(), version.clone()));
-            write!(
+            writeln!(
                 &mut extra,
-                "#[path=\"../../peripherals/{}_{}.rs\"] pub mod {};\n",
+                "#[path=\"../../peripherals/{}_{}.rs\"] pub mod {};",
                 module, version, module
             )
             .unwrap();
         }
-        write!(&mut extra, "pub const CORE_INDEX: usize = {};\n", core_index).unwrap();
+        writeln!(&mut extra, "pub const CORE_INDEX: usize = {};", core_index).unwrap();
 
         let flash = chip.memory.iter().find(|r| r.name == "BANK_1").unwrap();
         let settings = flash.settings.as_ref().unwrap();
-        write!(&mut extra, "pub const FLASH_BASE: usize = {};\n", flash.address).unwrap();
-        write!(&mut extra, "pub const FLASH_SIZE: usize = {};\n", flash.size).unwrap();
-        write!(&mut extra, "pub const ERASE_SIZE: usize = {};\n", settings.erase_size).unwrap();
-        write!(&mut extra, "pub const WRITE_SIZE: usize = {};\n", settings.write_size).unwrap();
-        write!(&mut extra, "pub const ERASE_VALUE: u8 = {};\n", settings.erase_value).unwrap();
+        writeln!(&mut extra, "pub const FLASH_BASE: usize = {};", flash.address).unwrap();
+        writeln!(&mut extra, "pub const FLASH_SIZE: usize = {};", flash.size).unwrap();
+        writeln!(&mut extra, "pub const ERASE_SIZE: usize = {};", settings.erase_size).unwrap();
+        writeln!(&mut extra, "pub const WRITE_SIZE: usize = {};", settings.write_size).unwrap();
+        writeln!(&mut extra, "pub const ERASE_VALUE: u8 = {};", settings.erase_value).unwrap();
 
         // Cleanups!
         transform::sort::Sort {}.run(&mut ir).unwrap();
@@ -155,7 +155,7 @@ impl Gen {
         let mut device_x = String::new();
 
         for irq in &core.interrupts {
-            write!(&mut device_x, "PROVIDE({} = DefaultHandler);\n", irq.name).unwrap();
+            writeln!(&mut device_x, "PROVIDE({} = DefaultHandler);", irq.name).unwrap();
         }
 
         // ==============================
@@ -220,12 +220,12 @@ impl Gen {
 
         // ==============================
         // generate default memory.x
-        gen_memory_x(&chip_dir, &chip);
+        gen_memory_x(&chip_dir, chip);
     }
 
     fn load_chip(&mut self, name: &str) -> Chip {
-        let chip_path = self.opts.data_dir.join("chips").join(&format!("{}.json", name));
-        let chip = fs::read(chip_path).expect(&format!("Could not load chip {}", name));
+        let chip_path = self.opts.data_dir.join("chips").join(format!("{}.json", name));
+        let chip = fs::read(chip_path).unwrap_or_else(|_| panic!("Could not load chip {}", name));
         serde_json::from_slice(&chip).unwrap()
     }
 
@@ -276,7 +276,7 @@ impl Gen {
             transform::expand_extends::ExpandExtends {}.run(&mut ir).unwrap();
 
             transform::map_names(&mut ir, |k, s| match k {
-                transform::NameKind::Block => *s = format!("{}", s),
+                transform::NameKind::Block => *s = s.to_string(),
                 transform::NameKind::Fieldset => *s = format!("regs::{}", s),
                 transform::NameKind::Enum => *s = format!("vals::{}", s),
                 _ => {}
@@ -304,7 +304,7 @@ impl Gen {
         // Generate Cargo.toml
         let mut contents = include_bytes!("../res/Cargo.toml").to_vec();
         for name in &chip_core_names {
-            write!(&mut contents, "{} = []\n", name.to_ascii_lowercase()).unwrap();
+            writeln!(&mut contents, "{} = []", name.to_ascii_lowercase()).unwrap();
         }
         fs::write(self.opts.out_dir.join("Cargo.toml"), contents).unwrap();
 
@@ -345,22 +345,22 @@ fn gen_opts() -> generate::Options {
     }
 }
 
-fn gen_memory_x(out_dir: &PathBuf, chip: &Chip) {
+fn gen_memory_x(out_dir: &Path, chip: &Chip) {
     let mut memory_x = String::new();
 
     let flash = chip.memory.iter().find(|r| r.name == "BANK_1").unwrap();
     let ram = chip.memory.iter().find(|r| r.name == "SRAM").unwrap();
 
     write!(memory_x, "MEMORY\n{{\n").unwrap();
-    write!(
+    writeln!(
         memory_x,
-        "    FLASH : ORIGIN = 0x{:x}, LENGTH = {}\n",
+        "    FLASH : ORIGIN = 0x{:x}, LENGTH = {}",
         flash.address, flash.size,
     )
     .unwrap();
-    write!(
+    writeln!(
         memory_x,
-        "    RAM : ORIGIN = 0x{:x}, LENGTH = {}\n",
+        "    RAM : ORIGIN = 0x{:x}, LENGTH = {}",
         ram.address, ram.size,
     )
     .unwrap();
