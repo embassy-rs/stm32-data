@@ -5,7 +5,7 @@ struct Memory {
     pub device_id: u16,
     pub names: Vec<String>,
     pub ram: Ram,
-    pub flash: Option<Flash>,
+    pub flash: Vec<FlashRegion>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -15,10 +15,19 @@ struct Ram {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-struct Flash {
+pub struct FlashRegion {
+    pub bank: FlashBank,
+    pub name: String,
     pub address: u32,
     pub bytes: u32,
     pub settings: stm32_data_serde::chip::memory::Settings,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum FlashBank {
+    Bank1,
+    Bank2,
+    Otp,
 }
 
 fn splat_names(base: &str, parts: Vec<&str>) -> Vec<String> {
@@ -148,6 +157,8 @@ mod xml {
                     pub struct Configuration {
                         #[serde(rename = "Parameters", default)]
                         pub parameters: Option<configuration::Parameters>,
+                        #[serde(rename = "Organization", default)]
+                        pub organization: Option<String>,
                         #[serde(rename = "Allignement", deserialize_with = "opt_from_hex", default)]
                         pub allignement: Option<u32>,
                         #[serde(rename = "Bank")]
@@ -157,7 +168,7 @@ mod xml {
                     mod configuration {
                         use serde::Deserialize;
 
-                        use super::super::super::super::super::from_hex;
+                        use super::super::super::super::super::{from_hex, opt_from_hex};
 
                         #[derive(Debug, Deserialize, PartialEq)]
                         pub struct Parameters {
@@ -165,10 +176,14 @@ mod xml {
                             pub address: u32,
                             #[serde(deserialize_with = "from_hex")]
                             pub size: u32,
+                            #[serde(deserialize_with = "opt_from_hex", default)]
+                            pub occurence: Option<u32>,
                         }
 
                         #[derive(Debug, Deserialize, PartialEq)]
                         pub struct Bank {
+                            #[serde(default)]
+                            pub name: Option<String>,
                             #[serde(rename = "Field", default)]
                             pub field: Vec<bank::Field>,
                         }
@@ -199,6 +214,7 @@ impl Memories {
         paths.sort();
 
         let mut memories = Vec::new();
+        let alphabet: Vec<char> = (b'A'..=b'Z').map(|c| c as char).collect();
 
         for f in paths {
             // println!("Parsing {f:?}");
@@ -210,7 +226,7 @@ impl Memories {
             let names = split_names(&parsed.device.name);
 
             let mut ram = None;
-            let mut flash = None;
+            let mut flash = vec![];
 
             for peripheral in parsed.device.peripherals.peripharal {
                 if peripheral.name == "Embedded SRAM" && ram.is_none() {
@@ -222,21 +238,60 @@ impl Memories {
                     });
                 }
 
-                if peripheral.name == "Embedded Flash" && flash.is_none() {
-                    let config = peripheral.configuration.first().unwrap();
+                enum BlockKind {
+                    Main,
+                    Otp,
+                }
+                let kind = match peripheral.name.as_str() {
+                    "Embedded Flash" => Some(BlockKind::Main),
+                    "OTP" => Some(BlockKind::Otp),
+                    _ => None,
+                };
+
+                if let Some(kind) = kind {
+                    // Use single bank alignment if both single and dual is available
+                    let config = peripheral
+                        .configuration
+                        .iter()
+                        .find(|c| c.organization.as_ref().map(|x| x.as_str()).unwrap_or_default() == "Single")
+                        .unwrap_or_else(|| peripheral.configuration.first().unwrap());
                     let parameters = config.parameters.as_ref().unwrap();
                     let bank = config.bank.first().unwrap();
-                    let erase_size = bank.field.iter().map(|field| field.parameters.size).max().unwrap();
 
-                    flash = Some(Flash {
-                        address: parameters.address,
-                        bytes: parameters.size,
-                        settings: stm32_data_serde::chip::memory::Settings {
-                            erase_value: peripheral.erased_value.unwrap(),
-                            write_size: config.allignement.unwrap(),
-                            erase_size,
+                    let flash_bank = match kind {
+                        BlockKind::Main => match bank.name.as_ref().map(|x| x.as_str()) {
+                            Some("Bank 1") => FlashBank::Bank1,
+                            Some("Bank 2") => FlashBank::Bank2,
+                            None => FlashBank::Bank1,
+                            _ => unimplemented!(),
                         },
-                    });
+                        BlockKind::Otp => FlashBank::Otp,
+                    };
+
+                    let erase_value = peripheral.erased_value.unwrap();
+                    let write_size = config.allignement.unwrap();
+                    flash.extend(bank.field.iter().enumerate().map(|(index, field)| {
+                        let name = match kind {
+                            BlockKind::Main => format!("MAIN{}", alphabet[index]).to_string(),
+                            BlockKind::Otp => "OTP".to_string(),
+                        };
+                        let bytes = if let Some(occurence) = field.parameters.occurence {
+                            occurence * field.parameters.size
+                        } else {
+                            parameters.size
+                        };
+                        FlashRegion {
+                            bank: flash_bank,
+                            name,
+                            address: field.parameters.address,
+                            bytes,
+                            settings: stm32_data_serde::chip::memory::Settings {
+                                erase_value,
+                                write_size,
+                                erase_size: field.parameters.size,
+                            },
+                        }
+                    }));
                 }
             }
 
@@ -256,7 +311,9 @@ impl Memories {
                 address: 0x20000000,
                 bytes: 64 * 1024,
             },
-            flash: Some(Flash {
+            flash: vec![FlashRegion {
+                bank: FlashBank::Bank1,
+                name: "MAINA".to_string(),
                 address: 0x08000000,
                 bytes: 384 * 1024,
                 settings: stm32_data_serde::chip::memory::Settings {
@@ -264,7 +321,7 @@ impl Memories {
                     write_size: 8,
                     erase_size: 2048,
                 },
-            }),
+            }],
         });
 
         memories.push(Memory {
@@ -274,7 +331,9 @@ impl Memories {
                 address: 0x20000000,
                 bytes: 80 * 1024,
             },
-            flash: Some(Flash {
+            flash: vec![FlashRegion {
+                bank: FlashBank::Bank1,
+                name: "MAINA".to_string(),
                 address: 0x08000000,
                 bytes: 384 * 1024,
                 settings: stm32_data_serde::chip::memory::Settings {
@@ -282,7 +341,7 @@ impl Memories {
                     write_size: 8,
                     erase_size: 2048,
                 },
-            }),
+            }],
         });
 
         memories.push(Memory {
@@ -292,7 +351,9 @@ impl Memories {
                 address: 0x20000000,
                 bytes: 32 * 1024,
             },
-            flash: Some(Flash {
+            flash: vec![FlashRegion {
+                bank: FlashBank::Bank1,
+                name: "MAINA".to_string(),
                 address: 0x08000000,
                 bytes: 4 * 1024,
                 settings: stm32_data_serde::chip::memory::Settings {
@@ -300,7 +361,7 @@ impl Memories {
                     write_size: 4,
                     erase_size: 256,
                 },
-            }),
+            }],
         });
 
         Ok(Self(memories))
@@ -321,12 +382,8 @@ impl Memories {
         self.lookup_chip(chip_name).ram.bytes
     }
 
-    pub fn determine_flash_size(&self, chip_name: &str) -> u32 {
-        self.lookup_chip(chip_name).flash.as_ref().unwrap().bytes
-    }
-
-    pub fn determine_flash_settings(&self, chip_name: &str) -> stm32_data_serde::chip::memory::Settings {
-        self.lookup_chip(chip_name).flash.as_ref().unwrap().settings.clone()
+    pub fn determine_flash_regions(&self, chip_name: &str) -> &[FlashRegion] {
+        self.lookup_chip(chip_name).flash.as_slice()
     }
 
     pub fn determine_device_id(&self, chip_name: &str) -> u16 {

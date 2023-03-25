@@ -988,7 +988,7 @@ fn process_chip(
     let mut memory_regions = Vec::new();
     let mut found = HashSet::<&str>::new();
     for each in ["FLASH", "FLASH_BANK1", "FLASH_BANK2", "D1_AXIFLASH", "D1_AXIICP"] {
-        if let Some(address) = h.defines.get("all").unwrap().0.get(&format!("{each}_BASE")) {
+        if let Some(_address) = h.defines.get("all").unwrap().0.get(&format!("{each}_BASE")) {
             let key = match each {
                 "FLASH" => "BANK_1",
                 "FLASH_BANK1" => "BANK_1",
@@ -1001,20 +1001,28 @@ fn process_chip(
             }
             found.insert(key);
 
-            let size = if key == "BANK_1" || key == "BANK_2" {
-                let size = memories.determine_flash_size(chip_name);
-                std::cmp::min(size, flash_total)
-            } else {
-                0
-            };
+            for region in memories.determine_flash_regions(chip_name) {
+                let size = if key == "BANK_1" || key == "BANK_2" {
+                    let size = region.bytes;
+                    std::cmp::min(size, flash_total)
+                } else {
+                    0
+                };
 
-            memory_regions.push(stm32_data_serde::chip::Memory {
-                name: key.to_string(),
-                kind: stm32_data_serde::chip::memory::Kind::Flash,
-                address: u32::try_from(*address).unwrap(),
-                size,
-                settings: Some(memories.determine_flash_settings(chip_name)),
-            });
+                let kind = match region.bank {
+                    memory::FlashBank::Bank1 => stm32_data_serde::chip::memory::Kind::Flash,
+                    memory::FlashBank::Bank2 => stm32_data_serde::chip::memory::Kind::Flash,
+                    memory::FlashBank::Otp => stm32_data_serde::chip::memory::Kind::Otp,
+                };
+
+                memory_regions.push(stm32_data_serde::chip::Memory {
+                    name: region.name.clone(),
+                    kind,
+                    address: region.address,
+                    size,
+                    settings: Some(region.settings.clone()),
+                })
+            }
         }
     }
     let mut found = HashSet::new();
