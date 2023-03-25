@@ -32,8 +32,6 @@ pub enum MemoryRegionKind {
     Flash,
     #[serde(rename = "ram")]
     Ram,
-    #[serde(rename = "otp")]
-    Otp,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]

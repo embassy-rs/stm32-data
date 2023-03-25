@@ -120,7 +120,7 @@ impl Gen {
         let flash_regions: Vec<&MemoryRegion> = chip
             .memory
             .iter()
-            .filter(|x| x.kind == MemoryRegionKind::Flash)
+            .filter(|x| x.kind == MemoryRegionKind::Flash && x.name.starts_with("BANK_"))
             .collect();
         let first_flash = flash_regions.first().unwrap();
         let total_flash_size = flash_regions
@@ -343,7 +343,6 @@ fn stringify<T: Debug>(metadata: T) -> String {
     metadata = metadata.replace(": [", ": &[");
     metadata = metadata.replace("kind: Ram", "kind: MemoryRegionKind::Ram");
     metadata = metadata.replace("kind: Flash", "kind: MemoryRegionKind::Flash");
-    metadata = metadata.replace("kind: Otp", "kind: MemoryRegionKind::Otp");
     metadata
 }
 
@@ -356,14 +355,20 @@ fn gen_opts() -> generate::Options {
 fn gen_memory_x(out_dir: &Path, chip: &Chip) {
     let mut memory_x = String::new();
 
-    let flash = chip.memory.iter().filter(|r| r.kind == MemoryRegionKind::Flash);
+    let flash = chip
+        .memory
+        .iter()
+        .filter(|r| r.kind == MemoryRegionKind::Flash && r.name.starts_with("BANK_"));
     let (flash_address, flash_size) = flash
         .clone()
         .map(|r| (r.address, r.size))
         .reduce(|acc, el| (u32::min(acc.0, el.0), acc.1 + el.1))
         .unwrap();
     let ram = chip.memory.iter().find(|r| r.kind == MemoryRegionKind::Ram).unwrap();
-    let otp = chip.memory.iter().find(|r| r.kind == MemoryRegionKind::Otp);
+    let otp = chip
+        .memory
+        .iter()
+        .find(|r| r.kind == MemoryRegionKind::Flash && r.name == "OTP");
 
     write!(memory_x, "MEMORY\n{{\n").unwrap();
     writeln!(
@@ -371,7 +376,7 @@ fn gen_memory_x(out_dir: &Path, chip: &Chip) {
         "    FLASH : ORIGIN = 0x{:08x}, LENGTH = {:>4}K /* {} */",
         flash_address,
         flash_size / 1024,
-        flash.map(|x| x.name.as_ref()).collect::<Vec<&str>>().join(", ")
+        flash.map(|x| x.name.as_ref()).collect::<Vec<&str>>().join(" + ")
     )
     .unwrap();
     writeln!(
