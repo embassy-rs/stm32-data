@@ -990,6 +990,7 @@ fn process_chip(
     let mut memory_regions = Vec::new();
     let mut found = HashSet::<&str>::new();
     for each in [
+        // We test FLASH_BANKx _before_ FLASH as we prefer their definition over the legacy one
         "FLASH_BANK1",
         "FLASH_BANK2",
         "FLASH",
