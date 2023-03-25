@@ -40,7 +40,6 @@ pub mod chip {
         pub enum Kind {
             Flash,
             Ram,
-            Otp,
         }
 
         #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]

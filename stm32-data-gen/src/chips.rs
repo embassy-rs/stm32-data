@@ -983,7 +983,9 @@ fn process_chip(
     cores: &[stm32_data_serde::chip::Core],
 ) -> Result<(), anyhow::Error> {
     let chip = chips.get(chip_name).unwrap();
-    let flash_total = chip.flash * 1024;
+    let flash_size = chip.flash * 1024;
+    let mut flash_remaining = flash_size;
+    let flash_regions = memories.determine_flash_regions(chip_name, flash_size);
     let ram_total = chip.ram * 1024;
     let mut memory_regions = Vec::new();
     let mut found = HashSet::<&str>::new();
@@ -996,11 +998,15 @@ fn process_chip(
         "D1_AXIICP",
     ] {
         if let Some(address) = h.defines.get("all").unwrap().0.get(&format!("{each}_BASE")) {
-            let key = match each {
-                "FLASH" => "BANK1",
-                "FLASH_BANK1" => "BANK1",
-                "FLASH_BANK2" => "BANK2",
-                each => each,
+            let (key, banks) = match each {
+                "FLASH" => (
+                    "BANK_1",
+                    Some([memory::FlashBank::Bank1, memory::FlashBank::Bank2].as_ref()),
+                ),
+                "FLASH_BANK1" => ("BANK_1", Some([memory::FlashBank::Bank1].as_ref())),
+                "FLASH_BANK2" => ("BANK_2", Some([memory::FlashBank::Bank2].as_ref())),
+                "FLASH_OTP" => ("OTP", Some([memory::FlashBank::Otp].as_ref())),
+                each => (each, None),
             };
 
             if found.contains(key) {
@@ -1008,46 +1014,59 @@ fn process_chip(
             }
             found.insert(key);
 
-            if key == "FLASH_OTP" {
-                if let Some(region) = memories
-                    .determine_flash_regions(chip_name)
-                    .iter()
-                    .find(|x| x.bank == memory::FlashBank::Otp)
-                {
-                    memory_regions.push(stm32_data_serde::chip::Memory {
-                        name: region.name.clone(),
-                        kind: stm32_data_serde::chip::memory::Kind::Otp,
-                        address: u32::try_from(*address).unwrap(),
-                        size: region.bytes,
-                        settings: Some(region.settings.clone()),
-                    })
+            if let Some(banks) = banks {
+                for bank in banks {
+                    let bank_name = match bank {
+                        memory::FlashBank::Bank1 => "BANK_1",
+                        memory::FlashBank::Bank2 => "BANK_2",
+                        memory::FlashBank::Otp => "OTP",
+                    };
+                    let regions: Vec<_> = flash_regions
+                        .iter()
+                        .filter(|region| region.bank == *bank)
+                        .enumerate()
+                        .map_while(|(index, region)| {
+                            let size = if *bank == memory::FlashBank::Bank1 || *bank == memory::FlashBank::Bank2 {
+                                // Truncate region to the total amount of remaining chip flash
+                                let size = std::cmp::min(region.bytes, flash_remaining);
+                                flash_remaining -= size;
+                                if size == 0 {
+                                    // No more regions are present on this chip
+                                    return None;
+                                }
+                                size
+                            } else {
+                                region.bytes
+                            };
+
+                            Some((index, region.address, size, region.settings.clone()))
+                        })
+                        .collect();
+                    let has_multiple_regions = regions.len() > 1;
+                    for (index, address, size, settings) in regions {
+                        let name = if has_multiple_regions {
+                            format!("{}_REGION_{}", bank_name, index + 1)
+                        } else {
+                            bank_name.to_string()
+                        };
+
+                        memory_regions.push(stm32_data_serde::chip::Memory {
+                            name,
+                            kind: stm32_data_serde::chip::memory::Kind::Flash,
+                            address,
+                            size,
+                            settings: Some(settings.clone()),
+                        });
+                    }
                 }
             } else {
-                let bank = if key == "BANK2" {
-                    memory::FlashBank::Bank2
-                } else {
-                    memory::FlashBank::Bank1
-                };
-
-                for region in memories
-                    .determine_flash_regions(chip_name)
-                    .iter()
-                    .filter(|x| x.bank == bank)
-                {
-                    let size = if key == "BANK1" || key == "BANK2" {
-                        std::cmp::min(region.bytes, flash_total)
-                    } else {
-                        0
-                    };
-
-                    memory_regions.push(stm32_data_serde::chip::Memory {
-                        name: format!("{}_{}", key, region.name),
-                        kind: stm32_data_serde::chip::memory::Kind::Flash,
-                        address: u32::try_from(*address).unwrap(),
-                        size,
-                        settings: Some(region.settings.clone()),
-                    })
-                }
+                memory_regions.push(stm32_data_serde::chip::Memory {
+                    name: key.to_string(),
+                    kind: stm32_data_serde::chip::memory::Kind::Flash,
+                    address: u32::try_from(*address).unwrap(),
+                    size: 0,
+                    settings: None,
+                })
             }
         }
     }
@@ -1077,7 +1096,7 @@ fn process_chip(
             found.insert(key);
 
             let size = if key == "SRAM" {
-                let size = memories.determine_ram_size(chip_name);
+                let size = memories.determine_ram_size(chip_name, flash_size);
                 std::cmp::min(size, ram_total)
             } else {
                 0
@@ -1093,7 +1112,7 @@ fn process_chip(
         }
     }
     let docs = docs.documents_for(chip_name);
-    let device_id = memories.determine_device_id(chip_name);
+    let device_id = memories.determine_device_id(chip_name, flash_size);
     let chip = stm32_data_serde::Chip {
         name: chip_name.to_string(),
         family: group.family.clone().unwrap(),
