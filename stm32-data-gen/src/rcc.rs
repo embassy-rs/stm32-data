@@ -73,14 +73,23 @@ impl PeripheralToClock {
 
     pub fn match_peri_clock(
         &self,
-        rcc_block: (String, String, String),
+        rcc_block: &(String, String, String),
         peri_name: &str,
     ) -> Option<&stm32_data_serde::chip::core::peripheral::Rcc> {
-        let clocks = self.0.get(&rcc_block)?;
+        const PERI_OVERRIDE: &[(&str, &[&str])] = &[("DCMI", &["DCMI_PSSI"]), ("PSSI", &["DCMI_PSSI"])];
+
+        let clocks = self.0.get(rcc_block)?;
         if let Some(res) = clocks.get(peri_name) {
             Some(res)
         } else if let Some(peri_name) = peri_name.strip_suffix('1') {
             self.match_peri_clock(rcc_block, peri_name)
+        } else if let Some((_, rename)) = PERI_OVERRIDE.iter().find(|(n, _)| *n == peri_name) {
+            for n in *rename {
+                if let Some(res) = self.match_peri_clock(rcc_block, n) {
+                    return Some(res);
+                }
+            }
+            None
         } else {
             None
         }

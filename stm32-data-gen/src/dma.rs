@@ -292,51 +292,56 @@ impl DmaChannels {
             dma_channels.insert(ff, chip_dma);
         }
 
-        // STM32U5
+        // GPDMA
 
-        let mut chip_dma = ChipDma {
-            peripherals: HashMap::new(),
-            channels: Vec::new(),
-        };
-
-        let parsed: HashMap<String, u8> =
-            serde_yaml::from_str(&std::fs::read_to_string("data/dmamux/U5_GPDMA1.yaml")?)?;
-
-        for (request_name, request_num) in parsed {
-            let parts: Vec<_> = request_name.split('_').collect();
-            let target_peri_name = parts[0];
-            let request = {
-                if parts.len() < 2 {
-                    target_peri_name
-                } else {
-                    parts[1]
-                }
+        for (file, gpdmax, instance) in [
+            ("data/dmamux/H5_GPDMA.yaml", "GPDMA1", "STM32H5_dma3_Cube"),
+            ("data/dmamux/H5_GPDMA.yaml", "GPDMA2", "Instance2_STM32H5_dma3_Cube"),
+            ("data/dmamux/U5_GPDMA1.yaml", "GPDMA1", "STM32U5_dma3_Cube"),
+        ] {
+            let mut chip_dma = ChipDma {
+                peripherals: HashMap::new(),
+                channels: Vec::new(),
             };
-            chip_dma
-                .peripherals
-                .entry(target_peri_name.to_string())
-                .or_default()
-                .push(stm32_data_serde::chip::core::peripheral::DmaChannel {
-                    signal: request.to_string(),
-                    dma: Some("GPDMA1".to_string()),
-                    channel: None,
+
+            let parsed: HashMap<String, u8> = serde_yaml::from_str(&std::fs::read_to_string(file)?)?;
+
+            for (request_name, request_num) in parsed {
+                let parts: Vec<_> = request_name.split('_').collect();
+                let target_peri_name = parts[0];
+                let request = {
+                    if parts.len() < 2 {
+                        target_peri_name
+                    } else {
+                        parts[1]
+                    }
+                };
+                chip_dma
+                    .peripherals
+                    .entry(target_peri_name.to_string())
+                    .or_default()
+                    .push(stm32_data_serde::chip::core::peripheral::DmaChannel {
+                        signal: request.to_string(),
+                        dma: Some(gpdmax.to_string()),
+                        channel: None,
+                        dmamux: None,
+                        request: Some(request_num),
+                    });
+            }
+
+            for i in 0..16 {
+                chip_dma.channels.push(stm32_data_serde::chip::core::DmaChannels {
+                    name: format!("{gpdmax}_CH{i}"),
+                    dma: gpdmax.to_string(),
+                    channel: i,
                     dmamux: None,
-                    request: Some(request_num),
+                    dmamux_channel: None,
+                    supports_2d: Some(i >= 12),
                 });
-        }
+            }
 
-        for i in 0..16 {
-            chip_dma.channels.push(stm32_data_serde::chip::core::DmaChannels {
-                name: format!("GPDMA1_CH{i}"),
-                dma: "GPDMA1".to_string(),
-                channel: i,
-                dmamux: None,
-                dmamux_channel: None,
-                supports_2d: Some(i >= 12),
-            });
+            dma_channels.insert(instance.to_string(), chip_dma);
         }
-
-        dma_channels.insert("STM32U5_dma3_Cube".to_string(), chip_dma);
 
         Ok(Self(dma_channels))
     }
