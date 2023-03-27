@@ -10,9 +10,8 @@ case "$CMD" in
     download-all)
         rm -rf ./sources/
         git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
-        # The following is a temporary workaround until https://github.com/embassy-rs/stm32-data/pull/175 is merged.
         cd ./sources/
-        git checkout 3d60b46
+        git checkout ca89656b
     ;;
     install-chiptool)
         cargo install --git https://github.com/embassy-rs/chiptool
@@ -40,7 +39,7 @@ case "$CMD" in
     ;;
     ci)
         [ -d sources ] || ./d download-all
-        rm -rf build
+        rm -rf build/{data,stm32-metapac}
         cargo run --release --bin stm32-data-gen
         cargo run --release --bin stm32-metapac-gen
         (cd build/stm32-metapac && cargo check --features stm32h755zi-cm7,pac,metadata)
