@@ -264,6 +264,8 @@ impl PeriMatcher {
             ("STM32WB.*:EXTI:.*", ("exti", "w", "EXTI")),
             ("STM32WL5.*:EXTI:.*", ("exti", "w", "EXTI")),
             ("STM32WLE.*:EXTI:.*", ("exti", "wle", "EXTI")),
+            ("STM32H50.*:EXTI:.*", ("exti", "h50", "EXTI")),
+            ("STM32H5.*:EXTI:.*", ("exti", "h5", "EXTI")),
             (".*:EXTI:.*", ("exti", "v1", "EXTI")),
             ("STM32L0.*:CRS:.*", ("crs", "l0", "CRS")),
             (".*SDMMC:sdmmc2_v1_0", ("sdmmc", "v2", "SDMMC")),
