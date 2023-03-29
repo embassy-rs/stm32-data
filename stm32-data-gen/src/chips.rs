@@ -984,9 +984,9 @@ fn process_chip(
 ) -> Result<(), anyhow::Error> {
     let chip = chips.get(chip_name).unwrap();
     let flash_size = chip.flash * 1024;
-    let mut flash_remaining = flash_size;
-    let flash_regions = memories.determine_flash_regions(chip_name, flash_size);
     let ram_total = chip.ram * 1024;
+    let memory = memories.get(group.die.as_ref().unwrap());
+    let mut flash_remaining = flash_size;
     let mut memory_regions = Vec::new();
     let mut found = HashSet::<&str>::new();
     for each in [
@@ -1022,7 +1022,8 @@ fn process_chip(
                         memory::FlashBank::Bank2 => "BANK_2",
                         memory::FlashBank::Otp => "OTP",
                     };
-                    let regions: Vec<_> = flash_regions
+                    let regions: Vec<_> = memory
+                        .flash_regions
                         .iter()
                         .filter(|region| region.bank == *bank)
                         .enumerate()
@@ -1097,8 +1098,16 @@ fn process_chip(
             found.insert(key);
 
             let size = if key == "SRAM" {
-                let size = memories.determine_ram_size(chip_name, flash_size);
-                std::cmp::min(size, ram_total)
+                // if memory.ram.bytes != ram_total {
+                //     println!(
+                //         "SRAM mismatch for chip {} with die {}: Expected {} was {}",
+                //         chip_name,
+                //         group.die.as_ref().unwrap(),
+                //         ram_total,
+                //         memory.ram.bytes,
+                //     );
+                // }
+                std::cmp::min(memory.ram.bytes, ram_total)
             } else {
                 0
             };
@@ -1113,13 +1122,12 @@ fn process_chip(
         }
     }
     let docs = docs.documents_for(chip_name);
-    let device_id = memories.determine_device_id(chip_name, flash_size);
     let chip = stm32_data_serde::Chip {
         name: chip_name.to_string(),
         family: group.family.clone().unwrap(),
         line: group.line.clone().unwrap(),
         die: group.die.clone().unwrap(),
-        device_id,
+        device_id: memory.device_id,
         packages: chip.packages.clone(),
         memory: memory_regions,
         docs,
