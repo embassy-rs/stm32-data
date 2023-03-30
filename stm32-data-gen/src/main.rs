@@ -56,6 +56,8 @@ impl Stopwatch {
 }
 
 fn main() -> anyhow::Result<()> {
+    pretty_env_logger::init();
+
     let mut stopwatch = Stopwatch::new();
 
     stopwatch.section("Parsing headers");

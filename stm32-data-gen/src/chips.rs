@@ -84,6 +84,8 @@ fn chip_name_from_package_name(x: &str) -> String {
         (regex!("^(STM32L0....).xS$"), "$1"),
         (regex!("^(STM32H7....).xQ$"), "$1"),
         (regex!("^(STM32U5....).xQ$"), "$1"),
+        (regex!("^(STM32H5....).xQ$"), "$1"),
+        (regex!("^(STM32WBA....).x$"), "$1"),
         (regex!("^(STM32......).x$"), "$1"),
     ];
 
@@ -184,6 +186,8 @@ impl PeriMatcher {
             ("STM32WB.*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
             ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
             ("STM32WLE.*:SYSCFG:.*", ("syscfg", "wle", "SYSCFG")),
+            ("STM32H50.*:SBS:.*", ("sbs", "h50", "SBS")),
+            ("STM32H5.*:SBS:.*", ("sbs", "h5", "SBS")),
             (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
             (".*:IWDG:iwdg1_v2_0", ("iwdg", "v2", "IWDG")),
             (".*:WWDG:wwdg1_v1_0", ("wwdg", "v1", "WWDG")),
@@ -244,6 +248,8 @@ impl PeriMatcher {
             ("STM32L4.*:RCC:.*", ("rcc", "l4", "RCC")),
             ("STM32L5.*:RCC:.*", ("rcc", "l5", "RCC")),
             ("STM32U5.*:RCC:.*", ("rcc", "u5", "RCC")),
+            ("STM32H50.*:RCC:.*", ("rcc", "h50", "RCC")),
+            ("STM32H5.*:RCC:.*", ("rcc", "h5", "RCC")),
             ("STM32WB.*:RCC:.*", ("rcc", "wb", "RCC")),
             ("STM32WL5.*:RCC:.*", ("rcc", "wl5", "RCC")),
             ("STM32WLE.*:RCC:.*", ("rcc", "wle", "RCC")),
@@ -276,6 +282,8 @@ impl PeriMatcher {
             ("STM32U5.*:PWR:.*", ("pwr", "u5", "PWR")),
             ("STM32WL.*:PWR:.*", ("pwr", "wl5", "PWR")),
             ("STM32WB.*:PWR:.*", ("pwr", "wb55", "PWR")),
+            ("STM32H50.*:PWR:.*", ("pwr", "h50", "PWR")),
+            ("STM32H5.*:PWR:.*", ("pwr", "h5", "PWR")),
             ("STM32H7.*:FLASH:.*", ("flash", "h7", "FLASH")),
             ("STM32F0.*:FLASH:.*", ("flash", "f0", "FLASH")),
             ("STM32F1.*:FLASH:.*", ("flash", "f1", "FLASH")),
@@ -292,6 +300,8 @@ impl PeriMatcher {
             ("STM32WL.*:FLASH:.*", ("flash", "wl", "FLASH")),
             ("STM32C0.*:FLASH:.*", ("flash", "c0", "FLASH")),
             ("STM32G0.*:FLASH:.*", ("flash", "g0", "FLASH")),
+            ("STM32H50.*:FLASH:.*", ("flash", "h50", "FLASH")),
+            ("STM32H5.*:FLASH:.*", ("flash", "h5", "FLASH")),
             ("STM32F107.*:ETH:.*", ("eth", "v1a", "ETH")),
             ("STM32F[24].*:ETH:.*", ("eth", "v1b", "ETH")),
             ("STM32F7.*:ETH:.*", ("eth", "v1c", "ETH")),
@@ -474,13 +484,13 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
 }
 
 static NOPELIST: &[&str] = &[
-    // Not supported
+    // Not supported, not planned unless someone wants to do it.
     "STM32MP",
+    // Not supported yet, planned.
+    "STM32WBA",
     // Does not exist in ST website. No datasheet, no RM.
     "STM32GBK",
     "STM32L485",
-    "STM32U59",
-    "STM32U5A",
     // STM32WxM modules. These are based on a chip that's supported on its own,
     // not sure why we want a separate target for it.
     "STM32WL5M",
@@ -687,10 +697,18 @@ fn process_core(
         if ["L5", "U5"].contains(&&chip_name[5..7]) {
             want_nvic_name = "NVIC2"
         }
+        if ["H56", "H57"].contains(&&chip_name[5..8]) {
+            want_nvic_name = "NVIC2"
+        }
 
         want_nvic_name
     };
-    let chip_nvic = group.ips.values().find(|x| x.name == want_nvic_name).unwrap();
+    let chip_nvic = group
+        .ips
+        .values()
+        .find(|x| x.name == want_nvic_name)
+        .ok_or_else(|| format!("couldn't find nvic. chip_name={chip_name} want_nvic_name={want_nvic_name}"))
+        .unwrap();
 
     // With the current data sources, this value is always either 2 or 4, and never resolves to None
     let nvic_priority_bits = defines.0.get("__NVIC_PRIO_BITS").map(|bits| *bits as u8);
@@ -778,7 +796,7 @@ fn process_core(
     const GHOST_PERIS: &[&str] = &[
         "GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOE", "GPIOF", "GPIOG", "GPIOH", "GPIOI", "GPIOJ", "GPIOK", "GPIOL",
         "GPIOM", "GPION", "GPIOO", "GPIOP", "GPIOQ", "GPIOR", "GPIOS", "GPIOT", "DMA1", "DMA2", "BDMA", "DMAMUX",
-        "DMAMUX1", "DMAMUX2", "SYSCFG", "EXTI", "FLASH", "DBGMCU", "CRS", "PWR", "AFIO", "BKP",
+        "DMAMUX1", "DMAMUX2", "SBS", "SYSCFG", "EXTI", "FLASH", "DBGMCU", "CRS", "PWR", "AFIO", "BKP",
     ];
     for pname in GHOST_PERIS {
         if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
@@ -857,7 +875,7 @@ fn process_core(
         }
 
         if let Some(rcc_info) = peripheral_to_clock.match_peri_clock(
-            (
+            &(
                 rcc_block.0.to_string(),
                 rcc_block.1.to_string(),
                 rcc_block.2.to_string(),

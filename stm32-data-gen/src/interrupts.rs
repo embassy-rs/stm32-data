@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use log::*;
+
 use crate::regex;
 
 mod xml {
@@ -48,6 +50,7 @@ impl ChipInterrupts {
         files.sort();
 
         for f in files {
+            trace!("parsing {f:?}");
             let mut irqs = HashMap::<String, _>::new();
             let file = std::fs::read_to_string(f)?;
             let parsed: xml::Ip = quick_xml::de::from_str(&file)?;
@@ -57,6 +60,7 @@ impl ChipInterrupts {
                 .filter(|param| param.name == "IRQn")
                 .flat_map(|param| param.possible_values)
             {
+                trace!("  irq={irq:?}");
                 let parts = {
                     let mut iter = irq.value.split(':');
                     let parts = [(); 5].map(|_| iter.next().unwrap());
@@ -64,17 +68,16 @@ impl ChipInterrupts {
                     parts
                 };
 
-                let name = {
-                    let name = parts[0].strip_suffix("_IRQn").unwrap();
+                let mut name = parts[0].strip_suffix("_IRQn").unwrap().to_string();
 
-                    // Fix typo in STM32Lxx and L083 devices
-                    let contains_rng = || parts[2..].iter().flat_map(|x| x.split(',')).any(|x| x == "RNG");
-                    if name == "AES_RNG_LPUART1" && !contains_rng() {
-                        "AES_LPUART1"
-                    } else {
-                        name
-                    }
-                };
+                // Fix typo in STM32Lxx and L083 devices
+                let contains_rng = || parts[2..].iter().flat_map(|x| x.split(',')).any(|x| x == "RNG");
+                if name == "AES_RNG_LPUART1" && !contains_rng() {
+                    name = "AES_LPUART1".to_string()
+                }
+
+                // More typos
+                let name = name.replace("USAR11", "USART11");
 
                 let entry = match irqs.entry(name.to_string()) {
                     std::collections::hash_map::Entry::Occupied(_) => continue,
@@ -105,6 +108,11 @@ impl ChipInterrupts {
                 if parsed.version.starts_with("STM32F3") && irq.comment.contains("remap") {
                     continue;
                 }
+                // not supported
+                if name == "LSECSSD" {
+                    continue;
+                }
+
                 let mut signals = HashSet::<(String, String)>::new();
                 if [
                     "NonMaskableInt",
@@ -117,7 +125,7 @@ impl ChipInterrupts {
                     "PendSV",
                     "SysTick",
                 ]
-                .contains(&name)
+                .contains(&name.as_str())
                 {
                     // pass
                 } else if flags
@@ -171,7 +179,7 @@ impl ChipInterrupts {
                         if name == "USBWakeUp" || name == "USBWakeUp_RMP" {
                             "USB_WKUP"
                         } else {
-                            name.strip_suffix("_S").unwrap_or(name)
+                            name.strip_suffix("_S").unwrap_or(&name)
                         }
                     };
 
@@ -205,6 +213,7 @@ impl ChipInterrupts {
                             signals.insert(("RCC".to_string(), "CRS".to_string()));
                         } else {
                             let pp = match_peris(&peri_names, &part);
+                            trace!("    part={part}, pp={pp:?}");
                             if !pp.is_empty() {
                                 curr_peris = pp;
                             } else {
@@ -230,7 +239,7 @@ impl ChipInterrupts {
 
                         for s in ss {
                             if !known.contains(&s.clone()) {
-                                panic!("Unknown signal {s} for peri {p}, known={known:?}");
+                                panic!("Unknown signal {s} for peri {p}, known={known:?}, parts={parts:?}");
                             }
                             signals.insert((p.clone(), s));
                         }
@@ -282,7 +291,8 @@ impl ChipInterrupts {
 fn tokenize_name(name: &str) -> Vec<String> {
     // Treat IRQ names are "tokens" separated by `_`, except some tokens
     // contain `_` themselves, such as `C1_RX`.
-    let r = regex!(r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*");
+    let r =
+        regex!(r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*");
     let name = name.to_ascii_uppercase();
 
     r.captures_iter(&name)
@@ -296,6 +306,7 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         ("OTG_HS", &["USB_OTG_HS"]),
         ("OTG_FS", &["USB_OTG_FS"]),
         ("USB", &["USB_DRD_FS"]),
+        ("USB_DRD_FS", &["USB"]),
         ("UCPD1_2", &["UCPD1", "UCPD2"]),
         ("ADC1", &["ADC"]),
         ("CEC", &["HDMI_CEC"]),
@@ -348,6 +359,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("CAN", &["TX", "RX0", "RX1", "SCE"]),
         ("FDCAN", &["IT0", "IT1", "CAL"]),
         ("I2C", &["ER", "EV"]),
+        ("I3C", &["ER", "EV"]),
         ("FMPI2C", &["ER", "EV"]),
         ("TIM", &["BRK", "UP", "TRG", "COM", "CC"]),
         // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
@@ -368,7 +380,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
             &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
         ),
         ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
-        ("PWR", &["S3WU"]),
+        ("PWR", &["S3WU", "WKUP"]),
         ("GTZC", &["GLOBAL", "ILA"]),
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
