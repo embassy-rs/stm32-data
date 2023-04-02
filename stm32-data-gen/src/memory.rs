@@ -1,68 +1,32 @@
-use std::fs;
+use std::{cmp::Ordering, collections::HashMap, fs};
 
 #[derive(Debug, PartialEq)]
-struct Memory {
+pub struct Memory {
     pub device_id: u16,
-    pub names: Vec<String>,
     pub ram: Ram,
-    pub flash: Option<Flash>,
+    pub flash_size: u32,
+    pub flash_regions: Vec<FlashRegion>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-struct Ram {
+pub struct Ram {
     pub address: u32,
     pub bytes: u32,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-struct Flash {
+pub struct FlashRegion {
+    pub bank: FlashBank,
     pub address: u32,
     pub bytes: u32,
     pub settings: stm32_data_serde::chip::memory::Settings,
 }
 
-fn splat_names(base: &str, parts: Vec<&str>) -> Vec<String> {
-    let mut names = Vec::new();
-    for part in parts {
-        if part.starts_with("STM32") {
-            names.push(base.to_string());
-        } else if part.starts_with(&base[5..6]) {
-            names.push("STM32".to_string() + part);
-        } else {
-            let diff = base.len() - part.len();
-            names.push((base[..diff]).to_string() + part);
-        }
-    }
-
-    names
-}
-
-fn split_names(str: &str) -> Vec<String> {
-    let mut cleaned = Vec::new();
-    let mut current_base = None;
-    for name in str.split('/') {
-        let name = name.split(' ').next().unwrap().trim();
-        if name.contains('-') {
-            let parts: Vec<_> = name.split('-').collect();
-            current_base = parts.first().map(ToString::to_string);
-            let splatted = splat_names(&current_base.unwrap(), parts);
-            current_base = splatted.first().map(Clone::clone);
-            cleaned.extend(splatted);
-        } else if name.starts_with("STM32") {
-            current_base = Some(name.to_string());
-            cleaned.push(name.to_string())
-        } else if name.starts_with(&current_base.clone().unwrap()[5..6]) {
-            // names.append('STM32' + name)
-            cleaned.push("STM32".to_string() + name);
-        } else {
-            cleaned.push(
-                (current_base.clone().unwrap()[0..(current_base.clone().unwrap().len() - name.len())]).to_string()
-                    + name,
-            )
-        }
-    }
-
-    cleaned
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum FlashBank {
+    Bank1,
+    Bank2,
+    Otp,
 }
 
 mod xml {
@@ -148,6 +112,8 @@ mod xml {
                     pub struct Configuration {
                         #[serde(rename = "Parameters", default)]
                         pub parameters: Option<configuration::Parameters>,
+                        #[serde(rename = "Organization", default)]
+                        pub organization: Option<String>,
                         #[serde(rename = "Allignement", deserialize_with = "opt_from_hex", default)]
                         pub allignement: Option<u32>,
                         #[serde(rename = "Bank")]
@@ -157,7 +123,7 @@ mod xml {
                     mod configuration {
                         use serde::Deserialize;
 
-                        use super::super::super::super::super::from_hex;
+                        use super::super::super::super::super::{from_hex, opt_from_hex};
 
                         #[derive(Debug, Deserialize, PartialEq)]
                         pub struct Parameters {
@@ -165,10 +131,14 @@ mod xml {
                             pub address: u32,
                             #[serde(deserialize_with = "from_hex")]
                             pub size: u32,
+                            #[serde(deserialize_with = "opt_from_hex", default)]
+                            pub occurence: Option<u32>,
                         }
 
                         #[derive(Debug, Deserialize, PartialEq)]
                         pub struct Bank {
+                            #[serde(default)]
+                            pub name: Option<String>,
                             #[serde(rename = "Field", default)]
                             pub field: Vec<bank::Field>,
                         }
@@ -188,7 +158,7 @@ mod xml {
         }
     }
 }
-pub struct Memories(Vec<Memory>);
+pub struct Memories(HashMap<u16, Memory>);
 
 impl Memories {
     pub fn parse() -> anyhow::Result<Self> {
@@ -198,7 +168,7 @@ impl Memories {
             .collect();
         paths.sort();
 
-        let mut memories = Vec::new();
+        let mut memories = HashMap::new();
 
         for f in paths {
             // println!("Parsing {f:?}");
@@ -207,12 +177,12 @@ impl Memories {
             // dbg!(&parsed);
 
             let device_id = parsed.device.device_id;
-            let names = split_names(&parsed.device.name);
 
             let mut ram = None;
-            let mut flash = None;
+            let mut flash_size = None;
+            let mut flash_regions = vec![];
 
-            for peripheral in parsed.device.peripherals.peripharal {
+            for mut peripheral in parsed.device.peripherals.peripharal {
                 if peripheral.name == "Embedded SRAM" && ram.is_none() {
                     let config = peripheral.configuration.first().unwrap();
                     let parameters = config.parameters.as_ref().unwrap();
@@ -222,127 +192,95 @@ impl Memories {
                     });
                 }
 
-                if peripheral.name == "Embedded Flash" && flash.is_none() {
-                    let config = peripheral.configuration.first().unwrap();
-                    let parameters = config.parameters.as_ref().unwrap();
-                    let bank = config.bank.first().unwrap();
-                    let erase_size = bank.field.iter().map(|field| field.parameters.size).max().unwrap();
+                enum BlockKind {
+                    Main,
+                    Otp,
+                }
+                let kind = match peripheral.name.as_str() {
+                    "Embedded Flash" => Some(BlockKind::Main),
+                    "OTP" => Some(BlockKind::Otp),
+                    _ => None,
+                };
 
-                    flash = Some(Flash {
-                        address: parameters.address,
-                        bytes: parameters.size,
-                        settings: stm32_data_serde::chip::memory::Settings {
-                            erase_value: peripheral.erased_value.unwrap(),
-                            write_size: config.allignement.unwrap(),
-                            erase_size,
-                        },
+                if let Some(kind) = kind {
+                    peripheral.configuration.sort_by(|a, b| {
+                        // Prefer largest size
+                        let ordering = b
+                            .parameters
+                            .as_ref()
+                            .unwrap()
+                            .size
+                            .partial_cmp(&a.parameters.as_ref().unwrap().size)
+                            .unwrap();
+
+                        // ... then prefer single ordering over dual
+                        if ordering == Ordering::Equal {
+                            // Possible values are Single and Dual
+                            b.organization.partial_cmp(&a.organization).unwrap()
+                        } else {
+                            ordering
+                        }
                     });
+                    let config = peripheral.configuration.first().unwrap();
+
+                    if flash_size.is_none() {
+                        let parameters = config.parameters.as_ref().unwrap();
+
+                        flash_size = Some(parameters.size);
+                    }
+
+                    for bank in config.bank.iter() {
+                        let flash_bank = match kind {
+                            BlockKind::Main => match bank.name.as_ref().map(|x| x.as_str()) {
+                                Some("Bank 1") => Some(FlashBank::Bank1),
+                                Some("Bank 2") => Some(FlashBank::Bank2),
+                                Some("EEPROM1") => None,
+                                Some("EEPROM2") => None,
+                                None => {
+                                    assert_eq!(1, config.bank.len());
+                                    Some(FlashBank::Bank1)
+                                }
+                                Some(other) => unimplemented!("Unsupported flash bank {}", other),
+                            },
+                            BlockKind::Otp => Some(FlashBank::Otp),
+                        };
+
+                        if let Some(flash_bank) = flash_bank {
+                            let erase_value = peripheral.erased_value.unwrap();
+                            let write_size = config.allignement.unwrap();
+                            flash_regions.extend(bank.field.iter().map(|field| FlashRegion {
+                                bank: flash_bank,
+                                address: field.parameters.address,
+                                bytes: field.parameters.occurence.unwrap() * field.parameters.size,
+                                settings: stm32_data_serde::chip::memory::Settings {
+                                    erase_value,
+                                    write_size,
+                                    erase_size: field.parameters.size,
+                                },
+                            }));
+                        }
+                    }
                 }
             }
 
-            memories.push(Memory {
+            memories.insert(
                 device_id,
-                names,
-                ram: ram.unwrap(),
-                flash,
-            });
+                Memory {
+                    device_id,
+                    ram: ram.unwrap(),
+                    flash_size: flash_size.unwrap_or_default(),
+                    flash_regions,
+                },
+            );
         }
-
-        // The chips below are missing from cubeprogdb
-        memories.push(Memory {
-            device_id: 0,
-            names: vec!["STM32F302xD".to_string()],
-            ram: Ram {
-                address: 0x20000000,
-                bytes: 64 * 1024,
-            },
-            flash: Some(Flash {
-                address: 0x08000000,
-                bytes: 384 * 1024,
-                settings: stm32_data_serde::chip::memory::Settings {
-                    erase_value: 0xFF,
-                    write_size: 8,
-                    erase_size: 2048,
-                },
-            }),
-        });
-
-        memories.push(Memory {
-            device_id: 0,
-            names: vec!["STM32F303xD".to_string()],
-            ram: Ram {
-                address: 0x20000000,
-                bytes: 80 * 1024,
-            },
-            flash: Some(Flash {
-                address: 0x08000000,
-                bytes: 384 * 1024,
-                settings: stm32_data_serde::chip::memory::Settings {
-                    erase_value: 0xFF,
-                    write_size: 8,
-                    erase_size: 2048,
-                },
-            }),
-        });
-
-        memories.push(Memory {
-            device_id: 0,
-            names: vec!["STM32L100x6".to_string()],
-            ram: Ram {
-                address: 0x20000000,
-                bytes: 32 * 1024,
-            },
-            flash: Some(Flash {
-                address: 0x08000000,
-                bytes: 4 * 1024,
-                settings: stm32_data_serde::chip::memory::Settings {
-                    erase_value: 0xFF,
-                    write_size: 4,
-                    erase_size: 256,
-                },
-            }),
-        });
 
         Ok(Self(memories))
     }
 
-    fn lookup_chip(&self, chip_name: &str) -> &Memory {
-        for each in &self.0 {
-            for name in &each.names {
-                if is_chip_name_match(name, chip_name) {
-                    return each;
-                }
-            }
-        }
-        panic!("could not find memory information for {chip_name}");
-    }
+    pub fn get(&self, die: &str) -> &Memory {
+        assert!(die.starts_with("DIE"));
+        let device_id = u16::from_str_radix(&die[3..], 16).unwrap();
 
-    pub fn determine_ram_size(&self, chip_name: &str) -> u32 {
-        self.lookup_chip(chip_name).ram.bytes
+        self.0.get(&device_id).unwrap()
     }
-
-    pub fn determine_flash_size(&self, chip_name: &str) -> u32 {
-        self.lookup_chip(chip_name).flash.as_ref().unwrap().bytes
-    }
-
-    pub fn determine_flash_settings(&self, chip_name: &str) -> stm32_data_serde::chip::memory::Settings {
-        self.lookup_chip(chip_name).flash.as_ref().unwrap().settings.clone()
-    }
-
-    pub fn determine_device_id(&self, chip_name: &str) -> u16 {
-        self.lookup_chip(chip_name).device_id
-    }
-}
-
-fn is_chip_name_match(pattern: &str, chip_name: &str) -> bool {
-    let mut chip_name = chip_name.replace("STM32F479", "STM32F469"); // F479 is missing, it's the same as F469.
-    chip_name = chip_name.replace("STM32G050", "STM32G051"); // same...
-    chip_name = chip_name.replace("STM32G060", "STM32G061"); // same...
-    chip_name = chip_name.replace("STM32G070", "STM32G071"); // same...
-    chip_name = chip_name.replace("STM32G0B0", "STM32G0B1"); // same...
-    chip_name = chip_name.replace("STM32G4A", "STM32G49"); // same...
-    chip_name = chip_name.replace("STM32L422", "STM32L412"); // same...
-    chip_name = chip_name.replace("STM32WB30", "STM32WB35"); // same...
-    let pattern = pattern.replace('x', ".");
-    regex::Regex::new(&pattern).unwrap().is_match(&chip_name)
 }

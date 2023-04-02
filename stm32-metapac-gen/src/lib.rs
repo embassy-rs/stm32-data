@@ -117,13 +117,32 @@ impl Gen {
         }
         writeln!(&mut extra, "pub const CORE_INDEX: usize = {};", core_index).unwrap();
 
-        let flash = chip.memory.iter().find(|r| r.name == "BANK_1").unwrap();
-        let settings = flash.settings.as_ref().unwrap();
-        writeln!(&mut extra, "pub const FLASH_BASE: usize = {};", flash.address).unwrap();
-        writeln!(&mut extra, "pub const FLASH_SIZE: usize = {};", flash.size).unwrap();
-        writeln!(&mut extra, "pub const ERASE_SIZE: usize = {};", settings.erase_size).unwrap();
-        writeln!(&mut extra, "pub const WRITE_SIZE: usize = {};", settings.write_size).unwrap();
-        writeln!(&mut extra, "pub const ERASE_VALUE: u8 = {};", settings.erase_value).unwrap();
+        let flash_regions: Vec<&MemoryRegion> = chip
+            .memory
+            .iter()
+            .filter(|x| x.kind == MemoryRegionKind::Flash && x.name.starts_with("BANK_"))
+            .collect();
+        let first_flash = flash_regions.first().unwrap();
+        let total_flash_size = flash_regions
+            .iter()
+            .map(|x| x.size)
+            .reduce(|acc, item| acc + item)
+            .unwrap();
+
+        writeln!(&mut extra, "pub const FLASH_BASE: usize = {};", first_flash.address).unwrap();
+        writeln!(&mut extra, "pub const FLASH_SIZE: usize = {};", total_flash_size).unwrap();
+
+        let write_sizes: HashSet<_> = flash_regions
+            .iter()
+            .map(|r| r.settings.as_ref().unwrap().write_size)
+            .collect();
+        assert_eq!(1, write_sizes.len());
+        writeln!(
+            &mut extra,
+            "pub const WRITE_SIZE: usize = {};",
+            write_sizes.iter().next().unwrap()
+        )
+        .unwrap();
 
         // Cleanups!
         transform::sort::Sort {}.run(&mut ir).unwrap();
@@ -348,22 +367,45 @@ fn gen_opts() -> generate::Options {
 fn gen_memory_x(out_dir: &Path, chip: &Chip) {
     let mut memory_x = String::new();
 
-    let flash = chip.memory.iter().find(|r| r.name == "BANK_1").unwrap();
-    let ram = chip.memory.iter().find(|r| r.name == "SRAM").unwrap();
+    let flash = chip
+        .memory
+        .iter()
+        .filter(|r| r.kind == MemoryRegionKind::Flash && r.name.starts_with("BANK_"));
+    let (flash_address, flash_size) = flash
+        .clone()
+        .map(|r| (r.address, r.size))
+        .reduce(|acc, el| (u32::min(acc.0, el.0), acc.1 + el.1))
+        .unwrap();
+    let ram = chip.memory.iter().find(|r| r.kind == MemoryRegionKind::Ram).unwrap();
+    let otp = chip
+        .memory
+        .iter()
+        .find(|r| r.kind == MemoryRegionKind::Flash && r.name == "OTP");
 
     write!(memory_x, "MEMORY\n{{\n").unwrap();
     writeln!(
         memory_x,
-        "    FLASH : ORIGIN = 0x{:x}, LENGTH = {}",
-        flash.address, flash.size,
+        "    FLASH : ORIGIN = 0x{:08x}, LENGTH = {:>4}K /* {} */",
+        flash_address,
+        flash_size / 1024,
+        flash.map(|x| x.name.as_ref()).collect::<Vec<&str>>().join(" + ")
     )
     .unwrap();
     writeln!(
         memory_x,
-        "    RAM : ORIGIN = 0x{:x}, LENGTH = {}",
-        ram.address, ram.size,
+        "    RAM   : ORIGIN = 0x{:08x}, LENGTH = {:>4}K",
+        ram.address,
+        ram.size / 1024,
     )
     .unwrap();
+    if let Some(otp) = otp {
+        writeln!(
+            memory_x,
+            "    OTP   : ORIGIN = 0x{:08x}, LENGTH = {:>4}",
+            otp.address, otp.size,
+        )
+        .unwrap();
+    }
     write!(memory_x, "}}").unwrap();
 
     fs::create_dir_all(out_dir.join("memory_x")).unwrap();
