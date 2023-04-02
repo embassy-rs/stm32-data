@@ -55,13 +55,13 @@ In order to run the generator, you will need to install the following tools:
 
   > This will download all the required data sources into `sources/`.
 
-- Run `cargo run --release stm32-data-gen`
+- Run `cargo run --release --bin stm32-data-gen`
 
   > This generates all the intermediate JSON's in `build/data/`.
   >
   > > Assignments of registers to peripherals is done in a [perimap](#peripheral-mapping-perimap) and fixes to registers can be done in the files located in `data/registers`.
 
-- Run `cargo run --release stm32-metapac-gen`
+- Run `cargo run --release --bin stm32-metapac-gen`
 
 > This generates the `stm32-metapac` crate into `build/stm32-metapac/`.
 
