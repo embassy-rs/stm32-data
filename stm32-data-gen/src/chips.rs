@@ -592,7 +592,15 @@ fn parse_group(
     }
     for pin in parsed.pins {
         if let Some(pin_name) = gpio_af::clean_pin(&pin.name) {
-            group.pins.insert(pin_name, pin);
+            group
+                .pins
+                .entry(pin_name)
+                .and_modify(|p| {
+                    // merge signals.
+                    p.signals.extend_from_slice(&pin.signals);
+                    p.signals.dedup();
+                })
+                .or_insert(pin);
         }
     }
 
