@@ -168,7 +168,7 @@ impl Defines {
             ("CAN", &["CAN_BASE", "CAN1_BASE"]),
             ("FMC", &["FMC_BASE", "FMC_R_BASE"]),
             ("FSMC", &["FSMC_R_BASE"]),
-            ("USB", &["USB_DRD_BASE"]),
+            ("USB", &["USB_BASE", "USB_DRD_BASE", "USB_BASE_NS", "USB_DRD_BASE_NS"]),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 
