@@ -380,6 +380,7 @@ impl PeriMatcher {
             (".*:LCD:lcdc1_v1.0.*", ("lcd", "v1", "LCD")),
             (".*:LCD:lcdc1_v1.2.*", ("lcd", "v2", "LCD")),
             (".*:LCD:lcdc1_v1.3.*", ("lcd", "v2", "LCD")),
+            (".*:UID:.*", ("uid", "v1", "UID")),
         ];
 
         Self {
@@ -742,6 +743,7 @@ fn process_core(
         .collect();
     interrupts.sort_unstable_by_key(|x| x.number);
     let mut peri_kinds = HashMap::new();
+    peri_kinds.insert("UID".to_string(), "UID".to_string());
     for ip in group.ips.values() {
         let pname = ip.instance_name.clone();
         let pkind = format!("{}:{}", ip.name, ip.version);
