@@ -614,8 +614,8 @@ fieldset/APB2ENR:
       description: "USART1 clock enable\r Set and reset by software."
       bit_offset: 14
       bit_size: 1
-    - name: USBFSEN
-      description: "USBFS clock enable\r Set and reset by software."
+    - name: USBEN
+      description: "USB clock enable\r Set and reset by software."
       bit_offset: 24
       bit_size: 1
 fieldset/APB2LPENR:
@@ -633,8 +633,8 @@ fieldset/APB2LPENR:
       description: "USART1 clock enable during sleep mode\r Set and reset by software."
       bit_offset: 14
       bit_size: 1
-    - name: USBFSLPEN
-      description: "USBFS clock enable during sleep mode\r Set and reset by software."
+    - name: USBLPEN
+      description: "USB clock enable during sleep mode\r Set and reset by software."
       bit_offset: 24
       bit_size: 1
 fieldset/APB2RSTR:
@@ -652,8 +652,8 @@ fieldset/APB2RSTR:
       description: "USART1 block reset\r Set and reset by software."
       bit_offset: 14
       bit_size: 1
-    - name: USBFSRST
-      description: "USBFS block reset\r Set and reset by software."
+    - name: USBRST
+      description: "USB block reset\r Set and reset by software."
       bit_offset: 24
       bit_size: 1
 fieldset/APB3ENR:
@@ -863,11 +863,11 @@ fieldset/CCIPR4:
       bit_offset: 2
       bit_size: 2
       enum: SYSTICKSEL
-    - name: USBFSSEL
-      description: USBFS kernel clock source selection
+    - name: USBSEL
+      description: USB kernel clock source selection
       bit_offset: 4
       bit_size: 2
-      enum: USBFSSEL
+      enum: USBSEL
     - name: I2C1SEL
       description: I2C1 kernel clock source selection
       bit_offset: 16
@@ -1599,6 +1599,9 @@ enum/PLLVCOSEL:
 enum/PPRE:
   bit_size: 3
   variants:
+    - name: Div1
+      description: rcc_pclk3 = rcc_hclk1 / 1
+      value: 0
     - name: Div2
       description: rcc_pclk3 = rcc_hclk1 / 2
       value: 4
@@ -1710,10 +1713,10 @@ enum/TIMICSEL:
 enum/TIMPRE:
   bit_size: 1
   variants:
-    - name: Mul1
+    - name: DefaultX2
       description: "The timers kernel clock is equal to rcc_hclk1 if PPRE1 or PPRE2 corresponds to a division by 1 or 2, else it is equal to 2 x Frcc_pclk1 or 2 x Frcc_pclk2 (default after reset)"
       value: 0
-    - name: Mul2
+    - name: DefaultX4
       description: "The timers kernel clock is equal to 2 x Frcc_pclk1 or 2 x Frcc_pclk2 if PPRE1 or PPRE2 corresponds to a division by 1, 2 or 4, else it is equal to 4 x Frcc_pclk1 or 4 x Frcc_pclk2"
       value: 1
 enum/USARTSEL:
@@ -1734,7 +1737,7 @@ enum/USARTSEL:
     - name: LSE
       description: LSE selected as peripheral clock
       value: 5
-enum/USBFSSEL:
+enum/USBSEL:
   bit_size: 2
   variants:
     - name: DISABLE
