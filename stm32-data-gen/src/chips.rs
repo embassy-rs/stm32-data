@@ -218,14 +218,18 @@ impl PeriMatcher {
             (".*:SDMMC:sdmmc_v1_3", ("sdmmc", "v1", "SDMMC")),
             (".*:SPDIFRX:spdifrx1_v1_0", ("spdifrx", "v1", "SPDIFRX")),
             // # USB
-            ("STM32F302.[BC].*:USB:.*", ("usb", "v1_x1", "USB")),
-            ("STM32F302.[68DE].*:USB:.*", ("usb", "v2", "USB")),
-            ("STM32F303.[BC].*:USB:.*", ("usb", "v1_x1", "USB")),
-            ("STM32F303.[DE].*:USB:.*", ("usb", "v2", "USB")),
-            ("STM32F373.*:USB:.*", ("usb", "v1_x2", "USB")),
-            ("STM32(F1|L1).*:USB:.*", ("usb", "v1_x1", "USB")),
-            ("STM32G0[BC]1.*:USB:.*", ("usb", "v4", "USB")),
-            (".*:USB:.*", ("usb", "v3", "USB")),
+            ("STM32(F1|L1).*:USB:.*", ("usb", "v1", "USB")),
+            ("STM32(F1|L1).*:USBRAM:.*", ("usbram", "16x1_512", "USBRAM")),
+            ("STM32F30[23].[BC].*:USB:.*", ("usb", "v1", "USB")),
+            ("STM32F30[23].[BC].*:USBRAM:.*", ("usbram", "16x1_512", "USBRAM")),
+            ("STM32F30[23].[68DE].*:USB:.*", ("usb", "v2", "USB")),
+            ("STM32F30[23].[68DE].*:USBRAM:.*", ("usbram", "16x2_1024", "USBRAM")),
+            ("STM32F373.*:USB:.*", ("usb", "v1", "USB")),
+            ("STM32F373.*:USBRAM:.*", ("usbram", "16x2_512", "USBRAM")),
+            ("STM32(F0|L[045]|G4|WB).*:USB:.*", ("usb", "v3", "USB")),
+            ("STM32(F0|L[045]|G4|WB).*:USBRAM:.*", ("usbram", "16x2_1024", "USBRAM")),
+            ("STM32(G0|H5|U5).*:USB:.*", ("usb", "v4", "USB")),
+            ("STM32(G0|H5|U5).*:USBRAM:.*", ("usbram", "32_2048", "USBRAM")),
             // # USB OTG
             (".*:USB_OTG_FS:otgfs1_.*", ("otg", "v1", "OTG")),
             (".*:USB_OTG_HS:otghs1_.*", ("otg", "v1", "OTG")),
@@ -806,7 +810,7 @@ fn process_core(
     const GHOST_PERIS: &[&str] = &[
         "GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOE", "GPIOF", "GPIOG", "GPIOH", "GPIOI", "GPIOJ", "GPIOK", "GPIOL",
         "GPIOM", "GPION", "GPIOO", "GPIOP", "GPIOQ", "GPIOR", "GPIOS", "GPIOT", "DMA1", "DMA2", "BDMA", "DMAMUX",
-        "DMAMUX1", "DMAMUX2", "SBS", "SYSCFG", "EXTI", "FLASH", "DBGMCU", "CRS", "PWR", "AFIO", "BKP",
+        "DMAMUX1", "DMAMUX2", "SBS", "SYSCFG", "EXTI", "FLASH", "DBGMCU", "CRS", "PWR", "AFIO", "BKP", "USBRAM",
     ];
     for pname in GHOST_PERIS {
         if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {

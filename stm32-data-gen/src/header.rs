@@ -169,6 +169,10 @@ impl Defines {
             ("FMC", &["FMC_BASE", "FMC_R_BASE"]),
             ("FSMC", &["FSMC_R_BASE"]),
             ("USB", &["USB_BASE", "USB_DRD_BASE", "USB_BASE_NS", "USB_DRD_BASE_NS"]),
+            (
+                "USBRAM",
+                &["USB_PMAADDR", "USB_DRD_PMAADDR", "USB_PMAADDR_NS", "USB_DRD_PMAADDR_NS"],
+            ),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 
