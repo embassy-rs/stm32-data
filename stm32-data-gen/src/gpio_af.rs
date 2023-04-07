@@ -39,6 +39,12 @@ mod xml {
 }
 
 pub fn clean_pin(pin_name: &str) -> Option<stm32_data_serde::chip::core::peripheral::pin::Pin> {
+    // some H7s have analog-only pins like PC2_C, PC3_C. Ignore these for now since the
+    // data model can't deal with pins that are not part of a GPIO port yet.
+    if regex!(r"^P[A-Z]\d+_C$").is_match(pin_name) {
+        return None;
+    }
+
     let pin_name = regex!(r"^P[A-Z]\d+").find(pin_name)?.as_str();
 
     stm32_data_serde::chip::core::peripheral::pin::Pin::parse(pin_name)
