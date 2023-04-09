@@ -65,32 +65,26 @@ fieldset/CLRFR:
       description: Clear overrun / underrun. This bit is write only. Programming this bit to 1 clears the OVRUDR flag in the SAI_xSR register. Reading this bit always returns the value 0.
       bit_offset: 0
       bit_size: 1
-      enum_write: COVRUDRW
     - name: CMUTEDET
       description: Mute detection flag. This bit is write only. Programming this bit to 1 clears the MUTEDET flag in the SAI_xSR register. Reading this bit always returns the value 0.
       bit_offset: 1
       bit_size: 1
-      enum_write: CMUTEDETW
     - name: CWCKCFG
       description: "Clear wrong clock configuration flag. This bit is write only. Programming this bit to 1 clears the WCKCFG flag in the SAI_xSR register. This bit is used only when the audio block is set as master (MODE[1] = 0) and NODIV = 0 in the SAI_xCR1 register. Reading this bit always returns the value 0."
       bit_offset: 2
       bit_size: 1
-      enum_write: CWCKCFGW
     - name: CCNRDY
       description: Clear Codec not ready flag. This bit is write only. Programming this bit to 1 clears the CNRDY flag in the SAI_xSR register. This bit is used only when the AC97 audio protocol is selected in the SAI_xCR1 register. Reading this bit always returns the value 0.
       bit_offset: 4
       bit_size: 1
-      enum_write: CCNRDYW
     - name: CAFSDET
       description: Clear anticipated frame synchronization detection flag. This bit is write only. Programming this bit to 1 clears the AFSDET flag in the SAI_xSR register. It is not used in AC97or SPDIF mode. Reading this bit always returns the value 0.
       bit_offset: 5
       bit_size: 1
-      enum_write: CAFSDETW
     - name: CLFSDET
       description: Clear late frame synchronization detection flag. This bit is write only. Programming this bit to 1 clears the LFSDET flag in the SAI_xSR register. This bit is not used in AC97or SPDIF mode Reading this bit always returns the value 0.
       bit_offset: 6
       bit_size: 1
-      enum_write: CLFSDETW
 fieldset/CR1:
   description: Configuration register 1
   fields:
@@ -138,12 +132,10 @@ fieldset/CR1:
       description: "Audio block enable where x is A or B. This bit is set by software. To switch off the audio block, the application software must program this bit to 0 and poll the bit till it reads back 0, meaning that the block is completely disabled. Before setting this bit to 1, check that it is set to 0, otherwise the enable command will not be taken into account. This bit allows to control the state of SAIx audio block. If it is disabled when an audio frame transfer is ongoing, the ongoing transfer completes and the cell is fully disabled at the end of this audio frame transfer. Note: When SAIx block is configured in master mode, the clock must be present on the input of SAIx before setting SAIXEN bit."
       bit_offset: 16
       bit_size: 1
-      enum: SAIEN
     - name: DMAEN
       description: "DMA enable. This bit is set and cleared by software. Note: Since the audio block defaults to operate as a transmitter after reset, the MODE[1:0] bits must be configured before setting DMAEN to avoid a DMA request in receiver mode."
       bit_offset: 17
       bit_size: 1
-      enum: DMAEN
     - name: NODIV
       description: No fixed divider between MCLK and FS
       bit_offset: 19
@@ -178,7 +170,6 @@ fieldset/CR2:
       description: "Mute. This bit is set and cleared by software. It is meaningful only when the audio block operates as a transmitter. The MUTE value is linked to value of MUTEVAL if the number of slots is lower or equal to 2, or equal to 0 if it is greater than 2. Refer to Section: Mute mode for more details. Note: This bit is meaningless and should not be used for SPDIF audio blocks."
       bit_offset: 5
       bit_size: 1
-      enum: MUTE
     - name: MUTEVAL
       description: "Mute value. This bit is set and cleared by software.It must be written before enabling the audio block: SAIXEN. This bit is meaningful only when the audio block operates as a transmitter, the number of slots is lower or equal to 2 and the MUTE bit is set. If more slots are declared, the bit value sent during the transmission in mute mode is equal to 0, whatever the value of MUTEVAL. if the number of slot is lower or equal to 2 and MUTEVAL = 1, the MUTE value transmitted for each slot is the one sent during the previous frame. Refer to Section: Mute mode for more details. Note: This bit is meaningless and should not be used for SPDIF audio blocks."
       bit_offset: 6
@@ -248,37 +239,30 @@ fieldset/IM:
       description: "Overrun/underrun interrupt enable. This bit is set and cleared by software. When this bit is set, an interrupt is generated if the OVRUDR bit in the SAI_xSR register is set."
       bit_offset: 0
       bit_size: 1
-      enum: OVRUDRIE
     - name: MUTEDETIE
       description: "Mute detection interrupt enable. This bit is set and cleared by software. When this bit is set, an interrupt is generated if the MUTEDET bit in the SAI_xSR register is set. This bit has a meaning only if the audio block is configured in receiver mode."
       bit_offset: 1
       bit_size: 1
-      enum: MUTEDETIE
     - name: WCKCFGIE
       description: "Wrong clock configuration interrupt enable. This bit is set and cleared by software. This bit is taken into account only if the audio block is configured as a master (MODE[1] = 0) and NODIV = 0. It generates an interrupt if the WCKCFG flag in the SAI_xSR register is set. Note: This bit is used only in TDM mode and is meaningless in other modes."
       bit_offset: 2
       bit_size: 1
-      enum: WCKCFGIE
     - name: FREQIE
       description: "FIFO request interrupt enable. This bit is set and cleared by software. When this bit is set, an interrupt is generated if the FREQ bit in the SAI_xSR register is set. Since the audio block defaults to operate as a transmitter after reset, the MODE bit must be configured before setting FREQIE to avoid a parasitic interruption in receiver mode,"
       bit_offset: 3
       bit_size: 1
-      enum: FREQIE
     - name: CNRDYIE
       description: "Codec not ready interrupt enable (AC97). This bit is set and cleared by software. When the interrupt is enabled, the audio block detects in the slot 0 (tag0) of the AC97 frame if the Codec connected to this line is ready or not. If it is not ready, the CNRDY flag in the SAI_xSR register is set and an interruption i generated. This bit has a meaning only if the AC97 mode is selected through PRTCFG[1:0] bits and the audio block is operates as a receiver."
       bit_offset: 4
       bit_size: 1
-      enum: CNRDYIE
     - name: AFSDETIE
       description: "Anticipated frame synchronization detection interrupt enable. This bit is set and cleared by software. When this bit is set, an interrupt will be generated if the AFSDET bit in the SAI_xSR register is set. This bit is meaningless in AC97, SPDIF mode or when the audio block operates as a master."
       bit_offset: 5
       bit_size: 1
-      enum: AFSDETIE
     - name: LFSDETIE
       description: "Late frame synchronization detection interrupt enable. This bit is set and cleared by software. When this bit is set, an interrupt will be generated if the LFSDET bit is set in the SAI_xSR register. This bit is meaningless in AC97, SPDIF mode or when the audio block operates as a master."
       bit_offset: 6
       bit_size: 1
-      enum: LFSDETIE
 fieldset/PDMCR:
   description: PDM control register
   fields:
@@ -405,15 +389,6 @@ fieldset/SR:
       bit_offset: 16
       bit_size: 3
       enum_read: FLVLR
-enum/AFSDETIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Interrupt is disabled
-      value: 0
-    - name: Enabled
-      description: Interrupt is enabled
-      value: 1
 enum/AFSDETR:
   bit_size: 1
   variants:
@@ -423,18 +398,6 @@ enum/AFSDETR:
     - name: EarlySync
       description: Frame synchronization signal is detected earlier than expected
       value: 1
-enum/CAFSDETW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears the AFSDET flag
-      value: 1
-enum/CCNRDYW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears the CNRDY flag
-      value: 1
 enum/CKSTR:
   bit_size: 1
   variants:
@@ -443,27 +406,6 @@ enum/CKSTR:
       value: 0
     - name: RisingEdge
       description: Data strobing edge is rising edge of SCK
-      value: 1
-enum/CLFSDETW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears the LFSDET flag
-      value: 1
-enum/CMUTEDETW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears the MUTEDET flag
-      value: 1
-enum/CNRDYIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Interrupt is disabled
-      value: 0
-    - name: Enabled
-      description: Interrupt is enabled
       value: 1
 enum/CNRDYR:
   bit_size: 1
@@ -486,12 +428,6 @@ enum/COMP:
     - name: ALaw
       description: A-Law algorithm
       value: 3
-enum/COVRUDRW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears the OVRUDR flag
-      value: 1
 enum/CPL:
   bit_size: 1
   variants:
@@ -500,21 +436,6 @@ enum/CPL:
       value: 0
     - name: TwosComplement
       description: 2’s complement representation
-      value: 1
-enum/CWCKCFGW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears the WCKCFG flag
-      value: 1
-enum/DMAEN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: DMA disabled
-      value: 0
-    - name: Enabled
-      description: DMA enabled
       value: 1
 enum/DS:
   bit_size: 3
@@ -567,15 +488,6 @@ enum/FLVLR:
     - name: Full
       description: FIFO full
       value: 5
-enum/FREQIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Interrupt is disabled
-      value: 0
-    - name: Enabled
-      description: Interrupt is enabled
-      value: 1
 enum/FREQR:
   bit_size: 1
   variants:
@@ -621,15 +533,6 @@ enum/FTH:
     - name: Full
       description: FIFO full
       value: 4
-enum/LFSDETIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Interrupt is disabled
-      value: 0
-    - name: Enabled
-      description: Interrupt is enabled
-      value: 1
 enum/LFSDETR:
   bit_size: 1
   variants:
@@ -672,24 +575,6 @@ enum/MONO:
     - name: Mono
       description: Mono mode
       value: 1
-enum/MUTE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: No mute mode
-      value: 0
-    - name: Enabled
-      description: Mute mode enabled
-      value: 1
-enum/MUTEDETIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Interrupt is disabled
-      value: 0
-    - name: Enabled
-      description: Interrupt is enabled
-      value: 1
 enum/MUTEDETR:
   bit_size: 1
   variants:
@@ -726,15 +611,6 @@ enum/OUTDRIV:
     - name: Immediately
       description: Audio block output driven immediately after the setting of this bit
       value: 1
-enum/OVRUDRIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Interrupt is disabled
-      value: 0
-    - name: Enabled
-      description: Interrupt is enabled
-      value: 1
 enum/OVRUDRR:
   bit_size: 1
   variants:
@@ -756,15 +632,6 @@ enum/PRTCFG:
     - name: Ac97
       description: AC’97 protocol
       value: 2
-enum/SAIEN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: SAI audio block disabled
-      value: 0
-    - name: Enabled
-      description: SAI audio block enabled
-      value: 1
 enum/SLOTEN:
   bit_size: 16
   variants:
@@ -798,15 +665,6 @@ enum/SYNCEN:
     - name: External
       description: audio sub-block is synchronous with an external SAI embedded peripheral. In this case the audio sub-block should be configured in Slave mode
       value: 2
-enum/WCKCFGIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Interrupt is disabled
-      value: 0
-    - name: Enabled
-      description: Interrupt is enabled
-      value: 1
 enum/WCKCFGR:
   bit_size: 1
   variants:
