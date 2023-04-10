@@ -294,17 +294,18 @@ impl DmaChannels {
 
         // GPDMA
 
-        for (file, gpdmax, instance) in [
-            ("data/dmamux/H5_GPDMA.yaml", "GPDMA1", "STM32H5_dma3_Cube"),
-            ("data/dmamux/H5_GPDMA.yaml", "GPDMA2", "Instance2_STM32H5_dma3_Cube"),
-            ("data/dmamux/U5_GPDMA1.yaml", "GPDMA1", "STM32U5_dma3_Cube"),
+        for (file, gpdmax, instance, count, count_2d) in [
+            ("H5_GPDMA.yaml", "GPDMA1", "STM32H5_dma3_Cube", 8, 2),
+            ("H5_GPDMA.yaml", "GPDMA2", "Instance2_STM32H5_dma3_Cube", 8, 2),
+            ("U5_GPDMA1.yaml", "GPDMA1", "STM32U5_dma3_Cube", 16, 4),
         ] {
             let mut chip_dma = ChipDma {
                 peripherals: HashMap::new(),
                 channels: Vec::new(),
             };
 
-            let parsed: HashMap<String, u8> = serde_yaml::from_str(&std::fs::read_to_string(file)?)?;
+            let parsed: HashMap<String, u8> =
+                serde_yaml::from_str(&std::fs::read_to_string(format!("data/dmamux/{file}"))?)?;
 
             for (request_name, request_num) in parsed {
                 let parts: Vec<_> = request_name.split('_').collect();
@@ -329,14 +330,14 @@ impl DmaChannels {
                     });
             }
 
-            for i in 0..16 {
+            for i in 0..count {
                 chip_dma.channels.push(stm32_data_serde::chip::core::DmaChannels {
                     name: format!("{gpdmax}_CH{i}"),
                     dma: gpdmax.to_string(),
                     channel: i,
                     dmamux: None,
                     dmamux_channel: None,
-                    supports_2d: Some(i >= 12),
+                    supports_2d: Some(i >= count - count_2d),
                 });
             }
 
