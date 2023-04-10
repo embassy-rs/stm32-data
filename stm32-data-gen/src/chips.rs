@@ -137,6 +137,7 @@ impl PeriMatcher {
             (".*:SPI:spi2_v1_4", ("spi", "f1", "SPI")),
             (".*:SPI:spi2s1_v2_1", ("spi", "v1", "SPI")),
             (".*:SPI:spi2s1_v2_2", ("spi", "v1", "SPI")),
+            (".*:SPI:spi2s1_v3_0", ("spi", "v2", "SPI")),
             (".*:SPI:spi2s1_v3_2", ("spi", "v2", "SPI")),
             (".*:SPI:spi2s1_v3_3", ("spi", "v2", "SPI")),
             (".*:SPI:spi2s1_v3_5", ("spi", "v2", "SPI")),
