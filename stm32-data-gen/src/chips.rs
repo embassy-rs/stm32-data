@@ -149,6 +149,7 @@ impl PeriMatcher {
             (".*:SPI:spi2s3_v1_1", ("spi", "v5", "SPI")),
             (".*:I2C:i2c1_v1_5", ("i2c", "v1", "I2C")),
             (".*:I2C:i2c2_v1_1", ("i2c", "v2", "I2C")),
+            (".*:I2C:F0-i2c2_v1_1", ("i2c", "v2", "I2C")),
             (".*:I2C:i2c2_v1_1F7", ("i2c", "v2", "I2C")),
             (".*:I2C:i2c2_v1_1U5", ("i2c", "v2", "I2C")),
             (".*:DAC:dacif_v1_1", ("dac", "v1", "DAC")),
