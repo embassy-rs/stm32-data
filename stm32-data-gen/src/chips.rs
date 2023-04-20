@@ -763,15 +763,6 @@ fn process_core(
             "DMA",
             // IRTIM is just TIM16+TIM17
             "IRTIM",
-            // I2S is just SPI on disguise
-            "I2S1",
-            "I2S2",
-            "I2S3",
-            "I2S4",
-            "I2S5",
-            "I2S6",
-            "I2S7",
-            "I2S8",
             // We add this as ghost peri
             "SYS",
             // These are software libraries
@@ -864,6 +855,11 @@ fn process_core(
     }
     let mut peripherals = Vec::new();
     for (pname, pkind) in peri_kinds {
+        // We cannot add this to FAKE peripherals because we need the pins
+        if pname.starts_with("I2S") {
+            continue;
+        }
+
         let addr = if chip_name.starts_with("STM32F0") && pname == "ADC" {
             defines.get_peri_addr("ADC1")
         } else {
@@ -912,6 +908,24 @@ fn process_core(
             }
             p.pins = pins.clone();
         }
+
+        let i2s_name = if pname.starts_with("SPI") {
+            "I2S".to_owned() + pname.trim_start_matches("SPI")
+        } else {
+            "".to_owned()
+        };
+
+        if let Some(i2s_pins) = periph_pins.get_mut(&i2s_name) {
+            // merge the core xml info with GPIO xml info to hopefully get the full picture
+            // if the peripheral does not exist in the GPIO xml (one of the notable one is ADC)
+            //   it probably doesn't need any AFIO writes to work
+            if let Some(af_pins) = chip_af.and_then(|x| x.get(&i2s_name)) {
+                merge_periph_pins_info(chip_name.contains("STM32F1"), &i2s_name, i2s_pins, af_pins.as_slice());
+            }
+
+            p.pins.append(i2s_pins.clone().as_mut());
+        }
+
         if let Some(peri_irqs) = chip_irqs.get(&pname) {
             //filter by available, because some are conditioned on <Die>
             let mut irqs: Vec<_> = peri_irqs
