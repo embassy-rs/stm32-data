@@ -1,6 +1,8 @@
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 
+use stm32_data_serde::chip::core::peripheral::Pin;
+
 use super::*;
 
 mod xml {
@@ -923,7 +925,11 @@ fn process_core(
                 merge_periph_pins_info(chip_name.contains("STM32F1"), &i2s_name, i2s_pins, af_pins.as_slice());
             }
 
-            p.pins.append(i2s_pins.clone().as_mut());
+            p.pins.extend(i2s_pins.iter().map(|p| Pin {
+                pin: p.pin,
+                signal: "I2S_".to_owned() + &p.signal,
+                af: p.af,
+            }));
         }
 
         if let Some(peri_irqs) = chip_irqs.get(&pname) {
