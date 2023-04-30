@@ -28,7 +28,7 @@ Switch ($CMD)
 
             echo "processing $f ..."
             chiptool extract-peripheral --svd "sources/svd/stm32$f.svd" --peripheral "$peri" > "tmp/$peri/$f.yaml" 2> "tmp/$peri/$f.err"
-            if (!$error) {
+            if ($LASTEXITCODE -eq 0) {
                 rm "tmp/$peri/$f.err"
                 echo OK
             } else {
