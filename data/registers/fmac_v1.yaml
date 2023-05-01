@@ -1,0 +1,179 @@
+---
+block/FMAC:
+  description: Filter math accelerator
+  items:
+    - name: X1BUFCFG
+      description: X1 buffer configuration register
+      byte_offset: 0
+      fieldset: X1BUFCFG
+    - name: X2BUFCFG
+      description: X2 buffer configuration register
+      byte_offset: 4
+      fieldset: X2BUFCFG
+    - name: YBUFCFG
+      description: Y buffer configuration register
+      byte_offset: 8
+      fieldset: YBUFCFG
+    - name: PARAM
+      description: Parameter register
+      byte_offset: 12
+      fieldset: PARAM
+    - name: CR
+      description: Control register
+      byte_offset: 16
+      fieldset: CR
+    - name: SR
+      description: Status register
+      byte_offset: 20
+      access: Read
+      fieldset: SR
+    - name: WDATA
+      description: Write data register
+      byte_offset: 24
+      access: Write
+      fieldset: WDATA
+    - name: RDATA
+      description: Read data register
+      byte_offset: 28
+      access: Read
+      fieldset: RDATA
+fieldset/CR:
+  description: Control register
+  fields:
+    - name: RIEN
+      description: Enable read interrupt
+      bit_offset: 0
+      bit_size: 1
+    - name: WIEN
+      description: Enable write interrupt
+      bit_offset: 1
+      bit_size: 1
+    - name: OVFLIEN
+      description: Enable overflow error interrupts
+      bit_offset: 2
+      bit_size: 1
+    - name: UNFLIEN
+      description: Enable underflow error interrupts
+      bit_offset: 3
+      bit_size: 1
+    - name: SATIEN
+      description: Enable saturation error interrupts
+      bit_offset: 4
+      bit_size: 1
+    - name: DMAREN
+      description: Enable DMA read channel requests
+      bit_offset: 8
+      bit_size: 1
+    - name: DMAWEN
+      description: Enable DMA write channel requests
+      bit_offset: 9
+      bit_size: 1
+    - name: CLIPEN
+      description: Enable clipping
+      bit_offset: 15
+      bit_size: 1
+    - name: RESET
+      description: Reset FMAC unit
+      bit_offset: 16
+      bit_size: 1
+fieldset/PARAM:
+  description: Parameter register
+  fields:
+    - name: P
+      description: Input parameter P
+      bit_offset: 0
+      bit_size: 8
+    - name: Q
+      description: Input parameter Q
+      bit_offset: 8
+      bit_size: 8
+    - name: R
+      description: Input parameter R
+      bit_offset: 16
+      bit_size: 8
+    - name: FUNC
+      description: Function
+      bit_offset: 24
+      bit_size: 7
+    - name: START
+      description: Enable execution
+      bit_offset: 31
+      bit_size: 1
+fieldset/RDATA:
+  description: Read data register
+  fields:
+    - name: RES
+      description: Read data (contents of the Y output buffer at the address indicated by the READ pointer)
+      bit_offset: 0
+      bit_size: 16
+fieldset/SR:
+  description: Status register
+  fields:
+    - name: YEMPTY
+      description: Y buffer empty flag
+      bit_offset: 0
+      bit_size: 1
+    - name: X1FULL
+      description: X1 buffer full flag
+      bit_offset: 1
+      bit_size: 1
+    - name: OVFL
+      description: Overflow error flag
+      bit_offset: 8
+      bit_size: 1
+    - name: UNFL
+      description: Underflow error flag
+      bit_offset: 9
+      bit_size: 1
+    - name: SAT
+      description: Saturation error flag
+      bit_offset: 10
+      bit_size: 1
+fieldset/WDATA:
+  description: Write data register
+  fields:
+    - name: WDATA
+      description: Write data (write data are transferred to the address indicated by the write pointer)
+      bit_offset: 0
+      bit_size: 16
+fieldset/X1BUFCFG:
+  description: X1 buffer configuration register
+  fields:
+    - name: X1_BASE
+      description: Base address of X1 buffer
+      bit_offset: 0
+      bit_size: 8
+    - name: X1_BUF_SIZE
+      description: Allocated size of X1 buffer in 16-bit words
+      bit_offset: 8
+      bit_size: 8
+    - name: FULL_WM
+      description: Watermark for buffer full flag
+      bit_offset: 24
+      bit_size: 2
+fieldset/X2BUFCFG:
+  description: X2 buffer configuration register
+  fields:
+    - name: X2_BASE
+      description: Base address of X2 buffer
+      bit_offset: 0
+      bit_size: 8
+    - name: X2_BUF_SIZE
+      description: Size of X2 buffer in 16-bit words
+      bit_offset: 8
+      bit_size: 8
+fieldset/YBUFCFG:
+  description: Y buffer configuration register
+  fields:
+    - name: Y_BASE
+      description: Base address of Y buffer
+      bit_offset: 0
+      bit_size: 8
+    - name: Y_BUF_SIZE
+      description: Size of Y buffer in 16-bit words
+      bit_offset: 8
+      bit_size: 8
+    - name: EMPTY_WM
+      description: Watermark for buffer empty flag
+      bit_offset: 24
+      bit_size: 2
