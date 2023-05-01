@@ -311,6 +311,7 @@ impl PeriMatcher {
             ("STM32WL.*:FLASH:.*", ("flash", "wl", "FLASH")),
             ("STM32C0.*:FLASH:.*", ("flash", "c0", "FLASH")),
             ("STM32G0.*:FLASH:.*", ("flash", "g0", "FLASH")),
+            ("STM32G4.*:FLASH:.*", ("flash", "g4", "FLASH")),
             ("STM32H50.*:FLASH:.*", ("flash", "h50", "FLASH")),
             ("STM32H5.*:FLASH:.*", ("flash", "h5", "FLASH")),
             ("STM32F107.*:ETH:.*", ("eth", "v1a", "ETH")),
