@@ -1,6 +1,58 @@
 ---
+block/USART:
+  description: Universal synchronous asynchronous receiver transmitter
+  items:
+    - name: CR1
+      description: Control register 1
+      byte_offset: 0
+      fieldset: CR1
+    - name: CR2
+      description: Control register 2
+      byte_offset: 4
+      fieldset: CR2
+    - name: CR3
+      description: Control register 3
+      byte_offset: 8
+      fieldset: CR3
+    - name: BRR
+      description: Baud rate register
+      byte_offset: 12
+      fieldset: BRR
+    - name: GTPR
+      description: Guard time and prescaler register
+      byte_offset: 16
+      fieldset: GTPR
+    - name: RTOR
+      description: Receiver timeout register
+      byte_offset: 20
+      fieldset: RTOR
+    - name: RQR
+      description: Request register
+      byte_offset: 24
+      access: Write
+      fieldset: RQR
+    - name: ISR
+      description: Interrupt & status register
+      byte_offset: 28
+      access: Read
+      fieldset: ISR
+    - name: ICR
+      description: Interrupt flag clear register
+      byte_offset: 32
+      access: Write
+      fieldset: ICR
+    - name: RDR
+      description: Receive data register
+      byte_offset: 36
+      access: Read
+      fieldset: DR
+    - name: TDR
+      description: Transmit data register
+      byte_offset: 40
+      access: Write
+      fieldset: DR
 block/LPUART:
-  description: Lower power Universal asynchronous receiver transmitter
+  description: Low-power Universal synchronous asynchronous receiver transmitter
   items:
     - name: CR1
       description: Control register 1
@@ -37,18 +89,19 @@ block/LPUART:
       description: Receive data register
       byte_offset: 36
       access: Read
-      fieldset: RDR
+      fieldset: DR
     - name: TDR
       description: Transmit data register
       byte_offset: 40
-      fieldset: TDR
+      access: Write
+      fieldset: DR
 fieldset/BRR:
   description: Baud rate register
   fields:
     - name: BRR
-      description: BRR
+      description: USARTDIV
       bit_offset: 0
-      bit_size: 20
+      bit_size: 16
 fieldset/CR1:
   description: Control register 1
   fields:
@@ -81,7 +134,7 @@ fieldset/CR1:
       bit_offset: 6
       bit_size: 1
     - name: TXEIE
-      description: interrupt enable
+      description: TXE interrupt enable
       bit_offset: 7
       bit_size: 1
     - name: PEIE
@@ -115,14 +168,27 @@ fieldset/CR1:
       description: Character match interrupt enable
       bit_offset: 14
       bit_size: 1
+    - name: OVER8
+      description: Oversampling mode
+      bit_offset: 15
+      bit_size: 1
+      enum: OVER8
     - name: DEDT
-      description: Driver Enable de-assertion time
+      description: Driver Enable deassertion time
       bit_offset: 16
       bit_size: 5
     - name: DEAT
       description: Driver Enable assertion time
       bit_offset: 21
       bit_size: 5
+    - name: RTOIE
+      description: Receiver timeout interrupt enable
+      bit_offset: 26
+      bit_size: 1
+    - name: EOBIE
+      description: End of Block interrupt enable
+      bit_offset: 27
+      bit_size: 1
     - name: M1
       description: Word length
       bit_offset: 28
@@ -131,16 +197,47 @@ fieldset/CR1:
 fieldset/CR2:
   description: Control register 2
   fields:
-    - name: ADDM7
+    - name: ADDM
       description: 7-bit Address Detection/4-bit Address Detection
       bit_offset: 4
       bit_size: 1
-      enum: ADDM7
+      enum: ADDM
+    - name: LBDL
+      description: Line break detection length
+      bit_offset: 5
+      bit_size: 1
+      enum: LBDL
+    - name: LBDIE
+      description: LIN break detection interrupt enable
+      bit_offset: 6
+      bit_size: 1
+    - name: LBCL
+      description: Last bit clock pulse
+      bit_offset: 8
+      bit_size: 1
+    - name: CPHA
+      description: Clock phase
+      bit_offset: 9
+      bit_size: 1
+      enum: CPHA
+    - name: CPOL
+      description: Clock polarity
+      bit_offset: 10
+      bit_size: 1
+      enum: CPOL
+    - name: CLKEN
+      description: Clock enable
+      bit_offset: 11
+      bit_size: 1
     - name: STOP
       description: STOP bits
       bit_offset: 12
       bit_size: 2
       enum: STOP
+    - name: LINEN
+      description: LIN mode enable
+      bit_offset: 14
+      bit_size: 1
     - name: SWAP
       description: Swap TX/RX pins
       bit_offset: 15
@@ -162,6 +259,19 @@ fieldset/CR2:
       bit_offset: 19
       bit_size: 1
       enum: MSBFIRST
+    - name: ABREN
+      description: Auto baud rate enable
+      bit_offset: 20
+      bit_size: 1
+    - name: ABRMOD
+      description: Auto baud rate mode
+      bit_offset: 21
+      bit_size: 2
+      enum: ABRMOD
+    - name: RTOEN
+      description: Receiver timeout enable
+      bit_offset: 23
+      bit_size: 1
     - name: ADD
       description: Address of the USART node
       bit_offset: 24
@@ -173,9 +283,26 @@ fieldset/CR3:
       description: Error interrupt enable
       bit_offset: 0
       bit_size: 1
+    - name: IREN
+      description: IrDA mode enable
+      bit_offset: 1
+      bit_size: 1
+    - name: IRLP
+      description: IrDA low-power
+      bit_offset: 2
+      bit_size: 1
+      enum: IRLP
     - name: HDSEL
       description: Half-duplex selection
       bit_offset: 3
+      bit_size: 1
+    - name: NACK
+      description: Smartcard NACK enable
+      bit_offset: 4
+      bit_size: 1
+    - name: SCEN
+      description: Smartcard mode enable
+      bit_offset: 5
       bit_size: 1
     - name: DMAR
       description: DMA enable receiver
@@ -197,6 +324,11 @@ fieldset/CR3:
       description: CTS interrupt enable
       bit_offset: 10
       bit_size: 1
+    - name: ONEBIT
+      description: One sample bit method enable
+      bit_offset: 11
+      bit_size: 1
+      enum: ONEBIT
     - name: OVRDIS
       description: Overrun Disable
       bit_offset: 12
@@ -214,6 +346,10 @@ fieldset/CR3:
       bit_offset: 15
       bit_size: 1
       enum: DEP
+    - name: SCARCNT
+      description: Smartcard auto-retry count
+      bit_offset: 17
+      bit_size: 3
     - name: WUS
       description: Wakeup from Stop mode interrupt flag selection
       bit_offset: 20
@@ -223,42 +359,72 @@ fieldset/CR3:
       description: Wakeup from Stop mode interrupt enable
       bit_offset: 22
       bit_size: 1
+fieldset/DR:
+  description: Data register
+  fields:
+    - name: DR
+      description: Data value
+      bit_offset: 0
+      bit_size: 9
+fieldset/GTPR:
+  description: Guard time and prescaler register
+  fields:
+    - name: PSC
+      description: Prescaler value
+      bit_offset: 0
+      bit_size: 8
+    - name: GT
+      description: Guard time value
+      bit_offset: 8
+      bit_size: 8
 fieldset/ICR:
   description: Interrupt flag clear register
   fields:
-    - name: PECF
+    - name: PE
       description: Parity error clear flag
       bit_offset: 0
       bit_size: 1
-    - name: FECF
+    - name: FE
       description: Framing error clear flag
       bit_offset: 1
       bit_size: 1
-    - name: NCF
-      description: Noise detected clear flag
+    - name: NE
+      description: Noise error clear flag
       bit_offset: 2
       bit_size: 1
-    - name: ORECF
+    - name: ORE
       description: Overrun error clear flag
       bit_offset: 3
       bit_size: 1
-    - name: IDLECF
+    - name: IDLE
       description: Idle line detected clear flag
       bit_offset: 4
       bit_size: 1
-    - name: TCCF
+    - name: TC
       description: Transmission complete clear flag
       bit_offset: 6
       bit_size: 1
-    - name: CTSCF
+    - name: LBD
+      description: LIN break detection clear flag
+      bit_offset: 8
+      bit_size: 1
+    - name: CTS
       description: CTS clear flag
       bit_offset: 9
       bit_size: 1
-    - name: CMCF
+    - name: RTOF
+      description: Receiver timeout clear flag
+      bit_offset: 11
+      bit_size: 1
+    - name: EOBF
+      description: End of block clear flag
+      bit_offset: 12
+      bit_size: 1
+    - name: CMF
       description: Character match clear flag
       bit_offset: 17
       bit_size: 1
-    - name: WUCF
+    - name: WUF
       description: Wakeup from Stop mode clear flag
       bit_offset: 20
       bit_size: 1
@@ -266,103 +432,144 @@ fieldset/ISR:
   description: Interrupt & status register
   fields:
     - name: PE
-      description: PE
+      description: Parity error
       bit_offset: 0
       bit_size: 1
     - name: FE
-      description: FE
+      description: Framing error
       bit_offset: 1
       bit_size: 1
     - name: NE
-      description: NE
+      description: Noise error flag
       bit_offset: 2
       bit_size: 1
     - name: ORE
-      description: ORE
+      description: Overrun error
       bit_offset: 3
       bit_size: 1
     - name: IDLE
-      description: IDLE
+      description: Idle line detected
       bit_offset: 4
       bit_size: 1
     - name: RXNE
-      description: RXNE
+      description: Read data register not empty
       bit_offset: 5
       bit_size: 1
     - name: TC
-      description: TC
+      description: Transmission complete
       bit_offset: 6
       bit_size: 1
     - name: TXE
-      description: TXE
+      description: Transmit data register empty
       bit_offset: 7
       bit_size: 1
+    - name: LBD
+      description: LIN break detection flag
+      bit_offset: 8
+      bit_size: 1
     - name: CTSIF
-      description: CTSIF
+      description: CTS interrupt flag
       bit_offset: 9
       bit_size: 1
     - name: CTS
-      description: CTS
+      description: CTS flag
       bit_offset: 10
       bit_size: 1
+    - name: RTOF
+      description: Receiver timeout
+      bit_offset: 11
+      bit_size: 1
+    - name: EOBF
+      description: End of block flag
+      bit_offset: 12
+      bit_size: 1
+    - name: ABRE
+      description: Auto baud rate error
+      bit_offset: 14
+      bit_size: 1
+    - name: ABRF
+      description: Auto baud rate flag
+      bit_offset: 15
+      bit_size: 1
     - name: BUSY
-      description: BUSY
+      description: Busy flag
       bit_offset: 16
       bit_size: 1
     - name: CMF
-      description: CMF
+      description: character match flag
       bit_offset: 17
       bit_size: 1
     - name: SBKF
-      description: SBKF
+      description: Send break flag
       bit_offset: 18
       bit_size: 1
     - name: RWU
-      description: RWU
+      description: Receiver wakeup from Mute mode
       bit_offset: 19
       bit_size: 1
+      enum: RWU
     - name: WUF
-      description: WUF
+      description: Wakeup from Stop mode flag
       bit_offset: 20
       bit_size: 1
     - name: TEACK
-      description: TEACK
+      description: Transmit enable acknowledge flag
       bit_offset: 21
       bit_size: 1
     - name: REACK
-      description: REACK
+      description: Receive enable acknowledge flag
       bit_offset: 22
       bit_size: 1
-fieldset/RDR:
-  description: Receive data register
-  fields:
-    - name: RDR
-      description: Receive data value
-      bit_offset: 0
-      bit_size: 9
 fieldset/RQR:
   description: Request register
   fields:
+    - name: ABRRQ
+      description: Auto baud rate request. Resets the ABRF flag in the USART_ISR and request an automatic baud rate measurement on the next received data frame.
+      bit_offset: 0
+      bit_size: 1
     - name: SBKRQ
-      description: Send break request
+      description: "Send break request. Sets the SBKF flag and request to send a BREAK on the line, as soon as the transmit machine is available"
       bit_offset: 1
       bit_size: 1
     - name: MMRQ
-      description: Mute mode request
+      description: Mute mode request. Puts the USART in mute mode and sets the RWU flag.
       bit_offset: 2
       bit_size: 1
     - name: RXFRQ
-      description: Receive data flush request
+      description: "Receive data flush request. Clears the RXNE flag. This allows to discard the received data without reading it, and avoid an overrun condition"
       bit_offset: 3
       bit_size: 1
-fieldset/TDR:
-  description: Transmit data register
+    - name: TXFRQ
+      description: Transmit data flush request. Sets the TXE flags. This allows to discard the transmit data.
+      bit_offset: 4
+      bit_size: 1
+fieldset/RTOR:
+  description: Receiver timeout register
   fields:
-    - name: TDR
-      description: Transmit data value
+    - name: RTO
+      description: Receiver timeout value
       bit_offset: 0
-      bit_size: 9
-enum/ADDM7:
+      bit_size: 24
+    - name: BLEN
+      description: Block Length
+      bit_offset: 24
+      bit_size: 8
+enum/ABRMOD:
+  bit_size: 2
+  variants:
+    - name: Start
+      description: Measurement of the start bit is used to detect the baud rate
+      value: 0
+    - name: Edge
+      description: Falling edge to falling edge measurement
+      value: 1
+    - name: Frame7F
+      description: "0x7F frame detection"
+      value: 2
+    - name: Frame55
+      description: "0x55 frame detection"
+      value: 3
+enum/ADDM:
   bit_size: 1
   variants:
     - name: Bit4
@@ -370,6 +577,24 @@ enum/ADDM7:
       value: 0
     - name: Bit7
       description: 7-bit address detection
+      value: 1
+enum/CPHA:
+  bit_size: 1
+  variants:
+    - name: First
+      description: The first clock transition is the first data capture edge
+      value: 0
+    - name: Second
+      description: The second clock transition is the first data capture edge
+      value: 1
+enum/CPOL:
+  bit_size: 1
+  variants:
+    - name: Low
+      description: Steady low value on CK pin outside transmission window
+      value: 0
+    - name: High
+      description: Steady high value on CK pin outside transmission window
       value: 1
 enum/DEP:
   bit_size: 1
@@ -379,6 +604,24 @@ enum/DEP:
       value: 0
     - name: Low
       description: DE signal is active low
+      value: 1
+enum/IRLP:
+  bit_size: 1
+  variants:
+    - name: Normal
+      description: Normal mode
+      value: 0
+    - name: LowPower
+      description: Low-power mode
+      value: 1
+enum/LBDL:
+  bit_size: 1
+  variants:
+    - name: Bit10
+      description: 10-bit break detection
+      value: 0
+    - name: Bit11
+      description: 11-bit break detection
       value: 1
 enum/M0:
   bit_size: 1
@@ -407,6 +650,24 @@ enum/MSBFIRST:
     - name: MSB
       description: "data is transmitted/received with MSB (bit 7/8/9) first, following the start bit"
       value: 1
+enum/ONEBIT:
+  bit_size: 1
+  variants:
+    - name: Sample3
+      description: Three sample bit method
+      value: 0
+    - name: Sample1
+      description: One sample bit method
+      value: 1
+enum/OVER8:
+  bit_size: 1
+  variants:
+    - name: Oversampling16
+      description: Oversampling by 16
+      value: 0
+    - name: Oversampling8
+      description: Oversampling by 8
+      value: 1
 enum/PS:
   bit_size: 1
   variants:
@@ -416,6 +677,15 @@ enum/PS:
     - name: Odd
       description: Odd parity
       value: 1
+enum/RWU:
+  bit_size: 1
+  variants:
+    - name: Active
+      description: Receiver in active mode
+      value: 0
+    - name: Mute
+      description: Receiver in mute mode
+      value: 1
 enum/STOP:
   bit_size: 2
   variants:
@@ -423,22 +693,22 @@ enum/STOP:
       description: 1 stop bit
       value: 0
     - name: Stop0p5
-      description: 0.5 stop bit
+      description: 0.5 stop bits
       value: 1
     - name: Stop2
-      description: 2 stop bit
+      description: 2 stop bits
       value: 2
     - name: Stop1p5
-      description: 1.5 stop bit
+      description: 1.5 stop bits
       value: 3
 enum/WAKE:
   bit_size: 1
   variants:
-    - name: Idle
-      description: Idle line
+    - name: IdleLine
+      description: USART wakeup on idle line
       value: 0
-    - name: Address
-      description: Address mask
+    - name: AddressMark
+      description: USART wakeup on address mark
       value: 1
 enum/WUS:
   bit_size: 2
