@@ -17,7 +17,7 @@ block/HRTIM:
       access: Write
       fieldset: MICR
     - name: MDIER
-      description: MDIER4
+      description: Master Timer DMA / Interrupt Enable Register
       byte_offset: 12
       fieldset: MDIER
     - name: MCNTR
@@ -32,22 +32,16 @@ block/HRTIM:
       description: "Master Timer Repetition Register"
       byte_offset: 24
       fieldset: MREP
-    - name: MCMP1R
-      description: "Master Timer Compare 1 Register"
+    - name: MCMPXR
+      description: "Master Timer Compare X Register"
       byte_offset: 28
-      fieldset: MCMP1R
-    - name: MCMP2R
-      description: "Master Timer Compare 2 Register"
-      byte_offset: 36
-      fieldset: MCMP2R
-    - name: MCMP3R
-      description: "Master Timer Compare 3 Register"
-      byte_offset: 40
-      fieldset: MCMP3R
-    - name: MCMP4R
-      description: "Master Timer Compare 4 Register"
-      byte_offset: 44
-      fieldset: MCMP4R
+      fieldset: MCMPXR
+      array:
+        offsets:
+          - 0
+          - 8
+          - 12
+          - 16
     - name: TIMX
       description: "High Resolution Timer: TIMX"
       array:
@@ -451,32 +445,11 @@ fieldset/FLTXR:
       bit_offset: 31
       bit_size: 1
       enum: LOCKED
-fieldset/MCMP1R:
+fieldset/MCMPXR:
   description: "Master Timer Compare 1 Register"
   fields:
     - name: MCMP1
       description: "Master Timer Compare 1 value"
-      bit_offset: 0
-      bit_size: 16
-fieldset/MCMP2R:
-  description: "Master Timer Compare 2 Register"
-  fields:
-    - name: MCMP2
-      description: "Master Timer Compare 2 value"
-      bit_offset: 0
-      bit_size: 16
-fieldset/MCMP3R:
-  description: "Master Timer Compare 3 Register"
-  fields:
-    - name: MCMP3
-      description: "Master Timer Compare 3 value"
-      bit_offset: 0
-      bit_size: 16
-fieldset/MCMP4R:
-  description: "Master Timer Compare 4 Register"
-  fields:
-    - name: MCMP4
-      description: "Master Timer Compare 4 value"
       bit_offset: 0
       bit_size: 16
 fieldset/MCNTR:
@@ -507,7 +480,7 @@ fieldset/MCR:
       bit_offset: 5
       bit_size: 1
     - name: SYNCIN
-      description: ynchronization input
+      description: Synchronization input
       bit_offset: 8
       bit_size: 2
       enum: SYNCIN
@@ -533,26 +506,13 @@ fieldset/MCR:
       description: Master Counter enable
       bit_offset: 16
       bit_size: 1
-    - name: TACEN
-      description: Timer A counter enable
+    - name: TXCEN
+      description: Timer X counter enable
       bit_offset: 17
       bit_size: 1
-    - name: TBCEN
-      description: Timer B counter enable
-      bit_offset: 18
-      bit_size: 1
-    - name: TCCEN
-      description: Timer C counter enable
-      bit_offset: 19
-      bit_size: 1
-    - name: TDCEN
-      description: Timer D counter enable
-      bit_offset: 20
-      bit_size: 1
-    - name: TECEN
-      description: Timer E counter enable
-      bit_offset: 21
-      bit_size: 1
+      array:
+        len: 5
+        stride: 1
     - name: DACSYNC
       description: AC Synchronization
       bit_offset: 25
@@ -572,125 +532,83 @@ fieldset/MCR:
       bit_size: 2
       enum: BRSTDMA
 fieldset/MDIER:
-  description: MDIER4
+  description: Master Timer DMA / Interrupt Enable Register 
   fields:
-    - name: MCMP1IE
-      description: MCMP1IE
+    - name: MCMPXIE
+      description: Master Compare X Interrupt Enable
       bit_offset: 0
       bit_size: 1
-    - name: MCMP2IE
-      description: MCMP2IE
-      bit_offset: 1
-      bit_size: 1
-    - name: MCMP3IE
-      description: MCMP3IE
-      bit_offset: 2
-      bit_size: 1
-    - name: MCMP4IE
-      description: MCMP4IE
-      bit_offset: 3
-      bit_size: 1
+      array:
+        len: 4
+        stride: 1
     - name: MREPIE
-      description: MREPIE
+      description: Master Repetition Interrupt Enable
       bit_offset: 4
       bit_size: 1
     - name: SYNCIE
-      description: SYNCIE
+      description: Sync Input Interrupt Enable
       bit_offset: 5
       bit_size: 1
     - name: MUPDIE
-      description: MUPDIE
+      description: Master Update Interrupt Enable
       bit_offset: 6
       bit_size: 1
-    - name: MCMP1DE
-      description: MCMP1DE
+    - name: MCMPXDE
+      description: Master Compare X DMA request Enable
       bit_offset: 16
       bit_size: 1
-    - name: MCMP2DE
-      description: MCMP2DE
-      bit_offset: 17
-      bit_size: 1
-    - name: MCMP3DE
-      description: MCMP3DE
-      bit_offset: 18
-      bit_size: 1
-    - name: MCMP4DE
-      description: MCMP4DE
-      bit_offset: 19
-      bit_size: 1
+      array:
+        len: 4
+        stride: 1
     - name: MREPDE
-      description: MREPDE
+      description: Master Repetition DMA request Enable
       bit_offset: 20
       bit_size: 1
     - name: SYNCDE
-      description: SYNCDE
+      description: Sync Input DMA request Enable
       bit_offset: 21
       bit_size: 1
     - name: MUPDDE
-      description: MUPDDE
+      description: Master Update DMA request Enable
       bit_offset: 22
       bit_size: 1
 fieldset/MICR:
   description: "Master Timer Interrupt Clear Register"
   fields:
-    - name: MCMP1C
-      description: "Master Compare 1 Interrupt flag clear"
+    - name: MCMPXC
+      description: "Master Compare X Interrupt flag clear"
       bit_offset: 0
       bit_size: 1
-      enum_write: MCMP1C
-    - name: MCMP2C
-      description: "Master Compare 2 Interrupt flag clear"
-      bit_offset: 1
-      bit_size: 1
-      enum_write: MCMP1C
-    - name: MCMP3C
-      description: "Master Compare 3 Interrupt flag clear"
-      bit_offset: 2
-      bit_size: 1
-      enum_write: MCMP1C
-    - name: MCMP4C
-      description: "Master Compare 4 Interrupt flag clear"
-      bit_offset: 3
-      bit_size: 1
-      enum_write: MCMP1C
+      enum_write: MCPMXC
+      array:
+        len: 4
+        stride: 1
     - name: MREPC
       description: "Repetition Interrupt flag clear"
       bit_offset: 4
       bit_size: 1
-      enum_write: MCMP1C
+      enum_write: MCPMXC
     - name: SYNCC
       description: "Sync Input Interrupt flag clear"
       bit_offset: 5
       bit_size: 1
-      enum_write: MCMP1C
+      enum_write: MCPMXC
     - name: MUPDC
       description: "Master update Interrupt flag clear"
       bit_offset: 6
       bit_size: 1
-      enum_write: MCMP1C
+      enum_write: MCPMXC
 fieldset/MISR:
   description: "Master Timer Interrupt Status Register"
   fields:
-    - name: MCMP1
-      description: "Master Compare 1 Interrupt Flag"
+    - name: MCMPX
+      description: "Master Compare X Interrupt Flag"
       bit_offset: 0
       bit_size: 1
       enum_read: EVENT
-    - name: MCMP2
-      description: "Master Compare 2 Interrupt Flag"
-      bit_offset: 1
-      bit_size: 1
-      enum_read: EVENT
-    - name: MCMP3
-      description: "Master Compare 3 Interrupt Flag"
-      bit_offset: 2
-      bit_size: 1
-      enum_read: EVENT
-    - name: MCMP4
-      description: "Master Compare 4 Interrupt Flag"
-      bit_offset: 3
-      bit_size: 1
-      enum_read: EVENT
+      array:
+        len: 4
+        stride: 1
     - name: MREP
       description: "Master Repetition Interrupt Flag"
       bit_offset: 4
@@ -1080,116 +998,95 @@ fieldset/TIMXCR:
 fieldset/TIMXDIER:
   description: Timerx DMA / Interrupt Enable Register
   fields:
-    - name: CMP1IE
-      description: CMP1IE
+    - name: CMPXIE
+      description: Compare X Interrupt Enable
       bit_offset: 0
       bit_size: 1
-    - name: CMP2IE
-      description: CMP2IE
-      bit_offset: 1
-      bit_size: 1
-    - name: CMP3IE
-      description: CMP3IE
-      bit_offset: 2
-      bit_size: 1
-    - name: CMP4IE
-      description: CMP4IE
-      bit_offset: 3
-      bit_size: 1
+      array:  
+        len: 4
+        stride: 1
     - name: REPIE
-      description: REPIE
+      description: Repetition Interrupt Enable
       bit_offset: 4
       bit_size: 1
     - name: UPDIE
-      description: UPDIE
+      description: Update Interrupt Enable
       bit_offset: 6
       bit_size: 1
-    - name: CPT1IE
-      description: CPT1IE
+    - name: CPTXIE
+      description: Capture Interrupt Enable
       bit_offset: 7
       bit_size: 1
-    - name: CPT2IE
-      description: CPT2IE
-      bit_offset: 8
-      bit_size: 1
-    - name: SETx1IE
-      description: SET1xIE
+      array:  
+        len: 2
+        stride: 1
+    - name: SETxXIE
+      description: Output X Set Interrupt Enable
       bit_offset: 9
       bit_size: 1
+      array:
+        offsets:
+          - 0 
+          - 2
     - name: RSTx1IE
-      description: RSTx1IE
+      description:  Output X Reset Interrupt Enable
       bit_offset: 10
       bit_size: 1
-    - name: SETx2IE
-      description: SETx2IE
-      bit_offset: 11
-      bit_size: 1
-    - name: RSTx2IE
-      description: RSTx2IE
-      bit_offset: 12
-      bit_size: 1
+        offsets:
+          - 0 
+          - 2
     - name: RSTIE
-      description: RSTIE
+      description: Reset/roll-over Interrupt Enable
       bit_offset: 13
       bit_size: 1
     - name: DLYPRTIE
-      description: DLYPRTIE
+      description: Delayed Protection Interrupt Enable
       bit_offset: 14
       bit_size: 1
-    - name: CMP1DE
-      description: CMP1DE
+    - name: CMPXDE
+      description: Compare X DMA request Enable
       bit_offset: 16
       bit_size: 1
-    - name: CMP2DE
-      description: CMP2DE
-      bit_offset: 17
-      bit_size: 1
-    - name: CMP3DE
-      description: CMP3DE
-      bit_offset: 18
-      bit_size: 1
-    - name: CMP4DE
-      description: CMP4DE
-      bit_offset: 19
-      bit_size: 1
+      array:
+        len: 4
+        stride: 1
     - name: REPDE
-      description: REPDE
+      description: Repetition DMA request Enable
       bit_offset: 20
       bit_size: 1
     - name: UPDDE
-      description: UPDDE
+      description: Update DMA request Enable
       bit_offset: 22
       bit_size: 1
-    - name: CPT1DE
-      description: CPT1DE
+    - name: CPTXDE
+      description: Capture X DMA request Enable
       bit_offset: 23
       bit_size: 1
-    - name: CPT2DE
-      description: CPT2DE
-      bit_offset: 24
-      bit_size: 1
-    - name: SETx1DE
-      description: SET1xDE
+      array:
+        len: 2
+        stride: 1
+    - name: SETxXDE
+      description: Output X Set DMA request Enable
       bit_offset: 25
       bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 2
     - name: RSTx1DE
-      description: RSTx1DE
+      description: Output X Reset DMA request Enable
       bit_offset: 26
       bit_size: 1
-    - name: SETx2DE
-      description: SETx2DE
-      bit_offset: 27
-      bit_size: 1
-    - name: RSTx2DE
-      description: RSTx2DE
-      bit_offset: 28
-      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 2
     - name: RSTDE
-      description: RSTDE
+      description: Reset/roll-over DMA request Enable
       bit_offset: 29
       bit_size: 1
     - name: DLYPRTDE
-      description: DLYPRTDE
+      description: Delayed Protection DMA request Enable
       bit_offset: 30
       bit_size: 1
 fieldset/TIMXICR:
@@ -1596,7 +1493,7 @@ enum/LOCKED:
     - name: Locked
       description: Bits are read-only
       value: 1
-enum/MCMP1C:
+enum/MCPMXC:
   bit_size: 1
   variants:
     - name: Clear
