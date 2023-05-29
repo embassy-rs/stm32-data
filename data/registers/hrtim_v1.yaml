@@ -512,7 +512,7 @@ fieldset/MICR:
       description: "Master Compare X Interrupt flag clear"
       bit_offset: 0
       bit_size: 1
-      enum_write: MCPMXC
+      enum_write: ICR
       array:
         len: 4
         stride: 1
@@ -520,22 +520,22 @@ fieldset/MICR:
       description: "Repetition Interrupt flag clear"
       bit_offset: 4
       bit_size: 1
-      enum_write: MCPMXC
+      enum_write: ICR
     - name: SYNCC
       description: "Sync Input Interrupt flag clear"
       bit_offset: 5
       bit_size: 1
-      enum_write: MCPMXC
+      enum_write: ICR
     - name: MUPDC
       description: "Master update Interrupt flag clear"
       bit_offset: 6
       bit_size: 1
-      enum_write: MCPMXC
+      enum_write: ICR
 fieldset/MISR:
-  description: "Master Timer Interrupt Status Register"
+  description: Master Timer Interrupt Status Register
   fields:
     - name: MCMP
-      description: "Master Compare X Interrupt Flag"
+      description: Master Compare X Interrupt Flag
       bit_offset: 0
       bit_size: 1
       enum_read: EVENT
@@ -543,7 +543,7 @@ fieldset/MISR:
         len: 4
         stride: 1
     - name: MREP
-      description: "Master Repetition Interrupt Flag"
+      description: Master Repetition Interrupt Flag
       bit_offset: 4
       bit_size: 1
       enum_read: EVENT
@@ -885,7 +885,7 @@ fieldset/TIMXCR:
       description: Delayed CMP4 mode
       bit_offset: 14
       bit_size: 2
-      enum: DELCMP4
+      enum: DELCMP
     - name: REPU
       description: Timer X Repetition update
       bit_offset: 17
@@ -1028,101 +1028,73 @@ fieldset/TIMXDIER:
       bit_offset: 30
       bit_size: 1
 fieldset/TIMXICR:
-  description: "Timerx Interrupt Clear Register"
+  description: Timerx Interrupt Clear Register
   fields:
-    - name: CMP1C
-      description: "Compare 1 Interrupt flag Clear"
+    - name: CMPC
+      description: Compare X Interrupt flag Clear
       bit_offset: 0
       bit_size: 1
-      enum_write: CMP1C
-    - name: CMP2C
-      description: "Compare 2 Interrupt flag Clear"
-      bit_offset: 1
-      bit_size: 1
-      enum_write: CMP1C
-    - name: CMP3C
-      description: "Compare 3 Interrupt flag Clear"
-      bit_offset: 2
-      bit_size: 1
-      enum_write: CMP1C
-    - name: CMP4C
-      description: "Compare 4 Interrupt flag Clear"
-      bit_offset: 3
-      bit_size: 1
-      enum_write: CMP1C
+      enum_write: ICR
+      array:
+        len: 4
+        stride: 1
     - name: REPC
-      description: "Repetition Interrupt flag Clear"
+      description: Repetition Interrupt flag Clear
       bit_offset: 4
       bit_size: 1
-      enum_write: CMP1C
+      enum_write: ICR
     - name: UPDC
-      description: "Update Interrupt flag Clear"
+      description: Update Interrupt flag Clear
       bit_offset: 6
       bit_size: 1
-      enum_write: CMP1C
-    - name: CPT1C
-      description: "Capture1 Interrupt flag Clear"
+      enum_write: ICR
+    - name: CPTC
+      description: Capture X Interrupt flag Clear
       bit_offset: 7
       bit_size: 1
-      enum_write: CMP1C
-    - name: CPT2C
-      description: "Capture2 Interrupt flag Clear"
-      bit_offset: 8
-      bit_size: 1
-      enum_write: CMP1C
-    - name: SET1xC
-      description: Output 1 Set flag Clear
+      enum_write: ICR
+      array:
+        len: 2
+        stride: 1
+    - name: SETRC
+      description: Output X Set flag Clear
       bit_offset: 9
       bit_size: 1
-      enum_write: CMP1C
-    - name: RSTx1C
-      description: Output 1 Reset flag Clear
+      enum_write: ICR
+      array:
+        offsets:
+          - 0
+          - 2
+    - name: RSTRC
+      description: Output X Reset flag Clear
       bit_offset: 10
       bit_size: 1
-      enum_write: CMP1C
-    - name: SET2xC
-      description: Output 2 Set flag Clear
-      bit_offset: 11
-      bit_size: 1
-      enum_write: CMP1C
-    - name: RSTx2C
-      description: Output 2 Reset flag Clear
-      bit_offset: 12
-      bit_size: 1
-      enum_write: CMP1C
+      enum_write: ICR
+      array:
+        offsets:
+          - 0
+          - 2
     - name: RSTC
       description: Reset Interrupt flag Clear
       bit_offset: 13
       bit_size: 1
-      enum_write: CMP1C
+      enum_write: ICR
     - name: DLYPRTC
-      description: "Delayed Protection Flag Clear"
+      description: Delayed Protection Flag Clear
       bit_offset: 14
       bit_size: 1
-      enum_write: CMP1C
+      enum_write: ICR
 fieldset/TIMXISR:
-  description: "Timerx Interrupt Status Register"
+  description: Timerx Interrupt Status Register
   fields:
-    - name: CMP1
-      description: Compare 1 Interrupt Flag
+    - name: CMP
+      description: Compare X Interrupt Flag
       bit_offset: 0
       bit_size: 1
       enum_read: EVENT
-    - name: CMP2
-      description: Compare 2 Interrupt Flag
-      bit_offset: 1
-      bit_size: 1
-      enum_read: EVENT
-    - name: CMP3
-      description: Compare 3 Interrupt Flag
-      bit_offset: 2
-      bit_size: 1
-      enum_read: EVENT
-    - name: CMP4
-      description: Compare 4 Interrupt Flag
-      bit_offset: 3
-      bit_size: 1
-      enum_read: EVENT
+      array:
+        len: 4
+        stride: 1
     - name: REP
       description: Repetition Interrupt Flag
       bit_offset: 4
@@ -1133,36 +1105,32 @@ fieldset/TIMXISR:
       bit_offset: 6
       bit_size: 1
       enum_read: EVENT
-    - name: CPT1
-      description: Capture1 Interrupt Flag
+    - name: CPT
+      description: Capture X Interrupt Flag
       bit_offset: 7
       bit_size: 1
       enum_read: EVENT
-    - name: CPT2
-      description: Capture2 Interrupt Flag
-      bit_offset: 8
-      bit_size: 1
-      enum_read: EVENT
-    - name: SETx1
-      description: "Output 1 Set Interrupt Flag"
+      array:
+        len: 2
+        stride: 1
+    - name: SETR
+      description: Output X Set Interrupt Flag
       bit_offset: 9
       bit_size: 1
       enum_read: EVENT
-    - name: RSTx1
-      description: "Output 1 Reset Interrupt Flag"
+      array:
+        offsets:
+          - 0
+          - 2
+    - name: RSTR
+      description: Output X Reset Interrupt Flag
       bit_offset: 10
       bit_size: 1
       enum_read: EVENT
-    - name: SETx2
-      description: "Output 2 Set Interrupt Flag"
-      bit_offset: 11
-      bit_size: 1
-      enum_read: EVENT
-    - name: RSTx2
-      description: "Output 2 Reset Interrupt Flag"
-      bit_offset: 12
-      bit_size: 1
-      enum_read: EVENT
+      array:
+        offsets:
+          - 0
+          - 2
     - name: RST
       description: Reset Interrupt Flag
       bit_offset: 13
@@ -1183,26 +1151,22 @@ fieldset/TIMXISR:
       bit_offset: 17
       bit_size: 1
       enum_read: IPPSTAT
-    - name: O1STAT
-      description: Output 1 State
+    - name: OSTAT
+      description: Output X State
       bit_offset: 18
       bit_size: 1
       enum_read: OUTPUTSTATE
-    - name: O2STAT
-      description: Output 2 State
-      bit_offset: 19
-      bit_size: 1
-      enum_read: OUTPUTSTATE
-    - name: O1CPY
-      description: Output 1 Copy
+      array:
+        len: 2
+        stride: 1
+    - name: OCPY
+      description: Output X Copy
       bit_offset: 20
       bit_size: 1
       enum_read: OUTPUTSTATE
-    - name: O2CPY
-      description: Output 2 Copy
-      bit_offset: 21
-      bit_size: 1
-      enum_read: OUTPUTSTATE
+      array:
+        len: 2
+        stride: 1
 enum/ACTIVEEFFECT:
   bit_size: 1
   variants:
@@ -1233,7 +1197,7 @@ enum/CAPTUREEFFECT:
     - name: TriggerCapture
       description: Timer event triggers capture
       value: 1
-enum/CMP1C:
+enum/ICR:
   bit_size: 1
   variants:
     - name: Clear
@@ -1272,35 +1236,20 @@ enum/DACSYNC:
     - name: DACSync3
       description: Trigger generated on DACSync3
       value: 3
-enum/DELCMP2:
+enum/DELCMP:
   bit_size: 2
   variants:
     - name: Standard
-      description: CMP2 register is always active (standard compare mode)
+      description: CMP register is always active (standard compare mode)
       value: 0
     - name: Capture1
-      description: CMP2 is recomputed and is active following a capture 1 event
+      description: CMP is recomputed and is active following a capture 1 event
       value: 1
-    - name: Capture1_Compare1
-      description: CMP2 is recomputed and is active following a capture 1 event or a Compare 1 match
+    - name: CaptureX_Compare1
+      description: CMP is recomputed and is active following a capture 1 event or a Compare 1 match
       value: 2
-    - name: Capture1_Compare3
-      description: CMP2 is recomputed and is active following a capture 1 event or a Compare 3 match
-      value: 3
-enum/DELCMP4:
-  bit_size: 2
-  variants:
-    - name: Standard
-      description: CMP4 register is always active (standard compare mode)
-      value: 0
-    - name: Capture2
-      description: CMP4 is recomputed and is active following a capture 2 event
-      value: 1
-    - name: Capture2_Compare1
-      description: CMP4 is recomputed and is active following a capture 2 event or a Compare 1 match
-      value: 2
-    - name: Capture_Compare3
-      description: CMP4 is recomputed and is active following a capture event or a Compare 3 match
+    - name: CaptureX_Compare3
+      description: CMP is recomputed and is active following a capture 1 event or a Compare 3 match
       value: 3
 enum/EEFLTR:
   bit_size: 4
@@ -1430,12 +1379,6 @@ enum/LOCKED:
       value: 0
     - name: Locked
       description: Bits are read-only
-      value: 1
-enum/MCPMXC:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears flag in MISR register
       value: 1
 enum/DLYPRT:
   bit_size: 3
