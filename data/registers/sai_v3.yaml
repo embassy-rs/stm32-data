@@ -39,6 +39,10 @@ block/CH:
 block/SAI:
   description: Serial audio interface
   items:
+    - name: GCR
+      description: Global configuration register
+      byte_offset: 0
+      fieldset: GCR
     - name: CH
       description: "Cluster CH%s, containing ?CR1, ?CR2, ?FRCR, ?SLOTR, ?IM, ?SR, ?CLRFR, ?DR"
       array:
@@ -46,6 +50,14 @@ block/SAI:
         stride: 32
       byte_offset: 4
       block: CH
+    - name: PDMCR
+      description: PDM control register
+      byte_offset: 68
+      fieldset: PDMCR
+    - name: PDMDLY
+      description: PDM delay register
+      byte_offset: 72
+      fieldset: PDMDLY
 fieldset/CLRFR:
   description: Clear flag register
   fields:
@@ -132,7 +144,11 @@ fieldset/CR1:
     - name: MCKDIV
       description: "Master clock divider. These bits are set and cleared by software. These bits are meaningless when the audio block operates in slave mode. They have to be configured when the audio block is disabled. Others: the master clock frequency is calculated accordingly to the following formula:"
       bit_offset: 20
-      bit_size: 4
+      bit_size: 6
+    - name: OSR
+      description: Oversampling ratio for master clock
+      bit_offset: 26
+      bit_size: 1
 fieldset/CR2:
   description: Configuration register 2
   fields:
@@ -145,7 +161,7 @@ fieldset/CR2:
       description: FIFO flush. This bit is set by software. It is always read as 0. This bit should be configured when the SAI is disabled.
       bit_offset: 3
       bit_size: 1
-      enum: FFLUSH
+      enum_write: FFLUSH
     - name: TRIS
       description: "Tristate management on data line. This bit is set and cleared by software. It is meaningful only if the audio block is configured as a transmitter. This bit is not used when the audio block is configured in SPDIF mode. It should be configured when SAI is disabled. Refer to Section: Output data line management on an inactive slot for more details."
       bit_offset: 4
@@ -205,6 +221,17 @@ fieldset/FRCR:
       bit_offset: 18
       bit_size: 1
       enum: FSOFF
+fieldset/GCR:
+  description: Global configuration register
+  fields:
+    - name: SYNCIN
+      description: Synchronization inputs
+      bit_offset: 0
+      bit_size: 2
+    - name: SYNCOUT
+      description: Synchronization outputs These bits are set and cleared by software.
+      bit_offset: 4
+      bit_size: 2
 fieldset/IM:
   description: Interrupt mask register 2
   fields:
@@ -236,6 +263,68 @@ fieldset/IM:
       description: "Late frame synchronization detection interrupt enable. This bit is set and cleared by software. When this bit is set, an interrupt will be generated if the LFSDET bit is set in the SAI_xSR register. This bit is meaningless in AC97, SPDIF mode or when the audio block operates as a master."
       bit_offset: 6
       bit_size: 1
+fieldset/PDMCR:
+  description: PDM control register
+  fields:
+    - name: PDMEN
+      description: PDM enable
+      bit_offset: 0
+      bit_size: 1
+    - name: MICNBR
+      description: Number of microphones
+      bit_offset: 4
+      bit_size: 2
+    - name: CKEN1
+      description: Clock enable of bitstream clock number 1
+      bit_offset: 8
+      bit_size: 1
+    - name: CKEN2
+      description: Clock enable of bitstream clock number 2
+      bit_offset: 9
+      bit_size: 1
+    - name: CKEN3
+      description: Clock enable of bitstream clock number 3
+      bit_offset: 10
+      bit_size: 1
+    - name: CKEN4
+      description: Clock enable of bitstream clock number 4
+      bit_offset: 11
+      bit_size: 1
+fieldset/PDMDLY:
+  description: PDM delay register
+  fields:
+    - name: DLYM1L
+      description: Delay line adjust for first microphone of pair 1
+      bit_offset: 0
+      bit_size: 3
+    - name: DLYM1R
+      description: Delay line adjust for second microphone of pair 1
+      bit_offset: 4
+      bit_size: 3
+    - name: DLYM2L
+      description: Delay line for first microphone of pair 2
+      bit_offset: 8
+      bit_size: 3
+    - name: DLYM2R
+      description: Delay line for second microphone of pair 2
+      bit_offset: 12
+      bit_size: 3
+    - name: DLYM3L
+      description: Delay line for first microphone of pair 3
+      bit_offset: 16
+      bit_size: 3
+    - name: DLYM3R
+      description: Delay line for second microphone of pair 3
+      bit_offset: 20
+      bit_size: 3
+    - name: DLYM4L
+      description: Delay line for first microphone of pair 4
+      bit_offset: 24
+      bit_size: 3
+    - name: DLYM4R
+      description: Delay line for second microphone of pair 4
+      bit_offset: 28
+      bit_size: 3
 fieldset/SLOTR:
   description: This register has no meaning in AC97 and SPDIF audio protocol
   fields:
