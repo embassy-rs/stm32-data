@@ -36,6 +36,7 @@ mod xml {
 
 #[derive(Debug)]
 pub struct ChipInterrupts(
+    // (chip name, chip version), (signal name, [interrupt])
     pub HashMap<(String, String), HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Interrupt>>>,
 );
 
@@ -51,9 +52,10 @@ impl ChipInterrupts {
 
         for f in files {
             trace!("parsing {f:?}");
-            let mut irqs = HashMap::<String, _>::new();
-            let file = std::fs::read_to_string(f)?;
+            let file = std::fs::read_to_string(&f)?;
             let parsed: xml::Ip = quick_xml::de::from_str(&file)?;
+            let mut chip_signals = HashMap::<_, Vec<_>>::new();
+
             for irq in parsed
                 .ref_parameters
                 .into_iter()
@@ -78,11 +80,6 @@ impl ChipInterrupts {
 
                 // More typos
                 let name = name.replace("USAR11", "USART11");
-
-                let entry = match irqs.entry(name.to_string()) {
-                    std::collections::hash_map::Entry::Occupied(_) => continue,
-                    std::collections::hash_map::Entry::Vacant(entry) => entry,
-                };
 
                 // Flags.
                 // Y
@@ -113,7 +110,7 @@ impl ChipInterrupts {
                     continue;
                 }
 
-                let mut signals = HashSet::<(String, String)>::new();
+                let mut interrupt_signals = HashSet::<(String, String)>::new();
                 if [
                     "NonMaskableInt",
                     "HardFault",
@@ -147,27 +144,27 @@ impl ChipInterrupts {
                             ch_from..=ch_to
                         };
                         for ch in range {
-                            signals.insert((dma.to_string(), format!("CH{ch}")));
+                            interrupt_signals.insert((dma.to_string(), format!("CH{ch}")));
                         }
                     }
                     assert!(dmas_iter.next().is_none());
                     assert!(chans_iter.next().is_none());
                 } else if name == "DMAMUX1" || name == "DMAMUX1_S" || name == "DMAMUX_OVR" || name == "DMAMUX1_OVR" {
-                    signals.insert(("DMAMUX1".to_string(), "OVR".to_string()));
+                    interrupt_signals.insert(("DMAMUX1".to_string(), "OVR".to_string()));
                 } else if name == "DMAMUX2_OVR" {
-                    signals.insert(("DMAMUX2".to_string(), "OVR".to_string()));
+                    interrupt_signals.insert(("DMAMUX2".to_string(), "OVR".to_string()));
                 } else if flags.contains(&"DMAMUX") {
                     panic!("should've been handled above");
                 } else if flags.contains(&"EXTI") {
                     for signal in parts[2].split(',') {
-                        signals.insert(("EXTI".to_string(), signal.to_string()));
+                        interrupt_signals.insert(("EXTI".to_string(), signal.to_string()));
                     }
                 } else if name == "FLASH" {
-                    signals.insert(("FLASH".to_string(), "GLOBAL".to_string()));
+                    interrupt_signals.insert(("FLASH".to_string(), "GLOBAL".to_string()));
                 } else if name == "CRS" {
-                    signals.insert(("RCC".to_string(), "CRS".to_string()));
+                    interrupt_signals.insert(("RCC".to_string(), "CRS".to_string()));
                 } else if name == "RCC" {
-                    signals.insert(("RCC".to_string(), "GLOBAL".to_string()));
+                    interrupt_signals.insert(("RCC".to_string(), "GLOBAL".to_string()));
                 } else {
                     if parts[2].is_empty() {
                         continue;
@@ -193,7 +190,7 @@ impl ChipInterrupts {
                         curr_peris = peri_names.clone();
                     }
 
-                    // Parse IRQ signals from the IRQ name.
+                    // Parse IRQ interrupt_signals from the IRQ name.
                     for part in tokenize_name(name2) {
                         let part = {
                             if part == "TAMPER" {
@@ -204,13 +201,13 @@ impl ChipInterrupts {
                         };
 
                         if part == "LSECSS" {
-                            signals.insert(("RCC".to_string(), "LSECSS".to_string()));
+                            interrupt_signals.insert(("RCC".to_string(), "LSECSS".to_string()));
                         } else if part == "CSS" {
-                            signals.insert(("RCC".to_string(), "CSS".to_string()));
+                            interrupt_signals.insert(("RCC".to_string(), "CSS".to_string()));
                         } else if part == "LSE" {
-                            signals.insert(("RCC".to_string(), "LSE".to_string()));
+                            interrupt_signals.insert(("RCC".to_string(), "LSE".to_string()));
                         } else if part == "CRS" {
-                            signals.insert(("RCC".to_string(), "CRS".to_string()));
+                            interrupt_signals.insert(("RCC".to_string(), "CRS".to_string()));
                         } else {
                             let pp = match_peris(&peri_names, &part);
                             trace!("    part={part}, pp={pp:?}");
@@ -228,7 +225,7 @@ impl ChipInterrupts {
                     for (p, mut ss) in peri_signals.into_iter() {
                         let known = valid_signals(&p);
 
-                        // If we have no signals for the peri, assume it's "global" so assign it all known ones
+                        // If we have no interrupt_signals for the peri, assume it's "global" so assign it all known ones
                         if ss.is_empty() {
                             if p.starts_with("COMP") {
                                 ss = vec!["WKUP".to_string()];
@@ -241,22 +238,14 @@ impl ChipInterrupts {
                             if !known.contains(&s.clone()) {
                                 panic!("Unknown signal {s} for peri {p}, known={known:?}, parts={parts:?}");
                             }
-                            signals.insert((p.clone(), s));
+                            interrupt_signals.insert((p.clone(), s));
                         }
                     }
                 }
 
-                // for (peri, signal) in &signals {
-                //     println!("    {peri}:{signal}");
-                // }
-                entry.insert(signals);
-            }
-
-            let mut irqs2 = HashMap::<_, Vec<_>>::new();
-            for (name, signals) in irqs {
-                for (p, s) in signals {
+                for (p, s) in interrupt_signals {
                     let key = if p == "USB_DRD_FS" { "USB".to_string() } else { p };
-                    irqs2
+                    chip_signals
                         .entry(key)
                         .or_default()
                         .push(stm32_data_serde::chip::core::peripheral::Interrupt {
@@ -266,22 +255,7 @@ impl ChipInterrupts {
                 }
             }
 
-            for pirqs in irqs2.values_mut() {
-                let mut psirqs = HashMap::<_, Vec<_>>::new();
-                for irq in pirqs {
-                    psirqs
-                        .entry(irq.signal.clone())
-                        .or_default()
-                        .push(irq.interrupt.clone());
-                }
-                // for (s, irqs) in psirqs {
-                //     if irqs.len() != 1 {
-                //         println!("DUPE: {p} {s} {irqs:?}");
-                //     }
-                // }
-            }
-
-            chip_interrupts.insert((parsed.name, parsed.version), irqs2);
+            chip_interrupts.insert((parsed.name, parsed.version), chip_signals);
         }
 
         Ok(Self(chip_interrupts))
