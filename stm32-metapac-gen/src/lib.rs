@@ -101,7 +101,7 @@ impl Gen {
 
         let mut extra = format!(
             "pub fn GPIO(n: usize) -> gpio::Gpio {{
-            gpio::Gpio(({} + {}*n) as _)
+            unsafe {{ gpio::Gpio::from_ptr(({} + {}*n) as _) }}
         }}",
             gpio_base, gpio_stride,
         );
