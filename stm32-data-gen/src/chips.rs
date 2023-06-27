@@ -130,12 +130,11 @@ impl PeriMatcher {
             (".*:LPUART:sci3_v1_2", ("usart", "v4", "LPUART")),
             (".*:LPUART:sci3_v1_3", ("usart", "v4", "LPUART")),
             (".*:LPUART:sci3_v1_4", ("usart", "v4", "LPUART")),
+            ("STM32[HU]5.*:RNG:.*", ("rng", "v3", "RNG")), // adds auto-reset bit ARDIS
             ("STM32L5.*:RNG:.*", ("rng", "v2", "RNG")),
-            (".*:RNG:rng1_v1_1", ("rng", "v1", "RNG")),
-            (".*:RNG:rng1_v2_0", ("rng", "v1", "RNG")),
-            (".*:RNG:rng1_v2_1", ("rng", "v1", "RNG")),
-            (".*:RNG:rng1_v3_1", ("rng", "v2", "RNG")),
-            (".*:RNG:rng1_v4_1", ("rng", "v2", "RNG")),
+            ("STM32L4[PQ]5.*:RNG:.*", ("rng", "v2", "RNG")),
+            ("STM32WL.*:RNG:.*", ("rng", "v2", "RNG")),
+            (".*:RNG:.*", ("rng", "v1", "RNG")), // use rng_v1 for everything else
             (".*:SPI:spi2_v1_4", ("spi", "f1", "SPI")),
             (".*:SPI:spi2s1_v2_1", ("spi", "v1", "SPI")),
             (".*:SPI:spi2s1_v2_2", ("spi", "v1", "SPI")),
