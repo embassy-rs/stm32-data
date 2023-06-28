@@ -165,7 +165,6 @@ fieldset/CR2:
       description: FIFO flush. This bit is set by software. It is always read as 0. This bit should be configured when the SAI is disabled.
       bit_offset: 3
       bit_size: 1
-      enum_write: FFLUSH
     - name: TRIS
       description: "Tristate management on data line. This bit is set and cleared by software. It is meaningful only if the audio block is configured as a transmitter. This bit is not used when the audio block is configured in SPDIF mode. It should be configured when SAI is disabled. Refer to Section: Output data line management on an inactive slot for more details."
       bit_offset: 4
@@ -357,43 +356,43 @@ fieldset/SR:
       description: "Overrun / underrun. This bit is read only. The overrun and underrun conditions can occur only when the audio block is configured as a receiver and a transmitter, respectively. It can generate an interrupt if OVRUDRIE bit is set in SAI_xIM register. This flag is cleared when the software sets COVRUDR bit in SAI_xCLRFR register."
       bit_offset: 0
       bit_size: 1
-      enum_read: OVRUDRR
+      enum: OVRUDR
     - name: MUTEDET
       description: Mute detection. This bit is read only. This flag is set if consecutive 0 values are received in each slot of a given audio frame and for a consecutive number of audio frames (set in the MUTECNT bit in the SAI_xCR2 register). It can generate an interrupt if MUTEDETIE bit is set in SAI_xIM register. This flag is cleared when the software sets bit CMUTEDET in the SAI_xCLRFR register.
       bit_offset: 1
       bit_size: 1
-      enum_read: MUTEDETR
+      enum: MUTEDET
     - name: WCKCFG
       description: "Wrong clock configuration flag. This bit is read only. This bit is used only when the audio block operates in master mode (MODE[1] = 0) and NODIV = 0. It can generate an interrupt if WCKCFGIE bit is set in SAI_xIM register. This flag is cleared when the software sets CWCKCFG bit in SAI_xCLRFR register."
       bit_offset: 2
       bit_size: 1
-      enum_read: WCKCFGR
+      enum: WCKCFG
     - name: FREQ
       description: "FIFO request. This bit is read only. The request depends on the audio block configuration: If the block is configured in transmission mode, the FIFO request is related to a write request operation in the SAI_xDR. If the block configured in reception, the FIFO request related to a read request operation from the SAI_xDR. This flag can generate an interrupt if FREQIE bit is set in SAI_xIM register."
       bit_offset: 3
       bit_size: 1
-      enum_read: FREQR
+      enum: FREQ
     - name: CNRDY
       description: Codec not ready. This bit is read only. This bit is used only when the AC97 audio protocol is selected in the SAI_xCR1 register and configured in receiver mode. It can generate an interrupt if CNRDYIE bit is set in SAI_xIM register. This flag is cleared when the software sets CCNRDY bit in SAI_xCLRFR register.
       bit_offset: 4
       bit_size: 1
-      enum_read: CNRDYR
+      enum: CNRDY
     - name: AFSDET
       description: Anticipated frame synchronization detection. This bit is read only. This flag can be set only if the audio block is configured in slave mode. It is not used in AC97or SPDIF mode. It can generate an interrupt if AFSDETIE bit is set in SAI_xIM register. This flag is cleared when the software sets CAFSDET bit in SAI_xCLRFR register.
       bit_offset: 5
       bit_size: 1
-      enum_read: AFSDETR
+      enum: AFSDET
     - name: LFSDET
       description: Late frame synchronization detection. This bit is read only. This flag can be set only if the audio block is configured in slave mode. It is not used in AC97 or SPDIF mode. It can generate an interrupt if LFSDETIE bit is set in the SAI_xIM register. This flag is cleared when the software sets bit CLFSDET in SAI_xCLRFR register
       bit_offset: 6
       bit_size: 1
-      enum_read: LFSDETR
+      enum: LFSDET
     - name: FLVL
       description: "FIFO level threshold. This bit is read only. The FIFO level threshold flag is managed only by hardware and its setting depends on SAI block configuration (transmitter or receiver mode). If the SAI block is configured as transmitter: If SAI block is configured as receiver:"
       bit_offset: 16
       bit_size: 3
-      enum_read: FLVLR
-enum/AFSDETR:
+      enum: FLVL
+enum/AFSDET:
   bit_size: 1
   variants:
     - name: NoError
@@ -411,7 +410,7 @@ enum/CKSTR:
     - name: RisingEdge
       description: Data strobing edge is rising edge of SCK
       value: 1
-enum/CNRDYR:
+enum/CNRDY:
   bit_size: 1
   variants:
     - name: Ready
@@ -462,16 +461,7 @@ enum/DS:
     - name: Bit32
       description: 32 bits
       value: 7
-enum/FFLUSH:
-  bit_size: 1
-  variants:
-    - name: NoFlush
-      description: No FIFO flush
-      value: 0
-    - name: Flush
-      description: FIFO flush. Programming this bit to 1 triggers the FIFO Flush. All the internal FIFO pointers (read and write) are cleared
-      value: 1
-enum/FLVLR:
+enum/FLVL:
   bit_size: 3
   variants:
     - name: Empty
@@ -492,7 +482,7 @@ enum/FLVLR:
     - name: Full
       description: FIFO full
       value: 5
-enum/FREQR:
+enum/FREQ:
   bit_size: 1
   variants:
     - name: NoRequest
@@ -537,7 +527,7 @@ enum/FTH:
     - name: Full
       description: FIFO full
       value: 4
-enum/LFSDETR:
+enum/LFSDET:
   bit_size: 1
   variants:
     - name: NoError
@@ -579,7 +569,7 @@ enum/MONO:
     - name: Mono
       description: Mono mode
       value: 1
-enum/MUTEDETR:
+enum/MUTEDET:
   bit_size: 1
   variants:
     - name: NoMute
@@ -615,7 +605,7 @@ enum/OUTDRIV:
     - name: Immediately
       description: Audio block output driven immediately after the setting of this bit
       value: 1
-enum/OVRUDRR:
+enum/OVRUDR:
   bit_size: 1
   variants:
     - name: NoError
@@ -669,7 +659,7 @@ enum/SYNCEN:
     - name: External
       description: audio sub-block is synchronous with an external SAI embedded peripheral. In this case the audio sub-block should be configured in Slave mode
       value: 2
-enum/WCKCFGR:
+enum/WCKCFG:
   bit_size: 1
   variants:
     - name: Correct

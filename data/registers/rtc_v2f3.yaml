@@ -319,12 +319,12 @@ fieldset/ISR:
       array:
         len: 2
         stride: 1
-      enum_read: ALRWFR
+      enum: ALRWF
     - name: WUTWF
       description: Wakeup timer write flag
       bit_offset: 2
       bit_size: 1
-      enum_read: WUTWFR
+      enum: WUTWF
     - name: SHPF
       description: Shift operation pending
       bit_offset: 3
@@ -333,18 +333,16 @@ fieldset/ISR:
       description: Initialization status flag
       bit_offset: 4
       bit_size: 1
-      enum_read: INITSR
+      enum: INITS
     - name: RSF
       description: Registers synchronization flag
       bit_offset: 5
       bit_size: 1
-      enum_read: RSFR
-      enum_write: RSFW
     - name: INITF
       description: Initialization flag
       bit_offset: 6
       bit_size: 1
-      enum_read: INITFR
+      enum: INITF
     - name: INIT
       description: Initialization mode
       bit_offset: 7
@@ -357,26 +355,18 @@ fieldset/ISR:
       array:
         len: 2
         stride: 1
-      enum_read: ALRFR
-      enum_write: ALRFW
     - name: WUTF
       description: Wakeup timer flag
       bit_offset: 10
       bit_size: 1
-      enum_read: WUTFR
-      enum_write: WUTFW
     - name: TSF
       description: Timestamp flag
       bit_offset: 11
       bit_size: 1
-      enum_read: TSFR
-      enum_write: TSFW
     - name: TSOVF
       description: Timestamp overflow flag
       bit_offset: 12
       bit_size: 1
-      enum_read: TSOVFR
-      enum_write: TSOVFW
     - name: TAMPF
       description: Tamper detection flag
       bit_offset: 13
@@ -384,13 +374,11 @@ fieldset/ISR:
       array:
         len: 3
         stride: 1
-      enum_read: TAMPFR
-      enum_write: TAMPFW
     - name: RECALPF
       description: Recalibration pending flag
       bit_offset: 16
       bit_size: 1
-      enum_read: RECALPFR
+      enum: RECALPF
 fieldset/PRER:
   description: Prescaler register
   fields:
@@ -606,18 +594,6 @@ fieldset/WUTR:
       description: Wakeup auto-reload value bits
       bit_offset: 0
       bit_size: 16
-enum/ALRFR:
-  bit_size: 1
-  variants:
-    - name: Match
-      description: This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the Alarm A register (RTC_ALRMAR)
-      value: 1
-enum/ALRFW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: This flag is cleared by software by writing 0
-      value: 0
 enum/ALRMR_MSK:
   bit_size: 1
   variants:
@@ -645,7 +621,7 @@ enum/ALRMR_WDSEL:
     - name: WeekDay
       description: "DU[3:0] represents the week day. DT[1:0] is don’t care"
       value: 1
-enum/ALRWFR:
+enum/ALRWF:
   bit_size: 1
   variants:
     - name: UpdateNotAllowed
@@ -711,7 +687,7 @@ enum/INIT:
     - name: InitMode
       description: "Initialization mode used to program time and date register (RTC_TR and RTC_DR), and prescaler register (RTC_PRER). Counters are stopped and start counting from the new value when INIT is reset."
       value: 1
-enum/INITFR:
+enum/INITF:
   bit_size: 1
   variants:
     - name: NotAllowed
@@ -720,7 +696,7 @@ enum/INITFR:
     - name: Allowed
       description: Calendar registers update is allowed
       value: 1
-enum/INITSR:
+enum/INITS:
   bit_size: 1
   variants:
     - name: NotInitalized
@@ -771,7 +747,7 @@ enum/POL:
     - name: Low
       description: "The pin is low when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])"
       value: 1
-enum/RECALPFR:
+enum/RECALPF:
   bit_size: 1
   variants:
     - name: Pending
@@ -786,21 +762,6 @@ enum/REFCKON:
     - name: Enabled
       description: RTC_REFIN detection enabled
       value: 1
-enum/RSFR:
-  bit_size: 1
-  variants:
-    - name: NotSynced
-      description: Calendar shadow registers not yet synchronized
-      value: 0
-    - name: Synced
-      description: Calendar shadow registers synchronized
-      value: 1
-enum/RSFW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: This flag is cleared by software by writing 0
-      value: 0
 enum/TAMPFLT:
   bit_size: 2
   variants:
@@ -816,12 +777,6 @@ enum/TAMPFLT:
     - name: Samples8
       description: Tamper event is activated after 8 consecutive samples at the active level
       value: 3
-enum/TAMPFR:
-  bit_size: 1
-  variants:
-    - name: Tampered
-      description: This flag is set by hardware when a tamper detection event is detected on the RTC_TAMPx input
-      value: 1
 enum/TAMPFREQ:
   bit_size: 3
   variants:
@@ -849,12 +804,6 @@ enum/TAMPFREQ:
     - name: Div256
       description: RTCCLK / 256 (128 Hz when RTCCLK = 32768 Hz)
       value: 7
-enum/TAMPFW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Flag cleared by software writing 0
-      value: 0
 enum/TAMPPRCH:
   bit_size: 2
   variants:
@@ -897,30 +846,6 @@ enum/TSEDGE:
     - name: FallingEdge
       description: RTC_TS input falling edge generates a time-stamp event
       value: 1
-enum/TSFR:
-  bit_size: 1
-  variants:
-    - name: TimestampEvent
-      description: This flag is set by hardware when a time-stamp event occurs
-      value: 1
-enum/TSFW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: This flag is cleared by software by writing 0
-      value: 0
-enum/TSOVFR:
-  bit_size: 1
-  variants:
-    - name: Overflow
-      description: This flag is set by hardware when a timestamp event occurs while TSF is already set
-      value: 1
-enum/TSOVFW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: This flag is cleared by software by writing 0
-      value: 0
 enum/WUCKSEL:
   bit_size: 3
   variants:
@@ -942,19 +867,7 @@ enum/WUCKSEL:
     - name: ClockSpareWithOffset
       description: ck_spre (usually 1 Hz) clock is selected and 2^16 is added to the WUT counter value
       value: 6
-enum/WUTFR:
-  bit_size: 1
-  variants:
-    - name: Zero
-      description: This flag is set by hardware when the wakeup auto-reload counter reaches 0
-      value: 1
-enum/WUTFW:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: This flag is cleared by software by writing 0
-      value: 0
-enum/WUTWFR:
+enum/WUTWF:
   bit_size: 1
   variants:
     - name: UpdateNotAllowed
