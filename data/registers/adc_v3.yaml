@@ -22,26 +22,20 @@ block/ADC:
       description: configuration register
       byte_offset: 16
       fieldset: CFGR2
-    - name: SMPR1
+    - name: SMPR
       description: sample time register 1
+      array:
+        len: 2
+        stride: 4
       byte_offset: 20
-      fieldset: SMPR1
-    - name: SMPR2
-      description: sample time register 2
-      byte_offset: 24
-      fieldset: SMPR2
-    - name: TR1
+      fieldset: SMPR
+    - name: TR
       description: watchdog threshold register 1
+      array:
+        len: 3
+        stride: 4
       byte_offset: 32
-      fieldset: TR1
-    - name: TR2
-      description: watchdog threshold register
-      byte_offset: 36
-      fieldset: TR2
-    - name: TR3
-      description: watchdog threshold register 3
-      byte_offset: 40
-      fieldset: TR3
+      fieldset: TR
     - name: SQR1
       description: regular sequence register 1
       byte_offset: 48
@@ -73,15 +67,15 @@ block/ADC:
         len: 4
         stride: 4
       byte_offset: 96
-      fieldset: OFR1
+      fieldset: OFR
     - name: JDR
-      description: injected data register 1
+      description: injected data registers
       array:
         len: 4
         stride: 4
       byte_offset: 128
       access: Read
-      fieldset: JDR1
+      fieldset: JDR
     - name: AWD2CR
       description: Analog Watchdog 2 Configuration Register
       byte_offset: 160
@@ -380,46 +374,13 @@ fieldset/ISR:
       description: JQOVF
       bit_offset: 10
       bit_size: 1
-fieldset/JDR1:
+fieldset/JDR:
   description: injected data register 1
   fields:
     - name: JDATA
       description: JDATA1
       bit_offset: 0
       bit_size: 16
-      array:
-        len: 1
-        stride: 0
-fieldset/JDR2:
-  description: injected data register 2
-  fields:
-    - name: JDATA
-      description: JDATA2
-      bit_offset: 0
-      bit_size: 16
-      array:
-        len: 1
-        stride: 0
-fieldset/JDR3:
-  description: injected data register 3
-  fields:
-    - name: JDATA
-      description: JDATA3
-      bit_offset: 0
-      bit_size: 16
-      array:
-        len: 1
-        stride: 0
-fieldset/JDR4:
-  description: injected data register 4
-  fields:
-    - name: JDATA
-      description: JDATA4
-      bit_offset: 0
-      bit_size: 16
-      array:
-        len: 1
-        stride: 0
 fieldset/JSQR:
   description: injected sequence register
   fields:
@@ -442,79 +403,19 @@ fieldset/JSQR:
       array:
         len: 4
         stride: 6
-fieldset/OFR1:
-  description: offset register 1
+fieldset/OFR:
+  description: offset register
   fields:
     - name: OFFSET
-      description: OFFSET1
       bit_offset: 0
       bit_size: 12
-      array:
-        len: 1
-        stride: 0
-    - name: OFFSET1_CH
-      description: OFFSET1_CH
+    - name: OFFSET_CH
       bit_offset: 26
       bit_size: 5
-    - name: OFFSET1_EN
-      description: OFFSET1_EN
+    - name: OFFSET_EN
       bit_offset: 31
       bit_size: 1
-fieldset/OFR2:
-  description: offset register 2
-  fields:
-    - name: OFFSET
-      description: OFFSET2
-      bit_offset: 0
-      bit_size: 12
-      array:
-        len: 1
-        stride: 0
-    - name: OFFSET2_CH
-      description: OFFSET2_CH
-      bit_offset: 26
-      bit_size: 5
-    - name: OFFSET2_EN
-      description: OFFSET2_EN
-      bit_offset: 31
-      bit_size: 1
-fieldset/OFR3:
-  description: offset register 3
-  fields:
-    - name: OFFSET
-      description: OFFSET3
-      bit_offset: 0
-      bit_size: 12
-      array:
-        len: 1
-        stride: 0
-    - name: OFFSET3_CH
-      description: OFFSET3_CH
-      bit_offset: 26
-      bit_size: 5
-    - name: OFFSET3_EN
-      description: OFFSET3_EN
-      bit_offset: 31
-      bit_size: 1
-fieldset/OFR4:
-  description: offset register 4
-  fields:
-    - name: OFFSET
-      description: OFFSET4
-      bit_offset: 0
-      bit_size: 12
-      array:
-        len: 1
-        stride: 0
-    - name: OFFSET4_CH
-      description: OFFSET4_CH
-      bit_offset: 26
-      bit_size: 5
-    - name: OFFSET4_EN
-      description: OFFSET4_EN
-      bit_offset: 31
-      bit_size: 1
-fieldset/SMPR1:
+fieldset/SMPR:
   description: sample time register 1
   fields:
     - name: SMP
@@ -523,17 +424,6 @@ fieldset/SMPR1:
       bit_size: 3
       array:
         len: 10
-        stride: 3
-      enum: SAMPLE_TIME
-fieldset/SMPR2:
-  description: sample time register 2
-  fields:
-    - name: SMP
-      description: Channel 10 sampling time selection
-      bit_offset: 0
-      bit_size: 3
-      array:
-        len: 9
         stride: 3
       enum: SAMPLE_TIME
 fieldset/SQR1:
@@ -580,57 +470,17 @@ fieldset/SQR4:
       array:
         len: 2
         stride: 6
-fieldset/TR1:
-  description: watchdog threshold register 1
+fieldset/TR:
+  description: watchdog threshold register
   fields:
     - name: LT
       description: LT1
       bit_offset: 0
       bit_size: 12
-      array:
-        len: 1
-        stride: 0
     - name: HT
       description: HT1
       bit_offset: 16
       bit_size: 12
-      array:
-        len: 1
-        stride: 0
-fieldset/TR2:
-  description: watchdog threshold register
-  fields:
-    - name: LT
-      description: LT2
-      bit_offset: 0
-      bit_size: 8
-      array:
-        len: 1
-        stride: 0
-    - name: HT
-      description: HT2
-      bit_offset: 16
-      bit_size: 8
-      array:
-        len: 1
-        stride: 0
-fieldset/TR3:
-  description: watchdog threshold register 3
-  fields:
-    - name: LT
-      description: LT3
-      bit_offset: 0
-      bit_size: 8
-      array:
-        len: 1
-        stride: 0
-    - name: HT
-      description: HT3
-      bit_offset: 16
-      bit_size: 8
-      array:
-        len: 1
-        stride: 0
 enum/RES:
   bit_size: 2
   variants:
