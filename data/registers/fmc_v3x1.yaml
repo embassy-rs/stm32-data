@@ -1,4 +1,3 @@
-# stm32h7
 ---
 block/FMC:
   description: Flexible memory controller
@@ -7,13 +6,6 @@ block/FMC:
       description: SRAM/NOR-Flash chip-select control register 1
       byte_offset: 0
       fieldset: BCR1
-    - name: BCR
-      description: SRAM/NOR-Flash chip-select control register 2-4
-      array:
-        len: 3
-        stride: 8
-      byte_offset: 8
-      fieldset: BCR
     - name: BTR
       description: SRAM/NOR-Flash chip-select timing register 1-4
       array:
@@ -21,13 +13,13 @@ block/FMC:
         stride: 8
       byte_offset: 4
       fieldset: BTR
-    - name: BWTR
-      description: SRAM/NOR-Flash write timing registers 1-4
+    - name: BCR
+      description: SRAM/NOR-Flash chip-select control register 2-4
       array:
-        len: 4
+        len: 3
         stride: 8
-      byte_offset: 260
-      fieldset: BWTR
+      byte_offset: 8
+      fieldset: BCR
     - name: PCR
       description: PC Card/NAND Flash control register
       byte_offset: 128
@@ -49,6 +41,13 @@ block/FMC:
       byte_offset: 148
       access: Read
       fieldset: ECCR
+    - name: BWTR
+      description: SRAM/NOR-Flash write timing registers 1-4
+      array:
+        len: 4
+        stride: 8
+      byte_offset: 260
+      fieldset: BWTR
     - name: SDCR
       description: SDRAM Control Register 1-2
       array:
@@ -76,6 +75,70 @@ block/FMC:
       byte_offset: 344
       access: Read
       fieldset: SDSR
+fieldset/BCR:
+  description: SRAM/NOR-Flash chip-select control register 2-4
+  fields:
+    - name: MBKEN
+      description: Memory bank enable bit
+      bit_offset: 0
+      bit_size: 1
+    - name: MUXEN
+      description: Address/data multiplexing enable bit
+      bit_offset: 1
+      bit_size: 1
+    - name: MTYP
+      description: Memory type
+      bit_offset: 2
+      bit_size: 2
+      enum: MTYP
+    - name: MWID
+      description: Memory data bus width
+      bit_offset: 4
+      bit_size: 2
+      enum: MWID
+    - name: FACCEN
+      description: Flash access enable
+      bit_offset: 6
+      bit_size: 1
+    - name: BURSTEN
+      description: Burst enable bit
+      bit_offset: 8
+      bit_size: 1
+    - name: WAITPOL
+      description: Wait signal polarity bit
+      bit_offset: 9
+      bit_size: 1
+      enum: WAITPOL
+    - name: WAITCFG
+      description: Wait timing configuration
+      bit_offset: 11
+      bit_size: 1
+      enum: WAITCFG
+    - name: WREN
+      description: Write enable bit
+      bit_offset: 12
+      bit_size: 1
+    - name: WAITEN
+      description: Wait enable bit
+      bit_offset: 13
+      bit_size: 1
+    - name: EXTMOD
+      description: Extended mode enable
+      bit_offset: 14
+      bit_size: 1
+    - name: ASYNCWAIT
+      description: Wait signal during asynchronous transfers
+      bit_offset: 15
+      bit_size: 1
+    - name: CPSIZE
+      description: CRAM page size
+      bit_offset: 16
+      bit_size: 3
+      enum: CPSIZE
+    - name: CBURSTRW
+      description: Write burst enable
+      bit_offset: 19
+      bit_size: 1
 fieldset/BCR1:
   description: SRAM/NOR-Flash chip-select control register 1
   fields:
@@ -156,70 +219,6 @@ fieldset/BCR1:
       description: FMC controller enable
       bit_offset: 31
       bit_size: 1
-fieldset/BCR:
-  description: SRAM/NOR-Flash chip-select control register 2-4
-  fields:
-    - name: MBKEN
-      description: Memory bank enable bit
-      bit_offset: 0
-      bit_size: 1
-    - name: MUXEN
-      description: Address/data multiplexing enable bit
-      bit_offset: 1
-      bit_size: 1
-    - name: MTYP
-      description: Memory type
-      bit_offset: 2
-      bit_size: 2
-      enum: MTYP
-    - name: MWID
-      description: Memory data bus width
-      bit_offset: 4
-      bit_size: 2
-      enum: MWID
-    - name: FACCEN
-      description: Flash access enable
-      bit_offset: 6
-      bit_size: 1
-    - name: BURSTEN
-      description: Burst enable bit
-      bit_offset: 8
-      bit_size: 1
-    - name: WAITPOL
-      description: Wait signal polarity bit
-      bit_offset: 9
-      bit_size: 1
-      enum: WAITPOL
-    - name: WAITCFG
-      description: Wait timing configuration
-      bit_offset: 11
-      bit_size: 1
-      enum: WAITCFG
-    - name: WREN
-      description: Write enable bit
-      bit_offset: 12
-      bit_size: 1
-    - name: WAITEN
-      description: Wait enable bit
-      bit_offset: 13
-      bit_size: 1
-    - name: EXTMOD
-      description: Extended mode enable
-      bit_offset: 14
-      bit_size: 1
-    - name: ASYNCWAIT
-      description: Wait signal during asynchronous transfers
-      bit_offset: 15
-      bit_size: 1
-    - name: CPSIZE
-      description: CRAM page size
-      bit_offset: 16
-      bit_size: 3
-      enum: CPSIZE
-    - name: CBURSTRW
-      description: Write burst enable
-      bit_offset: 19
-      bit_size: 1
 fieldset/BTR:
   description: SRAM/NOR-Flash chip-select timing register
   fields:
@@ -276,6 +275,32 @@ fieldset/BWTR:
       bit_offset: 28
       bit_size: 2
       enum: ACCMOD
+fieldset/ECCR:
+  description: ECC result register
+  fields:
+    - name: ECC
+      description: ECC computation result value
+      bit_offset: 0
+      bit_size: 32
+fieldset/PATT:
+  description: Attribute memory space timing register
+  fields:
+    - name: ATTSET
+      description: Attribute memory setup time
+      bit_offset: 0
+      bit_size: 8
+    - name: ATTWAIT
+      description: Attribute memory wait time
+      bit_offset: 8
+      bit_size: 8
+    - name: ATTHOLD
+      description: Attribute memory hold time
+      bit_offset: 16
+      bit_size: 8
+    - name: ATTHIZ
+      description: Attribute memory data bus Hi-Z time
+      bit_offset: 24
+      bit_size: 8
 fieldset/PCR:
   description: PC Card/NAND Flash control register
   fields:
@@ -309,37 +334,6 @@ fieldset/PCR:
       bit_offset: 17
       bit_size: 3
       enum: ECCPS
-fieldset/SR:
-  description: FIFO status and interrupt register
-  fields:
-    - name: IRS
-      description: Interrupt rising edge status
-      bit_offset: 0
-      bit_size: 1
-    - name: ILS
-      description: Interrupt high-level status
-      bit_offset: 1
-      bit_size: 1
-    - name: IFS
-      description: Interrupt falling edge status
-      bit_offset: 2
-      bit_size: 1
-    - name: IREN
-      description: Interrupt rising edge detection enable bit
-      bit_offset: 3
-      bit_size: 1
-    - name: ILEN
-      description: Interrupt high-level detection enable bit
-      bit_offset: 4
-      bit_size: 1
-    - name: IFEN
-      description: Interrupt falling edge detection enable bit
-      bit_offset: 5
-      bit_size: 1
-    - name: FEMPT
-      description: FIFO empty status
-      bit_offset: 6
-      bit_size: 1
 fieldset/PMEM:
   description: Common memory space timing register
   fields:
@@ -359,32 +353,30 @@ fieldset/PMEM:
       description: Common memory x data bus Hi-Z time
       bit_offset: 24
       bit_size: 8
-fieldset/PATT:
-  description: Attribute memory space timing register
+fieldset/SDCMR:
+  description: SDRAM Command Mode register
   fields:
-    - name: ATTSET
-      description: Attribute memory setup time
+    - name: MODE
+      description: Command mode
       bit_offset: 0
-      bit_size: 8
-    - name: ATTWAIT
-      description: Attribute memory wait time
-      bit_offset: 8
-      bit_size: 8
-    - name: ATTHOLD
-      description: Attribute memory hold time
-      bit_offset: 16
-      bit_size: 8
-    - name: ATTHIZ
-      description: Attribute memory data bus Hi-Z time
-      bit_offset: 24
-      bit_size: 8
-fieldset/ECCR:
-  description: ECC result register
-  fields:
-    - name: ECC
-      description: ECC computation result value
-      bit_offset: 0
-      bit_size: 32
+      bit_size: 3
+      enum_write: MODE
+    - name: CTB2
+      description: Command target bank 2
+      bit_offset: 3
+      bit_size: 1
+    - name: CTB1
+      description: Command target bank 1
+      bit_offset: 4
+      bit_size: 1
+    - name: NRFS
+      description: Number of Auto-refresh
+      bit_offset: 5
+      bit_size: 4
+    - name: MRD
+      description: Mode Register definition
+      bit_offset: 9
+      bit_size: 13
 fieldset/SDCR:
   description: SDRAM Control Register
   fields:
@@ -431,61 +423,6 @@ fieldset/SDCR:
       bit_offset: 13
       bit_size: 2
       enum: RPIPE
-fieldset/SDTR:
-  description: SDRAM Timing register
-  fields:
-    - name: TMRD
-      description: Load Mode Register to Active
-      bit_offset: 0
-      bit_size: 4
-    - name: TXSR
-      description: Exit self-refresh delay
-      bit_offset: 4
-      bit_size: 4
-    - name: TRAS
-      description: Self refresh time
-      bit_offset: 8
-      bit_size: 4
-    - name: TRC
-      description: Row cycle delay
-      bit_offset: 12
-      bit_size: 4
-    - name: TWR
-      description: Recovery delay
-      bit_offset: 16
-      bit_size: 4
-    - name: TRP
-      description: Row precharge delay
-      bit_offset: 20
-      bit_size: 4
-    - name: TRCD
-      description: Row to column delay
-      bit_offset: 24
-      bit_size: 4
-fieldset/SDCMR:
-  description: SDRAM Command Mode register
-  fields:
-    - name: MODE
-      description: Command mode
-      bit_offset: 0
-      bit_size: 3
-      enum_write: MODE
-    - name: CTB2
-      description: Command target bank 2
-      bit_offset: 3
-      bit_size: 1
-    - name: CTB1
-      description: Command target bank 1
-      bit_offset: 4
-      bit_size: 1
-    - name: NRFS
-      description: Number of Auto-refresh
-      bit_offset: 5
-      bit_size: 4
-    - name: MRD
-      description: Mode Register definition
-      bit_offset: 9
-      bit_size: 13
 fieldset/SDRTR:
   description: SDRAM Refresh Timer register
   fields:
@@ -519,6 +456,68 @@ fieldset/SDSR:
       bit_offset: 3
       bit_size: 2
       enum_read: MODES
+fieldset/SDTR:
+  description: SDRAM Timing register
+  fields:
+    - name: TMRD
+      description: Load Mode Register to Active
+      bit_offset: 0
+      bit_size: 4
+    - name: TXSR
+      description: Exit self-refresh delay
+      bit_offset: 4
+      bit_size: 4
+    - name: TRAS
+      description: Self refresh time
+      bit_offset: 8
+      bit_size: 4
+    - name: TRC
+      description: Row cycle delay
+      bit_offset: 12
+      bit_size: 4
+    - name: TWR
+      description: Recovery delay
+      bit_offset: 16
+      bit_size: 4
+    - name: TRP
+      description: Row precharge delay
+      bit_offset: 20
+      bit_size: 4
+    - name: TRCD
+      description: Row to column delay
+      bit_offset: 24
+      bit_size: 4
+fieldset/SR:
+  description: FIFO status and interrupt register
+  fields:
+    - name: IRS
+      description: Interrupt rising edge status
+      bit_offset: 0
+      bit_size: 1
+    - name: ILS
+      description: Interrupt high-level status
+      bit_offset: 1
+      bit_size: 1
+    - name: IFS
+      description: Interrupt falling edge status
+      bit_offset: 2
+      bit_size: 1
+    - name: IREN
+      description: Interrupt rising edge detection enable bit
+      bit_offset: 3
+      bit_size: 1
+    - name: ILEN
+      description: Interrupt high-level detection enable bit
+      bit_offset: 4
+      bit_size: 1
+    - name: IFEN
+      description: Interrupt falling edge detection enable bit
+      bit_offset: 5
+      bit_size: 1
+    - name: FEMPT
+      description: FIFO empty status
+      bit_offset: 6
+      bit_size: 1
 enum/ACCMOD:
   bit_size: 2
   variants:

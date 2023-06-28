@@ -1,13 +1,3 @@
-# stm32f101
-# stm32f102
-# stm32f103
-# stm32f105
-# stm32f107
-# stm32f2
-# stm32405
-# stm32407
-# stm32415
-# stm32417
 ---
 block/FSMC:
   description: Flexible static memory controller
@@ -26,13 +16,6 @@ block/FSMC:
         stride: 8
       byte_offset: 4
       fieldset: BTR
-    - name: BWTR
-      description: SRAM/NOR-Flash write timing registers 1-4
-      array:
-        len: 4
-        stride: 8
-      byte_offset: 260
-      fieldset: BWTR
     - name: PCR
       description: PC Card/NAND Flash control register 2-4
       array:
@@ -61,10 +44,6 @@ block/FSMC:
         stride: 32
       byte_offset: 108
       fieldset: PATT
-    - name: PIO4
-      description: I/O space timing register 4
-      byte_offset: 176
-      fieldset: PIO4
     - name: ECCR
       description: ECC result register 2-3
       array:
@@ -73,6 +52,17 @@ block/FSMC:
       byte_offset: 116
       access: Read
       fieldset: ECCR
+    - name: PIO4
+      description: I/O space timing register 4
+      byte_offset: 176
+      fieldset: PIO4
+    - name: BWTR
+      description: SRAM/NOR-Flash write timing registers 1-4
+      array:
+        len: 4
+        stride: 8
+      byte_offset: 260
+      fieldset: BWTR
 fieldset/BCR:
   description: SRAM/NOR-Flash chip-select control register
   fields:
@@ -197,6 +187,32 @@ fieldset/BWTR:
       bit_offset: 28
       bit_size: 2
       enum: ACCMOD
+fieldset/ECCR:
+  description: ECC result register
+  fields:
+    - name: ECC
+      description: ECC computation result value
+      bit_offset: 0
+      bit_size: 32
+fieldset/PATT:
+  description: Attribute memory space timing register
+  fields:
+    - name: ATTSET
+      description: Attribute memory setup time
+      bit_offset: 0
+      bit_size: 8
+    - name: ATTWAIT
+      description: Attribute memory wait time
+      bit_offset: 8
+      bit_size: 8
+    - name: ATTHOLD
+      description: Attribute memory hold time
+      bit_offset: 16
+      bit_size: 8
+    - name: ATTHIZ
+      description: Attribute memory data bus Hi-Z time
+      bit_offset: 24
+      bit_size: 8
 fieldset/PCR:
   description: PC Card/NAND Flash control register
   fields:
@@ -235,6 +251,44 @@ fieldset/PCR:
       bit_offset: 17
       bit_size: 3
       enum: ECCPS
+fieldset/PIO4:
+  description: I/O space timing register 4
+  fields:
+    - name: IOSETx
+      description: IOSETx
+      bit_offset: 0
+      bit_size: 8
+    - name: IOWAITx
+      description: IOWAITx
+      bit_offset: 8
+      bit_size: 8
+    - name: IOHOLDx
+      description: IOHOLDx
+      bit_offset: 16
+      bit_size: 8
+    - name: IOHIZx
+      description: IOHIZx
+      bit_offset: 24
+      bit_size: 8
+fieldset/PMEM:
+  description: Common memory space timing register
+  fields:
+    - name: MEMSET
+      description: Common memory x setup time
+      bit_offset: 0
+      bit_size: 8
+    - name: MEMWAIT
+      description: Common memory wait time
+      bit_offset: 8
+      bit_size: 8
+    - name: MEMHOLD
+      description: Common memory hold time
+      bit_offset: 16
+      bit_size: 8
+    - name: MEMHIZ
+      description: Common memory x data bus Hi-Z time
+      bit_offset: 24
+      bit_size: 8
 fieldset/SR:
   description: FIFO status and interrupt register
   fields:
@@ -266,70 +320,6 @@ fieldset/SR:
       description: FIFO empty status
       bit_offset: 6
       bit_size: 1
-fieldset/PMEM:
-  description: Common memory space timing register
-  fields:
-    - name: MEMSET
-      description: Common memory x setup time
-      bit_offset: 0
-      bit_size: 8
-    - name: MEMWAIT
-      description: Common memory wait time
-      bit_offset: 8
-      bit_size: 8
-    - name: MEMHOLD
-      description: Common memory hold time
-      bit_offset: 16
-      bit_size: 8
-    - name: MEMHIZ
-      description: Common memory x data bus Hi-Z time
-      bit_offset: 24
-      bit_size: 8
-fieldset/PATT:
-  description: Attribute memory space timing register
-  fields:
-    - name: ATTSET
-      description: Attribute memory setup time
-      bit_offset: 0
-      bit_size: 8
-    - name: ATTWAIT
-      description: Attribute memory wait time
-      bit_offset: 8
-      bit_size: 8
-    - name: ATTHOLD
-      description: Attribute memory hold time
-      bit_offset: 16
-      bit_size: 8
-    - name: ATTHIZ
-      description: Attribute memory data bus Hi-Z time
-      bit_offset: 24
-      bit_size: 8
-fieldset/PIO4:
-  description: I/O space timing register 4
-  fields:
-    - name: IOSETx
-      description: IOSETx
-      bit_offset: 0
-      bit_size: 8
-    - name: IOWAITx
-      description: IOWAITx
-      bit_offset: 8
-      bit_size: 8
-    - name: IOHOLDx
-      description: IOHOLDx
-      bit_offset: 16
-      bit_size: 8
-    - name: IOHIZx
-      description: IOHIZx
-      bit_offset: 24
-      bit_size: 8
-fieldset/ECCR:
-  description: ECC result register
-  fields:
-    - name: ECC
-      description: ECC computation result value
-      bit_offset: 0
-      bit_size: 32
 enum/ACCMOD:
   bit_size: 2
   variants:

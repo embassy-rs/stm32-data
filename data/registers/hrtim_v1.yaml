@@ -7,12 +7,12 @@ block/HRTIM:
       byte_offset: 0
       fieldset: MCR
     - name: MISR
-      description: "Master Timer Interrupt Status Register"
+      description: Master Timer Interrupt Status Register
       byte_offset: 4
       access: Read
       fieldset: MISR
     - name: MICR
-      description: "Master Timer Interrupt Clear Register"
+      description: Master Timer Interrupt Clear Register
       byte_offset: 8
       access: Write
       fieldset: MICR
@@ -29,19 +29,19 @@ block/HRTIM:
       byte_offset: 20
       fieldset: MPER
     - name: MREP
-      description: "Master Timer Repetition Register"
+      description: Master Timer Repetition Register
       byte_offset: 24
       fieldset: MREP
     - name: MCMP
-      description: "Master Timer Compare X Register"
-      byte_offset: 28
-      fieldset: MCMPX
+      description: Master Timer Compare X Register
       array:
         offsets:
           - 0
           - 8
           - 12
           - 16
+      byte_offset: 28
+      fieldset: MCMPX
     - name: TIM
       description: "High Resolution Timer: Timing Unit"
       array:
@@ -57,12 +57,12 @@ block/HRTIM_TIMX:
       byte_offset: 0
       fieldset: TIMXCR
     - name: ISR
-      description: "Timer X Interrupt Status Register"
+      description: Timer X Interrupt Status Register
       byte_offset: 4
       access: Read
       fieldset: TIMXISR
     - name: ICR
-      description: "Timer X Interrupt Clear Register"
+      description: Timer X Interrupt Clear Register
       byte_offset: 8
       access: Write
       fieldset: TIMXICR
@@ -84,57 +84,57 @@ block/HRTIM_TIMX:
       fieldset: TIMXREP
     - name: CMP
       description: Timer X Compare X Register
-      byte_offset: 28
-      fieldset: TIMXCMP
       array:
         offsets:
           - 0
           - 8
           - 12
           - 16
+      byte_offset: 28
+      fieldset: TIMXCMP
     - name: CMPC
-      description: "Timer X Compare X Compound Register"
-      byte_offset: 32
-      fieldset: TIMXCMPC
+      description: Timer X Compare X Compound Register
       array:
         offsets:
           - 0
+      byte_offset: 32
+      fieldset: TIMXCMPC
     - name: CPT
       description: Timer X Capture X Register
-      byte_offset: 48
-      access: Read
-      fieldset: TIMXCPT
       array:
         len: 2
         stride: 4
+      byte_offset: 48
+      access: Read
+      fieldset: TIMXCPT
     - name: DT
       description: Timer X Deadtime Register
       byte_offset: 56
       fieldset: TIMXDT
     - name: SETR
       description: Timer X Output X Set Register
+      array:
+        offsets:
+          - 0
+          - 8
       byte_offset: 60
       fieldset: TIMXSETR
-      array:
-        offsets:
-          - 0
-          - 8
     - name: RSTR
       description: Timer X Output X Reset Register
-      byte_offset: 64
-      fieldset: TIMXRSTR
       array:
         offsets:
           - 0
           - 8
+      byte_offset: 64
+      fieldset: TIMXRSTR
     - name: EEF
-      description: "Timer X External Event Filtering Register 1"
-      byte_offset: 76
-      fieldset: TIMXEEF
+      description: Timer X External Event Filtering Register 1
       array:
         offsets:
           - 0
           - 4
+      byte_offset: 76
+      fieldset: TIMXEEF
     - name: RST
       description: Timer X Reset Register
       byte_offset: 84
@@ -145,12 +145,12 @@ block/HRTIM_TIMX:
       fieldset: TIMXCHP
     - name: CCR
       description: Timer X Capture X Control Register
-      byte_offset: 92
-      fieldset: TIMXCCR
       array:
         offsets:
-          - 0 
+          - 0
           - 4
+      byte_offset: 92
+      fieldset: TIMXCCR
     - name: OUTR
       description: Timer X Output Register
       byte_offset: 100
@@ -159,225 +159,6 @@ block/HRTIM_TIMX:
       description: Timer X Fault Register
       byte_offset: 104
       fieldset: TIMXFLT
-fieldset/TIMXCHP:
-  description: Timerx Chopper Register
-  fields:
-    - name: CARFRQ
-      description: Timerx carrier frequency value
-      bit_offset: 0
-      bit_size: 4
-    - name: CARDTY
-      description: Timerx chopper duty cycle value
-      bit_offset: 4
-      bit_size: 3
-    - name: STRTPW
-      description: Timerx start pulsewidth
-      bit_offset: 7
-      bit_size: 4
-fieldset/TIMXCMP:
-  description: Timerx Compare X Register
-  fields:
-    - name: CMP
-      description: Timerx Compare X value
-      bit_offset: 0
-      bit_size: 16
-fieldset/TIMXCMPC:
-  description: "Timerx Compare X Compound Register"
-  fields:
-    - name: CMP
-      description: Timerx Compare X value
-      bit_offset: 0
-      bit_size: 16
-    - name: REP
-      description: "Timerx Repetition value (aliased from HRTIM_REPx register)"
-      bit_offset: 16
-      bit_size: 8
-fieldset/TIMXCNT:
-  description: Timerx Counter Register
-  fields:
-    - name: CNT
-      description: Timerx Counter value
-      bit_offset: 0
-      bit_size: 16
-fieldset/TIMXCCR:
-  description: Timerx Capture 2 Control Register
-  fields:
-    - name: SWCPT
-      description: Software Capture
-      bit_offset: 0
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: UPDCPT
-      description: Update Capture
-      bit_offset: 1
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: EXEVCPT
-      description: External Event X Capture
-      bit_offset: 2
-      bit_size: 1
-      enum: CAPTUREEFFECT
-      array:
-        len: 10
-        stride: 1
-    - name: TXSET
-      description: Timer X output Set
-      bit_offset: 16
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: TXRST
-      description: Timer X output Reset
-      bit_offset: 17
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: TXCMP
-      description: Timer X Compare X
-      bit_offset: 18
-      bit_size: 1
-      enum: CAPTUREEFFECT
-      array:
-        len: 2
-        stride: 1
-    - name: TYSET
-      description: Timer Y output Set
-      bit_offset: 20
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: TYRST
-      description: Timer Y output Reset
-      bit_offset: 21
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: TYCMP
-      description: Timer Y Compare X
-      bit_offset: 22
-      bit_size: 1
-      enum: CAPTUREEFFECT
-      array:
-        len: 2
-        stride: 1
-    - name: TZSET
-      description: Timer Z output Set
-      bit_offset: 24
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: TZRST
-      description: Timer Z output Reset
-      bit_offset: 25
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: TZCMP
-      description: Timer Z Compare X
-      bit_offset: 26
-      bit_size: 1
-      enum: CAPTUREEFFECT
-      array:
-        len: 2
-        stride: 1
-    - name: TTSET
-      description: Timer T output Set
-      bit_offset: 28
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: TTRST
-      description: Timer T output Reset
-      bit_offset: 29
-      bit_size: 1
-      enum: CAPTUREEFFECT
-    - name: TTCMP
-      description: Timer T Compare X
-      bit_offset: 30
-      bit_size: 1
-      enum: CAPTUREEFFECT
-      array:
-        len: 2
-        stride: 1
-fieldset/TIMXCPT:
-  description: Timerx Capture X Register
-  fields:
-    - name: CPT
-      description: Timerx Capture X value
-      bit_offset: 0
-      bit_size: 16
-fieldset/TIMXDT:
-  description: Timerx Deadtime Register
-  fields:
-    - name: DTR
-      description: Deadtime Rising value
-      bit_offset: 0
-      bit_size: 9
-    - name: SDTR
-      description: Sign Deadtime Rising value
-      bit_offset: 9
-      bit_size: 1
-      enum: SDTR
-    - name: DTPRSC
-      description: Deadtime Prescaler
-      bit_offset: 10
-      bit_size: 3
-    - name: DTRSLK
-      description: Deadtime Rising Sign Lock
-      bit_offset: 14
-      bit_size: 1
-      enum: LOCKED
-    - name: DTRLK
-      description: Deadtime Rising Lock
-      bit_offset: 15
-      bit_size: 1
-      enum: LOCKED
-    - name: DTF
-      description: Deadtime Falling value
-      bit_offset: 16
-      bit_size: 9
-    - name: SDTF
-      description: Sign Deadtime Falling value
-      bit_offset: 25
-      bit_size: 1
-      enum: SDTF
-    - name: DTFSLK
-      description: Deadtime Falling Sign Lock
-      bit_offset: 30
-      bit_size: 1
-      enum: LOCKED
-    - name: DTFLK
-      description: Deadtime Falling Lock
-      bit_offset: 31
-      bit_size: 1
-      enum: LOCKED
-fieldset/TIMXEEF:
-  description: Timer X External Event Filtering Register
-  fields:
-    - name: LTCH
-      description: External Event X latch
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 5
-        stride: 6
-    - name: FLTR
-      description: External Event X filter
-      bit_offset: 1
-      bit_size: 4
-      enum: EEFLTR
-      array:
-        len: 5
-        stride: 6
-fieldset/TIMXFLT:
-  description: Timerx Fault Register
-  fields:
-    - name: FLTEN
-      description: Fault X enable
-      bit_offset: 0
-      bit_size: 1
-      enum: FLTEN
-      array:
-        len: 5
-        stride: 1
-    - name: FLTLCK
-      description: Fault sources Lock
-      bit_offset: 31
-      bit_size: 1
-      enum: LOCKED
 fieldset/MCMPX:
   description: Master Timer Compare X Register
   fields:
@@ -465,7 +246,7 @@ fieldset/MCR:
       bit_size: 2
       enum: BRSTDMA
 fieldset/MDIER:
-  description: Master Timer DMA / Interrupt Enable Register 
+  description: Master Timer DMA / Interrupt Enable Register
   fields:
     - name: MCMPIE
       description: Master Compare X Interrupt Enable
@@ -506,28 +287,28 @@ fieldset/MDIER:
       bit_offset: 22
       bit_size: 1
 fieldset/MICR:
-  description: "Master Timer Interrupt Clear Register"
+  description: Master Timer Interrupt Clear Register
   fields:
     - name: MCMPC
-      description: "Master Compare X Interrupt flag clear"
+      description: Master Compare X Interrupt flag clear
       bit_offset: 0
       bit_size: 1
-      enum_write: ICR
       array:
         len: 4
         stride: 1
+      enum_write: ICR
     - name: MREPC
-      description: "Repetition Interrupt flag clear"
+      description: Repetition Interrupt flag clear
       bit_offset: 4
       bit_size: 1
       enum_write: ICR
     - name: SYNCC
-      description: "Sync Input Interrupt flag clear"
+      description: Sync Input Interrupt flag clear
       bit_offset: 5
       bit_size: 1
       enum_write: ICR
     - name: MUPDC
-      description: "Master update Interrupt flag clear"
+      description: Master update Interrupt flag clear
       bit_offset: 6
       bit_size: 1
       enum_write: ICR
@@ -538,10 +319,10 @@ fieldset/MISR:
       description: Master Compare X Interrupt Flag
       bit_offset: 0
       bit_size: 1
-      enum_read: EVENT
       array:
         len: 4
         stride: 1
+      enum_read: EVENT
     - name: MREP
       description: Master Repetition Interrupt Flag
       bit_offset: 4
@@ -553,7 +334,7 @@ fieldset/MISR:
       bit_size: 1
       enum_read: EVENT
     - name: MUPD
-      description: "Master Update Interrupt Flag"
+      description: Master Update Interrupt Flag
       bit_offset: 6
       bit_size: 1
       enum_read: EVENT
@@ -565,283 +346,152 @@ fieldset/MPER:
       bit_offset: 0
       bit_size: 16
 fieldset/MREP:
-  description: "Master Timer Repetition Register"
+  description: Master Timer Repetition Register
   fields:
     - name: MREP
-      description: "Master Timer Repetition counter value"
+      description: Master Timer Repetition counter value
       bit_offset: 0
       bit_size: 8
-fieldset/TIMXOUTR:
-  description: Timerx Output Register
+fieldset/TIMXCCR:
+  description: Timerx Capture 2 Control Register
   fields:
-    - name: POL
-      description: Output 1 polarity
+    - name: SWCPT
+      description: Software Capture
+      bit_offset: 0
+      bit_size: 1
+      enum: CAPTUREEFFECT
+    - name: UPDCPT
+      description: Update Capture
       bit_offset: 1
       bit_size: 1
-      enum: POL
-      array:
-        offsets:
-          - 0 
-          - 16
-    - name: IDLEM
-      description: Output X Idle mode
+      enum: CAPTUREEFFECT
+    - name: EXEVCPT
+      description: External Event X Capture
       bit_offset: 2
       bit_size: 1
-      enum: IDLEM
-      array:
-        offsets:
-          - 0
-          - 16
-    - name: IDLES
-      description: Output 1 Idle State
-      bit_offset: 3
-      bit_size: 1
-      enum: IDLES
-      array:
-        offsets:
-          - 0
-          - 16
-    - name: FAULTX
-      description: Output X Fault state
-      bit_offset: 4
-      bit_size: 2
-      enum: FAULT
-      array:
-        offsets:
-          - 0
-          - 16
-    - name: CHP
-      description: Output X Chopper enable
-      bit_offset: 6
-      bit_size: 1
-      array:
-        offsets:
-          - 0
-          - 16
-    - name: DIDL
-      description: "Output X Deadtime upon burst mode Idle entry"
-      bit_offset: 7
-      bit_size: 1
-      array:
-        offsets:
-          - 0
-          - 16
-    - name: DTEN
-      description: Deadtime enable
-      bit_offset: 8
-      bit_size: 1
-    - name: DLYPRTEN
-      description: Delayed Protection Enable
-      bit_offset: 9
-      bit_size: 1
-    - name: DLYPRT
-      description: Delayed Protection
-      bit_offset: 10
-      bit_size: 3
-      enum: DLYPRT
-fieldset/TIMXPER:
-  description: Timerx Period Register
-  fields:
-    - name: PER
-      description: Timerx Period value
-      bit_offset: 0
-      bit_size: 16
-fieldset/TIMXREP:
-  description: Timerx Repetition Register
-  fields:
-    - name: REP
-      description: "Timerx Repetition counter value"
-      bit_offset: 0
-      bit_size: 8
-fieldset/TIMXRSTR:
-  description: Timerx OutputX Reset Register
-  fields:
-    - name: SRT
-      description: Software Reset trigger
-      bit_offset: 0
-      bit_size: 1
-      enum: INACTIVEEFFECT
-    - name: RESYNC
-      description: Timer X resynchronizaton
-      bit_offset: 1
-      bit_size: 1
-      enum: INACTIVEEFFECT
-    - name: PER
-      description: Timer X Period
-      bit_offset: 2
-      bit_size: 1
-      enum: INACTIVEEFFECT
-    - name: CMP
-      description: Timer X compare X
-      bit_offset: 3
-      bit_size: 1
-      enum: INACTIVEEFFECT
-      array:
-        len: 4
-        stride: 1
-    - name: MSTPER
-      description: Master Period
-      bit_offset: 7
-      bit_size: 1
-      enum: INACTIVEEFFECT
-    - name: MSTCMP
-      description: Master Compare X
-      bit_offset: 8
-      bit_size: 1
-      enum: INACTIVEEFFECT
-      array:
-        len: 4
-        stride: 1
-    - name: TIMEVNT
-      description: Timer Event X
-      bit_offset: 12
-      bit_size: 1
-      enum: INACTIVEEFFECT
-      array:
-        len: 9
-        stride: 1
-    - name: EXTEVNT
-      description: External Event X
-      bit_offset: 21
-      bit_size: 1
-      enum: INACTIVEEFFECT
       array:
         len: 10
         stride: 1
-    - name: UPDATE
-      description: Registers update (transfer preload to active)
-      bit_offset: 31
+      enum: CAPTUREEFFECT
+    - name: TXSET
+      description: Timer X output Set
+      bit_offset: 16
       bit_size: 1
-      enum: INACTIVEEFFECT
-fieldset/TIMXRST:
-  description: Timerx Reset Register
-  fields:
-    - name: UPDT
-      description: Timer X Update reset
-      bit_offset: 1
+      enum: CAPTUREEFFECT
+    - name: TXRST
+      description: Timer X output Reset
+      bit_offset: 17
       bit_size: 1
-      enum: RESETEFFECT
-    - name: CMP
-      description: Timer X compare X reset
-      bit_offset: 2
+      enum: CAPTUREEFFECT
+    - name: TXCMP
+      description: Timer X Compare X
+      bit_offset: 18
       bit_size: 1
-      enum: RESETEFFECT
       array:
         len: 2
         stride: 1
-    - name: MSTPER
-      description: Master timer Period
-      bit_offset: 4
+      enum: CAPTUREEFFECT
+    - name: TYSET
+      description: Timer Y output Set
+      bit_offset: 20
       bit_size: 1
-      enum: RESETEFFECT
-    - name: MSTCMP
-      description: Master compare X
-      bit_offset: 5
-      bit_size: 1
-      enum: RESETEFFECT
-      array:
-        len: 4
-        stride: 1
-    - name: EXTEVNT
-      description: External Event X
-      bit_offset: 9
-      bit_size: 1
-      enum: RESETEFFECT
-      array:
-        len: 10
-        stride: 1
-    - name: TIMXCMP
-      description: Timer X Compare [1, 2, 4]
-      bit_offset: 19
-      bit_size: 1
-      enum: RESETEFFECT
-      array:
-        len: 3
-        stride: 1
-    - name: TIMYCMP
-      description: Timer Y Compare [1, 2, 4]
-      bit_offset: 22
-      bit_size: 1
-      enum: RESETEFFECT
-      array:
-        len: 3
-        stride: 1
-    - name: TIMZCMP
-      description: Timer Compare [1, 2, 4]
-      bit_offset: 25
-      bit_size: 1
-      enum: RESETEFFECT
-      array:
-        len: 3
-        stride: 1
-    - name: TIMTCMP
-      description: Timer Compare [1, 2, 4]
-      bit_offset: 28
-      bit_size: 1
-      enum: RESETEFFECT
-      array:
-        len: 3
-        stride: 1
-fieldset/TIMXSETR:
-  description: Timerx OutputX Set Register
-  fields:
-    - name: SST
-      description: Software Set trigger
-      bit_offset: 0
-      bit_size: 1
-      enum: ACTIVEEFFECT
-    - name: RESYNC
-      description: Timer X resynchronizaton
-      bit_offset: 1
-      bit_size: 1
-      enum: ACTIVEEFFECT
-    - name: PER
-      description: Timer X Period
-      bit_offset: 2
-      bit_size: 1
-      enum: ACTIVEEFFECT
-    - name: CMP
-      description: Timer X compare X
-      bit_offset: 3
-      bit_size: 1
-      enum: ACTIVEEFFECT
-      array:
-        len: 4
-        stride: 1
-    - name: MSTPER
-      description: Master Period
-      bit_offset: 7
-      bit_size: 1
-      enum: ACTIVEEFFECT
-    - name: MSTCMPX
-      description: Master Compare X
-      bit_offset: 8
-      bit_size: 1
-      enum: ACTIVEEFFECT
-      array:
-        len: 4
-        stride: 1
-    - name: TIMEVNT
-      description: Timer Event X
-      bit_offset: 12
-      bit_size: 1
-      enum: ACTIVEEFFECT
-      array:  
-        len: 9
-        stride: 1
-    - name: EXTEVNT
-      description: External Event X
+      enum: CAPTUREEFFECT
+    - name: TYRST
+      description: Timer Y output Reset
       bit_offset: 21
       bit_size: 1
-      enum: ACTIVEEFFECT
-      array:
-        len: 10
-        stride: 1
-    - name: UPDATE
-      description: Registers update (transfer preload to active)
-      bit_offset: 31
+      enum: CAPTUREEFFECT
+    - name: TYCMP
+      description: Timer Y Compare X
+      bit_offset: 22
       bit_size: 1
-      enum: ACTIVEEFFECT
+      array:
+        len: 2
+        stride: 1
+      enum: CAPTUREEFFECT
+    - name: TZSET
+      description: Timer Z output Set
+      bit_offset: 24
+      bit_size: 1
+      enum: CAPTUREEFFECT
+    - name: TZRST
+      description: Timer Z output Reset
+      bit_offset: 25
+      bit_size: 1
+      enum: CAPTUREEFFECT
+    - name: TZCMP
+      description: Timer Z Compare X
+      bit_offset: 26
+      bit_size: 1
+      array:
+        len: 2
+        stride: 1
+      enum: CAPTUREEFFECT
+    - name: TTSET
+      description: Timer T output Set
+      bit_offset: 28
+      bit_size: 1
+      enum: CAPTUREEFFECT
+    - name: TTRST
+      description: Timer T output Reset
+      bit_offset: 29
+      bit_size: 1
+      enum: CAPTUREEFFECT
+    - name: TTCMP
+      description: Timer T Compare X
+      bit_offset: 30
+      bit_size: 1
+      array:
+        len: 2
+        stride: 1
+      enum: CAPTUREEFFECT
+fieldset/TIMXCHP:
+  description: Timerx Chopper Register
+  fields:
+    - name: CARFRQ
+      description: Timerx carrier frequency value
+      bit_offset: 0
+      bit_size: 4
+    - name: CARDTY
+      description: Timerx chopper duty cycle value
+      bit_offset: 4
+      bit_size: 3
+    - name: STRTPW
+      description: Timerx start pulsewidth
+      bit_offset: 7
+      bit_size: 4
+fieldset/TIMXCMP:
+  description: Timerx Compare X Register
+  fields:
+    - name: CMP
+      description: Timerx Compare X value
+      bit_offset: 0
+      bit_size: 16
+fieldset/TIMXCMPC:
+  description: Timerx Compare X Compound Register
+  fields:
+    - name: CMP
+      description: Timerx Compare X value
+      bit_offset: 0
+      bit_size: 16
+    - name: REP
+      description: Timerx Repetition value (aliased from HRTIM_REPx register)
+      bit_offset: 16
+      bit_size: 8
+fieldset/TIMXCNT:
+  description: Timerx Counter Register
+  fields:
+    - name: CNT
+      description: Timerx Counter value
+      bit_offset: 0
+      bit_size: 16
+fieldset/TIMXCPT:
+  description: Timerx Capture X Register
+  fields:
+    - name: CPT
+      description: Timerx Capture X value
+      bit_offset: 0
+      bit_size: 16
 fieldset/TIMXCR:
   description: Timerx Control Register
   fields:
@@ -939,7 +589,7 @@ fieldset/TIMXDIER:
       description: Compare X Interrupt Enable
       bit_offset: 0
       bit_size: 1
-      array:  
+      array:
         len: 4
         stride: 1
     - name: REPIE
@@ -954,7 +604,7 @@ fieldset/TIMXDIER:
       description: Capture Interrupt Enable
       bit_offset: 7
       bit_size: 1
-      array:  
+      array:
         len: 2
         stride: 1
     - name: SETRIE
@@ -963,15 +613,15 @@ fieldset/TIMXDIER:
       bit_size: 1
       array:
         offsets:
-          - 0 
+          - 0
           - 2
     - name: RSTRIE
-      description:  Output X Reset Interrupt Enable
+      description: Output X Reset Interrupt Enable
       bit_offset: 10
       bit_size: 1
       array:
         offsets:
-          - 0 
+          - 0
           - 2
     - name: RSTIE
       description: Reset/roll-over Interrupt Enable
@@ -1027,6 +677,85 @@ fieldset/TIMXDIER:
       description: Delayed Protection DMA request Enable
       bit_offset: 30
       bit_size: 1
+fieldset/TIMXDT:
+  description: Timerx Deadtime Register
+  fields:
+    - name: DTR
+      description: Deadtime Rising value
+      bit_offset: 0
+      bit_size: 9
+    - name: SDTR
+      description: Sign Deadtime Rising value
+      bit_offset: 9
+      bit_size: 1
+      enum: SDTR
+    - name: DTPRSC
+      description: Deadtime Prescaler
+      bit_offset: 10
+      bit_size: 3
+    - name: DTRSLK
+      description: Deadtime Rising Sign Lock
+      bit_offset: 14
+      bit_size: 1
+      enum: LOCKED
+    - name: DTRLK
+      description: Deadtime Rising Lock
+      bit_offset: 15
+      bit_size: 1
+      enum: LOCKED
+    - name: DTF
+      description: Deadtime Falling value
+      bit_offset: 16
+      bit_size: 9
+    - name: SDTF
+      description: Sign Deadtime Falling value
+      bit_offset: 25
+      bit_size: 1
+      enum: SDTF
+    - name: DTFSLK
+      description: Deadtime Falling Sign Lock
+      bit_offset: 30
+      bit_size: 1
+      enum: LOCKED
+    - name: DTFLK
+      description: Deadtime Falling Lock
+      bit_offset: 31
+      bit_size: 1
+      enum: LOCKED
+fieldset/TIMXEEF:
+  description: Timer X External Event Filtering Register
+  fields:
+    - name: LTCH
+      description: External Event X latch
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 5
+        stride: 6
+    - name: FLTR
+      description: External Event X filter
+      bit_offset: 1
+      bit_size: 4
+      array:
+        len: 5
+        stride: 6
+      enum: EEFLTR
+fieldset/TIMXFLT:
+  description: Timerx Fault Register
+  fields:
+    - name: FLTEN
+      description: Fault X enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+      enum: FLTEN
+    - name: FLTLCK
+      description: Fault sources Lock
+      bit_offset: 31
+      bit_size: 1
+      enum: LOCKED
 fieldset/TIMXICR:
   description: Timerx Interrupt Clear Register
   fields:
@@ -1034,10 +763,10 @@ fieldset/TIMXICR:
       description: Compare X Interrupt flag Clear
       bit_offset: 0
       bit_size: 1
-      enum_write: ICR
       array:
         len: 4
         stride: 1
+      enum_write: ICR
     - name: REPC
       description: Repetition Interrupt flag Clear
       bit_offset: 4
@@ -1052,28 +781,28 @@ fieldset/TIMXICR:
       description: Capture X Interrupt flag Clear
       bit_offset: 7
       bit_size: 1
-      enum_write: ICR
       array:
         len: 2
         stride: 1
+      enum_write: ICR
     - name: SETRC
       description: Output X Set flag Clear
       bit_offset: 9
       bit_size: 1
-      enum_write: ICR
       array:
         offsets:
           - 0
           - 2
+      enum_write: ICR
     - name: RSTRC
       description: Output X Reset flag Clear
       bit_offset: 10
       bit_size: 1
-      enum_write: ICR
       array:
         offsets:
           - 0
           - 2
+      enum_write: ICR
     - name: RSTC
       description: Reset Interrupt flag Clear
       bit_offset: 13
@@ -1091,10 +820,10 @@ fieldset/TIMXISR:
       description: Compare X Interrupt Flag
       bit_offset: 0
       bit_size: 1
-      enum_read: EVENT
       array:
         len: 4
         stride: 1
+      enum_read: EVENT
     - name: REP
       description: Repetition Interrupt Flag
       bit_offset: 4
@@ -1109,28 +838,28 @@ fieldset/TIMXISR:
       description: Capture X Interrupt Flag
       bit_offset: 7
       bit_size: 1
-      enum_read: EVENT
       array:
         len: 2
         stride: 1
+      enum_read: EVENT
     - name: SETR
       description: Output X Set Interrupt Flag
       bit_offset: 9
       bit_size: 1
-      enum_read: EVENT
       array:
         offsets:
           - 0
           - 2
+      enum_read: EVENT
     - name: RSTR
       description: Output X Reset Interrupt Flag
       bit_offset: 10
       bit_size: 1
-      enum_read: EVENT
       array:
         offsets:
           - 0
           - 2
+      enum_read: EVENT
     - name: RST
       description: Reset Interrupt Flag
       bit_offset: 13
@@ -1155,18 +884,289 @@ fieldset/TIMXISR:
       description: Output X State
       bit_offset: 18
       bit_size: 1
-      enum_read: OUTPUTSTATE
       array:
         len: 2
         stride: 1
+      enum_read: OUTPUTSTATE
     - name: OCPY
       description: Output X Copy
       bit_offset: 20
       bit_size: 1
-      enum_read: OUTPUTSTATE
       array:
         len: 2
         stride: 1
+      enum_read: OUTPUTSTATE
+fieldset/TIMXOUTR:
+  description: Timerx Output Register
+  fields:
+    - name: POL
+      description: Output 1 polarity
+      bit_offset: 1
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 16
+      enum: POL
+    - name: IDLEM
+      description: Output X Idle mode
+      bit_offset: 2
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 16
+      enum: IDLEM
+    - name: IDLES
+      description: Output 1 Idle State
+      bit_offset: 3
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 16
+      enum: IDLES
+    - name: FAULTX
+      description: Output X Fault state
+      bit_offset: 4
+      bit_size: 2
+      array:
+        offsets:
+          - 0
+          - 16
+      enum: FAULT
+    - name: CHP
+      description: Output X Chopper enable
+      bit_offset: 6
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 16
+    - name: DIDL
+      description: Output X Deadtime upon burst mode Idle entry
+      bit_offset: 7
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 16
+    - name: DTEN
+      description: Deadtime enable
+      bit_offset: 8
+      bit_size: 1
+    - name: DLYPRTEN
+      description: Delayed Protection Enable
+      bit_offset: 9
+      bit_size: 1
+    - name: DLYPRT
+      description: Delayed Protection
+      bit_offset: 10
+      bit_size: 3
+      enum: DLYPRT
+fieldset/TIMXPER:
+  description: Timerx Period Register
+  fields:
+    - name: PER
+      description: Timerx Period value
+      bit_offset: 0
+      bit_size: 16
+fieldset/TIMXREP:
+  description: Timerx Repetition Register
+  fields:
+    - name: REP
+      description: Timerx Repetition counter value
+      bit_offset: 0
+      bit_size: 8
+fieldset/TIMXRST:
+  description: Timerx Reset Register
+  fields:
+    - name: UPDT
+      description: Timer X Update reset
+      bit_offset: 1
+      bit_size: 1
+      enum: RESETEFFECT
+    - name: CMP
+      description: Timer X compare X reset
+      bit_offset: 2
+      bit_size: 1
+      array:
+        len: 2
+        stride: 1
+      enum: RESETEFFECT
+    - name: MSTPER
+      description: Master timer Period
+      bit_offset: 4
+      bit_size: 1
+      enum: RESETEFFECT
+    - name: MSTCMP
+      description: Master compare X
+      bit_offset: 5
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+      enum: RESETEFFECT
+    - name: EXTEVNT
+      description: External Event X
+      bit_offset: 9
+      bit_size: 1
+      array:
+        len: 10
+        stride: 1
+      enum: RESETEFFECT
+    - name: TIMXCMP
+      description: "Timer X Compare [1, 2, 4]"
+      bit_offset: 19
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+      enum: RESETEFFECT
+    - name: TIMYCMP
+      description: "Timer Y Compare [1, 2, 4]"
+      bit_offset: 22
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+      enum: RESETEFFECT
+    - name: TIMZCMP
+      description: "Timer Compare [1, 2, 4]"
+      bit_offset: 25
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+      enum: RESETEFFECT
+    - name: TIMTCMP
+      description: "Timer Compare [1, 2, 4]"
+      bit_offset: 28
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+      enum: RESETEFFECT
+fieldset/TIMXRSTR:
+  description: Timerx OutputX Reset Register
+  fields:
+    - name: SRT
+      description: Software Reset trigger
+      bit_offset: 0
+      bit_size: 1
+      enum: INACTIVEEFFECT
+    - name: RESYNC
+      description: Timer X resynchronizaton
+      bit_offset: 1
+      bit_size: 1
+      enum: INACTIVEEFFECT
+    - name: PER
+      description: Timer X Period
+      bit_offset: 2
+      bit_size: 1
+      enum: INACTIVEEFFECT
+    - name: CMP
+      description: Timer X compare X
+      bit_offset: 3
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+      enum: INACTIVEEFFECT
+    - name: MSTPER
+      description: Master Period
+      bit_offset: 7
+      bit_size: 1
+      enum: INACTIVEEFFECT
+    - name: MSTCMP
+      description: Master Compare X
+      bit_offset: 8
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+      enum: INACTIVEEFFECT
+    - name: TIMEVNT
+      description: Timer Event X
+      bit_offset: 12
+      bit_size: 1
+      array:
+        len: 9
+        stride: 1
+      enum: INACTIVEEFFECT
+    - name: EXTEVNT
+      description: External Event X
+      bit_offset: 21
+      bit_size: 1
+      array:
+        len: 10
+        stride: 1
+      enum: INACTIVEEFFECT
+    - name: UPDATE
+      description: Registers update (transfer preload to active)
+      bit_offset: 31
+      bit_size: 1
+      enum: INACTIVEEFFECT
+fieldset/TIMXSETR:
+  description: Timerx OutputX Set Register
+  fields:
+    - name: SST
+      description: Software Set trigger
+      bit_offset: 0
+      bit_size: 1
+      enum: ACTIVEEFFECT
+    - name: RESYNC
+      description: Timer X resynchronizaton
+      bit_offset: 1
+      bit_size: 1
+      enum: ACTIVEEFFECT
+    - name: PER
+      description: Timer X Period
+      bit_offset: 2
+      bit_size: 1
+      enum: ACTIVEEFFECT
+    - name: CMP
+      description: Timer X compare X
+      bit_offset: 3
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+      enum: ACTIVEEFFECT
+    - name: MSTPER
+      description: Master Period
+      bit_offset: 7
+      bit_size: 1
+      enum: ACTIVEEFFECT
+    - name: MSTCMPX
+      description: Master Compare X
+      bit_offset: 8
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+      enum: ACTIVEEFFECT
+    - name: TIMEVNT
+      description: Timer Event X
+      bit_offset: 12
+      bit_size: 1
+      array:
+        len: 9
+        stride: 1
+      enum: ACTIVEEFFECT
+    - name: EXTEVNT
+      description: External Event X
+      bit_offset: 21
+      bit_size: 1
+      array:
+        len: 10
+        stride: 1
+      enum: ACTIVEEFFECT
+    - name: UPDATE
+      description: Registers update (transfer preload to active)
+      bit_offset: 31
+      bit_size: 1
+      enum: ACTIVEEFFECT
 enum/ACTIVEEFFECT:
   bit_size: 1
   variants:
@@ -1196,12 +1196,6 @@ enum/CAPTUREEFFECT:
       value: 0
     - name: TriggerCapture
       description: Timer event triggers capture
-      value: 1
-enum/ICR:
-  bit_size: 1
-  variants:
-    - name: Clear
-      description: Clears associated flag in ISR register
       value: 1
 enum/CONT:
   bit_size: 1
@@ -1251,6 +1245,33 @@ enum/DELCMP:
     - name: CaptureX_Compare3
       description: CMP is recomputed and is active following a capture 1 event or a Compare 3 match
       value: 3
+enum/DLYPRT:
+  bit_size: 3
+  variants:
+    - name: Output1_EE6
+      description: Output 1 delayed idle on external event 6
+      value: 0
+    - name: Output2_EE6
+      description: Output 2 delayed idle on external event 6
+      value: 1
+    - name: Output1_2_EE6
+      description: Output 1 and 2 delayed idle on external event 6
+      value: 2
+    - name: Balanced_EE6
+      description: Balanced idle on external event 6
+      value: 3
+    - name: Output1_EE7
+      description: Output 1 delayed idle on external event 7
+      value: 4
+    - name: Output2_EE7
+      description: Output 2 delayed idle on external event 7
+      value: 5
+    - name: Output1_2_EE7
+      description: Output 1 and 2 delayed idle on external event 7
+      value: 6
+    - name: Balanced_EE7
+      description: Balanced idle on external event 7
+      value: 7
 enum/EEFLTR:
   bit_size: 4
   variants:
@@ -1335,6 +1356,12 @@ enum/FLTEN:
     - name: Active
       description: Fault input is active and can disable HRTIM outputs
       value: 1
+enum/ICR:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clears associated flag in ISR register
+      value: 1
 enum/IDLEM:
   bit_size: 1
   variants:
@@ -1380,33 +1407,6 @@ enum/LOCKED:
     - name: Locked
       description: Bits are read-only
       value: 1
-enum/DLYPRT:
-  bit_size: 3
-  variants:
-    - name: Output1_EE6
-      description: Output 1 delayed idle on external event 6
-      value: 0
-    - name: Output2_EE6
-      description: Output 2 delayed idle on external event 6
-      value: 1
-    - name: Output1_2_EE6
-      description: Output 1 and 2 delayed idle on external event 6
-      value: 2
-    - name: Balanced_EE6
-      description: Balanced idle on external event 6
-      value: 3
-    - name: Output1_EE7
-      description: Output 1 delayed idle on external event 7
-      value: 4
-    - name: Output2_EE7
-      description: Output 2 delayed idle on external event 7
-      value: 5
-    - name: Output1_2_EE7
-      description: Output 1 and 2 delayed idle on external event 7
-      value: 6
-    - name: Balanced_EE7
-      description: Balanced idle on external event 7
-      value: 7
 enum/OUTPUTSTATE:
   bit_size: 1
   variants:
