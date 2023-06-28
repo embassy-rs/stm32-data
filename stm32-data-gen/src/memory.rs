@@ -1,4 +1,6 @@
-use std::{cmp::Ordering, collections::HashMap, fs};
+use std::cmp::Ordering;
+use std::collections::HashMap;
+use std::fs;
 
 #[derive(Debug, PartialEq)]
 pub struct Memory {
