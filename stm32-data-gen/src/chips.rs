@@ -1030,7 +1030,7 @@ fn process_core(
     let core_dma_channels = chs.clone();
     let have_chs: HashSet<_> = chs.into_iter().collect();
     // Process peripheral - DMA channel associations
-    for mut p in &mut peripherals {
+    for p in &mut peripherals {
         let mut chs = Vec::new();
         for dma in &chip_dmas {
             let mut peri_chs = dma_channels.0.get(dma).unwrap().peripherals.get(&p.name);
