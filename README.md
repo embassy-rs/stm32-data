@@ -17,6 +17,11 @@ families, including:
 
 :heavy_check_mark: = done, :construction: = work in progress, :x: = to do
 
+## Docs
+
+If you're looking for the API docs for `stm32-metapac` customized to a
+particular chip, they are available here: https://docs.embassy.dev/stm32-metapac
+
 ## Data sources
 
 These are the data sources currently used.
