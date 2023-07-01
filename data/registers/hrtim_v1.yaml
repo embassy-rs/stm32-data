@@ -1,6 +1,6 @@
 ---
 block/HRTIM:
-  description: "High Resolution Timer: Master Timer"
+  description: "High Resolution Timer"
   items:
     - name: MCR
       description: Master Timer Control Register
@@ -49,6 +49,494 @@ block/HRTIM:
         stride: 128
       byte_offset: 128
       block: HRTIM_TIMX
+    - name: CR1
+      description: "High Resolution Timer: Control Register 1"
+      byte_offset: 0x380
+      fieldset: HRTIM_CR1
+    - name: CR2
+      description: "High Resolution Timer: Control Register 2"
+      byte_offset: 0x384
+      fieldset: HRTIM_CR2
+    - name: ISR
+      description: "High Resolution Timer: Interrupt Status Register"
+      byte_offset: 0x388
+      access: Read
+      fieldset: HRTIM_ISR
+    - name: ICR
+      description: "High Resolution Timer: Interrupt Clear Register"
+      byte_offset: 0x38c
+      access: Write
+      fieldset: HRTIM_ICR
+    - name: IER
+      description: "High Resolution Timer: Interrupt Enable Register"
+      byte_offset: 0x390
+      fieldset: HRTIM_IER
+    - name: OENR
+      description: "High Resolution Timer: Output Enable Register"
+      byte_offset: 0x394
+      fieldset: HRTIM_OENR
+    - name: ODISR
+      description: "High Resolution Timer: Output Disable Register"
+      byte_offset: 0x398
+      fieldset: HRTIM_ODISR
+    - name: ODSR
+      description: "High Resolution Timer: Output Disable Status Register"
+      byte_offset: 0x39c
+      fieldset: HRTIM_ODSR
+    - name: BMCR
+      description: "High Resolution Timer: Burst Mode Control Register"
+      byte_offset: 0x3a0
+      fieldset: HRTIM_BMCR
+    - name: BMTRGR
+      description: "High Resolution Timer: Burst Mode Trigger Register"
+      byte_offset: 0x3a4
+      fieldset: HRTIM_BMTRGR
+    - name: BMCMPR
+      description: "High Resolution Timer: Burst Mode Compare Register"
+      byte_offset: 0x3a8
+      fieldset: HRTIM_BMCMPR
+    - name: BMPER
+      description: "High Resolution Timer: Burst Mode Period Register"
+      byte_offset: 0x3ac
+      fieldset: HRTIM_BMPER
+    - name: EECR1
+      description: "High Resolution Timer: External Event Control Register 1"
+      byte_offset: 0x3b0
+      fieldset: HRTIM_EECR1
+    - name: EECR2
+      description: "High Resolution Timer: External Event Control Register 2"
+      byte_offset: 0x3b4
+      fieldset: HRTIM_EECR2
+    - name: EECR3
+      description: "High Resolution Timer: External Event Control Register 3"
+      byte_offset: 0x3b8
+      fieldset: HRTIM_EECR3
+    - name: DLLCR
+      description: "High Resolution Timer: DLL Control Register"
+      byte_offset: 0x3cc
+      fieldset: HRTIM_DLLCR      
+fieldset/HRTIM_CR1:
+  description: "High Resolution Timer: Control Register 1"
+  items:
+    - name: MUDIS
+      description: Master Update Disable
+      bit_offset: 0
+      bit_size: 1
+    - name: TUDIS
+      description: Timer X Update Disable
+      bit_offset: 1
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+    - name: ADUSRC
+      description: ADC Trigger X Update Source
+      bit_offset: 16
+      bit_size: 3
+      array:
+        len: 4
+        stride: 2
+      enum: UPDATESOURCE
+fieldset/HRTIM_CR2:
+  description: "High Resolution Timer: Control Register 2"
+  items:
+    - name: MSWU
+      description: Master Timer Software Update
+      bit_offset: 0
+      bit_size: 1
+    - name: TSWU
+      description: Timer X Software Update
+      bit_offset: 1
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+    - name: MRST
+      description: Master Counter Software Reset
+      bit_offset: 8
+      bit_size: 1
+    - name: TRST
+      description: Timer X Counter Software Reset
+      bit_offset: 9
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+fieldset/HRTIM_ISR:
+  description: "High Resolution Timer: Interrupt Status Register"
+  items:
+    - name: FLT
+      description: Fault X Interrupt Flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+    - name: SYSFLT
+      description: System Fault Interrupt Flag
+      bit_offset: 5
+      bit_size: 1
+    - name: DLLRDY
+      description: DLL Ready Interrupt Flag
+      bit_offset: 16
+      bit_size: 1
+    - name: BMPER
+      description: Burst Mode Period Interrupt Flag
+      bit_offset: 17
+      bit_size: 1
+fieldset/HRTIM_ICR:
+  description: "High Resolution Timer: Interrupt Clear Register"
+  items:
+    - name: FLT
+      description: Fault X Interrupt Flag Clear
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+    - name: SYSFLT
+      description: System Fault Interrupt Flag Clear
+      bit_offset: 5
+      bit_size: 1
+    - name: DLLRDY
+      description: DLL Ready Interrupt Flag Clear
+      bit_offset: 16
+      bit_size: 1
+    - name: BMPER
+      description: Burst Mode Period Interrupt Flag Clear
+      bit_offset: 17
+      bit_size: 1
+fieldset/HRTIM_IER:
+  description: "High Resolution Timer: Interrupt Enable Register"
+  items:
+    - name: FLT
+      description: Fault X Interrupt Flag Enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+    - name: SYSFLT
+      description: System Fault Interrupt Flag Enable
+      bit_offset: 5
+      bit_size: 1
+    - name: DLLRDY
+      description: DLL Ready Interrupt Flag Enable
+      bit_offset: 16
+      bit_size: 1
+    - name: BMPER
+      description: Burst Mode Period Interrupt Flag Enable
+      bit_offset: 17
+      bit_size: 1
+fieldset/HRTIM_OENR:
+  description: "High Resolution Timer: Output Enable Register"
+  items:
+    - name: T1OEN
+      description: "Timer X Output Enable"
+      bit_offset: 0
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 2
+          - 4
+          - 6
+          - 8
+    - name: T2OEN
+      description: "Timer X Complementary Output Enable"
+      bit_offset: 1
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 2
+          - 4
+          - 6
+          - 8
+fieldset/HRTIM_ODISR:
+  description: "High Resolution Timer: Output Disable Register"
+  items:
+    - name: T1ODIS
+      description: "Timer X Output Disable"
+      bit_offset: 0
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 2
+          - 4
+          - 6
+          - 8
+    - name: T2ODIS
+      description: "Timer X Complementary Output Disable"
+      bit_offset: 1
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 2
+          - 4
+          - 6
+          - 8
+fieldset/HRTIM_ODSR:
+  description: "High Resolution Timer: Output Disable Status Register"
+  items:
+    - name: T1ODIS
+      description: "Timer X Output Disable Status"
+      bit_offset: 0
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 2
+          - 4
+          - 6
+          - 8
+    - name: T2ODIS
+      description: "Timer X Complementary Output Disable Status"
+      bit_offset: 1
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 2
+          - 4
+          - 6
+          - 8
+fieldset/HRTIM_BMCR:
+  description: "High Resolution Timer: Burst Mode Control Register"
+  items:
+    - name: BME
+      description: Burst Mode Enable
+      bit_offset: 0
+      bit_size: 1
+    - name: BMOM
+      description: Burst Mode Operating Mode
+      bit_offset: 1
+      bit_size: 1
+    - name: BMCLK
+      description: Burst Mode Clock source
+      bit_offset: 2
+      bit_size: 3
+    - name: BMPRSC
+      description: Burst Mode Prescaler
+      bit_offset: 6
+      bit_size: 3
+    - name: BMPREN
+      description: Burst Mode Preload Enable
+      bit_offset: 10
+      bit_size: 1
+    - name: MTBM
+      description: Master Timer Burst Mode
+      bit_offset: 16
+      bit_size: 1
+    - name: TBM
+      description: Timer X Burst Mode
+      bit_offset: 17
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+    - name: BMSTAT
+      decription: Burst Mode Status
+      bit_offset: 31
+      bit_size: 1
+fieldset/HRTIM_BMTRGR:
+  description: "High Resolution Timer: Burst Mode Trigger Register"
+  items:
+    - name: SW
+      description: Software start
+      bit_offset: 0
+      bit_size: 1
+    - name: MSTRST
+      description: Master reset or roll-over
+      bit_offset: 1
+      bit_size: 1
+    - name: MSTREP
+      description: Master repetition
+      bit_offset: 2
+      bit_size: 1
+    - name: MSTCMP
+      description: Master Compare X
+      bit_offset: 3
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+    - name: TRST
+      description: Timer X reset or roll-over
+      bit_offset: 7
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 4
+          - 8
+          - 12
+          - 16
+    - name: TREP
+      description: Timer X repetition
+      bit_offset: 8
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 4
+          - 8
+          - 12
+          - 16
+    - name: TCMP1
+      description: Timer X compare 1 event
+      bit_offset: 9
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 4
+          - 8
+          - 12
+          - 16
+    - name: TCMP2
+      description: Timer X compare 2 event
+      bit_offset: 10
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 4
+          - 8
+          - 12
+          - 16
+fieldset/HRTIM_BMCMPR:
+  description: "High Resolution Timer: Burst Mode Compare Register"
+  items:
+    - name: BMCMP
+      description: Burst mode compare value
+      bit_offset: 0 
+      bit_size: 16
+fieldset/HRTIM_BMPERs:
+  description: "High Resolution Timer: Burst Mode Period Register"
+  items:
+    - name: BMPER
+      description: Burst mode period value
+      bit_offset: 0 
+      bit_size: 16
+fieldset/HRTIM_EECR1:
+  description: "High Resolution Timer: External Events Control Register 1"
+  items:
+    - name: EESRC
+      description: External Event X Source
+      bit_offset: 0
+      bit_size: 2
+      array:
+        offsets:
+          - 0
+          - 6
+          - 12
+          - 18
+          - 24
+    - name: EEPOL
+      description: External Event X Polarity
+      bit_offset: 2
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 6
+          - 12
+          - 18
+          - 24
+    - name: EESNS
+      description: External Event X Sensitivity
+      bit_offset: 3
+      bit_size: 2
+      array:
+        offsets:
+          - 0
+          - 6
+          - 12
+          - 18
+          - 24
+    - name: EEFAST
+      description: External Event X Fast Mode
+      bit_offset: 5
+      bit_size: 2
+      array:
+        offsets:
+          - 0
+          - 6
+          - 12
+          - 18
+          - 24
+fieldset/HRTIM_EECR2:
+  description: "High Resolution Timer: External Events Control Register 2"
+  items:
+    - name: EESRC
+      description: External Event X Source
+      bit_offset: 0
+      bit_size: 2
+      array:
+        offsets:
+          - 0
+          - 6
+          - 12
+          - 18
+          - 24
+    - name: EEPOL
+      description: External Event X Polarity
+      bit_offset: 2
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 6
+          - 12
+          - 18
+          - 24
+    - name: EESNS
+      description: External Event X Sensitivity
+      bit_offset: 3
+      bit_size: 2
+      array:
+        offsets:
+          - 0
+          - 6
+          - 12
+          - 18
+          - 24
+fieldset/HRTIM_EECR3:
+  description: "High Resolution Timer: External Events Control Register 2"
+  items:
+    - name: EEF
+      description: External Event X filter
+      bit_offset: 0
+      bit_size: 3
+      array:
+        offsets:
+          - 0
+          - 6 
+          - 12
+          - 18
+          - 24
+    - name: EEVSD
+      description: External Event Sampling Clock Division
+      bit_offset: 30
+      bit_size: 2
+fieldset/HRTIM_DLLCR:
+  description: "High Resolution Timer: DLL Control Register"
+  items:
+    - name: CAL
+      description: DLL Calibration Start
+      bit_offset: 0
+      bit_size: 1
+    - name: CALEN
+      description: DLL Calibration Enable
+      bit_offset: 1
+      bit_size: 1
+    - name: CALRTE
+      description: DLL Calibration Rate
+      bit_offset: 2
+      bit_size: 2
 block/HRTIM_TIMX:
   description: "High Resolution Timer: Timing Unit"
   items:
@@ -1530,3 +2018,19 @@ enum/UPDGAT:
     - name: Input3_Update
       description: Update occurs on the update event following a rising edge of HRTIM update enable input 3
       value: 8
+enum/UPDATESOURCE:
+  bit_size: 3
+  variants:
+    - name: MasterTimer
+      value: 0
+    - name: TimerA
+      value: 1
+    - name: TimerB
+      value: 2
+    - name: TimerC
+      value: 3
+    - name: TimerD
+      value: 4
+    - name: TimerE
+      value: 5
+
