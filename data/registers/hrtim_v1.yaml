@@ -111,10 +111,50 @@ block/HRTIM:
       description: "High Resolution Timer: External Event Control Register 3"
       byte_offset: 0x3b8
       fieldset: HRTIM_EECR3
+    - name: ADC1R
+      description: "High Resolution Timer: ADC Trigger [1, 3] Register"
+      byte_offset: 0x3bc
+      fieldset: HRTIM_ADC1R
+      array:
+        offsets:
+          - 0
+          - 8
+    - name: ADC2R
+      description: "High Resolution Timer: ADC Trigger [2, 4] Register"
+      byte_offset: 0x3c0
+      fieldset: HRTIM_ADC2R
+      array:
+        offsets:
+          - 0
+          - 8
     - name: DLLCR
       description: "High Resolution Timer: DLL Control Register"
       byte_offset: 0x3cc
-      fieldset: HRTIM_DLLCR      
+      fieldset: HRTIM_DLLCR
+    - name: FLTINR1
+      description: "High Resolution Timer: Fault Input Register 1"
+      byte_offset: 0x3d0
+      fieldset: HRTIM_FLTINR1
+    - name: FLTINR2
+      description: "High Resolution Timer: Fault Input Register 2"
+      byte_offset: 0x3d0
+      fieldset: HRTIM_FLTINR2
+    - name: BDMUPR
+      description: "High Resolution Timer: Burst DMA Master timer update Register"
+      byte_offset: 0x3d8
+      fieldset: HRTIM_BDMUPR
+    - name: BDTUPR
+      description: "High Resolution Timer: Burst DMA Timer X update Register"
+      byte_offset: 0x3dc
+      fieldset: HRTIM_BDTUPR
+      array:
+        len: 5
+        stride: 4
+    - name: BDMADR
+      description: "High Resolution Timer: Burst DMA Data Register"
+      byte_offset: 0x3f0
+      access: Write
+      fieldset: HRTIM_BDMADR
 block/HRTIM_TIMX:
   description: "High Resolution Timer: Timing Unit"
   items:
@@ -632,6 +672,152 @@ fieldset/HRTIM_EECR3:
       description: External Event Sampling Clock Division
       bit_offset: 30
       bit_size: 2
+fieldset/HRTIM_ADC1R:
+  description: "High Resolution Timer: ADC Trigger 1 Register"
+  fields:
+    - name: ADCMC
+      description: ADC trigger X on Master Compare Y
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+    - name: ADCMPER
+      description: ADC trigger X on Master Period
+      bit_offset: 4
+      bit_size: 1
+    - name: ADCEEV
+      description: ADC trigger X on External Event Y
+      bit_offset: 5
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+    - name: ADCTC2
+      description: ADC trigger X on Timer Y Compare 2
+      bit_offset: 10
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 5
+          - 10
+          - 14
+          - 18
+    - name: ADCTC3
+      description: ADC trigger X on Timer Y Compare 3
+      bit_offset: 11
+      bit_size: 1
+      array:
+        offsets:
+          - 0 
+          - 5
+          - 10
+          - 14
+          - 18
+    - name: ADCTC4
+      description: ADC trigger X on Timer Y Compare 3
+      bit_offset: 12
+      bit_size: 1
+      array:
+        offsets:
+          - 0 
+          - 5
+          - 10
+          - 14
+          - 18
+    - name: ADCTPER
+      description: ADC trigger X on Timer Y Period
+      bit_offset: 13
+      bit_size: 1
+      array:
+        offsets:
+          - 0 
+          - 5
+          - 10
+          - 14
+          - 18
+    - name: ADCTRST
+      description: ADC trigger X on Timer Y Reset
+      bit_offset: 14
+      bit_size: 1
+      array:
+        offsets:
+          - 0 
+          - 5
+fieldset/HRTIM_ADC2R:
+  description: "High Resolution Timer: ADC Trigger 2 Register"
+  fields:
+    - name: ADCMC
+      description: ADC trigger X on Master Compare Y
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+    - name: ADCMPER
+      description: ADC trigger X on Master Period
+      bit_offset: 4
+      bit_size: 1
+    - name: ADCEEV
+      description: ADC trigger X on External Event Y
+      bit_offset: 5
+      bit_size: 1
+      array:
+        len: 5
+        stride: 1
+    - name: ADCTC2
+      description: ADC trigger X on Timer Y Compare 2
+      bit_offset: 10
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 4
+          - 8
+          - 13
+          - 18
+    - name: ADCTC3
+      description: ADC trigger X on Timer Y Compare 3
+      bit_offset: 11
+      bit_size: 1
+      array:
+        offsets:
+          - 0 
+          - 4
+          - 8
+          - 13
+          - 18
+    - name: ADCTC4
+      description: ADC trigger X on Timer Y Compare 3
+      bit_offset: 12
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 4
+          - 8
+          - 13
+          - 18
+    - name: ADCTPER
+      description: ADC trigger X on Timer Y Period
+      bit_offset: 13
+      bit_size: 1
+      array:
+        offsets:
+          - 0 
+          - 4
+          - 8
+          - 13
+    - name: ADCTRST
+      description: ADC trigger X on Timer Y Reset
+      bit_offset: 22
+      bit_size: 1
+      array:
+        offsets:
+          - 0 
+          - 5
+          - 9
 fieldset/HRTIM_DLLCR:
   description: "High Resolution Timer: DLL Control Register"
   fields:
@@ -647,6 +833,176 @@ fieldset/HRTIM_DLLCR:
       description: DLL Calibration Rate
       bit_offset: 2
       bit_size: 2
+fieldset/HRTIM_FLTINR1:
+  description: "High Resolution Timer: Fault Input Register 1"
+  fields:
+    - name: FLTE
+      description: Fault X enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 8
+          - 16
+          - 24
+    - name: FLTP
+      description: Fault X polarity
+      bit_offset: 1
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 8
+          - 16
+          - 24
+    - name: FLTSRC
+      description: Fault X source
+      bit_offset: 2
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 8
+          - 16
+          - 24
+    - name: FLTF
+      description: Fault X filter
+      bit_offset: 3
+      bit_size: 4
+      array:
+        offsets:
+          - 0
+          - 8
+          - 16
+          - 24
+    - name: FLTLCK
+      description: Fault X Lock
+      bit_offset: 7
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+          - 8
+          - 16
+          - 24
+fieldset/HRTIM_FLTINR2:
+  description: "High Resolution Timer: Fault Input Register 2"
+  fields:
+    - name: FLTE
+      description: Fault X enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+    - name: FLTP
+      description: Fault X polarity
+      bit_offset: 1
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+    - name: FLTSRC
+      description: Fault X source
+      bit_offset: 2
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+    - name: FLTF
+      description: Fault X filter
+      bit_offset: 3
+      bit_size: 4
+      array:
+        offsets:
+          - 0
+    - name: FLTLCK
+      description: Fault X Lock
+      bit_offset: 7
+      bit_size: 1
+      array:
+        offsets:
+          - 0
+    - name: FLTSD
+      description: Fault Sampling clock division
+      bit_offset: 24
+      bit_size: 2
+fieldset/HRTIM_BDMUPR:
+  description: "High Resolution Timer: Burst DMA Master timer update Register"
+  fields:
+    - name: MCR
+      description: MCR register update enable
+      bit_offset: 0
+      bit_size: 1
+    - name: MICR
+      description: MICR register update enable
+      bit_offset: 1
+      bit_size: 1
+    - name: MDIER
+      description: MDIER register update enable
+      bit_offset: 2
+      bit_size: 1
+    - name: MCNT
+      description: MCNT register update enable
+      bit_offset: 3
+      bit_size: 1
+    - name: MPER
+      description: MPER register update enable
+      bit_offset: 4
+      bit_size: 1
+    - name: MREP
+      description: MREP register update enable
+      bit_offset: 5
+      bit_size: 1
+    - name: MCMP
+      description: MCMP register X update enable
+      bit_offset: 6
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+fieldset/HRTIM_BDTUPR:
+  description: "High Resolution Timer: Burst DMA Master timer update Register"
+  fields:
+    - name: CR
+      description: CR register update enable
+      bit_offset: 0
+      bit_size: 1
+    - name: ICR
+      description: ICR register update enable
+      bit_offset: 1
+      bit_size: 1
+    - name: DIER
+      description: DIER register update enable
+      bit_offset: 2
+      bit_size: 1
+    - name: CNT
+      description: CNT register update enable
+      bit_offset: 3
+      bit_size: 1
+    - name: PER
+      description: PER register update enable
+      bit_offset: 4
+      bit_size: 1
+    - name: REP
+      description: REP register update enable
+      bit_offset: 5
+      bit_size: 1
+    - name: CMP
+      description: CMP register X update enable
+      bit_offset: 6
+      bit_size: 1
+      array:
+        len: 4
+        stride: 1
+fieldset/HRTIM_BDMADR:
+  description: "High Resolution Timer:  Burst DMA Data Register"
+  fields:
+    - name: BDMADR
+      description: Burst DMA Data register
+      bit_offset: 0
+      bit_size: 31
 fieldset/MCMPX:
   description: Master Timer Compare X Register
   fields:
