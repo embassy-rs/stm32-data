@@ -202,6 +202,7 @@ impl PeriMatcher {
             (".*:JPEG:jpeg1_v1_0", ("jpeg", "v1", "JPEG")),
             (".*:LPTIM:F7_lptimer1_v1_1", ("lptim", "v1", "LPTIM")),
             (".*:HRTIM:hrtim_v1_0", ("hrtim", "v1", "HRTIM")),
+            (".*:HRTIM:hrtim_H7", ("hrtim", "v1", "HRTIM")),
             (".*:LTDC:lcdtft1_v1_1", ("ltdc", "v1", "LTDC")),
             (".*:MDIOS:mdios1_v1_0", ("mdios", "v1", "MDIOS")),
             (".*:QUADSPI:quadspi1_v1_0", ("quadspi", "v1", "QUADSPI")),
@@ -876,6 +877,8 @@ fn process_core(
 
         let addr = if chip_name.starts_with("STM32F0") && pname == "ADC" {
             defines.get_peri_addr("ADC1")
+        } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
+            defines.get_peri_addr("HRTIM1")
         } else {
             defines.get_peri_addr(&pname)
         };
