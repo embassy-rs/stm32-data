@@ -286,7 +286,6 @@ fieldset/HRTIM_CR1:
       array:
         len: 4
         stride: 2
-      enum: UPDATESOURCE
 fieldset/HRTIM_CR2:
   description: "High Resolution Timer: Control Register 2"
   fields:
@@ -1028,7 +1027,6 @@ fieldset/MCR:
       description: Master Continuous mode
       bit_offset: 3
       bit_size: 1
-      enum: CONT
     - name: RETRIG
       description: Master Re-triggerable mode
       bit_offset: 4
@@ -1343,7 +1341,6 @@ fieldset/TIMXCR:
       description: Continuous mode
       bit_offset: 3
       bit_size: 1
-      enum: CONT
     - name: RETRIG
       description: Re-triggerable mode
       bit_offset: 4
@@ -1748,16 +1745,14 @@ fieldset/TIMXOUTR:
         offsets:
           - 0
           - 16
-      enum: IDLEM
     - name: IDLES
-      description: Output 1 Idle State
+      description: Output X Idle State
       bit_offset: 3
       bit_size: 1
       array:
         offsets:
           - 0
           - 16
-      enum: IDLES
     - name: FAULTX
       description: Output X Fault state
       bit_offset: 4
@@ -2029,15 +2024,6 @@ enum/CAPTUREEFFECT:
     - name: TriggerCapture
       description: Timer event triggers capture
       value: 1
-enum/CONT:
-  bit_size: 1
-  variants:
-    - name: SingleShot
-      description: The timer operates in single-shot mode and stops when it reaches the MPER value
-      value: 0
-    - name: Continuous
-      description: The timer operates in continuous (free-running) mode and rolls over to zero when it reaches the MPER value
-      value: 1
 enum/CPPSTAT:
   bit_size: 1
   variants:
@@ -2187,24 +2173,6 @@ enum/FLTEN:
       value: 0
     - name: Active
       description: Fault input is active and can disable HRTIM outputs
-      value: 1
-enum/IDLEM:
-  bit_size: 1
-  variants:
-    - name: NoEffect
-      description: "No action: the output is not affected by the burst mode operation"
-      value: 0
-    - name: SetIdle
-      description: The output is in idle state when requested by the burst mode controller
-      value: 1
-enum/IDLES:
-  bit_size: 1
-  variants:
-    - name: Inactive
-      description: Output idle state is inactive
-      value: 0
-    - name: Active
-      description: Output idle state is active
       value: 1
 enum/INACTIVEEFFECT:
   bit_size: 1
@@ -2374,19 +2342,3 @@ enum/UPDGAT:
     - name: Input3_Update
       description: Update occurs on the update event following a rising edge of HRTIM update enable input 3
       value: 8
-enum/UPDATESOURCE:
-  bit_size: 3
-  variants:
-    - name: MasterTimer
-      value: 0
-    - name: TimerA
-      value: 1
-    - name: TimerB
-      value: 2
-    - name: TimerC
-      value: 3
-    - name: TimerD
-      value: 4
-    - name: TimerE
-      value: 5
-
