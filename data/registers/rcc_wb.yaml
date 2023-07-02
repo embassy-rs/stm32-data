@@ -724,11 +724,12 @@ fieldset/BDCR:
       description: SE oscillator drive capability
       bit_offset: 3
       bit_size: 2
+      enum: LSEDRV
     - name: LSECSSON
       description: LSECSSON
       bit_offset: 5
       bit_size: 1
-    - name: LSECSSD_
+    - name: LSECSSD
       description: CSS on LSE failure detection
       bit_offset: 6
       bit_size: 1
@@ -736,6 +737,7 @@ fieldset/BDCR:
       description: RTC clock source selection
       bit_offset: 8
       bit_size: 2
+      enum: RTCSEL
     - name: RTCEN
       description: RTC clock enable
       bit_offset: 15
@@ -752,6 +754,7 @@ fieldset/BDCR:
       description: Low speed clock output selection
       bit_offset: 25
       bit_size: 2
+      enum: LSCOSEL
 fieldset/C2AHB1ENR:
   description: CPU2 AHB1 peripheral clock enable register
   fields:
@@ -1152,26 +1155,32 @@ fieldset/CFGR:
       description: System clock switch
       bit_offset: 0
       bit_size: 2
+      enum: SW
     - name: SWS
       description: System clock switch status
       bit_offset: 2
       bit_size: 2
+      enum: SW
     - name: HPRE
       description: AHB prescaler
       bit_offset: 4
       bit_size: 4
+      enum: HPRE
     - name: PPRE1
       description: PB low-speed prescaler (APB1)
       bit_offset: 8
       bit_size: 3
+      enum: PPRE
     - name: PPRE2
       description: APB high-speed prescaler (APB2)
       bit_offset: 11
       bit_size: 3
+      enum: PPRE
     - name: STOPWUCK
       description: Wakeup from Stop and CSS backup clock selection
       bit_offset: 15
       bit_size: 1
+      enum: STOPWUCK
     - name: HPREF
       description: AHB prescaler flag
       bit_offset: 16
@@ -1188,10 +1197,12 @@ fieldset/CFGR:
       description: Microcontroller clock output
       bit_offset: 24
       bit_size: 4
+      enum: MCOSEL
     - name: MCOPRE
       description: Microcontroller clock output prescaler
       bit_offset: 28
       bit_size: 3
+      enum: MCOPRE
 fieldset/CICR:
   description: Clock interrupt clear register
   fields:
@@ -1348,6 +1359,7 @@ fieldset/CR:
       description: MSI clock ranges
       bit_offset: 4
       bit_size: 4
+      enum: MSIRANGE
     - name: HSION
       description: HSI clock enabled
       bit_offset: 8
@@ -1558,6 +1570,7 @@ fieldset/PLLCFGR:
       description: "Main PLL, PLLSAI1 and PLLSAI2 entry clock source"
       bit_offset: 0
       bit_size: 2
+      enum: PLLSRC
     - name: PLLM
       description: Division factor M for the main PLL and audio PLL (PLLSAI1 and PLLSAI2) input clock
       bit_offset: 4
@@ -1636,3 +1649,237 @@ fieldset/SMPSCR:
       description: Step Down converter clock switch status
       bit_offset: 8
       bit_size: 2
+enum/SW:
+  bit_size: 2
+  variants:
+    - name: MSI
+      description: MSI selected as system clock
+      value: 0
+    - name: HSI16
+      description: HSI selected as system clock
+      value: 1
+    - name: HSE
+      description: HSE selected as system clock
+      value: 2
+    - name: PLL
+      description: PLL selected as system clock
+      value: 3
+enum/PLLSRC:
+  bit_size: 2
+  variants:
+    - name: None
+      description: No clock sent to PLL
+      value: 0
+    - name: MSI
+      description: MSI selected as PLL input clock
+      value: 1
+    - name: HSI16
+      description: HSI selected as PLL input clock
+      value: 2
+    - name: HSE
+      description: HSE selected as PLL input clock
+      value: 3
+enum/MCOPRE:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: MCO divided by 1
+      value: 0
+    - name: Div2
+      description: MCO divided by 2
+      value: 1
+    - name: Div4
+      description: MCO divided by 4
+      value: 2
+    - name: Div8
+      description: MCO divided by 8
+      value: 3
+    - name: Div16
+      description: MCO divided by 16
+      value: 4
+enum/MCOSEL:
+  bit_size: 4
+  variants:
+    - name: None
+      description: "MCO output disabled, no clock on MCO"
+      value: 0
+    - name: SYSCLK
+      description: SYSCLK system clock selected
+      value: 1
+    - name: MSI
+      description: MSI clock selected
+      value: 2
+    - name: HSI
+      description: HSI16 clock selected
+      value: 3
+    - name: HSE_stable
+      description: HSE clock selected (after stabilization, after HSERDY = 1)
+      value: 4
+    - name: PLL
+      description: Main PLLRCLK clock selected
+      value: 5
+    - name: LSI1
+      description: LSI1 clock selected
+      value: 6
+    - name: LSI2
+      description: LSI2 clock selected
+      value: 7
+    - name: LSE
+      description: LSE clock selected
+      value: 8
+    - name: HSI48
+      description: Internal HSI48 clock selected
+      value: 9
+    - name: HSE_unstable
+      description: HSE clock selected (before stabilization, after HSEON = 1)
+      value: 12
+enum/STOPWUCK:
+  bit_size: 1
+  variants:
+    - name: MSI
+      description: MSI oscillator selected as wake-up from Stop clock and CSS backup clock
+      value: 0
+    - name: HSI16
+      description: HSI16 oscillator selected as wake-up from stop clock and CSS backup clock
+      value: 1
+enum/PPRE:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: HCLK not divided
+      value: 0
+    - name: Div2
+      description: HCLK divided by 2
+      value: 4
+    - name: Div4
+      description: HCLK divided by 4
+      value: 5
+    - name: Div8
+      description: HCLK divided by 8
+      value: 6
+    - name: Div16
+      description: HCLK divided by 16
+      value: 7
+enum/HPRE:
+  bit_size: 4
+  variants:
+    - name: Div1
+      description: SYSCLK not divided
+      value: 0
+    - name: Div2
+      description: SYSCLK divided by 2
+      value: 8
+    - name: Div3
+      description: SYSCLK divided by 3
+      value: 1
+    - name: Div4
+      description: SYSCLK divided by 4
+      value: 9
+    - name: Div5
+      description: SYSCLK divided by 5
+      value: 2
+    - name: Div6
+      description: SYSCLK divided by 6
+      value: 5
+    - name: Div8
+      description: SYSCLK divided by 8
+      value: 10
+    - name: Div10
+      description: SYSCLK divided by 10
+      value: 6
+    - name: Div16
+      description: SYSCLK divided by 16
+      value: 11
+    - name: Div32
+      description: SYSCLK divided by 32
+      value: 7
+    - name: Div64
+      description: SYSCLK divided by 64
+      value: 12
+    - name: Div128
+      description: SYSCLK divided by 128
+      value: 13
+    - name: Div256
+      description: SYSCLK divided by 256
+      value: 14
+    - name: Div512
+      description: SYSCLK divided by 512
+      value: 15
+enum/RTCSEL:
+  bit_size: 2
+  variants:
+    - name: NoClock
+      description: No clock
+      value: 0
+    - name: LSE
+      description: LSE oscillator clock used as RTC clock
+      value: 1
+    - name: LSI
+      description: LSI oscillator clock used as RTC clock
+      value: 2
+    - name: HSE
+      description: HSE oscillator clock divided by 32 used as RTC clock
+      value: 3
+enum/LSEDRV:
+  bit_size: 2
+  variants:
+    - name: Lower
+      description: "'Xtal mode' lower driving capability"
+      value: 0
+    - name: MediumLow
+      description: "'Xtal mode' medium low driving capability"
+      value: 1
+    - name: MediumHigh
+      description: "'Xtal mode' medium high driving capability"
+      value: 2
+    - name: Higher
+      description: "'Xtal mode' higher driving capability"
+      value: 3
+enum/LSCOSEL:
+  bit_size: 1
+  variants:
+    - name: LSI
+      description: "LSI clock selected\""
+      value: 0
+    - name: LSE
+      description: LSE clock selected
+      value: 1
+enum/MSIRANGE:
+  bit_size: 4
+  variants:
+    - name: Range100K
+      description: range 0 around 100 kHz
+      value: 0
+    - name: Range200K
+      description: range 1 around 200 kHz
+      value: 1
+    - name: Range400K
+      description: range 2 around 400 kHz
+      value: 2
+    - name: Range800K
+      description: range 3 around 800 kHz
+      value: 3
+    - name: Range1M
+      description: range 4 around 1 MHz
+      value: 4
+    - name: Range2M
+      description: range 5 around 2 MHz
+      value: 5
+    - name: Range4M
+      description: range 6 around 4 MHz
+      value: 6
+    - name: Range8M
+      description: range 7 around 8 MHz
+      value: 7
+    - name: Range16M
+      description: range 8 around 16 MHz
+      value: 8
+    - name: Range24M
+      description: range 9 around 24 MHz
+      value: 9
+    - name: Range32M
+      description: range 10 around 32 MHz
+      value: 10
+    - name: Range48M
+      description: range 11 around 48 MHz
+      value: 11

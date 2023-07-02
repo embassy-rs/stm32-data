@@ -1,0 +1,519 @@
+# STM32F1
+- no LPTIM
+# STM32F2
+- no LPTIM
+# STM32L1
+- no LPTIM
+# STM32F4
+- STM32F405xx/07xx, STM32F415xx/17xx, STM32F42xxx and STM32F43xxx
+	- no LPTIM
+- STM32F401xB/C and STM32F401xD/E
+	- no LPTIM
+- STM32F411xC/E
+	- no LPTIM
+- STM32F469xx and STM32F479xx
+	- no LPTIM
+- STM32F446xx
+	- no LPTIM
+- STM32F410
+	- chapter [[rm0401-stm32f410-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=450]]
+	- register [[rm0401-stm32f410-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=461]]
+- STM32F412
+	- no LPTIM
+- STM32F413/423
+	- chapter [[rm0430-stm32f413423-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=655]]
+	- register [[rm0430-stm32f413423-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=666]]
+# STM32F0
+- no LPTIM
+# STM32F3
+- no LPTIM
+# STM32F7
+- STM32F75xxx and STM32F74xxx
+	- chapter [[rm0385-stm32f75xxx-and-stm32f74xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=875]]
+	- register [[rm0385-stm32f75xxx-and-stm32f74xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=886]]
+- STM32F76xxx and STM32F77xxx
+	- chapter [[rm0410-stm32f76xxx-and-stm32f77xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1093]]
+	- register [[rm0410-stm32f76xxx-and-stm32f77xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1104]]
+- STM32F72xxx and STM32F73xxx
+	- chapter [[rm0431-stm32f72xxx-and-stm32f73xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=737]]
+	- register [[rm0431-stm32f72xxx-and-stm32f73xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=748]]
+# STM32L0
+- STM32L0x3
+	- chapter [[rm0367-ultralowpower-stm32l0x3-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=613]]
+	- register [[rm0367-ultralowpower-stm32l0x3-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=624]]
+- STM32L0x2
+	- chapter [[rm0376-ultralowpower-stm32l0x2-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=580]]
+	- register [[rm0376-ultralowpower-stm32l0x2-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=591]]
+- STM32L0x1
+	- chapter [[rm0377-ultralowpower-stm32l0x1-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=507]]
+	- register [[rm0377-ultralowpower-stm32l0x1-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=518]]
+- STM32L0x0
+	- chapter [[rm0451-ultralowpower-stm32l0x0-advanced-armbased-32bit-mcus-stmicroelectronics-1.pdf#page=424]]
+	- register [[rm0451-ultralowpower-stm32l0x0-advanced-armbased-32bit-mcus-stmicroelectronics-1.pdf#page=435]]
+# STM32L4
+- chapter [[rm0351-stm32l47xxx-stm32l48xxx-stm32l49xxx-and-stm32l4axxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1186]]
+- register [[rm0351-stm32l47xxx-stm32l48xxx-stm32l49xxx-and-stm32l4axxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1198]]
+# STM32L4+
+- chapter [[rm0394-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=981]]
+- register [[rm0394-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=997]]
+# STM32H7
+- STM32H745/55/47/57xx
+	- chapter [[rm0399-stm32h745755-and-stm32h747757-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=2010]]
+	- register [[rm0399-stm32h745755-and-stm32h747757-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=2026]]
+- STM32H742xx, STM32H743/53xx and STM32H750xB
+	- chapter [[rm0433-stm32h742-stm32h743753-and-stm32h750-value-line-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1860]]
+	- register [[rm0433-stm32h742-stm32h743753-and-stm32h750-value-line-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1876]]
+- STM32H7A3/7B3 and STM32H7B0
+	- chapter [[rm0455-stm32h7a37b3-and-stm32h7b0-value-line-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1759]]
+	- register [[rm0455-stm32h7a37b3-and-stm32h7b0-value-line-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1774]]
+- STM32H723/733, STM32H725/735 and STM32H730
+	- chapter [[rm0468-stm32h723733-stm32h725735-and-stm32h730-value-line-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1896]]
+	- register [[rm0468-stm32h723733-stm32h725735-and-stm32h730-value-line-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1912]]
+# STM32G0
+- STM32G0x0
+	- no LPTIM
+- STM32G0x1
+	- chapter [[rm0444-stm32g0x1-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=831]]
+	- register [[rm0444-stm32g0x1-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=845]]
+# STM32L5
+- STM32L552xx and STM32L562xx
+	- chapter [[rm0438-stm32l552xx-and-stm32l562xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1356]]
+	- register [[rm0438-stm32l552xx-and-stm32l562xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1372]]
+# STM32G4
+- chapter [[rm0440-stm32g4-series-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1461]]
+- register [[rm0440-stm32g4-series-advanced-armbased-32bit-mcus-stmicroelectronics.pdf#page=1474]]
+# STM32WB
+- STM32WB55xx and STM32WB35xx
+	- chapter [[rm0434-multiprotocol-wireless-32bit-mcu-armbased-cortexm4-with-fpu-bluetooth-lowenergy-and-802154-radio-solution-stmicroelectronics-2.pdf#page=885]]
+	- register [[rm0434-multiprotocol-wireless-32bit-mcu-armbased-cortexm4-with-fpu-bluetooth-lowenergy-and-802154-radio-solution-stmicroelectronics-2.pdf#page=898]]
+- STM32WB50CG/30CE
+	- chapter [[rm0471-multiprotocol-wireless-32bit-mcu-armbased-cortexm4-with-fpu-bluetooth-low-energy-or-802154-radio-solution-stmicroelectronics.pdf#page=754]]
+	- register [[rm0471-multiprotocol-wireless-32bit-mcu-armbased-cortexm4-with-fpu-bluetooth-low-energy-or-802154-radio-solution-stmicroelectronics.pdf#page=767]]
+- STM32WB15CC
+	- chapter [[rm0473-multiprotocol-wireless-32bit-mcu-armbased-cortexm4-with-fpu-bluetooth-53-radio-solution-stmicroelectronics.pdf#page=694]]
+	- register [[rm0473-multiprotocol-wireless-32bit-mcu-armbased-cortexm4-with-fpu-bluetooth-53-radio-solution-stmicroelectronics.pdf#page=706]]
+- STM32WB10CC
+	- chapter [[rm0478-multiprotocol-wireless-32bit-mcu-armbased-cortexm4-with-fpu-bluetooth-53-radio-solution-stmicroelectronics.pdf#page=674]]
+	- register [[rm0478-multiprotocol-wireless-32bit-mcu-armbased-cortexm4-with-fpu-bluetooth-53-radio-solution-stmicroelectronics.pdf#page=686]]
+# STM32WL
+- STM32WL5x
+	- chapter [[rm0453-stm32wl5x-advanced-armbased-32bit-mcus-with-subghz-radio-solution-stmicroelectronics.pdf#page=945]]
+	- register [[rm0453-stm32wl5x-advanced-armbased-32bit-mcus-with-subghz-radio-solution-stmicroelectronics.pdf#page=961]]
+- STM32WLEx
+	- chapter [[rm0461-stm32wlex-advanced-armbased-32bit-mcus-with-subghz-radio-solution-stmicroelectronics-1.pdf#page=840]]
+	- register [[rm0461-stm32wlex-advanced-armbased-32bit-mcus-with-subghz-radio-solution-stmicroelectronics-1.pdf#page=856]]
+# STM32U5
+- chapter [[rm0456-stm32u5-series-armbased-32bit-mcus-stmicroelectronics.pdf#page=2464]]
+- register [[rm0456-stm32u5-series-armbased-32bit-mcus-stmicroelectronics.pdf#page=2489]]
+# STM32C0
+- no LPTIM
+# STM32H5
+- STM32H562xx, STM32H563xx, and STM32H573xx
+	- chapter [[rm0481-stm32h563h573-and-stm32h562-armbased-32bit-mcus-stmicroelectronics.pdf#page=1875]]
+	- register [[rm0481-stm32h563h573-and-stm32h562-armbased-32bit-mcus-stmicroelectronics.pdf#page=1898]]
+- STM32H503xx
+	- chapter [[rm0492-stm32h503-line-armbased-32bit-mcus-stmicroelectronics.pdf#page=1009]]
+	- register [[rm0492-stm32h503-line-armbased-32bit-mcus-stmicroelectronics.pdf#page=1031]]
+# Versions
+- rm-0434
+	- RMs:
+		- RM 0434
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- LPTIM_OR
+		- has 2 fields
+			- OR_0
+			- OR_1
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- no LPTIM3_CFGR2
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm-0401
+	- RMs:
+		- RM 0401
+		- RM 0351
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 3 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+	-  LPTIM_OR
+		- has 2 fields
+			- OR_0
+			- OR_1
+		- different to RM 0434, but only if used with enums
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- no LPTIM3_CFGR2
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0430
+	- RMs:
+		- RM 0430
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 3 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+	- no LPTIM_OR
+	- LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- no LPTIM3_CFGR2
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0385
+	- RMs:
+		- RM 0385
+		- RM 0410
+		- RM 0431
+		- RM 0367
+		- RM 0376
+		- RM 0377
+		- RM 0451
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 3 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+	- no LPTIM_OR
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- no LPTIM3_CFGR2
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0399-1
+	- RMs:
+		- RM 0399 for LPTIM (all except LPTIM3)
+		- RM 0433 for LPTIM (all expect LPTIM3)
+		- RM 0455 for all LPTIM
+		- RM 0468 for all LPTIM
+		- RM 0444 for all LPTIM
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- no LPTIM_OR
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- LPTIM_CFGR2
+		- has 2 fields
+			- IN1SEL
+			- IN2SEL
+	- no LPTIM3_CFGR2
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0399-2
+	- RMs:
+		- RM 0399 for LPTIM3
+		- RM 0433 for LPTIM3
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- no LPTIM_OR
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- LPTIM3_CFGR2
+		- has 1 field
+			- IN1SEL
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0438
+	- RMs:
+		- RM 0438
+		- RM 0453
+		- RM 0461
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 9 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+			- UE
+			- REPOK
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- LPTIM_OR
+		- has 2 fields
+			- OR_0
+			- OR_1
+		- LPTIM2_OR and LPTIM3_OR are different to LPTIM1_OR but only if used with enums
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- no LPTIM3_CFGR2
+	- LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0440
+	- RMs:
+		- RM 0440
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR with TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- LPTIM_OR
+		- has 2 fields
+			- IN1
+			- IN2
+			- both are 3 bits which don't lay all next to each other
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- no LPTIM3_CFGR2
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0471
+	- RMs:
+		- RM 0471
+		- RM 0478
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	-  LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- no LPTIM_OR
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- no LPTIM3_CFGR2
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0473
+	- RMs:
+		- RM 0473
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 7 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- LPTIM_OR
+		- has 1 field
+			- OR_0
+	- no LPTIM_OPTR
+	- no LPTIM_CCR1
+	- no LPTIM_CFGR2
+	- no LPTIM3_CFGR2
+	- no LPTIM_RCR
+	- no LPTIM_CCMR1
+	- no LPTIM_CCMR2
+- rm 0456-1:
+	- RMs:
+		- RM 0456 (for LPTIM4)
+		- RM 0481 (for LPTIM4)
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) don't alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 10 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+			- UE
+			- REPOK
+			- DIEROK
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- no LPTIM_OR
+	- no LPTIM_OPTR
+	- LPTIM_CCR1
+	- LPTIM_CFGR2
+		- has 4 fields
+			- IN1SEL
+			- IN2SEL
+			- IC1SEL
+			- IC2SEL
+	- no LPTIM3_CFGR2
+	- LPTIM_RCR
+	- LPTIM_CCMR1
+	- LPTIM_CCMR2
+- rm 0456-2:
+	- RMs:
+		- RM 0456 (for LPTIM1-3)
+		- RM 0481 (for LPTIM1-3)
+		- RM 0492 (for LPTIM1-2)
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER) alternate between input and output compare mode
+	- LPTIM_ISR (also LPTIM_ICR and LPTIM_IER but always same names in fields)
+		- has 12 fields
+			- CMPM
+			- ARRM
+			- EXTTRIG
+			- CMPOK
+			- ARROK
+			- UP
+			- DOWN
+			- UE
+			- REPOK
+			- CC2IF
+			- CMP2OK
+			- DIEROK
+	- LPTIM_CFGR without TRIGSEL extension
+	- LPTIM_CR
+		- has 5 fields
+			- ENABLE
+			- SNGSTRT
+			- CNTSTRT
+			- COUNTRST
+			- RSTARE
+	- no LPTIM_OR
+	- no LPTIM_OPTR
+	- LPTIM_CCR1
+	- LPTIM_CFGR2
+		- has 4 fields
+			- IN1SEL
+			- IN2SEL
+			- IC1SEL
+			- IC2SEL
+	- no LPTIM3_CFGR2
+	- LPTIM_RCR
+	- LPTIM_CCMR1
+	- LPTIM_CCMR2
