@@ -42,7 +42,9 @@ case "$CMD" in
         rm -rf build/{data,stm32-metapac}
         cargo run --release --bin stm32-data-gen
         cargo run --release --bin stm32-metapac-gen
-        (cd build/stm32-metapac && cargo check --features stm32h755zi-cm7,pac,metadata)
+        cd build/stm32-metapac
+        find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2021
+        cargo check --features stm32h755zi-cm7,pac,metadata
     ;;
     *)
         echo "unknown command"
