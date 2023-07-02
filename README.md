@@ -17,10 +17,14 @@ families, including:
 
 :heavy_check_mark: = done, :construction: = work in progress, :x: = to do
 
-## Docs
+The generated JSON files are available [here in the `stm32-data-generated`](https://github.com/embassy-rs/stm32-data-generated/blob/main/data) repo.
+
+## stm32-metapac
 
 If you're looking for the API docs for `stm32-metapac` customized to a
 particular chip, they are available here: https://docs.embassy.dev/stm32-metapac
+
+The generated PAC is available [here in the `stm32-data-generated`](https://github.com/embassy-rs/stm32-data-generated/blob/main/stm32-metapac) repo.
 
 ## Data sources
 
@@ -41,8 +45,13 @@ These are the data sources currently used.
 - STM32 HAL headers:
   - interrupt number, name
   - peripheral addresses
-- stm32-rs SVDs: register blocks. YAMLs are intially extracted from SVDs, manually cleaned up and
-  committed. From this point on, they're manually maintained (we don't maintain "patches" for registers)
+- stm32-rs SVDs: register blocks.
+
+For register blocks, YAMLs are intially extracted from SVDs, manually cleaned up and committed. From this point on, they're manually maintained.
+We don't maintain "patches" for registers unlike the `stm32-rs` project. This has two advantages:
+
+- Fixing mistakes and typos in the SVDs is now much easier (and yes, there are A LOT of those). It doesn't require a complicated patching system, you just edit the YAML to fix the mistake instead of writing a patch that will fix it when applied.
+- Ensuring consistency for the same peripherals between chips. (i.e. we check in a single `i2c_v2.yaml` and ensure it is good, vs trying to patch wildly differing SVDs for what's an identical IP block into being consistent). The `stm32-rs` project doesn't have this as a goal goal, while we do. Writing a single HAL for all stm32 chips (such as  [the `embassy-stm32` HAL](https://github.com/embassy-rs/embassy/tree/main/embassy-stm32)) is impossible otherwise.
 
 ## Install pre-requisites
 
