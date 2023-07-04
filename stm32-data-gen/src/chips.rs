@@ -389,6 +389,7 @@ impl PeriMatcher {
             ("STM32H7.*:DMA.*", ("dma", "v1", "DMA")),
             (".*:DMA.*", ("bdma", "v1", "DMA")),
             (".*:CAN:bxcan1_v1_1.*", ("can", "bxcan", "CAN")),
+            (".*:FDCAN:fdcan1_v1_0.*", ("can", "fdcan", "FDCAN")),
             // # stm32F4 CRC peripheral
             // # ("STM32F4*:CRC:CRC:crc_f4")
             // # v1: F1, F2, F4, L1
