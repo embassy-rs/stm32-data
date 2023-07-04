@@ -17,42 +17,40 @@ block/HSEM:
       byte_offset: 128
       access: Read
       fieldset: RLR
-    - name: C1IER
+    - name: IER
       description: HSEM Interrupt enable register
       byte_offset: 256
-      fieldset: C1IER
-    - name: C1ICR
+      fieldset: IER
+      array:
+        offsets:
+          - 0
+          - 16
+    - name: ICR
       description: HSEM Interrupt clear register
       byte_offset: 260
-      fieldset: C1ICR
-    - name: C1ISR
+      fieldset: ICR
+      array:
+        offsets:
+          - 0
+          - 16
+    - name: ISR
       description: HSEM Interrupt status register
       byte_offset: 264
       access: Read
-      fieldset: C1ISR
-    - name: C1MISR
+      fieldset: ISR
+      array:
+        offsets:
+          - 0
+          - 16
+    - name: MISR
       description: HSEM Masked interrupt status register
       byte_offset: 268
       access: Read
-      fieldset: C1MISR
-    - name: C2IER
-      description: HSEM Interrupt enable register
-      byte_offset: 272
-      fieldset: C2IER
-    - name: C2ICR
-      description: HSEM Interrupt clear register
-      byte_offset: 276
-      fieldset: C2ICR
-    - name: C2ISR
-      description: HSEM Interrupt status register
-      byte_offset: 280
-      access: Read
-      fieldset: C2ISR
-    - name: C2MISR
-      description: HSEM Masked interrupt status register
-      byte_offset: 284
-      access: Read
-      fieldset: C2MISR
+      fieldset: MISR
+      array:
+        offsets:
+          - 0
+          - 16
     - name: CR
       description: Semaphore Clear register
       byte_offset: 320
@@ -86,62 +84,46 @@ block/HSEM:
       byte_offset: 1020
       access: Read
       fieldset: SIDR
-fieldset/C1ICR:
+fieldset/ICR:
   description: HSEM Interrupt clear register
   fields:
     - name: ISCm
       description: CPU(n) semaphore m clear bit
       bit_offset: 0
-      bit_size: 32
-fieldset/C1IER:
+      bit_size: 1
+      array:
+        len: 32
+        stride: 1
+fieldset/IER:
   description: HSEM Interrupt enable register
   fields:
     - name: ISEm
       description: CPU(n) semaphore m enable bit
       bit_offset: 0
-      bit_size: 32
-fieldset/C1ISR:
+      bit_size: 1
+      array:
+        len: 32
+        stride: 1
+fieldset/ISR:
   description: HSEM Interrupt status register
   fields:
     - name: ISFm
       description: CPU(n) semaphore m status bit before enable (mask)
       bit_offset: 0
-      bit_size: 32
-fieldset/C1MISR:
+      bit_size: 1
+      array:
+        len: 32
+        stride: 1
+fieldset/MISR:
   description: HSEM Masked interrupt status register
   fields:
     - name: MISFm
       description: masked CPU(n) semaphore m status bit after enable (mask).
       bit_offset: 0
-      bit_size: 32
-fieldset/C2ICR:
-  description: HSEM Interrupt clear register
-  fields:
-    - name: ISCm
-      description: CPU(2) semaphore m clear bit
-      bit_offset: 0
-      bit_size: 32
-fieldset/C2IER:
-  description: HSEM Interrupt enable register
-  fields:
-    - name: ISEm
-      description: CPU(2) semaphore m enable bit.
-      bit_offset: 0
-      bit_size: 32
-fieldset/C2ISR:
-  description: HSEM Interrupt status register
-  fields:
-    - name: ISFm
-      description: CPU(2) semaphore m status bit before enable (mask).
-      bit_offset: 0
-      bit_size: 32
-fieldset/C2MISR:
-  description: HSEM Masked interrupt status register
-  fields:
-    - name: MISFm
-      description: masked CPU(2) semaphore m status bit after enable (mask).
-      bit_offset: 0
-      bit_size: 32
+      bit_size: 1
+      array:
+        len: 32
+        stride: 1
 fieldset/CR:
   description: Semaphore Clear register
   fields:
@@ -167,22 +149,13 @@ fieldset/HWCFGR1:
 fieldset/HWCFGR2:
   description: Semaphore hardware configuration register 2
   fields:
-    - name: MASTERID1
+    - name: MASTERID
       description: Hardware Configuration valid bus masters ID1
       bit_offset: 0
       bit_size: 4
-    - name: MASTERID2
-      description: Hardware Configuration valid bus masters ID2
-      bit_offset: 4
-      bit_size: 4
-    - name: MASTERID3
-      description: Hardware Configuration valid bus masters ID3
-      bit_offset: 8
-      bit_size: 4
-    - name: MASTERID4
-      description: Hardware Configuration valid bus masters ID4
-      bit_offset: 12
-      bit_size: 4
+      array:
+        len: 4
+        stride: 4
 fieldset/IPIDR:
   description: HSEM indentification register
   fields:
