@@ -32,8 +32,12 @@ case "$CMD" in
                 rm tmp/$peri/$f.err
                 echo OK
             else
+                if grep -q 'peripheral not found' tmp/$peri/$f.err; then
+                    echo No Peripheral
+                else
+                    echo OTHER FAILURE
+                fi
                 rm tmp/$peri/$f.yaml
-                echo FAIL
             fi
         done
     ;;
