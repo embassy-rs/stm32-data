@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::anyhow;
-use chiptool::ir::IR;
+use chiptool::ir::{BlockItemInner, IR};
 
 pub struct Registers {
     pub registers: HashMap<String, IR>,
@@ -22,6 +22,32 @@ impl Registers {
                 .to_string();
             let ir: IR = serde_yaml::from_str(&std::fs::read_to_string(&f)?)
                 .map_err(|e| anyhow!("failed to parse {f:?}: {e:?}"))?;
+
+            // validate yaml file
+            for (name, block) in &ir.blocks {
+                for item in &block.items {
+                    match &item.inner {
+                        BlockItemInner::Block(inner_block) => {
+                            if !ir.blocks.contains_key(&inner_block.block) {
+                                return Err(anyhow!(
+                                    "block {name} specified block {} but it does not exist",
+                                    inner_block.block
+                                ));
+                            }
+                        }
+                        BlockItemInner::Register(inner_register) => {
+                            if let Some(fieldset) = &inner_register.fieldset {
+                                if !ir.fieldsets.contains_key(fieldset) {
+                                    return Err(anyhow!(
+                                        "block {name} specified fieldset {fieldset} but it does not exist",
+                                    ));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             registers.insert(ff, ir);
         }
 
