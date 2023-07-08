@@ -11,7 +11,7 @@ case "$CMD" in
         rm -rf ./sources/
         git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
         cd ./sources/
-        git checkout ca89656b
+        git checkout 6f447dd
     ;;
     install-chiptool)
         cargo install --git https://github.com/embassy-rs/chiptool
