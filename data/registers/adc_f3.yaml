@@ -63,24 +63,15 @@ block/ADC1:
       description: injected sequence register
       byte_offset: 76
       fieldset: JSQR
-    - name: OFR1
-      description: offset register 1
+    - name: OFR
+      description: offset register X
       byte_offset: 96
-      fieldset: OFR1
-    - name: OFR2
-      description: offset register 2
-      byte_offset: 100
-      fieldset: OFR2
-    - name: OFR3
-      description: offset register 3
-      byte_offset: 104
-      fieldset: OFR3
-    - name: OFR4
-      description: offset register 4
-      byte_offset: 108
-      fieldset: OFR4
+      fieldset: OFR
+      array:
+        len: 4
+        stride: 4
     - name: JDR
-      description: injected data register 1
+      description: injected data register X
       byte_offset: 128
       access: Read
       fieldset: JDR
@@ -508,70 +499,21 @@ fieldset/JSQR:
       description: JSQ4
       bit_offset: 26
       bit_size: 5
-fieldset/OFR1:
+fieldset/OFR:
   description: offset register 1
   fields:
-    - name: OFFSET1
-      description: OFFSET1
+    - name: OFFSET
+      description: Data offset y for the channel programmed into bits OFFSETy_CH
       bit_offset: 0
       bit_size: 12
-    - name: OFFSET1_CH
-      description: OFFSET1_CH
+    - name: CH
+      description: Data offset y for the channel programmed into bits OFFSETy_CH
       bit_offset: 26
       bit_size: 5
-    - name: OFFSET1_EN
-      description: OFFSET1_EN
+    - name: EN
+      description: Offset y Enable
       bit_offset: 31
       bit_size: 1
-      enum: OFFSET1_EN
-fieldset/OFR2:
-  description: offset register 2
-  fields:
-    - name: OFFSET2
-      description: OFFSET2
-      bit_offset: 0
-      bit_size: 12
-    - name: OFFSET2_CH
-      description: OFFSET2_CH
-      bit_offset: 26
-      bit_size: 5
-    - name: OFFSET2_EN
-      description: OFFSET2_EN
-      bit_offset: 31
-      bit_size: 1
-      enum: OFFSET2_EN
-fieldset/OFR3:
-  description: offset register 3
-  fields:
-    - name: OFFSET3
-      description: OFFSET3
-      bit_offset: 0
-      bit_size: 12
-    - name: OFFSET3_CH
-      description: OFFSET3_CH
-      bit_offset: 26
-      bit_size: 5
-    - name: OFFSET3_EN
-      description: OFFSET3_EN
-      bit_offset: 31
-      bit_size: 1
-      enum: OFFSET3_EN
-fieldset/OFR4:
-  description: offset register 4
-  fields:
-    - name: OFFSET4
-      description: OFFSET4
-      bit_offset: 0
-      bit_size: 12
-    - name: OFFSET4_CH
-      description: OFFSET4_CH
-      bit_offset: 26
-      bit_size: 5
-    - name: OFFSET4_EN
-      description: OFFSET4_EN
-      bit_offset: 31
-      bit_size: 1
-      enum: OFFSET4_EN
 fieldset/SMPR1:
   description: sample time register 1
   fields:
@@ -598,82 +540,46 @@ fieldset/SQR1:
   description: regular sequence register 1
   fields:
     - name: L
-      description: L3
+      description: Regular channel sequence length
       bit_offset: 0
       bit_size: 4
-    - name: SQ1
-      description: SQ1
+    - name: SQ
+      description: X conversion in regular sequence
       bit_offset: 6
       bit_size: 5
-    - name: SQ2
-      description: SQ2
-      bit_offset: 12
-      bit_size: 5
-    - name: SQ3
-      description: SQ3
-      bit_offset: 18
-      bit_size: 5
-    - name: SQ4
-      description: SQ4
-      bit_offset: 24
-      bit_size: 5
+      array:
+        len: 4
+        stride: 6
 fieldset/SQR2:
   description: regular sequence register 2
   fields:
-    - name: SQ5
-      description: SQ5
+    - name: SQ
+      description: X conversion in regular sequence
       bit_offset: 0
       bit_size: 5
-    - name: SQ6
-      description: SQ6
-      bit_offset: 6
-      bit_size: 5
-    - name: SQ7
-      description: SQ7
-      bit_offset: 12
-      bit_size: 5
-    - name: SQ8
-      description: SQ8
-      bit_offset: 18
-      bit_size: 5
-    - name: SQ9
-      description: SQ9
-      bit_offset: 24
-      bit_size: 5
+      array:
+        len: 5
+        stride: 6
 fieldset/SQR3:
   description: regular sequence register 3
   fields:
-    - name: SQ10
-      description: SQ10
+    - name: SQ
+      description: X conversion in regular sequence
       bit_offset: 0
       bit_size: 5
-    - name: SQ11
-      description: SQ11
-      bit_offset: 6
-      bit_size: 5
-    - name: SQ12
-      description: SQ12
-      bit_offset: 12
-      bit_size: 5
-    - name: SQ13
-      description: SQ13
-      bit_offset: 18
-      bit_size: 5
-    - name: SQ14
-      description: SQ14
-      bit_offset: 24
-      bit_size: 5
+      array:
+        len: 5
+        stride: 6
 fieldset/SQR4:
   description: regular sequence register 4
   fields:
-    - name: SQ15
-      description: SQ15
+    - name: SQ
+      description: X conversion in regular sequence
       bit_offset: 0
       bit_size: 5
-    - name: SQ16
-      description: SQ16
-      bit_offset: 6
-      bit_size: 5
+      array:
+        len: 2
+        stride: 6
 fieldset/TR1:
   description: watchdog threshold register 1
   fields:
@@ -1105,42 +1011,6 @@ enum/JQOVFIE:
       value: 0
     - name: Enabled
       description: Injected context queue overflow interrupt enabled
-      value: 1
-enum/OFFSET1_EN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Offset disabled
-      value: 0
-    - name: Enabled
-      description: Offset enabled
-      value: 1
-enum/OFFSET2_EN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Offset disabled
-      value: 0
-    - name: Enabled
-      description: Offset enabled
-      value: 1
-enum/OFFSET3_EN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Offset disabled
-      value: 0
-    - name: Enabled
-      description: Offset enabled
-      value: 1
-enum/OFFSET4_EN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Offset disabled
-      value: 0
-    - name: Enabled
-      description: Offset enabled
       value: 1
 enum/OVRIE:
   bit_size: 1
