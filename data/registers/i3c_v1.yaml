@@ -430,7 +430,6 @@ fieldset/DEVR0:
       description: "IBI request enable (when the I3C is acting as target)\r This field is initially written by software when CFGR.EN=0, and is updated by hardware on the reception of DISEC CCC with DISINT=1 (i.e. cleared) and the reception of ENEC CCC with ENINT=1 (i.e. set)."
       bit_offset: 16
       bit_size: 1
-      enum: IBIEN
     - name: CREN
       description: "controller-role request enable (when the I3C is acting as target)\r This field is initially written by software when CFGR.EN=0, and is updated by hardware on the reception of DISEC CCC with DISCR=1 (i.e. cleared) and the reception of ENEC CCC with ENCR=1 (i.e. set)."
       bit_offset: 17
@@ -486,7 +485,6 @@ fieldset/DEVR1:
       description: "DA[6:0] write disabled (when the I3C is acting as controller)\r When the I3C is acting as controller, once that software set IBIACK=1 or CRACK=1, this read bit is set by hardware (i.e. DIS=1) to lock the configured DA[6:0] and IBIDEN values.\r Then, to be able to next modify DA[6:0] or IBIDEN, the software must wait for this field DIS to be de-asserted by hardware (i.e. polling on DIS=0) before modifying these two assigned values to the target x. Indeed, the target may be requesting an IBI or a controller-role meanwhile the controller intends to modify DA[6:0] or IBIDEN."
       bit_offset: 31
       bit_size: 1
-      enum: DEVR1_DIS
 fieldset/DEVR2:
   description: I3C device 2 characteristics register
   fields:
@@ -770,17 +768,14 @@ fieldset/IER:
       description: S-FIFO not empty interrupt enable (whatever the I3C is acting as controller/target)
       bit_offset: 3
       bit_size: 1
-      enum: SFNEIE
     - name: TXFNFIE
       description: TX-FIFO not full interrupt enable (whatever the I3C is acting as controller/target)
       bit_offset: 4
       bit_size: 1
-      enum: TXFNFIE
     - name: RXFNEIE
       description: RX-FIFO not empty interrupt enable (whatever the I3C is acting as controller/target)
       bit_offset: 5
       bit_size: 1
-      enum: RXFNEIE
     - name: FCIE
       description: frame complete interrupt enable (whatever the I3C is acting as controller/target)
       bit_offset: 9
@@ -805,7 +800,6 @@ fieldset/IER:
       description: IBI end interrupt enable (when the I3C is acting as target)
       bit_offset: 16
       bit_size: 1
-      enum: IBIENDIE
     - name: CRIE
       description: controller-role request interrupt enable (when the I3C is acting as controller)
       bit_offset: 17
@@ -825,7 +819,6 @@ fieldset/IER:
       description: wakeup interrupt enable (when the I3C is acting as target)
       bit_offset: 21
       bit_size: 1
-      enum: WKPIE
     - name: GETIE
       description: GETxxx CCC interrupt enable (when the I3C is acting as target)
       bit_offset: 22
@@ -835,7 +828,6 @@ fieldset/IER:
       description: GETSTATUS CCC interrupt enable (when the I3C is acting as target)
       bit_offset: 23
       bit_size: 1
-      enum: STAIE
     - name: DAUPDIE
       description: ENTDAA/RSTDAA/SETNEWDA CCC interrupt enable (when the I3C is acting as target)
       bit_offset: 24
@@ -845,17 +837,14 @@ fieldset/IER:
       description: SETMWL CCC interrupt enable (when the I3C is acting as target)
       bit_offset: 25
       bit_size: 1
-      enum: MWLUPDIE
     - name: MRLUPDIE
       description: SETMRL CCC interrupt enable (when the I3C is acting as target)
       bit_offset: 26
       bit_size: 1
-      enum: MRLUPDIE
     - name: RSTIE
       description: reset pattern interrupt enable (when the I3C is acting as target)
       bit_offset: 27
       bit_size: 1
-      enum: RSTIE
     - name: ASUPDIE
       description: ENTASx CCC interrupt enable (when the I3C is acting as target)
       bit_offset: 28
@@ -865,7 +854,6 @@ fieldset/IER:
       description: ENEC/DISEC CCC interrupt enable (when the I3C is acting as target)
       bit_offset: 29
       bit_size: 1
-      enum: INTUPDIE
     - name: DEFIE
       description: DEFTGTS CCC interrupt enable (when the I3C is acting as target)
       bit_offset: 30
@@ -1749,15 +1737,6 @@ enum/DEVR1_CRACK:
     - name: B_0x1
       description: "a controller-role request (with 7-bit dynamic address DA[6:0]) from target x is to be ACKed"
       value: 1
-enum/DEVR1_DIS:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: "write to DEVRx.DA[7:0] and to DEVRx.IBIDEN is allowed"
-      value: 0
-    - name: B_0x1
-      description: "write DEVRx.DA[7:0] and to DEVRx.IBIDEN is disabled/locked "
-      value: 1
 enum/DEVR1_IBIACK:
   bit_size: 1
   variants:
@@ -1920,33 +1899,6 @@ enum/DEVR4_SUSP:
     - name: B_0x1
       description: I3C transfer is stopped and C-FIFO is flushed on a received IBI request from target x
       value: 1
-enum/IBIEN:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: IBI request disabled
-      value: 0
-    - name: B_0x1
-      description: IBI request enabled
-      value: 1
-enum/IBIENDIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
-      value: 1
-enum/IBIIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
-      value: 1
 enum/IBIP:
   bit_size: 3
   variants:
@@ -1965,33 +1917,6 @@ enum/IBIP:
     - name: B_0x4
       description: "4 bytes (including first MDB[7:0])"
       value: 4
-enum/INTUPDIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
-      value: 1
-enum/MRLUPDIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
-      value: 1
-enum/MWLUPDIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
-      value: 1
 enum/NOARBH:
   bit_size: 1
   variants:
@@ -2052,15 +1977,6 @@ enum/RSTACT:
     - name: B_0x3
       description: no reset action
       value: 3
-enum/RSTIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
-      value: 1
 enum/RSTPTRN:
   bit_size: 1
   variants:
@@ -2087,15 +2003,6 @@ enum/RXFLUSH:
       value: 0
     - name: B_0x1
       description: flush RX-FIFO
-      value: 1
-enum/RXFNEIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
       value: 1
 enum/RXTGTENDIE:
   bit_size: 1
@@ -2141,24 +2048,6 @@ enum/SFLUSH:
       value: 0
     - name: B_0x1
       description: flush S-FIFO
-      value: 1
-enum/SFNEIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
-      value: 1
-enum/STAIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
       value: 1
 enum/STALL:
   bit_size: 1
@@ -2223,15 +2112,6 @@ enum/TXFLUSH:
     - name: B_0x1
       description: flush TX-FIFO
       value: 1
-enum/TXFNFIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
-      value: 1
 enum/TXTHRES:
   bit_size: 1
   variants:
@@ -2240,13 +2120,4 @@ enum/TXTHRES:
       value: 0
     - name: B_0x1
       description: 4-byte threshold
-      value: 1
-enum/WKPIE:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: interrupt disabled
-      value: 0
-    - name: B_0x1
-      description: interrupt enabled
       value: 1
