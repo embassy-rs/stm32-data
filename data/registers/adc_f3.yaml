@@ -339,60 +339,44 @@ fieldset/IER:
   description: interrupt enable register
   fields:
     - name: ADRDYIE
-      description: ADRDYIE
+      description:  ADC ready interrupt enable
       bit_offset: 0
       bit_size: 1
-      enum: ADRDYIE
     - name: EOSMPIE
-      description: EOSMPIE
+      description: End of sampling flag interrupt enable for regular conversions
       bit_offset: 1
       bit_size: 1
-      enum: EOSMPIE
     - name: EOCIE
-      description: EOCIE
+      description: End of regular conversion interrupt enable
       bit_offset: 2
       bit_size: 1
-      enum: EOCIE
     - name: EOSIE
-      description: EOSIE
+      description: End of regular sequence of conversions interrupt enable
       bit_offset: 3
       bit_size: 1
-      enum: EOSIE
     - name: OVRIE
-      description: OVRIE
+      description: Overrun interrupt enable
       bit_offset: 4
       bit_size: 1
-      enum: OVRIE
     - name: JEOCIE
-      description: JEOCIE
+      description: End of injected conversion interrupt enable
       bit_offset: 5
       bit_size: 1
-      enum: JEOCIE
     - name: JEOSIE
-      description: JEOSIE
+      description: End of injected sequence of conversions interrupt enable
       bit_offset: 6
       bit_size: 1
-      enum: JEOSIE
-    - name: AWD1IE
-      description: AWD1IE
+    - name: AWDIE
+      description: Analog watchdog X interrupt enable
       bit_offset: 7
       bit_size: 1
-      enum: AWD1IE
-    - name: AWD2IE
-      description: AWD2IE
-      bit_offset: 8
-      bit_size: 1
-      enum: AWD1IE
-    - name: AWD3IE
-      description: AWD3IE
-      bit_offset: 9
-      bit_size: 1
-      enum: AWD1IE
+      array:
+        len: 3
+        stride: 1
     - name: JQOVFIE
-      description: JQOVFIE
+      description: Injected context queue overflow interrupt enable
       bit_offset: 10
       bit_size: 1
-      enum: JQOVFIE
 fieldset/ISR:
   description: interrupt and status register
   fields:
@@ -446,35 +430,26 @@ fieldset/JSQR:
   description: injected sequence register
   fields:
     - name: JL
-      description: JL
+      description: Injected channel sequence length
       bit_offset: 0
       bit_size: 2
     - name: JEXTSEL
-      description: JEXTSEL
+      description: External Trigger Selection for injected group
       bit_offset: 2
       bit_size: 4
       enum: JEXTSEL
     - name: JEXTEN
-      description: JEXTEN
+      description: External Trigger Enable and Polarity Selection for injected channels
       bit_offset: 6
       bit_size: 2
       enum: JEXTEN
-    - name: JSQ1
-      description: JSQ1
+    - name: JSQ
+      description: X conversion in the injected sequence
       bit_offset: 8
       bit_size: 5
-    - name: JSQ2
-      description: JSQ2
-      bit_offset: 14
-      bit_size: 5
-    - name: JSQ3
-      description: JSQ3
-      bit_offset: 20
-      bit_size: 5
-    - name: JSQ4
-      description: JSQ4
-      bit_offset: 26
-      bit_size: 5
+      array:
+        len: 4
+        stride: 6
 fieldset/OFR:
   description: offset register 1
   fields:
@@ -589,15 +564,6 @@ fieldset/TR3:
       description: HT3
       bit_offset: 16
       bit_size: 8
-enum/ADRDYIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: ADC ready interrupt disabled
-      value: 0
-    - name: Enabled
-      description: ADC ready interrupt enabled
-      value: 1
 enum/ADVREGEN:
   bit_size: 2
   variants:
@@ -619,15 +585,6 @@ enum/ALIGN:
     - name: Left
       description: Left alignment
       value: 1
-enum/AWD1IE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Analog watchdog interrupt disabled
-      value: 0
-    - name: Enabled
-      description: Analog watchdog interrupt enabled
-      value: 1
 enum/AWD1SGL:
   bit_size: 1
   variants:
@@ -645,33 +602,6 @@ enum/DIFSEL_10:
       value: 0
     - name: Differential
       description: Input channel is configured in differential mode
-      value: 1
-enum/EOCIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: End of regular conversion interrupt disabled
-      value: 0
-    - name: Enabled
-      description: End of regular conversion interrupt enabled
-      value: 1
-enum/EOSIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: End of regular sequence interrupt disabled
-      value: 0
-    - name: Enabled
-      description: End of regular sequence interrupt enabled
-      value: 1
-enum/EOSMPIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: End of regular conversion sampling phase interrupt disabled
-      value: 0
-    - name: Enabled
-      description: End of regular conversion sampling phase interrupt enabled
       value: 1
 enum/EXTEN:
   bit_size: 2
@@ -733,24 +663,6 @@ enum/EXTSEL:
     - name: TIM3_CC4
       description: Timer 3 CC4 event
       value: 15
-enum/JEOCIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: End of injected conversion interrupt disabled
-      value: 0
-    - name: Enabled
-      description: End of injected conversion interrupt enabled
-      value: 1
-enum/JEOSIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: End of injected sequence interrupt disabled
-      value: 0
-    - name: Enabled
-      description: End of injected sequence interrupt enabled
-      value: 1
 enum/JEXTEN:
   bit_size: 2
   variants:
@@ -819,24 +731,6 @@ enum/JQM:
       value: 0
     - name: Mode1
       description: "JSQR Mode 1: An empty queue disables software and hardware triggers of the injected sequence"
-      value: 1
-enum/JQOVFIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Injected context queue overflow interrupt disabled
-      value: 0
-    - name: Enabled
-      description: Injected context queue overflow interrupt enabled
-      value: 1
-enum/OVRIE:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Overrun interrupt disabled
-      value: 0
-    - name: Enabled
-      description: Overrun interrupt enabled
       value: 1
 enum/RES:
   bit_size: 2
