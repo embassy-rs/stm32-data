@@ -1,0 +1,347 @@
+---
+block/DAC:
+  description: Digital-to-analog converter
+  items:
+    - name: CR
+      description: control register
+      byte_offset: 0
+      fieldset: CR
+    - name: SWTRIGR
+      description: software trigger register
+      byte_offset: 4
+      access: Write
+      fieldset: SWTRIGR
+    - name: DHR12R
+      description: channel 12-bit right-aligned data holding register
+      array:
+        len: 2
+        stride: 12
+      byte_offset: 8
+      fieldset: DHR12R
+    - name: DHR12L
+      description: channel 12-bit left-aligned data holding register
+      array:
+        len: 2
+        stride: 12
+      byte_offset: 12
+      fieldset: DHR12L
+    - name: DHR8R
+      description: channel 8-bit right-aligned data holding register
+      array:
+        len: 2
+        stride: 12
+      byte_offset: 16
+      fieldset: DHR8R
+    - name: DHR12RD
+      description: Dual DAC 12-bit right-aligned data holding register
+      byte_offset: 32
+      fieldset: DHR12RD
+    - name: DHR12LD
+      description: DUAL DAC 12-bit left aligned data holding register
+      byte_offset: 36
+      fieldset: DHR12LD
+    - name: DHR8RD
+      description: DUAL DAC 8-bit right aligned data holding register
+      byte_offset: 40
+      fieldset: DHR8RD
+    - name: DOR
+      description: channel data output register
+      array:
+        len: 2
+        stride: 4
+      byte_offset: 44
+      access: Read
+      fieldset: DOR
+    - name: SR
+      description: status register
+      byte_offset: 52
+      fieldset: SR
+    - name: CCR
+      description: calibration control register
+      byte_offset: 56
+      fieldset: CCR
+    - name: MCR
+      description: mode control register
+      byte_offset: 60
+      fieldset: MCR
+    - name: SHSR1
+      description: Sample and Hold sample time register
+      array:
+        len: 2
+        stride: 4
+      byte_offset: 64
+      fieldset: SHSR
+    - name: SHHR
+      description: Sample and Hold hold time register
+      byte_offset: 72
+      fieldset: SHHR
+    - name: SHRR
+      description: Sample and Hold refresh time register
+      byte_offset: 76
+      fieldset: SHRR
+fieldset/CCR:
+  description: calibration control register
+  fields:
+    - name: OTRIM1
+      description: DAC Channel 1 offset trimming value
+      bit_offset: 0
+      bit_size: 5
+    - name: OTRIM2
+      description: DAC Channel 2 offset trimming value
+      bit_offset: 16
+      bit_size: 5
+fieldset/CR:
+  description: control register
+  fields:
+    - name: EN
+      description: DAC channel enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 2
+        stride: 16
+    - name: TEN
+      description: DAC channel trigger enable
+      bit_offset: 1
+      bit_size: 1
+      array:
+        len: 2
+        stride: 16
+    - name: TSEL1
+      description: DAC channel 1 trigger selection
+      bit_offset: 2
+      bit_size: 4
+      enum: TSEL1
+    - name: WAVE
+      description: DAC channel noise/triangle wave generation enable
+      bit_offset: 6
+      bit_size: 2
+      array:
+        len: 2
+        stride: 16
+      enum: WAVE
+    - name: MAMP
+      description: DAC channel mask/amplitude selector
+      bit_offset: 8
+      bit_size: 4
+      array:
+        len: 2
+        stride: 16
+    - name: DMAEN
+      description: DAC channel DMA enable
+      bit_offset: 12
+      bit_size: 1
+      array:
+        len: 2
+        stride: 16
+    - name: DMAUDRIE
+      description: DAC channel DMA Underrun Interrupt enable
+      bit_offset: 13
+      bit_size: 1
+      array:
+        len: 2
+        stride: 16
+    - name: CEN
+      description: DAC channel calibration enable
+      bit_offset: 14
+      bit_size: 1
+      array:
+        len: 2
+        stride: 16
+    - name: TSEL2
+      description: DAC channel 2 trigger selection
+      bit_offset: 18
+      bit_size: 4
+      enum: TSEL2
+fieldset/DHR12L:
+  description: channel 12-bit left-aligned data holding register
+  fields:
+    - name: DHR
+      description: DAC channel 12-bit left-aligned data
+      bit_offset: 4
+      bit_size: 12
+fieldset/DHR12LD:
+  description: DUAL DAC 12-bit left aligned data holding register
+  fields:
+    - name: DHR
+      description: DAC channel 12-bit left-aligned data
+      bit_offset: 4
+      bit_size: 12
+      array:
+        len: 2
+        stride: 16
+fieldset/DHR12R:
+  description: channel 12-bit right-aligned data holding register
+  fields:
+    - name: DHR
+      description: DAC channel 12-bit right-aligned data
+      bit_offset: 0
+      bit_size: 12
+fieldset/DHR12RD:
+  description: Dual DAC 12-bit right-aligned data holding register
+  fields:
+    - name: DHR
+      description: DAC channel 12-bit right-aligned data
+      bit_offset: 0
+      bit_size: 12
+      array:
+        len: 2
+        stride: 16
+fieldset/DHR8R:
+  description: channel 8-bit right-aligned data holding register
+  fields:
+    - name: DHR
+      description: DAC channel 8-bit right-aligned data
+      bit_offset: 0
+      bit_size: 8
+fieldset/DHR8RD:
+  description: DUAL DAC 8-bit right aligned data holding register
+  fields:
+    - name: DHR
+      description: DAC channel 8-bit right-aligned data
+      bit_offset: 0
+      bit_size: 8
+      array:
+        len: 2
+        stride: 8
+fieldset/DOR:
+  description: channel data output register
+  fields:
+    - name: DOR
+      description: DAC channel data output
+      bit_offset: 0
+      bit_size: 12
+fieldset/MCR:
+  description: mode control register
+  fields:
+    - name: MODE
+      description: DAC channel mode
+      bit_offset: 0
+      bit_size: 3
+      array:
+        len: 2
+        stride: 16
+fieldset/SHHR:
+  description: Sample and Hold hold time register
+  fields:
+    - name: THOLD
+      description: DAC channel hold Time
+      bit_offset: 0
+      bit_size: 10
+      array:
+        len: 2
+        stride: 16
+fieldset/SHRR:
+  description: Sample and Hold refresh time register
+  fields:
+    - name: TREFRESH
+      description: DAC channel refresh Time
+      bit_offset: 0
+      bit_size: 8
+      array:
+        len: 2
+        stride: 16
+fieldset/SHSR:
+  description: Sample and Hold sample time register
+  fields:
+    - name: TSAMPLE
+      description: DAC channel sample Time
+      bit_offset: 0
+      bit_size: 10
+fieldset/SR:
+  description: status register
+  fields:
+    - name: DMAUDR
+      description: DAC channel DMA underrun flag
+      bit_offset: 13
+      bit_size: 1
+      array:
+        len: 2
+        stride: 16
+    - name: CAL_FLAG
+      description: DAC channel calibration offset status
+      bit_offset: 14
+      bit_size: 1
+      array:
+        len: 2
+        stride: 16
+    - name: BWST
+      description: DAC channel busy writing sample time flag
+      bit_offset: 15
+      bit_size: 1
+      array:
+        len: 2
+        stride: 16
+fieldset/SWTRIGR:
+  description: software trigger register
+  fields:
+    - name: SWTRIG
+      description: DAC channel software trigger
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 2
+        stride: 1
+enum/TSEL1:
+  bit_size: 3
+  variants:
+    - name: TIM6_TRGO
+      description: Timer 6 TRGO event
+      value: 0
+    - name: TIM3_TRGO
+      description: Timer 3 TRGO event
+      value: 1
+    - name: TIM7_TRGO
+      description: Timer 7 TRGO event
+      value: 2
+    - name: TIM15_TRGO
+      description: Timer 15 TRGO event
+      value: 3
+    - name: TIM2_TRGO
+      description: Timer 2 TRGO event
+      value: 4
+    - name: EXTI9
+      description: EXTI line9
+      value: 6
+    - name: SOFTWARE
+      description: Software trigger
+      value: 7
+enum/TSEL2:
+  bit_size: 3
+  variants:
+    - name: TIM6_TRGO
+      description: Timer 6 TRGO event
+      value: 0
+    - name: TIM8_TRGO
+      description: Timer 8 TRGO event
+      value: 1
+    - name: TIM7_TRGO
+      description: Timer 7 TRGO event
+      value: 2
+    - name: TIM5_TRGO
+      description: Timer 5 TRGO event
+      value: 3
+    - name: TIM2_TRGO
+      description: Timer 2 TRGO event
+      value: 4
+    - name: TIM4_TRGO
+      description: Timer 4 TRGO event
+      value: 5
+    - name: EXTI9
+      description: EXTI line9
+      value: 6
+    - name: SOFTWARE
+      description: Software trigger
+      value: 7
+enum/WAVE:
+  bit_size: 2
+  variants:
+    - name: Disabled
+      description: Wave generation disabled
+      value: 0
+    - name: Noise
+      description: Noise wave generation enabled
+      value: 1
+    - name: Triangle
+      description: Triangle wave generation enabled
+      value: 2

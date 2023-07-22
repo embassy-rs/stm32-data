@@ -166,7 +166,7 @@ impl PeriMatcher {
             (".*:DAC:dacif_v1_1F1", ("dac", "v1", "DAC")),
             (".*:DAC:F0dacif_v1_1", ("dac", "v1", "DAC")),
             (".*:DAC:dacif_v2_0", ("dac", "v2", "DAC")),
-            (".*:DAC:dacif_v3_0", ("dac", "v2", "DAC")),
+            (".*:DAC:dacif_v3_0", ("dac", "v3", "DAC")),
             (".*:DAC:F3_dacif_v1_1", ("dac", "v1", "DAC")),
             (".*:ADC:aditf_v2_5F1", ("adc", "f1", "ADC")),
             (".*:ADC:aditf4_v1_1", ("adc", "v1", "ADC")),
