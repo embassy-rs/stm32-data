@@ -298,6 +298,7 @@ impl PeriMatcher {
             ("STM32G0B1.*:CRS:.*", ("crs", "v1", "CRS")),
             ("STM32G0C1.*:CRS:.*", ("crs", "v1", "CRS")),
             ("STM32G4.*:CRS:.*", ("crs", "v1", "CRS")),
+            ("STM32U5.*:CRS:.*", ("crs", "v1", "CRS")),
             (".*SDMMC:sdmmc2_v1_0", ("sdmmc", "v2", "SDMMC")),
             ("STM32C0.*:PWR:.*", ("pwr", "c0", "PWR")),
             ("STM32G0.*:PWR:.*", ("pwr", "g0", "PWR")),
