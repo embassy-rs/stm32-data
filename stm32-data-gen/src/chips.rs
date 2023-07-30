@@ -963,33 +963,31 @@ fn process_core(
 
             //filter by available, because some are conditioned on <Die>
 
-            let mut irqs: Vec<_> =
-                if pname == "CAN" && (chip_name.starts_with("STM32F358") || chip_name.starts_with("STM32F398")) {
-                    /*
-                        This section is needed because the interrupt definition file does not apply uniformly to
-                        all chips that it covers in this specific case. This cannot be done in interrupt.rs
-                        because there, it's only possible to modify the interrupt definition file in a uniform manner.
-                    */
+            static EQUIVALENT_IRQS: &[(&str, &[&str])] = &[
+                ("HASH_RNG", &["RNG"]),
+                ("USB_HP_CAN_TX", &["CAN_TX"]),
+                ("USB_LP_CAN_RX0", &["CAN_RX0"]),
+            ];
 
-                    peri_irqs
-                        .iter()
-                        .map(|i| Interrupt {
-                            interrupt: i
-                                .interrupt
-                                .trim_start_matches("USB_LP_")
-                                .trim_start_matches("USB_HP_")
-                                .to_owned(),
-                            signal: i.signal.clone(),
-                        })
-                        .filter(|i| header_irqs.contains_key(&i.interrupt))
-                        .collect()
-                } else {
-                    peri_irqs
-                        .iter()
-                        .filter(|i| header_irqs.contains_key(&i.interrupt))
-                        .cloned()
-                        .collect()
-                };
+            let mut irqs: Vec<_> = peri_irqs
+                .iter()
+                .filter_map(|i| {
+                    if header_irqs.contains_key(&i.interrupt) {
+                        return Some(i.clone());
+                    }
+                    if let Some((_, eq_irqs)) = EQUIVALENT_IRQS.iter().find(|(irq, _)| irq == &i.interrupt) {
+                        for eq_irq in *eq_irqs {
+                            if header_irqs.contains_key(*eq_irq) {
+                                return Some(Interrupt {
+                                    signal: i.signal.clone(),
+                                    interrupt: eq_irq.to_string(),
+                                });
+                            }
+                        }
+                    }
+                    None
+                })
+                .collect();
             irqs.sort_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
             irqs.dedup_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
 
