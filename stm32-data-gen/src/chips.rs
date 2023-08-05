@@ -824,7 +824,7 @@ fn process_core(
                 entry.insert(format!("ADC_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
         }
-        if pname.starts_with("ADC3") && (chip_name.starts_with("STM32H7")) {
+        if pname.starts_with("ADC3") && chip_name.starts_with("STM32H7") {
             if let Entry::Vacant(entry) = peri_kinds.entry("ADC3_COMMON".to_string()) {
                 entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
