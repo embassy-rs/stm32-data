@@ -184,6 +184,7 @@ impl PeriMatcher {
             (".*:ADC_COMMON:aditf5_v2_2", ("adccommon", "v3", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf4_v3_0_WL", ("adccommon", "v3", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
+            (".*:ADC3_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
             ("STM32H7.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             ("STM32H7.*:ADC3_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (".*:DCMI:.*", ("dcmi", "v1", "DCMI")),
@@ -824,7 +825,7 @@ fn process_core(
                 entry.insert(format!("ADC_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
         }
-        if pname.starts_with("ADC3") && chip_name.starts_with("STM32H7") {
+        if pname.starts_with("ADC3") && (chip_name.starts_with("STM32H7") || chip_name.starts_with("STM32F3")) {
             if let Entry::Vacant(entry) = peri_kinds.entry("ADC3_COMMON".to_string()) {
                 entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
@@ -998,17 +999,6 @@ fn process_core(
         peripherals.push(p);
     }
     if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family.as_ref().unwrap())) {
-        #[derive(serde::Deserialize)]
-        struct Extra {
-            peripherals: Vec<stm32_data_serde::chip::core::Peripheral>,
-        }
-
-        let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
-        for p in extra.peripherals {
-            peripherals.push(p);
-        }
-    }
-    if let Ok(extra_f) = std::fs::read(format!("data/extra/chip_name/{}.yaml", chip_name)) {
         #[derive(serde::Deserialize)]
         struct Extra {
             peripherals: Vec<stm32_data_serde::chip::core::Peripheral>,
