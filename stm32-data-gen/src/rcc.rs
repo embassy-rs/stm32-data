@@ -79,7 +79,7 @@ impl PeripheralToClock {
         const PERI_OVERRIDE: &[(&str, &[&str])] = &[("DCMI", &["DCMI_PSSI"]), ("PSSI", &["DCMI_PSSI"])];
 
         let clocks = self.0.get(rcc_block)?;
-        if peri_name.starts_with("ADC") {
+        if peri_name.starts_with("ADC") && !peri_name.contains("COMMON") {
             return self.match_adc_peri_clock(clocks, peri_name);
         }
         if let Some(res) = clocks.get(peri_name) {
@@ -121,6 +121,11 @@ impl PeripheralToClock {
                     return clocks.get(paired.as_str());
                 }
             }
+        }
+
+        // Look for bare ADC clock register
+        if clocks.contains_key("ADC") {
+            return clocks.get("ADC");
         }
 
         None
