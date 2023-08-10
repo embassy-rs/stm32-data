@@ -79,6 +79,9 @@ impl PeripheralToClock {
         const PERI_OVERRIDE: &[(&str, &[&str])] = &[("DCMI", &["DCMI_PSSI"]), ("PSSI", &["DCMI_PSSI"])];
 
         let clocks = self.0.get(rcc_block)?;
+        if peri_name.starts_with("ADC") && !peri_name.contains("COMMON") {
+            return self.match_adc_peri_clock(clocks, peri_name);
+        }
         if let Some(res) = clocks.get(peri_name) {
             Some(res)
         } else if let Some(peri_name) = peri_name.strip_suffix('1') {
@@ -93,5 +96,38 @@ impl PeripheralToClock {
         } else {
             None
         }
+    }
+
+    fn match_adc_peri_clock<'a>(
+        &'a self,
+        clocks: &'a HashMap<String, stm32_data_serde::chip::core::peripheral::Rcc>,
+        peri_name: &str,
+    ) -> Option<&stm32_data_serde::chip::core::peripheral::Rcc> {
+        // Direct match
+        if clocks.contains_key(peri_name) {
+            return clocks.get(peri_name);
+        }
+
+        // Paired match based on odd/even
+        if let Some(digit_char) = peri_name.chars().last() {
+            if let Some(digit) = digit_char.to_digit(10) {
+                let paired = if digit % 2 == 1 {
+                    format!("ADC{}{}", digit, digit + 1)
+                } else {
+                    format!("ADC{}{}", digit - 1, digit)
+                };
+
+                if clocks.contains_key(paired.as_str()) {
+                    return clocks.get(paired.as_str());
+                }
+            }
+        }
+
+        // Look for bare ADC clock register
+        if clocks.contains_key("ADC") {
+            return clocks.get("ADC");
+        }
+
+        None
     }
 }
