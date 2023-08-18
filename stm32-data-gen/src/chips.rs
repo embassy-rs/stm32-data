@@ -322,6 +322,7 @@ impl PeriMatcher {
             ("STM32WB.*:PWR:.*", ("pwr", "wb55", "PWR")),
             ("STM32H50.*:PWR:.*", ("pwr", "h50", "PWR")),
             ("STM32H5.*:PWR:.*", ("pwr", "h5", "PWR")),
+            ("STM32H7(A3|B3|B0).*:FLASH:.*", ("flash", "h7ab", "FLASH")),
             ("STM32H7.*:FLASH:.*", ("flash", "h7", "FLASH")),
             ("STM32F0.*:FLASH:.*", ("flash", "f0", "FLASH")),
             ("STM32F1.*:FLASH:.*", ("flash", "f1", "FLASH")),

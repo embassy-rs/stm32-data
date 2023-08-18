@@ -1,0 +1,637 @@
+---
+block/BANK:
+  description: "Cluster BANK%s, containing KEYR?, CR?, SR?, CCR?, PRAR_CUR?, PRAR_PRG?, SCAR_CUR?, SCAR_PRG?, WPSN_CUR?R, WPSN_PRG?R, CRCCR?, CRCSADD?R, CRCEADD?R, ECC_FA?R"
+  items:
+    - name: KEYR
+      description: FLASH key register for bank 1
+      byte_offset: 0
+      access: Write
+      fieldset: KEYR
+    - name: CR
+      description: FLASH control register for bank 1
+      byte_offset: 8
+      fieldset: CR
+    - name: SR
+      description: FLASH status register for bank 1
+      byte_offset: 12
+      fieldset: SR
+    - name: CCR
+      description: FLASH clear control register for bank 1
+      byte_offset: 16
+      fieldset: CCR
+    - name: PRAR_CUR
+      description: FLASH protection address for bank 1
+      byte_offset: 36
+      access: Read
+      fieldset: PRAR_CUR
+    - name: PRAR_PRG
+      description: FLASH protection address for bank 1
+      byte_offset: 40
+      fieldset: PRAR_PRG
+    - name: SCAR_CUR
+      description: FLASH secure address for bank 1
+      byte_offset: 44
+      fieldset: SCAR_CUR
+    - name: SCAR_PRG
+      description: FLASH secure address for bank 1
+      byte_offset: 48
+      fieldset: SCAR_PRG
+    - name: WPSN_CURR
+      description: FLASH write sector protection for bank 1
+      byte_offset: 52
+      access: Read
+      fieldset: WPSN_CURR
+    - name: WPSN_PRGR
+      description: FLASH write sector protection for bank 1
+      byte_offset: 56
+      fieldset: WPSN_PRGR
+    - name: CRCCR
+      description: FLASH CRC control register for bank 1
+      byte_offset: 76
+      fieldset: CRCCR
+    - name: CRCSADDR
+      description: FLASH CRC start address register for bank 1
+      byte_offset: 80
+      fieldset: CRCSADDR
+    - name: CRCEADDR
+      description: FLASH CRC end address register for bank 1
+      byte_offset: 84
+      fieldset: CRCEADDR
+    - name: FAR
+      description: FLASH ECC fail address for bank 1
+      byte_offset: 92
+      access: Read
+      fieldset: FAR
+block/FLASH:
+  description: Flash
+  items:
+    - name: ACR
+      description: Access control register
+      byte_offset: 0
+      fieldset: ACR
+    - name: BANK
+      description: "Cluster BANK%s, containing KEYR?, CR?, SR?, CCR?, PRAR_CUR?, PRAR_PRG?, SCAR_CUR?, SCAR_PRG?, WPSN_CUR?R, WPSN_PRG?R, CRCCR?, CRCSADD?R, CRCEADD?R, ECC_FA?R"
+      array:
+        len: 2
+        stride: 256
+      byte_offset: 4
+      block: BANK
+    - name: OPTKEYR
+      description: FLASH option key register
+      byte_offset: 8
+      fieldset: OPTKEYR
+    - name: OPTCR
+      description: FLASH option control register
+      byte_offset: 24
+      fieldset: OPTCR
+    - name: OPTSR_CUR
+      description: FLASH option status register
+      byte_offset: 28
+      fieldset: OPTSR_CUR
+    - name: OPTSR_PRG
+      description: FLASH option status register
+      byte_offset: 32
+      fieldset: OPTSR_PRG
+    - name: OPTCCR
+      description: FLASH option clear control register
+      byte_offset: 36
+      access: Write
+      fieldset: OPTCCR
+    - name: BOOT_CURR
+      description: FLASH register with boot address
+      byte_offset: 64
+      access: Read
+      fieldset: BOOT_CURR
+    - name: BOOT_PRGR
+      description: FLASH register with boot address
+      byte_offset: 68
+      fieldset: BOOT_PRGR
+    - name: CRCDATAR
+      description: FLASH CRC data register
+      byte_offset: 92
+      fieldset: CRCDATAR
+fieldset/ACR:
+  description: Access control register
+  fields:
+    - name: LATENCY
+      description: Read latency
+      bit_offset: 0
+      bit_size: 3
+    - name: WRHIGHFREQ
+      description: Flash signal delay
+      bit_offset: 4
+      bit_size: 2
+fieldset/BOOT_CURR:
+  description: FLASH register with boot address
+  fields:
+    - name: BOOT_ADD0
+      description: Boot address 0
+      bit_offset: 0
+      bit_size: 16
+    - name: BOOT_ADD1
+      description: Boot address 1
+      bit_offset: 16
+      bit_size: 16
+fieldset/BOOT_PRGR:
+  description: FLASH register with boot address
+  fields:
+    - name: BOOT_ADD0
+      description: Boot address 0
+      bit_offset: 0
+      bit_size: 16
+    - name: BOOT_ADD1
+      description: Boot address 1
+      bit_offset: 16
+      bit_size: 16
+fieldset/CCR:
+  description: FLASH clear control register for bank 1
+  fields:
+    - name: CLR_EOP
+      description: Bank 1 EOP1 flag clear bit
+      bit_offset: 16
+      bit_size: 1
+    - name: CLR_WRPERR
+      description: Bank 1 WRPERR1 flag clear bit
+      bit_offset: 17
+      bit_size: 1
+    - name: CLR_PGSERR
+      description: Bank 1 PGSERR1 flag clear bi
+      bit_offset: 18
+      bit_size: 1
+    - name: CLR_STRBERR
+      description: Bank 1 STRBERR1 flag clear bit
+      bit_offset: 19
+      bit_size: 1
+    - name: CLR_INCERR
+      description: Bank 1 INCERR1 flag clear bit
+      bit_offset: 21
+      bit_size: 1
+    - name: CLR_OPERR
+      description: Bank 1 OPERR1 flag clear bit
+      bit_offset: 22
+      bit_size: 1
+    - name: CLR_RDPERR
+      description: Bank 1 RDPERR1 flag clear bit
+      bit_offset: 23
+      bit_size: 1
+    - name: CLR_RDSERR
+      description: Bank 1 RDSERR1 flag clear bit
+      bit_offset: 24
+      bit_size: 1
+    - name: CLR_SNECCERR
+      description: Bank 1 SNECCERR1 flag clear bit
+      bit_offset: 25
+      bit_size: 1
+    - name: CLR_DBECCERR
+      description: Bank 1 DBECCERR1 flag clear bit
+      bit_offset: 26
+      bit_size: 1
+    - name: CLR_CRCEND
+      description: Bank 1 CRCEND1 flag clear bit
+      bit_offset: 27
+      bit_size: 1
+fieldset/CR:
+  description: FLASH control register for bank 1
+  fields:
+    - name: LOCK
+      description: Bank 1 configuration lock bit
+      bit_offset: 0
+      bit_size: 1
+    - name: PG
+      description: Bank 1 program enable bit
+      bit_offset: 1
+      bit_size: 1
+    - name: SER
+      description: Bank 1 sector erase request
+      bit_offset: 2
+      bit_size: 1
+    - name: BER
+      description: Bank 1 erase request
+      bit_offset: 3
+      bit_size: 1
+    - name: FW
+      description: Bank 1 write forcing control bit
+      bit_offset: 4
+      bit_size: 1
+    - name: START
+      description: Bank 1 bank or sector erase start control bit
+      bit_offset: 5
+      bit_size: 1
+    - name: SSN
+      description: Bank 1 sector erase selection number
+      bit_offset: 6
+      bit_size: 7
+    - name: CRC_EN
+      description: Bank 1 CRC control bit
+      bit_offset: 15
+      bit_size: 1
+    - name: EOPIE
+      description: Bank 1 end-of-program interrupt control bit
+      bit_offset: 16
+      bit_size: 1
+    - name: WRPERRIE
+      description: Bank 1 write protection error interrupt enable bit
+      bit_offset: 17
+      bit_size: 1
+    - name: PGSERRIE
+      description: Bank 1 programming sequence error interrupt enable bit
+      bit_offset: 18
+      bit_size: 1
+    - name: STRBERRIE
+      description: Bank 1 strobe error interrupt enable bit
+      bit_offset: 19
+      bit_size: 1
+    - name: INCERRIE
+      description: Bank 1 inconsistency error interrupt enable bit
+      bit_offset: 21
+      bit_size: 1
+    - name: OPERRIE
+      description: Bank 1 write/erase error interrupt enable bit
+      bit_offset: 22
+      bit_size: 1
+    - name: RDPERRIE
+      description: Bank 1 read protection error interrupt enable bit
+      bit_offset: 23
+      bit_size: 1
+    - name: RDSERRIE
+      description: Bank 1 secure error interrupt enable bit
+      bit_offset: 24
+      bit_size: 1
+    - name: SNECCERRIE
+      description: Bank 1 ECC single correction error interrupt enable bit
+      bit_offset: 25
+      bit_size: 1
+    - name: DBECCERRIE
+      description: Bank 1 ECC double detection error interrupt enable bit
+      bit_offset: 26
+      bit_size: 1
+    - name: CRCENDIE
+      description: Bank 1 end of CRC calculation interrupt enable bit
+      bit_offset: 27
+      bit_size: 1
+    - name: CRCRDERRIE
+      description: Bank 1 CRC read error interrupt enable bit
+      bit_offset: 28
+      bit_size: 1
+fieldset/CRCCR:
+  description: FLASH CRC control register for bank 1
+  fields:
+    - name: CRC_SECT
+      description: Bank 1 CRC sector number
+      bit_offset: 0
+      bit_size: 3
+    - name: ALL_BANK
+      description: Bank 1 CRC select bit
+      bit_offset: 7
+      bit_size: 1
+    - name: CRC_BY_SECT
+      description: Bank 1 CRC sector mode select bit
+      bit_offset: 8
+      bit_size: 1
+    - name: ADD_SECT
+      description: Bank 1 CRC sector select bit
+      bit_offset: 9
+      bit_size: 1
+    - name: CLEAN_SECT
+      description: Bank 1 CRC sector list clear bit
+      bit_offset: 10
+      bit_size: 1
+    - name: START_CRC
+      description: Bank 1 CRC start bit
+      bit_offset: 16
+      bit_size: 1
+    - name: CLEAN_CRC
+      description: Bank 1 CRC clear bit
+      bit_offset: 17
+      bit_size: 1
+    - name: CRC_BURST
+      description: Bank 1 CRC burst size
+      bit_offset: 20
+      bit_size: 2
+fieldset/CRCDATAR:
+  description: FLASH CRC data register
+  fields:
+    - name: CRC_DATA
+      description: CRC result
+      bit_offset: 0
+      bit_size: 32
+fieldset/CRCEADDR:
+  description: FLASH CRC end address register for bank 1
+  fields:
+    - name: CRC_END_ADDR
+      description: CRC end address on bank 1
+      bit_offset: 0
+      bit_size: 32
+fieldset/CRCSADDR:
+  description: FLASH CRC start address register for bank 1
+  fields:
+    - name: CRC_START_ADDR
+      description: CRC start address on bank 1
+      bit_offset: 0
+      bit_size: 32
+fieldset/FAR:
+  description: FLASH ECC fail address for bank 1
+  fields:
+    - name: FAIL_ECC_ADDR
+      description: Bank 1 ECC error address
+      bit_offset: 0
+      bit_size: 15
+fieldset/KEYR:
+  description: FLASH key register for bank 1
+  fields:
+    - name: KEYR
+      description: Bank 1 access configuration unlock key
+      bit_offset: 0
+      bit_size: 32
+fieldset/OPTCCR:
+  description: FLASH option clear control register
+  fields:
+    - name: CLR_OPTCHANGEERR
+      description: OPTCHANGEERR reset bit
+      bit_offset: 30
+      bit_size: 1
+fieldset/OPTCR:
+  description: FLASH option control register
+  fields:
+    - name: OPTLOCK
+      description: FLASH_OPTCR lock option configuration bit
+      bit_offset: 0
+      bit_size: 1
+    - name: OPTSTART
+      description: Option byte start change option configuration bit
+      bit_offset: 1
+      bit_size: 1
+    - name: MER
+      description: Flash mass erase enable bit
+      bit_offset: 4
+      bit_size: 1
+    - name: OPTCHANGEERRIE
+      description: Option byte change error interrupt enable bit
+      bit_offset: 30
+      bit_size: 1
+    - name: SWAP_BANK
+      description: Bank swapping configuration bit
+      bit_offset: 31
+      bit_size: 1
+fieldset/OPTKEYR:
+  description: FLASH option key register
+  fields:
+    - name: OPTKEYR
+      description: Unlock key option bytes
+      bit_offset: 0
+      bit_size: 32
+fieldset/OPTSR_CUR:
+  description: FLASH option status register
+  fields:
+    - name: OPT_BUSY
+      description: Option byte change ongoing flag
+      bit_offset: 0
+      bit_size: 1
+    - name: BOR_LEV
+      description: Brownout level option status bit
+      bit_offset: 2
+      bit_size: 2
+    - name: IWDG1_HW
+      description: IWDG1 control option status bit
+      bit_offset: 4
+      bit_size: 1
+    - name: nRST_STOP_D1
+      description: D1 DStop entry reset option status bit
+      bit_offset: 6
+      bit_size: 1
+    - name: nRST_STBY_D1
+      description: D1 DStandby entry reset option status bit
+      bit_offset: 7
+      bit_size: 1
+    - name: RDP
+      description: Readout protection level option status byte
+      bit_offset: 8
+      bit_size: 8
+    - name: FZ_IWDG_STOP
+      description: IWDG Stop mode freeze option status bit
+      bit_offset: 17
+      bit_size: 1
+    - name: FZ_IWDG_SDBY
+      description: IWDG Standby mode freeze option status bit
+      bit_offset: 18
+      bit_size: 1
+    - name: ST_RAM_SIZE
+      description: DTCM RAM size option status
+      bit_offset: 19
+      bit_size: 2
+    - name: SECURITY
+      description: Security enable option status bit
+      bit_offset: 21
+      bit_size: 1
+    - name: RSS1
+      description: User option bit 1
+      bit_offset: 26
+      bit_size: 1
+    - name: PERSO_OK
+      description: Device personalization status bit
+      bit_offset: 28
+      bit_size: 1
+    - name: IO_HSLV
+      description: I/O high-speed at low-voltage status bit (PRODUCT_BELOW_25V)
+      bit_offset: 29
+      bit_size: 1
+    - name: OPTCHANGEERR
+      description: Option byte change error flag
+      bit_offset: 30
+      bit_size: 1
+    - name: SWAP_BANK_OPT
+      description: Bank swapping option status bit
+      bit_offset: 31
+      bit_size: 1
+fieldset/OPTSR_PRG:
+  description: FLASH option status register
+  fields:
+    - name: BOR_LEV
+      description: BOR reset level option configuration bits
+      bit_offset: 2
+      bit_size: 2
+    - name: IWDG1_HW
+      description: IWDG1 option configuration bit
+      bit_offset: 4
+      bit_size: 1
+    - name: nRST_STOP_D1
+      description: Option byte erase after D1 DStop option configuration bit
+      bit_offset: 6
+      bit_size: 1
+    - name: nRST_STBY_D1
+      description: Option byte erase after D1 DStandby option configuration bit
+      bit_offset: 7
+      bit_size: 1
+    - name: RDP
+      description: Readout protection level option configuration byte
+      bit_offset: 8
+      bit_size: 8
+    - name: FZ_IWDG_STOP
+      description: IWDG Stop mode freeze option configuration bit
+      bit_offset: 17
+      bit_size: 1
+    - name: FZ_IWDG_SDBY
+      description: IWDG Standby mode freeze option configuration bit
+      bit_offset: 18
+      bit_size: 1
+    - name: ST_RAM_SIZE
+      description: DTCM size select option configuration bits
+      bit_offset: 19
+      bit_size: 2
+    - name: SECURITY
+      description: Security option configuration bit
+      bit_offset: 21
+      bit_size: 1
+    - name: RSS1
+      description: User option configuration bit 1
+      bit_offset: 26
+      bit_size: 1
+    - name: RSS2
+      description: User option configuration bit 2
+      bit_offset: 27
+      bit_size: 1
+    - name: IO_HSLV
+      description: I/O high-speed at low-voltage (PRODUCT_BELOW_25V)
+      bit_offset: 29
+      bit_size: 1
+    - name: SWAP_BANK_OPT
+      description: Bank swapping option configuration bit
+      bit_offset: 31
+      bit_size: 1
+fieldset/PRAR_CUR:
+  description: FLASH protection address for bank 1
+  fields:
+    - name: PROT_AREA_START
+      description: Bank 1 lowest PCROP protected address
+      bit_offset: 0
+      bit_size: 12
+    - name: PROT_AREA_END
+      description: Bank 1 highest PCROP protected address
+      bit_offset: 16
+      bit_size: 12
+    - name: DMEP
+      description: Bank 1 PCROP protected erase enable option status bit
+      bit_offset: 31
+      bit_size: 1
+fieldset/PRAR_PRG:
+  description: FLASH protection address for bank 1
+  fields:
+    - name: PROT_AREA_START
+      description: Bank 1 lowest PCROP protected address configuration
+      bit_offset: 0
+      bit_size: 12
+    - name: PROT_AREA_END
+      description: Bank 1 highest PCROP protected address configuration
+      bit_offset: 16
+      bit_size: 12
+    - name: DMEP
+      description: Bank 1 PCROP protected erase enable option configuration bit
+      bit_offset: 31
+      bit_size: 1
+fieldset/SCAR_CUR:
+  description: FLASH secure address for bank 1
+  fields:
+    - name: SEC_AREA_START
+      description: Bank 1 lowest secure protected address
+      bit_offset: 0
+      bit_size: 12
+    - name: SEC_AREA_END
+      description: Bank 1 highest secure protected address
+      bit_offset: 16
+      bit_size: 12
+    - name: DMES
+      description: Bank 1 secure protected erase enable option status bit
+      bit_offset: 31
+      bit_size: 1
+fieldset/SCAR_PRG:
+  description: FLASH secure address for bank 1
+  fields:
+    - name: SEC_AREA_START
+      description: Bank 1 lowest secure protected address configuration
+      bit_offset: 0
+      bit_size: 12
+    - name: SEC_AREA_END
+      description: Bank 1 highest secure protected address configuration
+      bit_offset: 16
+      bit_size: 12
+    - name: DMES
+      description: Bank 1 secure protected erase enable option configuration bit
+      bit_offset: 31
+      bit_size: 1
+fieldset/SR:
+  description: FLASH status register for bank 1
+  fields:
+    - name: BSY
+      description: Bank 1 ongoing program flag
+      bit_offset: 0
+      bit_size: 1
+    - name: WBNE
+      description: Bank 1 write buffer not empty flag
+      bit_offset: 1
+      bit_size: 1
+    - name: QW
+      description: Bank 1 wait queue flag
+      bit_offset: 2
+      bit_size: 1
+    - name: CRC_BUSY
+      description: Bank 1 CRC busy flag
+      bit_offset: 3
+      bit_size: 1
+    - name: EOP
+      description: Bank 1 end-of-program flag
+      bit_offset: 16
+      bit_size: 1
+    - name: WRPERR
+      description: Bank 1 write protection error flag
+      bit_offset: 17
+      bit_size: 1
+    - name: PGSERR
+      description: Bank 1 programming sequence error flag
+      bit_offset: 18
+      bit_size: 1
+    - name: STRBERR
+      description: Bank 1 strobe error flag
+      bit_offset: 19
+      bit_size: 1
+    - name: INCERR
+      description: Bank 1 inconsistency error flag
+      bit_offset: 21
+      bit_size: 1
+    - name: OPERR
+      description: Bank 1 write/erase error flag
+      bit_offset: 22
+      bit_size: 1
+    - name: RDPERR
+      description: Bank 1 read protection error flag
+      bit_offset: 23
+      bit_size: 1
+    - name: RDSERR
+      description: Bank 1 secure error flag
+      bit_offset: 24
+      bit_size: 1
+    - name: SNECCERR1
+      description: Bank 1 single correction error flag
+      bit_offset: 25
+      bit_size: 1
+    - name: DBECCERR
+      description: Bank 1 ECC double detection error flag
+      bit_offset: 26
+      bit_size: 1
+    - name: CRCEND
+      description: Bank 1 CRC-complete flag
+      bit_offset: 27
+      bit_size: 1
+fieldset/WPSN_CURR:
+  description: FLASH write sector protection for bank 1
+  fields:
+    - name: WRPSn
+      description: Bank 1 sector write protection option status byte
+      bit_offset: 0
+      bit_size: 8
+fieldset/WPSN_PRGR:
+  description: FLASH write sector protection for bank 1
+  fields:
+    - name: WRPSn
+      description: Bank 1 sector write protection configuration byte
+      bit_offset: 0
+      bit_size: 8
