@@ -147,7 +147,6 @@ fieldset/CR1:
       description: Disable backup domain write protection
       bit_offset: 8
       bit_size: 1
-      enum: DBP
     - name: VOS
       description: Voltage scaling range selection
       bit_offset: 9
@@ -175,7 +174,6 @@ fieldset/CR2:
       description: "Peripheral voltage monitoring 3 enable: VDDA vs. 1.62V"
       bit_offset: 6
       bit_size: 1
-      enum: PVME
 fieldset/CR3:
   description: Power control register 3
   fields:
@@ -186,17 +184,14 @@ fieldset/CR3:
       array:
         len: 3
         stride: 1
-      enum: EWUP
     - name: EULPEN
       description: Ultra-low-power enable
       bit_offset: 7
       bit_size: 1
-      enum: EULPEN
     - name: EWPVD
       description: Enable wakeup PVD for CPU1
       bit_offset: 8
       bit_size: 1
-      enum: EWPVD
     - name: RRS
       description: SRAM2 retention in Standby mode
       bit_offset: 9
@@ -206,7 +201,6 @@ fieldset/CR3:
       description: Apply pull-up and pull-down configuration from CPU1
       bit_offset: 10
       bit_size: 1
-      enum: APC
     - name: EWRFBUSY
       description: Enable Radio BUSY Wakeup from Standby for CPU1
       bit_offset: 11
@@ -225,7 +219,6 @@ fieldset/CR3:
       description: Enable internal wakeup line for CPU1
       bit_offset: 15
       bit_size: 1
-      enum: EIWUL
 fieldset/CR4:
   description: Power control register 4
   fields:
@@ -467,15 +460,6 @@ fieldset/SUBGHZSPICR:
       bit_offset: 15
       bit_size: 1
       enum: NSS
-enum/APC:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: I/O pull-up and pull-down configurations defined in the PWR_PUCRx and PWR_PDCRx registers are applied
-      value: 0
-    - name: Enabled
-      description: PWR_PUCRx and PWR_PDCRx registers are NOT applied to the I/Os
-      value: 1
 enum/CDS:
   bit_size: 1
   variants:
@@ -503,42 +487,6 @@ enum/CSTOPF:
     - name: Stop
       description: System has been in Stop 2 mode
       value: 1
-enum/DBP:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Access to RTC and backup registers disabled
-      value: 0
-    - name: Enabled
-      description: Access to RTC and backup registers enabled
-      value: 1
-enum/EIWUL:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Internal wakeup line interrupt to CPU disabled
-      value: 0
-    - name: Enabled
-      description: Internal wakeup line interrupt to CPU enabled
-      value: 1
-enum/EULPEN:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: Disable (the supply voltage is monitored continuously)
-      value: 0
-    - name: Enabled
-      description: "Enable, when set, the supply voltage is sampled for PDR/BOR reset condition only periodically"
-      value: 1
-enum/EWPVD:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: PVD not enabled by the sub-GHz radio active state
-      value: 0
-    - name: Enabled
-      description: PVD enabled while the sub-GHz radio is active
-      value: 1
 enum/EWRFBUSY:
   bit_size: 1
   variants:
@@ -556,15 +504,6 @@ enum/EWRFIRQ:
       value: 0
     - name: Enabled
       description: "Radio IRQ[2:0] is enabled and triggers a wakeup from Standby event to CPU."
-      value: 1
-enum/EWUP:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: WKUP pin 3 is used for general purpose I/Os. An event on the WKUP pin 3 does not wakeup the device from Standby mode
-      value: 0
-    - name: Enabled
-      description: WKUP pin 3 is used for wakeup from Standby mode and forced in input pull down configuration (rising edge on WKUP pin 3wakes-up the system from Standby mode)
       value: 1
 enum/FLASHRDY:
   bit_size: 1
@@ -682,15 +621,6 @@ enum/PVDO:
       value: 0
     - name: Below
       description: VDD or voltage level on PVD_IN below the selected PVD threshold
-      value: 1
-enum/PVME:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: PVM3 (VDDA monitoring versus 1.62 V threshold) disable
-      value: 0
-    - name: Enabled
-      description: PVM3 (VDDA monitoring versus 1.62 V threshold) enable
       value: 1
 enum/PVMO:
   bit_size: 1
