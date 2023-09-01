@@ -59,7 +59,7 @@ block/UCPD:
       description: "Rx ordered set extension register 2 \t"
       byte_offset: 56
       fieldset: RX_ORDEXTR2
-      # TODO: IPVER, IPID and MID from g0[7, 8]1? do we care?
+      # TODO: IPVER, IPID and MID from g0[7, 8]1 svds? do we care?
 fieldset/CFGR1:
   description: "configuration register 1 "
   fields:
@@ -106,7 +106,6 @@ fieldset/CFGR2:
       description: "BMC decoder Rx pre-filter sampling method\r Number of consistent consecutive samples before confirming a new value."
       bit_offset: 1
       bit_size: 1
-      enum: RXFILT2N3
     - name: FORCECLK
       description: Force ClkReq clock request
       bit_offset: 2
@@ -116,6 +115,7 @@ fieldset/CFGR2:
       bit_offset: 3
       bit_size: 1
 fieldset/CFGR3:
+# TODO: sort out this mess
   description: "configuration register 3 "
   fields:
     - name: TRIM1_NG_CCRPD
@@ -185,6 +185,11 @@ fieldset/CR:
     - name: CC2VCONNEN
       description: VCONN switch enable for CC2
       bit_offset: 14
+      bit_size: 1
+# TODO: this is fine, right?
+    - name: DBATTEN
+      description: "Dead battery function enable\r The bit takes effect upon setting the USBPDstrobe bit of the SYS_CONFIG register.\r Dead battery function only operates if the external circuit is appropriately configured."
+      bit_offset: 15
       bit_size: 1
     - name: FRSRXEN
       description: "FRS event detection enable\r Setting the bit enables FRS Rx event (FRSEVT) detection on the CC line selected through the PHYCCSEL bit. 0: Disable\r Clear the bit when the device is attached to an FRS-incapable source/sink."
@@ -433,12 +438,12 @@ fieldset/SR:
       description: "The status bitfield indicates the voltage level on the CC1 line in its steady state.\r The voltage variation on the CC1 line during USB PD messages due to the BMC PHY modulation does not impact the bitfield value."
       bit_offset: 16
       bit_size: 2
-      enum: TYPEC_VSTATE_CC1
+      enum: TYPEC_VSTATE_CC
     - name: TYPEC_VSTATE_CC2
       description: "CC2 line voltage level\r The status bitfield indicates the voltage level on the CC2 line in its steady state.\r The voltage variation on the CC2 line during USB PD messages due to the BMC PHY modulation does not impact the bitfield value."
       bit_offset: 18
       bit_size: 2
-      enum: TYPEC_VSTATE_CC2
+      enum: TYPEC_VSTATE_CC
     - name: FRSEVT
       description: "FRS detection event\r The flag is cleared by setting the FRSEVTCF bit."
       bit_offset: 20
@@ -467,129 +472,106 @@ fieldset/TX_PAYSZR:
 enum/ANAMODE:
   bit_size: 1
   variants:
-    - name: B_0x0
+    - name: Source
       description: Source
       value: 0
-    - name: B_0x1
+    - name: Sink
       description: Sink
       value: 1
 enum/CCENABLE:
   bit_size: 2
+  # TODO: should this maybe be 2 fields, CCxENABLE?
   variants:
-    - name: B_0x0
+    - name: Disabled
       description: "Disable both PHYs "
       value: 0
-    - name: B_0x1
+    - name: Cc1
       description: Enable CC1 PHY
       value: 1
-    - name: B_0x2
+    - name: Cc2
       description: Enable CC2 PHY
       value: 2
-    - name: B_0x3
+    - name: Both
       description: Enable CC1 and CC2 PHY
       value: 3
 enum/PHYCCSEL:
   bit_size: 1
   variants:
-    - name: B_0x0
+    - name: Cc1
       description: Use CC1 IO for Power Delivery communication
       value: 0
-    - name: B_0x1
+    - name: Cc2
       description: Use CC2 IO for Power Delivery communication
-      value: 1
-enum/RXFILT2N3:
-  bit_size: 1
-  variants:
-    - name: B_0x0
-      description: 3 samples
-      value: 0
-    - name: B_0x1
-      description: 2 samples
       value: 1
 enum/RXORDSET:
   bit_size: 3
   variants:
-    - name: B_0x0
+    - name: Sop
       description: SOP code detected in receiver
       value: 0
-    - name: B_0x1
+    - name: SopPrime
       description: "SOP' code detected in receiver"
       value: 1
-    - name: B_0x2
+    - name: SopDoublePrime
       description: "SOP'' code detected in receiver"
       value: 2
-    - name: B_0x3
+    - name: SopPrimeDebug
       description: "SOP'_Debug detected in receiver"
       value: 3
-    - name: B_0x4
+    - name: SopDoublePrimeDebug
       description: "SOP''_Debug detected in receiver"
       value: 4
-    - name: B_0x5
+    - name: CableReset
       description: Cable Reset detected in receiver
       value: 5
-    - name: B_0x6
+    - name: Ext1
       description: "SOP extension#1 detected in receiver"
       value: 6
-    - name: B_0x7
+    - name: Ext2
       description: "SOP extension#2 detected in receiver"
       value: 7
 enum/RXSOPKINVALID:
   bit_size: 3
   variants:
-    - name: B_0x0
+    - name: None
       description: No K‑code corrupted
       value: 0
-    - name: B_0x1
+    - name: First
       description: First K‑code corrupted
       value: 1
-    - name: B_0x2
+    - name: Second
       description: Second K‑code corrupted
       value: 2
-    - name: B_0x3
+    - name: Third
       description: Third K‑code corrupted
       value: 3
-    - name: B_0x4
+    - name: Fourth
       description: Fourth K‑code corrupted
       value: 4
 enum/TXMODE:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: Packet
       description: Transmission of Tx packet previously defined in other registers
       value: 0
-    - name: B_0x1
+    - name: CableReset
       description: Cable Reset sequence
       value: 1
-    - name: B_0x2
+    - name: Bist
       description: BIST test sequence (BIST Carrier Mode 2)
       value: 2
-enum/TYPEC_VSTATE_CC1:
+enum/TYPEC_VSTATE_CC:
   bit_size: 2
   variants:
-    - name: B_0x0
+    - name: Lowest
       description: Lowest
       value: 0
-    - name: B_0x1
+    - name: Low
       description: Low
       value: 1
-    - name: B_0x2
+    - name: High
       description: High
       value: 2
-    - name: B_0x3
-      description: Highest
-      value: 3
-enum/TYPEC_VSTATE_CC2:
-  bit_size: 2
-  variants:
-    - name: B_0x0
-      description: Lowest
-      value: 0
-    - name: B_0x1
-      description: Low
-      value: 1
-    - name: B_0x2
-      description: High
-      value: 2
-    - name: B_0x3
+    - name: Highest
       description: Highest
       value: 3
