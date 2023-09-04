@@ -208,6 +208,7 @@ impl PeriMatcher {
             ("STM32WB.*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
             ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
             ("STM32WLE.*:SYSCFG:.*", ("syscfg", "wle", "SYSCFG")),
+            ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32H50.*:SBS:.*", ("sbs", "h50", "SBS")),
             ("STM32H5.*:SBS:.*", ("sbs", "h5", "SBS")),
             (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
