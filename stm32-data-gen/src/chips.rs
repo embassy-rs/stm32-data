@@ -247,6 +247,7 @@ impl PeriMatcher {
             (".*:SAI:sai1_v2_1", ("sai", "v4", "SAI")),
             (".*:SDIO:sdmmc_v1_2", ("sdmmc", "v1", "SDMMC")),
             (".*:SDMMC:sdmmc_v1_3", ("sdmmc", "v1", "SDMMC")),
+            ("STM32U5.*:SDMMC:.*", ("sdmmc", "v2", "SDMMC")),
             (".*:SPDIFRX:spdifrx1_v1_0", ("spdifrx", "v1", "SPDIFRX")),
             // # USB
             ("STM32(F1|L1).*:USB:.*", ("usb", "v1", "USB")),
