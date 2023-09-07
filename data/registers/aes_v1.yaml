@@ -18,38 +18,20 @@ block/AES:
       description: Data output register
       byte_offset: 12
       fieldset: DOUTR
-    - name: KEYR0
-      description: Key register 0
+    - name: KEYR
+      description: Key register
+      array:
+        len: 4
+        stride: 4
       byte_offset: 16
-      fieldset: KEYR0
-    - name: KEYR1
-      description: Key register 1
-      byte_offset: 20
-      fieldset: KEYR1
-    - name: KEYR2
-      description: Key register 2
-      byte_offset: 24
-      fieldset: KEYR2
-    - name: KEYR3
-      description: Key register 3
-      byte_offset: 28
-      fieldset: KEYR3
-    - name: IVR0
-      description: Initialization vector register 0
+      fieldset: KEYR
+    - name: IVR
+      description: Initialization vector register
+      array:
+        len: 4
+        stride: 4
       byte_offset: 32
-      fieldset: IVR0
-    - name: IVR1
-      description: Initialization vector register 1
-      byte_offset: 36
-      fieldset: IVR1
-    - name: IVR2
-      description: Initialization vector register 2
-      byte_offset: 40
-      fieldset: IVR2
-    - name: IVR3
-      description: Initialization vector register 3
-      byte_offset: 44
-      fieldset: IVR3
+      fieldset: IVR
 fieldset/CR:
   description: Control register
   fields:
@@ -109,60 +91,18 @@ fieldset/DOUTR:
       description: Output data word
       bit_offset: 0
       bit_size: 32
-fieldset/IVR0:
-  description: Initialization vector register 0
+fieldset/IVR:
+  description: Initialization vector register
   fields:
     - name: IVI
-      description: Initialization vector input, bits [31:0]
+      description: "Initialization vector input"
       bit_offset: 0
       bit_size: 32
-fieldset/IVR1:
-  description: Initialization vector register 1
-  fields:
-    - name: IVI
-      description: Initialization vector input, bits [63:32]
-      bit_offset: 0
-      bit_size: 32
-fieldset/IVR2:
-  description: Initialization vector register 2
-  fields:
-    - name: IVI
-      description: Initialization vector input, bits [95:64]
-      bit_offset: 0
-      bit_size: 32
-fieldset/IVR3:
-  description: Initialization vector register 3
-  fields:
-    - name: IVI
-      description: Initialization vector input, bits [127:96]
-      bit_offset: 0
-      bit_size: 32
-fieldset/KEYR0:
-  description: Key register 0
+fieldset/KEYR:
+  description: Key register
   fields:
     - name: KEY
-      description: Cryptographic key, bits [31:0]
-      bit_offset: 0
-      bit_size: 32
-fieldset/KEYR1:
-  description: Key register 1
-  fields:
-    - name: KEY
-      description: Cryptographic key, bits [63:32]
-      bit_offset: 0
-      bit_size: 32
-fieldset/KEYR2:
-  description: Key register 2
-  fields:
-    - name: KEY
-      description: Cryptographic key, bits [95:64]
-      bit_offset: 0
-      bit_size: 32
-fieldset/KEYR3:
-  description: Key register 3
-  fields:
-    - name: KEY
-      description: Cryptographic key, bits [127:96]
+      description: Cryptographic key
       bit_offset: 0
       bit_size: 32
 fieldset/SR:
@@ -199,14 +139,14 @@ enum/MODE:
   bit_size: 2
   variants:
     - name: Mode1
-      description: "Mode 1: encryption"
+      description: "Encryption"
       value: 0
     - name: Mode2
-      description: "Mode 2: key derivation (or key preparation for ECB/CBC decryption)"
+      description: "Key derivation (or key preparation for ECB/CBC decryption)"
       value: 1
     - name: Mode3
-      description: "Mode 3: decryption"
+      description: "Decryption"
       value: 2
     - name: Mode4
-      description: "Mode 4: key derivation then single decryption"
+      description: "Key derivation then single decryption"
       value: 3
