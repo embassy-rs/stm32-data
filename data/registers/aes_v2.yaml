@@ -1,0 +1,332 @@
+---
+block/AES:
+  description: Advanced Encryption Standard
+  items:
+    - name: CR
+      description: AES control register
+      byte_offset: 0
+      fieldset: CR
+    - name: SR
+      description: AES status register
+      byte_offset: 4
+      fieldset: SR
+    - name: DINR
+      description: "AES data input register "
+      byte_offset: 8
+      fieldset: DINR
+    - name: DOUTR
+      description: "AES data output register "
+      byte_offset: 12
+      fieldset: DOUTR
+    - name: KEYR0
+      description: AES key register 0
+      byte_offset: 16
+      fieldset: KEYR0
+    - name: KEYR1
+      description: AES key register 1
+      byte_offset: 20
+      fieldset: KEYR1
+    - name: KEYR2
+      description: AES key register 2
+      byte_offset: 24
+      fieldset: KEYR2
+    - name: KEYR3
+      description: AES key register 3
+      byte_offset: 28
+      fieldset: KEYR3
+    - name: IVR0
+      description: AES initialization vector register 0
+      byte_offset: 32
+      fieldset: IVR0
+    - name: IVR1
+      description: AES initialization vector register 1
+      byte_offset: 36
+      fieldset: IVR1
+    - name: IVR2
+      description: AES initialization vector register 2
+      byte_offset: 40
+      fieldset: IVR2
+    - name: IVR3
+      description: AES initialization vector register 3
+      byte_offset: 44
+      fieldset: IVR3
+    - name: KEYR4
+      description: AES key register 4
+      byte_offset: 48
+      fieldset: KEYR4
+    - name: KEYR5
+      description: AES key register 5
+      byte_offset: 52
+      fieldset: KEYR5
+    - name: KEYR6
+      description: AES key register 6
+      byte_offset: 56
+      fieldset: KEYR6
+    - name: KEYR7
+      description: AES key register 7
+      byte_offset: 60
+      fieldset: KEYR7
+    - name: SUSP0R
+      description: "AES suspend registers "
+      byte_offset: 64
+      fieldset: SUSP0R
+    - name: SUSP1R
+      description: "AES suspend registers "
+      byte_offset: 68
+      fieldset: SUSP1R
+    - name: SUSP2R
+      description: "AES suspend registers "
+      byte_offset: 72
+      fieldset: SUSP2R
+    - name: SUSP3R
+      description: "AES suspend registers "
+      byte_offset: 76
+      fieldset: SUSP3R
+    - name: SUSP4R
+      description: "AES suspend registers "
+      byte_offset: 80
+      fieldset: SUSP4R
+    - name: SUSP5R
+      description: "AES suspend registers "
+      byte_offset: 84
+      fieldset: SUSP5R
+    - name: SUSP6R
+      description: "AES suspend registers "
+      byte_offset: 88
+      fieldset: SUSP6R
+    - name: SUSP7R
+      description: "AES suspend registers "
+      byte_offset: 92
+      fieldset: SUSP7R
+fieldset/CR:
+  description: AES control register
+  fields:
+    - name: EN
+      description: "AES enable This bit enables/disables the AES peripheral: At any moment, clearing then setting the bit re-initializes the AES peripheral. This bit is automatically cleared by hardware upon the completion of the key preparation (Mode 2) and upon the completion of GCM/GMAC/CCM initial phase."
+      bit_offset: 0
+      bit_size: 1
+    - name: DATATYPE
+      description: "Data type selection This bitfield defines the format of data written in the AES_DINR register or read from the AES_DOUTR register, through selecting the mode of data swapping: For more details, refer to . Attempts to write the bitfield are ignored when the EN bit of the AES_CR register is set before the write access and it is not cleared by that write access."
+      bit_offset: 1
+      bit_size: 2
+    - name: MODE
+      description: "AES operating mode This bitfield selects the AES operating mode: Attempts to write the bitfield are ignored when the EN bit of the AES_CR register is set before the write access and it is not cleared by that write access. Any attempt to selecting Mode 4 while either ECB or CBC chaining mode is not selected, defaults to effective selection of Mode 3. It is not possible to select a Mode 3 following a Mode 4."
+      bit_offset: 3
+      bit_size: 2
+    - name: CHMOD1
+      description: "Chaining mode selection, bit [2] Refer to the bits [5:6] of the register for the description of the CHMOD[2:0] bitfield CHMOD[1:0]: Chaining mode selection, bits [1:0] This bitfield, together with the bit CHMOD[2] forming CHMOD[2:0], selects the AES chaining mode: others: Reserved Attempts to write the bitfield are ignored when the EN bit of the AES_CR register is set before the write access and it is not cleared by that write access."
+      bit_offset: 5
+      bit_size: 2
+    - name: CCFC
+      description: "Computation complete flag clear Upon written to 1, this bit clears the computation complete flag (CCF) in the AES_SR register: Reading the flag always returns zero."
+      bit_offset: 7
+      bit_size: 1
+    - name: ERRC
+      description: "Error flag clear Upon written to 1, this bit clears the RDERR and WRERR error flags in the AES_SR register: Reading the flag always returns zero."
+      bit_offset: 8
+      bit_size: 1
+    - name: CCFIE
+      description: "CCF interrupt enable This bit enables or disables (masks) the AES interrupt generation when CCF (computation complete flag) is set:"
+      bit_offset: 9
+      bit_size: 1
+    - name: ERRIE
+      description: "Error interrupt enable This bit enables or disables (masks) the AES interrupt generation when RDERR and/or WRERR is set:"
+      bit_offset: 10
+      bit_size: 1
+    - name: DMAINEN
+      description: "DMA input enable This bit enables/disables data transferring with DMA, in the input phase: When the bit is set, DMA requests are automatically generated by AES during the input data phase. This feature is only effective when Mode 1 or Mode 3 is selected through the MODE[1:0] bitfield. It is not effective for Mode 2 (key derivation). Usage of DMA with Mode 4 (single decryption) is not recommended."
+      bit_offset: 11
+      bit_size: 1
+    - name: DMAOUTEN
+      description: "DMA output enable This bit enables/disables data transferring with DMA, in the output phase: When the bit is set, DMA requests are automatically generated by AES during the output data phase. This feature is only effective when Mode 1 or Mode 3 is selected through the MODE[1:0] bitfield. It is not effective for Mode 2 (key derivation). Usage of DMA with Mode 4 (single decryption) is not recommended."
+      bit_offset: 12
+      bit_size: 1
+    - name: GCMPH
+      description: "GCM or CCM phase selection This bitfield selects the phase of GCM, GMAC or CCM algorithm: The bitfield has no effect if other than GCM, GMAC or CCM algorithms are selected (through the ALGOMODE bitfield)."
+      bit_offset: 13
+      bit_size: 2
+    - name: CHMOD2
+      description: "Chaining mode selection, bit [2] Refer to the bits [5:6] of the register for the description of the CHMOD[2:0] bitfield CHMOD[1:0]: Chaining mode selection, bits [1:0] This bitfield, together with the bit CHMOD[2] forming CHMOD[2:0], selects the AES chaining mode: others: Reserved Attempts to write the bitfield are ignored when the EN bit of the AES_CR register is set before the write access and it is not cleared by that write access."
+      bit_offset: 16
+      bit_size: 1
+    - name: KEYSIZE
+      description: "Key size selection This bitfield defines the length of the key used in the AES cryptographic core, in bits: Attempts to write the bit are ignored when the EN bit of the AES_CR register is set before the write access and it is not cleared by that write access."
+      bit_offset: 18
+      bit_size: 1
+    - name: NPBLB
+      description: "Number of padding bytes in last block The bitfield sets the number of padding bytes in last block of payload: ..."
+      bit_offset: 20
+      bit_size: 4
+fieldset/DINR:
+  description: "AES data input register "
+  fields:
+    - name: DIN
+      description: "Input data word A four-fold sequential write to this bitfield during the input phase results in writing a complete 128-bit block of input data to the AES peripheral. From the first to the fourth write, the corresponding data weights are [127:96], [95:64], [63:32], and [31:0]. Upon each write, the data from the 32-bit input buffer are handled by the data swap block according to the DATATYPE[1:0] bitfield, then written into the AES core 128-bit input buffer. The data signification of the input data block depends on the AES operating mode: - Mode 1 (encryption): plaintext - Mode 2 (key derivation): the bitfield is not used (AES_KEYRx registers used for input) - Mode 3 (decryption) and Mode 4 (key derivation then single decryption): ciphertext The data swap operation is described in page 499."
+      bit_offset: 0
+      bit_size: 32
+fieldset/DOUTR:
+  description: "AES data output register "
+  fields:
+    - name: DOUT
+      description: "Output data word This read-only bitfield fetches a 32-bit output buffer. A four-fold sequential read of this bitfield, upon the computation completion (CCF set), virtually reads a complete 128-bit block of output data from the AES peripheral. Before reaching the output buffer, the data produced by the AES core are handled by the data swap block according to the DATATYPE[1:0] bitfield. Data weights from the first to the fourth read operation are: [127:96], [95:64], [63:32], and [31:0]. The data signification of the output data block depends on the AES operating mode: - Mode 1 (encryption): ciphertext - Mode 2 (key derivation): the bitfield is not used (AES_KEYRx registers used for output) - Mode 3 (decryption) and Mode 4 (key derivation then single decryption): plaintext The data swap operation is described in page 499."
+      bit_offset: 0
+      bit_size: 32
+fieldset/IVR0:
+  description: AES initialization vector register 0
+  fields:
+    - name: IVI
+      description: "Initialization vector input, bits [31:0] Refer to for description of the IVI[127:0] bitfield. The initialization vector is only used in chaining modes other than ECB. The AES_IVRx registers may be written only when the AES peripheral is disabled"
+      bit_offset: 0
+      bit_size: 32
+fieldset/IVR1:
+  description: AES initialization vector register 1
+  fields:
+    - name: IVI
+      description: "Initialization vector input, bits [63:32] Refer to the AES_IVR0 register for description of the IVI[128:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/IVR2:
+  description: AES initialization vector register 2
+  fields:
+    - name: IVI
+      description: "Initialization vector input, bits [95:64] Refer to the AES_IVR0 register for description of the IVI[128:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/IVR3:
+  description: AES initialization vector register 3
+  fields:
+    - name: IVI
+      description: "Initialization vector input, bits [127:96] Refer to the AES_IVR0 register for description of the IVI[128:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR0:
+  description: AES key register 0
+  fields:
+    - name: KEY
+      description: "Cryptographic key, bits [31:0] This bitfield contains the bits [31:0] of the AES encryption or decryption key, depending on the operating mode: - In Mode 1 (encryption), Mode 2 (key derivation) and Mode 4 (key derivation then single decryption): the value to write into the bitfield is the encryption key. - In Mode 3 (decryption): the value to write into the bitfield is the encryption key to be derived before being used for decryption. After writing the encryption key into the bitfield, its reading before enabling AES returns the same value. Its reading after enabling AES and after the CCF flag is set returns the decryption key derived from the encryption key. Note: In mode 4 (key derivation then single decryption) the bitfield always contains the encryption key. The AES_KEYRx registers may be written only when KEYSIZE value is correct and when the AES peripheral is disabled (EN bit of the AES_CR register cleared). Note that, if, the key is directly loaded to AES_KEYRx registers (hence writes to key register is ignored and KEIF is set). Refer to for more details."
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR1:
+  description: AES key register 1
+  fields:
+    - name: KEY
+      description: "Cryptographic key, bits [63:32] Refer to the AES_KEYR0 register for description of the KEY[255:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR2:
+  description: AES key register 2
+  fields:
+    - name: KEY
+      description: "Cryptographic key, bits [95:64] Refer to the AES_KEYR0 register for description of the KEY[255:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR3:
+  description: AES key register 3
+  fields:
+    - name: KEY
+      description: "Cryptographic key, bits [127:96] Refer to the AES_KEYR0 register for description of the KEY[255:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR4:
+  description: AES key register 4
+  fields:
+    - name: KEY
+      description: "Cryptographic key, bits [159:128] Refer to the AES_KEYR0 register for description of the KEY[255:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR5:
+  description: AES key register 5
+  fields:
+    - name: KEY
+      description: "Cryptographic key, bits [191:160] Refer to the AES_KEYR0 register for description of the KEY[255:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR6:
+  description: AES key register 6
+  fields:
+    - name: KEY
+      description: "Cryptographic key, bits [223:192] Refer to the AES_KEYR0 register for description of the KEY[255:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR7:
+  description: AES key register 7
+  fields:
+    - name: KEY
+      description: "Cryptographic key, bits [255:224] Refer to the AES_KEYR0 register for description of the KEY[255:0] bitfield."
+      bit_offset: 0
+      bit_size: 32
+fieldset/SR:
+  description: AES status register
+  fields:
+    - name: CCF
+      description: "Computation completed flag This flag indicates whether the computation is completed: The flag is set by hardware upon the completion of the computation. It is cleared by software, upon setting the CCFC bit of the AES_CR register. Upon the flag setting, an interrupt is generated if enabled through the CCFIE bit of the AES_CR register. The flag is significant only when the DMAOUTEN bit is 0. It may stay high when DMA_EN is 1."
+      bit_offset: 0
+      bit_size: 1
+    - name: RDERR
+      description: "Read error flag This flag indicates the detection of an unexpected read operation from the AES_DOUTR register (during computation or data input phase): The flag is set by hardware. It is cleared by software upon setting the ERRC bit of the AES_CR register. Upon the flag setting, an interrupt is generated if enabled through the ERRIE bit of the AES_CR register. The flag setting has no impact on the AES operation. Unexpected read returns zero."
+      bit_offset: 1
+      bit_size: 1
+    - name: WRERR
+      description: "Write error This flag indicates the detection of an unexpected write operation to the AES_DINR register (during computation or data output phase): The flag is set by hardware. It is cleared by software upon setting the ERRC bit of the AES_CR register. Upon the flag setting, an interrupt is generated if enabled through the ERRIE bit of the AES_CR register. The flag setting has no impact on the AES operation. Unexpected write is ignored."
+      bit_offset: 2
+      bit_size: 1
+    - name: BUSY
+      description: "Busy This flag indicates whether AES is idle or busy during GCM payload encryption phase: When the flag indicates “idle”, the current GCM encryption processing may be suspended to process a higher-priority message. In other chaining modes, or in GCM phases other than payload encryption, the flag must be ignored for the suspend process."
+      bit_offset: 3
+      bit_size: 1
+fieldset/SUSP0R:
+  description: "AES suspend registers "
+  fields:
+    - name: SUSP
+      description: "AES suspend Upon suspend operation, this bitfield of every AES_SUSPxR register takes the value of one of internal AES registers."
+      bit_offset: 0
+      bit_size: 32
+fieldset/SUSP1R:
+  description: "AES suspend registers "
+  fields:
+    - name: SUSP
+      description: "AES suspend Upon suspend operation, this bitfield of every AES_SUSPxR register takes the value of one of internal AES registers."
+      bit_offset: 0
+      bit_size: 32
+fieldset/SUSP2R:
+  description: "AES suspend registers "
+  fields:
+    - name: SUSP
+      description: "AES suspend Upon suspend operation, this bitfield of every AES_SUSPxR register takes the value of one of internal AES registers."
+      bit_offset: 0
+      bit_size: 32
+fieldset/SUSP3R:
+  description: "AES suspend registers "
+  fields:
+    - name: SUSP
+      description: "AES suspend Upon suspend operation, this bitfield of every AES_SUSPxR register takes the value of one of internal AES registers."
+      bit_offset: 0
+      bit_size: 32
+fieldset/SUSP4R:
+  description: "AES suspend registers "
+  fields:
+    - name: SUSP
+      description: "AES suspend Upon suspend operation, this bitfield of every AES_SUSPxR register takes the value of one of internal AES registers."
+      bit_offset: 0
+      bit_size: 32
+fieldset/SUSP5R:
+  description: "AES suspend registers "
+  fields:
+    - name: SUSP
+      description: "AES suspend Upon suspend operation, this bitfield of every AES_SUSPxR register takes the value of one of internal AES registers."
+      bit_offset: 0
+      bit_size: 32
+fieldset/SUSP6R:
+  description: "AES suspend registers "
+  fields:
+    - name: SUSP
+      description: "AES suspend Upon suspend operation, this bitfield of every AES_SUSPxR register takes the value of one of internal AES registers."
+      bit_offset: 0
+      bit_size: 32
+fieldset/SUSP7R:
+  description: "AES suspend registers "
+  fields:
+    - name: SUSP
+      description: "AES suspend Upon suspend operation, this bitfield of every AES_SUSPxR register takes the value of one of internal AES registers."
+      bit_offset: 0
+      bit_size: 32

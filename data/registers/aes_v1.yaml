@@ -1,0 +1,321 @@
+---
+block/AES:
+  description: Advanced encryption standard hardware accelerator
+  items:
+    - name: CR
+      description: control register
+      byte_offset: 0
+      fieldset: CR
+    - name: SR
+      description: status register
+      byte_offset: 4
+      access: Read
+      fieldset: SR
+    - name: DINR
+      description: data input register
+      byte_offset: 8
+      fieldset: DINR
+    - name: DOUTR
+      description: data output register
+      byte_offset: 12
+      access: Read
+      fieldset: DOUTR
+    - name: KEYR0
+      description: key register 0
+      byte_offset: 16
+      fieldset: KEYR0
+    - name: KEYR1
+      description: key register 1
+      byte_offset: 20
+      fieldset: KEYR1
+    - name: KEYR2
+      description: key register 2
+      byte_offset: 24
+      fieldset: KEYR2
+    - name: KEYR3
+      description: key register 3
+      byte_offset: 28
+      fieldset: KEYR3
+    - name: IVR0
+      description: initialization vector register 0
+      byte_offset: 32
+      fieldset: IVR0
+    - name: IVR1
+      description: initialization vector register 1
+      byte_offset: 36
+      fieldset: IVR1
+    - name: IVR2
+      description: initialization vector register 2
+      byte_offset: 40
+      fieldset: IVR2
+    - name: IVR3
+      description: initialization vector register 3
+      byte_offset: 44
+      fieldset: IVR3
+fieldset/CR:
+  description: control register
+  fields:
+    - name: EN
+      description: AES enable
+      bit_offset: 0
+      bit_size: 1
+      enum: EN
+    - name: DATATYPE
+      description: Data type selection (for data in and data out to/from the cryptographic block)
+      bit_offset: 1
+      bit_size: 2
+      enum: DATATYPE
+    - name: MODE
+      description: AES operating mode
+      bit_offset: 3
+      bit_size: 2
+      enum: MODE
+    - name: CHMOD
+      description: AES chaining mode
+      bit_offset: 5
+      bit_size: 2
+      enum: CHMOD
+    - name: CCFC
+      description: Computation Complete Flag Clear
+      bit_offset: 7
+      bit_size: 1
+      enum: CCFC
+    - name: ERRC
+      description: Error clear
+      bit_offset: 8
+      bit_size: 1
+      enum: ERRC
+    - name: CCFIE
+      description: CCF flag interrupt enable
+      bit_offset: 9
+      bit_size: 1
+      enum: CCFIE
+    - name: ERRIE
+      description: Error interrupt enable
+      bit_offset: 10
+      bit_size: 1
+      enum: ERRIE
+    - name: DMAINEN
+      description: Enable DMA management of data input phase
+      bit_offset: 11
+      bit_size: 1
+      enum: DMAINEN
+    - name: DMAOUTEN
+      description: Enable DMA management of data output phase
+      bit_offset: 12
+      bit_size: 1
+      enum: DMAOUTEN
+fieldset/DINR:
+  description: data input register
+  fields:
+    - name: DIN
+      description: Data Input Register.
+      bit_offset: 0
+      bit_size: 32
+fieldset/DOUTR:
+  description: data output register
+  fields:
+    - name: DOUT
+      description: Data output register
+      bit_offset: 0
+      bit_size: 32
+fieldset/IVR0:
+  description: initialization vector register 0
+  fields:
+    - name: IV0
+      description: "initialization vector register (LSB IVR [31:0])"
+      bit_offset: 0
+      bit_size: 32
+fieldset/IVR1:
+  description: initialization vector register 1
+  fields:
+    - name: IV1
+      description: "Initialization Vector Register (IVR [63:32])"
+      bit_offset: 0
+      bit_size: 32
+fieldset/IVR2:
+  description: initialization vector register 2
+  fields:
+    - name: IV2
+      description: "Initialization Vector Register (IVR [95:64])"
+      bit_offset: 0
+      bit_size: 32
+fieldset/IVR3:
+  description: initialization vector register 3
+  fields:
+    - name: IV3
+      description: "Initialization Vector Register (MSB IVR [127:96])"
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR0:
+  description: key register 0
+  fields:
+    - name: KEY0
+      description: "Data Output Register (LSB key [31:0])"
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR1:
+  description: key register 1
+  fields:
+    - name: KEY1
+      description: "AES key register (key [63:32])"
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR2:
+  description: key register 2
+  fields:
+    - name: KEY2
+      description: "AES key register (key [95:64])"
+      bit_offset: 0
+      bit_size: 32
+fieldset/KEYR3:
+  description: key register 3
+  fields:
+    - name: KEY3
+      description: "AES key register (MSB key [127:96])"
+      bit_offset: 0
+      bit_size: 32
+fieldset/SR:
+  description: status register
+  fields:
+    - name: CCF
+      description: Computation complete flag
+      bit_offset: 0
+      bit_size: 1
+      enum: CCF
+    - name: RDERR
+      description: Read error flag
+      bit_offset: 1
+      bit_size: 1
+      enum: RDERR
+    - name: WRERR
+      description: Write error flag
+      bit_offset: 2
+      bit_size: 1
+      enum: WRERR
+enum/CCF:
+  bit_size: 1
+  variants:
+    - name: Complete
+      description: Computation complete
+      value: 0
+    - name: NotComplete
+      description: Computation not complete
+      value: 1
+enum/CCFC:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear computation complete flag
+      value: 1
+enum/CCFIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Disable (mask) CCF interrupt
+      value: 0
+    - name: Enabled
+      description: Enable CCF interrupt
+      value: 1
+enum/CHMOD:
+  bit_size: 2
+  variants:
+    - name: ECB
+      description: Electronic codebook (ECB)
+      value: 0
+    - name: CBC
+      description: Cipher-Block Chaining (CBC)
+      value: 1
+    - name: CTR
+      description: Counter Mode (CTR)
+      value: 2
+enum/DATATYPE:
+  bit_size: 2
+  variants:
+    - name: None
+      description: Word
+      value: 0
+    - name: HalfWord
+      description: Half-word (16-bit)
+      value: 1
+    - name: Byte
+      description: Byte (8-bit)
+      value: 2
+    - name: Bit
+      description: Bit
+      value: 3
+enum/DMAINEN:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Disable DMA Input
+      value: 0
+    - name: Enabled
+      description: Enable DMA Input
+      value: 1
+enum/DMAOUTEN:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Disable DMA Output
+      value: 0
+    - name: Enabled
+      description: Enabled DMA Output
+      value: 1
+enum/EN:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Disable AES
+      value: 0
+    - name: Enabled
+      description: Enable AES
+      value: 1
+enum/ERRC:
+  bit_size: 1
+  variants:
+    - name: Clear
+      description: Clear RDERR and WRERR flags
+      value: 1
+enum/ERRIE:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Disable (mask) error interrupt
+      value: 0
+    - name: Enabled
+      description: Enable error interrupt
+      value: 1
+enum/MODE:
+  bit_size: 2
+  variants:
+    - name: Mode1
+      description: "Mode 1: encryption"
+      value: 0
+    - name: Mode2
+      description: "Mode 2: key derivation (or key preparation for ECB/CBC decryption)"
+      value: 1
+    - name: Mode3
+      description: "Mode 3: decryption"
+      value: 2
+    - name: Mode4
+      description: "Mode 4: key derivation then single decryption"
+      value: 3
+enum/RDERR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: Read error not detected
+      value: 0
+    - name: Error
+      description: Read error detected
+      value: 1
+enum/WRERR:
+  bit_size: 1
+  variants:
+    - name: NoError
+      description: Write error not detected
+      value: 0
+    - name: Error
+      description: Write error detected
+      value: 1
