@@ -1,142 +1,138 @@
 ---
 block/AES:
-  description: Advanced encryption standard hardware accelerator 1
+  description: Advanced encryption standard hardware accelerator
   items:
     - name: CR
-      description: control register
+      description: Control register
       byte_offset: 0
       fieldset: CR
     - name: SR
-      description: status register
+      description: Status register
       byte_offset: 4
-      access: Read
       fieldset: SR
     - name: DINR
-      description: data input register
+      description: Data input register
       byte_offset: 8
       fieldset: DINR
     - name: DOUTR
-      description: data output register
+      description: Data output register
       byte_offset: 12
-      access: Read
       fieldset: DOUTR
     - name: KEYR0
-      description: key register 0
+      description: Key register 0
       byte_offset: 16
       fieldset: KEYR0
     - name: KEYR1
-      description: key register 1
+      description: Key register 1
       byte_offset: 20
       fieldset: KEYR1
     - name: KEYR2
-      description: key register 2
+      description: Key register 2
       byte_offset: 24
       fieldset: KEYR2
     - name: KEYR3
-      description: key register 3
+      description: Key register 3
       byte_offset: 28
       fieldset: KEYR3
     - name: IVR0
-      description: initialization vector register 0
+      description: Initialization vector register 0
       byte_offset: 32
       fieldset: IVR0
     - name: IVR1
-      description: initialization vector register 1
+      description: Initialization vector register 1
       byte_offset: 36
       fieldset: IVR1
     - name: IVR2
-      description: initialization vector register 2
+      description: Initialization vector register 2
       byte_offset: 40
       fieldset: IVR2
     - name: IVR3
-      description: initialization vector register 3
+      description: Initialization vector register 3
       byte_offset: 44
       fieldset: IVR3
     - name: KEYR4
-      description: key register 4
+      description: Key register 4
       byte_offset: 48
       fieldset: KEYR4
     - name: KEYR5
-      description: key register 5
+      description: Key register 5
       byte_offset: 52
       fieldset: KEYR5
     - name: KEYR6
-      description: key register 6
+      description: Key register 6
       byte_offset: 56
       fieldset: KEYR6
     - name: KEYR7
-      description: key register 7
+      description: Key register 7
       byte_offset: 60
       fieldset: KEYR7
     - name: SUSP0R
-      description: AES suspend register 0
+      description: Suspend register 0
       byte_offset: 64
       fieldset: SUSP0R
     - name: SUSP1R
-      description: AES suspend register 1
+      description: Suspend register 1
       byte_offset: 68
       fieldset: SUSP1R
     - name: SUSP2R
-      description: AES suspend register 2
+      description: Suspend register 2
       byte_offset: 72
       fieldset: SUSP2R
     - name: SUSP3R
-      description: AES suspend register 3
+      description: Suspend register 3
       byte_offset: 76
       fieldset: SUSP3R
     - name: SUSP4R
-      description: AES suspend register 4
+      description: Suspend register 4
       byte_offset: 80
       fieldset: SUSP4R
     - name: SUSP5R
-      description: AES suspend register 5
+      description: Suspend register 5
       byte_offset: 84
       fieldset: SUSP5R
     - name: SUSP6R
-      description: AES suspend register 6
+      description: Suspend register 6
       byte_offset: 88
       fieldset: SUSP6R
     - name: SUSP7R
-      description: AES suspend register 7
+      description: Suspend register 7
       byte_offset: 92
       fieldset: SUSP7R
     - name: HWCFR
-      description: AES hardware configuration register
+      description: Hardware configuration register
       byte_offset: 1008
-      access: Read
       fieldset: HWCFR
     - name: VERR
-      description: AES version register
+      description: Version register
       byte_offset: 1012
-      access: Read
       fieldset: VERR
     - name: IPIDR
-      description: AES identification register
+      description: Identification register
       byte_offset: 1016
-      access: Read
       fieldset: IPIDR
     - name: SIDR
-      description: AES size ID register
+      description: Size ID register
       byte_offset: 1020
-      access: Read
       fieldset: SIDR
 fieldset/CR:
-  description: control register
+  description: Control register
   fields:
     - name: EN
       description: AES enable
       bit_offset: 0
       bit_size: 1
     - name: DATATYPE
-      description: Data type selection (for data in and data out to/from the cryptographic block)
+      description: Data type selection
       bit_offset: 1
       bit_size: 2
+      enum: DATATYPE
     - name: MODE
-      description: AES operating mode
+      description: Operating mode
       bit_offset: 3
       bit_size: 2
+      enum: MODE
     - name: CHMOD10
-      description: AES chaining mode Bit1 Bit0
+      description: Chaining mode bit1 bit0
       bit_offset: 5
       bit_size: 2
     - name: CCFC
@@ -164,11 +160,12 @@ fieldset/CR:
       bit_offset: 12
       bit_size: 1
     - name: GCMPH
-      description: "Used only for GCM, CCM and GMAC algorithms and has no effect when other algorithms are selected"
+      description: GCM or CCM phase selection
       bit_offset: 13
       bit_size: 2
+      enum: GCMPH
     - name: CHMOD2
-      description: AES chaining mode Bit2
+      description: Chaining mode bit2
       bit_offset: 16
       bit_size: 1
     - name: KEYSIZE
@@ -180,21 +177,21 @@ fieldset/CR:
       bit_offset: 20
       bit_size: 4
 fieldset/DINR:
-  description: data input register
+  description: Data input register
   fields:
-    - name: AES_DINR
-      description: Data Input Register
+    - name: DIN
+      description: Input data word
       bit_offset: 0
       bit_size: 32
 fieldset/DOUTR:
-  description: data output register
+  description: Data output register
   fields:
-    - name: AES_DOUTR
-      description: Data output register
+    - name: DOUT
+      description: Output data word
       bit_offset: 0
       bit_size: 32
 fieldset/HWCFR:
-  description: AES hardware configuration register
+  description: Hardware configuration register
   fields:
     - name: CFG1
       description: HW Generic 1
@@ -213,105 +210,105 @@ fieldset/HWCFR:
       bit_offset: 12
       bit_size: 4
 fieldset/IPIDR:
-  description: AES identification register
+  description: Identification register
   fields:
     - name: ID
       description: Identification code
       bit_offset: 0
       bit_size: 32
 fieldset/IVR0:
-  description: initialization vector register 0
+  description: AES initialization vector register 0
   fields:
-    - name: AES_IVR0
-      description: "initialization vector register (LSB IVR [31:0])"
+    - name: IVI
+      description: Initialization vector input, bits [31:0]
       bit_offset: 0
       bit_size: 32
 fieldset/IVR1:
-  description: initialization vector register 1
+  description: AES initialization vector register 1
   fields:
-    - name: AES_IVR1
-      description: "Initialization Vector Register (IVR [63:32])"
+    - name: IVI
+      description: Initialization vector input, bits [63:32]
       bit_offset: 0
       bit_size: 32
 fieldset/IVR2:
-  description: initialization vector register 2
+  description: AES initialization vector register 2
   fields:
-    - name: AES_IVR2
-      description: "Initialization Vector Register (IVR [95:64])"
+    - name: IVI
+      description: Initialization vector input, bits [95:64]
       bit_offset: 0
       bit_size: 32
 fieldset/IVR3:
-  description: initialization vector register 3
+  description: AES initialization vector register 3
   fields:
-    - name: AES_IVR3
-      description: "Initialization Vector Register (MSB IVR [127:96])"
+    - name: IVI
+      description: Initialization vector input, bits [127:96]
       bit_offset: 0
       bit_size: 32
 fieldset/KEYR0:
-  description: key register 0
+  description: Key register 0
   fields:
-    - name: AES_KEYR0
-      description: "Data Output Register (LSB key [31:0])"
+    - name: KEY
+      description: Cryptographic key, bits [31:0]
       bit_offset: 0
       bit_size: 32
 fieldset/KEYR1:
-  description: key register 1
+  description: Key register 1
   fields:
-    - name: AES_KEYR1
-      description: "AES key register (key [63:32])"
+    - name: KEY
+      description: Cryptographic key, bits [63:32]
       bit_offset: 0
       bit_size: 32
 fieldset/KEYR2:
-  description: key register 2
+  description: Key register 2
   fields:
-    - name: AES_KEYR2
-      description: "AES key register (key [95:64])"
+    - name: KEY
+      description: Cryptographic key, bits [95:64]
       bit_offset: 0
       bit_size: 32
 fieldset/KEYR3:
-  description: key register 3
+  description: Key register 3
   fields:
-    - name: AES_KEYR3
-      description: "AES key register (MSB key [127:96])"
+    - name: KEY
+      description: Cryptographic key, bits [127:96]
       bit_offset: 0
       bit_size: 32
 fieldset/KEYR4:
-  description: key register 4
+  description: Key register 4
   fields:
-    - name: AES_KEYR4
-      description: "AES key register (MSB key [159:128])"
+    - name: KEY
+      description: Cryptographic key, bits [159:128]
       bit_offset: 0
       bit_size: 32
 fieldset/KEYR5:
-  description: key register 5
+  description: Key register 5
   fields:
-    - name: AES_KEYR5
-      description: "AES key register (MSB key [191:160])"
+    - name: KEY
+      description: Cryptographic key, bits [191:160]
       bit_offset: 0
       bit_size: 32
 fieldset/KEYR6:
-  description: key register 6
+  description: Key register 6
   fields:
-    - name: AES_KEYR6
-      description: "AES key register (MSB key [223:192])"
+    - name: KEY
+      description: Cryptographic key, bits [223:192]
       bit_offset: 0
       bit_size: 32
 fieldset/KEYR7:
-  description: key register 7
+  description: Key register 7
   fields:
-    - name: AES_KEYR7
-      description: "AES key register (MSB key [255:224])"
+    - name: KEY
+      description: Cryptographic key, bits [255:224]
       bit_offset: 0
       bit_size: 32
 fieldset/SIDR:
-  description: AES size ID register
+  description: Size ID register
   fields:
     - name: ID
       description: Size Identification code
       bit_offset: 0
       bit_size: 32
 fieldset/SR:
-  description: status register
+  description: Status register
   fields:
     - name: CCF
       description: Computation complete flag
@@ -330,63 +327,63 @@ fieldset/SR:
       bit_offset: 3
       bit_size: 1
 fieldset/SUSP0R:
-  description: AES suspend register 0
+  description: Suspend register 0
   fields:
-    - name: AES_SUSP0R
-      description: AES suspend register 0
+    - name: SUSP
+      description: AES suspend
       bit_offset: 0
       bit_size: 32
 fieldset/SUSP1R:
-  description: AES suspend register 1
+  description: Suspend register 1
   fields:
-    - name: AES_SUSP1R
-      description: AES suspend register 1
+    - name: SUSP
+      description: AES suspend
       bit_offset: 0
       bit_size: 32
 fieldset/SUSP2R:
-  description: AES suspend register 2
+  description: Suspend register 2
   fields:
-    - name: AES_SUSP2R
-      description: AES suspend register 2
+    - name: SUSP
+      description: AES suspend
       bit_offset: 0
       bit_size: 32
 fieldset/SUSP3R:
-  description: AES suspend register 3
+  description: Suspend register 3
   fields:
-    - name: AES_SUSP3R
-      description: AES suspend register 3
+    - name: SUSP
+      description: AES suspend
       bit_offset: 0
       bit_size: 32
 fieldset/SUSP4R:
-  description: AES suspend register 4
+  description: Suspend register 4
   fields:
-    - name: AES_SUSP4R
-      description: AES suspend register 4
+    - name: SUSP
+      description: AES suspend
       bit_offset: 0
       bit_size: 32
 fieldset/SUSP5R:
-  description: AES suspend register 5
+  description: Suspend register 5
   fields:
-    - name: AES_SUSP5R
-      description: AES suspend register 5
+    - name: SUSP
+      description: AES suspend
       bit_offset: 0
       bit_size: 32
 fieldset/SUSP6R:
-  description: AES suspend register 6
+  description: Suspend register 6
   fields:
-    - name: AES_SUSP6R
-      description: AES suspend register 6
+    - name: SUSP
+      description: AES suspend
       bit_offset: 0
       bit_size: 32
 fieldset/SUSP7R:
-  description: AES suspend register 7
+  description: Suspend register 7
   fields:
-    - name: AES_SUSP7R
-      description: AES suspend register 7
+    - name: SUSP
+      description: AES suspend
       bit_offset: 0
       bit_size: 32
 fieldset/VERR:
-  description: AES version register
+  description: Version register
   fields:
     - name: MINREV
       description: Minor revision
@@ -396,3 +393,48 @@ fieldset/VERR:
       description: Major revision
       bit_offset: 4
       bit_size: 4
+enum/GCMPH:
+  bit_size: 2
+  variants:
+    - name: Init phase
+      description: Init phase
+      value: 0
+    - name: Header phase
+      description: Header phase
+      value: 1
+    - name: Payload phase
+      description: Payload phase
+      value: 2
+    - name: Final phase
+      description: Final phase
+      value: 3
+enum/DATATYPE:
+  bit_size: 2
+  variants:
+    - name: None
+      description: Word
+      value: 0
+    - name: HalfWord
+      description: Half-word (16-bit)
+      value: 1
+    - name: Byte
+      description: Byte (8-bit)
+      value: 2
+    - name: Bit
+      description: Bit
+      value: 3
+enum/MODE:
+  bit_size: 2
+  variants:
+    - name: Mode1
+      description: "Mode 1: encryption"
+      value: 0
+    - name: Mode2
+      description: "Mode 2: key derivation (or key preparation for ECB/CBC decryption)"
+      value: 1
+    - name: Mode3
+      description: "Mode 3: decryption"
+      value: 2
+    - name: Mode4
+      description: "Mode 4: key derivation then single decryption"
+      value: 3
