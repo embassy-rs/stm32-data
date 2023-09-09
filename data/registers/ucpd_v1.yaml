@@ -59,7 +59,21 @@ block/UCPD:
       description: "Rx ordered set extension register 2 \t"
       byte_offset: 56
       fieldset: RX_ORDEXTR2
-      # TODO: IPVER, IPID and MID from g0[7, 8]1 svds? do we care?
+    - name: IPVER
+      description: UCPD IP ID register
+      byte_offset: 1012
+      access: Read
+      fieldset: IPVER
+    - name: IPID
+      description: UCPD IP ID register
+      byte_offset: 1016
+      access: Read
+      fieldset: IPID
+    - name: MID
+      description: UCPD IP ID register
+      byte_offset: 1020
+      access: Read
+      fieldset: MID
 fieldset/CFGR1:
   description: "configuration register 1 "
   fields:
@@ -79,6 +93,7 @@ fieldset/CFGR1:
       description: "Pre-scaler division ratio for generating clk\r The bitfield determines the division ratio of a kernel clock pre-scaler producing peripheral clock (clk).\r It is recommended to use the pre-scaler so as to set the clk frequency in the range from 6 to 9 MHz."
       bit_offset: 17
       bit_size: 3
+      enum: PSC_USBPDCLK
     - name: RXORDSETEN
       description: "Receiver ordered set enable\r The bitfield determines the types of ordered sets that the receiver must detect. When set/cleared, each bit enables/disables a specific function:\r 0bxxxxxxxx1: SOP detect enabled\r 0bxxxxxxx1x: SOP' detect enabled\r 0bxxxxxx1xx: SOP'' detect enabled\r 0bxxxxx1xxx: Hard Reset detect enabled\r 0bxxxx1xxxx: Cable Detect reset enabled\r 0bxxx1xxxxx: SOP'_Debug enabled\r 0bxx1xxxxxx: SOP''_Debug enabled\r 0bx1xxxxxxx: SOP extension#1 enabled\r 0b1xxxxxxxx: SOP extension#2 enabled"
       bit_offset: 20
@@ -115,23 +130,22 @@ fieldset/CFGR2:
       bit_offset: 3
       bit_size: 1
 fieldset/CFGR3:
-# TODO: sort out this mess
   description: "configuration register 3 "
   fields:
-    - name: TRIM1_NG_CCRPD
-      description: SW trim value for RPD resistors on the CC1 line
+    - name: TRIM_CC1_RD
+      description: SW trim value for Rd resistor on the CC1 line
       bit_offset: 0
       bit_size: 4
-    - name: TRIM1_NG_CC3A0
-      description: SW trim value for Iref on the CC1 line
+    - name: TRIM_CC1_RP
+      description: SW trim value for Rp current sources on the CC1 line
       bit_offset: 9
       bit_size: 4
-    - name: TRIM2_NG_CCRPD
-      description: SW trim value for RPD resistors on the CC2 line
+    - name: TRIM_CC2_RD
+      description: SW trim value for Rd resistor on the CC2 line
       bit_offset: 16
       bit_size: 4
-    - name: TRIM2_NG_CC3A0
-      description: SW trim value for Iref on the CC2 line
+    - name: TRIM_CC2_RP
+      description: SW trim value for Rp current sources on the CC2 line
       bit_offset: 25
       bit_size: 4
 fieldset/CR:
@@ -185,7 +199,6 @@ fieldset/CR:
       description: VCONN switch enable for CC2
       bit_offset: 14
       bit_size: 1
-# TODO: this is fine, right?
     - name: DBATTEN
       description: "Dead battery function enable\r The bit takes effect upon setting the USBPDstrobe bit of the SYS_CONFIG register.\r Dead battery function only operates if the external circuit is appropriately configured."
       bit_offset: 15
@@ -328,6 +341,27 @@ fieldset/IMR:
       description: FRSEVT interrupt enable
       bit_offset: 20
       bit_size: 1
+fieldset/IPID:
+  description: UCPD IP ID register
+  fields:
+    - name: IPID
+      description: IPID
+      bit_offset: 0
+      bit_size: 32
+fieldset/IPVER:
+  description: UCPD IP ID register
+  fields:
+    - name: IPVER
+      description: IPVER
+      bit_offset: 0
+      bit_size: 32
+fieldset/MID:
+  description: UCPD IP ID register
+  fields:
+    - name: IPID
+      description: IPID
+      bit_offset: 0
+      bit_size: 32
 fieldset/RXDR:
   fields:
     - name: RXDATA
@@ -479,7 +513,6 @@ enum/ANAMODE:
       value: 1
 enum/CCENABLE:
   bit_size: 2
-  # TODO: should this maybe be 2 fields, CCxENABLE?
   variants:
     - name: Disabled
       description: "Disable both PHYs "
@@ -574,3 +607,21 @@ enum/TYPEC_VSTATE_CC:
     - name: Highest
       description: Highest
       value: 3
+enum/PSC_USBPDCLK:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: 1 (bypass)
+      value: 0
+    - name: Div2
+      description: "2"
+      value: 1
+    - name: Div4
+      description: "4"
+      value: 2
+    - name: Div8
+      description: "8"
+      value: 3
+    - name: Div16
+      description: "16"
+      value: 4
