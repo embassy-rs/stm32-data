@@ -1,0 +1,627 @@
+---
+block/UCPD:
+  description: USB Power Delivery interface
+  items:
+    - name: CFGR1
+      description: "configuration register 1 "
+      byte_offset: 0
+      fieldset: CFGR1
+    - name: CFGR2
+      description: "configuration register 2 "
+      byte_offset: 4
+      fieldset: CFGR2
+    - name: CFGR3
+      description: "configuration register 3 "
+      byte_offset: 8
+      fieldset: CFGR3
+    - name: CR
+      description: "control register "
+      byte_offset: 12
+      fieldset: CR
+    - name: IMR
+      description: "interrupt mask register "
+      byte_offset: 16
+      fieldset: IMR
+    - name: SR
+      description: "status register "
+      byte_offset: 20
+      fieldset: SR
+    - name: ICR
+      description: "interrupt clear register "
+      byte_offset: 24
+      fieldset: ICR
+    - name: TX_ORDSETR
+      description: "Tx ordered set type register "
+      byte_offset: 28
+      fieldset: TX_ORDSETR
+    - name: TX_PAYSZR
+      description: "Tx payload size register "
+      byte_offset: 32
+      fieldset: TX_PAYSZR
+    - name: TXDR
+      description: "Tx data register "
+      byte_offset: 36
+      fieldset: TXDR
+    - name: RX_ORDSETR
+      byte_offset: 40
+      fieldset: RX_ORDSETR
+    - name: RX_PAYSZR
+      byte_offset: 44
+      fieldset: RX_PAYSZR
+    - name: RXDR
+      byte_offset: 48
+      fieldset: RXDR
+    - name: RX_ORDEXTR1
+      description: "Rx ordered set extension register 1 \t"
+      byte_offset: 52
+      fieldset: RX_ORDEXTR1
+    - name: RX_ORDEXTR2
+      description: "Rx ordered set extension register 2 \t"
+      byte_offset: 56
+      fieldset: RX_ORDEXTR2
+    - name: IPVER
+      description: UCPD IP ID register
+      byte_offset: 1012
+      access: Read
+      fieldset: IPVER
+    - name: IPID
+      description: UCPD IP ID register
+      byte_offset: 1016
+      access: Read
+      fieldset: IPID
+    - name: MID
+      description: UCPD IP ID register
+      byte_offset: 1020
+      access: Read
+      fieldset: MID
+fieldset/CFGR1:
+  description: "configuration register 1 "
+  fields:
+    - name: HBITCLKDIV
+      description: "Division ratio for producing half-bit clock\r The bitfield determines the division ratio (the bitfield value plus one) of a clk divider producing half-bit clock (hbit_clk)."
+      bit_offset: 0
+      bit_size: 6
+    - name: IFRGAP
+      description: "Division ratio for producing inter-frame gap timer clock\r The bitfield determines the division ratio (the bitfield value minus one) of a clk divider producing inter-frame gap timer clock (tInterFrameGap).\r The division ratio 15 is to apply for Tx clock at the USB PD 2.0 specification nominal value. The division ratios below 15 are to apply for Tx clock below nominal, and the division ratios above 15 for Tx clock above nominal."
+      bit_offset: 6
+      bit_size: 5
+    - name: TRANSWIN
+      description: "Transition window duration\r The bitfield determines the division ratio (the bitfield value minus one) of a hbit_clk divider producing tTransitionWindow interval.\r Set a value that produces an interval of 12 to 20 us, taking into account the clk frequency and the HBITCLKDIV[5:0] bitfield setting."
+      bit_offset: 11
+      bit_size: 5
+    - name: PSC_USBPDCLK
+      description: "Pre-scaler division ratio for generating clk\r The bitfield determines the division ratio of a kernel clock pre-scaler producing peripheral clock (clk).\r It is recommended to use the pre-scaler so as to set the clk frequency in the range from 6 to 9 MHz."
+      bit_offset: 17
+      bit_size: 3
+      enum: PSC_USBPDCLK
+    - name: RXORDSETEN
+      description: "Receiver ordered set enable\r The bitfield determines the types of ordered sets that the receiver must detect. When set/cleared, each bit enables/disables a specific function:\r 0bxxxxxxxx1: SOP detect enabled\r 0bxxxxxxx1x: SOP' detect enabled\r 0bxxxxxx1xx: SOP'' detect enabled\r 0bxxxxx1xxx: Hard Reset detect enabled\r 0bxxxx1xxxx: Cable Detect reset enabled\r 0bxxx1xxxxx: SOP'_Debug enabled\r 0bxx1xxxxxx: SOP''_Debug enabled\r 0bx1xxxxxxx: SOP extension#1 enabled\r 0b1xxxxxxxx: SOP extension#2 enabled"
+      bit_offset: 20
+      bit_size: 9
+    - name: TXDMAEN
+      description: "Transmission DMA mode enable\r When set, the bit enables DMA mode for transmission."
+      bit_offset: 29
+      bit_size: 1
+    - name: RXDMAEN
+      description: "Reception DMA mode enable\r When set, the bit enables DMA mode for reception."
+      bit_offset: 30
+      bit_size: 1
+    - name: UCPDEN
+      description: "peripheral enable\r General enable of the peripheral.\r Upon disabling, the peripheral instantly quits any ongoing activity and all control bits and bitfields default to their reset values. They must be set to their desired values each time the peripheral transits from disabled to enabled state."
+      bit_offset: 31
+      bit_size: 1
+fieldset/CFGR2:
+  description: "configuration register 2 "
+  fields:
+    - name: RXFILTDIS
+      description: "BMC decoder Rx pre-filter enable\r The sampling clock is that of the receiver (that is, after pre-scaler)."
+      bit_offset: 0
+      bit_size: 1
+    - name: RXFILT2N3
+      description: "BMC decoder Rx pre-filter sampling method\r Number of consistent consecutive samples before confirming a new value."
+      bit_offset: 1
+      bit_size: 1
+    - name: FORCECLK
+      description: Force ClkReq clock request
+      bit_offset: 2
+      bit_size: 1
+    - name: WUPEN
+      description: "Wakeup from Stop mode enable\r Setting the bit enables the ASYNC_INT signal."
+      bit_offset: 3
+      bit_size: 1
+fieldset/CFGR3:
+  description: "configuration register 3 "
+  fields:
+    - name: TRIM_CC1_RD
+      description: SW trim value for Rd resistor on the CC1 line
+      bit_offset: 0
+      bit_size: 4
+    - name: TRIM_CC1_RP
+      description: SW trim value for Rp current sources on the CC1 line
+      bit_offset: 9
+      bit_size: 4
+    - name: TRIM_CC2_RD
+      description: SW trim value for Rd resistor on the CC2 line
+      bit_offset: 16
+      bit_size: 4
+    - name: TRIM_CC2_RP
+      description: SW trim value for Rp current sources on the CC2 line
+      bit_offset: 25
+      bit_size: 4
+fieldset/CR:
+  description: "control register "
+  fields:
+    - name: TXMODE
+      description: "Type of Tx packet\r Writing the bitfield triggers the action as follows, depending on the value:\r Others: invalid\r From V1.1 of the USB PD specification, there is a counter defined for the duration of the BIST Carrier Mode 2. To quit this mode correctly (after the \"tBISTContMode\" delay), disable the peripheral (UCPDEN = 0)."
+      bit_offset: 0
+      bit_size: 2
+      enum: TXMODE
+    - name: TXSEND
+      description: "Command to send a Tx packet\r The bit is cleared by hardware as soon as the packet transmission begins or is discarded."
+      bit_offset: 2
+      bit_size: 1
+    - name: TXHRST
+      description: "Command to send a Tx Hard Reset\r The bit is cleared by hardware as soon as the message transmission begins or is discarded."
+      bit_offset: 3
+      bit_size: 1
+    - name: RXMODE
+      description: "Receiver mode\r Determines the mode of the receiver.\r When the bit is set, RXORDSET behaves normally, RXDR no longer receives bytes yet the CRC checking still proceeds as for a normal message."
+      bit_offset: 4
+      bit_size: 1
+    - name: PHYRXEN
+      description: "USB Power Delivery receiver enable\r Both CC1 and CC2 receivers are disabled when the bit is cleared. Only the CC receiver selected via the PHYCCSEL bit is enabled when the bit is set."
+      bit_offset: 5
+      bit_size: 1
+    - name: PHYCCSEL
+      description: "CC1/CC2 line selector for USB Power Delivery signaling\r The selection depends on the cable orientation as discovered at attach."
+      bit_offset: 6
+      bit_size: 1
+      enum: PHYCCSEL
+    - name: ANASUBMODE
+      description: "Analog PHY sub-mode\r Refer to TYPEC_VSTATE_CCx for the effect of this bitfield."
+      bit_offset: 7
+      bit_size: 2
+    - name: ANAMODE
+      description: "Analog PHY operating mode\r The use of CC1 and CC2 depends on CCENABLE. Refer to ANAMODE, ANASUBMODE and link with TYPEC_VSTATE_CCx for the effect of this bitfield in conjunction with ANASUBMODE[1:0]."
+      bit_offset: 9
+      bit_size: 1
+      enum: ANAMODE
+    - name: CCENABLE
+      description: "CC line enable\r This bitfield enables CC1 and CC2 line analog PHYs (pull-ups and pull-downs) according to ANAMODE and ANASUBMODE[1:0] setting.\r A single line PHY can be enabled when, for example, the other line is driven by VCONN via an external VCONN switch. Enabling both PHYs is the normal usage for sink/source."
+      bit_offset: 10
+      bit_size: 2
+      enum: CCENABLE
+    - name: CC1VCONNEN
+      description: VCONN switch enable for CC1
+      bit_offset: 13
+      bit_size: 1
+    - name: CC2VCONNEN
+      description: VCONN switch enable for CC2
+      bit_offset: 14
+      bit_size: 1
+    - name: DBATTEN
+      description: "Dead battery function enable\r The bit takes effect upon setting the USBPDstrobe bit of the SYS_CONFIG register.\r Dead battery function only operates if the external circuit is appropriately configured."
+      bit_offset: 15
+      bit_size: 1
+    - name: FRSRXEN
+      description: "FRS event detection enable\r Setting the bit enables FRS Rx event (FRSEVT) detection on the CC line selected through the PHYCCSEL bit. 0: Disable\r Clear the bit when the device is attached to an FRS-incapable source/sink."
+      bit_offset: 16
+      bit_size: 1
+    - name: FRSTX
+      description: "FRS Tx signaling enable.\r Setting the bit enables FRS Tx signaling.\r The bit is cleared by hardware after a delay respecting the USB Power Delivery specification Revision 3.0."
+      bit_offset: 17
+      bit_size: 1
+    - name: RDCH
+      description: "Rdch condition drive\r The bit drives Rdch condition on the CC line selected through the PHYCCSEL bit (thus associated with VCONN), by remaining set during the source-only UnattachedWait.SRC state, to respect the Type-C state. Refer to \"USB Type-C ECN for Source VCONN Discharge\". The CCENABLE[1:0] bitfield must be set accordingly, too."
+      bit_offset: 18
+      bit_size: 1
+    - name: CC1TCDIS
+      description: "CC1 Type-C detector disable\r The bit disables the Type-C detector on the CC1 line.\r When enabled, the Type-C detector for CC1 is configured through ANAMODE and ANASUBMODE[1:0]."
+      bit_offset: 20
+      bit_size: 1
+    - name: CC2TCDIS
+      description: "CC2 Type-C detector disable\r The bit disables the Type-C detector on the CC2 line.\r When enabled, the Type-C detector for CC2 is configured through ANAMODE and ANASUBMODE[1:0]."
+      bit_offset: 21
+      bit_size: 1
+fieldset/ICR:
+  description: "interrupt clear register "
+  fields:
+    - name: TXMSGDISCCF
+      description: "Tx message discard flag (TXMSGDISC) clear\r Setting the bit clears the TXMSGDISC flag in the SR register."
+      bit_offset: 1
+      bit_size: 1
+    - name: TXMSGSENTCF
+      description: "Tx message send flag (TXMSGSENT) clear\r Setting the bit clears the TXMSGSENT flag in the SR register."
+      bit_offset: 2
+      bit_size: 1
+    - name: TXMSGABTCF
+      description: "Tx message abort flag (TXMSGABT) clear\r Setting the bit clears the TXMSGABT flag in the SR register."
+      bit_offset: 3
+      bit_size: 1
+    - name: HRSTDISCCF
+      description: "Hard reset discard flag (HRSTDISC) clear\r Setting the bit clears the HRSTDISC flag in the SR register."
+      bit_offset: 4
+      bit_size: 1
+    - name: HRSTSENTCF
+      description: "Hard reset send flag (HRSTSENT) clear\r Setting the bit clears the HRSTSENT flag in the SR register."
+      bit_offset: 5
+      bit_size: 1
+    - name: TXUNDCF
+      description: "Tx underflow flag (TXUND) clear\r Setting the bit clears the TXUND flag in the SR register."
+      bit_offset: 6
+      bit_size: 1
+    - name: RXORDDETCF
+      description: "Rx ordered set detect flag (RXORDDET) clear\r Setting the bit clears the RXORDDET flag in the SR register."
+      bit_offset: 9
+      bit_size: 1
+    - name: RXHRSTDETCF
+      description: "Rx Hard Reset detect flag (RXHRSTDET) clear\r Setting the bit clears the RXHRSTDET flag in the SR register."
+      bit_offset: 10
+      bit_size: 1
+    - name: RXOVRCF
+      description: "Rx overflow flag (RXOVR) clear\r Setting the bit clears the RXOVR flag in the SR register."
+      bit_offset: 11
+      bit_size: 1
+    - name: RXMSGENDCF
+      description: "Rx message received flag (RXMSGEND) clear\r Setting the bit clears the RXMSGEND flag in the SR register."
+      bit_offset: 12
+      bit_size: 1
+    - name: TYPECEVT1CF
+      description: "Type-C CC1 event flag (TYPECEVT1) clear\r Setting the bit clears the TYPECEVT1 flag in the SR register"
+      bit_offset: 14
+      bit_size: 1
+    - name: TYPECEVT2CF
+      description: "Type-C CC2 line event flag (TYPECEVT2) clear\r Setting the bit clears the TYPECEVT2 flag in the SR register"
+      bit_offset: 15
+      bit_size: 1
+    - name: FRSEVTCF
+      description: "FRS event flag (FRSEVT) clear\r Setting the bit clears the FRSEVT flag in the SR register."
+      bit_offset: 20
+      bit_size: 1
+fieldset/IMR:
+  description: "interrupt mask register "
+  fields:
+    - name: TXISIE
+      description: TXIS interrupt enable
+      bit_offset: 0
+      bit_size: 1
+    - name: TXMSGDISCIE
+      description: TXMSGDISC interrupt enable
+      bit_offset: 1
+      bit_size: 1
+    - name: TXMSGSENTIE
+      description: TXMSGSENT interrupt enable
+      bit_offset: 2
+      bit_size: 1
+    - name: TXMSGABTIE
+      description: TXMSGABT interrupt enable
+      bit_offset: 3
+      bit_size: 1
+    - name: HRSTDISCIE
+      description: HRSTDISC interrupt enable
+      bit_offset: 4
+      bit_size: 1
+    - name: HRSTSENTIE
+      description: HRSTSENT interrupt enable
+      bit_offset: 5
+      bit_size: 1
+    - name: TXUNDIE
+      description: TXUND interrupt enable
+      bit_offset: 6
+      bit_size: 1
+    - name: RXNEIE
+      description: RXNE interrupt enable
+      bit_offset: 8
+      bit_size: 1
+    - name: RXORDDETIE
+      description: RXORDDET interrupt enable
+      bit_offset: 9
+      bit_size: 1
+    - name: RXHRSTDETIE
+      description: RXHRSTDET interrupt enable
+      bit_offset: 10
+      bit_size: 1
+    - name: RXOVRIE
+      description: RXOVR interrupt enable
+      bit_offset: 11
+      bit_size: 1
+    - name: RXMSGENDIE
+      description: RXMSGEND interrupt enable
+      bit_offset: 12
+      bit_size: 1
+    - name: TYPECEVT1IE
+      description: TYPECEVT1 interrupt enable
+      bit_offset: 14
+      bit_size: 1
+    - name: TYPECEVT2IE
+      description: TYPECEVT2 interrupt enable
+      bit_offset: 15
+      bit_size: 1
+    - name: FRSEVTIE
+      description: FRSEVT interrupt enable
+      bit_offset: 20
+      bit_size: 1
+fieldset/IPID:
+  description: UCPD IP ID register
+  fields:
+    - name: IPID
+      description: IPID
+      bit_offset: 0
+      bit_size: 32
+fieldset/IPVER:
+  description: UCPD IP ID register
+  fields:
+    - name: IPVER
+      description: IPVER
+      bit_offset: 0
+      bit_size: 32
+fieldset/MID:
+  description: UCPD IP ID register
+  fields:
+    - name: IPID
+      description: IPID
+      bit_offset: 0
+      bit_size: 32
+fieldset/RXDR:
+  fields:
+    - name: RXDATA
+      description: Data byte received
+      bit_offset: 0
+      bit_size: 8
+fieldset/RX_ORDEXTR1:
+  description: "Rx ordered set extension register 1 \t"
+  fields:
+    - name: RXSOPX1
+      description: "Ordered set 1 received\r The bitfield contains a full 20-bit sequence received, consisting of four K‑codes, each of five bits. The bit 0 (bit 0 of K‑code1) is receive first, the bit 19 (bit 4 of K‑code4) last."
+      bit_offset: 0
+      bit_size: 20
+fieldset/RX_ORDEXTR2:
+  description: "Rx ordered set extension register 2 \t"
+  fields:
+    - name: RXSOPX2
+      description: "Ordered set 2 received\r The bitfield contains a full 20-bit sequence received, consisting of four K‑codes, each of five bits. The bit 0 (bit 0 of K‑code1) is receive first, the bit 19 (bit 4 of K‑code4) last."
+      bit_offset: 0
+      bit_size: 20
+fieldset/RX_ORDSETR:
+  fields:
+    - name: RXORDSET
+      description: Rx ordered set code detected
+      bit_offset: 0
+      bit_size: 3
+      enum: RXORDSET
+    - name: RXSOP3OF4
+      description: The bit indicates the number of correct K‑codes. For debug purposes only.
+      bit_offset: 3
+      bit_size: 1
+    - name: RXSOPKINVALID
+      description: "The bitfield is for debug purposes only.\r Others: Invalid"
+      bit_offset: 4
+      bit_size: 3
+      enum: RXSOPKINVALID
+fieldset/RX_PAYSZR:
+  fields:
+    - name: RXPAYSZ
+      description: "Rx payload size received\r This bitfield contains the number of bytes of a payload (including header but excluding CRC) received: each time a new data byte is received in the RXDR register, the bitfield value increments and the RXMSGEND flag is set (and an interrupt generated if enabled).\r The bitfield may return a spurious value when a byte reception is ongoing (the RXMSGEND flag is low)."
+      bit_offset: 0
+      bit_size: 10
+fieldset/SR:
+  description: "status register "
+  fields:
+    - name: TXIS
+      description: "Transmit interrupt status\r The flag indicates that the TXDR register is empty and new data write is required (as the amount of data sent has not reached the payload size defined in the TXPAYSZ bitfield). The flag is cleared with the data write into the TXDR register."
+      bit_offset: 0
+      bit_size: 1
+    - name: TXMSGDISC
+      description: "Message transmission discarded\r The flag indicates that a message transmission was dropped. The flag is cleared by setting the TXMSGDISCCF bit.\r Transmission of a message can be dropped if there is a concurrent receive in progress or at excessive noise on the line. After a Tx message is discarded, the flag is only raised when the CC line becomes idle."
+      bit_offset: 1
+      bit_size: 1
+    - name: TXMSGSENT
+      description: "Message transmission completed\r The flag indicates the completion of packet transmission. It is cleared by setting the TXMSGSENTCF bit.\r In the event of a message transmission interrupted by a Hard Reset, the flag is not raised."
+      bit_offset: 2
+      bit_size: 1
+    - name: TXMSGABT
+      description: "Transmit message abort\r The flag indicates that a Tx message is aborted due to a subsequent Hard Reset message send request taking priority during transmit. It is cleared by setting the TXMSGABTCF bit."
+      bit_offset: 3
+      bit_size: 1
+    - name: HRSTDISC
+      description: "Hard Reset discarded\r The flag indicates that the Hard Reset message is discarded. The flag is cleared by setting the HRSTDISCCF bit."
+      bit_offset: 4
+      bit_size: 1
+    - name: HRSTSENT
+      description: "Hard Reset message sent\r The flag indicates that the Hard Reset message is sent. The flag is cleared by setting the HRSTSENTCF bit."
+      bit_offset: 5
+      bit_size: 1
+    - name: TXUND
+      description: "Tx data underrun detection\r The flag indicates that the Tx data register (TXDR) was not written in time for a transmit message to execute normally. It is cleared by setting the TXUNDCF bit."
+      bit_offset: 6
+      bit_size: 1
+    - name: RXNE
+      description: "Receive data register not empty detection\r The flag indicates that the RXDR register is not empty. It is automatically cleared upon reading RXDR."
+      bit_offset: 8
+      bit_size: 1
+    - name: RXORDDET
+      description: "Rx ordered set (4 K-codes) detection\r The flag indicates the detection of an ordered set. The relevant information is stored in the RXORDSET[2:0] bitfield of the RX_ORDSET register. It is cleared by setting the RXORDDETCF bit."
+      bit_offset: 9
+      bit_size: 1
+    - name: RXHRSTDET
+      description: "Rx Hard Reset receipt detection\r The flag indicates the receipt of valid Hard Reset message. It is cleared by setting the RXHRSTDETCF bit."
+      bit_offset: 10
+      bit_size: 1
+    - name: RXOVR
+      description: "Rx data overflow detection\r The flag indicates Rx data buffer overflow. It is cleared by setting the RXOVRCF bit.\r The buffer overflow can occur if the received data are not read fast enough."
+      bit_offset: 11
+      bit_size: 1
+    - name: RXMSGEND
+      description: "Rx message received\r The flag indicates whether a message (except Hard Reset message) has been received, regardless the CRC value. The flag is cleared by setting the RXMSGENDCF bit.\r The RXERR flag set when the RXMSGEND flag goes high indicates errors in the last-received message."
+      bit_offset: 12
+      bit_size: 1
+    - name: RXERR
+      description: "Receive message error\r The flag indicates errors of the last Rx message declared (via RXMSGEND), such as incorrect CRC or truncated message (a line becoming static before EOP is met). It is asserted whenever the RXMSGEND flag is set."
+      bit_offset: 13
+      bit_size: 1
+    - name: TYPECEVT1
+      description: "Type-C voltage level event on CC1 line\r The flag indicates a change of the TYPEC_VSTATE_CC1[1:0] bitfield value, which corresponds to a new Type-C event. It is cleared by setting the TYPECEVT2CF bit."
+      bit_offset: 14
+      bit_size: 1
+    - name: TYPECEVT2
+      description: "Type-C voltage level event on CC2 line\r The flag indicates a change of the TYPEC_VSTATE_CC2[1:0] bitfield value, which corresponds to a new Type-C event. It is cleared by setting the TYPECEVT2CF bit."
+      bit_offset: 15
+      bit_size: 1
+    - name: TYPEC_VSTATE_CC1
+      description: "The status bitfield indicates the voltage level on the CC1 line in its steady state.\r The voltage variation on the CC1 line during USB PD messages due to the BMC PHY modulation does not impact the bitfield value."
+      bit_offset: 16
+      bit_size: 2
+      enum: TYPEC_VSTATE_CC
+    - name: TYPEC_VSTATE_CC2
+      description: "CC2 line voltage level\r The status bitfield indicates the voltage level on the CC2 line in its steady state.\r The voltage variation on the CC2 line during USB PD messages due to the BMC PHY modulation does not impact the bitfield value."
+      bit_offset: 18
+      bit_size: 2
+      enum: TYPEC_VSTATE_CC
+    - name: FRSEVT
+      description: "FRS detection event\r The flag is cleared by setting the FRSEVTCF bit."
+      bit_offset: 20
+      bit_size: 1
+fieldset/TXDR:
+  description: "Tx data register "
+  fields:
+    - name: TXDATA
+      description: Data byte to transmit
+      bit_offset: 0
+      bit_size: 8
+fieldset/TX_ORDSETR:
+  description: "Tx ordered set type register "
+  fields:
+    - name: TXORDSET
+      description: "Ordered set to transmit\r The bitfield determines a full 20-bit sequence to transmit, consisting of four K-codes, each of five bits, defining the packet to transmit. The bit 0 (bit 0 of K-code1) is the first, the bit 19 (bit 4 of K‑code4) the last."
+      bit_offset: 0
+      bit_size: 20
+fieldset/TX_PAYSZR:
+  description: "Tx payload size register "
+  fields:
+    - name: TXPAYSZ
+      description: "Payload size yet to transmit\r The bitfield is modified by software and by hardware. It contains the number of bytes of a payload (including header but excluding CRC) yet to transmit: each time a data byte is written into the TXDR register, the bitfield value decrements and the TXIS bit is set, except when the bitfield value reaches zero. The enumerated values are standard payload sizes before the start of transmission."
+      bit_offset: 0
+      bit_size: 10
+enum/ANAMODE:
+  bit_size: 1
+  variants:
+    - name: Source
+      description: Source
+      value: 0
+    - name: Sink
+      description: Sink
+      value: 1
+enum/CCENABLE:
+  bit_size: 2
+  variants:
+    - name: Disabled
+      description: "Disable both PHYs "
+      value: 0
+    - name: Cc1
+      description: Enable CC1 PHY
+      value: 1
+    - name: Cc2
+      description: Enable CC2 PHY
+      value: 2
+    - name: Both
+      description: Enable CC1 and CC2 PHY
+      value: 3
+enum/PHYCCSEL:
+  bit_size: 1
+  variants:
+    - name: Cc1
+      description: Use CC1 IO for Power Delivery communication
+      value: 0
+    - name: Cc2
+      description: Use CC2 IO for Power Delivery communication
+      value: 1
+enum/RXORDSET:
+  bit_size: 3
+  variants:
+    - name: Sop
+      description: SOP code detected in receiver
+      value: 0
+    - name: SopPrime
+      description: "SOP' code detected in receiver"
+      value: 1
+    - name: SopDoublePrime
+      description: "SOP'' code detected in receiver"
+      value: 2
+    - name: SopPrimeDebug
+      description: "SOP'_Debug detected in receiver"
+      value: 3
+    - name: SopDoublePrimeDebug
+      description: "SOP''_Debug detected in receiver"
+      value: 4
+    - name: CableReset
+      description: Cable Reset detected in receiver
+      value: 5
+    - name: Ext1
+      description: "SOP extension#1 detected in receiver"
+      value: 6
+    - name: Ext2
+      description: "SOP extension#2 detected in receiver"
+      value: 7
+enum/RXSOPKINVALID:
+  bit_size: 3
+  variants:
+    - name: None
+      description: No K‑code corrupted
+      value: 0
+    - name: First
+      description: First K‑code corrupted
+      value: 1
+    - name: Second
+      description: Second K‑code corrupted
+      value: 2
+    - name: Third
+      description: Third K‑code corrupted
+      value: 3
+    - name: Fourth
+      description: Fourth K‑code corrupted
+      value: 4
+enum/TXMODE:
+  bit_size: 2
+  variants:
+    - name: Packet
+      description: Transmission of Tx packet previously defined in other registers
+      value: 0
+    - name: CableReset
+      description: Cable Reset sequence
+      value: 1
+    - name: Bist
+      description: BIST test sequence (BIST Carrier Mode 2)
+      value: 2
+enum/TYPEC_VSTATE_CC:
+  bit_size: 2
+  variants:
+    - name: Lowest
+      description: Lowest
+      value: 0
+    - name: Low
+      description: Low
+      value: 1
+    - name: High
+      description: High
+      value: 2
+    - name: Highest
+      description: Highest
+      value: 3
+enum/PSC_USBPDCLK:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: 1 (bypass)
+      value: 0
+    - name: Div2
+      description: "2"
+      value: 1
+    - name: Div4
+      description: "4"
+      value: 2
+    - name: Div8
+      description: "8"
+      value: 3
+    - name: Div16
+      description: "16"
+      value: 4
