@@ -123,6 +123,11 @@ impl PeripheralToClock {
             }
         }
 
+        // If adc is 3, 4, or 5, check for ADC345
+        if (peri_name == "ADC3" || peri_name == "ADC4" || peri_name == "ADC5") && clocks.contains_key("ADC345") {
+            return clocks.get("ADC345");
+        }
+
         // Look for bare ADC clock register
         if clocks.contains_key("ADC") {
             return clocks.get("ADC");
