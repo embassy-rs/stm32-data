@@ -1,5 +1,15 @@
 use serde::{Deserialize, Serialize};
 
+#[macro_export]
+macro_rules! regex {
+    ($re:literal) => {{
+        ::ref_thread_local::ref_thread_local! {
+            static managed REGEX: ::regex::Regex = ::regex::Regex::new($re).unwrap();
+        }
+        <REGEX as ::ref_thread_local::RefThreadLocal<::regex::Regex>>::borrow(&REGEX)
+    }};
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct Chip {
     pub name: String,
@@ -121,12 +131,52 @@ pub mod chip {
                 }
             }
 
-            #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+            #[derive(Clone, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
             pub struct Pin {
                 pub pin: String,
                 pub signal: String,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub af: Option<u8>,
+            }
+
+            fn extract_port_and_pin(pin: &str) -> (char, u8) {
+                let captures = regex!(r"^P([A-Z])(\d+)(?:_C)?")
+                    .captures(pin)
+                    .expect("Could not match regex on pin");
+                let port = captures
+                    .get(1)
+                    .expect("Could not extract port")
+                    .as_str()
+                    .chars()
+                    .next()
+                    .expect("Empty port");
+                let pin_number = captures
+                    .get(2)
+                    .expect("Could not extract pin number")
+                    .as_str()
+                    .parse::<u8>()
+                    .expect("Could not parse pin number to u8");
+                (port, pin_number)
+            }
+
+            impl Ord for Pin {
+                fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+                    let (port_a, pin_number_a) = extract_port_and_pin(&self.pin);
+                    let (port_b, pin_number_b) = extract_port_and_pin(&other.pin);
+
+                    if port_a != port_b {
+                        port_a.cmp(&port_b)
+                    } else if pin_number_a != pin_number_b {
+                        pin_number_a.cmp(&pin_number_b)
+                    } else {
+                        self.signal.cmp(&other.signal)
+                    }
+                }
+            }
+            impl PartialOrd for Pin {
+                fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+                    Some(self.cmp(other))
+                }
             }
 
             #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
