@@ -1,0 +1,239 @@
+---
+block/PWR:
+  description: Power control
+  items:
+    - name: CR
+      description: power control register
+      byte_offset: 0
+      fieldset: CR
+    - name: CSR
+      description: power control/status register
+      byte_offset: 4
+      fieldset: CSR
+fieldset/CR:
+  description: power control register
+  fields:
+    - name: LPSDSR
+      description: Low-power deepsleep/Sleep/Low-power run
+      bit_offset: 0
+      bit_size: 1
+      enum: MODE
+    - name: PDDS
+      description: Power down deepsleep
+      bit_offset: 1
+      bit_size: 1
+      enum: PDDS
+    - name: CWUF
+      description: Clear wakeup flag
+      bit_offset: 2
+      bit_size: 1
+    - name: CSBF
+      description: Clear standby flag
+      bit_offset: 3
+      bit_size: 1
+    - name: PVDE
+      description: Power voltage detector enable
+      bit_offset: 4
+      bit_size: 1
+    - name: PLS
+      description: PVD level selection
+      bit_offset: 5
+      bit_size: 3
+      enum: PLS
+    - name: DBP
+      description: Disable backup domain write protection
+      bit_offset: 8
+      bit_size: 1
+    - name: ULP
+      description: Ultra-low-power mode
+      bit_offset: 9
+      bit_size: 1
+    - name: FWU
+      description: Fast wakeup
+      bit_offset: 10
+      bit_size: 1
+    - name: VOS
+      description: Voltage scaling range selection
+      bit_offset: 11
+      bit_size: 2
+      enum: VOS
+    - name: DS_EE_KOFF
+      description: Deep sleep mode with Flash memory kept off
+      bit_offset: 13
+      bit_size: 1
+      enum: DS_EE_KOFF
+    - name: LPRUN
+      description: Low power run mode
+      bit_offset: 14
+      bit_size: 1
+      enum: MODE
+    - name: LPDS
+      description: Regulator in Low-power deepsleep mode
+      bit_offset: 16
+      bit_size: 1
+      enum: MODE
+fieldset/CSR:
+  description: power control/status register
+  fields:
+    - name: WUF
+      description: Wakeup flag
+      bit_offset: 0
+      bit_size: 1
+      enum_read: WUFR
+    - name: SBF
+      description: Standby flag
+      bit_offset: 1
+      bit_size: 1
+      enum_read: SBFR
+    - name: PVDO
+      description: PVD output
+      bit_offset: 2
+      bit_size: 1
+      enum_read: PVDOR
+    - name: VREFINTRDYF
+      description: Internal voltage reference ready flag
+      bit_offset: 3
+      bit_size: 1
+      enum_read: VREFINTRDYFR
+    - name: VOSF
+      description: Voltage Scaling select flag
+      bit_offset: 4
+      bit_size: 1
+      enum_read: VOSFR
+    - name: REGLPF
+      description: Regulator LP flag
+      bit_offset: 5
+      bit_size: 1
+      enum_read: REGLPFR
+    - name: EWUP1
+      description: Enable WKUP pin 1
+      bit_offset: 8
+      bit_size: 1
+    - name: EWUP2
+      description: Enable WKUP pin 2
+      bit_offset: 9
+      bit_size: 1
+    - name: EWUP3
+      description: Enable WKUP pin 3
+      bit_offset: 10
+      bit_size: 1
+enum/DS_EE_KOFF:
+  bit_size: 1
+  variants:
+    - name: NVMWakeUp
+      description: NVM woken up when exiting from Deepsleep mode even if the bit RUN_PD is set
+      value: 0
+    - name: NVMSleep
+      description: NVM not woken up when exiting from low-power mode (if the bit RUN_PD is set)
+      value: 1
+enum/MODE:
+  bit_size: 1
+  variants:
+    - name: MAIN_MODE
+      description: Voltage regulator in Main mode
+      value: 0
+    - name: LOW_POWER_MODE
+      description: Voltage regulator switches to low-power mode
+      value: 1
+enum/PDDS:
+  bit_size: 1
+  variants:
+    - name: STOP_MODE
+      description: Enter Stop mode when the CPU enters deepsleep
+      value: 0
+    - name: STANDBY_MODE
+      description: Enter Standby mode when the CPU enters deepsleep
+      value: 1
+enum/PLS:
+  bit_size: 3
+  variants:
+    - name: V1_9
+      description: 1.9 V
+      value: 0
+    - name: V2_1
+      description: 2.1 V
+      value: 1
+    - name: V2_3
+      description: 2.3 V
+      value: 2
+    - name: V2_5
+      description: 2.5 V
+      value: 3
+    - name: V2_7
+      description: 2.7 V
+      value: 4
+    - name: V2_9
+      description: 2.9 V
+      value: 5
+    - name: V3_1
+      description: 3.1 V
+      value: 6
+    - name: External
+      description: External input analog voltage (Compare internally to VREFINT)
+      value: 7
+enum/PVDOR:
+  bit_size: 1
+  variants:
+    - name: AboveThreshold
+      description: "VDD is higher than the PVD threshold selected with the PLS[2:0] bits"
+      value: 0
+    - name: BelowThreshold
+      description: "VDD is lower than the PVD threshold selected with the PLS[2:0] bits"
+      value: 1
+enum/REGLPFR:
+  bit_size: 1
+  variants:
+    - name: Ready
+      description: Regulator is ready in Main mode
+      value: 0
+    - name: NotReady
+      description: Regulator voltage is in low-power mode
+      value: 1
+enum/SBFR:
+  bit_size: 1
+  variants:
+    - name: NoStandbyEvent
+      description: Device has not been in Standby mode
+      value: 0
+    - name: StandbyEvent
+      description: Device has been in Standby mode
+      value: 1
+enum/VOS:
+  bit_size: 2
+  variants:
+    - name: V1_8
+      description: 1.8 V (range 1)
+      value: 1
+    - name: V1_5
+      description: 1.5 V (range 2)
+      value: 2
+    - name: V1_2
+      description: 1.2 V (range 3)
+      value: 3
+enum/VOSFR:
+  bit_size: 1
+  variants:
+    - name: Ready
+      description: Regulator is ready in the selected voltage range
+      value: 0
+    - name: NotReady
+      description: Regulator voltage output is changing to the required VOS level
+      value: 1
+enum/VREFINTRDYFR:
+  bit_size: 1
+  variants:
+    - name: NotReady
+      description: VREFINT is OFF
+      value: 0
+    - name: Ready
+      description: VREFINT is ready
+      value: 1
+enum/WUFR:
+  bit_size: 1
+  variants:
+    - name: NoWakeupEvent
+      description: No wakeup event occurred
+      value: 0
+    - name: WakeupEvent
+      description: "A wakeup event was received from the WKUP pin or from the RTC alarm (Alarm A or Alarm B), RTC Tamper event, RTC TimeStamp event or RTC Wakeup)"
+      value: 1
