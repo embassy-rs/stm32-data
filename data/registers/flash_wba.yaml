@@ -1,0 +1,643 @@
+block/FLASH:
+  description: Embedded memory
+  items:
+  - name: ACR
+    description: access control register
+    byte_offset: 0
+    fieldset: ACR
+  - name: NSKEYR
+    description: key register
+    byte_offset: 8
+    fieldset: NSKEYR
+  - name: SECKEYR
+    description: secure key register
+    byte_offset: 12
+    fieldset: SECKEYR
+  - name: OPTKEYR
+    description: option key register
+    byte_offset: 16
+    fieldset: OPTKEYR
+  - name: PDKEYR
+    description: power-down key register
+    byte_offset: 24
+    fieldset: PDKEYR
+  - name: NSSR
+    description: status register
+    byte_offset: 32
+    fieldset: NSSR
+  - name: SECSR
+    description: secure status register
+    byte_offset: 36
+    fieldset: SECSR
+  - name: NSCR1
+    description: control register
+    byte_offset: 40
+    fieldset: NSCR1
+  - name: SECCR1
+    description: secure control register
+    byte_offset: 44
+    fieldset: SECCR1
+  - name: ECCR
+    description: ECC register
+    byte_offset: 48
+    fieldset: ECCR
+  - name: OPSR
+    description: operation status register
+    byte_offset: 52
+    fieldset: OPSR
+  - name: NSCR2
+    description: control 2 register
+    byte_offset: 56
+    fieldset: NSCR2
+  - name: SECCR2
+    description: secure control 2 register
+    byte_offset: 60
+    fieldset: SECCR2
+  - name: OPTR
+    description: option register
+    byte_offset: 64
+    fieldset: OPTR
+  - name: NSBOOTADD0R
+    description: boot address 0 register
+    byte_offset: 68
+    fieldset: NSBOOTADD0R
+  - name: NSBOOTADD1R
+    description: boot address 1 register
+    byte_offset: 72
+    fieldset: NSBOOTADD1R
+  - name: SECBOOTADD0R
+    description: secure boot address 0 register
+    byte_offset: 76
+    fieldset: SECBOOTADD0R
+  - name: SECWMR1
+    description: secure watermark register 1
+    byte_offset: 80
+    fieldset: SECWMR1
+  - name: SECWMR2
+    description: secure watermark register 2
+    byte_offset: 84
+    fieldset: SECWMR2
+  - name: WRPAR
+    description: WRP area A address register
+    byte_offset: 88
+    fieldset: WRPAR
+  - name: WRPBR
+    description: WRP area B address register
+    byte_offset: 92
+    fieldset: WRPBR
+  - name: OEM1KEYR1
+    description: OEM1 key register 1
+    byte_offset: 112
+  - name: OEM1KEYR2
+    description: OEM1 key register 2
+    byte_offset: 116
+  - name: OEM2KEYR1
+    description: OEM2 key register 1
+    byte_offset: 120
+  - name: OEM2KEYR2
+    description: OEM2 key register 2
+    byte_offset: 124
+  - name: SECBBR
+    description: secure block based register 1
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 128
+    fieldset: BBR
+  - name: SECHDPCR
+    description: secure HDP control register
+    byte_offset: 192
+    fieldset: SECHDPCR
+  - name: PRIFCFGR
+    description: privilege configuration register
+    byte_offset: 196
+    fieldset: PRIFCFGR
+  - name: PRIVBBR
+    description: privilege block based register 1
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 208
+    fieldset: BBR
+fieldset/ACR:
+  description: access control register
+  fields:
+  - name: LATENCY
+    description: "Latency\r These bits represent the ratio between the AHB hclk1 clock period and the memory access time.\r Access to the bit can be secured by RCC SYSCLKSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV.\r ...\r Note: Before entering Stop 1 mode software must set wait state latency to at least 1."
+    bit_offset: 0
+    bit_size: 4
+  - name: PRFTEN
+    description: "Prefetch enable\r This bit enables the prefetch buffer in the embedded memory.\r This bit can be protected against unprivileged access by NSPRIV."
+    bit_offset: 8
+    bit_size: 1
+  - name: LPM
+    description: "Low-power read mode\r This bit puts the memory in low-power read mode.\r Access to the bit can be secured by PWR LPMSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV.\r This bit can’t be written when a program or erase operation is busy (BSY = 1) or when the write buffer is not empty (WDW = 1). Changing this bit while a program or erase operation is busy (BSY = 1) is rejected."
+    bit_offset: 11
+    bit_size: 1
+  - name: PDREQ
+    description: "power-down mode request\r This bit requests to enter power-down mode. When enters power-down mode, this bit is cleared by hardware and the PDKEYR is locked.\r This bit is write-protected with PDKEYR. \r Access to the bit can be secured by PWR LPMSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
+    bit_offset: 12
+    bit_size: 1
+  - name: SLEEP_PD
+    description: "memory power-down mode during Sleep mode\r This bit determines whether the memory is in power-down mode or Idle mode when the device is in Sleep mode.\r Access to the bit can be secured by PWR LPMSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV.\r The must not be put in power-down while a program or an erase operation is ongoing."
+    bit_offset: 14
+    bit_size: 1
+fieldset/BBR:
+  description: block based register
+  fields:
+  - name: BLOCK
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+fieldset/ECCR:
+  description: ECC register
+  fields:
+  - name: ADDR_ECC
+    description: "ECC fail address\r This field indicates which address is concerned by the ECC error correction or by the double ECC error detection. The address is given relative to base address, from offset 0x0�0000 to 0xF�FFF0.\r Note that bit 19 is reserved on STM32WBAxEx devices."
+    bit_offset: 0
+    bit_size: 20
+  - name: SYSF_ECC
+    description: "System memory ECC fail\r This bit indicates that the ECC error correction or double ECC error detection is located in the system memory."
+    bit_offset: 22
+    bit_size: 1
+  - name: ECCIE
+    description: "ECC correction interrupt enable\r This bit enables the interrupt generation when the ECCC bit in the ECCR register is set."
+    bit_offset: 24
+    bit_size: 1
+  - name: ECCC
+    description: "ECC correction\r This bit is set by hardware when one ECC error has been detected and corrected (only if ECCC and ECCD were previously cleared). An interrupt is generated if ECCIE is set. This bit is cleared by writing 1."
+    bit_offset: 30
+    bit_size: 1
+  - name: ECCD
+    description: "ECC detection\r This bit is set by hardware when two ECC errors have been detected (only if ECCC and ECCD were previously cleared). When this bit is set, a NMI is generated. This bit is cleared by writing 1."
+    bit_offset: 31
+    bit_size: 1
+fieldset/NSBOOTADD0R:
+  description: boot address 0 register
+  fields:
+  - name: NSBOOTADD0
+    description: "Non-secure boot base address 0\r This address is only used when TZEN = 0.\r The non-secure boot memory address can be programmed to any address in the valid address range (see Table 28: Boot space versus RDP protection) with a granularity of 128 bytes. These bits correspond to address [31:7]. The NSBOOTADD0 option bytes are selected following the BOOT0 pin or NSWBOOT0 state.\r Examples:\r NSBOOTADD0[24:0] = 0x0100000: Boot from memory (0x0800 0000)\r NSBOOTADD0[24:0] = 0x017F100: Boot from system memory bootloader (0x0BF8 8000)\r NSBOOTADD0[24:0] = 0x0400200: Boot from SRAM2 on S-Bus (0x2001 0000)"
+    bit_offset: 7
+    bit_size: 25
+fieldset/NSBOOTADD1R:
+  description: boot address 1 register
+  fields:
+  - name: NSBOOTADD1
+    description: "Non-secure boot address 1\r This address is only used when TZEN = 0.\r The non-secure boot memory address can be programmed to any address in the valid address range (see Table 28: Boot space versus RDP protection) with a granularity of 128 bytes. These bits correspond to address [31:7]. The NSBOOTADD0 option bytes are selected following the BOOT0 pin or NSWBOOT0 state. \r Examples:\r NSBOOTADD1[24:0] = 0x0100000: Boot from memory (0x0800 0000)\r NSBOOTADD1[24:0] = 0x017F100: Boot from system memory bootloader (0x0BF8 8000)\r NSBOOTADD1[24:0] = 0x0400200: Boot from SRAM2 (0x2001 0000)"
+    bit_offset: 7
+    bit_size: 25
+fieldset/NSCR1:
+  description: control register
+  fields:
+  - name: PG
+    description: Non-secure programming
+    bit_offset: 0
+    bit_size: 1
+  - name: PER
+    description: Non-secure page erase
+    bit_offset: 1
+    bit_size: 1
+  - name: MER
+    description: "Non-secure mass erase\r This bit triggers the non-secure mass erase (all user pages) when set."
+    bit_offset: 2
+    bit_size: 1
+  - name: PNB
+    description: "Non-secure page number selection\r These bits select the page to erase.\r ...\r Note that bit 9 is reserved on STM32WBA5xEx devices."
+    bit_offset: 3
+    bit_size: 7
+  - name: BWR
+    description: "Non-secure burst write programming mode\r When set, this bit selects the burst write programming mode."
+    bit_offset: 14
+    bit_size: 1
+  - name: STRT
+    description: "Non-secure operation start \r This bit triggers a non-secure erase operation when set. If MER and PER bits are reset and the STRT bit is set, the PGSERR bit in NSSR is set (this condition is forbidden).\r This bit is set only by software and is cleared when the BSY bit is cleared in NSSR."
+    bit_offset: 16
+    bit_size: 1
+  - name: OPTSTRT
+    description: "Options modification start\r This bit triggers an option bytes erase and program operation when set. This bit is write-protected with OPTLOCK.. This bit is set only by software, and is cleared when the BSY bit is cleared in NSSR."
+    bit_offset: 17
+    bit_size: 1
+  - name: EOPIE
+    description: "Non-secure end of operation interrupt enable\r This bit enables the interrupt generation when the EOP bit in the NSSR is set to 1."
+    bit_offset: 24
+    bit_size: 1
+  - name: ERRIE
+    description: "Non-secure error interrupt enable\r This bit enables the interrupt generation when the OPERR bit in the NSSR is set to 1."
+    bit_offset: 25
+    bit_size: 1
+  - name: OBL_LAUNCH
+    description: "Force the option byte loading\r When set to 1, this bit forces the option byte reloading. This bit is cleared only when the option byte loading is complete. This bit is write-protected with OPTLOCK.\r Note: The LSE oscillator must be disabled, LSEON = 0 and LSERDY = 0, before starting OBL_LAUNCH."
+    bit_offset: 27
+    bit_size: 1
+  - name: OPTLOCK
+    description: "Option lock\r This bit is set only. When set, the NSCR1.OPTSRT and OBL_LAUNCH bits concerning user options write access is locked. This bit is cleared by hardware after detecting the unlock sequence in OPTKEYR. The NSCR1.LOCK bit must be cleared before doing the OPTKEYR unlock sequence.\r In case of an unsuccessful unlock operation, this bit remains set until the next reset."
+    bit_offset: 30
+    bit_size: 1
+  - name: LOCK
+    description: "Non-secure lock\r This bit is set only.\r When set, the NSCR1 register write access is locked. This bit is cleared by hardware after detecting the unlock sequence in NSKEYR.\r In case of an unsuccessful unlock operation, this bit remains set until the next system reset."
+    bit_offset: 31
+    bit_size: 1
+fieldset/NSCR2:
+  description: control 2 register
+  fields:
+  - name: PS
+    description: Program suspend request
+    bit_offset: 0
+    bit_size: 1
+  - name: ES
+    description: Erase suspend request
+    bit_offset: 1
+    bit_size: 1
+fieldset/NSKEYR:
+  description: key register
+  fields:
+  - name: NSKEY
+    description: "memory non-secure key\r The following values must be written consecutively to unlock the NSCR1 register, allowing the memory non-secure programming/erasing operations:\r KEY1: 0x4567�0123\r KEY2: 0xCDEF�89AB"
+    bit_offset: 0
+    bit_size: 32
+fieldset/NSSR:
+  description: status register
+  fields:
+  - name: EOP
+    description: "Non-secure end of operation\r This bit is set by hardware when one or more memory non-secure operation (program/erase) has been completed successfully. This bit is set only if the non-secure end of operation interrupts are enabled (EOPIE = 1 in NSCR1). This bit is cleared by writing�1."
+    bit_offset: 0
+    bit_size: 1
+  - name: OPERR
+    description: "Non-secure operation error\r This bit is set by hardware when a memory non-secure operation (program/erase) completes unsuccessfully. This bit is set only if non-secure error interrupts are enabled (NSERRIE = 1). This bit is cleared by writing 1."
+    bit_offset: 1
+    bit_size: 1
+  - name: PROGERR
+    description: "Non-secure programming error\r This bit is set by hardware when a non-secure quad-word address to be programmed contains a value different from all 1 before programming, except if the data to write is all 0. This bit is cleared by writing 1."
+    bit_offset: 3
+    bit_size: 1
+  - name: WRPERR
+    description: "Non-secure write protection error\r This bit is set by hardware when a non-secure address to be erased/programmed belongs to a write-protected part (by WRP or HDP) of the memory. This bit is cleared by writing 1.\r Refer to Section�7.3.10: memory errors flags for full conditions of error flag setting."
+    bit_offset: 4
+    bit_size: 1
+  - name: PGAERR
+    description: "Non-secure programming alignment error\r This bit is set by hardware when the first word to be programmed is not aligned with a quad-word address, or the second, third or forth word does not belong to the same quad-word address. This bit is cleared by writing 1."
+    bit_offset: 5
+    bit_size: 1
+  - name: SIZERR
+    description: "Non-secure size error\r This bit is set by hardware when the size of the access is a byte or half-word during a non-secure program sequence. Only quad-word programming is allowed by means of successive word accesses. This bit is cleared by writing 1."
+    bit_offset: 6
+    bit_size: 1
+  - name: PGSERR
+    description: "Non-secure programming sequence error\r This bit is set by hardware when programming sequence is not correct. It is cleared by writing 1.\r Refer to Section�7.3.10: memory errors flags for full conditions of error flag setting."
+    bit_offset: 7
+    bit_size: 1
+  - name: OPTWERR
+    description: "Option write error \r This bit is set by hardware when the options bytes are written with an invalid configuration or when modifying options in RDP level 2.. It is cleared by writing 1.\r Refer to Section�7.3.10: memory errors flags for full conditions of error flag setting."
+    bit_offset: 13
+    bit_size: 1
+  - name: BSY
+    description: "Non-secure busy\r This indicates that a memory secure or non-secure operation is in progress. This bit is set at the beginning of a operation and reset when the operation finishes or when an error occurs."
+    bit_offset: 16
+    bit_size: 1
+  - name: WDW
+    description: "Non-secure wait data to write\r This bit indicates that the memory write buffer has been written by a secure or non-secure operation. It is set when the first data is stored in the buffer and cleared when the write is performed in the memory."
+    bit_offset: 17
+    bit_size: 1
+  - name: OEM1LOCK
+    description: "OEM1 key RDP lock\r This bit indicates that the OEM1 key read during the OBL is not virgin. When set, the OEM1 key RDP lock mechanism is active."
+    bit_offset: 18
+    bit_size: 1
+  - name: OEM2LOCK
+    description: "OEM2 key RDP lock\r This bit indicates that the OEM2 key read during the OBL is not virgin. When set, the OEM2 key RDP lock mechanism is active."
+    bit_offset: 19
+    bit_size: 1
+  - name: PD
+    description: "in power-down mode\r This bit indicates that the memory is in power-down state. It is reset when is in normal mode or being awaken."
+    bit_offset: 20
+    bit_size: 1
+fieldset/OPSR:
+  description: operation status register
+  fields:
+  - name: ADDR_OP
+    description: "Interrupted operation address\r This field indicates which address in the memory was accessed when reset occurred. The address is given relative to the base address, from offset 0x0�0000 to 0xF�FFF0.\r Note that bit 19 is reserved on STM32WBAxEx devices."
+    bit_offset: 0
+    bit_size: 20
+  - name: SYSF_OP
+    description: "Operation in system memory interrupted\r This bit indicates that the reset occurred during an operation in the system memory."
+    bit_offset: 22
+    bit_size: 1
+  - name: CODE_OP
+    description: "memory operation code\r This field indicates which memory operation has been interrupted by a system reset:"
+    bit_offset: 29
+    bit_size: 3
+    enum: CODE_OP
+fieldset/OPTKEYR:
+  description: option key register
+  fields:
+  - name: OPTKEY
+    description: "Option byte key\r The LOCK bit in the NSCR1 must be cleared before doing the unlock sequence for OPTLOCK bit. The following values must be written consecutively to unlock the NSCR1.OPTSTRT and OBL_LAUNCH register bits concerning user option operations:\r KEY1: 0x0819�2A3B\r KEY2: 0x4C5D�6E7F"
+    bit_offset: 0
+    bit_size: 32
+fieldset/OPTR:
+  description: option register
+  fields:
+  - name: RDP
+    description: "Readout protection level\r Others: Level 1 (memories readout protection active)\r Note: Refer to Section�7.6.2: Readout protection (RDP) for more details."
+    bit_offset: 0
+    bit_size: 8
+    enum: RDP
+  - name: BOR_LEV
+    description: "BOR reset level\r These bits contain the V<sub>DD</sub> supply level threshold that activates/releases the reset."
+    bit_offset: 8
+    bit_size: 3
+    enum: BOR_LEV
+  - name: NRST_STOP
+    description: Reset generation in Stop mode
+    bit_offset: 12
+    bit_size: 1
+  - name: NRST_STDBY
+    description: Reset generation in Standby mode
+    bit_offset: 13
+    bit_size: 1
+  - name: SRAM1_RST
+    description: SRAM1 erase upon system reset
+    bit_offset: 15
+    bit_size: 1
+  - name: IWDG_SW
+    description: Independent watchdog enable selection
+    bit_offset: 16
+    bit_size: 1
+  - name: IWDG_STOP
+    description: Independent watchdog counter freeze in Stop mode
+    bit_offset: 17
+    bit_size: 1
+  - name: IWDG_STDBY
+    description: Independent watchdog counter freeze in Standby mode
+    bit_offset: 18
+    bit_size: 1
+  - name: WWDG_SW
+    description: Window watchdog selection
+    bit_offset: 19
+    bit_size: 1
+  - name: SRAM2_PE
+    description: SRAM2 parity check enable
+    bit_offset: 24
+    bit_size: 1
+  - name: SRAM2_RST
+    description: SRAM2 erase when system reset
+    bit_offset: 25
+    bit_size: 1
+  - name: NSWBOOT0
+    description: Software BOOT0
+    bit_offset: 26
+    bit_size: 1
+  - name: NBOOT0
+    description: NBOOT0 option bit
+    bit_offset: 27
+    bit_size: 1
+  - name: TZEN
+    description: Global TrustZone security enable
+    bit_offset: 31
+    bit_size: 1
+fieldset/PDKEYR:
+  description: power-down key register
+  fields:
+  - name: PDKEY1
+    description: "power-down key\r The following values must be written consecutively to unlock the PDREQ bit in ACR:\r PDKEY_1: 0x0415�2637\r PDKEY_2: 0xFAFB�FCFD"
+    bit_offset: 0
+    bit_size: 32
+fieldset/PRIFCFGR:
+  description: privilege configuration register
+  fields:
+  - name: SPRIV
+    description: "Privileged protection for secure registers\r This bit is secure write protected. It can only be written by a secure privileged access when TrustZone is enabled (TZEN�=�1)."
+    bit_offset: 0
+    bit_size: 1
+  - name: NSPRIV
+    description: Privileged protection for non-secure registers
+    bit_offset: 1
+    bit_size: 1
+fieldset/SECBOOTADD0R:
+  description: secure boot address 0 register
+  fields:
+  - name: BOOT_LOCK
+    description: "Boot lock\r This lock is only used when TZEN = 0.\r When set, the boot is always forced to base address value programmed in SECBOOTADD0[24:0] option bytes whatever the boot selection option. When set, this bit can only be cleared by an RDP regression level 1 to level 0."
+    bit_offset: 0
+    bit_size: 1
+  - name: SECBOOTADD0
+    description: "Secure boot base address 0\r This address is only used when TZEN = 1.\r The secure boot memory address can be programmed to any address in the valid address range (see Table�28: Boot space versus RDP protection) with a granularity of 128 bytes. This bits correspond to address [31:7] The SECBOOTADD0 option bytes are selected following the BOOT0 pin or NSWBOOT0 state. \r Examples:\r SECBOOTADD0[24:0] = 0x018 0000: Boot from secure user memory (0x0C00 0000)\r SECBOOTADD0[24:0] = 0x01F F000: Boot from RSS system memory (0x0FF8 0000)\r SECBOOTADD0[24:0] = 0x060 0000: Boot from secure SRAM1 on S-Bus (0x3000 0000)"
+    bit_offset: 7
+    bit_size: 25
+fieldset/SECCR1:
+  description: secure control register
+  fields:
+  - name: PG
+    description: Secure programming
+    bit_offset: 0
+    bit_size: 1
+  - name: PER
+    description: Secure page erase
+    bit_offset: 1
+    bit_size: 1
+  - name: MER
+    description: "Secure mass erase\r This bit triggers the secure mass erase (all user pages) when set."
+    bit_offset: 2
+    bit_size: 1
+  - name: PNB
+    description: "Secure page number selection\r These bits select the page to erase:\r ...\r Note that bit 9 is reserved on STM32WBA5xEx devices."
+    bit_offset: 3
+    bit_size: 7
+  - name: BWR
+    description: "Secure burst write programming mode\r When set, this bit selects the burst write programming mode."
+    bit_offset: 14
+    bit_size: 1
+  - name: STRT
+    description: "Secure start \r This bit triggers a secure erase operation when set. If MER and PER bits are reset and the STRT bit is set, the PGSERR in the SECSR is set (this condition is forbidden).\r This bit is set only by software and is cleared when the BSY bit is cleared in SECSR."
+    bit_offset: 16
+    bit_size: 1
+  - name: EOPIE
+    description: "Secure End of operation interrupt enable\r This bit enables the interrupt generation when the EOP bit in SECSR is set to 1."
+    bit_offset: 24
+    bit_size: 1
+  - name: ERRIE
+    description: "Secure error interrupt enable\r This bit enables the interrupt generation when the OPERR bit in SECSR is set to 1."
+    bit_offset: 25
+    bit_size: 1
+  - name: INV
+    description: "memory security state invert\r This bit inverts the memory security state."
+    bit_offset: 29
+    bit_size: 1
+  - name: LOCK
+    description: "Secure lock\r This bit is set only. When set, the SECCR1 register is locked. It is cleared by hardware after detecting the unlock sequence in SECKEYR register.\r In case of an unsuccessful unlock operation, this bit remains set until the next system reset."
+    bit_offset: 31
+    bit_size: 1
+fieldset/SECCR2:
+  description: secure control 2 register
+  fields:
+  - name: PS
+    description: Program suspend request
+    bit_offset: 0
+    bit_size: 1
+  - name: ES
+    description: Erase suspend request
+    bit_offset: 1
+    bit_size: 1
+fieldset/SECHDPCR:
+  description: secure HDP control register
+  fields:
+  - name: HDP_ACCDIS
+    description: "Secure HDP area access disable \r When set, this bit is only cleared by a system reset."
+    bit_offset: 0
+    bit_size: 1
+fieldset/SECKEYR:
+  description: secure key register
+  fields:
+  - name: SECKEY
+    description: "memory secure key\r The following values must be written consecutively to unlock the SECCR1 register, allowing the memory secure programming/erasing operations:\r KEY1: 0x4567�0123\r KEY2: 0xCDEF�89AB"
+    bit_offset: 0
+    bit_size: 32
+fieldset/SECSR:
+  description: secure status register
+  fields:
+  - name: EOP
+    description: "Secure end of operation\r This bit is set by hardware when one or more memory secure operation (program/erase) has been completed successfully. This bit is set only if the secure end of operation interrupts are enabled (EOPIE = 1 in SECCR1). This bit is cleared by writing�1."
+    bit_offset: 0
+    bit_size: 1
+  - name: OPERR
+    description: "Secure operation error\r This bit is set by hardware when a memory secure operation (program/erase) completes unsuccessfully. This bit is set only if secure error interrupts are enabled (SECERRIE = 1). This bit is cleared by writing 1."
+    bit_offset: 1
+    bit_size: 1
+  - name: PROGERR
+    description: "Secure programming error\r This bit is set by hardware when a secure quad-word address to be programmed contains a value different from all 1 before programming, except if the data to write is all 0. This bit is cleared by writing 1."
+    bit_offset: 3
+    bit_size: 1
+  - name: WRPERR
+    description: "Secure write protection error\r This bit is set by hardware when an secure address to be erased/programmed belongs to a write-protected part (by WRP or HDP) of the memory. This bit is cleared by writing 1.\r Refer to Section�7.3.10: memory errors flags for full conditions of error flag setting."
+    bit_offset: 4
+    bit_size: 1
+  - name: PGAERR
+    description: "Secure programming alignment error\r This bit is set by hardware when the first word to be programmed is not aligned with a quad-word address, or the second, third or forth word does not belong to the same quad-word address.This bit is cleared by writing 1."
+    bit_offset: 5
+    bit_size: 1
+  - name: SIZERR
+    description: "Secure size error\r This bit is set by hardware when the size of the access is a byte or half-word during a secure program sequence. Only quad-word programming is allowed by means of successive word accesses.This bit is cleared by writing 1."
+    bit_offset: 6
+    bit_size: 1
+  - name: PGSERR
+    description: "Secure programming sequence error\r This bit is set by hardware when programming sequence is not correct. It is cleared by writing 1.\r Refer to Section�7.3.10: memory errors flags for full conditions of error flag setting."
+    bit_offset: 7
+    bit_size: 1
+  - name: BSY
+    description: "Secure busy\r This bit indicates that a memory secure or non-secure operation is in progress. This is set on the beginning of a operation and reset when the operation finishes or when an error occurs."
+    bit_offset: 16
+    bit_size: 1
+  - name: WDW
+    description: "Secure wait data to write\r This bit indicates that the memory write buffer has been written by a secure or non-secure operation. It is set when the first data is stored in the buffer and cleared when the write is performed in the memory."
+    bit_offset: 17
+    bit_size: 1
+fieldset/SECWMR1:
+  description: secure watermark register 1
+  fields:
+  - name: SECWM_PSTRT
+    description: "Start page of secure area\r This field contains the first page of the secure area."
+    bit_offset: 0
+    bit_size: 7
+  - name: SECWM_PEND
+    description: "End page of secure area\r This field contains the last page of the secure area."
+    bit_offset: 16
+    bit_size: 7
+fieldset/SECWMR2:
+  description: secure watermark register 2
+  fields:
+  - name: HDP_PEND
+    description: "End page of secure hide protection area\r This field contains the last page of the secure HDP area."
+    bit_offset: 16
+    bit_size: 7
+  - name: HDPEN
+    description: Secure Hide protection area enable
+    bit_offset: 31
+    bit_size: 1
+fieldset/WRPAR:
+  description: WRP area A address register
+  fields:
+  - name: WRPA_PSTRT
+    description: "WPR area A start page\r This field contains the first page of the WPR area A.\r Note that bit 6 is reserved on STM32WBAxEx devices."
+    bit_offset: 0
+    bit_size: 7
+  - name: WRPA_PEND
+    description: "WPR area A end page\r This field contains the last page of the WPR area A.\r Note that bit 22 is reserved on STM32WBAxEx devices."
+    bit_offset: 16
+    bit_size: 7
+  - name: UNLOCK
+    description: WPR area A unlock
+    bit_offset: 31
+    bit_size: 1
+fieldset/WRPBR:
+  description: WRP area B address register
+  fields:
+  - name: WRPB_PSTRT
+    description: "WRP area B start page\r This field contains the first page of the WRP area B.\r Note that bit 6 is reserved on STM32WBAxEx devices."
+    bit_offset: 0
+    bit_size: 7
+  - name: WRPB_PEND
+    description: "WRP area B end page\r This field contains the last page of the WRP area B.\r Note that bit 22 is reserved on STM32WBAxEx devices."
+    bit_offset: 16
+    bit_size: 7
+  - name: UNLOCK
+    description: WPR area B unlock
+    bit_offset: 31
+    bit_size: 1
+enum/BOR_LEV:
+  bit_size: 3
+  variants:
+  - name: Level0
+    description: BOR level 0 (reset level threshold around 1.7�V)
+    value: 0
+  - name: Level1
+    description: BOR level 1 (reset level threshold around 2.0�V)
+    value: 1
+  - name: Level2
+    description: BOR level 2 (reset level threshold around 2.2�V)
+    value: 2
+  - name: Level3
+    description: BOR level 3 (reset level threshold around 2.5�V)
+    value: 3
+  - name: Level4
+    description: BOR level 4 (reset level threshold around 2.8�V)
+    value: 4
+enum/CODE_OP:
+  bit_size: 3
+  variants:
+  - name: B_0x0
+    description: No operation interrupted by previous reset
+    value: 0
+  - name: B_0x1
+    description: Single write operation interrupted
+    value: 1
+  - name: B_0x2
+    description: Burst write operation interrupted
+    value: 2
+  - name: B_0x3
+    description: Page erase operation interrupted
+    value: 3
+  - name: B_0x4
+    description: Reserved
+    value: 4
+  - name: B_0x5
+    description: Mass erase operation interrupted
+    value: 5
+  - name: B_0x6
+    description: Option change operation interrupted
+    value: 6
+  - name: B_0x7
+    description: Reserved
+    value: 7
+enum/RDP:
+  bit_size: 8
+  variants:
+  - name: B_0x55
+    description: Level 0.5 (readout protection not active, only non-secure debug access is possible). Only available when TrustZone is active (TZEN=1)
+    value: 85
+  - name: B_0xAA
+    description: Level 0 (readout protection not active)
+    value: 170
+  - name: B_0xCC
+    description: Level 2 (chip readout protection active)
+    value: 204

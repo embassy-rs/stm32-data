@@ -2,7 +2,7 @@
 ## on push branch~=gh-readonly-queue/main/.*
 ## on pull_request
 
-set -euo pipefail
+set -euxo pipefail
 
 export RUSTUP_HOME=/ci/cache/rustup
 export CARGO_HOME=/ci/cache/cargo
@@ -24,7 +24,8 @@ git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) htt
 # upload diff
 (
     cd build
-    git diff --color data | aha --black > /ci/artifacts/diff.html
+    git add .
+    git diff --staged --color data | aha --black > /ci/artifacts/diff.html
 )
 
 # upload generated data to a fake git repo at

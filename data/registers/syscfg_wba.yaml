@@ -1,0 +1,196 @@
+block/SYSCFG:
+  description: System configuration controller
+  items:
+  - name: SECCFGR
+    description: secure configuration register
+    byte_offset: 0
+    fieldset: SECCFGR
+  - name: CFGR1
+    description: configuration register 1
+    byte_offset: 4
+    fieldset: CFGR1
+  - name: FPUIMR
+    description: FPU interrupt mask register
+    byte_offset: 8
+    fieldset: FPUIMR
+  - name: CNSLCKR
+    description: CPU non-secure lock register
+    byte_offset: 12
+    fieldset: CNSLCKR
+  - name: CSLOCKR
+    description: CPU secure lock register
+    byte_offset: 16
+    fieldset: CSLOCKR
+  - name: CFGR2
+    description: configuration register 2
+    byte_offset: 20
+    fieldset: CFGR2
+  - name: MESR
+    description: memory erase status register
+    byte_offset: 24
+    fieldset: MESR
+  - name: CCCSR
+    description: compensation cell control/status register
+    byte_offset: 28
+    fieldset: CCCSR
+  - name: CCVR
+    description: compensation cell value register
+    byte_offset: 32
+    fieldset: CCVR
+  - name: CCCR
+    description: compensation cell code register
+    byte_offset: 36
+    fieldset: CCCR
+  - name: RSSCMDR
+    description: RSS command register
+    byte_offset: 44
+    fieldset: RSSCMDR
+fieldset/CCCR:
+  description: compensation cell code register
+  fields:
+  - name: NCC1
+    description: "NMOS compensation code of the I/Os supplied by V<sub>DD</sub>\r These bits are written by software to define an I/Os compensation cell code for NMOS transistors. This code is applied to the I/Os compensation cell when the CS1 bit of the CCCSR is set."
+    bit_offset: 0
+    bit_size: 4
+  - name: PCC1
+    description: "PMOS compensation code of the I/Os supplied by V<sub>DD</sub>\r These bits are written by software to define an I/Os compensation cell code for PMOS transistors. This code is applied to the I/Os compensation cell when the CS1 bit of the CCCSR is set."
+    bit_offset: 4
+    bit_size: 4
+fieldset/CCCSR:
+  description: compensation cell control/status register
+  fields:
+  - name: EN1
+    description: "VDD I/Os compensation cell enable\r This bit enables the compensation cell of the I/Os supplied by V<sub>DD</sub>."
+    bit_offset: 0
+    bit_size: 1
+  - name: CS1
+    description: "VDD I/Os code selection\r This bit selects the code to be applied for the compensation cell of the I/Os supplied by V<sub>DD</sub>."
+    bit_offset: 1
+    bit_size: 1
+  - name: RDY1
+    description: "VDD I/Os compensation cell ready flag\r This bit provides the compensation cell status of the I/Os supplied by V<sub>DD</sub>.\r Note: The HSI16 clock is required for the compensation cell to work properly. The compensation cell ready bit (RDY1) is not set if the HSI16 clock is not enabled (HSION)."
+    bit_offset: 8
+    bit_size: 1
+fieldset/CCVR:
+  description: compensation cell value register
+  fields:
+  - name: NCV1
+    description: "NMOS compensation value of the I/Os supplied by V<sub>DD</sub>\r This value is provided by the cell and can be used by the CPU to compute an I/Os compensation cell code for NMOS transistors. This code is applied to the I/Os compensation cell when the CS1 bit of the CCCSR is reset."
+    bit_offset: 0
+    bit_size: 4
+  - name: PCV1
+    description: "PMOS compensation value of the I/Os supplied by V<sub>DD</sub>\r This value is provided by the cell and can be used by the CPU to compute an I/Os compensation cell code for PMOS transistors. This code is applied to the I/Os compensation cell when the CS1 bit of the CCCSR is reset."
+    bit_offset: 4
+    bit_size: 4
+fieldset/CFGR1:
+  description: configuration register 1
+  fields:
+  - name: BOOSTEN
+    description: "I/O analog switch voltage booster enable\r Access can be protected by GTZC_TZSC ADC4SEC.\r Note: Refer to Table�121 for setting."
+    bit_offset: 8
+    bit_size: 1
+  - name: ANASWVDD
+    description: "GPIO analog switch control voltage selection\r Access can be protected by GTZC_TZSC ADC4SEC.\r Note: Refer to Table�121 for setting."
+    bit_offset: 9
+    bit_size: 1
+  - name: PA6_FMP
+    description: "Fast-mode Plus drive capability activation on PA6\r This bit can be read and written only with secure access if PA6 is secure in GPIOA. This bit enables the Fast-mode Plus drive mode for PA6 when PA6 is not used by I2C peripheral. This can be used to dive a LED for instance.\r Access can be protected by GPIOA SEC6."
+    bit_offset: 16
+    bit_size: 1
+  - name: PA7_FMP
+    description: "Fast-mode Plus drive capability activation on PA7\r This bit can be read and written only with secure access if PA7 is secure in GPIOA. This bit enables the Fast-mode Plus drive mode for PA7 when PA7 is not used by I2C peripheral. This can be used to dive a LED for instance.\r Access can be protected by GPIOA SEC7."
+    bit_offset: 17
+    bit_size: 1
+  - name: PA15_FMP
+    description: "Fast-mode Plus drive capability activation on PA15\r This bit can be read and written only with secure access if PA15 is secure in GPIOA. This bit enables the Fast-mode Plus drive mode for PA15 when PA15 is not used by I2C peripheral. This can be used to dive a LED for instance.\r Access can be protected by GPIOA SEC15."
+    bit_offset: 18
+    bit_size: 1
+  - name: PB3_FMP
+    description: "Fast-mode Plus drive capability activation on PB3\r This bit can be read and written only with secure access if PB3 is secure in GPIOB. This bit enables the Fast-mode Plus drive mode for PB3 when PB3 is not used by I2C peripheral. This can be used to dive a LED for instance.\r Access can be protected by GPIOB SEC3."
+    bit_offset: 19
+    bit_size: 1
+fieldset/CFGR2:
+  description: configuration register 2
+  fields:
+  - name: CLL
+    description: "Cortex-M33 LOCKUP (hardfault) output enable\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the connection of Cortex-M33 LOCKUP (hardfault) output to TIM1/16/17 break input."
+    bit_offset: 0
+    bit_size: 1
+  - name: SPL
+    description: "SRAM2 parity lock bit\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the SRAM2 parity error signal connection to TIM1/16/17 break inputs."
+    bit_offset: 1
+    bit_size: 1
+  - name: PVDL
+    description: "PVD lock enable bit\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the PVD connection to TIM1/16/17 break input, as well as the PVDE and PVDLS[2:0] in the PWR register."
+    bit_offset: 2
+    bit_size: 1
+  - name: ECCL
+    description: "ECC lock\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the Flash ECC double error signal connection to TIM1/16/17 break input."
+    bit_offset: 3
+    bit_size: 1
+fieldset/CNSLCKR:
+  description: CPU non-secure lock register
+  fields:
+  - name: LOCKNSVTOR
+    description: "VTOR_NS register lock\r This bit is set by software and cleared only by a system reset."
+    bit_offset: 0
+    bit_size: 1
+  - name: LOCKNSMPU
+    description: "Non-secure MPU registers lock\r This bit is set by software and cleared only by a system reset. When set, this bit disables write access to non-secure MPU_CTRL_NS, MPU_RNR_NS and MPU_RBAR_NS registers."
+    bit_offset: 1
+    bit_size: 1
+fieldset/CSLOCKR:
+  description: CPU secure lock register
+  fields:
+  - name: LOCKSVTAIRCR
+    description: "VTOR_S register and AIRCR register bits lock\r This bit is set by software and cleared only by a system reset. When set, it disables write access to VTOR_S register, PRIS and BFHFNMINS bits in the AIRCR register."
+    bit_offset: 0
+    bit_size: 1
+  - name: LOCKSMPU
+    description: "Secure MPU registers lock\r This bit is set by software and cleared only by a system reset. When set, it disables write access to secure MPU_CTRL, MPU_RNR and MPU_RBAR registers."
+    bit_offset: 1
+    bit_size: 1
+  - name: LOCKSAU
+    description: "SAU registers lock\r This bit is set by software and cleared only by a system reset. When set, it disables write access to SAU_CTRL, SAU_RNR, SAU_RBAR and SAU_RLAR registers."
+    bit_offset: 2
+    bit_size: 1
+fieldset/FPUIMR:
+  description: FPU interrupt mask register
+  fields:
+  - name: FPU_IE
+    description: "Floating point unit interrupts enable bits\r FPU_IE[5]: Inexact interrupt enable (interrupt disable at reset)\r FPU_IE[4]: Input abnormal interrupt enable\r FPU_IE[3]: Overflow interrupt enable\r FPU_IE[2]: Underflow interrupt enable\r FPU_IE[1]: Divide-by-zero interrupt enable\r FPU_IE[0]: Invalid operation Interrupt enable"
+    bit_offset: 0
+    bit_size: 6
+fieldset/MESR:
+  description: memory erase status register
+  fields:
+  - name: MCLR
+    description: "Device memories erase status\r This bit is set by hardware when SRAM2, ICACHE, PKA SRAM erase is completed after power-on reset or tamper detection (refer to Section�75: Tamper and backup registers (TAMP) for more details). This bit is not reset by system reset and is cleared by software by writing 1 to it."
+    bit_offset: 0
+    bit_size: 1
+  - name: IPMEE
+    description: "ICACHE and PKA SRAM erase status\r This bit is set by hardware when ICACHE and PKA SRAM erase is completed after potential tamper detection (refer to Section�75: Tamper and backup registers (TAMP) for more details). This bit is cleared by software by writing 1 to it."
+    bit_offset: 16
+    bit_size: 1
+fieldset/RSSCMDR:
+  description: RSS command register
+  fields:
+  - name: RSSCMD
+    description: "RSS commands\r This field defines a command to be executed by the RSS."
+    bit_offset: 0
+    bit_size: 16
+fieldset/SECCFGR:
+  description: secure configuration register
+  fields:
+  - name: SYSCFGSEC
+    description: clock control, memory erase status and compensation cell registers security
+    bit_offset: 0
+    bit_size: 1
+  - name: CLASSBSEC
+    description: Class B security
+    bit_offset: 1
+    bit_size: 1
+  - name: FPUSEC
+    description: FPU security
+    bit_offset: 3
+    bit_size: 1

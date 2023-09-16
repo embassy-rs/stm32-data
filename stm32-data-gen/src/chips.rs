@@ -216,6 +216,7 @@ impl PeriMatcher {
             ("STM32G4.*:SYSCFG:.*", ("syscfg", "g4", "SYSCFG")),
             ("STM32H7.*:SYSCFG:.*", ("syscfg", "h7", "SYSCFG")),
             ("STM32U5.*:SYSCFG:.*", ("syscfg", "u5", "SYSCFG")),
+            ("STM32WBA.*:SYSCFG:.*", ("syscfg", "wba", "SYSCFG")),
             ("STM32WB.*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
             ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
             ("STM32WL5.*:ADC:.*", ("adc", "g0", "ADC")),
@@ -245,6 +246,7 @@ impl PeriMatcher {
             ("STM32L0.*:RTC:rtc2_.*", ("rtc", "v2l0", "RTC")),
             ("STM32L1.*:RTC:rtc2_.*", ("rtc", "v2l1", "RTC")),
             ("STM32L4.*:RTC:rtc2_.*", ("rtc", "v2l4", "RTC")),
+            ("STM32WBA.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")),
             ("STM32WB.*:RTC:rtc2_.*", ("rtc", "v2wb", "RTC")),
             ("STM32U5.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")), // Cube says v2, but it's v3 with security stuff
             (".*:RTC:rtc3_v1_0", ("rtc", "v3", "RTC")),
@@ -297,12 +299,14 @@ impl PeriMatcher {
             ("STM32U5.*:RCC:.*", ("rcc", "u5", "RCC")),
             ("STM32H50.*:RCC:.*", ("rcc", "h50", "RCC")),
             ("STM32H5.*:RCC:.*", ("rcc", "h5", "RCC")),
+            ("STM32WBA.*:RCC:.*", ("rcc", "wba", "RCC")),
             ("STM32WB.*:RCC:.*", ("rcc", "wb", "RCC")),
             ("STM32WL5.*:RCC:.*", ("rcc", "wl5", "RCC")),
             ("STM32WLE.*:RCC:.*", ("rcc", "wle", "RCC")),
             ("STM32F1.*:SPI[1234]:.*", ("spi", "f1", "SPI")),
             ("STM32F3.*:SPI[1234]:.*", ("spi", "v2", "SPI")),
             ("STM32F1.*:AFIO:.*", ("afio", "f1", "AFIO")),
+            ("STM32WBA.*:EXTI:.*", ("exti", "l5", "EXTI")),
             ("STM32L5.*:EXTI:.*", ("exti", "l5", "EXTI")),
             ("STM32C0.*:EXTI:.*", ("exti", "c0", "EXTI")),
             ("STM32G0.*:EXTI:.*", ("exti", "g0", "EXTI")),
@@ -336,6 +340,7 @@ impl PeriMatcher {
             ("STM32L5.*:PWR:.*", ("pwr", "l5", "PWR")),
             ("STM32U5.*:PWR:.*", ("pwr", "u5", "PWR")),
             ("STM32WL.*:PWR:.*", ("pwr", "wl5", "PWR")),
+            ("STM32WBA.*:PWR:.*", ("pwr", "wba", "PWR")),
             ("STM32WB.*:PWR:.*", ("pwr", "wb55", "PWR")),
             ("STM32H50.*:PWR:.*", ("pwr", "h50", "PWR")),
             ("STM32H5.*:PWR:.*", ("pwr", "h5", "PWR")),
@@ -352,6 +357,7 @@ impl PeriMatcher {
             ("STM32L4.*:FLASH:.*", ("flash", "l4", "FLASH")),
             ("STM32L5.*:FLASH:.*", ("flash", "l5", "FLASH")),
             ("STM32U5.*:FLASH:.*", ("flash", "u5", "FLASH")),
+            ("STM32WBA.*:FLASH:.*", ("flash", "wba", "FLASH")),
             ("STM32WB.*:FLASH:.*", ("flash", "wb", "FLASH")),
             ("STM32WL.*:FLASH:.*", ("flash", "wl", "FLASH")),
             ("STM32C0.*:FLASH:.*", ("flash", "c0", "FLASH")),
@@ -363,6 +369,7 @@ impl PeriMatcher {
             ("STM32F[24].*:ETH:.*", ("eth", "v1b", "ETH")),
             ("STM32F7.*:ETH:.*", ("eth", "v1c", "ETH")),
             (".*ETH:ethermac110_v3_0", ("eth", "v2", "ETH")),
+            (".*ETH:ethermac110_v3_0_1", ("eth", "v2", "ETH")),
             ("STM32F4[23][79].*:FMC:.*", ("fmc", "v1x3", "FMC")),
             ("STM32F446.*:FMC:.*", ("fmc", "v2x1", "FMC")),
             ("STM32F469.*:FMC:.*", ("fmc", "v2x1", "FMC")),
@@ -405,6 +412,7 @@ impl PeriMatcher {
             ("STM32L1.*:DBGMCU:.*", ("dbgmcu", "l1", "DBGMCU")),
             ("STM32L4.*:DBGMCU:.*", ("dbgmcu", "l4", "DBGMCU")),
             ("STM32U5.*:DBGMCU:.*", ("dbgmcu", "u5", "DBGMCU")),
+            ("STM32WBA.*:DBGMCU:.*", ("dbgmcu", "wba", "DBGMCU")),
             ("STM32WB.*:DBGMCU:.*", ("dbgmcu", "wb", "DBGMCU")),
             ("STM32WL.*:DBGMCU:.*", ("dbgmcu", "wl", "DBGMCU")),
             ("STM32F1.*:GPIO.*", ("gpio", "v1", "GPIO")),
@@ -546,11 +554,11 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
 static NOPELIST: &[&str] = &[
     // Not supported, not planned unless someone wants to do it.
     "STM32MP",
-    // Not supported yet, planned.
-    "STM32WBA",
     // Does not exist in ST website. No datasheet, no RM.
     "STM32GBK",
     "STM32L485",
+    "STM32U5F",
+    "STM32U5G",
     // STM32WxM modules. These are based on a chip that's supported on its own,
     // not sure why we want a separate target for it.
     "STM32WL5M",
@@ -765,7 +773,7 @@ fn process_core(
         if ["L5", "U5"].contains(&&chip_name[5..7]) {
             want_nvic_name = "NVIC2"
         }
-        if ["H56", "H57"].contains(&&chip_name[5..8]) {
+        if ["H56", "H57", "WBA"].contains(&&chip_name[5..8]) {
             want_nvic_name = "NVIC2"
         }
 
