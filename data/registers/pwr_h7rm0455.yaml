@@ -154,10 +154,18 @@ fieldset/CR3:
     description: Low drop-out regulator enable
     bit_offset: 1
     bit_size: 1
-  - name: SCUEN
+  - name: SDEN
     description: SD converter Enable
     bit_offset: 2
     bit_size: 1
+  - name: SDEXTHP
+    description: Step-down converter forced ON and in High Power MR mode
+    bit_offset: 3
+    bit_size: 1
+  - name: SDLEVEL
+    description: Step-down converter voltage output level selection
+    bit_offset: 4
+    bit_size: 2
   - name: VBE
     description: VBAT charging enable
     bit_offset: 8
@@ -165,6 +173,10 @@ fieldset/CR3:
   - name: VBRS
     description: VBAT charging resistor selection
     bit_offset: 9
+    bit_size: 1
+  - name: SDEXTRDY
+    description: SMPS step-down converter external supply ready
+    bit_offset: 16
     bit_size: 1
   - name: USB33DEN
     description: VDD33USB voltage level detector enable.
@@ -208,6 +220,7 @@ fieldset/D3CR:
     description: 'Voltage scaling selection according to performance These bits control the VCORE voltage level and allow to obtains the best trade-off between power consumption and performance: When increasing the performance, the voltage scaling shall be changed before increasing the system frequency. When decreasing performance, the system frequency shall first be decreased before changing the voltage scaling.'
     bit_offset: 14
     bit_size: 2
+    enum: VOS
 fieldset/WKUPCR:
   description: reset only by system reset, not reset by wakeup from Standby mode5 wait states are required when writing this register (when clearing a WKUPF bit in PWR_WKUPFR, the AHB write access will complete after the WKUPF has been cleared).
   fields:
@@ -249,3 +262,14 @@ fieldset/WKUPFR:
     array:
       len: 6
       stride: 1
+enum/VOS:
+  bit_size: 2
+  variants:
+  - name: Scale3
+    value: 0
+  - name: Scale2
+    value: 1
+  - name: Scale1
+    value: 2
+  - name: Scale0
+    value: 3
