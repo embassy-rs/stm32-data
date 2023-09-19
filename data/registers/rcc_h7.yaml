@@ -48,14 +48,14 @@ block/RCC:
       len: 3
       stride: 8
     byte_offset: 48
-    fieldset: PLL1DIVR
+    fieldset: PLLDIVR
   - name: PLLFRACR
     description: RCC PLL1 Fractional Divider Register
     array:
       len: 3
       stride: 8
     byte_offset: 52
-    fieldset: PLL1FRACR
+    fieldset: PLLFRACR
   - name: D1CCIPR
     description: RCC Domain 1 Kernel Clock Configuration Register
     byte_offset: 76
@@ -2760,7 +2760,7 @@ fieldset/CFGR:
     description: System clock switch status
     bit_offset: 3
     bit_size: 3
-    enum: SWS
+    enum: SW
   - name: STOPWUCK
     description: System clock selection after a wake up from system Stop
     bit_offset: 6
@@ -3354,85 +3354,6 @@ fieldset/ICSCR:
     description: CSI clock trimming
     bit_offset: 26
     bit_size: 5
-fieldset/PLL1DIVR:
-  description: RCC PLL1 Dividers Configuration Register
-  fields:
-  - name: DIVN1
-    description: Multiplication factor for PLL1 VCO
-    bit_offset: 0
-    bit_size: 9
-  - name: DIVP1
-    description: PLL1 DIVP division factor
-    bit_offset: 9
-    bit_size: 7
-    enum: DIVP
-  - name: DIVQ1
-    description: PLL1 DIVQ division factor
-    bit_offset: 16
-    bit_size: 7
-  - name: DIVR1
-    description: PLL1 DIVR division factor
-    bit_offset: 24
-    bit_size: 7
-fieldset/PLL1FRACR:
-  description: RCC PLL1 Fractional Divider Register
-  fields:
-  - name: FRACN1
-    description: Fractional part of the multiplication factor for PLL1 VCO
-    bit_offset: 3
-    bit_size: 13
-fieldset/PLL2DIVR:
-  description: RCC PLL2 Dividers Configuration Register
-  fields:
-  - name: DIVN2
-    description: Multiplication factor for PLL1 VCO
-    bit_offset: 0
-    bit_size: 9
-  - name: DIVP2
-    description: PLL1 DIVP division factor
-    bit_offset: 9
-    bit_size: 7
-  - name: DIVQ2
-    description: PLL1 DIVQ division factor
-    bit_offset: 16
-    bit_size: 7
-  - name: DIVR2
-    description: PLL1 DIVR division factor
-    bit_offset: 24
-    bit_size: 7
-fieldset/PLL2FRACR:
-  description: RCC PLL2 Fractional Divider Register
-  fields:
-  - name: FRACN2
-    description: Fractional part of the multiplication factor for PLL VCO
-    bit_offset: 3
-    bit_size: 13
-fieldset/PLL3DIVR:
-  description: RCC PLL3 Dividers Configuration Register
-  fields:
-  - name: DIVN3
-    description: Multiplication factor for PLL1 VCO
-    bit_offset: 0
-    bit_size: 9
-  - name: DIVP3
-    description: PLL DIVP division factor
-    bit_offset: 9
-    bit_size: 7
-  - name: DIVQ3
-    description: PLL DIVQ division factor
-    bit_offset: 16
-    bit_size: 7
-  - name: DIVR3
-    description: PLL DIVR division factor
-    bit_offset: 24
-    bit_size: 7
-fieldset/PLL3FRACR:
-  description: RCC PLL3 Fractional Divider Register
-  fields:
-  - name: FRACN3
-    description: Fractional part of the multiplication factor for PLL3 VCO
-    bit_offset: 3
-    bit_size: 13
 fieldset/PLLCFGR:
   description: RCC PLLs Configuration Register
   fields:
@@ -3495,6 +3416,32 @@ fieldset/PLLCKSELR:
     array:
       len: 3
       stride: 8
+fieldset/PLLDIVR:
+  description: RCC PLL1 Dividers Configuration Register
+  fields:
+  - name: PLLN
+    description: Multiplication factor for PLL1 VCO
+    bit_offset: 0
+    bit_size: 9
+  - name: PLLP
+    description: PLL DIVP division factor
+    bit_offset: 9
+    bit_size: 7
+  - name: PLLQ
+    description: PLL DIVQ division factor
+    bit_offset: 16
+    bit_size: 7
+  - name: PLLR
+    description: PLL DIVR division factor
+    bit_offset: 24
+    bit_size: 7
+fieldset/PLLFRACR:
+  description: RCC PLL Fractional Divider Register
+  fields:
+  - name: FRACN
+    description: Fractional part of the multiplication factor for PLL VCO
+    bit_offset: 3
+    bit_size: 13
 fieldset/RSR:
   description: RCC Reset Status Register
   fields:
@@ -3587,204 +3534,6 @@ enum/DFSDMSEL:
   - name: SYS
     description: System clock selected as peripheral clock
     value: 1
-enum/DIVP:
-  bit_size: 7
-  variants:
-  - name: Div1
-    description: pll_p_ck = vco_ck
-    value: 0
-  - name: Div2
-    description: pll_p_ck = vco_ck / 2
-    value: 1
-  - name: Div4
-    description: pll_p_ck = vco_ck / 4
-    value: 3
-  - name: Div6
-    description: pll_p_ck = vco_ck / 6
-    value: 5
-  - name: Div8
-    description: pll_p_ck = vco_ck / 8
-    value: 7
-  - name: Div10
-    description: pll_p_ck = vco_ck / 10
-    value: 9
-  - name: Div12
-    description: pll_p_ck = vco_ck / 12
-    value: 11
-  - name: Div14
-    description: pll_p_ck = vco_ck / 14
-    value: 13
-  - name: Div16
-    description: pll_p_ck = vco_ck / 16
-    value: 15
-  - name: Div18
-    description: pll_p_ck = vco_ck / 18
-    value: 17
-  - name: Div20
-    description: pll_p_ck = vco_ck / 20
-    value: 19
-  - name: Div22
-    description: pll_p_ck = vco_ck / 22
-    value: 21
-  - name: Div24
-    description: pll_p_ck = vco_ck / 24
-    value: 23
-  - name: Div26
-    description: pll_p_ck = vco_ck / 26
-    value: 25
-  - name: Div28
-    description: pll_p_ck = vco_ck / 28
-    value: 27
-  - name: Div30
-    description: pll_p_ck = vco_ck / 30
-    value: 29
-  - name: Div32
-    description: pll_p_ck = vco_ck / 32
-    value: 31
-  - name: Div34
-    description: pll_p_ck = vco_ck / 34
-    value: 33
-  - name: Div36
-    description: pll_p_ck = vco_ck / 36
-    value: 35
-  - name: Div38
-    description: pll_p_ck = vco_ck / 38
-    value: 37
-  - name: Div40
-    description: pll_p_ck = vco_ck / 40
-    value: 39
-  - name: Div42
-    description: pll_p_ck = vco_ck / 42
-    value: 41
-  - name: Div44
-    description: pll_p_ck = vco_ck / 44
-    value: 43
-  - name: Div46
-    description: pll_p_ck = vco_ck / 46
-    value: 45
-  - name: Div48
-    description: pll_p_ck = vco_ck / 48
-    value: 47
-  - name: Div50
-    description: pll_p_ck = vco_ck / 50
-    value: 49
-  - name: Div52
-    description: pll_p_ck = vco_ck / 52
-    value: 51
-  - name: Div54
-    description: pll_p_ck = vco_ck / 54
-    value: 53
-  - name: Div56
-    description: pll_p_ck = vco_ck / 56
-    value: 55
-  - name: Div58
-    description: pll_p_ck = vco_ck / 58
-    value: 57
-  - name: Div60
-    description: pll_p_ck = vco_ck / 60
-    value: 59
-  - name: Div62
-    description: pll_p_ck = vco_ck / 62
-    value: 61
-  - name: Div64
-    description: pll_p_ck = vco_ck / 64
-    value: 63
-  - name: Div66
-    description: pll_p_ck = vco_ck / 66
-    value: 65
-  - name: Div68
-    description: pll_p_ck = vco_ck / 68
-    value: 67
-  - name: Div70
-    description: pll_p_ck = vco_ck / 70
-    value: 69
-  - name: Div72
-    description: pll_p_ck = vco_ck / 72
-    value: 71
-  - name: Div74
-    description: pll_p_ck = vco_ck / 74
-    value: 73
-  - name: Div76
-    description: pll_p_ck = vco_ck / 76
-    value: 75
-  - name: Div78
-    description: pll_p_ck = vco_ck / 78
-    value: 77
-  - name: Div80
-    description: pll_p_ck = vco_ck / 80
-    value: 79
-  - name: Div82
-    description: pll_p_ck = vco_ck / 82
-    value: 81
-  - name: Div84
-    description: pll_p_ck = vco_ck / 84
-    value: 83
-  - name: Div86
-    description: pll_p_ck = vco_ck / 86
-    value: 85
-  - name: Div88
-    description: pll_p_ck = vco_ck / 88
-    value: 87
-  - name: Div90
-    description: pll_p_ck = vco_ck / 90
-    value: 89
-  - name: Div92
-    description: pll_p_ck = vco_ck / 92
-    value: 91
-  - name: Div94
-    description: pll_p_ck = vco_ck / 94
-    value: 93
-  - name: Div96
-    description: pll_p_ck = vco_ck / 96
-    value: 95
-  - name: Div98
-    description: pll_p_ck = vco_ck / 98
-    value: 97
-  - name: Div100
-    description: pll_p_ck = vco_ck / 100
-    value: 99
-  - name: Div102
-    description: pll_p_ck = vco_ck / 102
-    value: 101
-  - name: Div104
-    description: pll_p_ck = vco_ck / 104
-    value: 103
-  - name: Div106
-    description: pll_p_ck = vco_ck / 106
-    value: 105
-  - name: Div108
-    description: pll_p_ck = vco_ck / 108
-    value: 107
-  - name: Div110
-    description: pll_p_ck = vco_ck / 110
-    value: 109
-  - name: Div112
-    description: pll_p_ck = vco_ck / 112
-    value: 111
-  - name: Div114
-    description: pll_p_ck = vco_ck / 114
-    value: 113
-  - name: Div116
-    description: pll_p_ck = vco_ck / 116
-    value: 115
-  - name: Div118
-    description: pll_p_ck = vco_ck / 118
-    value: 117
-  - name: Div120
-    description: pll_p_ck = vco_ck / 120
-    value: 119
-  - name: Div122
-    description: pll_p_ck = vco_ck / 122
-    value: 121
-  - name: Div124
-    description: pll_p_ck = vco_ck / 124
-    value: 123
-  - name: Div126
-    description: pll_p_ck = vco_ck / 126
-    value: 125
-  - name: Div128
-    description: pll_p_ck = vco_ck / 128
-    value: 127
 enum/FDCANSEL:
   bit_size: 2
   variants:
@@ -4235,21 +3984,6 @@ enum/SWPSEL:
   - name: HSI_KER
     description: hsi_ker selected as peripheral clock
     value: 1
-enum/SWS:
-  bit_size: 3
-  variants:
-  - name: HSI
-    description: HSI oscillator used as system clock
-    value: 0
-  - name: CSI
-    description: CSI oscillator used as system clock
-    value: 1
-  - name: HSE
-    description: HSE oscillator used as system clock
-    value: 2
-  - name: PLL1
-    description: PLL1 used as system clock
-    value: 3
 enum/TIMPRE:
   bit_size: 1
   variants:
