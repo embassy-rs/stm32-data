@@ -26,6 +26,8 @@ impl PeripheralToClock {
                         };
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("EN") {
+                                let peri = if peri == "RTCAPB" { "RTC" } else { peri };
+
                                 // Timers are a bit special, they may have a x2 freq
                                 let peri_clock = {
                                     if regex!(r"^TIM\d+$").is_match(peri) {
