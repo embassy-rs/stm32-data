@@ -13,6 +13,7 @@ fn main() {
         .to_ascii_lowercase()
         .replace('_', "-");
 
+    #[cfg(feature = "rt")]
     println!(
         "cargo:rustc-link-search={}/src/chips/{}",
         crate_dir.display(),

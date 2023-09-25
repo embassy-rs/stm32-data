@@ -1,0 +1,261 @@
+block/PWR:
+  description: PWR
+  items:
+  - name: CR1
+    description: PWR control register 1
+    byte_offset: 0
+    fieldset: CR1
+  - name: CSR1
+    description: PWR control status register 1
+    byte_offset: 4
+    access: Read
+    fieldset: CSR1
+  - name: CR2
+    description: This register is not reset by wakeup from Standby mode, RESET signal and VDD POR. It is only reset by VSW POR and VSWRST reset. This register shall not be accessed when VSWRST bit in RCC_BDCR register resets the VSW domain.After reset, PWR_CR2 register is write-protected. Prior to modifying its content, the DBP bit in PWR_CR1 register must be set to disable the write protection.
+    byte_offset: 8
+    fieldset: CR2
+  - name: CR3
+    description: 'Reset only by POR only, not reset by wakeup from Standby mode and RESET pad. The lower byte of this register is written once after POR and shall be written before changing VOS level or ck_sys clock frequency. No limitation applies to the upper bytes.Programming data corresponding to an invalid combination of SDLEVEL, SDEXTHP, SDEN, LDOEN and BYPASS bits (see Table9) will be ignored: data will not be written, the written-once mechanism will lock the register and any further write access will be ignored. The default supply configuration will be kept and the ACTVOSRDY bit in PWR control status register 1 (PWR_CSR1) will go on indicating invalid voltage levels. The system shall be power cycled before writing a new value.'
+    byte_offset: 12
+    fieldset: CR3
+  - name: CPUCR
+    description: This register allows controlling CPU1 power.
+    byte_offset: 16
+    fieldset: CPUCR
+  - name: D3CR
+    description: This register allows controlling D3 domain power.Following reset VOSRDY will be read 1 by software
+    byte_offset: 24
+    fieldset: D3CR
+  - name: WKUPCR
+    description: reset only by system reset, not reset by wakeup from Standby mode5 wait states are required when writing this register (when clearing a WKUPF bit in PWR_WKUPFR, the AHB write access will complete after the WKUPF has been cleared).
+    byte_offset: 32
+    fieldset: WKUPCR
+  - name: WKUPFR
+    description: reset only by system reset, not reset by wakeup from Standby mode
+    byte_offset: 36
+    fieldset: WKUPFR
+  - name: WKUPEPR
+    description: Reset only by system reset, not reset by wakeup from Standby mode
+    byte_offset: 40
+    fieldset: WKUPEPR
+fieldset/CPUCR:
+  description: This register allows controlling CPU1 power.
+  fields:
+  - name: PDDS_D1
+    description: D1 domain Power Down Deepsleep selection. This bit allows CPU1 to define the Deepsleep mode for D1 domain.
+    bit_offset: 0
+    bit_size: 1
+  - name: PDDS_D2
+    description: D2 domain Power Down Deepsleep. This bit allows CPU1 to define the Deepsleep mode for D2 domain.
+    bit_offset: 1
+    bit_size: 1
+  - name: PDDS_D3
+    description: System D3 domain Power Down Deepsleep. This bit allows CPU1 to define the Deepsleep mode for System D3 domain.
+    bit_offset: 2
+    bit_size: 1
+  - name: STOPF
+    description: STOP flag This bit is set by hardware and cleared only by any reset or by setting the CPU1 CSSF bit.
+    bit_offset: 5
+    bit_size: 1
+  - name: SBF
+    description: System Standby flag This bit is set by hardware and cleared only by a POR (Power-on Reset) or by setting the CPU1 CSSF bit
+    bit_offset: 6
+    bit_size: 1
+  - name: SBF_D1
+    description: D1 domain DStandby flag This bit is set by hardware and cleared by any system reset or by setting the CPU1 CSSF bit. Once set, this bit can be cleared only when the D1 domain is no longer in DStandby mode.
+    bit_offset: 7
+    bit_size: 1
+  - name: SBF_D2
+    description: D2 domain DStandby flag This bit is set by hardware and cleared by any system reset or by setting the CPU1 CSSF bit. Once set, this bit can be cleared only when the D2 domain is no longer in DStandby mode.
+    bit_offset: 8
+    bit_size: 1
+  - name: CSSF
+    description: Clear D1 domain CPU1 Standby, Stop and HOLD flags (always read as 0) This bit is cleared to 0 by hardware.
+    bit_offset: 9
+    bit_size: 1
+  - name: RUN_D3
+    description: Keep system D3 domain in Run mode regardless of the CPU sub-systems modes
+    bit_offset: 11
+    bit_size: 1
+fieldset/CR1:
+  description: PWR control register 1
+  fields:
+  - name: LPDS
+    description: Low-power Deepsleep with SVOS3 (SVOS4 and SVOS5 always use low-power, regardless of the setting of this bit)
+    bit_offset: 0
+    bit_size: 1
+  - name: PVDE
+    description: Programmable voltage detector enable
+    bit_offset: 4
+    bit_size: 1
+  - name: PLS
+    description: 'Programmable voltage detector level selection These bits select the voltage threshold detected by the PVD. Note: Refer to Section Electrical characteristics of the product datasheet for more details.'
+    bit_offset: 5
+    bit_size: 3
+  - name: DBP
+    description: Disable backup domain write protection In reset state, the RCC_BDCR register, the RTC registers (including the backup registers), BREN and MOEN bits in PWR_CR2 register, are protected against parasitic write access. This bit must be set to enable write access to these registers.
+    bit_offset: 8
+    bit_size: 1
+  - name: FLPS
+    description: Flash low-power mode in DStop mode This bit allows to obtain the best trade-off between low-power consumption and restart time when exiting from DStop mode. When it is set, the Flash memory enters low-power mode when D1 domain is in DStop mode.
+    bit_offset: 9
+    bit_size: 1
+  - name: SVOS
+    description: System Stop mode voltage scaling selection These bits control the VCORE voltage level in system Stop mode, to obtain the best trade-off between power consumption and performance.
+    bit_offset: 14
+    bit_size: 2
+  - name: AVDEN
+    description: Peripheral voltage monitor on VDDA enable
+    bit_offset: 16
+    bit_size: 1
+  - name: ALS
+    description: Analog voltage detector level selection These bits select the voltage threshold detected by the AVD.
+    bit_offset: 17
+    bit_size: 2
+fieldset/CR2:
+  description: This register is not reset by wakeup from Standby mode, RESET signal and VDD POR. It is only reset by VSW POR and VSWRST reset. This register shall not be accessed when VSWRST bit in RCC_BDCR register resets the VSW domain.After reset, PWR_CR2 register is write-protected. Prior to modifying its content, the DBP bit in PWR_CR1 register must be set to disable the write protection.
+  fields:
+  - name: BREN
+    description: Backup regulator enable When set, the Backup regulator (used to maintain the backup RAM content in Standby and VBAT modes) is enabled. If BREN is reset, the backup regulator is switched off. The backup RAM can still be used in Run and Stop modes. However, its content will be lost in Standby and VBAT modes. If BREN is set, the application must wait till the Backup Regulator Ready flag (BRRDY) is set to indicate that the data written into the SRAM will be maintained in Standby and VBAT modes.
+    bit_offset: 0
+    bit_size: 1
+  - name: MONEN
+    description: VBAT and temperature monitoring enable When set, the VBAT supply and temperature monitoring is enabled.
+    bit_offset: 4
+    bit_size: 1
+  - name: BRRDY
+    description: Backup regulator ready This bit is set by hardware to indicate that the Backup regulator is ready.
+    bit_offset: 16
+    bit_size: 1
+  - name: VBATL
+    description: VBAT level monitoring versus low threshold
+    bit_offset: 20
+    bit_size: 1
+  - name: VBATH
+    description: VBAT level monitoring versus high threshold
+    bit_offset: 21
+    bit_size: 1
+  - name: TEMPL
+    description: Temperature level monitoring versus low threshold
+    bit_offset: 22
+    bit_size: 1
+  - name: TEMPH
+    description: Temperature level monitoring versus high threshold
+    bit_offset: 23
+    bit_size: 1
+fieldset/CR3:
+  description: 'Reset only by POR only, not reset by wakeup from Standby mode and RESET pad. The lower byte of this register is written once after POR and shall be written before changing VOS level or ck_sys clock frequency. No limitation applies to the upper bytes.Programming data corresponding to an invalid combination of SDLEVEL, SDEXTHP, SDEN, LDOEN and BYPASS bits (see Table9) will be ignored: data will not be written, the written-once mechanism will lock the register and any further write access will be ignored. The default supply configuration will be kept and the ACTVOSRDY bit in PWR control status register 1 (PWR_CSR1) will go on indicating invalid voltage levels. The system shall be power cycled before writing a new value.'
+  fields:
+  - name: BYPASS
+    description: Power management unit bypass
+    bit_offset: 0
+    bit_size: 1
+  - name: LDOEN
+    description: Low drop-out regulator enable
+    bit_offset: 1
+    bit_size: 1
+  - name: SCUEN
+    description: Supply configuration update enable
+    bit_offset: 2
+    bit_size: 1
+  - name: VBE
+    description: VBAT charging enable
+    bit_offset: 8
+    bit_size: 1
+  - name: VBRS
+    description: VBAT charging resistor selection
+    bit_offset: 9
+    bit_size: 1
+  - name: USB33DEN
+    description: VDD33USB voltage level detector enable.
+    bit_offset: 24
+    bit_size: 1
+  - name: USBREGEN
+    description: USB regulator enable.
+    bit_offset: 25
+    bit_size: 1
+  - name: USB33RDY
+    description: USB supply ready.
+    bit_offset: 26
+    bit_size: 1
+fieldset/CSR1:
+  description: PWR control status register 1
+  fields:
+  - name: PVDO
+    description: 'Programmable voltage detect output This bit is set and cleared by hardware. It is valid only if the PVD has been enabled by the PVDE bit. Note: since the PVD is disabled in Standby mode, this bit is equal to 0 after Standby or reset until the PVDE bit is set.'
+    bit_offset: 4
+    bit_size: 1
+  - name: ACTVOSRDY
+    description: Voltage levels ready bit for currently used VOS and SDLEVEL This bit is set to 1 by hardware when the voltage regulator and the SD converter are both disabled and Bypass mode is selected in PWR control register 3 (PWR_CR3).
+    bit_offset: 13
+    bit_size: 1
+  - name: ACTVOS
+    description: VOS currently applied for VCORE voltage scaling selection. These bits reflect the last VOS value applied to the PMU.
+    bit_offset: 14
+    bit_size: 2
+  - name: AVDO
+    description: 'Analog voltage detector output on VDDA This bit is set and cleared by hardware. It is valid only if AVD on VDDA is enabled by the AVDEN bit. Note: Since the AVD is disabled in Standby mode, this bit is equal to 0 after Standby or reset until the AVDEN bit is set.'
+    bit_offset: 16
+    bit_size: 1
+fieldset/D3CR:
+  description: This register allows controlling D3 domain power.Following reset VOSRDY will be read 1 by software
+  fields:
+  - name: VOSRDY
+    description: VOS Ready bit for VCORE voltage scaling output selection. This bit is set to 1 by hardware when Bypass mode is selected in PWR control register 3 (PWR_CR3).
+    bit_offset: 13
+    bit_size: 1
+  - name: VOS
+    description: 'Voltage scaling selection according to performance These bits control the VCORE voltage level and allow to obtains the best trade-off between power consumption and performance: When increasing the performance, the voltage scaling shall be changed before increasing the system frequency. When decreasing performance, the system frequency shall first be decreased before changing the voltage scaling.'
+    bit_offset: 14
+    bit_size: 2
+    enum: VOS
+fieldset/WKUPCR:
+  description: reset only by system reset, not reset by wakeup from Standby mode5 wait states are required when writing this register (when clearing a WKUPF bit in PWR_WKUPFR, the AHB write access will complete after the WKUPF has been cleared).
+  fields:
+  - name: WKUPC
+    description: Clear Wakeup pin flag for WKUP. These bits are always read as 0.
+    bit_offset: 0
+    bit_size: 6
+fieldset/WKUPEPR:
+  description: Reset only by system reset, not reset by wakeup from Standby mode
+  fields:
+  - name: WKUPEN
+    description: 'Enable Wakeup Pin WKUPn+1 Each bit is set and cleared by software. Note: An additional wakeup event is detected if WKUPn+1 pin is enabled (by setting the WKUPENn+1 bit) when WKUPn+1 pin level is already high when WKUPPn+1 selects rising edge, or low when WKUPPn+1 selects falling edge.'
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 6
+      stride: 1
+  - name: WKUPP
+    description: Wakeup pin polarity bit for WKUPn-7 These bits define the polarity used for event detection on WKUPn-7 external wakeup pin.
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 6
+      stride: 1
+  - name: WKUPPUPD
+    description: Wakeup pin pull configuration
+    bit_offset: 16
+    bit_size: 2
+    array:
+      len: 6
+      stride: 2
+fieldset/WKUPFR:
+  description: reset only by system reset, not reset by wakeup from Standby mode
+  fields:
+  - name: WKUPF
+    description: Wakeup pin WKUPF flag. This bit is set by hardware and cleared only by a Reset pin or by setting the WKUPCn+1 bit in the PWR wakeup clear register (PWR_WKUPCR).
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 6
+      stride: 1
+enum/VOS:
+  bit_size: 2
+  variants:
+  - name: Scale3
+    value: 1
+  - name: Scale2
+    value: 2
+  - name: Scale1
+    value: 3

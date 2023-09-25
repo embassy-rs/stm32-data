@@ -12,7 +12,7 @@ Switch ($CMD)
         rm -r -Force ./sources/ -ErrorAction SilentlyContinue
         git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
         cd ./sources/
-        git checkout ca89656b
+        git checkout a2062c088cf299bd3dc5128eeaa96e07fff2087c
         cd ..
     }
     "install-chiptool" {
