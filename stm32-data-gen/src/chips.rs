@@ -362,7 +362,7 @@ impl PeriMatcher {
             ("STM32F3.*:FLASH:.*", ("flash", "f3", "FLASH")),
             ("STM32F4.*:FLASH:.*", ("flash", "f4", "FLASH")),
             ("STM32F7.*:FLASH:.*", ("flash", "f7", "FLASH")),
-            ("STM32L0[0-9]2.*:FLASH:.*", ("flash", "l0", "FLASH")),
+            ("STM32L0.*:FLASH:.*", ("flash", "l0", "FLASH")),
             ("STM32L1.*:FLASH:.*", ("flash", "l1", "FLASH")),
             ("STM32L4.*:FLASH:.*", ("flash", "l4", "FLASH")),
             ("STM32L5.*:FLASH:.*", ("flash", "l5", "FLASH")),
