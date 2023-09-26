@@ -85,6 +85,8 @@ pub struct PeripheralRcc {
     pub enable: Option<PeripheralRccRegister>,
     #[serde(default)]
     pub reset: Option<PeripheralRccRegister>,
+    #[serde(default)]
+    pub mux: Option<PeripheralRccRegister>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
