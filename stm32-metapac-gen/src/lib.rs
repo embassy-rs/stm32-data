@@ -206,7 +206,7 @@ impl Gen {
             file
         });
 
-        let data = format!(
+        let mut data = format!(
             "include!(\"../{}\");
             pub const METADATA: Metadata = Metadata {{
                 name: {:?},
@@ -225,6 +225,15 @@ impl Gen {
             stringify(&chip.memory),
             &core.nvic_priority_bits,
         );
+
+        for (module, version) in &peripheral_versions {
+            writeln!(
+                &mut data,
+                "#[path=\"../../registers/{}_{}.rs\"] pub mod {};",
+                module, version, module
+            )
+            .unwrap();
+        }
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();
         file.write_all(data.as_bytes()).unwrap();
@@ -250,6 +259,7 @@ impl Gen {
 
     pub fn gen(&mut self) {
         fs::create_dir_all(self.opts.out_dir.join("src/peripherals")).unwrap();
+        fs::create_dir_all(self.opts.out_dir.join("src/registers")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/chips")).unwrap();
 
         let mut chip_core_names: Vec<String> = Vec::new();
@@ -317,6 +327,35 @@ impl Gen {
             // Remove inner attributes like #![no_std]
             let re = Regex::new("# *! *\\[.*\\]").unwrap();
             let data = re.replace_all(&data, "");
+            file.write_all(data.as_bytes()).unwrap();
+
+            let ir = crate::data::ir::IR::from_chiptool(ir);
+            let mut data = String::new();
+
+            write!(
+                &mut data,
+                "
+                    use crate::metadata::ir::*;
+                    static REGISTERS: IR = {};
+                ",
+                stringify(&ir)
+                    .replace("Register(", "BlockItemInner::Register(")
+                    .replace("Block(", "BlockItemInner::Block(")
+                    .replace("Regular(", "Array::Regular(")
+                    .replace("Cursed(", "Array::Cursed(")
+                    .replace("Read,", "Access::Read,")
+                    .replace("Write,", "Access::Write,")
+                    .replace("ReadAccess::Write,", "Access::ReadWrite,"),
+            )
+            .unwrap();
+
+            let mut file = File::create(
+                self.opts
+                    .out_dir
+                    .join("src/registers")
+                    .join(format!("{}_{}.rs", module, version)),
+            )
+            .unwrap();
             file.write_all(data.as_bytes()).unwrap();
         }
 

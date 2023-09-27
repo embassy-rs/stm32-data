@@ -1,3 +1,96 @@
+pub mod ir {
+    pub struct IR {
+        pub blocks: &'static [Block],
+        pub fieldsets: &'static [FieldSet],
+        pub enums: &'static [Enum],
+    }
+
+    pub struct Block {
+        pub name: &'static str,
+        pub extends: Option<&'static str>,
+
+        pub description: Option<&'static str>,
+        pub items: &'static [BlockItem],
+    }
+
+    pub struct BlockItem {
+        pub name: &'static str,
+        pub description: Option<&'static str>,
+
+        pub array: Option<Array>,
+        pub byte_offset: u32,
+
+        pub inner: BlockItemInner,
+    }
+
+    pub enum BlockItemInner {
+        Block(BlockItemBlock),
+        Register(Register),
+    }
+
+    pub struct Register {
+        pub access: Access,
+        pub bit_size: u32,
+        pub fieldset: Option<&'static str>,
+    }
+
+    pub struct BlockItemBlock {
+        pub block: &'static str,
+    }
+
+    pub enum Access {
+        ReadWrite,
+        Read,
+        Write,
+    }
+
+    pub struct FieldSet {
+        pub name: &'static str,
+        pub extends: Option<&'static str>,
+
+        pub description: Option<&'static str>,
+        pub bit_size: u32,
+        pub fields: &'static [Field],
+    }
+
+    pub struct Field {
+        pub name: &'static str,
+        pub description: Option<&'static str>,
+
+        pub bit_offset: u32,
+        pub bit_size: u32,
+        pub array: Option<Array>,
+        pub enumm: Option<&'static str>,
+    }
+
+    pub enum Array {
+        Regular(RegularArray),
+        Cursed(CursedArray),
+    }
+
+    pub struct RegularArray {
+        pub len: u32,
+        pub stride: u32,
+    }
+
+    pub struct CursedArray {
+        pub offsets: &'static [u32],
+    }
+
+    pub struct Enum {
+        pub name: &'static str,
+        pub description: Option<&'static str>,
+        pub bit_size: u32,
+        pub variants: &'static [EnumVariant],
+    }
+
+    pub struct EnumVariant {
+        pub name: &'static str,
+        pub description: Option<&'static str>,
+        pub value: u64,
+    }
+}
+
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct Metadata {
     pub name: &'static str,
@@ -73,6 +166,7 @@ pub struct PeripheralRcc {
     pub clock: &'static str,
     pub enable: Option<PeripheralRccRegister>,
     pub reset: Option<PeripheralRccRegister>,
+    pub mux: Option<PeripheralRccRegister>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
