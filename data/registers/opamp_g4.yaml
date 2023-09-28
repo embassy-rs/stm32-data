@@ -1,0 +1,298 @@
+---
+block/OPAMP:
+  description: Operational amplifiers
+  items:
+    - name: OPAMP_CSR
+      description: OPAMP control/status register
+      byte_offset: 0
+      fieldset: OPAMP_CSR
+    - name: OPAMP_TCMR
+      description: OPAMP control/status register
+      byte_offset: 24
+      fieldset: OPAMP_TCMR
+fieldset/OPAMP_CSR:
+  description: OPAMP control/status register
+  fields:
+    - name: OPAEN
+      description: Operational amplifier Enable
+      bit_offset: 0
+      bit_size: 1
+    - name: FORCE_VP
+      description: FORCE_VP
+      bit_offset: 1
+      bit_size: 1
+      enum: OPAMP_CSR_FORCE_VP
+    - name: VP_SEL
+      description: VP_SEL
+      bit_offset: 2
+      bit_size: 2
+      enum: OPAMP_CSR_VP_SEL
+    - name: USERTRIM
+      description: USERTRIM
+      bit_offset: 4
+      bit_size: 1
+      enum: OPAMP_CSR_USERTRIM
+    - name: VM_SEL
+      description: VM_SEL
+      bit_offset: 5
+      bit_size: 2
+      enum: OPAMP_CSR_VM_SEL
+    - name: OPAHSM
+      description: OPAHSM
+      bit_offset: 7
+      bit_size: 1
+      enum: OPAMP_CSR_OPAHSM
+    - name: OPAINTOEN
+      description: OPAINTOEN
+      bit_offset: 8
+      bit_size: 1
+      enum: OPAMP_CSR_OPAINTOEN
+    - name: CALON
+      description: CALON
+      bit_offset: 11
+      bit_size: 1
+    - name: CALSEL
+      description: CALSEL
+      bit_offset: 12
+      bit_size: 2
+      enum: OPAMP_CSR_CALSEL
+    - name: PGA_GAIN
+      description: PGA_GAIN
+      bit_offset: 14
+      bit_size: 5
+      enum: OPAMP_CSR_PGA_GAIN
+    - name: TRIMOFFSETP
+      description: TRIMOFFSETP
+      bit_offset: 19
+      bit_size: 5
+    - name: TRIMOFFSETN
+      description: TRIMOFFSETN
+      bit_offset: 24
+      bit_size: 5
+    - name: CALOUT
+      description: CALOUT
+      bit_offset: 30
+      bit_size: 1
+    - name: LOCK
+      description: LOCK
+      bit_offset: 31
+      bit_size: 1
+      enum: OPAMP_CSR_LOCK
+fieldset/OPAMP_TCMR:
+  description: OPAMP timer controlled mode register
+  fields:
+    - name: VMS_SEL
+      description: VMS_SEL
+      bit_offset: 0
+      bit_size: 1
+    - name: VPS_SEL
+      description: VPS_SEL
+      bit_offset: 1
+      bit_size: 2
+      enum: OPAMP_TCMR_VPS_SEL
+    - name: T1CM_EN
+      description: T1CM_EN
+      bit_offset: 3
+      bit_size: 1
+    - name: T8CM_EN
+      description: T8CM_EN
+      bit_offset: 4
+      bit_size: 1
+    - name: T20CM_EN
+      description: T20CM_EN
+      bit_offset: 5
+      bit_size: 1
+    - name: LOCK
+      description: LOCK
+      bit_offset: 31
+      bit_size: 1
+      enum: OPAMP_TCMR_LOCK
+enum/OPAMP_CSR_CALSEL:
+  bit_size: 2
+  variants:
+    - name: Percent3_3
+      description: 0.033*VDDA applied to OPAMP inputs during calibration
+      value: 0
+    - name: Percent10
+      description: 0.1*VDDA applied to OPAMP inputs during calibration
+      value: 1
+    - name: Percent50
+      description: 0.5*VDDA applied to OPAMP inputs during calibration
+      value: 2
+    - name: Percent90
+      description: 0.9*VDDA applied to OPAMP inputs during calibration
+      value: 3
+enum/OPAMP_CSR_FORCE_VP:
+  bit_size: 1
+  variants:
+    - name: Normal
+      description: Non-inverting input connected configured inputs
+      value: 0
+    - name: CalibrationVerification
+      description: Non-inverting input connected to calibration reference voltage
+      value: 1
+enum/OPAMP_CSR_LOCK:
+  bit_size: 1
+  variants:
+    - name: ReadWrite
+      description: CSR is read-write
+      value: 0
+    - name: ReadOnly
+      description: "CSR is read-only, can only be cleared by system reset"
+      value: 1
+enum/OPAMP_CSR_OPAHSM:
+  bit_size: 1
+  variants:
+    - name: Normal
+      description: OpAmp in normal mode
+      value: 0
+    - name: HighSpeed
+      description: OpAmp in high speed mode
+      value: 1
+enum/OPAMP_CSR_OPAINTOEN:
+  bit_size: 1
+  variants:
+    - name: OutputPin
+      description: Output is connected to the output Pin
+      value: 0
+    - name: ADCChannel
+      description: Output is connected internally to ADC channel
+      value: 1
+enum/OPAMP_CSR_PGA_GAIN:
+  bit_size: 5
+  variants:
+    - name: Gain2
+      description: Gain 2
+      value: 0
+    - name: Gain4
+      description: Gain 4
+      value: 1
+    - name: Gain8
+      description: Gain 8
+      value: 2
+    - name: Gain16
+      description: Gain 16
+      value: 3
+    - name: Gain32
+      description: Gain 32
+      value: 4
+    - name: Gain64
+      description: Gain 64
+      value: 5
+    - name: Gain2_InputVINM0
+      description: "Gain 2, input/bias connected to VINM0 or inverting gain"
+      value: 8
+    - name: Gain4_InputVINM0
+      description: "Gain 4, input/bias connected to VINM0 or inverting gain"
+      value: 9
+    - name: Gain8_InputVINM0
+      description: "Gain 8, input/bias connected to VINM0 or inverting gain"
+      value: 10
+    - name: Gain16_InputVINM0
+      description: "Gain 16, input/bias connected to VINM0 or inverting gain"
+      value: 11
+    - name: Gain32_InputVINM0
+      description: "Gain 32, input/bias connected to VINM0 or inverting gain"
+      value: 12
+    - name: Gain64_InputVINM0
+      description: "Gain 64, input/bias connected to VINM0 or inverting gain"
+      value: 13
+    - name: Gain2_FilteringVINM0
+      description: "Gain 2, with filtering on VINM0"
+      value: 16
+    - name: Gain4_FilteringVINM0
+      description: "Gain 4, with filtering on VINM0"
+      value: 17
+    - name: Gain8_FilteringVINM0
+      description: "Gain 8, with filtering on VINM0"
+      value: 18
+    - name: Gain16_FilteringVINM0
+      description: "Gain 16, with filtering on VINM0"
+      value: 19
+    - name: Gain32_FilteringVINM0
+      description: "Gain 32, with filtering on VINM0"
+      value: 20
+    - name: Gain64_FilteringVINM0
+      description: "Gain 64, with filtering on VINM0"
+      value: 21
+    - name: Gain2_InputVINM0FilteringVINM1
+      description: "Gain 2, input/bias connected to VINM0 with filtering on VINM1 or inverting gain"
+      value: 24
+    - name: Gain4_InputVINM0FilteringVINM1
+      description: "Gain 4, input/bias connected to VINM0 with filtering on VINM1 or inverting gain"
+      value: 25
+    - name: Gain8_InputVINM0FilteringVINM1
+      description: "Gain 8, input/bias connected to VINM0 with filtering on VINM1 or inverting gain"
+      value: 26
+    - name: Gain16_InputVINM0FilteringVINM1
+      description: "Gain 16, input/bias connected to VINM0 with filtering on VINM1 or inverting gain"
+      value: 27
+    - name: Gain32_InputVINM0FilteringVINM1
+      description: "Gain 32, input/bias connected to VINM0 with filtering on VINM1 or inverting gain"
+      value: 28
+    - name: Gain64_InputVINM0FilteringVINM1
+      description: "Gain 64, input/bias connected to VINM0 with filtering on VINM1 or inverting gain"
+      value: 29
+enum/OPAMP_CSR_USERTRIM:
+  bit_size: 1
+  variants:
+    - name: Factory
+      description: Factory trim used
+      value: 0
+    - name: User
+      description: User trim used
+      value: 1
+enum/OPAMP_CSR_VM_SEL:
+  bit_size: 2
+  variants:
+    - name: VINM0
+      description: VINM0 connected to VINM input
+      value: 0
+    - name: VINM1
+      description: VINM1 connected to VINM input
+      value: 1
+    - name: PGA
+      description: Feedback resistor connected to VINM (PGA mode)
+      value: 2
+    - name: Output
+      description: OpAmp output connected to VINM (Follower mode)
+      value: 3
+enum/OPAMP_CSR_VP_SEL:
+  bit_size: 2
+  variants:
+    - name: VINP0
+      description: VINP0 connected to VINP input
+      value: 0
+    - name: VINP1
+      description: VINP1 connected to VINP input
+      value: 1
+    - name: VINP2
+      description: VINP2 connected to VINP input
+      value: 2
+    - name: DAC3_CH1
+      description: DAC3_CH1 connected to VINP input
+      value: 3
+enum/OPAMP_TCMR_LOCK:
+  bit_size: 1
+  variants:
+    - name: ReadWrite
+      description: TCMR is read-write
+      value: 0
+    - name: ReadOnly
+      description: "TCMR is read-only, can only be cleared by system reset"
+      value: 1
+enum/OPAMP_TCMR_VPS_SEL:
+  bit_size: 2
+  variants:
+    - name: VINP0
+      description: VINP0 connected to VINP input
+      value: 0
+    - name: VINP1
+      description: VINP1 connected to VINP input
+      value: 1
+    - name: VINP2
+      description: VINP2 connected to VINP input
+      value: 2
+    - name: DAC3_CH1
+      description: DAC3_CH1 connected to VINP input
+      value: 3
