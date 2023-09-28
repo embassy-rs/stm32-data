@@ -1,0 +1,213 @@
+---
+block/OPAMP:
+  description: Operational Amplifier
+  items:
+    - name: OPAMPCSR
+      description: OPAMP control register
+      byte_offset: 0
+      fieldset: OPAMP_CSR
+fieldset/OPAMP_CSR:
+  description: OPAMP control register
+  fields:
+    - name: OPAMPEN
+      description: OPAMP enable
+      bit_offset: 0
+      bit_size: 1
+    - name: FORCE_VP
+      description: FORCE_VP
+      bit_offset: 1
+      bit_size: 1
+    - name: VP_SEL
+      description: OPAMP Non inverting input selection
+      bit_offset: 2
+      bit_size: 2
+    - name: VM_SEL
+      description: OPAMP inverting input selection
+      bit_offset: 5
+      bit_size: 2
+    - name: TCM_EN
+      description: Timer controlled Mux mode enable
+      bit_offset: 7
+      bit_size: 1
+    - name: VMS_SEL
+      description: OPAMP inverting input secondary selection
+      bit_offset: 8
+      bit_size: 1
+    - name: VPS_SEL
+      description: OPAMP Non inverting input secondary selection
+      bit_offset: 9
+      bit_size: 2
+    - name: CALON
+      description: Calibration mode enable
+      bit_offset: 11
+      bit_size: 1
+    - name: CALSEL
+      description: Calibration selection
+      bit_offset: 12
+      bit_size: 2
+    - name: PGA_GAIN
+      description: Gain in PGA mode
+      bit_offset: 14
+      bit_size: 4
+    - name: USER_TRIM
+      description: User trimming enable
+      bit_offset: 18
+      bit_size: 1
+    - name: TRIMOFFSETP
+      description: Offset trimming value (PMOS)
+      bit_offset: 19
+      bit_size: 5
+    - name: TRIMOFFSETN
+      description: Offset trimming value (NMOS)
+      bit_offset: 24
+      bit_size: 5
+    - name: TSTREF
+      description: TSTREF
+      bit_offset: 29
+      bit_size: 1
+    - name: OUTCAL
+      description: OPAMP ouput status flag
+      bit_offset: 30
+      bit_size: 1
+    - name: LOCK
+      description: OPAMP lock
+      bit_offset: 31
+      bit_size: 1
+enum/CALSEL:
+  bit_size: 2
+  variants:
+    - name: Percent3_3
+      description: VREFOPAMP=3.3% VDDA
+      value: 0
+    - name: Percent10
+      description: VREFOPAMP=10% VDDA
+      value: 1
+    - name: Percent50
+      description: VREFOPAMP=50% VDDA
+      value: 2
+    - name: Percent90
+      description: VREFOPAMP=90% VDDA
+      value: 3
+enum/FORCE_VP:
+  bit_size: 1
+  variants:
+    - name: Normal
+      description: Normal operating mode
+      value: 0
+    - name: Calibration
+      description: Calibration mode. Non-inverting input connected to calibration reference
+      value: 1
+enum/LOCK:
+  bit_size: 1
+  variants:
+    - name: Unlocked
+      description: Comparator CSR bits are read-write
+      value: 0
+    - name: Locked
+      description: Comparator CSR bits are read-only
+      value: 1
+enum/OUTCAL:
+  bit_size: 1
+  variants:
+    - name: Low
+      description: Non-inverting < inverting
+      value: 0
+    - name: High
+      description: Non-inverting > inverting
+      value: 1
+enum/PGA_GAIN:
+  bit_size: 4
+  variants:
+    - name: Gain2
+      description: Gain 2
+      value: 0
+    - name: Gain4
+      description: Gain 4
+      value: 1
+    - name: Gain8
+      description: Gain 8
+      value: 2
+    - name: Gain16
+      description: Gain 16
+      value: 4
+    - name: Gain2_VM0
+      description: "Gain 2, feedback connected to VM0"
+      value: 8
+    - name: Gain4_VM0
+      description: "Gain 4, feedback connected to VM0"
+      value: 9
+    - name: Gain8_VM0
+      description: "Gain 8, feedback connected to VM0"
+      value: 10
+    - name: Gain16_VM0
+      description: "Gain 16, feedback connected to VM0"
+      value: 11
+    - name: Gain2_VM1
+      description: "Gain 2, feedback connected to VM1"
+      value: 12
+    - name: Gain4_VM1
+      description: "Gain 4, feedback connected to VM1"
+      value: 13
+    - name: Gain8_VM1
+      description: "Gain 8, feedback connected to VM1"
+      value: 14
+    - name: Gain16_VM1
+      description: "Gain 16, feedback connected to VM1"
+      value: 15
+enum/TSTREF:
+  bit_size: 1
+  variants:
+    - name: Output
+      description: VREFOPAMP2 is output
+      value: 0
+    - name: NotOutput
+      description: VREFOPAMP2 is not output
+      value: 1
+enum/VMS_SEL:
+  bit_size: 1
+  variants:
+    - name: PC5
+      description: PC5 (VM0) used as OPAMP2 inverting input when TCM_EN=1
+      value: 0
+    - name: PA5
+      description: PA5 (VM1) used as OPAMP2 inverting input when TCM_EN=1
+      value: 1
+enum/VM_SEL:
+  bit_size: 2
+  variants:
+    - name: PC5
+      description: PC5 (VM0) used as OPAMP2 inverting input
+      value: 0
+    - name: PA5
+      description: PA5 (VM1) used as OPAMP2 inverting input
+      value: 1
+    - name: PGA
+      description: Resistor feedback output (PGA mode)
+      value: 2
+    - name: Follower
+      description: Follower mode
+      value: 3
+enum/VPS_SEL:
+  bit_size: 2
+  variants:
+    - name: PB14
+      description: PB14 used as OPAMP2 non-inverting input when TCM_EN=1
+      value: 1
+    - name: PB0
+      description: PB0 used as OPAMP2 non-inverting input when TCM_EN=1
+      value: 2
+    - name: PA7
+      description: PA7 used as OPAMP2 non-inverting input when TCM_EN=1
+      value: 3
+enum/VP_SEL:
+  bit_size: 2
+  variants:
+    - name: PB14
+      description: PB14 used as OPAMP2 non-inverting input
+      value: 1
+    - name: PB0
+      description: PB0 used as OPAMP2 non-inverting input
+      value: 2
+    - name: PA7
+      description: PA7 used as OPAMP2 non-inverting input
+      value: 3
