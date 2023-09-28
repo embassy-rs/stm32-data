@@ -26,6 +26,8 @@ impl PeripheralToClock {
                         };
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("EN") {
+                                let peri = if peri == "RTCAPB" { "RTC" } else { peri };
+
                                 // Timers are a bit special, they may have a x2 freq
                                 let peri_clock = {
                                     if regex!(r"^TIM\d+$").is_match(peri) {
@@ -79,6 +81,9 @@ impl PeripheralToClock {
         const PERI_OVERRIDE: &[(&str, &[&str])] = &[("DCMI", &["DCMI_PSSI"]), ("PSSI", &["DCMI_PSSI"])];
 
         let clocks = self.0.get(rcc_block)?;
+        if peri_name.starts_with("ADC") && !peri_name.contains("COMMON") {
+            return self.match_adc_peri_clock(clocks, peri_name);
+        }
         if let Some(res) = clocks.get(peri_name) {
             Some(res)
         } else if let Some(peri_name) = peri_name.strip_suffix('1') {
@@ -93,5 +98,43 @@ impl PeripheralToClock {
         } else {
             None
         }
+    }
+
+    fn match_adc_peri_clock<'a>(
+        &'a self,
+        clocks: &'a HashMap<String, stm32_data_serde::chip::core::peripheral::Rcc>,
+        peri_name: &str,
+    ) -> Option<&stm32_data_serde::chip::core::peripheral::Rcc> {
+        // Direct match
+        if clocks.contains_key(peri_name) {
+            return clocks.get(peri_name);
+        }
+
+        // Paired match based on odd/even
+        if let Some(digit_char) = peri_name.chars().last() {
+            if let Some(digit) = digit_char.to_digit(10) {
+                let paired = if digit % 2 == 1 {
+                    format!("ADC{}{}", digit, digit + 1)
+                } else {
+                    format!("ADC{}{}", digit - 1, digit)
+                };
+
+                if clocks.contains_key(paired.as_str()) {
+                    return clocks.get(paired.as_str());
+                }
+            }
+        }
+
+        // If adc is 3, 4, or 5, check for ADC345
+        if (peri_name == "ADC3" || peri_name == "ADC4" || peri_name == "ADC5") && clocks.contains_key("ADC345") {
+            return clocks.get("ADC345");
+        }
+
+        // Look for bare ADC clock register
+        if clocks.contains_key("ADC") {
+            return clocks.get("ADC");
+        }
+
+        None
     }
 }

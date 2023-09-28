@@ -142,9 +142,21 @@ impl PeriMatcher {
             ("STM32H7.*:RNG:.*", ("rng", "v1", "RNG")),
             ("STM32G0.*:RNG:.*", ("rng", "v1", "RNG")),
             ("STM32G4.*:RNG:.*", ("rng", "v1", "RNG")),
+            ("STM32F7.*:AES:.*", ("aes", "f7", "AES")),
+            ("STM32F4.*:AES:.*", ("aes", "v1", "AES")),
+            ("STM32G0.*:AES:.*", ("aes", "v2", "AES")),
+            ("STM32G4.*:AES:.*", ("aes", "v2", "AES")),
+            ("STM32L0.*:AES:.*", ("aes", "v1", "AES")),
+            ("STM32L1.*:AES:.*", ("aes", "v1", "AES")),
+            ("STM32L4.*:AES:.*", ("aes", "v1", "AES")),
+            ("STM32L5.*:AES:.*", ("aes", "v2", "AES")),
+            ("STM32U5.*:AES:.*", ("aes", "u5", "AES")),
+            ("STM32WL5.*:AES:.*", ("aes", "v2", "AES")),
+            ("STM32WLE.*:AES:.*", ("aes", "v2", "AES")),
             (".*:SPI:spi2_v1_4", ("spi", "f1", "SPI")),
             (".*:SPI:spi2s1_v2_1", ("spi", "v1", "SPI")),
             (".*:SPI:spi2s1_v2_2", ("spi", "v1", "SPI")),
+            (".*:SPI:spi2s1_v2_3", ("spi", "v1", "SPI")),
             (".*:SPI:spi2s1_v2_4", ("spi", "v1", "SPI")),
             (".*:SPI:spi2s1_v3_0", ("spi", "v2", "SPI")),
             (".*:SPI:spi2s1_v3_2", ("spi", "v2", "SPI")),
@@ -170,6 +182,7 @@ impl PeriMatcher {
             (".*:DAC:F3_dacif_v1_1", ("dac", "v1", "DAC")),
             (".*:ADC:aditf_v2_5F1", ("adc", "f1", "ADC")),
             (".*:ADC:aditf5_v1_1", ("adc", "f3", "ADC")),
+            (".*:ADC:aditf_v2_5", ("adc", "f3_v2", "ADC")),
             (".*:ADC:aditf4_v1_1", ("adc", "v1", "ADC")),
             (".*:ADC:aditf2_v1_1", ("adc", "v2", "ADC")),
             (".*:ADC:aditf5_v2_0", ("adc", "v3", "ADC")),
@@ -178,10 +191,14 @@ impl PeriMatcher {
             (".*:ADC:aditf5_v3_1", ("adc", "v4", "ADC")),
             ("STM32G0.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
+            ("STM32G4.*:ADC:.*", ("adc", "v4", "ADC")),
+            ("STM32G4.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf2_v1_1", ("adccommon", "v2", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf5_v2_0", ("adccommon", "v3", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf5_v2_2", ("adccommon", "v3", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf4_v3_0_WL", ("adccommon", "v3", "ADC_COMMON")),
+            (".*:ADC_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
+            (".*:ADC3_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
             ("STM32H7.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             ("STM32H7.*:ADC3_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (".*:DCMI:.*", ("dcmi", "v1", "DCMI")),
@@ -197,11 +214,18 @@ impl PeriMatcher {
             ("STM32L5.*:SYSCFG:.*", ("syscfg", "l5", "SYSCFG")),
             ("STM32G0.*:SYSCFG:.*", ("syscfg", "g0", "SYSCFG")),
             ("STM32G4.*:SYSCFG:.*", ("syscfg", "g4", "SYSCFG")),
+            (
+                "STM32H7(45|47|55|57|42|43|53|50).*:SYSCFG:.*",
+                ("syscfg", "h7od", "SYSCFG"),
+            ),
             ("STM32H7.*:SYSCFG:.*", ("syscfg", "h7", "SYSCFG")),
             ("STM32U5.*:SYSCFG:.*", ("syscfg", "u5", "SYSCFG")),
+            ("STM32WBA.*:SYSCFG:.*", ("syscfg", "wba", "SYSCFG")),
             ("STM32WB.*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
             ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
+            ("STM32WL5.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32WLE.*:SYSCFG:.*", ("syscfg", "wle", "SYSCFG")),
+            ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32H50.*:SBS:.*", ("sbs", "h50", "SBS")),
             ("STM32H5.*:SBS:.*", ("sbs", "h5", "SBS")),
             (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
@@ -226,6 +250,7 @@ impl PeriMatcher {
             ("STM32L0.*:RTC:rtc2_.*", ("rtc", "v2l0", "RTC")),
             ("STM32L1.*:RTC:rtc2_.*", ("rtc", "v2l1", "RTC")),
             ("STM32L4.*:RTC:rtc2_.*", ("rtc", "v2l4", "RTC")),
+            ("STM32WBA.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")),
             ("STM32WB.*:RTC:rtc2_.*", ("rtc", "v2wb", "RTC")),
             ("STM32U5.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")), // Cube says v2, but it's v3 with security stuff
             (".*:RTC:rtc3_v1_0", ("rtc", "v3", "RTC")),
@@ -262,6 +287,7 @@ impl PeriMatcher {
             ("STM32F10[123].*:RCC:.*", ("rcc", "f1", "RCC")),
             ("STM32F10[57].*:RCC:.*", ("rcc", "f1cl", "RCC")),
             ("STM32F2.*:RCC:.*", ("rcc", "f2", "RCC")),
+            ("STM32F37.*:RCC:.*", ("rcc", "f3_v2", "RCC")),
             ("STM32F3.*:RCC:.*", ("rcc", "f3", "RCC")),
             ("STM32F410.*:RCC:.*", ("rcc", "f410", "RCC")),
             ("STM32F4.*:RCC:.*", ("rcc", "f4", "RCC")),
@@ -277,12 +303,14 @@ impl PeriMatcher {
             ("STM32U5.*:RCC:.*", ("rcc", "u5", "RCC")),
             ("STM32H50.*:RCC:.*", ("rcc", "h50", "RCC")),
             ("STM32H5.*:RCC:.*", ("rcc", "h5", "RCC")),
+            ("STM32WBA.*:RCC:.*", ("rcc", "wba", "RCC")),
             ("STM32WB.*:RCC:.*", ("rcc", "wb", "RCC")),
             ("STM32WL5.*:RCC:.*", ("rcc", "wl5", "RCC")),
             ("STM32WLE.*:RCC:.*", ("rcc", "wle", "RCC")),
             ("STM32F1.*:SPI[1234]:.*", ("spi", "f1", "SPI")),
             ("STM32F3.*:SPI[1234]:.*", ("spi", "v2", "SPI")),
             ("STM32F1.*:AFIO:.*", ("afio", "f1", "AFIO")),
+            ("STM32WBA.*:EXTI:.*", ("exti", "l5", "EXTI")),
             ("STM32L5.*:EXTI:.*", ("exti", "l5", "EXTI")),
             ("STM32C0.*:EXTI:.*", ("exti", "c0", "EXTI")),
             ("STM32G0.*:EXTI:.*", ("exti", "g0", "EXTI")),
@@ -300,23 +328,33 @@ impl PeriMatcher {
             ("STM32G4.*:CRS:.*", ("crs", "v1", "CRS")),
             ("STM32U5.*:CRS:.*", ("crs", "v1", "CRS")),
             (".*SDMMC:sdmmc2_v1_0", ("sdmmc", "v2", "SDMMC")),
+            (".*SDMMC:sdmmc2_v2_1", ("sdmmc", "v2", "SDMMC")),
             ("STM32C0.*:PWR:.*", ("pwr", "c0", "PWR")),
             ("STM32G0.*:PWR:.*", ("pwr", "g0", "PWR")),
             ("STM32G4.*:PWR:.*", ("pwr", "g4", "PWR")),
-            ("STM32H7(42|43|53|50).*:PWR:.*", ("pwr", "h7", "PWR")),
-            ("STM32H7.*:PWR:.*", ("pwr", "h7smps", "PWR")),
+            ("STM32H7(45|47|55|57).*:PWR:.*", ("pwr", "h7rm0399", "PWR")),
+            ("STM32H7(42|43|53|50).*:PWR:.*", ("pwr", "h7rm0433", "PWR")),
+            ("STM32H7(23|25|33|35|30).*:PWR:.*", ("pwr", "h7rm0468", "PWR")),
+            ("STM32H7(A3|B0|B3).*:PWR:.*", ("pwr", "h7rm0455", "PWR")),
+            ("STM32F0.0.*:PWR:.*", ("pwr", "f0x0", "PWR")),
+            ("STM32F0.*:PWR:.*", ("pwr", "f0", "PWR")),
+            ("STM32F1.*:PWR:.*", ("pwr", "f1", "PWR")),
             ("STM32F2.*:PWR:.*", ("pwr", "f2", "PWR")),
             ("STM32F3.*:PWR:.*", ("pwr", "f3", "PWR")),
             ("STM32F4.*:PWR:.*", ("pwr", "f4", "PWR")),
             ("STM32F7.*:PWR:.*", ("pwr", "f7", "PWR")),
+            ("STM32L0.*:PWR:.*", ("pwr", "l0", "PWR")),
             ("STM32L1.*:PWR:.*", ("pwr", "l1", "PWR")),
             ("STM32L4.*:PWR:.*", ("pwr", "l4", "PWR")),
             ("STM32L5.*:PWR:.*", ("pwr", "l5", "PWR")),
             ("STM32U5.*:PWR:.*", ("pwr", "u5", "PWR")),
             ("STM32WL.*:PWR:.*", ("pwr", "wl5", "PWR")),
-            ("STM32WB.*:PWR:.*", ("pwr", "wb55", "PWR")),
+            ("STM32WBA.*:PWR:.*", ("pwr", "wba", "PWR")),
+            ("STM32WB55.*:PWR:.*", ("pwr", "wb55", "PWR")),
+            ("STM32WB.*:PWR:.*", ("pwr", "wb", "PWR")),
             ("STM32H50.*:PWR:.*", ("pwr", "h50", "PWR")),
             ("STM32H5.*:PWR:.*", ("pwr", "h5", "PWR")),
+            ("STM32H7(A3|B3|B0).*:FLASH:.*", ("flash", "h7ab", "FLASH")),
             ("STM32H7.*:FLASH:.*", ("flash", "h7", "FLASH")),
             ("STM32F0.*:FLASH:.*", ("flash", "f0", "FLASH")),
             ("STM32F1.*:FLASH:.*", ("flash", "f1", "FLASH")),
@@ -324,11 +362,12 @@ impl PeriMatcher {
             ("STM32F3.*:FLASH:.*", ("flash", "f3", "FLASH")),
             ("STM32F4.*:FLASH:.*", ("flash", "f4", "FLASH")),
             ("STM32F7.*:FLASH:.*", ("flash", "f7", "FLASH")),
-            ("STM32L0[0-9]2.*:FLASH:.*", ("flash", "l0", "FLASH")),
+            ("STM32L0.*:FLASH:.*", ("flash", "l0", "FLASH")),
             ("STM32L1.*:FLASH:.*", ("flash", "l1", "FLASH")),
             ("STM32L4.*:FLASH:.*", ("flash", "l4", "FLASH")),
             ("STM32L5.*:FLASH:.*", ("flash", "l5", "FLASH")),
             ("STM32U5.*:FLASH:.*", ("flash", "u5", "FLASH")),
+            ("STM32WBA.*:FLASH:.*", ("flash", "wba", "FLASH")),
             ("STM32WB.*:FLASH:.*", ("flash", "wb", "FLASH")),
             ("STM32WL.*:FLASH:.*", ("flash", "wl", "FLASH")),
             ("STM32C0.*:FLASH:.*", ("flash", "c0", "FLASH")),
@@ -340,6 +379,7 @@ impl PeriMatcher {
             ("STM32F[24].*:ETH:.*", ("eth", "v1b", "ETH")),
             ("STM32F7.*:ETH:.*", ("eth", "v1c", "ETH")),
             (".*ETH:ethermac110_v3_0", ("eth", "v2", "ETH")),
+            (".*ETH:ethermac110_v3_0_1", ("eth", "v2", "ETH")),
             ("STM32F4[23][79].*:FMC:.*", ("fmc", "v1x3", "FMC")),
             ("STM32F446.*:FMC:.*", ("fmc", "v2x1", "FMC")),
             ("STM32F469.*:FMC:.*", ("fmc", "v2x1", "FMC")),
@@ -384,6 +424,7 @@ impl PeriMatcher {
             ("STM32L1.*:DBGMCU:.*", ("dbgmcu", "l1", "DBGMCU")),
             ("STM32L4.*:DBGMCU:.*", ("dbgmcu", "l4", "DBGMCU")),
             ("STM32U5.*:DBGMCU:.*", ("dbgmcu", "u5", "DBGMCU")),
+            ("STM32WBA.*:DBGMCU:.*", ("dbgmcu", "wba", "DBGMCU")),
             ("STM32WB.*:DBGMCU:.*", ("dbgmcu", "wb", "DBGMCU")),
             ("STM32WL.*:DBGMCU:.*", ("dbgmcu", "wl", "DBGMCU")),
             ("STM32F1.*:GPIO.*", ("gpio", "v1", "GPIO")),
@@ -416,6 +457,7 @@ impl PeriMatcher {
             (".*:LCD:lcdc1_v1.2.*", ("lcd", "v2", "LCD")),
             (".*:LCD:lcdc1_v1.3.*", ("lcd", "v2", "LCD")),
             (".*:UID:.*", ("uid", "v1", "UID")),
+            (".*:UCPD:.*", ("ucpd", "v1", "UCPD")),
         ];
 
         Self {
@@ -524,11 +566,11 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
 static NOPELIST: &[&str] = &[
     // Not supported, not planned unless someone wants to do it.
     "STM32MP",
-    // Not supported yet, planned.
-    "STM32WBA",
     // Does not exist in ST website. No datasheet, no RM.
     "STM32GBK",
     "STM32L485",
+    "STM32U5F",
+    "STM32U5G",
     // STM32WxM modules. These are based on a chip that's supported on its own,
     // not sure why we want a separate target for it.
     "STM32WL5M",
@@ -743,7 +785,7 @@ fn process_core(
         if ["L5", "U5"].contains(&&chip_name[5..7]) {
             want_nvic_name = "NVIC2"
         }
-        if ["H56", "H57"].contains(&&chip_name[5..8]) {
+        if ["H56", "H57", "WBA"].contains(&&chip_name[5..8]) {
             want_nvic_name = "NVIC2"
         }
 
@@ -824,7 +866,7 @@ fn process_core(
                 entry.insert(format!("ADC_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
         }
-        if pname.starts_with("ADC3") && chip_name.starts_with("STM32H7") {
+        if pname.starts_with("ADC3") && (chip_name.starts_with("STM32H7") || chip_name.starts_with("STM32F3")) {
             if let Entry::Vacant(entry) = peri_kinds.entry("ADC3_COMMON".to_string()) {
                 entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }

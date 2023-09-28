@@ -1,288 +1,287 @@
----
 block/SBS:
-  description: "System configuration, boot and security"
+  description: System configuration, boot and security
   items:
-    - name: HDPLCR
-      description: SBS temporal isolation control register
-      byte_offset: 16
-      fieldset: HDPLCR
-    - name: HDPLSR
-      description: SBS temporal isolation status register
-      byte_offset: 20
-      fieldset: HDPLSR
-    - name: DBGCR
-      description: SBS debug control register
-      byte_offset: 32
-      fieldset: DBGCR
-    - name: DBGLOCKR
-      description: SBS debug lock register
-      byte_offset: 36
-      fieldset: DBGLOCKR
-    - name: PMCR
-      description: SBS product mode and configuration register
-      byte_offset: 256
-      fieldset: PMCR
-    - name: FPUIMR
-      description: SBS FPU interrupt mask register
-      byte_offset: 260
-      fieldset: FPUIMR
-    - name: MESR
-      description: SBS memory erase status register
-      byte_offset: 264
-      fieldset: MESR
-    - name: CCCSR
-      description: SBS compensation cell for I/Os control and status register
-      byte_offset: 272
-      fieldset: CCCSR
-    - name: CCVALR
-      description: SBS compensation cell for I/Os value register
-      byte_offset: 276
-      fieldset: CCVALR
-    - name: CCSWCR
-      description: SBS compensation cell for I/Os software code register
-      byte_offset: 280
-      fieldset: CCSWCR
-    - name: CFGR2
-      description: SBS Class B register
-      byte_offset: 288
-      fieldset: CFGR2
-    - name: CNSLCKR
-      description: SBS CPU lock register
-      byte_offset: 324
-      fieldset: CNSLCKR
-    - name: ECCNMIR
-      description: SBS flift ECC NMI mask register
-      byte_offset: 332
-      fieldset: ECCNMIR
+  - name: HDPLCR
+    description: SBS temporal isolation control register
+    byte_offset: 16
+    fieldset: HDPLCR
+  - name: HDPLSR
+    description: SBS temporal isolation status register
+    byte_offset: 20
+    fieldset: HDPLSR
+  - name: DBGCR
+    description: SBS debug control register
+    byte_offset: 32
+    fieldset: DBGCR
+  - name: DBGLOCKR
+    description: SBS debug lock register
+    byte_offset: 36
+    fieldset: DBGLOCKR
+  - name: PMCR
+    description: SBS product mode and configuration register
+    byte_offset: 256
+    fieldset: PMCR
+  - name: FPUIMR
+    description: SBS FPU interrupt mask register
+    byte_offset: 260
+    fieldset: FPUIMR
+  - name: MESR
+    description: SBS memory erase status register
+    byte_offset: 264
+    fieldset: MESR
+  - name: CCCSR
+    description: SBS compensation cell for I/Os control and status register
+    byte_offset: 272
+    fieldset: CCCSR
+  - name: CCVALR
+    description: SBS compensation cell for I/Os value register
+    byte_offset: 276
+    fieldset: CCVALR
+  - name: CCSWCR
+    description: SBS compensation cell for I/Os software code register
+    byte_offset: 280
+    fieldset: CCSWCR
+  - name: CFGR2
+    description: SBS Class B register
+    byte_offset: 288
+    fieldset: CFGR2
+  - name: CNSLCKR
+    description: SBS CPU lock register
+    byte_offset: 324
+    fieldset: CNSLCKR
+  - name: ECCNMIR
+    description: SBS flift ECC NMI mask register
+    byte_offset: 332
+    fieldset: ECCNMIR
 fieldset/CCCSR:
   description: SBS compensation cell for I/Os control and status register
   fields:
-    - name: EN
-      description: "enable compensation cell for VDDIO power rail\r This bit enables the I/O compensation cell."
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 2
-        stride: 2
-    - name: CS
-      description: "code selection for VDDIO power rail (reset value set to 1)\r This bit selects the code to be applied for the I/O compensation cell."
-      bit_offset: 1
-      bit_size: 1
-      array:
-        len: 2
-        stride: 2
-      enum: CS
-    - name: RDY
-      description: "VDDIO compensation cell ready flag\r This bit provides the status of the compensation cell."
-      bit_offset: 8
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
+  - name: EN
+    description: "enable compensation cell for VDDIO power rail\r This bit enables the I/O compensation cell."
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 2
+  - name: CS
+    description: "code selection for VDDIO power rail (reset value set to 1)\r This bit selects the code to be applied for the I/O compensation cell."
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 2
+      stride: 2
+    enum: CS
+  - name: RDY
+    description: "VDDIO compensation cell ready flag\r This bit provides the status of the compensation cell."
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
 fieldset/CCSWCR:
   description: SBS compensation cell for I/Os software code register
   fields:
-    - name: SW_ANSRC1
-      description: "NMOS compensation code for VDD power rails\r This bitfield is written by software to define an I/O compensation cell code for NMOS transistors of the VDD power rail. This code is applied to the I/O when CS1 is set in SBS_CCSR."
-      bit_offset: 0
-      bit_size: 4
-    - name: SW_APSRC1
-      description: "PMOS compensation code for the VDD power rails\r This bitfield is written by software to define an I/O compensation cell code for PMOS transistors of the VDDIO power rail. This code is applied to the I/O when CS1 is set in SBS_CCSR."
-      bit_offset: 4
-      bit_size: 4
-    - name: SW_ANSRC2
-      description: "NMOS compensation code for VDDIO power rails\r This bitfield is written by software to define an I/O compensation cell code for NMOS transistors of the VDD power rail. This code is applied to the I/O when CS2 is set in SBS_CCSR."
-      bit_offset: 8
-      bit_size: 4
-    - name: SW_APSRC2
-      description: "PMOS compensation code for the V<sub>DDIO</sub> power rails\r This bitfield is written by software to define an I/O compensation cell code for PMOS transistors of the VDDIO power rail. This code is applied to the I/O when CS2 is set in SBS_CCSR."
-      bit_offset: 12
-      bit_size: 4
+  - name: SW_ANSRC1
+    description: "NMOS compensation code for VDD power rails\r This bitfield is written by software to define an I/O compensation cell code for NMOS transistors of the VDD power rail. This code is applied to the I/O when CS1 is set in SBS_CCSR."
+    bit_offset: 0
+    bit_size: 4
+  - name: SW_APSRC1
+    description: "PMOS compensation code for the VDD power rails\r This bitfield is written by software to define an I/O compensation cell code for PMOS transistors of the VDDIO power rail. This code is applied to the I/O when CS1 is set in SBS_CCSR."
+    bit_offset: 4
+    bit_size: 4
+  - name: SW_ANSRC2
+    description: "NMOS compensation code for VDDIO power rails\r This bitfield is written by software to define an I/O compensation cell code for NMOS transistors of the VDD power rail. This code is applied to the I/O when CS2 is set in SBS_CCSR."
+    bit_offset: 8
+    bit_size: 4
+  - name: SW_APSRC2
+    description: "PMOS compensation code for the V<sub>DDIO</sub> power rails\r This bitfield is written by software to define an I/O compensation cell code for PMOS transistors of the VDDIO power rail. This code is applied to the I/O when CS2 is set in SBS_CCSR."
+    bit_offset: 12
+    bit_size: 4
 fieldset/CCVALR:
   description: SBS compensation cell for I/Os value register
   fields:
-    - name: ANSRC1
-      description: "compensation value for the NMOS transistor\r This value is provided by the cell and must be interpreted by the processor to compensate the slew rate in the functional range."
-      bit_offset: 0
-      bit_size: 4
-    - name: APSRC1
-      description: "compensation value for the PMOS transistor \r This value is provided by the cell and must be interpreted by the processor to compensate the slew rate in the functional range."
-      bit_offset: 4
-      bit_size: 4
-    - name: ANSRC2
-      description: "Compensation value for the NMOS transistor \r This value is provided by the cell and must be interpreted by the processor to compensate the slew rate in the functional range."
-      bit_offset: 8
-      bit_size: 4
-    - name: APSRC2
-      description: "compensation value for the PMOS transistor\r This value is provided by the cell and must be interpreted by the processor to compensate the slew rate in the functional range."
-      bit_offset: 12
-      bit_size: 4
+  - name: ANSRC1
+    description: "compensation value for the NMOS transistor\r This value is provided by the cell and must be interpreted by the processor to compensate the slew rate in the functional range."
+    bit_offset: 0
+    bit_size: 4
+  - name: APSRC1
+    description: "compensation value for the PMOS transistor \r This value is provided by the cell and must be interpreted by the processor to compensate the slew rate in the functional range."
+    bit_offset: 4
+    bit_size: 4
+  - name: ANSRC2
+    description: "Compensation value for the NMOS transistor \r This value is provided by the cell and must be interpreted by the processor to compensate the slew rate in the functional range."
+    bit_offset: 8
+    bit_size: 4
+  - name: APSRC2
+    description: "compensation value for the PMOS transistor\r This value is provided by the cell and must be interpreted by the processor to compensate the slew rate in the functional range."
+    bit_offset: 12
+    bit_size: 4
 fieldset/CFGR2:
   description: SBS Class B register
   fields:
-    - name: CLL
-      description: "core lockup lock\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the lockup (HardFault) output of Cortex-M33 with TIM1 break inputs."
-      bit_offset: 0
-      bit_size: 1
-    - name: SEL
-      description: "SRAM ECC error lock\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the SRAM double ECC error signal with break input of TIM1."
-      bit_offset: 1
-      bit_size: 1
-    - name: PVDL
-      description: "PVD lock\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the PVD connection with TIM1 break inputs."
-      bit_offset: 2
-      bit_size: 1
-    - name: ECCL
-      description: "ECC lock\r This bit is set and cleared by software. It can be used to enable and lock the Flash memory double ECC error with break input of TIM1."
-      bit_offset: 3
-      bit_size: 1
+  - name: CLL
+    description: "core lockup lock\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the lockup (HardFault) output of Cortex-M33 with TIM1 break inputs."
+    bit_offset: 0
+    bit_size: 1
+  - name: SEL
+    description: "SRAM ECC error lock\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the SRAM double ECC error signal with break input of TIM1."
+    bit_offset: 1
+    bit_size: 1
+  - name: PVDL
+    description: "PVD lock\r This bit is set by software and cleared only by a system reset. It can be used to enable and lock the PVD connection with TIM1 break inputs."
+    bit_offset: 2
+    bit_size: 1
+  - name: ECCL
+    description: "ECC lock\r This bit is set and cleared by software. It can be used to enable and lock the Flash memory double ECC error with break input of TIM1."
+    bit_offset: 3
+    bit_size: 1
 fieldset/CNSLCKR:
   description: SBS CPU lock register
   fields:
-    - name: LOCKNSVTOR
-      description: "VTOR_NS register lock\r This bit is set by software and cleared only by a system reset."
-      bit_offset: 0
-      bit_size: 1
-    - name: LOCKNSMPU
-      description: "MPU register lock \r This bit is set by software and cleared only by a system reset. When set, this bit disables write access to MPU_CTRL_NS, MPU_RNR_NS and MPU_RBAR_NS registers."
-      bit_offset: 1
-      bit_size: 1
+  - name: LOCKNSVTOR
+    description: "VTOR_NS register lock\r This bit is set by software and cleared only by a system reset."
+    bit_offset: 0
+    bit_size: 1
+  - name: LOCKNSMPU
+    description: "MPU register lock \r This bit is set by software and cleared only by a system reset. When set, this bit disables write access to MPU_CTRL_NS, MPU_RNR_NS and MPU_RBAR_NS registers."
+    bit_offset: 1
+    bit_size: 1
 fieldset/DBGCR:
   description: SBS debug control register
   fields:
-    - name: AP_UNLOCK
-      description: "access port unlock\r Write 0xB4 to this bitfield to open the device access port."
-      bit_offset: 0
-      bit_size: 8
-    - name: DBG_UNLOCK
-      description: "debug unlock when DBG_AUTH_HDPL is reached\r Write 0xB4 to this bitfield to open the debug when HDPL in SBS_HDPLSR equals to DBG_AUTH_HDPL in this register."
-      bit_offset: 8
-      bit_size: 8
-    - name: DBG_AUTH_HDPL
-      description: "authenticated debug temporal isolation level\r Writing to this bitfield defines at which HDPL the authenticated debug opens.\r Note: Writing any other values is ignored. Reading any other value means the debug never opens."
-      bit_offset: 16
-      bit_size: 8
-      enum: DBG_AUTH_HDPL
+  - name: AP_UNLOCK
+    description: "access port unlock\r Write 0xB4 to this bitfield to open the device access port."
+    bit_offset: 0
+    bit_size: 8
+  - name: DBG_UNLOCK
+    description: "debug unlock when DBG_AUTH_HDPL is reached\r Write 0xB4 to this bitfield to open the debug when HDPL in SBS_HDPLSR equals to DBG_AUTH_HDPL in this register."
+    bit_offset: 8
+    bit_size: 8
+  - name: DBG_AUTH_HDPL
+    description: "authenticated debug temporal isolation level\r Writing to this bitfield defines at which HDPL the authenticated debug opens.\r Note: Writing any other values is ignored. Reading any other value means the debug never opens."
+    bit_offset: 16
+    bit_size: 8
+    enum: DBG_AUTH_HDPL
 fieldset/DBGLOCKR:
   description: SBS debug lock register
   fields:
-    - name: DBGCFG_LOCK
-      description: "debug configuration lock\r Reading this bitfield returns 0x6A if the bitfield value is different from 0xB4.\r 0xC3 is the recommended value to lock the debug configuration using this bitfield.\r Other: Writes to SBS_DBGCR ignored"
-      bit_offset: 0
-      bit_size: 8
-      enum: DBGCFG_LOCK
+  - name: DBGCFG_LOCK
+    description: "debug configuration lock\r Reading this bitfield returns 0x6A if the bitfield value is different from 0xB4.\r 0xC3 is the recommended value to lock the debug configuration using this bitfield.\r Other: Writes to SBS_DBGCR ignored"
+    bit_offset: 0
+    bit_size: 8
+    enum: DBGCFG_LOCK
 fieldset/ECCNMIR:
   description: SBS flift ECC NMI mask register
   fields:
-    - name: ECCNMI_MASK_EN
-      description: NMI behavior setup when a double ECC error occurs on flitf data part
-      bit_offset: 0
-      bit_size: 1
+  - name: ECCNMI_MASK_EN
+    description: NMI behavior setup when a double ECC error occurs on flitf data part
+    bit_offset: 0
+    bit_size: 1
 fieldset/FPUIMR:
   description: SBS FPU interrupt mask register
   fields:
-    - name: FPU_IE
-      description: "FPU interrupt enable\r Set and cleared by software to enable the Cortex-M33 FPU interrupts\r FPU_IE[5]: inexact interrupt enable (interrupt disabled at reset)\r FPU_IE[4]: input abnormal interrupt enable\r FPU_IE[3]: overflow interrupt enable\r FPU_IE[2]: underflow interrupt enable\r FPU_IE[1]: divide-by-zero interrupt enable\r FPU_IE[0]: invalid operation interrupt enable"
-      bit_offset: 0
-      bit_size: 6
+  - name: FPU_IE
+    description: "FPU interrupt enable\r Set and cleared by software to enable the Cortex-M33 FPU interrupts\r FPU_IE[5]: inexact interrupt enable (interrupt disabled at reset)\r FPU_IE[4]: input abnormal interrupt enable\r FPU_IE[3]: overflow interrupt enable\r FPU_IE[2]: underflow interrupt enable\r FPU_IE[1]: divide-by-zero interrupt enable\r FPU_IE[0]: invalid operation interrupt enable"
+    bit_offset: 0
+    bit_size: 6
 fieldset/HDPLCR:
   description: SBS temporal isolation control register
   fields:
-    - name: INCR_HDPL
-      description: "increment HDPL value\r Other: all other values allow a HDPL level increment."
-      bit_offset: 0
-      bit_size: 8
-      enum: INCR_HDPL
+  - name: INCR_HDPL
+    description: "increment HDPL value\r Other: all other values allow a HDPL level increment."
+    bit_offset: 0
+    bit_size: 8
+    enum: INCR_HDPL
 fieldset/HDPLSR:
   description: SBS temporal isolation status register
   fields:
-    - name: HDPL
-      description: "temporal isolation level\r This bitfield returns the current temporal isolation level."
-      bit_offset: 0
-      bit_size: 8
-      enum: HDPL
+  - name: HDPL
+    description: "temporal isolation level\r This bitfield returns the current temporal isolation level."
+    bit_offset: 0
+    bit_size: 8
+    enum: HDPL
 fieldset/MESR:
   description: SBS memory erase status register
   fields:
-    - name: MCLR
-      description: "erase after reset status\r This bit shows the status of the protection for SRAM2, BKPRAM, ICACHE, ICACHE. It is set by hardware and reset by software"
-      bit_offset: 0
-      bit_size: 1
-    - name: IPMEE
-      description: "end-of-erase status for ICACHE\r This bit shows the status of the protection for ICACHE. It is set by hardware and reset by software."
-      bit_offset: 16
-      bit_size: 1
+  - name: MCLR
+    description: "erase after reset status\r This bit shows the status of the protection for SRAM2, BKPRAM, ICACHE, ICACHE. It is set by hardware and reset by software"
+    bit_offset: 0
+    bit_size: 1
+  - name: IPMEE
+    description: "end-of-erase status for ICACHE\r This bit shows the status of the protection for ICACHE. It is set by hardware and reset by software."
+    bit_offset: 16
+    bit_size: 1
 fieldset/PMCR:
   description: SBS product mode and configuration register
   fields:
-    - name: BOOSTEN
-      description: "booster enable\r Set this bit to reduce the total harmonic distortion of the analog switch when the processor supply is below 2.7 V. The booster can be activated to guaranty AC performance on analog switch when the supply is below 2.7 V. When the booster is activated, the analog switch performances are the same as with the full voltage range."
-      bit_offset: 8
-      bit_size: 1
-    - name: BOOSTVDDSEL
-      description: "booster V<sub>DD</sub> selection\r Note: Booster must not be used when V<sub>DDA</sub> < 2.7 V, but V<sub>DD</sub> > 2.7 V (add current consumption).\r Note: When both V<sub>DD</sub> < 2.7 V and V<sub>DDA</sub> < 2.7 V, booster is needed to get full AC performances from I/O analog switches."
-      bit_offset: 9
-      bit_size: 1
-    - name: PB6_FMPLUS
-      description: Fast-mode Plus command on PB(6)
-      bit_offset: 16
-      bit_size: 1
-    - name: PB7_FMPLUS
-      description: Fast-mode Plus command on PB(7)
-      bit_offset: 17
-      bit_size: 1
-    - name: PB8_FMPLUS
-      description: Fast-mode Plus command on PB(8)
-      bit_offset: 18
-      bit_size: 1
+  - name: BOOSTEN
+    description: "booster enable\r Set this bit to reduce the total harmonic distortion of the analog switch when the processor supply is below 2.7 V. The booster can be activated to guaranty AC performance on analog switch when the supply is below 2.7 V. When the booster is activated, the analog switch performances are the same as with the full voltage range."
+    bit_offset: 8
+    bit_size: 1
+  - name: BOOSTVDDSEL
+    description: "booster V<sub>DD</sub> selection\r Note: Booster must not be used when V<sub>DDA</sub> < 2.7 V, but V<sub>DD</sub> > 2.7 V (add current consumption).\r Note: When both V<sub>DD</sub> < 2.7 V and V<sub>DDA</sub> < 2.7 V, booster is needed to get full AC performances from I/O analog switches."
+    bit_offset: 9
+    bit_size: 1
+  - name: PB6_FMPLUS
+    description: Fast-mode Plus command on PB(6)
+    bit_offset: 16
+    bit_size: 1
+  - name: PB7_FMPLUS
+    description: Fast-mode Plus command on PB(7)
+    bit_offset: 17
+    bit_size: 1
+  - name: PB8_FMPLUS
+    description: Fast-mode Plus command on PB(8)
+    bit_offset: 18
+    bit_size: 1
 enum/CS:
   bit_size: 1
   variants:
-    - name: Cell
-      description: Code from the cell (available in SBS_CCVR)
-      value: 0
-    - name: Software
-      description: Code from SBS_CCCR
-      value: 1
+  - name: Cell
+    description: Code from the cell (available in SBS_CCVR)
+    value: 0
+  - name: Software
+    description: Code from SBS_CCCR
+    value: 1
 enum/DBGCFG_LOCK:
   bit_size: 8
   variants:
-    - name: B_0xB4
-      description: Writes to SBS_DBGCR allowed (default)
-      value: 180
+  - name: B_0xB4
+    description: Writes to SBS_DBGCR allowed (default)
+    value: 180
 enum/DBG_AUTH_HDPL:
   bit_size: 8
   variants:
-    - name: B_0x51
-      description: HDPL1
-      value: 81
-    - name: B_0x6F
-      description: HDPL3
-      value: 111
-    - name: B_0x8A
-      description: HDPL2
-      value: 138
+  - name: B_0x51
+    description: HDPL1
+    value: 81
+  - name: B_0x6F
+    description: HDPL3
+    value: 111
+  - name: B_0x8A
+    description: HDPL2
+    value: 138
 enum/HDPL:
   bit_size: 8
   variants:
-    - name: B_0x51
-      description: "HDPL1, iRoT"
-      value: 81
-    - name: B_0x6F
-      description: "HDPL3, application"
-      value: 111
-    - name: B_0x8A
-      description: "HDPL2, uRoT"
-      value: 138
-    - name: B_0xB4
-      description: "HDPL0, RSS"
-      value: 180
+  - name: B_0x51
+    description: HDPL1, iRoT
+    value: 81
+  - name: B_0x6F
+    description: HDPL3, application
+    value: 111
+  - name: B_0x8A
+    description: HDPL2, uRoT
+    value: 138
+  - name: B_0xB4
+    description: HDPL0, RSS
+    value: 180
 enum/INCR_HDPL:
   bit_size: 8
   variants:
-    - name: B_0x6A
-      description: recommended value to increment HDPL level by one
-      value: 106
-    - name: B_0xB4
-      description: no increment
-      value: 180
+  - name: B_0x6A
+    description: recommended value to increment HDPL level by one
+    value: 106
+  - name: B_0xB4
+    description: no increment
+    value: 180

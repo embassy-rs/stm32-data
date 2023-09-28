@@ -1,204 +1,203 @@
----
 block/GPIO:
   description: General purpose I/O
   items:
-    - name: CR
-      description: Port configuration register low (GPIOn_CRL)
-      array:
-        len: 2
-        stride: 4
-      byte_offset: 0
-      fieldset: CR
-    - name: IDR
-      description: Port input data register (GPIOn_IDR)
-      byte_offset: 8
-      access: Read
-      fieldset: IDR
-    - name: ODR
-      description: Port output data register (GPIOn_ODR)
-      byte_offset: 12
-      fieldset: ODR
-    - name: BSRR
-      description: Port bit set/reset register (GPIOn_BSRR)
-      byte_offset: 16
-      access: Write
-      fieldset: BSRR
-    - name: BRR
-      description: Port bit reset register (GPIOn_BRR)
-      byte_offset: 20
-      access: Write
-      fieldset: BRR
-    - name: LCKR
-      description: Port configuration lock register
-      byte_offset: 24
-      fieldset: LCKR
+  - name: CR
+    description: Port configuration register low (GPIOn_CRL)
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 0
+    fieldset: CR
+  - name: IDR
+    description: Port input data register (GPIOn_IDR)
+    byte_offset: 8
+    access: Read
+    fieldset: IDR
+  - name: ODR
+    description: Port output data register (GPIOn_ODR)
+    byte_offset: 12
+    fieldset: ODR
+  - name: BSRR
+    description: Port bit set/reset register (GPIOn_BSRR)
+    byte_offset: 16
+    access: Write
+    fieldset: BSRR
+  - name: BRR
+    description: Port bit reset register (GPIOn_BRR)
+    byte_offset: 20
+    access: Write
+    fieldset: BRR
+  - name: LCKR
+    description: Port configuration lock register
+    byte_offset: 24
+    fieldset: LCKR
 fieldset/BRR:
   description: Port bit reset register (GPIOn_BRR)
   fields:
-    - name: BR
-      description: Reset bit
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 16
-        stride: 1
+  - name: BR
+    description: Reset bit
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
 fieldset/BSRR:
   description: Port bit set/reset register (GPIOn_BSRR)
   fields:
-    - name: BS
-      description: Set bit
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 16
-        stride: 1
-    - name: BR
-      description: Reset bit
-      bit_offset: 16
-      bit_size: 1
-      array:
-        len: 16
-        stride: 1
+  - name: BS
+    description: Set bit
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+  - name: BR
+    description: Reset bit
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
 fieldset/CR:
   description: Port configuration register (GPIOn_CRx)
   fields:
-    - name: MODE
-      description: Port n mode bits
-      bit_offset: 0
-      bit_size: 2
-      array:
-        len: 8
-        stride: 4
-      enum: MODE
-    - name: CNF_IN
-      description: "Port n configuration bits, for input mode"
-      bit_offset: 2
-      bit_size: 2
-      array:
-        len: 8
-        stride: 4
-      enum: CNF_IN
-    - name: CNF_OUT
-      description: "Port n configuration bits, for output mode"
-      bit_offset: 2
-      bit_size: 2
-      array:
-        len: 8
-        stride: 4
-      enum: CNF_OUT
+  - name: MODE
+    description: Port n mode bits
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 8
+      stride: 4
+    enum: MODE
+  - name: CNF_IN
+    description: Port n configuration bits, for input mode
+    bit_offset: 2
+    bit_size: 2
+    array:
+      len: 8
+      stride: 4
+    enum: CNF_IN
+  - name: CNF_OUT
+    description: Port n configuration bits, for output mode
+    bit_offset: 2
+    bit_size: 2
+    array:
+      len: 8
+      stride: 4
+    enum: CNF_OUT
 fieldset/IDR:
   description: Port input data register (GPIOn_IDR)
   fields:
-    - name: IDR
-      description: Port input data
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 16
-        stride: 1
-      enum: IDR
+  - name: IDR
+    description: Port input data
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+    enum: IDR
 fieldset/LCKR:
   description: Port configuration lock register
   fields:
-    - name: LCK
-      description: Port A Lock bit
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 16
-        stride: 1
-      enum: LCK
-    - name: LCKK
-      description: Lock key
-      bit_offset: 16
-      bit_size: 1
-      enum: LCKK
+  - name: LCK
+    description: Port A Lock bit
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+    enum: LCK
+  - name: LCKK
+    description: Lock key
+    bit_offset: 16
+    bit_size: 1
+    enum: LCKK
 fieldset/ODR:
   description: Port output data register (GPIOn_ODR)
   fields:
-    - name: ODR
-      description: Port output data
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 16
-        stride: 1
-      enum: ODR
+  - name: ODR
+    description: Port output data
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+    enum: ODR
 enum/CNF_IN:
   bit_size: 2
   variants:
-    - name: Analog
-      description: Analog mode
-      value: 0
-    - name: Floating
-      description: Floating input (reset state)
-      value: 1
-    - name: Pull
-      description: Input with pull-up/pull-down
-      value: 2
+  - name: Analog
+    description: Analog mode
+    value: 0
+  - name: Floating
+    description: Floating input (reset state)
+    value: 1
+  - name: Pull
+    description: Input with pull-up/pull-down
+    value: 2
 enum/CNF_OUT:
   bit_size: 2
   variants:
-    - name: PushPull
-      description: Push-Pull mode
-      value: 0
-    - name: OpenDrain
-      description: Open Drain-Mode
-      value: 1
-    - name: AltPushPull
-      description: Alternate Function Push-Pull Mode
-      value: 2
-    - name: AltOpenDrain
-      description: Alternate Function Open-Drain Mode
-      value: 3
+  - name: PushPull
+    description: Push-Pull mode
+    value: 0
+  - name: OpenDrain
+    description: Open Drain-Mode
+    value: 1
+  - name: AltPushPull
+    description: Alternate Function Push-Pull Mode
+    value: 2
+  - name: AltOpenDrain
+    description: Alternate Function Open-Drain Mode
+    value: 3
 enum/IDR:
   bit_size: 1
   variants:
-    - name: Low
-      description: Input is logic low
-      value: 0
-    - name: High
-      description: Input is logic high
-      value: 1
+  - name: Low
+    description: Input is logic low
+    value: 0
+  - name: High
+    description: Input is logic high
+    value: 1
 enum/LCK:
   bit_size: 1
   variants:
-    - name: Unlocked
-      description: Port configuration not locked
-      value: 0
-    - name: Locked
-      description: Port configuration locked
-      value: 1
+  - name: Unlocked
+    description: Port configuration not locked
+    value: 0
+  - name: Locked
+    description: Port configuration locked
+    value: 1
 enum/LCKK:
   bit_size: 1
   variants:
-    - name: NotActive
-      description: Port configuration lock key not active
-      value: 0
-    - name: Active
-      description: Port configuration lock key active
-      value: 1
+  - name: NotActive
+    description: Port configuration lock key not active
+    value: 0
+  - name: Active
+    description: Port configuration lock key active
+    value: 1
 enum/MODE:
   bit_size: 2
   variants:
-    - name: Input
-      description: Input mode (reset state)
-      value: 0
-    - name: Output10Mhz
-      description: Output mode 10 MHz
-      value: 1
-    - name: Output2Mhz
-      description: Output mode 2 MHz
-      value: 2
-    - name: Output50Mhz
-      description: Output mode 50 MHz
-      value: 3
+  - name: Input
+    description: Input mode (reset state)
+    value: 0
+  - name: Output10Mhz
+    description: Output mode 10 MHz
+    value: 1
+  - name: Output2Mhz
+    description: Output mode 2 MHz
+    value: 2
+  - name: Output50Mhz
+    description: Output mode 50 MHz
+    value: 3
 enum/ODR:
   bit_size: 1
   variants:
-    - name: Low
-      description: Set output to logic low
-      value: 0
-    - name: High
-      description: Set output to logic high
-      value: 1
+  - name: Low
+    description: Set output to logic low
+    value: 0
+  - name: High
+    description: Set output to logic high
+    value: 1

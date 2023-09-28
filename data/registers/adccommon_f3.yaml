@@ -1,0 +1,284 @@
+block/ADC_COMMON:
+  description: ADC common registers
+  items:
+  - name: CSR
+    description: ADC Common status register
+    byte_offset: 0
+    access: Read
+    fieldset: CSR
+  - name: CCR
+    description: ADC common control register
+    byte_offset: 8
+    fieldset: CCR
+  - name: CDR
+    description: ADC common regular data register for dual and triple modes
+    byte_offset: 12
+    access: Read
+    fieldset: CDR
+fieldset/CCR:
+  description: ADC common control register
+  fields:
+  - name: DUAL
+    description: Dual ADC mode selection
+    bit_offset: 0
+    bit_size: 5
+    enum: DUAL
+  - name: DELAY
+    description: Delay between 2 sampling phases
+    bit_offset: 8
+    bit_size: 4
+  - name: DMACFG
+    description: DMA configuration (for multi-ADC mode)
+    bit_offset: 13
+    bit_size: 1
+    enum: DMACFG
+  - name: MDMA
+    description: Direct memory access mode for multi ADC mode
+    bit_offset: 14
+    bit_size: 2
+    enum: MDMA
+  - name: CKMODE
+    description: ADC clock mode
+    bit_offset: 16
+    bit_size: 2
+    enum: CKMODE
+  - name: VREFEN
+    description: VREFINT enable
+    bit_offset: 22
+    bit_size: 1
+  - name: TSEN
+    description: Temperature sensor enable
+    bit_offset: 23
+    bit_size: 1
+  - name: VBATEN
+    description: VBAT enable
+    bit_offset: 24
+    bit_size: 1
+fieldset/CDR:
+  description: ADC common regular data register for dual and triple modes
+  fields:
+  - name: RDATA_MST
+    description: Regular data of the master ADC
+    bit_offset: 0
+    bit_size: 16
+  - name: RDATA_SLV
+    description: Regular data of the master ADC
+    bit_offset: 16
+    bit_size: 16
+fieldset/CSR:
+  fields:
+  - name: ADRDY_MST
+    description: Master ADC ready
+    bit_offset: 0
+    bit_size: 1
+  - name: EOSMP_MST
+    description: End of sampling phase flag of the master ADC
+    bit_offset: 1
+    bit_size: 1
+    enum: ENDED
+  - name: EOC_MST
+    description: End of regular conversion of the master ADC
+    bit_offset: 2
+    bit_size: 1
+    enum: ENDED
+  - name: EOS_MST
+    description: End of regular sequence flag of the master ADC
+    bit_offset: 3
+    bit_size: 1
+    enum: ENDED
+  - name: OVR_MST
+    description: Overrun flag of the master ADC
+    bit_offset: 4
+    bit_size: 1
+    enum: OVR
+  - name: JEOC_MST
+    description: End of injected conversion of the master ADC
+    bit_offset: 5
+    bit_size: 1
+    enum: ENDED
+  - name: JEOS
+    description: End of injected sequence flag of the master ADC
+    bit_offset: 6
+    bit_size: 1
+    enum: ENDED
+  - name: AWD1_MST
+    description: Analog watchdog 1 flag of the master ADC
+    bit_offset: 7
+    bit_size: 1
+    enum: AWD
+  - name: AWD2_MST
+    description: Analog watchdog 2 flag of the master ADC
+    bit_offset: 8
+    bit_size: 1
+    enum: AWD
+  - name: AWD3_MST
+    description: Analog watchdog 3 flag of the master ADC
+    bit_offset: 9
+    bit_size: 1
+    enum: AWD
+  - name: JQOVF_MST
+    description: Injected context queue overflow flag of the master ADC
+    bit_offset: 10
+    bit_size: 1
+    enum: JQOVF
+  - name: ADRDY_SLV
+    description: Slave ADC ready
+    bit_offset: 16
+    bit_size: 1
+  - name: EOSMP_SLV
+    description: End of sampling phase flag of the slave ADC
+    bit_offset: 17
+    bit_size: 1
+    enum: ENDED
+  - name: EOC_SLV
+    description: End of regular conversion of the slave ADC
+    bit_offset: 18
+    bit_size: 1
+    enum: ENDED
+  - name: EOS_SLV
+    description: End of regular sequence flag of the slave ADC
+    bit_offset: 19
+    bit_size: 1
+    enum: ENDED
+  - name: OVR_SLV
+    description: Overrun flag of the slave ADC
+    bit_offset: 20
+    bit_size: 1
+    enum: OVR
+  - name: JEOC_SLV
+    description: End of injected conversion of the slave ADC
+    bit_offset: 21
+    bit_size: 1
+    enum: ENDED
+  - name: JEOS_SLV
+    description: End of injected sequence flag of the slave ADC
+    bit_offset: 22
+    bit_size: 1
+    enum: ENDED
+  - name: AWD1_SLV
+    description: Analog watchdog 1 flag of the slave ADC
+    bit_offset: 23
+    bit_size: 1
+    enum: AWD
+  - name: AWD2_SLV
+    description: Analog watchdog 2 flag of the slave ADC
+    bit_offset: 24
+    bit_size: 1
+    enum: AWD
+  - name: AWD3_SLV
+    description: Analog watchdog 3 flag of the slave ADC
+    bit_offset: 25
+    bit_size: 1
+    enum: AWD
+  - name: JQOVF_SLV
+    description: Injected context queue overflow flag of the slave ADC
+    bit_offset: 26
+    bit_size: 1
+    enum: JQOVF
+enum/AWD:
+  description: Analog watchdog flag
+  bit_size: 1
+  variants:
+  - name: NoEvent
+    description: No analog watchdog event occurred
+    value: 0
+  - name: Event
+    description: Analog watchdog event occurred
+    value: 1
+enum/CKMODE:
+  description: ADC clock mode
+  bit_size: 2
+  variants:
+  - name: Asynchronous
+    description: Use Kernel Clock adc_ker_ck_input divided by PRESC. Asynchronous mode
+    value: 0
+  - name: SyncDiv1
+    description: Use AHB clock rcc_hclk3. In this case rcc_hclk must equal sys_d1cpre_ck.
+    value: 1
+  - name: SyncDiv2
+    description: Use AHB clock rcc_hclk3 divided by 2.
+    value: 2
+  - name: SyncDiv4
+    description: Use AHB clock rcc_hclk3 divided by 4.
+    value: 3
+enum/DMACFG:
+  description: DMA configuration (for multi-ADC mode)
+  bit_size: 1
+  variants:
+  - name: OneShot
+    description: DMA one shot mode selected
+    value: 0
+  - name: Circulator
+    description: DMA circular mode selected
+    value: 1
+enum/DUAL:
+  description: Dual ADC mode selection
+  bit_size: 5
+  variants:
+  - name: Independent
+    description: Independent mode
+    value: 0
+  - name: DualRJ
+    description: Dual, combined regular simultaneous + injected simultaneous mode
+    value: 1
+  - name: DualRA
+    description: Dual, combined regular simultaneous + alternate trigger mode
+    value: 2
+  - name: DualIJ
+    description: Dual, combined injected simultaneous + fast interleaved mode
+    value: 3
+  - name: DualJ
+    description: Dual, injected simultaneous mode only
+    value: 5
+  - name: DualR
+    description: Dual, regular simultaneous mode only
+    value: 6
+  - name: DualI
+    description: dual, interleaved mode only
+    value: 7
+  - name: DualA
+    description: Dual, alternate trigger mode only
+    value: 9
+enum/ENDED:
+  description: End of operation
+  bit_size: 1
+  variants:
+  - name: NotEnded
+    description: Operation is not ended
+    value: 0
+  - name: Ended
+    description: Operation is ended
+    value: 1
+enum/JQOVF:
+  description: Injected context queue overflow flag
+  bit_size: 1
+  variants:
+  - name: NoOverflow
+    description: No injected context queue overflow
+    value: 0
+  - name: Overflow
+    description: Injected context queue overflow
+    value: 1
+enum/MDMA:
+  description: Direct memory access mode for multi ADC mode
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: MDMA mode disabled
+    value: 0
+  - name: Bits12_10
+    description: MDMA mode enabled for 12 and 10-bit resolution
+    value: 2
+  - name: Bit8_6
+    description: MDMA mode enabled for 8 and 6-bit resolution
+    value: 3
+enum/OVR:
+  description: Overrun flag
+  bit_size: 1
+  variants:
+  - name: NoOverrun
+    description: No overrun occurred
+    value: 0
+  - name: Overrun
+    description: Overrun occurred
+    value: 1
