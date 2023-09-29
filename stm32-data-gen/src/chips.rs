@@ -189,6 +189,8 @@ impl PeriMatcher {
             (".*:ADC:aditf5_v2_2", ("adc", "v3", "ADC")),
             (".*:ADC:aditf5_v3_0", ("adc", "v4", "ADC")),
             (".*:ADC:aditf5_v3_1", ("adc", "v4", "ADC")),
+            ("STM32WL5.*:ADC:.*", ("adc", "g0", "ADC")),
+            ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32G4.*:ADC:.*", ("adc", "v4", "ADC")),
@@ -201,6 +203,8 @@ impl PeriMatcher {
             (".*:ADC3_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
             ("STM32H7.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             ("STM32H7.*:ADC3_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
+            ("STM32G4.*:OPAMP:G4_tsmc90_fastOpamp", ("opamp", "g4", "OPAMP")),
+            ("STM32F3.*:OPAMP:tsmc018_ull_opamp_v1_0", ("opamp", "f3", "OPAMP")),
             (".*:DCMI:.*", ("dcmi", "v1", "DCMI")),
             ("STM32C0.*:SYSCFG:.*", ("syscfg", "c0", "SYSCFG")),
             ("STM32F0.*:SYSCFG:.*", ("syscfg", "f0", "SYSCFG")),
@@ -223,11 +227,9 @@ impl PeriMatcher {
             ("STM32WBA.*:SYSCFG:.*", ("syscfg", "wba", "SYSCFG")),
             ("STM32WB.*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
             ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
-            ("STM32WL5.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32WLE.*:SYSCFG:.*", ("syscfg", "wle", "SYSCFG")),
-            ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
-            ("STM32H50.*:SBS:.*", ("sbs", "h50", "SBS")),
-            ("STM32H5.*:SBS:.*", ("sbs", "h5", "SBS")),
+            ("STM32H50.*:SBS:.*", ("syscfg", "h50", "SYSCFG")),
+            ("STM32H5.*:SBS:.*", ("syscfg", "h5", "SYSCFG")),
             (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
             (".*:IWDG:iwdg1_v2_0", ("iwdg", "v2", "IWDG")),
             (".*:WWDG:wwdg1_v1_0", ("wwdg", "v1", "WWDG")),
@@ -398,7 +400,9 @@ impl PeriMatcher {
             ("STM32G4.*:FSMC:.*", ("fsmc", "v4x1", "FSMC")),
             ("STM32L5.*:FSMC:.*", ("fsmc", "v4x1", "FSMC")),
             ("STM32U5.*:FSMC:.*", ("fsmc", "v5x1", "FSMC")),
-            (r".*LPTIM\d.*:G0xx_lptimer1_v1_4", ("lptim", "g0", "LPTIM")),
+            (r".*LPTIM\d.*:G0xx_lptimer1_v1_4", ("lptim", "v1", "LPTIM")),
+            ("STM32WB.*:LPTIM1:.*", ("lptim", "v1", "LPTIM")),
+            ("STM32WB.*:LPTIM2:.*", ("lptim", "v1", "LPTIM")),
             ("STM32F1.*:TIM(1|8):.*", ("timer", "v1", "TIM_ADV")),
             ("STM32F1.*:TIM(2|5):.*", ("timer", "v1", "TIM_GP16")),
             ("STM32F1.*:TIM(6|7):.*", ("timer", "v1", "TIM_BASIC")),
@@ -942,7 +946,11 @@ fn process_core(
         };
 
         let mut p = stm32_data_serde::chip::core::Peripheral {
-            name: pname.clone(),
+            name: if pname == "SBS" {
+                "SYSCFG".to_string()
+            } else {
+                pname.clone()
+            },
             address: addr,
             registers: None,
             rcc: None,
