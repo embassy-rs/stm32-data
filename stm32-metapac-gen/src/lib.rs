@@ -186,9 +186,9 @@ impl Gen {
         write!(
             &mut data,
             "
-                const PERIPHERALS: &'static [Peripheral] = {};
-                const INTERRUPTS: &'static [Interrupt] = {};
-                const DMA_CHANNELS: &'static [DmaChannel] = {};
+                pub(crate) static PERIPHERALS: &'static [Peripheral] = {};
+                pub(crate) static INTERRUPTS: &'static [Interrupt] = {};
+                pub(crate) static DMA_CHANNELS: &'static [DmaChannel] = {};
             ",
             stringify(&core.peripherals),
             stringify(&core.interrupts),
@@ -199,6 +199,18 @@ impl Gen {
         let out_dir = self.opts.out_dir.clone();
         let n = self.metadata_dedup.len();
         let deduped_file = self.metadata_dedup.entry(data.clone()).or_insert_with(|| {
+            let ir_regex = Regex::new("\":ir_for:([a-z0-9]+):\"").unwrap();
+            let mut data = ir_regex.replace_all(&data, "&$1::REGISTERS").to_string();
+
+            for (module, version) in &peripheral_versions {
+                writeln!(
+                    &mut data,
+                    "#[path=\"../registers/{}_{}.rs\"] pub mod {};",
+                    module, version, module
+                )
+                .unwrap();
+            }
+
             let file = format!("metadata_{:04}.rs", n);
             let path = out_dir.join("src/chips").join(&file);
             fs::write(path, data).unwrap();
@@ -206,9 +218,9 @@ impl Gen {
             file
         });
 
-        let mut data = format!(
+        let data = format!(
             "include!(\"../{}\");
-            pub const METADATA: Metadata = Metadata {{
+            pub static METADATA: Metadata = Metadata {{
                 name: {:?},
                 family: {:?},
                 line: {:?},
@@ -225,15 +237,6 @@ impl Gen {
             stringify(&chip.memory),
             &core.nvic_priority_bits,
         );
-
-        for (module, version) in &peripheral_versions {
-            writeln!(
-                &mut data,
-                "#[path=\"../../registers/{}_{}.rs\"] pub mod {};",
-                module, version, module
-            )
-            .unwrap();
-        }
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();
         file.write_all(data.as_bytes()).unwrap();
@@ -277,6 +280,10 @@ impl Gen {
                 for p in &mut core.peripherals {
                     for irq in &mut p.interrupts {
                         irq.interrupt = irq.interrupt.to_ascii_uppercase();
+                    }
+
+                    if let Some(registers) = &mut p.registers {
+                        registers.ir = format!(":ir_for:{}:", registers.kind);
                     }
                 }
             }
@@ -336,7 +343,7 @@ impl Gen {
                 &mut data,
                 "
                     use crate::metadata::ir::*;
-                    static REGISTERS: IR = {};
+                    pub(crate) static REGISTERS: IR = {};
                 ",
                 stringify(&ir)
                     .replace("Register(", "BlockItemInner::Register(")

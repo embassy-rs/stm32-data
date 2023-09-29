@@ -22,7 +22,15 @@ pub mod ir {
                         .map(|item| BlockItem {
                             name: item.name.clone(),
                             description: item.description.clone(),
-                            array: None,
+                            array: item.array.as_ref().map(|array| match &array {
+                                chiptool::ir::Array::Regular(regular_array) => Array::Regular(RegularArray {
+                                    len: regular_array.len,
+                                    stride: regular_array.stride,
+                                }),
+                                chiptool::ir::Array::Cursed(cursed_array) => Array::Cursed(CursedArray {
+                                    offsets: cursed_array.offsets.clone(),
+                                }),
+                            }),
                             byte_offset: item.byte_offset,
                             inner: match &item.inner {
                                 chiptool::ir::BlockItemInner::Block(block) => BlockItemInner::Block(BlockItemBlock {
@@ -346,4 +354,6 @@ pub struct PeripheralRegisters {
     pub kind: String,
     pub version: String,
     pub block: String,
+    #[serde(default)]
+    pub ir: String,
 }
