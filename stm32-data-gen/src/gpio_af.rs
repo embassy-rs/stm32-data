@@ -38,16 +38,9 @@ mod xml {
     }
 }
 
-pub fn clean_pin(pin_name: &str) -> Option<stm32_data_serde::chip::core::peripheral::pin::Pin> {
-    // some H7s have analog-only pins like PC2_C, PC3_C. Ignore these for now since the
-    // data model can't deal with pins that are not part of a GPIO port yet.
-    if regex!(r"^P[A-Z]\d+_C$").is_match(pin_name) {
-        return None;
-    }
-
-    let pin_name = regex!(r"^P[A-Z]\d+").find(pin_name)?.as_str();
-
-    stm32_data_serde::chip::core::peripheral::pin::Pin::parse(pin_name)
+pub fn clean_pin(pin_name: &str) -> Option<String> {
+    // Some H7 chips have additonal "_C" pins.
+    Some(regex!(r"^P[A-Z]\d+(?:_C)?").find(pin_name)?.as_str().into())
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -87,7 +80,7 @@ impl Af {
                     };
                     peris.entry(peri_name.to_string()).or_default().push(
                         stm32_data_serde::chip::core::peripheral::Pin {
-                            pin: pin_name,
+                            pin: pin_name.clone(),
                             signal: signal_name.to_string(),
                             af: afn,
                         },

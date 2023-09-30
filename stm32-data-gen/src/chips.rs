@@ -68,7 +68,7 @@ pub struct ChipGroup {
     chip_names: Vec<String>,
     xml: xml::Mcu,
     ips: HashMap<String, xml::Ip>,
-    pins: HashMap<stm32_data_serde::chip::core::peripheral::pin::Pin, xml::Pin>,
+    pins: HashMap<String, xml::Pin>,
     family: Option<String>,
     line: Option<String>,
     die: Option<String>,
@@ -503,18 +503,20 @@ fn merge_periph_pins_info(
     }
 
     // covert to hashmap
-    let af_pins: HashMap<(stm32_data_serde::chip::core::peripheral::pin::Pin, &str), Option<u8>> =
-        af_pins.iter().map(|v| ((v.pin, v.signal.as_str()), v.af)).collect();
+    let af_pins: HashMap<(&str, &str), Option<u8>> = af_pins
+        .iter()
+        .map(|v| ((v.pin.as_str(), v.signal.as_str()), v.af))
+        .collect();
 
     for pin in core_pins {
-        let af = af_pins.get(&(pin.pin, &pin.signal)).copied().flatten();
+        let af = af_pins.get(&(&pin.pin, &pin.signal)).copied().flatten();
 
         // try to look for a signal with another name
         let af = af.or_else(|| {
             if pin.signal == "CTS" {
                 // for some godforsaken reason UART4's and UART5's CTS are called CTS_NSS in the GPIO xml
                 // so try to match with these
-                af_pins.get(&(pin.pin, "CTS_NSS")).copied().flatten()
+                af_pins.get(&(pin.pin.as_str(), "CTS_NSS")).copied().flatten()
             } else if periph_name == "I2C1" {
                 // it appears that for __some__ STM32 MCUs there is no AFIO specified in GPIO file
                 // (notably - STM32F030C6 with it's I2C1 on PF6 and PF7)
@@ -910,7 +912,7 @@ fn process_core(
                     if let Some(signal) = signal.strip_prefix(&format!("{periph}_")) {
                         periph_pins.entry(periph.to_string()).or_default().push(
                             stm32_data_serde::chip::core::peripheral::Pin {
-                                pin: *pin_name,
+                                pin: pin_name.clone(),
                                 signal: signal.to_string(),
                                 af: None,
                             },
@@ -1002,7 +1004,7 @@ fn process_core(
             }
 
             p.pins.extend(i2s_pins.iter().map(|p| Pin {
-                pin: p.pin,
+                pin: p.pin.clone(),
                 signal: "I2S_".to_owned() + &p.signal,
                 af: p.af,
             }));
