@@ -84,6 +84,7 @@ pub mod chip {
         #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
         pub struct Peripheral {
             pub name: String,
+            #[serde(default)]
             pub address: u32,
             #[serde(skip_serializing_if = "Option::is_none")]
             pub registers: Option<peripheral::Registers>,

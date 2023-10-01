@@ -927,7 +927,7 @@ fn process_core(
         pins.sort();
         pins.dedup();
     }
-    let mut peripherals = Vec::new();
+    let mut peripherals = HashMap::new();
     for (pname, pkind) in peri_kinds {
         // We cannot add this to FAKE peripherals because we need the pins
         if pname.starts_with("I2S") {
@@ -1045,7 +1045,7 @@ fn process_core(
 
             p.interrupts = Some(irqs);
         }
-        peripherals.push(p);
+        peripherals.insert(p.name.clone(), p);
     }
     if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family.as_ref().unwrap())) {
         #[derive(serde::Deserialize)]
@@ -1054,10 +1054,18 @@ fn process_core(
         }
 
         let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
-        for p in extra.peripherals {
-            peripherals.push(p);
+        for mut p in extra.peripherals {
+            if let Some(peripheral) = peripherals.get_mut(&p.name) {
+                // Modify the generated peripheral
+                peripheral.pins.append(&mut p.pins);
+            } else if p.address != 0 {
+                // Only insert the peripheral if the address is not the default
+                peripherals.insert(p.name.clone(), p);
+            }
         }
     }
+
+    let mut peripherals: Vec<_> = peripherals.into_values().collect();
     peripherals.sort_by_key(|x| x.name.clone());
     let have_peris: HashSet<_> = peripherals.iter_mut().map(|p| p.name.clone()).collect();
     // Collect DMA versions in the chip
