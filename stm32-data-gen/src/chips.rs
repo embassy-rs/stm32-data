@@ -1065,9 +1065,9 @@ fn process_core(
         }
     }
 
+    let have_peris: HashSet<_> = peripherals.keys().cloned().collect();
     let mut peripherals: Vec<_> = peripherals.into_values().collect();
     peripherals.sort_by_key(|x| x.name.clone());
-    let have_peris: HashSet<_> = peripherals.iter_mut().map(|p| p.name.clone()).collect();
     // Collect DMA versions in the chip
     let mut chip_dmas: Vec<_> = group
         .ips
