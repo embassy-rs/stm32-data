@@ -1,0 +1,499 @@
+block/TAMP:
+  description: Tamper and backup registers
+  items:
+    - name: CR1
+      description: "TAMP control register 1"
+      byte_offset: 0
+      fieldset: CR1
+    - name: CR2
+      description: "TAMP control register 2"
+      byte_offset: 4
+      fieldset: CR2
+    - name: CR3
+      description: "TAMP control register 3"
+      byte_offset: 8
+      fieldset: CR3
+    - name: FLTCR
+      description: "TAMP filter control register"
+      byte_offset: 12
+      fieldset: FLTCR
+    - name: ATCR1
+      description: "TAMP active tamper control register 1"
+      byte_offset: 16
+      fieldset: ATCR1
+    - name: ATSEEDR
+      description: "TAMP active tamper seed register"
+      byte_offset: 20
+      fieldset: ATSEEDR
+    - name: ATOR
+      description: "TAMP active tamper output register"
+      byte_offset: 24
+      fieldset: ATOR
+    - name: ATCR2
+      description: "TAMP active tamper control register 2"
+      byte_offset: 28
+      fieldset: ATCR2
+    - name: SECCFGR
+      description: "TAMP secure mode register"
+      byte_offset: 32
+      fieldset: SECCFGR
+    - name: PRIVCR
+      description: "TAMP privilege mode control register"
+      byte_offset: 36
+      fieldset: PRIVCR
+    - name: IER
+      description: "TAMP interrupt enable register"
+      byte_offset: 44
+      fieldset: IER
+    - name: SR
+      description: "TAMP status register"
+      byte_offset: 48
+      fieldset: SR
+    - name: MISR
+      description: "TAMP non-secure masked interrupt status register"
+      byte_offset: 52
+      fieldset: MISR
+    - name: SMISR
+      description: "TAMP secure masked interrupt status register"
+      byte_offset: 56
+      fieldset: SMISR
+    - name: SCR
+      description: "TAMP status clear register"
+      byte_offset: 60
+      fieldset: SCR
+    - name: COUNTR
+      description: "TAMP monotonic counter 1 register"
+      byte_offset: 64
+      fieldset: COUNTR
+    - name: ERCFGR
+      description: "TAMP erase configuration register"
+      byte_offset: 84
+      fieldset: ERCFGR
+    - name: BKPR
+      description: TAMP backup X register
+      array:
+        len: 32
+        stride: 4
+      byte_offset: 256
+      fieldset: BKPR
+fieldset/ATCR1:
+  description: "TAMP active tamper control register 1"
+  fields:
+    - name: TAMPAM
+      description: Tamper X active mode
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ATOSEL
+      description: "Active tamper shared output X selection. The selected output must be available in the package pinout"
+      bit_offset: 8
+      bit_size: 2
+      array:
+        len: 4
+        stride: 2
+    - name: ATCKSEL
+      description: "Active tamper RTC asynchronous prescaler clock selection. These bits selects the RTC asynchronous prescaler stage output.The selected clock is CK_ATPRE.. fCK_ATPRE = fRTCCLK / 2ATCKSEL when (PREDIV_A+1) = 128.. .... These bits can be written only when all active tampers are disabled. The write protection remains for up to 1.5 ck_atpre cycles after all the active tampers are disable."
+      bit_offset: 16
+      bit_size: 3
+      enum: ATCKSEL
+    - name: ATPER
+      description: "Active tamper output change period. The tamper output is changed every CK_ATPER = (2ATPER x CK_ATPRE) cycles. Refer to ."
+      bit_offset: 24
+      bit_size: 3
+    - name: ATOSHARE
+      description: "Active tamper output sharing. IN1 is compared with TAMPOUTSEL1. IN2 is compared with TAMPOUTSEL2. IN3 is compared with TAMPOUTSEL3. IN4 is compared with TAMPOUTSEL4. IN5 is compared with TAMPOUTSEL5. IN6 is compared with TAMPOUTSEL6. IN7 is compared with TAMPOUTSEL7. IN8 is compared with TAMPOUTSEL8"
+      bit_offset: 30
+      bit_size: 1
+    - name: FLTEN
+      description: Active tamper filter enable
+      bit_offset: 31
+      bit_size: 1
+fieldset/ATCR2:
+  description: "TAMP active tamper control register 2"
+  fields:
+    - name: ATOSEL
+      description: "Active tamper shared output X selection. The selected output must be available in the package pinout. Bits 9:8 are the mirror of ATOSEL1[1:0] in the ATCR1, and so can also be read or. written through ATCR1."
+      bit_offset: 8
+      bit_size: 3
+      array:
+        len: 8
+        stride: 3
+fieldset/ATOR:
+  description: "TAMP active tamper output register"
+  fields:
+    - name: PRNG
+      description: "Pseudo-random generator value. This field provides the values of the PRNG output. Because of potential inconsistencies due to synchronization delays, PRNG must be read at least twice. The read value is correct if it is equal to previous read value. This field can only be read when the APB is in secure mode."
+      bit_offset: 0
+      bit_size: 8
+    - name: SEEDF
+      description: "Seed running flag. This flag is set by hardware when a new seed is written in the ATSEEDR. It is cleared by hardware when the PRNG has absorbed this new seed, and by system reset. The TAMP APB cock must not be switched off as long as SEEDF is set."
+      bit_offset: 14
+      bit_size: 1
+    - name: INITS
+      description: "Active tamper initialization status. This flag is set by hardware when the PRNG has absorbed the first 128-bit seed, meaning that the enabled active tampers are functional. This flag is cleared when the active tampers are disabled."
+      bit_offset: 15
+      bit_size: 1
+fieldset/ATSEEDR:
+  description: "TAMP active tamper seed register"
+  fields:
+    - name: SEED
+      description: "Pseudo-random generator seed value. This register must be written four times with 32-bit values to provide the 128-bit seed to the PRNG. Writing to this register automatically sends the seed value to the PRNG."
+      bit_offset: 0
+      bit_size: 32
+fieldset/BKPR:
+  description: TAMP backup register
+  fields:
+    - name: BKP
+      description: "The application can write or read data to and from these registers. In the default (ERASE) configuration this register is reset on a tamper detection event. It is forced to reset value as long as there is at least one internal or external tamper flag being set. This register is also reset when the readout protection (RDP) is disabled."
+      bit_offset: 0
+      bit_size: 32
+fieldset/COUNTR:
+  description: "TAMP monotonic counter 1 register"
+  fields:
+    - name: COUNT
+      description: This register is read-only only and is incremented by one when a write access is done to this register. This register cannot roll-over and is frozen when reaching the maximum value.
+      bit_offset: 0
+      bit_size: 32
+fieldset/CR1:
+  description: "TAMP control register 1 "
+  fields:
+    - name: TAMPE
+      description: Tamper detection on INx enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPE
+      description: Internal tamper X enable
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 13
+        stride: 1
+fieldset/CR2:
+  description: "TAMP control register 2"
+  fields:
+    - name: TAMPNOER
+      description: Tamper X no erase
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: TAMPMSK
+      description: Tamper X mask. The tamper 1 interrupt must not be enabled when TAMP1MSK is set.
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+    - name: BKBLOCK
+      description: Backup registers and device secrets access blocked
+      bit_offset: 22
+      bit_size: 1
+    - name: BKERASE
+      description: Backup registers and device secrets erase. Writing '1 to this bit reset the backup registers and device secrets(1). Writing 0 has no effect. This bit is always read as 0.
+      bit_offset: 23
+      bit_size: 1
+    - name: TAMPTRG
+      description: Active level for tamper 1 input.
+      bit_offset: 24
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+      enum: TAMPTRG
+fieldset/CR3:
+  description: "TAMP control register 3"
+  fields:
+    - name: ITAMPNOER
+      description: Internal Tamper X no erase
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 13
+        stride: 1
+fieldset/ERCFGR:
+  description: "TAMP erase configuration register"
+  fields:
+    - name: ERCFG0
+      description: Configurable device secrets configuration
+      bit_offset: 0
+      bit_size: 1
+      enum: ERCFG
+fieldset/FLTCR:
+  description: "TAMP filter control register"
+  fields:
+    - name: TAMPFREQ
+      description: "Tamper sampling frequency. Determines the frequency at which each of the INx inputs are sampled."
+      bit_offset: 0
+      bit_size: 3
+      enum: TAMPFREQ
+    - name: TAMPFLT
+      description: "INx filter count. These bits determines the number of consecutive samples at the specified level (TAMP*TRG) needed to activate a tamper event. TAMPFLT is valid for each of the INx inputs."
+      bit_offset: 3
+      bit_size: 2
+      enum: TAMPFLT
+    - name: TAMPPRCH
+      description: "INx precharge duration. These bit determines the duration of time during which the pull-up/is activated before each sample. TAMPPRCH is valid for each of the INx inputs."
+      bit_offset: 5
+      bit_size: 2
+      enum: TAMPPRCH
+    - name: TAMPPUDIS
+      description: "INx pull-up disable. This bit determines if each of the TAMPx pins are precharged before each sample."
+      bit_offset: 7
+      bit_size: 1
+fieldset/IER:
+  description: "TAMP interrupt enable register"
+  fields:
+    - name: TAMPIE
+      description: Tamper X interrupt enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPIE
+      description: Internal tamper X interrupt enable
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 13
+        stride: 1
+fieldset/MISR:
+  description: "TAMP non-secure masked interrupt status register"
+  fields:
+    - name: TAMPMF
+      description: "TAMPx non-secure interrupt masked flag. This flag is set by hardware when the tamper X non-secure interrupt is raised."
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPMF
+      description: "Internal tamper X non-secure interrupt masked flag. This flag is set by hardware when the internal tamper X non-secure interrupt is raised."
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 13
+        stride: 1
+fieldset/PRIVCR:
+  description: "TAMP privilege mode control register "
+  fields:
+    - name: CNT1PRIV
+      description: Monotonic counter 1 privilege protection
+      bit_offset: 15
+      bit_size: 1
+      enum: PRIV
+    - name: BKPRWPRIV
+      description: Backup registers zone 1 privilege protection
+      bit_offset: 29
+      bit_size: 1
+      enum: PRIV
+    - name: BKPWPRIV
+      description: Backup registers zone 2 privilege protection
+      bit_offset: 30
+      bit_size: 1
+      enum: PRIV
+    - name: TAMPPRIV
+      description: "Tamper privilege protection (excluding backup registers). Note: Refer to for details on the read protection."
+      bit_offset: 31
+      bit_size: 1
+      enum: PRIV
+fieldset/SCR:
+  description: "TAMP status clear register"
+  fields:
+    - name: CTAMPF
+      description: "Clear TAMPx detection flag. Writing 1 in this bit clears the TAMPxF bit in the SR register."
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: CITAMPF
+      description: "Clear ITAMPx detection flag. Writing 1 in this bit clears the ITAMPxF bit in the SR register."
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 13
+        stride: 1
+fieldset/SECCFGR:
+  description: "TAMP secure mode register"
+  fields:
+    - name: BKPRWSEC
+      description: "Backup registers read/write protection offset. Protection zone 1 is defined for backup registers from BKP0R to BKPxR (x = BKPRWSEC-1, from 0 to 128). if TZEN=1, these backup registers can be read and written only with secure access. If TZEN=0:\tthe protection zone 1 can be read and written with non-secure access. If BKPRWSEC = 0: there is no protection zone 1. If BKPRWPRIV is set, BKPRWSEC[7:0] can be written only in privileged mode."
+      bit_offset: 0
+      bit_size: 8
+    - name: CNT1SEC
+      description: Monotonic counter 1 secure protection
+      bit_offset: 15
+      bit_size: 1
+      enum: SEC
+    - name: BKPWSEC
+      description: "Backup registers write protection offset. Protection zone 2 is defined for backup registers from BKPyR (y = BKPRWSEC, from 0 to 128) to BKPzR (z = BKPWSEC-1, from 0 to 128, BKPWSECBKPRWSEC): if TZEN=1, these backup registers can be written only with secure access. They can be read with secure or non-secure access. Protection zone 3 defined for backup registers from BKPtR (t = BKPWSEC, from 0 to 127). They can be read or written with secure or non-secure access. If TZEN=0:\tthe protection zone 2 can be read and written with non-secure access. If BKPWSEC = 0 or if BKPWSEC BKPRWSEC: there is no protection zone 2. If BKPWPRIV is set, BKPRWSEC[7:0] can be written only in privileged mode."
+      bit_offset: 16
+      bit_size: 8
+    - name: BHKLOCK
+      description: "Boot hardware key lock. This bit can be read and can only be written to 1 by software. It is cleared by hardware together with the backup registers following a tamper detection event or when the readout protection (RDP) is disabled."
+      bit_offset: 30
+      bit_size: 1
+      enum: BHKLOCK
+    - name: TAMPSEC
+      description: "Tamper protection (excluding monotonic counters and backup registers). Note: Refer to for details on the read protection."
+      bit_offset: 31
+      bit_size: 1
+      enum: SEC
+fieldset/SMISR:
+  description: "TAMP secure masked interrupt status register"
+  fields:
+    - name: TAMPMF
+      description: "TAMPx secure interrupt masked flag. This flag is set by hardware when the tamper X secure interrupt is raised."
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPMF
+      description: "Internal tamper X secure interrupt masked flag. This flag is set by hardware when the internal tamper X secure interrupt is raised."
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 13
+        stride: 1
+fieldset/SR:
+  description: "TAMP status register"
+  fields:
+    - name: TAMPF
+      description: "TAMPx detection flag. This flag is set by hardware when a tamper detection event is detected on the TAMPx input."
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPF
+      description: "Internal tamper X flag. This flag is set by hardware when a tamper detection event is detected on the internal tamper X."
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 13
+        stride: 1
+enum/ATCKSEL:
+  bit_size: 3
+  variants:
+    - name: Div1
+      description: RTCCLK is selected
+      value: 0
+    - name: Div2
+      description: RTCCLK/2 is selected when (PREDIV_A+1) = 128 (actually selects 1st flip flop output)
+      value: 1
+    - name: Div4
+      description: RTCCLK/4 is selected when (PREDIV_A+1) = 128 (actually selects 2nd flip flop output)
+      value: 2
+    - name: Div128
+      description: RTCCLK/128 is selected when (PREDIV_A+1) = 128 (actually selects 7th flip flop output)
+      value: 7
+enum/BHKLOCK:
+  bit_size: 1
+  variants:
+    - name: Unlocked
+      description: The Backup registers from BKP0R to BKP7R can be accessed according to the Protection zone they belong to.
+      value: 0
+    - name: Locked
+      description: The backup registers from BKP0R to BKP7R cannot be accessed neither in read nor in write (they are read as 0 and write ignore).
+      value: 1
+enum/ERCFG:
+  bit_size: 1
+  variants:
+    - name: Unprotected
+      description: Configurable device secrets are not included in the device secrets protected by TAMP peripheral
+      value: 0
+    - name: Protected
+      description: Configurable device secrets are is included in the device secrets protected by TAMP peripheral
+      value: 1
+enum/TAMPFLT:
+  bit_size: 2
+  variants:
+    - name: NoFilter
+      description: Tamper event is activated on edge of INx input transitions to the active level (no internal pull-up on INx input).
+      value: 0
+    - name: Filter2
+      description: Tamper event is activated after 2 consecutive samples at the active level.
+      value: 1
+    - name: Filter4
+      description: Tamper event is activated after 4 consecutive samples at the active level.
+      value: 2
+    - name: Filter8
+      description: Tamper event is activated after 8 consecutive samples at the active level.
+      value: 3
+enum/TAMPFREQ:
+  bit_size: 3
+  variants:
+    - name: Hz_1
+      description: RTCCLK / 32768 (1 Hz when RTCCLK = 32768 Hz)
+      value: 0
+    - name: Hz_2
+      description: RTCCLK / 16384 (2 Hz when RTCCLK = 32768 Hz)
+      value: 1
+    - name: Hz_4
+      description: RTCCLK / 8192 (4 Hz when RTCCLK = 32768 Hz)
+      value: 2
+    - name: Hz_8
+      description: RTCCLK / 4096 (8 Hz when RTCCLK = 32768 Hz)
+      value: 3
+    - name: Hz_16
+      description: RTCCLK / 2048 (16 Hz when RTCCLK = 32768 Hz)
+      value: 4
+    - name: Hz_32
+      description: RTCCLK / 1024 (32 Hz when RTCCLK = 32768 Hz)
+      value: 5
+    - name: Hz_64
+      description: RTCCLK / 512 (64 Hz when RTCCLK = 32768 Hz)
+      value: 6
+    - name: Hz_128
+      description: RTCCLK / 256 (128 Hz when RTCCLK = 32768 Hz)
+      value: 7
+enum/TAMPPRCH:
+  bit_size: 2
+  variants:
+    - name: Cycles1
+      description: 1 RTCCLK cycle
+      value: 0
+    - name: Cycles2
+      description: 2 RTCCLK cycles
+      value: 1
+    - name: Cycles4
+      description: 4 RTCCLK cycles
+      value: 2
+    - name: Cycles8
+      description: 8 RTCCLK cycles
+      value: 3
+enum/PRIV:
+  bit_size: 1
+  variants:
+    - name: Unprivileged
+      description: Can be read/written with privileged or unprivileged access.
+      value: 0
+    - name: Privileged
+      description: Can be read/written only with privileged access.
+      value: 1
+enum/SEC:
+  bit_size: 1
+  variants:
+    - name: NonSecure
+      description: Can be written when the APB access is secure or non-secure.
+      value: 0
+    - name: Secure
+      description: Can be written only when the APB access is secure.
+      value: 1
+enum/TAMPTRG:
+  bit_size: 1
+  variants:
+    - name: FilteredLowOrUnfilteredHigh
+      description: "If TAMPFLT 00 Tamper 2 input staying low triggers a tamper detection event. "
+      value: 0
+    - name: FilteredHighOrUnfilteredLow
+      description: "If TAMPFLT 00 Tamper 2 input staying high triggers a tamper detection event. "
+      value: 1

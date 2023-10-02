@@ -1,0 +1,368 @@
+block/TAMP:
+  description: Tamper and backup registers
+  items:
+    - name: CR1
+      description: control register 1
+      byte_offset: 0
+      fieldset: CR1
+    - name: CR2
+      description: control register 2
+      byte_offset: 4
+      fieldset: CR2
+    - name: CR3
+      description: control register 3
+      byte_offset: 8
+      fieldset: CR3
+    - name: FLTCR
+      description: TAMP filter control register
+      byte_offset: 12
+      fieldset: FLTCR
+    - name: ATCR1
+      description: TAMP active tamper control register 1
+      byte_offset: 16
+      fieldset: ATCR1
+    - name: ATSEEDR
+      description: TAMP active tamper seed register
+      byte_offset: 20
+      access: Write
+      fieldset: ATSEEDR
+    - name: ATOR
+      description: TAMP active tamper output register
+      byte_offset: 24
+      access: Read
+      fieldset: ATOR
+    - name: ATCR2
+      description: TAMP active tamper control register 2
+      byte_offset: 28
+      fieldset: ATCR2
+    - name: SMCR
+      description: TAMP secure mode register
+      byte_offset: 32
+      fieldset: SMCR
+    - name: PRIVCR
+      description: TAMP privilege mode control register
+      byte_offset: 36
+      fieldset: PRIVCR
+    - name: IER
+      description: TAMP interrupt enable register
+      byte_offset: 44
+      fieldset: IER
+    - name: SR
+      description: TAMP status register
+      byte_offset: 48
+      access: Read
+      fieldset: SR
+    - name: MISR
+      description: " TAMP masked interrupt status register "
+      byte_offset: 52
+      access: Read
+      fieldset: MISR
+    - name: SMISR
+      description: TAMP secure masked interrupt status register
+      byte_offset: 56
+      access: Read
+      fieldset: SMISR
+    - name: SCR
+      description: TAMP status clear register
+      byte_offset: 60
+      access: Write
+      fieldset: SCR
+    - name: COUNTR
+      description: TAMP monotonic counter register
+      byte_offset: 64
+      access: Read
+      fieldset: COUNTR
+    - name: CFGR
+      description: TAMP configuration register
+      byte_offset: 80
+      fieldset: CFGR
+    - name: BKPR
+      description: TAMP backup register
+      array:
+        len: 32
+        stride: 4
+      byte_offset: 256
+      fieldset: BKPR
+fieldset/ATCR1:
+  description: TAMP active tamper control register 1
+  fields:
+    - name: TAMPAM
+      description: TAMPAM
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ATOSEL
+      description: ATOSEL
+      bit_offset: 8
+      bit_size: 2
+      array:
+        len: 4
+        stride: 2
+    - name: ATCKSEL
+      description: ATCKSEL
+      bit_offset: 16
+      bit_size: 2
+    - name: ATPER
+      description: ATPER
+      bit_offset: 24
+      bit_size: 2
+    - name: ATOSHARE
+      description: ATOSHARE
+      bit_offset: 30
+      bit_size: 1
+    - name: FLTEN
+      description: FLTEN
+      bit_offset: 31
+      bit_size: 1
+fieldset/ATCR2:
+  description: TAMP active tamper control register 2
+  fields:
+    - name: ATOSEL
+      description: ATOSEL
+      bit_offset: 8
+      bit_size: 3
+      array:
+        len: 8
+        stride: 3
+fieldset/ATOR:
+  description: TAMP active tamper output register
+  fields:
+    - name: PRNG
+      description: Pseudo-random generator value
+      bit_offset: 0
+      bit_size: 8
+    - name: SEEDF
+      description: Seed running flag
+      bit_offset: 14
+      bit_size: 1
+    - name: INITS
+      description: Active tamper initialization status
+      bit_offset: 15
+      bit_size: 1
+fieldset/ATSEEDR:
+  description: TAMP active tamper seed register
+  fields:
+    - name: SEED
+      description: Pseudo-random generator seed value
+      bit_offset: 0
+      bit_size: 32
+fieldset/BKPR:
+  description: TAMP backup register
+  fields:
+    - name: BKP
+      description: BKP
+      bit_offset: 0
+      bit_size: 32
+fieldset/CFGR:
+  description: TAMP configuration register
+  fields:
+    - name: TMONEN
+      description: TMONEN
+      bit_offset: 1
+      bit_size: 1
+    - name: VMONEN
+      description: VMONEN
+      bit_offset: 2
+      bit_size: 1
+    - name: WUTMONEN
+      description: WUTMONEN
+      bit_offset: 3
+      bit_size: 1
+fieldset/COUNTR:
+  description: TAMP monotonic counter register
+  fields:
+    - name: COUNT
+      description: COUNT
+      bit_offset: 0
+      bit_size: 32
+fieldset/CR1:
+  description: control register 1
+  fields:
+    - name: TAMPE
+      description: TAMPE
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPE
+      description: ITAMPE
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/CR2:
+  description: control register 2
+  fields:
+    - name: TAMPNOER
+      description: Tamper X no erase
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: TAMPMSK
+      description: Tamper X mask
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+    - name: BKERASE
+      description: BKERASE
+      bit_offset: 23
+      bit_size: 1
+    - name: TAMPTRG
+      description: Active level for tamper X input
+      bit_offset: 24
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/CR3:
+  description: control register 3
+  fields:
+    - name: ITAMPNOER
+      description: Internal Tamper X no erase
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/FLTCR:
+  description: TAMP filter control register
+  fields:
+    - name: TAMPFREQ
+      description: TAMPFREQ
+      bit_offset: 0
+      bit_size: 3
+    - name: TAMPFLT
+      description: TAMPFLT
+      bit_offset: 3
+      bit_size: 2
+    - name: TAMPPRCH
+      description: TAMPPRCH
+      bit_offset: 5
+      bit_size: 2
+    - name: TAMPPUDIS
+      description: TAMPPUDIS
+      bit_offset: 7
+      bit_size: 1
+fieldset/IER:
+  description: TAMP interrupt enable register
+  fields:
+    - name: TAMPIE
+      description: Tamper X interrupt enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPIE
+      description: Internal tamper X interrupt enable
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/MISR:
+  description: " TAMP masked interrupt status register "
+  fields:
+    - name: TAMPMF
+      description: Tamper X interrupt masked flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPMF
+      description: Internal tamper X interrupt masked flag
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/PRIVCR:
+  description: TAMP privilege mode control register
+  fields:
+    - name: BKPRWPRIV
+      description: Backup registers zone 1 privilege protection
+      bit_offset: 29
+      bit_size: 1
+    - name: BKPWPRIV
+      description: Backup registers zone 2 privilege protection
+      bit_offset: 30
+      bit_size: 1
+    - name: TAMPPRIV
+      description: Tamper privilege protection
+      bit_offset: 31
+      bit_size: 1
+fieldset/SCR:
+  description: TAMP status clear register
+  fields:
+    - name: CTAMPF
+      description: Clear tamper X detection flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: CITAMPF
+      description: Clear internal tamper X detection flag
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/SMCR:
+  description: TAMP secure mode register
+  fields:
+    - name: BKPRWDPROT
+      description: Backup registers read/write protection offset
+      bit_offset: 0
+      bit_size: 8
+    - name: BKPWDPROT
+      description: Backup registers write protection offset
+      bit_offset: 16
+      bit_size: 8
+    - name: TAMPDPROT
+      description: Tamper protection
+      bit_offset: 31
+      bit_size: 1
+fieldset/SMISR:
+  description: TAMP secure masked interrupt status register
+  fields:
+    - name: TAMPMF
+      description: Tamper X interrupt masked flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPMF
+      description: Internal tamper X interrupt masked flag
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/SR:
+  description: TAMP status register
+  fields:
+    - name: TAMPF
+      description: Tamper X detection flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+    - name: ITAMPF
+      description: Internal tamper X detection flag
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1

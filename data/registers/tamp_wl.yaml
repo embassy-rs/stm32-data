@@ -1,0 +1,293 @@
+block/TAMP:
+  description: Tamper and backup registers
+  items:
+    - name: CR1
+      description: control register 1
+      byte_offset: 0
+      fieldset: CR1
+    - name: CR2
+      description: control register 2
+      byte_offset: 4
+      fieldset: CR2
+    - name: CR3
+      description: TAMP control register 3
+      byte_offset: 8
+      fieldset: CR3
+    - name: FLTCR
+      description: TAMP filter control register
+      byte_offset: 12
+      fieldset: FLTCR
+    - name: IER
+      description: TAMP interrupt enable register
+      byte_offset: 44
+      fieldset: IER
+    - name: SR
+      description: TAMP status register
+      byte_offset: 48
+      access: Read
+      fieldset: SR
+    - name: MISR
+      description: TAMP masked interrupt status register
+      byte_offset: 52
+      access: Read
+      fieldset: MISR
+    - name: SCR
+      description: TAMP status clear register
+      byte_offset: 60
+      access: Write
+      fieldset: SCR
+    - name: COUNTR
+      description: monotonic counter register
+      byte_offset: 64
+      access: Read
+      fieldset: COUNTR
+    - name: BKPR
+      description: TAMP backup register
+      array:
+        len: 20
+        stride: 4
+      byte_offset: 256
+      fieldset: BKPR
+fieldset/BKPR:
+  description: TAMP backup register
+  fields:
+    - name: BKP
+      description: BKP
+      bit_offset: 0
+      bit_size: 32
+fieldset/COUNTR:
+  description: monotonic counter register
+  fields:
+    - name: COUNT
+      description: COUNT
+      bit_offset: 0
+      bit_size: 32
+fieldset/CR1:
+  description: control register 1
+  fields:
+    - name: TAMPE
+      description: Tamper detection on IN X enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+    - name: ITAMPE
+      description: Internal tamper X enable
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/CR2:
+  description: control register 2
+  fields:
+    - name: TAMPNOER
+      description: Tamper X no erase
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+    - name: TAMPMSK
+      description: Tamper X mask. The tamper X interrupt must not be enabled when TAMPMSK is set.
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+      enum: TAMPMSK
+    - name: BKERASE
+      description: Backup registers erase
+      bit_offset: 23
+      bit_size: 1
+      enum: BKERASE
+    - name: TAMPTRG
+      description: Active level for tamper X input
+      bit_offset: 24
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+      enum: TAMPTRG
+fieldset/CR3:
+  description: TAMP control register 3
+  fields:
+    - name: ITAMPNOER
+      description: Internal Tamper X no erase
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/FLTCR:
+  description: TAMP filter control register
+  fields:
+    - name: TAMPFREQ
+      description: "Tamper sampling frequency. Determines the frequency at which each of the INx inputs are sampled."
+      bit_offset: 0
+      bit_size: 3
+      enum: TAMPFREQ
+    - name: TAMPFLT
+      description: "INx filter count. These bits determines the number of consecutive samples at the specified level (TAMP*TRG) needed to activate a tamper event. TAMPFLT is valid for each of the INx inputs."
+      bit_offset: 3
+      bit_size: 2
+      enum: TAMPFLT
+    - name: TAMPPRCH
+      description: "INx precharge duration. These bit determines the duration of time during which the pull-up/is activated before each sample. TAMPPRCH is valid for each of the INx inputs."
+      bit_offset: 5
+      bit_size: 2
+      enum: TAMPPRCH
+    - name: TAMPPUDIS
+      description: "INx pull-up disable. This bit determines if each of the TAMPx pins are precharged before each sample."
+      bit_offset: 7
+      bit_size: 1
+fieldset/IER:
+  description: TAMP interrupt enable register
+  fields:
+    - name: TAMPIE
+      description: Tamper X interrupt enable
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+    - name: ITAMPIE
+      description: Internal tamper X interrupt enable
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/MISR:
+  description: TAMP masked interrupt status register
+  fields:
+    - name: TAMPMF
+      description: Tamper X interrupt masked flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+    - name: ITAMPMF
+      description: Internal tamper X interrupt masked flag
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/SCR:
+  description: TAMP status clear register
+  fields:
+    - name: CTAMPF
+      description: Clear tamper X detection flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+    - name: CITAMPF
+      description: Clear internal tamper X detection flag
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+fieldset/SR:
+  description: TAMP status register
+  fields:
+    - name: TAMPF
+      description: Tamper X detection flag
+      bit_offset: 0
+      bit_size: 1
+      array:
+        len: 3
+        stride: 1
+    - name: ITAMPF
+      description: Internal tamper X detection flag
+      bit_offset: 16
+      bit_size: 1
+      array:
+        len: 8
+        stride: 1
+enum/BKERASE:
+  bit_size: 1
+  variants:
+    - name: Reset
+      description: Reset backup registers
+      value: 1
+enum/TAMPFLT:
+  bit_size: 2
+  variants:
+    - name: NoFilter
+      description: 'Tamper event is activated on edge of TAMP_INx input transitions to the active level (no internal pull-up on TAMP_INx input)"'
+      value: 0
+    - name: Filter2
+      description: 'Tamper event is activated after 2 consecutive samples at the active level"'
+      value: 1
+    - name: Filter4
+      description: 'Tamper event is activated after 4 consecutive samples at the active level"'
+      value: 2
+    - name: Filter8
+      description: 'Tamper event is activated after 8 consecutive samples at the active level"'
+      value: 3
+enum/TAMPFREQ:
+  bit_size: 3
+  variants:
+    - name: Hz_1
+      description: RTCCLK / 32768 (1 Hz when RTCCLK = 32768 Hz)
+      value: 0
+    - name: Hz_2
+      description: RTCCLK / 16384 (2 Hz when RTCCLK = 32768 Hz)
+      value: 1
+    - name: Hz_4
+      description: RTCCLK / 8192 (4 Hz when RTCCLK = 32768 Hz)
+      value: 2
+    - name: Hz_8
+      description: RTCCLK / 4096 (8 Hz when RTCCLK = 32768 Hz)
+      value: 3
+    - name: Hz_16
+      description: RTCCLK / 2048 (16 Hz when RTCCLK = 32768 Hz)
+      value: 4
+    - name: Hz_32
+      description: RTCCLK / 1024 (32 Hz when RTCCLK = 32768 Hz)
+      value: 5
+    - name: Hz_64
+      description: RTCCLK / 512 (64 Hz when RTCCLK = 32768 Hz)
+      value: 6
+    - name: Hz_128
+      description: RTCCLK / 256 (128 Hz when RTCCLK = 32768 Hz)
+      value: 7
+enum/TAMPMSK:
+  bit_size: 1
+  variants:
+    - name: ResetBySoftware
+      description: Tamper x event generates a trigger event and TAMPxF must be cleared by software to allow next tamper event detection
+      value: 0
+    - name: ResetByHardware
+      description: Tamper x event generates a trigger event. TAMPxF is masked and internally cleared by hardware. The backup registers are not erased. The tamper x interrupt must not be enabled when TAMP3MSK is set
+      value: 1
+enum/TAMPPRCH:
+  bit_size: 2
+  variants:
+    - name: Cycles1
+      description: 1 RTCCLK cycle
+      value: 0
+    - name: Cycles2
+      description: 2 RTCCLK cycles
+      value: 1
+    - name: Cycles4
+      description: 4 RTCCLK cycles
+      value: 2
+    - name: Cycles8
+      description: 8 RTCCLK cycles
+      value: 3
+enum/TAMPTRG:
+  bit_size: 1
+  variants:
+    - name: FilteredLowOrUnfilteredHigh
+      description: If TAMPFLT != 00 Tamper x input staying low triggers a tamper detection event. If TAMPFLT = 00 Tamper x input rising edge and high level triggers a tamper detection event
+      value: 0
+    - name: FilteredHighOrUnfilteredLow
+      description: If TAMPFLT != 00 Tamper x input staying high triggers a tamper detection event. If TAMPFLT = 00 Tamper x input falling edge and low level triggers a tamper detection event
+      value: 1
