@@ -16,7 +16,7 @@ cargo fmt -- --check
 # clone stm32-data-generated at the merge base
 # so the diff will show this PR's effect
 git remote add upstream https://github.com/embassy-rs/stm32-data
-git fetch --depth 1 upstream main
+git fetch --depth 15 upstream main
 git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build
 
 ./d ci
