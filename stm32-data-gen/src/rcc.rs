@@ -14,6 +14,24 @@ impl PeripheralToClock {
 
         for (rcc_name, ir) in &registers.registers {
             if let Some(rcc_name) = rcc_name.strip_prefix("rcc_") {
+                let mut family_muxes = HashMap::new();
+                for (reg, body) in &ir.fieldsets {
+                    let key = format!("fieldset/{reg}");
+                    if let Some(_) = regex!(r"^fieldset/CCIPR\d?$").captures(&key) {
+                        for field in &body.fields {
+                            if let Some(peri) = field.name.strip_suffix("SEL") {
+                                family_muxes.insert(
+                                    peri.to_string(),
+                                    stm32_data_serde::chip::core::peripheral::rcc::Mux {
+                                        register: reg.clone(),
+                                        field: field.name.clone(),
+                                    },
+                                );
+                            }
+                        }
+                    }
+                }
+
                 let mut family_clocks = HashMap::new();
                 for (reg, body) in &ir.fieldsets {
                     let key = format!("fieldset/{reg}");
@@ -49,6 +67,8 @@ impl PeripheralToClock {
                                     }
                                 }
 
+                                let mux = family_muxes.get(peri).map(|peri| peri.clone());
+
                                 let res = stm32_data_serde::chip::core::peripheral::Rcc {
                                     clock: peri_clock,
                                     enable: stm32_data_serde::chip::core::peripheral::rcc::Enable {
@@ -56,6 +76,7 @@ impl PeripheralToClock {
                                         field: field.name.clone(),
                                     },
                                     reset,
+                                    mux,
                                 };
 
                                 family_clocks.insert(peri.to_string(), res);

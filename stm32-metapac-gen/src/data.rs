@@ -1,5 +1,234 @@
 use serde::Deserialize;
 
+pub mod ir {
+    use super::*;
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct IR {
+        pub blocks: Vec<Block>,
+        pub fieldsets: Vec<FieldSet>,
+        pub enums: Vec<Enum>,
+    }
+
+    impl IR {
+        pub fn from_chiptool(ir: chiptool::ir::IR) -> Self {
+            let blocks: Vec<Block> = ir
+                .blocks
+                .iter()
+                .map(|(name, block)| {
+                    let items = block
+                        .items
+                        .iter()
+                        .map(|item| BlockItem {
+                            name: item.name.clone(),
+                            description: item.description.clone(),
+                            array: item.array.as_ref().map(|array| match &array {
+                                chiptool::ir::Array::Regular(regular_array) => Array::Regular(RegularArray {
+                                    len: regular_array.len,
+                                    stride: regular_array.stride,
+                                }),
+                                chiptool::ir::Array::Cursed(cursed_array) => Array::Cursed(CursedArray {
+                                    offsets: cursed_array.offsets.clone(),
+                                }),
+                            }),
+                            byte_offset: item.byte_offset,
+                            inner: match &item.inner {
+                                chiptool::ir::BlockItemInner::Block(block) => BlockItemInner::Block(BlockItemBlock {
+                                    block: block.block.clone(),
+                                }),
+                                chiptool::ir::BlockItemInner::Register(register) => {
+                                    BlockItemInner::Register(Register {
+                                        access: match register.access {
+                                            chiptool::ir::Access::Read => Access::Read,
+                                            chiptool::ir::Access::ReadWrite => Access::ReadWrite,
+                                            chiptool::ir::Access::Write => Access::Write,
+                                        },
+                                        bit_size: register.bit_size,
+                                        fieldset: register
+                                            .fieldset
+                                            .as_ref()
+                                            .map(|fieldset| fieldset.strip_prefix("regs::").unwrap().to_string()),
+                                    })
+                                }
+                            },
+                        })
+                        .collect();
+
+                    Block {
+                        name: name.to_string(),
+                        items: items,
+                        extends: block.extends.clone(),
+                        description: block.description.clone(),
+                    }
+                })
+                .collect();
+            let fieldsets: Vec<FieldSet> = ir
+                .fieldsets
+                .iter()
+                .map(|(name, fieldset)| {
+                    let fields = fieldset
+                        .fields
+                        .iter()
+                        .map(|field| Field {
+                            name: field.name.clone(),
+                            description: field.description.clone(),
+                            bit_offset: field.bit_offset,
+                            bit_size: field.bit_size,
+                            array: field.array.as_ref().map(|array| match &array {
+                                chiptool::ir::Array::Regular(regular_array) => Array::Regular(RegularArray {
+                                    len: regular_array.len,
+                                    stride: regular_array.stride,
+                                }),
+                                chiptool::ir::Array::Cursed(cursed_array) => Array::Cursed(CursedArray {
+                                    offsets: cursed_array.offsets.clone(),
+                                }),
+                            }),
+                            enumm: field
+                                .enumm
+                                .as_ref()
+                                .map(|fieldset| fieldset.strip_prefix("vals::").unwrap().to_string()),
+                        })
+                        .collect();
+
+                    FieldSet {
+                        name: name.strip_prefix("regs::").unwrap().to_owned(),
+                        fields: fields,
+                        extends: fieldset.extends.clone(),
+                        description: fieldset.description.clone(),
+                        bit_size: fieldset.bit_size,
+                    }
+                })
+                .collect();
+            let enums: Vec<Enum> = ir
+                .enums
+                .iter()
+                .map(|(name, enumm)| {
+                    let variants = enumm
+                        .variants
+                        .iter()
+                        .map(|variant| EnumVariant {
+                            name: variant.name.clone(),
+                            description: variant.description.clone(),
+                            value: variant.value,
+                        })
+                        .collect();
+
+                    Enum {
+                        name: name.strip_prefix("vals::").unwrap().to_owned(),
+                        description: enumm.description.clone(),
+                        bit_size: enumm.bit_size,
+                        variants: variants,
+                    }
+                })
+                .collect();
+
+            Self {
+                blocks,
+                fieldsets,
+                enums,
+            }
+        }
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct Block {
+        pub name: String,
+        pub extends: Option<String>,
+
+        pub description: Option<String>,
+        pub items: Vec<BlockItem>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct BlockItem {
+        pub name: String,
+        pub description: Option<String>,
+
+        pub array: Option<Array>,
+        pub byte_offset: u32,
+
+        pub inner: BlockItemInner,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub enum BlockItemInner {
+        Block(BlockItemBlock),
+        Register(Register),
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct Register {
+        pub access: Access,
+        pub bit_size: u32,
+        pub fieldset: Option<String>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct BlockItemBlock {
+        pub block: String,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub enum Access {
+        ReadWrite,
+        Read,
+        Write,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct FieldSet {
+        pub name: String,
+        pub extends: Option<String>,
+
+        pub description: Option<String>,
+        pub bit_size: u32,
+        pub fields: Vec<Field>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct Field {
+        pub name: String,
+        pub description: Option<String>,
+
+        pub bit_offset: u32,
+        pub bit_size: u32,
+        pub array: Option<Array>,
+        pub enumm: Option<String>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub enum Array {
+        Regular(RegularArray),
+        Cursed(CursedArray),
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct RegularArray {
+        pub len: u32,
+        pub stride: u32,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct CursedArray {
+        pub offsets: Vec<u32>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct Enum {
+        pub name: String,
+        pub description: Option<String>,
+        pub bit_size: u32,
+        pub variants: Vec<EnumVariant>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct EnumVariant {
+        pub name: String,
+        pub description: Option<String>,
+        pub value: u64,
+    }
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
 pub struct Chip {
     pub name: String,
@@ -85,6 +314,8 @@ pub struct PeripheralRcc {
     pub enable: Option<PeripheralRccRegister>,
     #[serde(default)]
     pub reset: Option<PeripheralRccRegister>,
+    #[serde(default)]
+    pub mux: Option<PeripheralRccRegister>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
@@ -123,4 +354,6 @@ pub struct PeripheralRegisters {
     pub kind: String,
     pub version: String,
     pub block: String,
+    #[serde(default)]
+    pub ir: String,
 }

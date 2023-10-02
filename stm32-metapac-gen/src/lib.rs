@@ -186,9 +186,9 @@ impl Gen {
         write!(
             &mut data,
             "
-                const PERIPHERALS: &'static [Peripheral] = {};
-                const INTERRUPTS: &'static [Interrupt] = {};
-                const DMA_CHANNELS: &'static [DmaChannel] = {};
+                pub(crate) static PERIPHERALS: &'static [Peripheral] = {};
+                pub(crate) static INTERRUPTS: &'static [Interrupt] = {};
+                pub(crate) static DMA_CHANNELS: &'static [DmaChannel] = {};
             ",
             stringify(&core.peripherals),
             stringify(&core.interrupts),
@@ -199,6 +199,18 @@ impl Gen {
         let out_dir = self.opts.out_dir.clone();
         let n = self.metadata_dedup.len();
         let deduped_file = self.metadata_dedup.entry(data.clone()).or_insert_with(|| {
+            let ir_regex = Regex::new("\":ir_for:([a-z0-9]+):\"").unwrap();
+            let mut data = ir_regex.replace_all(&data, "&$1::REGISTERS").to_string();
+
+            for (module, version) in &peripheral_versions {
+                writeln!(
+                    &mut data,
+                    "#[path=\"../registers/{}_{}.rs\"] pub mod {};",
+                    module, version, module
+                )
+                .unwrap();
+            }
+
             let file = format!("metadata_{:04}.rs", n);
             let path = out_dir.join("src/chips").join(&file);
             fs::write(path, data).unwrap();
@@ -208,7 +220,7 @@ impl Gen {
 
         let data = format!(
             "include!(\"../{}\");
-            pub const METADATA: Metadata = Metadata {{
+            pub static METADATA: Metadata = Metadata {{
                 name: {:?},
                 family: {:?},
                 line: {:?},
@@ -250,6 +262,7 @@ impl Gen {
 
     pub fn gen(&mut self) {
         fs::create_dir_all(self.opts.out_dir.join("src/peripherals")).unwrap();
+        fs::create_dir_all(self.opts.out_dir.join("src/registers")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/chips")).unwrap();
 
         let mut chip_core_names: Vec<String> = Vec::new();
@@ -267,6 +280,10 @@ impl Gen {
                 for p in &mut core.peripherals {
                     for irq in &mut p.interrupts {
                         irq.interrupt = irq.interrupt.to_ascii_uppercase();
+                    }
+
+                    if let Some(registers) = &mut p.registers {
+                        registers.ir = format!(":ir_for:{}:", registers.kind);
                     }
                 }
             }
@@ -317,6 +334,35 @@ impl Gen {
             // Remove inner attributes like #![no_std]
             let re = Regex::new("# *! *\\[.*\\]").unwrap();
             let data = re.replace_all(&data, "");
+            file.write_all(data.as_bytes()).unwrap();
+
+            let ir = crate::data::ir::IR::from_chiptool(ir);
+            let mut data = String::new();
+
+            write!(
+                &mut data,
+                "
+                    use crate::metadata::ir::*;
+                    pub(crate) static REGISTERS: IR = {};
+                ",
+                stringify(&ir)
+                    .replace("Register(", "BlockItemInner::Register(")
+                    .replace("Block(", "BlockItemInner::Block(")
+                    .replace("Regular(", "Array::Regular(")
+                    .replace("Cursed(", "Array::Cursed(")
+                    .replace("Read,", "Access::Read,")
+                    .replace("Write,", "Access::Write,")
+                    .replace("ReadAccess::Write,", "Access::ReadWrite,"),
+            )
+            .unwrap();
+
+            let mut file = File::create(
+                self.opts
+                    .out_dir
+                    .join("src/registers")
+                    .join(format!("{}_{}.rs", module, version)),
+            )
+            .unwrap();
             file.write_all(data.as_bytes()).unwrap();
         }
 
