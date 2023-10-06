@@ -297,6 +297,7 @@ impl PeriMatcher {
             ("STM32G0.*:RCC:.*", ("rcc", "g0", "RCC")),
             ("STM32G4.*:RCC:.*", ("rcc", "g4", "RCC")),
             ("STM32H7[AB].*:RCC:.*", ("rcc", "h7ab", "RCC")),
+            ("STM32H7(42|43|53|50).*:RCC:.*", ("rcc", "h7rm0433", "RCC")),
             ("STM32H7.*:RCC:.*", ("rcc", "h7", "RCC")),
             ("STM32L0.*:RCC:.*", ("rcc", "l0", "RCC")),
             ("STM32L1.*:RCC:.*", ("rcc", "l1", "RCC")),
