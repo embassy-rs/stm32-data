@@ -1015,6 +1015,9 @@ fn process_core(
             }));
         }
 
+        // sort pins to avoid diff for c pins
+        p.pins.sort();
+
         if let Some(peri_irqs) = chip_irqs.get(&pname) {
             use stm32_data_serde::chip::core::peripheral::Interrupt;
 
