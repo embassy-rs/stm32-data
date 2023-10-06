@@ -498,12 +498,12 @@ fn corename(d: &str) -> String {
 }
 
 fn merge_periph_pins_info(
-    is_f1: bool,
+    chip_name: &str,
     periph_name: &str,
     core_pins: &mut Vec<stm32_data_serde::chip::core::peripheral::Pin>,
     af_pins: &[stm32_data_serde::chip::core::peripheral::Pin],
 ) {
-    if is_f1 {
+    if chip_name.contains("STM32F1") {
         // TODO: actually handle the F1 AFIO information when it will be extracted
         return;
     }
@@ -514,7 +514,7 @@ fn merge_periph_pins_info(
         .map(|v| ((v.pin.as_str(), v.signal.as_str()), v.af))
         .collect();
 
-    for pin in core_pins {
+    for pin in &mut core_pins[..] {
         let af = af_pins.get(&(&pin.pin, &pin.signal)).copied().flatten();
 
         // try to look for a signal with another name
@@ -539,6 +539,15 @@ fn merge_periph_pins_info(
 
         if let Some(af) = af {
             pin.af = Some(af);
+        }
+    }
+
+    // apply some renames
+    if chip_name.starts_with("STM32C0") || chip_name.starts_with("STM32G0") {
+        for pin in &mut core_pins[..] {
+            if pin.signal == "MCO" {
+                pin.signal = "MCO_1".to_string()
+            }
         }
     }
 }
@@ -990,7 +999,7 @@ fn process_core(
             // if the peripheral does not exist in the GPIO xml (one of the notable one is ADC)
             //   it probably doesn't need any AFIO writes to work
             if let Some(af_pins) = chip_af.and_then(|x| x.get(&pname)) {
-                merge_periph_pins_info(chip_name.contains("STM32F1"), &pname, pins, af_pins.as_slice());
+                merge_periph_pins_info(chip_name, &pname, pins, af_pins.as_slice());
             }
             p.pins = pins.clone();
         }
@@ -1006,7 +1015,7 @@ fn process_core(
             // if the peripheral does not exist in the GPIO xml (one of the notable one is ADC)
             //   it probably doesn't need any AFIO writes to work
             if let Some(af_pins) = chip_af.and_then(|x| x.get(&i2s_name)) {
-                merge_periph_pins_info(chip_name.contains("STM32F1"), &i2s_name, i2s_pins, af_pins.as_slice());
+                merge_periph_pins_info(chip_name, &i2s_name, i2s_pins, af_pins.as_slice());
             }
 
             p.pins.extend(i2s_pins.iter().map(|p| Pin {
