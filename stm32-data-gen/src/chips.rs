@@ -32,6 +32,8 @@ mod xml {
         pub pins: Vec<Pin>,
     }
 
+    // comment
+
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     pub struct Pin {
         #[serde(rename = "Name")]
