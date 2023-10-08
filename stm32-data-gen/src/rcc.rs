@@ -20,6 +20,10 @@ impl PeripheralToClock {
                     if let Some(_) = regex!(r"^fieldset/CCIPR\d?$").captures(&key) {
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("SEL") {
+                                if family_muxes.get(peri).is_some() && reg != "CCIPR" {
+                                    continue;
+                                }
+
                                 family_muxes.insert(
                                     peri.to_string(),
                                     stm32_data_serde::chip::core::peripheral::rcc::Mux {
