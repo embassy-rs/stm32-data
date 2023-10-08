@@ -345,14 +345,7 @@ impl Gen {
                     use crate::metadata::ir::*;
                     pub(crate) static REGISTERS: IR = {};
                 ",
-                stringify(&ir)
-                    .replace("Register(", "BlockItemInner::Register(")
-                    .replace("Block(", "BlockItemInner::Block(")
-                    .replace("Regular(", "Array::Regular(")
-                    .replace("Cursed(", "Array::Cursed(")
-                    .replace("Read,", "Access::Read,")
-                    .replace("Write,", "Access::Write,")
-                    .replace("ReadAccess::Write,", "Access::ReadWrite,"),
+                stringify(&ir),
             )
             .unwrap();
 
@@ -394,14 +387,22 @@ impl Gen {
 }
 
 fn stringify<T: Debug>(metadata: T) -> String {
-    let mut metadata = format!("{:?}", metadata);
+    let mut metadata = format!("{:#?}", metadata);
     if metadata.starts_with('[') {
         metadata = format!("&{}", metadata);
     }
-    metadata = metadata.replace(": [", ": &[");
-    metadata = metadata.replace("kind: Ram", "kind: MemoryRegionKind::Ram");
-    metadata = metadata.replace("kind: Flash", "kind: MemoryRegionKind::Flash");
+
     metadata
+        .replace(": [", ": &[")
+        .replace("kind: Ram", "kind: MemoryRegionKind::Ram")
+        .replace("kind: Flash", "kind: MemoryRegionKind::Flash")
+        .replace("Register(", "BlockItemInner::Register(")
+        .replace("Block(", "BlockItemInner::Block(")
+        .replace("Regular(", "Array::Regular(")
+        .replace("Cursed(", "Array::Cursed(")
+        .replace("Read,", "Access::Read,")
+        .replace("Write,", "Access::Write,")
+        .replace("ReadAccess::Write,", "Access::ReadWrite,")
 }
 
 fn gen_opts() -> generate::Options {
