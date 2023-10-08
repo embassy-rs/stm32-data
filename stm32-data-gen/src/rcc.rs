@@ -27,8 +27,8 @@ impl PeripheralToClock {
                                 family_muxes.insert(
                                     peri.to_string(),
                                     stm32_data_serde::chip::core::peripheral::rcc::Mux {
-                                        register: reg.clone(),
-                                        field: field.name.clone(),
+                                        register: reg.to_ascii_lowercase(),
+                                        field: field.name.to_ascii_lowercase(),
                                     },
                                 );
                             }
@@ -65,8 +65,8 @@ impl PeripheralToClock {
                                         rstr.fields.iter().find(|field| field.name == format!("{peri}RST"))
                                     {
                                         reset = Some(stm32_data_serde::chip::core::peripheral::rcc::Reset {
-                                            register: reg.replace("ENR", "RSTR"),
-                                            field: format!("{peri}RST"),
+                                            register: reg.replace("ENR", "RSTR").to_ascii_lowercase(),
+                                            field: format!("{peri}RST").to_ascii_lowercase(),
                                         });
                                     }
                                 }
@@ -76,8 +76,8 @@ impl PeripheralToClock {
                                 let res = stm32_data_serde::chip::core::peripheral::Rcc {
                                     clock: peri_clock,
                                     enable: stm32_data_serde::chip::core::peripheral::rcc::Enable {
-                                        register: reg.clone(),
-                                        field: field.name.clone(),
+                                        register: reg.to_ascii_lowercase(),
+                                        field: field.name.to_ascii_lowercase(),
                                     },
                                     reset,
                                     mux,
