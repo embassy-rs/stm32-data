@@ -533,11 +533,11 @@ fieldset/CFGR:
     bit_offset: 28
     bit_size: 3
     enum: MCOPRE
-  - name: PLLNODIV
+  - name: PLLMCODIV
     description: Do not divide PLL to MCO
     bit_offset: 31
     bit_size: 1
-    enum: PLLNODIV
+    enum: PLLMCODIV
 fieldset/CFGR2:
   description: Clock configuration register 2
   fields:
@@ -993,8 +993,17 @@ enum/MCOSEL:
     description: External 4-32 MHz (HSE) oscillator clock selected
     value: 6
   - name: PLL
-    description: PLL clock selected (divided by 1 or 2, depending en PLLNODIV)
+    description: PLL clock selected (divided by 1 or 2, depending en PLLMCODIV)
     value: 7
+enum/PLLMCODIV:
+  bit_size: 1
+  variants:
+  - name: Div2
+    description: PLL is divided by 2 for MCO
+    value: 0
+  - name: Div1
+    description: PLL is not divided for MCO
+    value: 1
 enum/PLLMUL:
   bit_size: 4
   variants:
@@ -1043,18 +1052,6 @@ enum/PLLMUL:
   - name: Mul16
     description: PLL input clock x16
     value: 14
-  - name: Mul16x
-    description: PLL input clock x16
-    value: 15
-enum/PLLNODIV:
-  bit_size: 1
-  variants:
-  - name: Div2
-    description: PLL is divided by 2 for MCO
-    value: 0
-  - name: Div1
-    description: PLL is not divided for MCO
-    value: 1
 enum/PLLSRC:
   bit_size: 2
   variants:
