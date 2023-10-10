@@ -836,7 +836,7 @@ fieldset/CFGR1:
   description: RCC clock configuration register 1
   fields:
   - name: SW
-    description: "system clock switch\r Set and cleared by software to select system clock source (SYSCLK).\r Cleared by hardware when entering Stop and Standby modes\r When selecting HSE32 directly or indirectly as system clock and HSE32 oscillator clock security fails, cleared by hardware."
+    description: "system clock switch\r Set and cleared by software to select system clock source (SYSCLK).\r Cleared by hardware when entering Stop and Standby modes\r When selecting HSE directly or indirectly as system clock and HSE oscillator clock security fails, cleared by hardware."
     bit_offset: 0
     bit_size: 2
     enum: SW
@@ -890,7 +890,7 @@ fieldset/CFGR4:
     bit_size: 3
     enum: HPRE5
   - name: HDIV5
-    description: "AHB5 divider when SWS select HSI16 or HSE32\r Set and reset by software.\r Set to 1 by hardware when entering Stop 1 mode.\r When SYSCLK source indicated by SWS is HSI16 or HSE32: HDIV5 is taken into account\r When SYSCLK source indicated by SWS is PLL1: HDIV5 is taken not taken into account\r Depending on the device voltage range, the software must set this bit correctly to ensure that the AHB5 frequency does not exceed the maximum allowed frequency (for more details, refer to Table�99). After a write operation to this bit and before decreasing the voltage range, this register must be read to be sure that the new value is taken into account."
+    description: "AHB5 divider when SWS select HSI16 or HSE\r Set and reset by software.\r Set to 1 by hardware when entering Stop 1 mode.\r When SYSCLK source indicated by SWS is HSI16 or HSE: HDIV5 is taken into account\r When SYSCLK source indicated by SWS is PLL1: HDIV5 is taken not taken into account\r Depending on the device voltage range, the software must set this bit correctly to ensure that the AHB5 frequency does not exceed the maximum allowed frequency (for more details, refer to Table�99). After a write operation to this bit and before decreasing the voltage range, this register must be read to be sure that the new value is taken into account."
     bit_offset: 4
     bit_size: 1
     enum: HDIV5
@@ -910,7 +910,7 @@ fieldset/CICR:
     bit_offset: 3
     bit_size: 1
   - name: HSERDYC
-    description: "HSE32 ready interrupt clear\r Writing this bit to 1 clears the HSERDYF flag. Writing 0 has no effect.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSE ready interrupt clear\r Writing this bit to 1 clears the HSERDYF flag. Writing 0 has no effect.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 4
     bit_size: 1
   - name: PLLRDYC
@@ -937,7 +937,7 @@ fieldset/CIER:
     bit_offset: 3
     bit_size: 1
   - name: HSERDYIE
-    description: "HSE32 ready interrupt enable\r Set and cleared by software to enable/disable interrupt caused by the HSE32 oscillator stabilization.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSE ready interrupt enable\r Set and cleared by software to enable/disable interrupt caused by the HSE oscillator stabilization.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 4
     bit_size: 1
   - name: PLLRDYIE
@@ -960,7 +960,7 @@ fieldset/CIFR:
     bit_offset: 3
     bit_size: 1
   - name: HSERDYF
-    description: "HSE32 ready interrupt flag\r Set by hardware when the HSE32 clock becomes stable and HSERDYIE is set.\r Cleared by software setting the HSERDYC bit.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSE ready interrupt flag\r Set by hardware when the HSE clock becomes stable and HSERDYIE is set.\r Cleared by software setting the HSERDYC bit.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 4
     bit_size: 1
   - name: PLLRDYF
@@ -968,14 +968,14 @@ fieldset/CIFR:
     bit_offset: 6
     bit_size: 1
   - name: HSECSSF
-    description: "HSE32 clock security system interrupt flag\r Set by hardware when a clock security failure is detected in the HSE32 oscillator.\r Cleared by software setting the HSECSSC bit.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSE clock security system interrupt flag\r Set by hardware when a clock security failure is detected in the HSE oscillator.\r Cleared by software setting the HSECSSC bit.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 10
     bit_size: 1
 fieldset/CR:
   description: RCC clock control register
   fields:
   - name: HSION
-    description: "HSI16 clock enable\r Set and cleared by software.\r Cleared by hardware when entering Stop and Standby modes. \r Set by hardware to force the HSI16 oscillator on when exiting Stop and Standby modes.\r Set by hardware to force the HSI16 oscillator on in case of clock security failure of the HSE32 crystal oscillator.\r This bit is set by hardware if the HSI16 is used directly or indirectly as system clock.\r Access to the bit can be secured by RCC HSISEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSI16 clock enable\r Set and cleared by software.\r Cleared by hardware when entering Stop and Standby modes. \r Set by hardware to force the HSI16 oscillator on when exiting Stop and Standby modes.\r Set by hardware to force the HSI16 oscillator on in case of clock security failure of the HSE crystal oscillator.\r This bit is set by hardware if the HSI16 is used directly or indirectly as system clock.\r Access to the bit can be secured by RCC HSISEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 8
     bit_size: 1
   - name: HSIKERON
@@ -987,24 +987,24 @@ fieldset/CR:
     bit_offset: 10
     bit_size: 1
   - name: HSEON
-    description: "HSE32 clock enable\r Set and cleared by software.\r Cleared by hardware to stop the HSE32 clock for the CPU when entering Stop and Standby modes and on a HSECSS failure.\r When the HSE32 is used as 2.4 GHz RADIO kernel clock, enabled by RADIOEN and RADIOSMEN and the 2.4 GHz RADIO is active, HSEON is not be cleared when entering low power mode. In this case only Stop 0 mode is entered as low power mode.\r This bit cannot be reset if the HSE32 oscillator is used directly or indirectly as the system clock.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSE clock enable\r Set and cleared by software.\r Cleared by hardware to stop the HSE clock for the CPU when entering Stop and Standby modes and on a HSECSS failure.\r When the HSE is used as 2.4 GHz RADIO kernel clock, enabled by RADIOEN and RADIOSMEN and the 2.4 GHz RADIO is active, HSEON is not be cleared when entering low power mode. In this case only Stop 0 mode is entered as low power mode.\r This bit cannot be reset if the HSE oscillator is used directly or indirectly as the system clock.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 16
     bit_size: 1
   - name: HSERDY
-    description: "HSE32 clock ready flag\r Set by hardware to indicate that the HSE32 oscillator is stable. This bit is set both when HSE32 is enabled by software by setting HSEON and when requested as kernel clock by the 2.4 GHz RADIO.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSE clock ready flag\r Set by hardware to indicate that the HSE oscillator is stable. This bit is set both when HSE is enabled by software by setting HSEON and when requested as kernel clock by the 2.4 GHz RADIO.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 17
     bit_size: 1
   - name: HSECSSON
-    description: "HSE32 clock security system enable\r Set by software to enable the HSE32 clock security system. When HSECSSON is set, the clock detector is enabled by hardware when the HSE32 oscillator is ready and disabled by hardware if a HSE32 clock failure is detected. This bit is set only and is cleared by reset.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSE clock security system enable\r Set by software to enable the HSE clock security system. When HSECSSON is set, the clock detector is enabled by hardware when the HSE oscillator is ready and disabled by hardware if a HSE clock failure is detected. This bit is set only and is cleared by reset.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 19
     bit_size: 1
   - name: HSEPRE
-    description: "HSE32 clock for SYSCLK prescaler\r Set and cleared by software to control the division factor of the HSE32 clock for SYSCLK.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "HSE clock for SYSCLK prescaler\r Set and cleared by software to control the division factor of the HSE clock for SYSCLK.\r Access to the bit can be secured by RCC HSESEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 20
     bit_size: 1
     enum: HSEPRE
   - name: PLLON
-    description: "PLL1 enable\r Set and cleared by software to enable the main PLL.\r Cleared by hardware when entering Stop or Standby modes and when PLL1 on HSE32 is selected as sysclk, on a HSECSS failure.\r This bit cannot be reset if the PLL1 clock is used as the system clock.\r Access to the bit can be secured by RCC PLL1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    description: "PLL1 enable\r Set and cleared by software to enable the main PLL.\r Cleared by hardware when entering Stop or Standby modes and when PLL1 on HSE is selected as sysclk, on a HSECSS failure.\r This bit cannot be reset if the PLL1 clock is used as the system clock.\r Access to the bit can be secured by RCC PLL1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 24
     bit_size: 1
   - name: PLLRDY
@@ -1050,7 +1050,7 @@ fieldset/ECSCR1:
   description: RCC external clock sources calibration register 1
   fields:
   - name: HSETRIM
-    description: "HSE32 clock trimming \r These bits provide user-programmable capacitor trimming value. It can be programmed to adjust the HSE32 oscillator frequency."
+    description: "HSE clock trimming \r These bits provide user-programmable capacitor trimming value. It can be programmed to adjust the HSE oscillator frequency."
     bit_offset: 16
     bit_size: 6
 fieldset/ICSCR3:
@@ -1152,11 +1152,11 @@ fieldset/RADIOENR:
   description: RCC RADIO peripheral clock enable register
   fields:
   - name: BBCLKEN
-    description: "2.4 GHz RADIO baseband kernel clock (aclk) enable\r Set and cleared by software.\r Note: The HSE32 oscillator needs to be enabled by either HSEON or STRADIOCLKON."
+    description: "2.4 GHz RADIO baseband kernel clock (aclk) enable\r Set and cleared by software.\r Note: The HSE oscillator needs to be enabled by either HSEON or STRADIOCLKON."
     bit_offset: 1
     bit_size: 1
   - name: STRADIOCLKON
-    description: "2.4 GHz RADIO bus clock enable and HSE32 oscillator enable by 2.4 GHz RADIO sleep timer wakeup event\r Set by hardware on a 2.4 GHz RADIO sleep timer wakeup event.\r Cleared by software writing zero to this bit.\r Note: Before accessing the 2.4 GHz RADIO registers the RADIOCLKRDY bit must be checked."
+    description: "2.4 GHz RADIO bus clock enable and HSE oscillator enable by 2.4 GHz RADIO sleep timer wakeup event\r Set by hardware on a 2.4 GHz RADIO sleep timer wakeup event.\r Cleared by software writing zero to this bit.\r Note: Before accessing the 2.4 GHz RADIO registers the RADIOCLKRDY bit must be checked."
     bit_offset: 16
     bit_size: 1
   - name: RADIOCLKRDY
@@ -1171,7 +1171,7 @@ fieldset/SECCFGR:
     bit_offset: 0
     bit_size: 1
   - name: HSESEC
-    description: "HSE32 clock configuration bits, status bits and HSECSS security\r Set and reset by software."
+    description: "HSE clock configuration bits, status bits and HSECSS security\r Set and reset by software."
     bit_offset: 1
     bit_size: 1
   - name: LSISEC
@@ -1210,8 +1210,8 @@ enum/ADCSEL:
   - name: PLL1_P
     description: pll1pclk selected
     value: 2
-  - name: HSE32
-    description: HSE32 clock selected
+  - name: HSE
+    description: HSE clock selected
     value: 3
   - name: HSI16
     description: HSI16 clock selected
@@ -1265,10 +1265,10 @@ enum/HSEPRE:
   bit_size: 1
   variants:
   - name: Div1
-    description: HSE32 not divided, SYSCLK = HSE32
+    description: HSE not divided, SYSCLK = HSE
     value: 0
   - name: Div2
-    description: HSE32 divided, SYSCLK = HSE32/2
+    description: HSE divided, SYSCLK = HSE/2
     value: 1
 enum/ICSEL:
   bit_size: 2
@@ -1390,8 +1390,8 @@ enum/MCOSEL:
   - name: HSI16
     description: HSI16 clock selected
     value: 3
-  - name: HSE32
-    description: HSE32 clock selected
+  - name: HSE
+    description: HSE clock selected
     value: 4
   - name: PLL1_R
     description: pll1rclk clock selected
@@ -1447,8 +1447,8 @@ enum/PLLSRC:
   - name: HSI16
     description: HSI16 clock selected as PLL1 clock entry
     value: 2
-  - name: HSE32
-    description: HSE32 clock after HSEPRE divider selected as PLL1 clock entry
+  - name: HSE
+    description: HSE clock after HSEPRE divider selected as PLL1 clock entry
     value: 3
 enum/PPRE:
   bit_size: 3
@@ -1477,8 +1477,8 @@ enum/RADIOSTSEL:
   - name: LSE
     description: LSE oscillator clock selected
     value: 1
-  - name: HSE32
-    description: HSE32 oscillator clock divided by 1000 selected
+  - name: HSE
+    description: HSE oscillator clock divided by 1000 selected
     value: 3
 enum/RNGSEL:
   bit_size: 2
@@ -1507,8 +1507,8 @@ enum/RTCSEL:
   - name: LSI
     description: LSI oscillator clock selected, and enabled
     value: 2
-  - name: HSE32
-    description: HSE32 oscillator clock divided by 32 selected, and enabled
+  - name: HSE
+    description: HSE oscillator clock divided by 32 selected, and enabled
     value: 3
 enum/SPISEL:
   bit_size: 2
@@ -1528,8 +1528,8 @@ enum/SW:
   - name: HSI16
     description: HSI16 selected as system clock
     value: 0
-  - name: HSE32
-    description: HSE32 or HSE32/2, as defined by HSEPRE, selected as system clock
+  - name: HSE
+    description: HSE or HSE/2, as defined by HSEPRE, selected as system clock
     value: 2
   - name: PLL1_R
     description: pll1rclk selected as system clock
