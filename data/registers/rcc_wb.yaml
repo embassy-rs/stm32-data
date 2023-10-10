@@ -1153,10 +1153,12 @@ fieldset/CFGR:
     description: System clock switch
     bit_offset: 0
     bit_size: 2
+    enum: SW
   - name: SWS
     description: System clock switch status
     bit_offset: 2
     bit_size: 2
+    enum: SW
   - name: HPRE
     description: AHB prescaler
     bit_offset: 4
@@ -1394,6 +1396,7 @@ fieldset/CR:
     description: HSE sysclk and PLL M divider prescaler
     bit_offset: 20
     bit_size: 1
+    enum: HSEPRE
   - name: PLLON
     description: Main PLL enable
     bit_offset: 24
@@ -1503,10 +1506,12 @@ fieldset/EXTCFGR:
     description: Shared AHB prescaler
     bit_offset: 0
     bit_size: 4
+    enum: HPRE
   - name: C2HPRE
     description: CPU2 AHB prescaler
     bit_offset: 4
     bit_size: 4
+    enum: HPRE
   - name: SHDHPREF
     description: Shared AHB prescaler flag
     bit_offset: 16
@@ -1564,14 +1569,17 @@ fieldset/PLLCFGR:
     description: Main PLL, PLLSAI1 and PLLSAI2 entry clock source
     bit_offset: 0
     bit_size: 2
+    enum: PLLSRC
   - name: PLLM
     description: Division factor M for the main PLL and audio PLL (PLLSAI1 and PLLSAI2) input clock
     bit_offset: 4
     bit_size: 3
+    enum: PLLM
   - name: PLLN
     description: Main PLLSYS multiplication factor N
     bit_offset: 8
     bit_size: 7
+    enum: PLLN
   - name: PLLPEN
     description: Main PLLSYSP output enable
     bit_offset: 16
@@ -1580,6 +1588,7 @@ fieldset/PLLCFGR:
     description: Main PLL division factor P for PPLSYSSAICLK
     bit_offset: 17
     bit_size: 5
+    enum: PLLP
   - name: PLLQEN
     description: Main PLLSYSQ output enable
     bit_offset: 24
@@ -1588,6 +1597,7 @@ fieldset/PLLCFGR:
     description: Main PLLSYS division factor Q for PLLSYSUSBCLK
     bit_offset: 25
     bit_size: 3
+    enum: PLLQ
   - name: PLLREN
     description: Main PLLSYSR PLLCLK output enable
     bit_offset: 28
@@ -1596,6 +1606,7 @@ fieldset/PLLCFGR:
     description: Main PLLSYS division factor R for SYSCLK (system clock)
     bit_offset: 29
     bit_size: 3
+    enum: PLLR
 fieldset/PLLSAI1CFGR:
   description: PLLSAI1 configuration register
   fields:
@@ -1603,6 +1614,7 @@ fieldset/PLLSAI1CFGR:
     description: SAIPLL multiplication factor for VCO
     bit_offset: 8
     bit_size: 7
+    enum: PLLN
   - name: PLLPEN
     description: SAIPLL PLLSAI1CLK output enable
     bit_offset: 16
@@ -1611,6 +1623,7 @@ fieldset/PLLSAI1CFGR:
     description: SAI1PLL division factor P for PLLSAICLK (SAI1clock)
     bit_offset: 17
     bit_size: 5
+    enum: PLLP
   - name: PLLQEN
     description: SAIPLL PLLSAIUSBCLK output enable
     bit_offset: 24
@@ -1619,6 +1632,7 @@ fieldset/PLLSAI1CFGR:
     description: SAIPLL division factor Q for PLLSAIUSBCLK (48 MHz clock)
     bit_offset: 25
     bit_size: 3
+    enum: PLLQ
   - name: PLLREN
     description: PLLSAI PLLADC1CLK output enable
     bit_offset: 28
@@ -1627,6 +1641,7 @@ fieldset/PLLSAI1CFGR:
     description: PLLSAI division factor R for PLLADC1CLK (ADC clock)
     bit_offset: 29
     bit_size: 3
+    enum: PLLR
 fieldset/SMPSCR:
   description: Step Down converter control register
   fields:
@@ -1687,6 +1702,13 @@ enum/HPRE:
   - name: Div512
     description: hclk = SYSCLK divided by 256
     value: 15
+enum/HSEPRE:
+  bit_size: 1
+  variants:
+  - name: Div1
+    value: 0
+  - name: Div2
+    value: 1
 enum/LSEDRV:
   bit_size: 2
   variants:
@@ -1756,6 +1778,380 @@ enum/MCOSEL:
   - name: HSE_UNSTABLE
     description: HSE clock selected (before stabilization, after HSEON = 1)
     value: 12
+enum/PLLM:
+  bit_size: 3
+  variants:
+  - name: Div1
+    value: 0
+  - name: Div2
+    value: 1
+  - name: Div3
+    value: 2
+  - name: Div4
+    value: 3
+  - name: Div5
+    value: 4
+  - name: Div6
+    value: 5
+  - name: Div7
+    value: 6
+  - name: Div8
+    value: 7
+enum/PLLN:
+  bit_size: 7
+  variants:
+  - name: Mul6
+    value: 6
+  - name: Mul7
+    value: 7
+  - name: Mul8
+    value: 8
+  - name: Mul9
+    value: 9
+  - name: Mul10
+    value: 10
+  - name: Mul11
+    value: 11
+  - name: Mul12
+    value: 12
+  - name: Mul13
+    value: 13
+  - name: Mul14
+    value: 14
+  - name: Mul15
+    value: 15
+  - name: Mul16
+    value: 16
+  - name: Mul17
+    value: 17
+  - name: Mul18
+    value: 18
+  - name: Mul19
+    value: 19
+  - name: Mul20
+    value: 20
+  - name: Mul21
+    value: 21
+  - name: Mul22
+    value: 22
+  - name: Mul23
+    value: 23
+  - name: Mul24
+    value: 24
+  - name: Mul25
+    value: 25
+  - name: Mul26
+    value: 26
+  - name: Mul27
+    value: 27
+  - name: Mul28
+    value: 28
+  - name: Mul29
+    value: 29
+  - name: Mul30
+    value: 30
+  - name: Mul31
+    value: 31
+  - name: Mul32
+    value: 32
+  - name: Mul33
+    value: 33
+  - name: Mul34
+    value: 34
+  - name: Mul35
+    value: 35
+  - name: Mul36
+    value: 36
+  - name: Mul37
+    value: 37
+  - name: Mul38
+    value: 38
+  - name: Mul39
+    value: 39
+  - name: Mul40
+    value: 40
+  - name: Mul41
+    value: 41
+  - name: Mul42
+    value: 42
+  - name: Mul43
+    value: 43
+  - name: Mul44
+    value: 44
+  - name: Mul45
+    value: 45
+  - name: Mul46
+    value: 46
+  - name: Mul47
+    value: 47
+  - name: Mul48
+    value: 48
+  - name: Mul49
+    value: 49
+  - name: Mul50
+    value: 50
+  - name: Mul51
+    value: 51
+  - name: Mul52
+    value: 52
+  - name: Mul53
+    value: 53
+  - name: Mul54
+    value: 54
+  - name: Mul55
+    value: 55
+  - name: Mul56
+    value: 56
+  - name: Mul57
+    value: 57
+  - name: Mul58
+    value: 58
+  - name: Mul59
+    value: 59
+  - name: Mul60
+    value: 60
+  - name: Mul61
+    value: 61
+  - name: Mul62
+    value: 62
+  - name: Mul63
+    value: 63
+  - name: Mul64
+    value: 64
+  - name: Mul65
+    value: 65
+  - name: Mul66
+    value: 66
+  - name: Mul67
+    value: 67
+  - name: Mul68
+    value: 68
+  - name: Mul69
+    value: 69
+  - name: Mul70
+    value: 70
+  - name: Mul71
+    value: 71
+  - name: Mul72
+    value: 72
+  - name: Mul73
+    value: 73
+  - name: Mul74
+    value: 74
+  - name: Mul75
+    value: 75
+  - name: Mul76
+    value: 76
+  - name: Mul77
+    value: 77
+  - name: Mul78
+    value: 78
+  - name: Mul79
+    value: 79
+  - name: Mul80
+    value: 80
+  - name: Mul81
+    value: 81
+  - name: Mul82
+    value: 82
+  - name: Mul83
+    value: 83
+  - name: Mul84
+    value: 84
+  - name: Mul85
+    value: 85
+  - name: Mul86
+    value: 86
+  - name: Mul87
+    value: 87
+  - name: Mul88
+    value: 88
+  - name: Mul89
+    value: 89
+  - name: Mul90
+    value: 90
+  - name: Mul91
+    value: 91
+  - name: Mul92
+    value: 92
+  - name: Mul93
+    value: 93
+  - name: Mul94
+    value: 94
+  - name: Mul95
+    value: 95
+  - name: Mul96
+    value: 96
+  - name: Mul97
+    value: 97
+  - name: Mul98
+    value: 98
+  - name: Mul99
+    value: 99
+  - name: Mul100
+    value: 100
+  - name: Mul101
+    value: 101
+  - name: Mul102
+    value: 102
+  - name: Mul103
+    value: 103
+  - name: Mul104
+    value: 104
+  - name: Mul105
+    value: 105
+  - name: Mul106
+    value: 106
+  - name: Mul107
+    value: 107
+  - name: Mul108
+    value: 108
+  - name: Mul109
+    value: 109
+  - name: Mul110
+    value: 110
+  - name: Mul111
+    value: 111
+  - name: Mul112
+    value: 112
+  - name: Mul113
+    value: 113
+  - name: Mul114
+    value: 114
+  - name: Mul115
+    value: 115
+  - name: Mul116
+    value: 116
+  - name: Mul117
+    value: 117
+  - name: Mul118
+    value: 118
+  - name: Mul119
+    value: 119
+  - name: Mul120
+    value: 120
+  - name: Mul121
+    value: 121
+  - name: Mul122
+    value: 122
+  - name: Mul123
+    value: 123
+  - name: Mul124
+    value: 124
+  - name: Mul125
+    value: 125
+  - name: Mul126
+    value: 126
+  - name: Mul127
+    value: 127
+enum/PLLP:
+  bit_size: 5
+  variants:
+  - name: Div2
+    value: 1
+  - name: Div3
+    value: 2
+  - name: Div4
+    value: 3
+  - name: Div5
+    value: 4
+  - name: Div6
+    value: 5
+  - name: Div7
+    value: 6
+  - name: Div8
+    value: 7
+  - name: Div9
+    value: 8
+  - name: Div10
+    value: 9
+  - name: Div11
+    value: 10
+  - name: Div12
+    value: 11
+  - name: Div13
+    value: 12
+  - name: Div14
+    value: 13
+  - name: Div15
+    value: 14
+  - name: Div16
+    value: 15
+  - name: Div17
+    value: 16
+  - name: Div18
+    value: 17
+  - name: Div19
+    value: 18
+  - name: Div20
+    value: 19
+  - name: Div21
+    value: 20
+  - name: Div22
+    value: 21
+  - name: Div23
+    value: 22
+  - name: Div24
+    value: 23
+  - name: Div25
+    value: 24
+  - name: Div26
+    value: 25
+  - name: Div27
+    value: 26
+  - name: Div28
+    value: 27
+  - name: Div29
+    value: 28
+  - name: Div30
+    value: 29
+  - name: Div31
+    value: 30
+enum/PLLQ:
+  bit_size: 3
+  variants:
+  - name: Div2
+    value: 1
+  - name: Div3
+    value: 2
+  - name: Div4
+    value: 3
+  - name: Div5
+    value: 4
+  - name: Div6
+    value: 5
+  - name: Div7
+    value: 6
+enum/PLLR:
+  bit_size: 3
+  variants:
+  - name: Div2
+    value: 1
+  - name: Div3
+    value: 2
+  - name: Div4
+    value: 3
+  - name: Div5
+    value: 4
+  - name: Div6
+    value: 5
+  - name: Div7
+    value: 6
+enum/PLLSRC:
+  bit_size: 2
+  variants:
+  - name: NoClock
+    description: No clock selected as PLL entry clock source
+    value: 0
+  - name: MSI
+    description: MSI selected as PLL entry clock source
+    value: 1
+  - name: HSI16
+    description: HSI16 selected as PLL entry clock source
+    value: 2
+  - name: HSE
+    description: HSE selected as PLL entry clock source
+    value: 3
 enum/PPRE:
   bit_size: 3
   variants:
@@ -1788,4 +2184,15 @@ enum/RTCSEL:
     value: 2
   - name: HSE
     description: HSE oscillator clock divided by 32 selected
+    value: 3
+enum/SW:
+  bit_size: 2
+  variants:
+  - name: MSI
+    value: 0
+  - name: HSI16
+    value: 1
+  - name: HSE
+    value: 2
+  - name: PLL
     value: 3
