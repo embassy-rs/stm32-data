@@ -254,6 +254,7 @@ impl PeriMatcher {
             ("STM32L4.*:RTC:rtc2_.*", ("rtc", "v2l4", "RTC")),
             ("STM32WBA.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")),
             ("STM32WB.*:RTC:rtc2_.*", ("rtc", "v2wb", "RTC")),
+            ("STM32H5.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")),
             ("STM32U5.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")), // Cube says v2, but it's v3 with security stuff
             (".*:RTC:rtc3_v1_0", ("rtc", "v3", "RTC")),
             (".*:RTC:rtc3_v1_1", ("rtc", "v3", "RTC")),
