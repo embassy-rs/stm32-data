@@ -91,26 +91,6 @@ block/OCTOSPI:
     description: OCTOSPI HyperBus latency configuration register
     byte_offset: 512
     fieldset: HLCR
-  - name: HWCFGR
-    description: HW configuration register
-    byte_offset: 1008
-    access: Read
-    fieldset: HWCFGR
-  - name: VER
-    description: version register
-    byte_offset: 1012
-    access: Read
-    fieldset: VER
-  - name: ID
-    description: identification
-    byte_offset: 1016
-    access: Read
-    fieldset: ID
-  - name: MID
-    description: magic ID
-    byte_offset: 1020
-    access: Read
-    fieldset: MID
 fieldset/ABR:
   description: alternate bytes register
   fields:
@@ -206,8 +186,8 @@ fieldset/CR:
     description: Timeout counter enable. This bit is valid only when the Memory-mapped mode (FMODE[1:0] = 11) is selected. This bit enables the timeout counter.
     bit_offset: 3
     bit_size: 1
-  - name: DQM
-    description: Dual-quad mode
+  - name: DMM
+    description: Dual-memory configuration. This bit activates the dual-memory configuration, where two external devices are used simultaneously to double the throughput and the capacity
     bit_offset: 6
     bit_size: 1
   - name: FSEL
@@ -291,6 +271,10 @@ fieldset/DCR2:
 fieldset/DCR3:
   description: device configuration register 3
   fields:
+  - name: MAXTRAN
+    description: Maximum transfer
+    bit_offset: 0
+    bit_size: 8
   - name: CSBOUND
     description: 'NCS boundary. This field enables the transaction boundary feature. When active, a minimum value of 3 is recommended. The NCS is released on each boundary of 2CSBOUND bytes. others: NCS boundary set to 2CSBOUND bytes'
     bit_offset: 16
@@ -347,40 +331,6 @@ fieldset/HLCR:
     description: Read write recovery time Device read write recovery time expressed in number of communication clock cycles
     bit_offset: 16
     bit_size: 8
-fieldset/HWCFGR:
-  description: HW configuration register
-  fields:
-  - name: AXI
-    description: AXI interface
-    bit_offset: 0
-    bit_size: 4
-  - name: FIFO
-    description: FIFO depth
-    bit_offset: 4
-    bit_size: 8
-  - name: PRES
-    description: Prescaler
-    bit_offset: 12
-    bit_size: 8
-  - name: IDL
-    description: ID Length
-    bit_offset: 20
-    bit_size: 4
-  - name: MMW
-    description: Memory map write
-    bit_offset: 24
-    bit_size: 4
-  - name: MST
-    description: Master
-    bit_offset: 28
-    bit_size: 4
-fieldset/ID:
-  description: identification
-  fields:
-  - name: ID
-    description: Identification
-    bit_offset: 0
-    bit_size: 32
 fieldset/IR:
   description: instruction register
   fields:
@@ -395,13 +345,6 @@ fieldset/LPTR:
     description: '[15: 0]: Timeout period After each access in Memory-mapped mode, the OCTOSPI prefetches the subsequent bytes and hold them in the FIFO. This field indicates how many CLK cycles the OCTOSPI waits after the clock becomes inactive and until it raises the NCS, putting the external device in a lower-consumption state.'
     bit_offset: 0
     bit_size: 16
-fieldset/MID:
-  description: magic ID
-  fields:
-  - name: MID
-    description: Magic ID
-    bit_offset: 0
-    bit_size: 32
 fieldset/PIR:
   description: polling interval register
   fields:
@@ -469,13 +412,7 @@ fieldset/TCR:
     description: Sample shift By default, the OCTOSPI samples data 1/2 of a CLK cycle after the data is driven by the external device. This bit allows the data to be sampled later in order to consider the external signal delays. The software must ensure that SSHIFT = 0 when the data phase is configured in DTR mode (when DDTR = 1.)
     bit_offset: 30
     bit_size: 1
-fieldset/VER:
-  description: version register
-  fields:
-  - name: VER
-    description: Version
-    bit_offset: 0
-    bit_size: 8
+    enum: SampleShift
 fieldset/WABR:
   description: write alternate bytes register
   fields:
@@ -567,15 +504,6 @@ enum/CycleDelay:
     value: 0
   - name: QuarterCycle
     description: 1/4 cycle hold
-    value: 1
-enum/CycleShift:
-  bit_size: 1
-  variants:
-  - name: None
-    description: No shift
-    value: 0
-  - name: HalfCycle
-    description: 1/2 cycle shift
     value: 1
 enum/FlashSelect:
   bit_size: 1
@@ -670,6 +598,15 @@ enum/PhaseMode:
   - name: EightLines
     description: Alternate bytes on eight lines
     value: 4
+enum/SampleShift:
+  bit_size: 1
+  variants:
+  - name: None
+    description: No shift
+    value: 0
+  - name: HalfCycle
+    description: 1/2 cycle shift
+    value: 1
 enum/SizeInBits:
   bit_size: 2
   variants:

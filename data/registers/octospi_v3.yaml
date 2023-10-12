@@ -271,7 +271,6 @@ fieldset/DCR1:
     description: Chip-select high time CSHT + 1 defines the minimum number of CLK cycles where the chip-select (NCS) must remain high between commands issued to the external device. ...
     bit_offset: 8
     bit_size: 6
-    enum: CycleShift
   - name: DEVSIZE
     description: 'Device size. This field defines the size of the external device using the following formula: Number of bytes in device = 2[DEVSIZE+1]. DEVSIZE+1 is effectively the number of address bits required to address the external device. The device capacity can be up to 4 Gbytes (addressed using 32-bits) in Indirect mode, but the addressable space in Memory-mapped mode is limited to 256 Mbytes. In Regular-command protocol, if DMM = 1, DEVSIZE[4:0] indicates the total capacity of the two devices together.'
     bit_offset: 16
@@ -351,7 +350,7 @@ fieldset/HLCR:
     bit_offset: 1
     bit_size: 1
   - name: TACC
-    description: '[7: 0]: Access time Device access time expressed in number of communication clock cycles'
+    description: '[7: 0]: Access time. Device access time expressed in number of communication clock cycles'
     bit_offset: 8
     bit_size: 8
   - name: TRWR
@@ -439,11 +438,12 @@ fieldset/TCR:
     description: Sample shift By default, the OCTOSPI samples data 1/2 of a CLK cycle after the data is driven by the external device. This bit allows the data to be sampled later in order to consider the external signal delays. The software must ensure that SSHIFT = 0 when the data phase is configured in DTR mode (when DDTR = 1.)
     bit_offset: 30
     bit_size: 1
+    enum: SampleShift
 fieldset/WABR:
   description: write alternate bytes register
   fields:
   - name: ALTERNATE
-    description: '[31: 0]: Alternate bytes Optional data to be sent to the external SPI device right after the address'
+    description: '[31: 0]: Alternate bytes. Optional data to be sent to the external SPI device right after the address'
     bit_offset: 0
     bit_size: 32
 fieldset/WCCR:
@@ -598,6 +598,7 @@ fieldset/WPTCR:
     description: Sample shift By default, the OCTOSPI samples data 1/2 of a CLK cycle after the data is driven by the external device. This bit allows the data to be sampled later in order to consider the external signal delays. The firmware must assure that SSHIFT=0 when the data phase is configured in DTR mode (when DDTR = 1).
     bit_offset: 30
     bit_size: 1
+    enum: SampleShift
 fieldset/WTCR:
   description: write timing configuration register
   fields:
@@ -613,15 +614,6 @@ enum/CycleDelay:
     value: 0
   - name: QuarterCycle
     description: 1/4 cycle hold
-    value: 1
-enum/CycleShift:
-  bit_size: 1
-  variants:
-  - name: None
-    description: No shift
-    value: 0
-  - name: HalfCycle
-    description: 1/2 cycle shift
     value: 1
 enum/FlashSelect:
   bit_size: 1
@@ -716,6 +708,15 @@ enum/PhaseMode:
   - name: EightLines
     description: Alternate bytes on eight lines
     value: 4
+enum/SampleShift:
+  bit_size: 1
+  variants:
+  - name: None
+    description: No shift
+    value: 0
+  - name: HalfCycle
+    description: 1/2 cycle shift
+    value: 1
 enum/SizeInBits:
   bit_size: 2
   variants:
