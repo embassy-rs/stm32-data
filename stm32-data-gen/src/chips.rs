@@ -486,15 +486,15 @@ impl PeriMatcher {
             ),
             (
                 "STM32L5.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*",
-                ("octospi", "v3", "OCTOSPI"), // Slightly different field sizes from v2.
+                ("octospi", "v3", "OCTOSPI"),
             ),
             (
                 "STM32U5.*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*",
-                ("octospi", "v4", "OCTOSPI"), // Introduces enum values into SVD.
+                ("octospi", "v3", "OCTOSPI"),
             ),
             (
                 "STM32H5.*:OCTOSPI:OCTOSPI:octospi1_v5_1.*",
-                ("octospi", "v4", "OCTOSPI"), // No register changes from `octospi1_v3_0_Cube` definition (our v4)
+                ("octospi", "v3", "OCTOSPI"),
             ),
         ];
 
