@@ -476,7 +476,6 @@ impl PeriMatcher {
                 "STM32U5.*:OCTOSPIM:OCTOSPIM:octospi1_v3_0.*",
                 ("octospim", "v2", "OCTOSPIM"),
             ),
-            (".*:OCTOSPIM:.*", ("octospim", "v2", "OCTOSPIM")), //Next chips releasing OCTOSPIM will default to v2.
             (
                 "STM32L4.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0.*",
                 ("octospi", "v1", "OCTOSPI"),
@@ -497,7 +496,6 @@ impl PeriMatcher {
                 "STM32H5.*:OCTOSPI:OCTOSPI:octospi1_v5_1.*",
                 ("octospi", "v4", "OCTOSPI"), // No register changes from `octospi1_v3_0_Cube` definition (our v4)
             ),
-            (".*:OCTOSPI[12]:.*", ("octospi", "v4", "OCTOSPI")), // Next chips releasing OCTOSPI will default to v4.
         ];
 
         Self {
