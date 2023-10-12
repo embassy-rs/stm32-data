@@ -1,0 +1,746 @@
+block/OCTOSPI:
+  description: OctoSPI
+  items:
+  - name: CR
+    description: control register
+    byte_offset: 0
+    fieldset: CR
+  - name: DCR1
+    description: device configuration register 1
+    byte_offset: 8
+    fieldset: DCR1
+  - name: DCR2
+    description: device configuration register 2
+    byte_offset: 12
+    fieldset: DCR2
+  - name: DCR3
+    description: device configuration register 3
+    byte_offset: 16
+    fieldset: DCR3
+  - name: DCR4
+    description: device configuration register 4
+    byte_offset: 20
+    fieldset: DCR4
+  - name: SR
+    description: status register
+    byte_offset: 32
+    access: Read
+    fieldset: SR
+  - name: FCR
+    description: flag clear register
+    byte_offset: 36
+    access: Write
+    fieldset: FCR
+  - name: DLR
+    description: data length register
+    byte_offset: 64
+    fieldset: DLR
+  - name: AR
+    description: address register
+    byte_offset: 72
+    fieldset: AR
+  - name: DR
+    description: data register
+    byte_offset: 80
+    fieldset: DR
+  - name: PSMKR
+    description: polling status mask register
+    byte_offset: 128
+    fieldset: PSMKR
+  - name: PSMAR
+    description: polling status match register
+    byte_offset: 136
+    fieldset: PSMAR
+  - name: PIR
+    description: polling interval register
+    byte_offset: 144
+    fieldset: PIR
+  - name: CCR
+    description: communication configuration register
+    byte_offset: 256
+    fieldset: CCR
+  - name: TCR
+    description: timing configuration register
+    byte_offset: 264
+    fieldset: TCR
+  - name: IR
+    description: instruction register
+    byte_offset: 272
+    fieldset: IR
+  - name: ABR
+    description: alternate bytes register
+    byte_offset: 288
+    fieldset: ABR
+  - name: LPTR
+    description: low-power timeout register
+    byte_offset: 304
+    fieldset: LPTR
+  - name: WPCCR
+    description: wrap communication configuration register
+    byte_offset: 320
+    fieldset: WPCCR
+  - name: WPTCR
+    description: wrap timing configuration register
+    byte_offset: 328
+    fieldset: WPTCR
+  - name: WPIR
+    description: wrap instruction register
+    byte_offset: 336
+    fieldset: WPIR
+  - name: WPABR
+    description: wrap alternate bytes register
+    byte_offset: 352
+    fieldset: WPABR
+  - name: WCCR
+    description: write communication configuration register
+    byte_offset: 384
+    fieldset: WCCR
+  - name: WTCR
+    description: write timing configuration register
+    byte_offset: 392
+    fieldset: WTCR
+  - name: WIR
+    description: write instruction register
+    byte_offset: 400
+    fieldset: WIR
+  - name: WABR
+    description: write alternate bytes register
+    byte_offset: 416
+    fieldset: WABR
+  - name: HLCR
+    description: OCTOSPI HyperBus latency configuration register
+    byte_offset: 512
+    fieldset: HLCR
+fieldset/ABR:
+  description: alternate bytes register
+  fields:
+  - name: ALTERNATE
+    description: Alternate bytes
+    bit_offset: 0
+    bit_size: 32
+fieldset/AR:
+  description: address register
+  fields:
+  - name: ADDRESS
+    description: Address to be sent to the external device. In HyperBus protocol, this field must be even as this protocol is 16-bit word oriented. In dual-memory configuration, AR[0] is forced to 1. Writes to. this field are ignored when BUSY = 1 or when FMODE = 11 (Memory-mapped mode).
+    bit_offset: 0
+    bit_size: 32
+fieldset/CCR:
+  description: communication configuration register
+  fields:
+  - name: IMODE
+    description: 'Instruction mode. This field defines the instruction phase mode of operation. 101-111: Reserved'
+    bit_offset: 0
+    bit_size: 3
+    enum: PhaseMode
+  - name: IDTR
+    description: Instruction double transfer rate. This bit sets the DTR mode for the instruction phase.
+    bit_offset: 3
+    bit_size: 1
+  - name: ISIZE
+    description: Instruction size. This bit defines instruction size.
+    bit_offset: 4
+    bit_size: 2
+    enum: SizeInBits
+  - name: ADMODE
+    description: 'Address mode. This field defines the address phase mode of operation. 101-111: Reserved'
+    bit_offset: 8
+    bit_size: 3
+    enum: PhaseMode
+  - name: ADDTR
+    description: Address double transfer rate. This bit sets the DTR mode for the address phase.
+    bit_offset: 11
+    bit_size: 1
+  - name: ADSIZE
+    description: Address size. This field defines address size.
+    bit_offset: 12
+    bit_size: 2
+    enum: SizeInBits
+  - name: ABMODE
+    description: 'Alternate-byte mode. This field defines the alternate-byte phase mode of operation. 101-111: Reserved'
+    bit_offset: 16
+    bit_size: 3
+    enum: PhaseMode
+  - name: ABDTR
+    description: Alternate bytes double transfer rate. This bit sets the DTR mode for the alternate bytes phase. This field can be written only when BUSY = 0.
+    bit_offset: 19
+    bit_size: 1
+  - name: ABSIZE
+    description: Alternate bytes size. This bit defines alternate bytes size.
+    bit_offset: 20
+    bit_size: 2
+    enum: SizeInBits
+  - name: DMODE
+    description: 'Data mode. This field defines the data phase mode of operation. 101-111: Reserved'
+    bit_offset: 24
+    bit_size: 3
+    enum: PhaseMode
+  - name: DDTR
+    description: Data double transfer rate. This bit sets the DTR mode for the data phase.
+    bit_offset: 27
+    bit_size: 1
+  - name: DQSE
+    description: DQS enable. This bit enables the data strobe management.
+    bit_offset: 29
+    bit_size: 1
+  - name: SIOO
+    description: Send instruction only once mode. This bit has no effect when IMODE = 00 (see ).
+    bit_offset: 31
+    bit_size: 1
+fieldset/CR:
+  description: control register
+  fields:
+  - name: EN
+    description: 'Enable This bit enables the OCTOSPI. Note: The DMA request can be aborted without having received the ACK in case this EN bit is cleared during the operation. In case. this bit is set to 0 during a DMA transfer, the REQ signal to DMA returns to inactive state without waiting for the ACK signal from DMA to be active.'
+    bit_offset: 0
+    bit_size: 1
+  - name: ABORT
+    description: 'Abort request. This bit aborts the ongoing command sequence. It is automatically reset once the abort is completed. This bit stops the current transfer. Note: This bit is always read as 0.'
+    bit_offset: 1
+    bit_size: 1
+  - name: DMAEN
+    description: 'DMA enable In Indirect mode, the DMA can be used to input or output data via DR. DMA transfers are initiated when FTF is set. Note: Resetting the DMAEN bit while a DMA transfer is ongoing, breaks the handshake with the DMA. Do not write. this bit during DMA operation.'
+    bit_offset: 2
+    bit_size: 1
+  - name: TCEN
+    description: Timeout counter enable. This bit is valid only when the Memory-mapped mode (FMODE[1:0] = 11) is selected. This bit enables the timeout counter.
+    bit_offset: 3
+    bit_size: 1
+  - name: DMM
+    description: Dual-memory configuration. This bit activates the dual-memory configuration, where two external devices are used simultaneously to double the throughput and the capacity
+    bit_offset: 6
+    bit_size: 1
+  - name: FSEL
+    description: Flash select. This bit selects the Flash memory to be addressed in Single-, Dual-, Quad-SPI mode in single-memory configuration (when DMM = 0). This bit is ignored when DMM = 1 or when Octal-SPI mode is selected.
+    bit_offset: 7
+    bit_size: 1
+  - name: FTHRES
+    description: 'FIFO threshold level. This field defines, in Indirect mode, the threshold number of bytes in the FIFO that causes the FIFO threshold flag FTF in SR, to be set. ... Note: If DMAEN = 1, the DMA controller for the corresponding channel must be disabled before changing the FTHRES[4:0] value.'
+    bit_offset: 8
+    bit_size: 5
+    enum: Threshold
+  - name: TEIE
+    description: Transfer error interrupt enable. This bit enables the transfer error interrupt.
+    bit_offset: 16
+    bit_size: 1
+  - name: TCIE
+    description: Transfer complete interrupt enable. This bit enables the transfer complete interrupt.
+    bit_offset: 17
+    bit_size: 1
+  - name: FTIE
+    description: FIFO threshold interrupt enable. This bit enables the FIFO threshold interrupt.
+    bit_offset: 18
+    bit_size: 1
+  - name: SMIE
+    description: Status match interrupt enable. This bit enables the status match interrupt.
+    bit_offset: 19
+    bit_size: 1
+  - name: TOIE
+    description: Timeout interrupt enable. This bit enables the timeout interrupt.
+    bit_offset: 20
+    bit_size: 1
+  - name: APMS
+    description: Automatic status-polling mode stop. This bit determines if the Automatic status-polling mode is stopped after a match.
+    bit_offset: 22
+    bit_size: 1
+  - name: PMM
+    description: Polling match mode. This bit indicates which method must be used to determine a match during the Automatic status-polling mode.
+    bit_offset: 23
+    bit_size: 1
+  - name: FMODE
+    description: Functional mode. This field defines the OCTOSPI functional mode of operation. If DMAEN = 1 already, then the DMA controller for the corresponding channel must be disabled before changing the FMODE[1:0] value. If FMODE[1:0] and FTHRES[4:0] are wrongly updated while DMAEN = 1, the DMA request signal automatically goes to inactive state.
+    bit_offset: 28
+    bit_size: 2
+    enum: FunctionalMode
+fieldset/DCR1:
+  description: device configuration register 1
+  fields:
+  - name: CKMODE
+    description: Mode 0/Mode 3 This bit indicates the level taken by the CLK between commands (when NCS = 1).
+    bit_offset: 0
+    bit_size: 1
+  - name: FRCK
+    description: Free running clock. This bit configures the free running clock.
+    bit_offset: 1
+    bit_size: 1
+  - name: DLYBYP
+    description: Delay block bypass
+    bit_offset: 3
+    bit_size: 1
+  - name: CSHT
+    description: Chip-select high time CSHT + 1 defines the minimum number of CLK cycles where the chip-select (NCS) must remain high between commands issued to the external device. ...
+    bit_offset: 8
+    bit_size: 6
+  - name: DEVSIZE
+    description: 'Device size. This field defines the size of the external device using the following formula: Number of bytes in device = 2[DEVSIZE+1]. DEVSIZE+1 is effectively the number of address bits required to address the external device. The device capacity can be up to 4 Gbytes (addressed using 32-bits) in Indirect mode, but the addressable space in Memory-mapped mode is limited to 256 Mbytes. In Regular-command protocol, if DMM = 1, DEVSIZE[4:0] indicates the total capacity of the two devices together.'
+    bit_offset: 16
+    bit_size: 5
+  - name: MTYP
+    description: 'Memory type. This bit indicates the type of memory to be supported. Note: In. this mode, DQS signal polarity is inverted with respect to the memory clock signal. This is the default value and care must be taken to change MTYP[2:0] for memories different from Micron. Others: Reserved'
+    bit_offset: 24
+    bit_size: 3
+    enum: MemType
+fieldset/DCR2:
+  description: device configuration register 2
+  fields:
+  - name: PRESCALER
+    description: 'Clock prescaler. This field defines the scaler factor for generating the CLK based on the kernel clock (value + 1). 2: FCLK = FKERNEL/3 ... 255: FCLK = FKERNEL/256 For odd clock division factors, the CLK duty cycle is not 50 %. The clock signal remains low one cycle longer than it stays high.'
+    bit_offset: 0
+    bit_size: 8
+  - name: WRAPSIZE
+    description: 'Wrap size. This field indicates the wrap size to which the memory is configured. For memories which have a separate command for wrapped instructions, this field indicates the wrap-size associated with the command held in the OCTOSPI1_WPIR register. 110-111: Reserved'
+    bit_offset: 16
+    bit_size: 3
+fieldset/DCR3:
+  description: device configuration register 3
+  fields:
+  - name: CSBOUND
+    description: 'NCS boundary. This field enables the transaction boundary feature. When active, a minimum value of 3 is recommended. The NCS is released on each boundary of 2CSBOUND bytes. others: NCS boundary set to 2CSBOUND bytes'
+    bit_offset: 16
+    bit_size: 5
+fieldset/DCR4:
+  description: device configuration register 4
+  fields:
+  - name: REFRESH
+    description: 'Refresh rate. This field enables the refresh rate feature. The NCS is released every REFRESH + 1 clock cycles for writes, and REFRESH + 4 clock cycles for reads. Note: These two values can be extended with few clock cycles when refresh occurs during a byte transmission in Single-, Dual- or Quad-SPI mode, because the byte transmission must be completed. others: Maximum communication length is set to REFRESH + 1 clock cycles.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/DLR:
+  description: data length register
+  fields:
+  - name: DL
+    description: '[31: 0]: Data length Number of data to be retrieved (value+1) in Indirect and Automatic status-polling modes. A value not greater than three (indicating 4 bytes) must be used for Automatic status-polling mode. All 1’s in Indirect mode means undefined length, where OCTOSPI continues until the end of the memory, as defined by DEVSIZE. 0x0000_0000: 1 byte is to be transferred. 0x0000_0001: 2 bytes are to be transferred. 0x0000_0002: 3 bytes are to be transferred. 0x0000_0003: 4 bytes are to be transferred. ... 0xFFFF_FFFD: 4,294,967,294 (4G-2) bytes are to be transferred. 0xFFFF_FFFE: 4,294,967,295 (4G-1) bytes are to be transferred. 0xFFFF_FFFF: undefined length; all bytes, until the end of the external device, (as defined by DEVSIZE) are to be transferred. Continue reading indefinitely if DEVSIZE = 0x1F. DL[0] is stuck at 1 in dual-memory configuration (DMM = 1) even when 0 is written to. this bit, thus assuring that each access transfers an even number of bytes. This field has no effect in Memory-mapped mode.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/DR:
+  description: data register
+  fields:
+  - name: DATA
+    description: '[31: 0]: Data Data to be sent/received to/from the external SPI device In Indirect-write mode, data written to this register is stored on the FIFO before it is sent to the external device during the data phase. If the FIFO is too full, a write operation is stalled until the FIFO has enough space to accept the amount of data being written. In Indirect-read mode, reading this register gives (via the FIFO) the data that was received from the external device. If the FIFO does not have as many bytes as requested by the read operation and if BUSY = 1, the read operation is stalled until enough data is present or until the transfer is complete, whichever happens first. In Automatic status-polling mode, this register contains the last data read from the external device (without masking). Word, half-word, and byte accesses to this register are supported. In Indirect-write mode, a byte write adds 1 byte to the FIFO, a half-word write 2 bytes, and a word write 4 bytes. Similarly, in Indirect-read mode, a byte read removes 1 byte from the FIFO, a halfword read 2 bytes, and a word read 4 bytes. Accesses in Indirect mode must be aligned to the bottom of. this register: A byte read must read DATA[7:0] and a half-word read must read DATA[15:0].'
+    bit_offset: 0
+    bit_size: 32
+fieldset/FCR:
+  description: flag clear register
+  fields:
+  - name: CTEF
+    description: Clear transfer error flag Writing 1 clears the TEF flag in the SR register.
+    bit_offset: 0
+    bit_size: 1
+  - name: CTCF
+    description: Clear transfer complete flag Writing 1 clears the TCF flag in the SR register.
+    bit_offset: 1
+    bit_size: 1
+  - name: CSMF
+    description: Clear status match flag Writing 1 clears the SMF flag in the SR register.
+    bit_offset: 3
+    bit_size: 1
+  - name: CTOF
+    description: Clear timeout flag Writing 1 clears the TOF flag in the SR register.
+    bit_offset: 4
+    bit_size: 1
+fieldset/HLCR:
+  description: OCTOSPI HyperBus latency configuration register
+  fields:
+  - name: LM
+    description: Latency mode. This bit selects the Latency mode.
+    bit_offset: 0
+    bit_size: 1
+  - name: WZL
+    description: Write zero latency. This bit enables zero latency on write operations.
+    bit_offset: 1
+    bit_size: 1
+  - name: TACC
+    description: '[7: 0]: Access time. Device access time expressed in number of communication clock cycles'
+    bit_offset: 8
+    bit_size: 8
+  - name: TRWR
+    description: Read write recovery time Device read write recovery time expressed in number of communication clock cycles
+    bit_offset: 16
+    bit_size: 8
+fieldset/IR:
+  description: instruction register
+  fields:
+  - name: INSTRUCTION
+    description: Instruction to be sent to the external SPI device
+    bit_offset: 0
+    bit_size: 32
+fieldset/LPTR:
+  description: low-power timeout register
+  fields:
+  - name: TIMEOUT
+    description: '[15: 0]: Timeout period After each access in Memory-mapped mode, the OCTOSPI prefetches the subsequent bytes and hold them in the FIFO. This field indicates how many CLK cycles the OCTOSPI waits after the clock becomes inactive and until it raises the NCS, putting the external device in a lower-consumption state.'
+    bit_offset: 0
+    bit_size: 16
+fieldset/PIR:
+  description: polling interval register
+  fields:
+  - name: INTERVAL
+    description: '[15: 0]: Polling interval Number of CLK cycle between a read during the Automatic status-polling phases'
+    bit_offset: 0
+    bit_size: 16
+fieldset/PSMAR:
+  description: polling status match register
+  fields:
+  - name: MATCH
+    description: '[31: 0]: Status match Value to be compared with the masked status register to get a match'
+    bit_offset: 0
+    bit_size: 32
+fieldset/PSMKR:
+  description: polling status mask register
+  fields:
+  - name: MASK
+    description: 'Status mask Mask to be applied to the status bytes received in Automatic status-polling mode For bit n:'
+    bit_offset: 0
+    bit_size: 32
+fieldset/SR:
+  description: status register
+  fields:
+  - name: TEF
+    description: Transfer error flag. This bit is set in Indirect mode when an invalid address is being accessed in Indirect mode. It is cleared by writing 1 to CTEF.
+    bit_offset: 0
+    bit_size: 1
+  - name: TCF
+    description: Transfer complete flag. This bit is set in Indirect mode when the programmed number of data has been transferred or in any mode when the transfer has been aborted.It is cleared by writing 1 to CTCF.
+    bit_offset: 1
+    bit_size: 1
+  - name: FTF
+    description: FIFO threshold flag In Indirect mode, this bit is set when the FIFO threshold has been reached, or if there is any data left in the FIFO after the reads from the external device are complete. It is cleared automatically as soon as the threshold condition is no longer true. In Automatic status-polling mode, this bit is set every time the status register is read, and the bit is cleared when the data register is read.
+    bit_offset: 2
+    bit_size: 1
+  - name: SMF
+    description: Status match flag. This bit is set in Automatic status-polling mode when the unmasked received data matches the corresponding bits in the match register (PSMAR). It is cleared by writing 1 to CSMF.
+    bit_offset: 3
+    bit_size: 1
+  - name: TOF
+    description: Timeout flag. This bit is set when timeout occurs. It is cleared by writing 1 to CTOF.
+    bit_offset: 4
+    bit_size: 1
+  - name: BUSY
+    description: Busy. This bit is set when an operation is ongoing. It is cleared automatically when the operation with the external device is finished and the FIFO is empty.
+    bit_offset: 5
+    bit_size: 1
+  - name: FLEVEL
+    description: FIFO level. This field gives the number of valid bytes that are being held in the FIFO. FLEVEL = 0 when the FIFO is empty, and 32 when it is full. In Automatic status-polling mode, FLEVEL is zero.
+    bit_offset: 8
+    bit_size: 6
+fieldset/TCR:
+  description: timing configuration register
+  fields:
+  - name: DCYC
+    description: Number of dummy cycles. This field defines the duration of the dummy phase. In both SDR and DTR modes, it specifies a number of CLK cycles (0-31). It is recommended to have at least six dummy cycles when using memories with DQS activated.
+    bit_offset: 0
+    bit_size: 5
+  - name: DHQC
+    description: Delay hold quarter cycle
+    bit_offset: 28
+    bit_size: 1
+  - name: SSHIFT
+    description: Sample shift By default, the OCTOSPI samples data 1/2 of a CLK cycle after the data is driven by the external device. This bit allows the data to be sampled later in order to consider the external signal delays. The software must ensure that SSHIFT = 0 when the data phase is configured in DTR mode (when DDTR = 1.)
+    bit_offset: 30
+    bit_size: 1
+    enum: SampleShift
+fieldset/WABR:
+  description: write alternate bytes register
+  fields:
+  - name: ALTERNATE
+    description: '[31: 0]: Alternate bytes. Optional data to be sent to the external SPI device right after the address'
+    bit_offset: 0
+    bit_size: 32
+fieldset/WCCR:
+  description: OCTOSPI write communication configuration register
+  fields:
+  - name: IMODE
+    description: 'Instruction mode. This field defines the instruction phase mode of operation. 101-111: Reserved'
+    bit_offset: 0
+    bit_size: 3
+    enum: PhaseMode
+  - name: IDTR
+    description: Instruction double transfer rate. This bit sets the DTR mode for the instruction phase.
+    bit_offset: 3
+    bit_size: 1
+  - name: ISIZE
+    description: 'Instruction size. This bit defines instruction size:'
+    bit_offset: 4
+    bit_size: 2
+    enum: SizeInBits
+  - name: ADMODE
+    description: 'Address mode. This field defines the address phase mode of operation. 101-111: Reserved'
+    bit_offset: 8
+    bit_size: 3
+    enum: PhaseMode
+  - name: ADDTR
+    description: Address double transfer rate. This bit sets the DTR mode for the address phase.
+    bit_offset: 11
+    bit_size: 1
+  - name: ADSIZE
+    description: Address size. This field defines address size.
+    bit_offset: 12
+    bit_size: 2
+    enum: SizeInBits
+  - name: ABMODE
+    description: 'Alternate-byte mode. This field defines the alternate-byte phase mode of operation. 101-111: Reserved'
+    bit_offset: 16
+    bit_size: 3
+    enum: PhaseMode
+  - name: ABDTR
+    description: Alternate bytes double transfer rate. This bit sets the DTR mode for the alternate-bytes phase.
+    bit_offset: 19
+    bit_size: 1
+  - name: ABSIZE
+    description: 'Alternate bytes size. This field defines alternate bytes size:'
+    bit_offset: 20
+    bit_size: 2
+    enum: SizeInBits
+  - name: DMODE
+    description: 'Data mode. This field defines the data phase mode of operation. 101-111: Reserved'
+    bit_offset: 24
+    bit_size: 3
+    enum: PhaseMode
+  - name: DDTR
+    description: data double transfer rate. This bit sets the DTR mode for the data phase.
+    bit_offset: 27
+    bit_size: 1
+  - name: DQSE
+    description: DQS enable. This bit enables the data strobe management.
+    bit_offset: 29
+    bit_size: 1
+fieldset/WIR:
+  description: write instruction register
+  fields:
+  - name: INSTRUCTION
+    description: Instruction Instruction to be sent to the external SPI device
+    bit_offset: 0
+    bit_size: 32
+fieldset/WPABR:
+  description: wrap alternate bytes register
+  fields:
+  - name: ALTERNATE
+    description: '[31: 0]: Alternate bytes Optional data to be sent to the external SPI device right after the address'
+    bit_offset: 0
+    bit_size: 32
+fieldset/WPCCR:
+  description: OCTOSPI wrap communication configuration register
+  fields:
+  - name: IMODE
+    description: 'Instruction mode. This field defines the instruction phase mode of operation. 101-111: Reserved'
+    bit_offset: 0
+    bit_size: 3
+    enum: PhaseMode
+  - name: IDTR
+    description: Instruction double transfer rate. This bit sets the DTR mode for the instruction phase.
+    bit_offset: 3
+    bit_size: 1
+  - name: ISIZE
+    description: Instruction size. This field defines instruction size.
+    bit_offset: 4
+    bit_size: 2
+    enum: SizeInBits
+  - name: ADMODE
+    description: 'Address mode. This field defines the address phase mode of operation. 101-111: Reserved'
+    bit_offset: 8
+    bit_size: 3
+    enum: PhaseMode
+  - name: ADDTR
+    description: Address double transfer rate. This bit sets the DTR mode for the address phase.
+    bit_offset: 11
+    bit_size: 1
+  - name: ADSIZE
+    description: Address size. This field defines address size.
+    bit_offset: 12
+    bit_size: 2
+    enum: SizeInBits
+  - name: ABMODE
+    description: 'Alternate-byte mode. This field defines the alternate byte phase mode of operation. 101-111: Reserved'
+    bit_offset: 16
+    bit_size: 3
+    enum: PhaseMode
+  - name: ABDTR
+    description: Alternate bytes double transfer rate. This bit sets the DTR mode for the alternate bytes phase.
+    bit_offset: 19
+    bit_size: 1
+  - name: ABSIZE
+    description: Alternate bytes size. This bit defines alternate bytes size.
+    bit_offset: 20
+    bit_size: 2
+    enum: SizeInBits
+  - name: DMODE
+    description: 'Data mode. This field defines the data phase mode of operation. 101-111: Reserved'
+    bit_offset: 24
+    bit_size: 3
+    enum: PhaseMode
+  - name: DDTR
+    description: Data double transfer rate. This bit sets the DTR mode for the data phase.
+    bit_offset: 27
+    bit_size: 1
+  - name: DQSE
+    description: DQS enable. This bit enables the data strobe management.
+    bit_offset: 29
+    bit_size: 1
+fieldset/WPIR:
+  description: wrap instruction register
+  fields:
+  - name: INSTRUCTION
+    description: '[31: 0]: Instruction Instruction to be sent to the external SPI device'
+    bit_offset: 0
+    bit_size: 32
+fieldset/WPTCR:
+  description: wrap timing configuration register
+  fields:
+  - name: DCYC
+    description: Number of dummy cycles. This field defines the duration of the dummy phase. In both SDR and DTR modes, it specifies a number of CLK cycles (0-31). It is recommended to have at least 5 dummy cycles when using memories with DQS activated.
+    bit_offset: 0
+    bit_size: 5
+  - name: DHQC
+    description: Delay hold quarter cycle Add a quarter cycle delay on the outputs in DTR communication to match hold requirement.
+    bit_offset: 28
+    bit_size: 1
+  - name: SSHIFT
+    description: Sample shift By default, the OCTOSPI samples data 1/2 of a CLK cycle after the data is driven by the external device. This bit allows the data to be sampled later in order to consider the external signal delays. The firmware must assure that SSHIFT=0 when the data phase is configured in DTR mode (when DDTR = 1).
+    bit_offset: 30
+    bit_size: 1
+    enum: SampleShift
+fieldset/WTCR:
+  description: write timing configuration register
+  fields:
+  - name: DCYC
+    description: Number of dummy cycles. This field defines the duration of the dummy phase. In both SDR and DTR modes, it specifies a number of CLK cycles (0-31). It is recommended to have at least 5 dummy cycles when using memories with DQS activated.
+    bit_offset: 0
+    bit_size: 5
+enum/CycleDelay:
+  bit_size: 1
+  variants:
+  - name: None
+    description: No delay hold
+    value: 0
+  - name: QuarterCycle
+    description: 1/4 cycle hold
+    value: 1
+enum/FlashSelect:
+  bit_size: 1
+  variants:
+  - name: FlashOne
+    description: FLASH 1 selected (data exchanged over IO[3:0])
+    value: 0
+  - name: FlashTwo
+    description: FLASH 2 selected (data exchanged over IO[7:4])
+    value: 1
+enum/FunctionalMode:
+  bit_size: 2
+  variants:
+  - name: IndirectWrite
+    description: Indirect-write mode
+    value: 0
+  - name: IndirectRead
+    description: Indirect-read mode
+    value: 1
+  - name: AutoStatusPolling
+    description: Automatic status-polling mode
+    value: 2
+  - name: MemoryMapped
+    description: Memory-mapped mode
+    value: 3
+enum/Latency:
+  bit_size: 1
+  variants:
+  - name: Variable
+    description: Variable initial latency
+    value: 0
+  - name: Fixed
+    description: Fixed latency
+    value: 1
+enum/MatchMode:
+  bit_size: 1
+  variants:
+  - name: MatchAnd
+    description: AND-match mode, SMF is set if all the unmasked bits received from the device match the corresponding bits in the match register.
+    value: 0
+  - name: MatchOr
+    description: OR-match mode, SMF is set if any of the unmasked bits received from the device matches its corresponding bit in the match register.
+    value: 1
+enum/MemType:
+  bit_size: 3
+  variants:
+  - name: Micron
+    description: Micron mode, D0/D1 ordering in DTR 8-data-bit mode. Regular-command protocol in Single-, Dual-, Quad- and Octal-SPI modes.
+    value: 0
+  - name: Macronix
+    description: Macronix mode, D1/D0 ordering in DTR 8-data-bit mode. Regular-command protocol in Single-, Dual-, Quad- and Octal-SPI modes.
+    value: 1
+  - name: B_Standard
+    description: Standard mode
+    value: 2
+  - name: MacronixRam
+    description: Macronix RAM mode, D1/D0 ordering in DTR 8-data-bit mode. Regular-command protocol in Single-, Dual-, Quad- and Octal-SPI modes with dedicated address mapping.
+    value: 3
+  - name: HyperBusMemory
+    description: HyperBus memory mode, the protocol follows the HyperBus specification. 8-data-bit DTR mode must be selected.
+    value: 4
+  - name: HyperBusRegister
+    description: HyperBus register mode, addressing register space. The memory-mapped accesses in. this mode must be non-cacheable, or Indirect read/write modes must be used.
+    value: 5
+enum/NcsCycleHold:
+  bit_size: 6
+  variants:
+  - name: OneCycle
+    description: NCS stays high for at least 1 cycle between external device commands.
+    value: 0
+  - name: TwoCycles
+    description: NCS stays high for at least 2 cycles between external device commands.
+    value: 1
+  - name: SixtyFourCycles
+    description: NCS stays high for at least 64 cycles between external device commands.
+    value: 63
+enum/PhaseMode:
+  bit_size: 3
+  variants:
+  - name: None
+    description: No alternate bytes
+    value: 0
+  - name: OneLine
+    description: Alternate bytes on a single line
+    value: 1
+  - name: TwoLines
+    description: Alternate bytes on two lines
+    value: 2
+  - name: FourLines
+    description: Alternate bytes on four lines
+    value: 3
+  - name: EightLines
+    description: Alternate bytes on eight lines
+    value: 4
+enum/SampleShift:
+  bit_size: 1
+  variants:
+  - name: None
+    description: No shift
+    value: 0
+  - name: HalfCycle
+    description: 1/2 cycle shift
+    value: 1
+enum/SizeInBits:
+  bit_size: 2
+  variants:
+  - name: 8Bit
+    description: 8-bit alternate bytes
+    value: 0
+  - name: 16Bit
+    description: 16-bit alternate bytes
+    value: 1
+  - name: 24Bit
+    description: 24-bit alternate bytes
+    value: 2
+  - name: 32Bit
+    description: 32-bit alternate bytes
+    value: 3
+enum/Threshold:
+  bit_size: 5
+  variants:
+  - name: NeedOneByte
+    description: FTF is set if there are one or more free bytes available to be written to in the FIFO in Indirect-write mode, or if there are one or more valid bytes can be read from the FIFO in Indirect-read mode.
+    value: 0
+  - name: NeedTwoBytes
+    description: FTF is set if there are two or more free bytes available to be written to in the FIFO in Indirect‑write mode, or if there are two or more valid bytes can be read from the FIFO in Indirect-read mode.
+    value: 1
+  - name: NeedThirtyTwoBytes
+    description: FTF is set if there are 32 free bytes available to be written to in the FIFO in Indirect-write mode, or if there are 32 valid bytes can be read from the FIFO in Indirect-read mode.
+    value: 31

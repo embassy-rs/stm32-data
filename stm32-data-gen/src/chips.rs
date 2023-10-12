@@ -468,6 +468,27 @@ impl PeriMatcher {
             ("STM32L5.*:TAMP:.*", ("tamp", "l5", "TAMP")),
             ("STM32U5.*:TAMP:.*", ("tamp", "u5", "TAMP")),
             ("STM32WL.*:TAMP:.*", ("tamp", "wl", "TAMP")),
+            (".*:OCTOSPIM:OCTOSPIM:.*", ("octospim", "v1", "OCTOSPIM")),
+            (
+                "STM32L4.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0.*",
+                ("octospi", "v1", "OCTOSPI"),
+            ),
+            (
+                "STM32H7.*:OCTOSPI[12]:OCTOSPI:octospi_v2_1H7AB.*",
+                ("octospi", "v1", "OCTOSPI"),
+            ),
+            (
+                "STM32U5.*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*",
+                ("octospi", "v1", "OCTOSPI"),
+            ),
+            (
+                "STM32L5.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*",
+                ("octospi", "v2", "OCTOSPI"),
+            ),
+            (
+                "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
+                ("octospi", "v2", "OCTOSPI"),
+            ),
         ];
 
         Self {
