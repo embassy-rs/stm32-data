@@ -119,6 +119,7 @@ SVDs have some widespread annoyances that should be fixed when adding register Y
   - Check out the `DeleteEnums` chiptool transforms.
 - Convert repeated registers or fields (like `FOO0 FOO1, FOO2, FOO3`) to arrays `FOO[n]`.
   - Check out the `MakeRegisterArray`, `MakeFieldArray` chiptool transforms.
+- Use `chiptool fmt` on each of the register yamls.
 
 ## Adding support for a new family (RCC)
 

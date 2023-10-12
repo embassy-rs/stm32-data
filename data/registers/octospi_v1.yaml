@@ -17,6 +17,10 @@ block/OCTOSPI:
     description: device configuration register 3
     byte_offset: 16
     fieldset: DCR3
+  - name: DCR4
+    description: device configuration register 4
+    byte_offset: 20
+    fieldset: DCR4
   - name: SR
     description: status register
     byte_offset: 32
@@ -71,6 +75,22 @@ block/OCTOSPI:
     description: low-power timeout register
     byte_offset: 304
     fieldset: LPTR
+  - name: WPCCR
+    description: wrap communication configuration register
+    byte_offset: 320
+    fieldset: WPCCR
+  - name: WPTCR
+    description: wrap timing configuration register
+    byte_offset: 328
+    fieldset: WPTCR
+  - name: WPIR
+    description: wrap instruction register
+    byte_offset: 336
+    fieldset: WPIR
+  - name: WPABR
+    description: wrap alternate bytes register
+    byte_offset: 352
+    fieldset: WPABR
   - name: WCCR
     description: write communication configuration register
     byte_offset: 384
@@ -243,11 +263,14 @@ fieldset/DCR1:
     description: Free running clock. This bit configures the free running clock.
     bit_offset: 1
     bit_size: 1
+  - name: DLYBYP
+    description: Delay block bypass
+    bit_offset: 3
+    bit_size: 1
   - name: CSHT
     description: Chip-select high time CSHT + 1 defines the minimum number of CLK cycles where the chip-select (NCS) must remain high between commands issued to the external device. ...
     bit_offset: 8
-    bit_size: 3
-    enum: CycleShift
+    bit_size: 6
   - name: DEVSIZE
     description: 'Device size. This field defines the size of the external device using the following formula: Number of bytes in device = 2[DEVSIZE+1]. DEVSIZE+1 is effectively the number of address bits required to address the external device. The device capacity can be up to 4 Gbytes (addressed using 32-bits) in Indirect mode, but the addressable space in Memory-mapped mode is limited to 256 Mbytes. In Regular-command protocol, if DMM = 1, DEVSIZE[4:0] indicates the total capacity of the two devices together.'
     bit_offset: 16
@@ -271,14 +294,17 @@ fieldset/DCR2:
 fieldset/DCR3:
   description: device configuration register 3
   fields:
-  - name: MAXTRAN
-    description: Maximum transfer
-    bit_offset: 0
-    bit_size: 8
   - name: CSBOUND
     description: 'NCS boundary. This field enables the transaction boundary feature. When active, a minimum value of 3 is recommended. The NCS is released on each boundary of 2CSBOUND bytes. others: NCS boundary set to 2CSBOUND bytes'
     bit_offset: 16
     bit_size: 5
+fieldset/DCR4:
+  description: device configuration register 4
+  fields:
+  - name: REFRESH
+    description: 'Refresh rate. This field enables the refresh rate feature. The NCS is released every REFRESH + 1 clock cycles for writes, and REFRESH + 4 clock cycles for reads. Note: These two values can be extended with few clock cycles when refresh occurs during a byte transmission in Single-, Dual- or Quad-SPI mode, because the byte transmission must be completed. others: Maximum communication length is set to REFRESH + 1 clock cycles.'
+    bit_offset: 0
+    bit_size: 32
 fieldset/DLR:
   description: data length register
   fields:
@@ -478,10 +504,6 @@ fieldset/WCCR:
     description: DQS enable. This bit enables the data strobe management.
     bit_offset: 29
     bit_size: 1
-  - name: SIOO
-    description: Send instruction only once mode
-    bit_offset: 31
-    bit_size: 1
 fieldset/WIR:
   description: write instruction register
   fields:
@@ -489,6 +511,94 @@ fieldset/WIR:
     description: Instruction Instruction to be sent to the external SPI device
     bit_offset: 0
     bit_size: 32
+fieldset/WPABR:
+  description: wrap alternate bytes register
+  fields:
+  - name: ALTERNATE
+    description: '[31: 0]: Alternate bytes Optional data to be sent to the external SPI device right after the address'
+    bit_offset: 0
+    bit_size: 32
+fieldset/WPCCR:
+  description: OCTOSPI wrap communication configuration register
+  fields:
+  - name: IMODE
+    description: 'Instruction mode. This field defines the instruction phase mode of operation. 101-111: Reserved'
+    bit_offset: 0
+    bit_size: 3
+    enum: PhaseMode
+  - name: IDTR
+    description: Instruction double transfer rate. This bit sets the DTR mode for the instruction phase.
+    bit_offset: 3
+    bit_size: 1
+  - name: ISIZE
+    description: Instruction size. This field defines instruction size.
+    bit_offset: 4
+    bit_size: 2
+    enum: SizeInBits
+  - name: ADMODE
+    description: 'Address mode. This field defines the address phase mode of operation. 101-111: Reserved'
+    bit_offset: 8
+    bit_size: 3
+    enum: PhaseMode
+  - name: ADDTR
+    description: Address double transfer rate. This bit sets the DTR mode for the address phase.
+    bit_offset: 11
+    bit_size: 1
+  - name: ADSIZE
+    description: Address size. This field defines address size.
+    bit_offset: 12
+    bit_size: 2
+    enum: SizeInBits
+  - name: ABMODE
+    description: 'Alternate-byte mode. This field defines the alternate byte phase mode of operation. 101-111: Reserved'
+    bit_offset: 16
+    bit_size: 3
+    enum: PhaseMode
+  - name: ABDTR
+    description: Alternate bytes double transfer rate. This bit sets the DTR mode for the alternate bytes phase.
+    bit_offset: 19
+    bit_size: 1
+  - name: ABSIZE
+    description: Alternate bytes size. This bit defines alternate bytes size.
+    bit_offset: 20
+    bit_size: 2
+    enum: SizeInBits
+  - name: DMODE
+    description: 'Data mode. This field defines the data phase mode of operation. 101-111: Reserved'
+    bit_offset: 24
+    bit_size: 3
+    enum: PhaseMode
+  - name: DDTR
+    description: Data double transfer rate. This bit sets the DTR mode for the data phase.
+    bit_offset: 27
+    bit_size: 1
+  - name: DQSE
+    description: DQS enable. This bit enables the data strobe management.
+    bit_offset: 29
+    bit_size: 1
+fieldset/WPIR:
+  description: wrap instruction register
+  fields:
+  - name: INSTRUCTION
+    description: '[31: 0]: Instruction Instruction to be sent to the external SPI device'
+    bit_offset: 0
+    bit_size: 32
+fieldset/WPTCR:
+  description: wrap timing configuration register
+  fields:
+  - name: DCYC
+    description: Number of dummy cycles. This field defines the duration of the dummy phase. In both SDR and DTR modes, it specifies a number of CLK cycles (0-31). It is recommended to have at least 5 dummy cycles when using memories with DQS activated.
+    bit_offset: 0
+    bit_size: 5
+  - name: DHQC
+    description: Delay hold quarter cycle Add a quarter cycle delay on the outputs in DTR communication to match hold requirement.
+    bit_offset: 28
+    bit_size: 1
+  - name: SSHIFT
+    description: Sample shift By default, the OCTOSPI samples data 1/2 of a CLK cycle after the data is driven by the external device. This bit allows the data to be sampled later in order to consider the external signal delays. The firmware must assure that SSHIFT=0 when the data phase is configured in DTR mode (when DDTR = 1).
+    bit_offset: 30
+    bit_size: 1
+    enum: SampleShift
 fieldset/WTCR:
   description: write timing configuration register
   fields:
