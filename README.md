@@ -98,7 +98,13 @@ are only interested in one. It's easier than it looks, and doing all families at
 - Minimize the diff between each pair of versions. For example between `lpuart_v1.yaml` and `lpuart_v2.yaml`. If one is missing enums or descriptions, copy it from another.
 - Make sure the block
 - Add entries to [`perimap`](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/chips.rs#L109), see below.
-- Regen, check `data/chips/*.yaml` has the right `block: lpuart_vX/LPUART` fields
+- Regen, then: 
+  - Check `data/chips/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
+  - Ensure a successful build of the affected pac. e.g.
+    ```
+    cd build/stm32-metapac
+    cargo build --features stm32u5a9nj,memory-x --target thumbv8m.main-none-eabihf 
+    ``` 
 
 Please separate manual changes and changes resulting from regen in separate commits. It helps tremendously with review and rebasing/merging.
 
