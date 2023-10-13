@@ -1,4 +1,7 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
+
+use anyhow::{anyhow, Ok};
+use chiptool::ir::{BlockItemInner, Enum};
 
 use crate::regex;
 use crate::registers::Registers;
@@ -14,6 +17,59 @@ impl PeripheralToClock {
 
         for (rcc_name, ir) in &registers.registers {
             if let Some(rcc_name) = rcc_name.strip_prefix("rcc_") {
+                let checked_rccs = HashSet::from(["h5"]);
+                let prohibited_variants = HashSet::from(["RCC_PCLK3", "RCC_PCLK2", "RCC_PCLK1"]);
+
+                let rcc_enum_map: HashMap<&String, HashMap<&String, &Enum>> = {
+                    let rcc_blocks = &ir.blocks.get("RCC").unwrap().items;
+
+                    rcc_blocks
+                        .iter()
+                        .filter_map(|b| match &b.inner {
+                            BlockItemInner::Register(register) => register.fieldset.as_ref().map(|f| {
+                                let f = ir.fieldsets.get(f).unwrap();
+                                (
+                                    &b.name,
+                                    f.fields
+                                        .iter()
+                                        .filter_map(|f| {
+                                            let enumm = f.enumm.as_ref()?;
+                                            let enumm = ir.enums.get(enumm)?;
+
+                                            Some((&f.name, enumm))
+                                        })
+                                        .collect(),
+                                )
+                            }),
+                            _ => None,
+                        })
+                        .collect()
+                };
+
+                let check_mux = |register: &String, field: &String| -> Result<(), anyhow::Error> {
+                    if !checked_rccs.contains(&rcc_name) {
+                        return Ok(());
+                    }
+
+                    let block_map = match rcc_enum_map.get(register) {
+                        Some(block_map) => block_map,
+                        _ => return Ok(()),
+                    };
+
+                    let enumm = match block_map.get(field) {
+                        Some(enumm) => enumm,
+                        _ => return Ok(()),
+                    };
+
+                    for v in &enumm.variants {
+                        if prohibited_variants.contains(v.name.as_str()) {
+                            return Err(anyhow!("rcc: prohibited variant name",));
+                        }
+                    }
+
+                    Ok(())
+                };
+
                 let mut family_muxes = HashMap::new();
                 for (reg, body) in &ir.fieldsets {
                     let key = format!("fieldset/{reg}");
@@ -23,6 +79,8 @@ impl PeripheralToClock {
                                 if family_muxes.get(peri).is_some() && reg != "CCIPR" {
                                     continue;
                                 }
+
+                                check_mux(reg, &field.name)?;
 
                                 family_muxes.insert(
                                     peri.to_string(),
