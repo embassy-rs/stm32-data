@@ -16,7 +16,7 @@ pub mod ir {
                 .blocks
                 .iter()
                 .map(|(name, block)| {
-                    let mut items: Vec<_> = block
+                    let items = block
                         .items
                         .iter()
                         .map(|item| BlockItem {
@@ -53,8 +53,6 @@ pub mod ir {
                             },
                         })
                         .collect();
-
-                    items.sort_by_key(|i| i.name.clone());
 
                     Block {
                         name: name.to_string(),
