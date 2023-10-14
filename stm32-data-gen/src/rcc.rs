@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, Ok};
 use chiptool::ir::{BlockItemInner, Enum};
+use stm32_data_serde::chip::core::peripheral::rcc::Mux;
 
 use crate::regex;
 use crate::registers::Registers;
@@ -17,16 +18,21 @@ impl PeripheralToClock {
 
         for (rcc_name, ir) in &registers.registers {
             if let Some(rcc_name) = rcc_name.strip_prefix("rcc_") {
-                let checked_rccs = HashSet::from(["h5", "h50", "h7"]);
+                let checked_rccs = HashSet::from(["h5", "h50", "h7", "h7ab", "h7rm0433", "g4"]);
                 let prohibited_variants = HashSet::from([
                     "RCC_PCLK1",
                     "RCC_PCLK2",
                     "RCC_PCLK3",
                     "RCC_PCLK4",
                     "HSI_KER",
+                    "HSI48_KER",
                     "CSI_KER",
                     "LSI_KER",
                     "PER_CLK",
+                    "RCC_HCLK1",
+                    "RCC_HCLK2",
+                    "RCC_HCLK3",
+                    "RCC_HCLK4",
                 ]);
 
                 let rcc_enum_map: HashMap<&String, HashMap<&String, &Enum>> = {
@@ -73,7 +79,7 @@ impl PeripheralToClock {
                     for v in &enumm.variants {
                         if prohibited_variants.contains(v.name.as_str()) {
                             return Err(anyhow!(
-                                "rcc: prohibited variant name {} for {}",
+                                "rcc: prohibited variant name {} for rcc_{}",
                                 v.name.as_str(),
                                 rcc_name
                             ));
@@ -97,7 +103,21 @@ impl PeripheralToClock {
 
                                 family_muxes.insert(
                                     peri.to_string(),
-                                    stm32_data_serde::chip::core::peripheral::rcc::Mux {
+                                    Mux {
+                                        register: reg.to_ascii_lowercase(),
+                                        field: field.name.to_ascii_lowercase(),
+                                    },
+                                );
+                            }
+                        }
+                    } else if let Some(_) = regex!(r"^fieldset/CFGR\d?$").captures(&key) {
+                        for field in &body.fields {
+                            if let Some(peri) = field.name.strip_suffix("SW") {
+                                check_mux(reg, &field.name)?;
+
+                                family_muxes.insert(
+                                    peri.to_string(),
+                                    Mux {
                                         register: reg.to_ascii_lowercase(),
                                         field: field.name.to_ascii_lowercase(),
                                     },
