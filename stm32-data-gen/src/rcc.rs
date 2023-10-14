@@ -33,6 +33,12 @@ impl PeripheralToClock {
                     "RCC_HCLK2",
                     "RCC_HCLK3",
                     "RCC_HCLK4",
+                    "PLL3_1",
+                    "NOCLK",
+                    "PLLP",
+                    "PLLQ",
+                    "PLLR",
+                    "SYSCLK",
                 ]);
 
                 let rcc_enum_map: HashMap<&String, HashMap<&String, &Enum>> = {
@@ -113,6 +119,24 @@ impl PeripheralToClock {
                     } else if let Some(_) = regex!(r"^fieldset/CFGR\d?$").captures(&key) {
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("SW") {
+                                check_mux(reg, &field.name)?;
+
+                                family_muxes.insert(
+                                    peri.to_string(),
+                                    Mux {
+                                        register: reg.to_ascii_lowercase(),
+                                        field: field.name.to_ascii_lowercase(),
+                                    },
+                                );
+                            }
+                        }
+                    } else if let Some(_) = regex!(r"^fieldset/D\d?CCIPR$").captures(&key) {
+                        for field in &body.fields {
+                            if let Some(peri) = field.name.strip_suffix("SEL") {
+                                if family_muxes.get(peri).is_some() && reg != "D1CCIPR" {
+                                    continue;
+                                }
+
                                 check_mux(reg, &field.name)?;
 
                                 family_muxes.insert(
