@@ -12,11 +12,11 @@ pub mod ir {
 
     impl IR {
         pub fn from_chiptool(ir: chiptool::ir::IR) -> Self {
-            let blocks: Vec<Block> = ir
+            let mut blocks: Vec<Block> = ir
                 .blocks
                 .iter()
                 .map(|(name, block)| {
-                    let items = block
+                    let mut items: Vec<_> = block
                         .items
                         .iter()
                         .map(|item| BlockItem {
@@ -54,6 +54,8 @@ pub mod ir {
                         })
                         .collect();
 
+                    items.sort_by_key(|i| i.name.clone());
+
                     Block {
                         name: name.to_string(),
                         items: items,
@@ -62,7 +64,10 @@ pub mod ir {
                     }
                 })
                 .collect();
-            let fieldsets: Vec<FieldSet> = ir
+
+            blocks.sort_by_key(|b| b.name.clone());
+
+            let mut fieldsets: Vec<FieldSet> = ir
                 .fieldsets
                 .iter()
                 .map(|(name, fieldset)| {
@@ -99,7 +104,10 @@ pub mod ir {
                     }
                 })
                 .collect();
-            let enums: Vec<Enum> = ir
+
+            fieldsets.sort_by_key(|f| f.name.clone());
+
+            let mut enums: Vec<Enum> = ir
                 .enums
                 .iter()
                 .map(|(name, enumm)| {
@@ -121,6 +129,8 @@ pub mod ir {
                     }
                 })
                 .collect();
+
+            enums.sort_by_key(|e| e.name.clone());
 
             Self {
                 blocks,
