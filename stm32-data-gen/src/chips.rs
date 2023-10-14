@@ -489,6 +489,8 @@ impl PeriMatcher {
                 "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
                 ("octospi", "v2", "OCTOSPI"),
             ),
+            ("STM32L4.*:GFXMMU:.*", ("gfxmmu", "v1", "GFXMMU")),
+            ("STM32U5.*:GFXMMU:.*", ("gfxmmu", "v2", "GFXMMU")),
         ];
 
         Self {
