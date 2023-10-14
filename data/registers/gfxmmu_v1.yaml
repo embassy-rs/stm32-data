@@ -1,0 +1,141 @@
+block/GFXMMU:
+  description: GFXMMU.
+  items:
+  - name: CR
+    description: GFXMMU configuration register.
+    byte_offset: 0
+    fieldset: CR
+  - name: SR
+    description: GFXMMU status register.
+    byte_offset: 4
+    access: Read
+    fieldset: SR
+  - name: FCR
+    description: GFXMMU flag clear register.
+    byte_offset: 8
+    access: Write
+    fieldset: FCR
+  - name: DVR
+    description: GFXMMU default value register.
+    byte_offset: 16
+    fieldset: DVR
+  - name: BCR
+    description: GFXMMU buffer 0 configuration register.
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 32
+    fieldset: BCR
+  - name: LUTL
+    description: GFXMMU LUT entry 0 low.
+    array:
+      len: 1024
+      stride: 8
+    byte_offset: 4096
+    fieldset: LUTL
+  - name: LUTH
+    description: GFXMMU LUT entry 0 high.
+    array:
+      len: 1024
+      stride: 8
+    byte_offset: 4100
+    fieldset: LUTH
+fieldset/BCR:
+  description: GFXMMU buffer configuration register.
+  fields:
+  - name: PBO
+    description: Physical buffer offset. Offset of the physical buffer.
+    bit_offset: 4
+    bit_size: 19
+  - name: PBBA
+    description: Physical buffer base address. Base address MSB of the physical buffer.
+    bit_offset: 23
+    bit_size: 9
+fieldset/CR:
+  description: GFXMMU configuration register.
+  fields:
+  - name: BOIE
+    description: Buffer overflow interrupt enable. This bit enables the buffer 0 overflow interrupt.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: AMEIE
+    description: AHB master error interrupt enable. This bit enables the AHB master error interrupt.
+    bit_offset: 4
+    bit_size: 1
+  - name: BM
+    description: 192 Block mode. This bit defines the number of blocks per line.
+    bit_offset: 6
+    bit_size: 1
+    array:
+      len: 1
+      stride: 0
+    enum: BM192
+fieldset/DVR:
+  description: GFXMMU default value register.
+  fields:
+  - name: DV
+    description: Default value. This field indicates the default 32-bit value which is returned when a master accesses a virtual memory location not physically mapped.
+    bit_offset: 0
+    bit_size: 32
+fieldset/FCR:
+  description: GFXMMU flag clear register.
+  fields:
+  - name: CBOF
+    description: Clear buffer overflow flag. Writing 1 clears the buffer 0 overflow flag in the GFXMMU_SR register.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: CAMEF
+    description: Clear AHB master error flag. Writing 1 clears the AHB master error flag in the GFXMMU_SR register.
+    bit_offset: 4
+    bit_size: 1
+fieldset/LUTH:
+  description: GFXMMU LUT entry high.
+  fields:
+  - name: LO
+    description: Line offset. Line offset of line number x (i.e. offset of block 0 of line x).
+    bit_offset: 4
+    bit_size: 18
+fieldset/LUTL:
+  description: GFXMMU LUT entry low.
+  fields:
+  - name: EN
+    description: Line enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: FVB
+    description: First Valid Block. Number of the first valid block of line number x.
+    bit_offset: 8
+    bit_size: 8
+  - name: LVB
+    description: Last Valid Block. Number of the last valid block of line number X.
+    bit_offset: 16
+    bit_size: 8
+fieldset/SR:
+  description: GFXMMU status register.
+  fields:
+  - name: BOF
+    description: Buffer overflow flag. This bit is set when an overflow occurs during the offset calculation of the buffer 0. It is cleared by writing 1 to CB0OF.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: AMEF
+    description: AHB master error flag. This bit is set when an AHB error happens during a transaction. It is cleared by writing 1 to CAMEF.
+    bit_offset: 4
+    bit_size: 1
+enum/BM192:
+  bit_size: 1
+  variants:
+  - name: 256BlocksPerLine
+    description: 256 blocks per line.
+    value: 0
+  - name: 192BlocksPerLine
+    description: 192 blocks per line.
+    value: 1

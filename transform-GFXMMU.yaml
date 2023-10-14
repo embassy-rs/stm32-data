@@ -1,0 +1,26 @@
+transforms:
+  - !RenameRegisters
+    block: .*
+    from: GFXMMU_(.+)
+    to: $1
+  - !RenameFields
+    fieldset: .*
+    from: GFXMMU_(.+)
+    to: $1
+  - !Rename
+    from: GFXMMU_(.+)
+    to: $1
+  - !DeleteEnums
+    from: .*(IE|_EN|FI|FF|PD|OC|OB|FC|CL|CE)$
+    bit_size: 1
+  - !MakeFieldArray
+    fieldsets: .*
+    from: ([A-Z]+)\d+([A-Z]*)
+    to: $1$2
+  - !MergeFieldsets
+    from: ([A-Z]+)\d+([A-Z]*)
+    to: $1$2
+  - !MakeRegisterArray
+    blocks: .*
+    from: ([A-Z]+)\d+([A-Z]*)
+    to: $1$2
