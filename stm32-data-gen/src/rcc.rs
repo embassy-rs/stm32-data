@@ -26,6 +26,7 @@ impl PeripheralToClock {
                     "HSI_KER",
                     "CSI_KER",
                     "LSI_KER",
+                    "PER_CLK",
                 ]);
 
                 let rcc_enum_map: HashMap<&String, HashMap<&String, &Enum>> = {
