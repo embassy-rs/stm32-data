@@ -18,8 +18,17 @@ impl PeripheralToClock {
 
         for (rcc_name, ir) in &registers.registers {
             if let Some(rcc_name) = rcc_name.strip_prefix("rcc_") {
-                let checked_rccs = HashSet::from(["h5", "h50", "h7", "h7ab", "h7rm0433", "g4"]);
+                let checked_rccs = HashSet::from([
+                    "c0", "f0", "f1", "f100", "f1c1", "f3", "f3_v2", "f4", "f410", "f7", "g0", "g4", "h5", "h50", "h7",
+                    "h7ab", "h7rm0433",
+                ]);
                 let prohibited_variants = HashSet::from([
+                    "APB",
+                    "AHB",
+                    "PCLK",
+                    "PCLK2",
+                    "PCLK3",
+                    "PCLK4",
                     "RCC_PCLK1",
                     "RCC_PCLK2",
                     "RCC_PCLK3",
@@ -29,16 +38,23 @@ impl PeripheralToClock {
                     "CSI_KER",
                     "LSI_KER",
                     "PER_CLK",
+                    "HCLK",
+                    "HCLK2",
+                    "HCLK3",
+                    "HCLK4",
                     "RCC_HCLK1",
                     "RCC_HCLK2",
                     "RCC_HCLK3",
                     "RCC_HCLK4",
                     "PLL3_1",
                     "NOCLK",
+                    "NoMCO",
+                    "NoClock",
                     "PLLP",
                     "PLLQ",
                     "PLLR",
                     "SYSCLK",
+                    "HSI16",
                 ]);
 
                 let rcc_enum_map: HashMap<&String, HashMap<&String, &Enum>> = {
