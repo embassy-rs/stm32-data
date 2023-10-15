@@ -15,48 +15,80 @@ pub struct PeripheralToClock(
 impl PeripheralToClock {
     pub fn parse(registers: &Registers) -> anyhow::Result<Self> {
         let mut peripheral_to_clock = HashMap::new();
+        let checked_rccs = HashSet::from([
+            "c0", "f0", "f1", "f100", "f1c1", "f3", "f3_v2", "f7", "g0", "g4", "h5", "h50", "h7", "h7ab", "h7rm0433",
+        ]);
+        let allowed_variants = HashSet::from([
+            "DISABLE",
+            "SYS",
+            "PCLK1",
+            "PCLK1_TIM",
+            "PCLK2",
+            "PCLK2_TIM",
+            "PCLK3",
+            "PCLK4",
+            "PCLK5",
+            "PCLK6",
+            "PCLK7",
+            "HCLK1",
+            "HCLK2",
+            "HCLK3",
+            "HCLK4",
+            "HCLK5",
+            "HCLK6",
+            "HCLK7",
+            "PLLI2S1_P",
+            "PLLI2S1_Q",
+            "PLLI2S1_R",
+            "PLLI2S2_P",
+            "PLLI2S2_Q",
+            "PLLI2S2_R",
+            "PLLSAI1_P",
+            "PLLSAI1_Q",
+            "PLLSAI1_R",
+            "PLLSAI2_P",
+            "PLLSAI2_Q",
+            "PLLSAI2_R",
+            "PLL1_P",
+            "PLL1_Q",
+            "PLL1_R",
+            "PLL2_P",
+            "PLL2_Q",
+            "PLL2_R",
+            "PLL3_P",
+            "PLL3_Q",
+            "PLL3_R",
+            "HSI",
+            "HSI48",
+            "LSI",
+            "CSI",
+            "HSE",
+            "LSE",
+            "AUDIOCLK",
+            "PER",
+            // TODO: variants to cleanup
+            "B_0x0",
+            "B_0x1",
+            "PLL",
+            "PLLCLK",
+            "TIMPCLK",
+            "HSI_Div244",
+            "CSI_DIV_122",
+            "HSI16_Div488",
+            "HSI16_Div8",
+            "HCLK_DIV_8",
+            "HCLK1_DIV_8",
+            "RCC_PCLK_D3",
+            "I2S_CKIN",
+            "DAC_HOLD",
+            "DAC_HOLD_2",
+            "TIMPCLK",
+            "RTCCLK",
+            "RTC_WKUP",
+        ]);
 
         for (rcc_name, ir) in &registers.registers {
             if let Some(rcc_name) = rcc_name.strip_prefix("rcc_") {
-                let checked_rccs = HashSet::from([
-                    "c0", "f0", "f1", "f100", "f1c1", "f3", "f3_v2", "f4", "f410", "f7", "g0", "g4", "h5", "h50", "h7",
-                    "h7ab", "h7rm0433",
-                ]);
-                let prohibited_variants = HashSet::from([
-                    "APB",
-                    "AHB",
-                    "PCLK",
-                    "PCLK2",
-                    "PCLK3",
-                    "PCLK4",
-                    "RCC_PCLK1",
-                    "RCC_PCLK2",
-                    "RCC_PCLK3",
-                    "RCC_PCLK4",
-                    "HSI_KER",
-                    "HSI48_KER",
-                    "CSI_KER",
-                    "LSI_KER",
-                    "PER_CLK",
-                    "HCLK",
-                    "HCLK2",
-                    "HCLK3",
-                    "HCLK4",
-                    "RCC_HCLK1",
-                    "RCC_HCLK2",
-                    "RCC_HCLK3",
-                    "RCC_HCLK4",
-                    "PLL3_1",
-                    "NOCLK",
-                    "NoMCO",
-                    "NoClock",
-                    "PLLP",
-                    "PLLQ",
-                    "PLLR",
-                    "SYSCLK",
-                    "HSI16",
-                ]);
-
                 let rcc_enum_map: HashMap<&String, HashMap<&String, &Enum>> = {
                     let rcc_blocks = &ir.blocks.get("RCC").unwrap().items;
 
@@ -99,7 +131,7 @@ impl PeripheralToClock {
                     };
 
                     for v in &enumm.variants {
-                        if prohibited_variants.contains(v.name.as_str()) {
+                        if !allowed_variants.contains(v.name.as_str()) {
                             return Err(anyhow!(
                                 "rcc: prohibited variant name {} for rcc_{}",
                                 v.name.as_str(),
