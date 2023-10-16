@@ -16,7 +16,8 @@ impl PeripheralToClock {
     pub fn parse(registers: &Registers) -> anyhow::Result<Self> {
         let mut peripheral_to_clock = HashMap::new();
         let checked_rccs = HashSet::from([
-            "c0", "f0", "f1", "f100", "f1c1", "f3", "f3_v2", "f7", "g0", "g4", "h5", "h50", "h7", "h7ab", "h7rm0433",
+            "c0", "f0", "f1", "f100", "f1c1", "f2", "f3", "f3_v2", "f4", "f410", "f7", "g0", "g4", "h5", "h50", "h7",
+            "h7ab", "h7rm0433", "l0", "l0_v2", "l1", "l4",
         ]);
         let allowed_variants = HashSet::from([
             "DISABLE",
@@ -62,22 +63,18 @@ impl PeripheralToClock {
             "HSI48",
             "LSI",
             "CSI",
+            "MSI",
             "HSE",
             "LSE",
             "AUDIOCLK",
             "PER",
             // TODO: variants to cleanup
+            "SAI1_EXTCLK",
+            "SAI2_EXTCLK",
             "B_0x0",
             "B_0x1",
             "PLL",
             "PLLCLK",
-            "TIMPCLK",
-            "HSI_Div244",
-            "CSI_DIV_122",
-            "HSI16_Div488",
-            "HSI16_Div8",
-            "HCLK_DIV_8",
-            "HCLK1_DIV_8",
             "RCC_PCLK_D3",
             "I2S_CKIN",
             "DAC_HOLD",
@@ -85,6 +82,8 @@ impl PeripheralToClock {
             "TIMPCLK",
             "RTCCLK",
             "RTC_WKUP",
+            "DSIPHY",
+            "PLLDSICLK",
         ]);
 
         for (rcc_name, ir) in &registers.registers {
@@ -131,7 +130,17 @@ impl PeripheralToClock {
                     };
 
                     for v in &enumm.variants {
-                        if !allowed_variants.contains(v.name.as_str()) {
+                        if let Some(captures) = regex!(r"^([A-Z0-9]+)_DIV_\d+?$").captures(v.name.as_str()) {
+                            let name = captures.get(1).unwrap();
+
+                            if !allowed_variants.contains(name.as_str()) {
+                                return Err(anyhow!(
+                                    "rcc: prohibited variant name {} for rcc_{}",
+                                    v.name.as_str(),
+                                    rcc_name
+                                ));
+                            }
+                        } else if !allowed_variants.contains(v.name.as_str()) {
                             return Err(anyhow!(
                                 "rcc: prohibited variant name {} for rcc_{}",
                                 v.name.as_str(),
@@ -237,7 +246,10 @@ impl PeripheralToClock {
                                 let mux = family_muxes.get(peri).map(|peri| peri.clone());
 
                                 let res = stm32_data_serde::chip::core::peripheral::Rcc {
-                                    clock: peri_clock,
+                                    clock: peri_clock
+                                        .to_ascii_lowercase()
+                                        .replace("ahb", "hclk")
+                                        .replace("apb", "pclk"),
                                     enable: stm32_data_serde::chip::core::peripheral::rcc::Enable {
                                         register: reg.to_ascii_lowercase(),
                                         field: field.name.to_ascii_lowercase(),
