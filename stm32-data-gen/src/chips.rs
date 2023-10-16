@@ -303,6 +303,7 @@ impl PeriMatcher {
             ("STM32L0.[23].*:RCC:.*", ("rcc", "l0_v2", "RCC")),
             ("STM32L0.*:RCC:.*", ("rcc", "l0", "RCC")),
             ("STM32L1.*:RCC:.*", ("rcc", "l1", "RCC")),
+            ("STM32L4[PQRS].*:RCC:.*", ("rcc", "l4plus", "RCC")),
             ("STM32L4.*:RCC:.*", ("rcc", "l4", "RCC")),
             ("STM32L5.*:RCC:.*", ("rcc", "l5", "RCC")),
             ("STM32U5.*:RCC:.*", ("rcc", "u5", "RCC")),
