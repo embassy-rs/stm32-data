@@ -20,11 +20,11 @@ block/RCC:
   - name: PLLSAI1CFGR
     description: PLLSAI1 configuration register
     byte_offset: 16
-    fieldset: PLLSAICFGR
+    fieldset: PLLCFGR
   - name: PLLSAI2CFGR
     description: PLLSAI2 configuration register
     byte_offset: 20
-    fieldset: PLLSAICFGR
+    fieldset: PLLCFGR
   - name: CIER
     description: Clock interrupt enable register
     byte_offset: 24
@@ -1378,6 +1378,7 @@ fieldset/CCIPR1:
     description: 48 MHz clock source selection
     bit_offset: 26
     bit_size: 2
+    enum: CLK48SEL
   - name: ADCSEL
     description: ADCs clock source selection
     bit_offset: 28
@@ -1612,6 +1613,7 @@ fieldset/CR:
     description: MSI clock range selection
     bit_offset: 3
     bit_size: 1
+    enum: MSIRGSEL
   - name: MSIRANGE
     description: MSI clock ranges
     bit_offset: 4
@@ -1766,94 +1768,49 @@ fieldset/PLLCFGR:
   description: PLL configuration register
   fields:
   - name: PLLSRC
-    description: Main PLL, PLLSAI1 and PLLSAI2 entry clock source
+    description: PLL clock source
     bit_offset: 0
     bit_size: 2
     enum: PLLSRC
   - name: PLLM
-    description: Division factor for the main PLL and audio PLL (PLLSAI1 and PLLSAI2) input clock
+    description: Division factor for the PLL input clock
     bit_offset: 4
     bit_size: 4
     enum: PLLM
   - name: PLLN
-    description: Main PLL multiplication factor for VCO
+    description: PLL multiplication factor for VCO
     bit_offset: 8
     bit_size: 7
     enum: PLLN
   - name: PLLPEN
-    description: Main PLL PLLSAI3CLK output enable
+    description: PLL PLLSAI3CLK output enable
     bit_offset: 16
     bit_size: 1
   - name: PLLPBIT
-    description: Main PLL division factor for PLLSAI3CLK (SAI1 and SAI2 clock)
+    description: PLL division factor for PLLSAI3CLK (SAI1 and SAI2 clock)
     bit_offset: 17
     bit_size: 1
     enum: PLLPBIT
   - name: PLLQEN
-    description: Main PLL PLLUSB1CLK output enable
+    description: PLL PLLUSB1CLK output enable
     bit_offset: 20
     bit_size: 1
   - name: PLLQ
-    description: Main PLL division factor for PLLUSB1CLK(48 MHz clock)
+    description: PLL division factor for PLLUSB1CLK(48 MHz clock)
     bit_offset: 21
     bit_size: 2
     enum: PLLQ
   - name: PLLREN
-    description: Main PLL PLLCLK output enable
+    description: PLL PLLCLK output enable
     bit_offset: 24
     bit_size: 1
   - name: PLLR
-    description: Main PLL division factor for PLLCLK (system clock)
+    description: PLL division factor for PLLCLK (system clock)
     bit_offset: 25
     bit_size: 2
     enum: PLLR
   - name: PLLP
-    description: Main PLL division factor for PLLSAI2CLK
-    bit_offset: 27
-    bit_size: 5
-    enum: PLLP
-fieldset/PLLSAICFGR:
-  description: PLLSAI configuration register
-  fields:
-  - name: PLLM
-    description: Division factor for PLLSAI input clock
-    bit_offset: 4
-    bit_size: 4
-    enum: PLLM
-  - name: PLLN
-    description: SAI1PLL multiplication factor for VCO
-    bit_offset: 8
-    bit_size: 7
-    enum: PLLN
-  - name: PLLPEN
-    description: SAI1PLL PLLSAICLK output enable
-    bit_offset: 16
-    bit_size: 1
-  - name: PLLPBIT
-    description: SAI1PLL division factor for PLLSAICLK
-    bit_offset: 17
-    bit_size: 1
-    enum: PLLPBIT
-  - name: PLLQEN
-    description: SAI1PLL PLLUSB2CLK output enable
-    bit_offset: 20
-    bit_size: 1
-  - name: PLLQ
-    description: SAI1PLL division factor for PLLUSB2CLK
-    bit_offset: 21
-    bit_size: 2
-    enum: PLLQ
-  - name: PLLREN
-    description: PLLSAI PLLADC1CLK output enable
-    bit_offset: 24
-    bit_size: 1
-  - name: PLLR
-    description: PLLSAI division factor for PLLADC1CLK
-    bit_offset: 25
-    bit_size: 2
-    enum: PLLR
-  - name: PLLP
-    description: PLLSAI division factor for PLLSAICLK
+    description: PLL division factor for PLLSAI2CLK
     bit_offset: 27
     bit_size: 5
     enum: PLLP
@@ -1967,6 +1924,21 @@ fieldset/SECSR:
     description: RMVFSECF
     bit_offset: 12
     bit_size: 1
+enum/CLK48SEL:
+  bit_size: 2
+  variants:
+  - name: HSI48
+    description: HSI48 clock selected
+    value: 0
+  - name: PLLSAI1_Q
+    description: PLLSAI1_Q aka PLL48M1CLK clock selected
+    value: 1
+  - name: PLL_Q
+    description: PLL_Q aka PLL48M2CLK clock selected
+    value: 2
+  - name: MSI
+    description: MSI clock selected
+    value: 3
 enum/HPRE:
   bit_size: 4
   variants:
@@ -2108,6 +2080,15 @@ enum/MSIRANGE:
   - name: Range48M
     description: range 11 around 48 MHz
     value: 11
+enum/MSIRGSEL:
+  bit_size: 1
+  variants:
+  - name: CSR
+    description: MSI Range is provided by MSISRANGE[3:0] in RCC_CSR register
+    value: 0
+  - name: CR
+    description: MSI Range is provided by MSIRANGE[3:0] in the RCC_CR register
+    value: 1
 enum/PLLM:
   bit_size: 4
   variants:
