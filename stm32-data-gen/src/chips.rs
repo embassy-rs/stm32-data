@@ -493,6 +493,11 @@ impl PeriMatcher {
             ),
             ("STM32L4.*:GFXMMU:.*", ("gfxmmu", "v1", "GFXMMU")),
             ("STM32U5.*:GFXMMU:.*", ("gfxmmu", "v2", "GFXMMU")),
+            ("STM32F0x[128].*:TSC:.*", ("tsc", "v1", "TSC")),
+            ("STM32F3[07][123].*:TSC:.*", ("tsc", "v1", "TSC")),
+            ("STM32WB55.*:TSC:.*", ("tsc", "v2", "TSC")),
+            ("STM32L[045].*:TSC:.*", ("tsc", "v3", "TSC")),
+            ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
         ];
 
         Self {
