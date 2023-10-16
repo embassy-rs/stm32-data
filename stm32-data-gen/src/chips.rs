@@ -142,6 +142,7 @@ impl PeriMatcher {
             ("STM32H7.*:RNG:.*", ("rng", "v1", "RNG")),
             ("STM32G0.*:RNG:.*", ("rng", "v1", "RNG")),
             ("STM32G4.*:RNG:.*", ("rng", "v1", "RNG")),
+            ("STM32WB.*:RNG:.*", ("rng", "v1", "RNG")),
             ("STM32F7.*:AES:.*", ("aes", "f7", "AES")),
             ("STM32F4.*:AES:.*", ("aes", "v1", "AES")),
             ("STM32G0.*:AES:.*", ("aes", "v2", "AES")),
