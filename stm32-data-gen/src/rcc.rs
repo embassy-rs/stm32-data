@@ -17,7 +17,7 @@ impl PeripheralToClock {
         let mut peripheral_to_clock = HashMap::new();
         let checked_rccs = HashSet::from([
             "c0", "f0", "f1", "f100", "f1c1", "f2", "f3", "f3_v2", "f4", "f410", "f7", "g0", "g4", "h5", "h50", "h7",
-            "h7ab", "h7rm0433", "l0", "l0_v2", "l1", "l4",
+            "h7ab", "h7rm0433", "l0", "l0_v2", "l1", "l4", "l4plus", "l5",
         ]);
         let allowed_variants = HashSet::from([
             "DISABLE",
