@@ -73,22 +73,17 @@ impl PeripheralToClock {
             "SAI2_EXTCLK",
             "B_0x0",
             "B_0x1",
-            "PLL",
-            "PLLCLK",
-            "RCC_PCLK_D3",
             "I2S_CKIN",
             "DAC_HOLD",
             "DAC_HOLD_2",
-            "TIMPCLK",
             "RTCCLK",
             "RTC_WKUP",
             "DSIPHY",
-            "PLLDSICLK",
         ]);
 
         for (rcc_name, ir) in &registers.registers {
             if let Some(rcc_name) = rcc_name.strip_prefix("rcc_") {
-                let rcc_enum_map: HashMap<&String, HashMap<&String, &Enum>> = {
+                let rcc_enum_map: HashMap<&String, HashMap<&String, (&String, &Enum)>> = {
                     let rcc_blocks = &ir.blocks.get("RCC").unwrap().items;
 
                     rcc_blocks
@@ -101,10 +96,10 @@ impl PeripheralToClock {
                                     f.fields
                                         .iter()
                                         .filter_map(|f| {
-                                            let enumm = f.enumm.as_ref()?;
-                                            let enumm = ir.enums.get(enumm)?;
+                                            let enumm_name = f.enumm.as_ref()?;
+                                            let enumm = ir.enums.get(enumm_name)?;
 
-                                            Some((&f.name, enumm))
+                                            Some((&f.name, (enumm_name, enumm)))
                                         })
                                         .collect(),
                                 )
@@ -124,7 +119,7 @@ impl PeripheralToClock {
                         _ => return Ok(()),
                     };
 
-                    let enumm = match block_map.get(field) {
+                    let (enumm_name, enumm) = match block_map.get(field) {
                         Some(enumm) => enumm,
                         _ => return Ok(()),
                     };
@@ -135,15 +130,17 @@ impl PeripheralToClock {
 
                             if !allowed_variants.contains(name.as_str()) {
                                 return Err(anyhow!(
-                                    "rcc: prohibited variant name {} for rcc_{}",
+                                    "rcc: prohibited variant name {} in enum {} for rcc_{}",
                                     v.name.as_str(),
+                                    enumm_name,
                                     rcc_name
                                 ));
                             }
                         } else if !allowed_variants.contains(v.name.as_str()) {
                             return Err(anyhow!(
-                                "rcc: prohibited variant name {} for rcc_{}",
+                                "rcc: prohibited variant name {} in enum {} for rcc_{}",
                                 v.name.as_str(),
+                                enumm_name,
                                 rcc_name
                             ));
                         }
