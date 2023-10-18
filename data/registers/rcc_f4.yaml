@@ -1581,11 +1581,11 @@ fieldset/DCKCFGR:
     bit_offset: 25
     bit_size: 2
     enum: ISSRC
-  - name: CK48MSEL
+  - name: CLK48SEL
     description: 48 MHz clock source selection
     bit_offset: 27
     bit_size: 1
-    enum: CKMSEL
+    enum: CLK48SEL
   - name: I2S2SRC
     description: I2S APB2 clocks source selection (I2S1/4/5)
     bit_offset: 27
@@ -1619,11 +1619,11 @@ fieldset/DCKCFGR2:
     bit_offset: 26
     bit_size: 1
     enum: CECSEL
-  - name: CK48MSEL
+  - name: CLK48SEL
     description: SDIO/USB clock selection
     bit_offset: 27
     bit_size: 1
-    enum: CKMSEL
+    enum: CLK48SEL
   - name: SDIOSEL
     description: SDIO clock selection
     bit_offset: 28
@@ -1675,56 +1675,74 @@ fieldset/PLLCFGR:
 fieldset/PLLI2SCFGR:
   description: PLLI2S configuration register
   fields:
-  - name: PLLI2SM
-    description: Division factor for the audio PLL (PLLI2S) input clock
+  - name: PLLM
+    description: Division factor for the main PLL (PLL) and audio PLL (PLLI2S) input clock
     bit_offset: 0
     bit_size: 6
-  - name: PLLI2SN
-    description: PLLI2S multiplication factor for VCO
+    enum: PLLM
+  - name: PLLN
+    description: Main PLL (PLL) multiplication factor for VCO
     bit_offset: 6
     bit_size: 9
-  - name: PLLI2SP
-    description: PLLI2S division factor for SPDIF-IN clock
+    enum: PLLN
+  - name: PLLP
+    description: Main PLL (PLL) division factor for main system clock
     bit_offset: 16
     bit_size: 2
-    enum: PLLI2SP
+    enum: PLLP
   - name: PLLI2SSRC
     description: PLLI2S entry clock source
     bit_offset: 22
     bit_size: 1
     enum: PLLI2SSRC
-  - name: PLLI2SQ
-    description: PLLI2S division factor for USB OTG FS/SDIO/RNG clock
+  - name: PLLSRC
+    description: Main PLL(PLL) and audio PLL (PLLI2S) entry clock source
+    bit_offset: 22
+    bit_size: 1
+    enum: PLLSRC
+  - name: PLLQ
+    description: Main PLL (PLL) division factor for USB OTG FS, SDIO and random number generator clocks
     bit_offset: 24
     bit_size: 4
-  - name: PLLI2SR
-    description: PLLI2S division factor for I2S clocks
+    enum: PLLQ
+  - name: PLLR
+    description: PLL division factor for I2S and System clocks
     bit_offset: 28
     bit_size: 3
+    enum: PLLR
 fieldset/PLLSAICFGR:
   description: PLL configuration register
   fields:
-  - name: PLLSAIM
-    description: Division factor for audio PLLSAI input clock
+  - name: PLLM
+    description: Division factor for the main PLL (PLL) and audio PLL (PLLI2S) input clock
     bit_offset: 0
     bit_size: 6
-  - name: PLLSAIN
-    description: PLLSAI division factor for VCO
+    enum: PLLM
+  - name: PLLN
+    description: Main PLL (PLL) multiplication factor for VCO
     bit_offset: 6
     bit_size: 9
-  - name: PLLSAIP
-    description: PLLSAI division factor for 48 MHz clock
+    enum: PLLN
+  - name: PLLP
+    description: Main PLL (PLL) division factor for main system clock
     bit_offset: 16
     bit_size: 2
-    enum: PLLSAIP
-  - name: PLLSAIQ
-    description: PLLSAI division factor for SAI1 clock
+    enum: PLLP
+  - name: PLLSRC
+    description: Main PLL(PLL) and audio PLL (PLLI2S) entry clock source
+    bit_offset: 22
+    bit_size: 1
+    enum: PLLSRC
+  - name: PLLQ
+    description: Main PLL (PLL) division factor for USB OTG FS, SDIO and random number generator clocks
     bit_offset: 24
     bit_size: 4
-  - name: PLLSAIR
-    description: PLLSAI division factor for LCD clock
+    enum: PLLQ
+  - name: PLLR
+    description: PLL division factor for I2S and System clocks
     bit_offset: 28
     bit_size: 3
+    enum: PLLR
 fieldset/SSCGR:
   description: spread spectrum clock generation register
   fields:
@@ -1772,7 +1790,7 @@ enum/CKDFSDMSEL:
   - name: SYSCLK
     description: System clock used as Kernel clock
     value: 1
-enum/CKMSEL:
+enum/CLK48SEL:
   bit_size: 1
   variants:
   - name: PLL
@@ -3434,7 +3452,7 @@ enum/SAIBSRC:
 enum/SDIOSEL:
   bit_size: 1
   variants:
-  - name: CK48M
+  - name: CLK48
     description: 48 MHz clock is selected as SD clock
     value: 0
   - name: SYSCLK
