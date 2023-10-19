@@ -15,10 +15,6 @@ pub struct PeripheralToClock(
 impl PeripheralToClock {
     pub fn parse(registers: &Registers) -> anyhow::Result<Self> {
         let mut peripheral_to_clock = HashMap::new();
-        let checked_rccs = HashSet::from([
-            "c0", "f0", "f1", "f100", "f1c1", "f2", "f3", "f3_v2", "f4", "f410", "f7", "g0", "g4", "h5", "h50", "h7",
-            "h7ab", "h7rm0433", "l0", "l0_v2", "l1", "l4", "l4plus", "l5",
-        ]);
         let allowed_variants = HashSet::from([
             "DISABLE",
             "SYS",
@@ -60,10 +56,13 @@ impl PeripheralToClock {
             "PLL3_Q",
             "PLL3_R",
             "HSI",
+            "SHSI",
             "HSI48",
             "LSI",
             "CSI",
             "MSI",
+            "MSIS",
+            "MSIK",
             "HSE",
             "LSE",
             "AUDIOCLK",
@@ -79,6 +78,12 @@ impl PeripheralToClock {
             "RTCCLK",
             "RTC_WKUP",
             "DSIPHY",
+            "ICLK",
+            "DCLK",
+            "HSI256_MSIS1024_MSIS4",
+            "HSI256_MSIS1024_MSIK4",
+            "HSI256_MSIK1024_MSIS4",
+            "HSI256_MSIK1024_MSIK4",
         ]);
 
         for (rcc_name, ir) in &registers.registers {
@@ -110,10 +115,6 @@ impl PeripheralToClock {
                 };
 
                 let check_mux = |register: &String, field: &String| -> Result<(), anyhow::Error> {
-                    if !checked_rccs.contains(&rcc_name) {
-                        return Ok(());
-                    }
-
                     let block_map = match rcc_enum_map.get(register) {
                         Some(block_map) => block_map,
                         _ => return Ok(()),
@@ -125,7 +126,7 @@ impl PeripheralToClock {
                     };
 
                     for v in &enumm.variants {
-                        if let Some(captures) = regex!(r"^([A-Z0-9]+)_DIV_\d+?$").captures(v.name.as_str()) {
+                        if let Some(captures) = regex!(r"^([A-Z0-9_]+)_DIV_\d+?$").captures(v.name.as_str()) {
                             let name = captures.get(1).unwrap();
 
                             if !allowed_variants.contains(name.as_str()) {
