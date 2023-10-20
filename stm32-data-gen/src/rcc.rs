@@ -1,3 +1,4 @@
+use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, Ok};
@@ -256,7 +257,24 @@ impl PeripheralToClock {
                                     mux,
                                 };
 
-                                family_clocks.insert(peri.to_string(), res);
+                                match family_clocks.entry(peri.to_string()) {
+                                    Entry::Vacant(e) => {
+                                        e.insert(res);
+                                    }
+                                    Entry::Occupied(mut e) => {
+                                        if (e.get().clock != "pclk1" || e.get().clock != "hclk1")
+                                            && (res.clock == "pclk1" || res.clock == "hclk1")
+                                        {
+                                            e.insert(res);
+                                        } else if !(e.get().clock == "pclk1" || e.get().clock == "hclk1") {
+                                            return Err(anyhow!(
+                                                "rcc: duplicate entry for peri {} for rcc_{}",
+                                                peri.to_string(),
+                                                rcc_name
+                                            ));
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
