@@ -1,12 +1,34 @@
+use std::cmp::Ordering;
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
+use std::hash::Hash;
 
 use anyhow::{anyhow, Ok};
 use chiptool::ir::{BlockItemInner, Enum};
+use stm32_data_serde::chip::core::peripheral;
 use stm32_data_serde::chip::core::peripheral::rcc::Mux;
 
 use crate::regex;
 use crate::registers::Registers;
+
+/// Deterministically insert into a `HashMap`
+fn insert_into_map<K, V, F>(hash_map: &mut HashMap<K, V>, key: K, value: V, mut compare: F)
+where
+    K: Eq + Hash,
+    F: FnMut(&V, &V) -> Ordering,
+{
+    match hash_map.entry(key) {
+        Entry::Vacant(e) => {
+            e.insert(value);
+        }
+        Entry::Occupied(mut e) => match compare(&value, e.get()) {
+            Ordering::Less => {
+                e.insert(value);
+            }
+            _ => {}
+        },
+    };
+}
 
 #[derive(Debug)]
 pub struct PeripheralToClock(
@@ -157,18 +179,16 @@ impl PeripheralToClock {
                     if let Some(_) = regex!(r"^fieldset/CCIPR\d?$").captures(&key) {
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("SEL") {
-                                if family_muxes.get(peri).is_some() && reg != "CCIPR" {
-                                    continue;
-                                }
-
                                 check_mux(reg, &field.name)?;
 
-                                family_muxes.insert(
+                                insert_into_map(
+                                    &mut family_muxes,
                                     peri.to_string(),
                                     Mux {
                                         register: reg.to_ascii_lowercase(),
                                         field: field.name.to_ascii_lowercase(),
                                     },
+                                    |mux1: &Mux, mux2: &Mux| mux1.register.cmp(&mux2.register),
                                 );
                             }
                         }
@@ -177,12 +197,14 @@ impl PeripheralToClock {
                             if let Some(peri) = field.name.strip_suffix("SW") {
                                 check_mux(reg, &field.name)?;
 
-                                family_muxes.insert(
+                                insert_into_map(
+                                    &mut family_muxes,
                                     peri.to_string(),
                                     Mux {
                                         register: reg.to_ascii_lowercase(),
                                         field: field.name.to_ascii_lowercase(),
                                     },
+                                    |mux1: &Mux, mux2: &Mux| mux1.register.cmp(&mux2.register),
                                 );
                             }
                         }
@@ -195,12 +217,14 @@ impl PeripheralToClock {
 
                                 check_mux(reg, &field.name)?;
 
-                                family_muxes.insert(
+                                insert_into_map(
+                                    &mut family_muxes,
                                     peri.to_string(),
                                     Mux {
                                         register: reg.to_ascii_lowercase(),
                                         field: field.name.to_ascii_lowercase(),
                                     },
+                                    |mux1: &Mux, mux2: &Mux| mux1.register.cmp(&mux2.register),
                                 );
                             }
                         }
@@ -244,37 +268,25 @@ impl PeripheralToClock {
 
                                 let mux = family_muxes.get(peri).map(|peri| peri.clone());
 
-                                let res = stm32_data_serde::chip::core::peripheral::Rcc {
-                                    clock: peri_clock
-                                        .to_ascii_lowercase()
-                                        .replace("ahb", "hclk")
-                                        .replace("apb", "pclk"),
-                                    enable: stm32_data_serde::chip::core::peripheral::rcc::Enable {
-                                        register: reg.to_ascii_lowercase(),
-                                        field: field.name.to_ascii_lowercase(),
-                                    },
-                                    reset,
-                                    mux,
-                                };
-
                                 match family_clocks.entry(peri.to_string()) {
                                     Entry::Vacant(e) => {
-                                        e.insert(res);
+                                        e.insert(peripheral::Rcc {
+                                            clock: peri_clock
+                                                .to_ascii_lowercase()
+                                                .replace("ahb", "hclk")
+                                                .replace("apb", "pclk"),
+                                            enable: peripheral::rcc::Enable {
+                                                register: reg.to_ascii_lowercase(),
+                                                field: field.name.to_ascii_lowercase(),
+                                            },
+                                            reset,
+                                            mux,
+                                        });
                                     }
-                                    Entry::Occupied(mut e) => {
-                                        if (e.get().clock != "pclk1" || e.get().clock != "hclk1")
-                                            && (res.clock == "pclk1" || res.clock == "hclk1")
-                                        {
-                                            e.insert(res);
-                                        } else if !(e.get().clock == "pclk1" || e.get().clock == "hclk1") {
-                                            return Err(anyhow!(
-                                                "rcc: duplicate entry for peri {} for rcc_{}",
-                                                peri.to_string(),
-                                                rcc_name
-                                            ));
-                                        }
+                                    Entry::Occupied(_) => {
+                                        return Err(anyhow!("rcc: duplicate clock for {} for rcc_{}", peri, rcc_name));
                                     }
-                                }
+                                };
                             }
                         }
                     }
