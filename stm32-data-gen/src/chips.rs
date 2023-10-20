@@ -234,6 +234,7 @@ impl PeriMatcher {
             (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
             (".*:IWDG:iwdg1_v2_0", ("iwdg", "v2", "IWDG")),
             (".*:WWDG:wwdg1_v1_0", ("wwdg", "v1", "WWDG")),
+            (".*:WWDG:wwdg1_v2_0", ("wwdg", "v2", "WWDG")),
             (".*:JPEG:jpeg1_v1_0", ("jpeg", "v1", "JPEG")),
             (".*:LPTIM:F7_lptimer1_v1_1", ("lptim", "v1", "LPTIM")),
             (".*:HRTIM:hrtim_v1_0", ("hrtim", "v1", "HRTIM")),
