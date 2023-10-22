@@ -90,6 +90,7 @@ impl PeripheralToClock {
             "LSE",
             "AUDIOCLK",
             "PER",
+            "CLK48",
             // TODO: variants to cleanup
             "SAI1_EXTCLK",
             "SAI2_EXTCLK",

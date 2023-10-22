@@ -1110,42 +1110,52 @@ fieldset/CCIPR:
     description: USART1 clock source selection
     bit_offset: 0
     bit_size: 2
+    enum: USART1SEL
   - name: LPUART1SEL
     description: LPUART1 clock source selection
     bit_offset: 10
     bit_size: 2
+    enum: LPUART1SEL
   - name: I2C1SEL
     description: I2C1 clock source selection
     bit_offset: 12
     bit_size: 2
+    enum: I2C1SEL
   - name: I2C3SEL
     description: I2C3 clock source selection
     bit_offset: 16
     bit_size: 2
+    enum: I2C3SEL
   - name: LPTIM1SEL
     description: Low power timer 1 clock source selection
     bit_offset: 18
     bit_size: 2
+    enum: LPTIM1SEL
   - name: LPTIM2SEL
     description: Low power timer 2 clock source selection
     bit_offset: 20
     bit_size: 2
+    enum: LPTIM2SEL
   - name: SAI1SEL
     description: SAI1 clock source selection
     bit_offset: 22
     bit_size: 2
+    enum: SAI1SEL
   - name: CLK48SEL
     description: 48 MHz clock source selection
     bit_offset: 26
     bit_size: 2
+    enum: CLK48SEL
   - name: ADCSEL
     description: ADCs clock source selection
     bit_offset: 28
     bit_size: 2
+    enum: ADCSEL
   - name: RNGSEL
     description: RNG clock source selection
     bit_offset: 30
     bit_size: 2
+    enum: RNGSEL
 fieldset/CFGR:
   description: Clock configuration register
   fields:
@@ -1657,6 +1667,34 @@ fieldset/SMPSCR:
     description: Step Down converter clock switch status
     bit_offset: 8
     bit_size: 2
+enum/ADCSEL:
+  bit_size: 2
+  variants:
+  - name: DISABLE
+    description: No clock selected
+    value: 0
+  - name: PLLSAI1_R
+    value: 1
+  - name: PLL1_P
+    value: 2
+  - name: SYS
+    description: SYSCLK clock selected
+    value: 3
+enum/CLK48SEL:
+  bit_size: 2
+  variants:
+  - name: HSI48
+    description: HSI48 clock selected
+    value: 0
+  - name: PLLSAI1_Q
+    description: PLLSAI1_Q aka PLL48M1CLK clock selected
+    value: 1
+  - name: PLL1_Q
+    description: PLL_Q aka PLL48M2CLK clock selected
+    value: 2
+  - name: MSI
+    description: MSI clock selected
+    value: 3
 enum/HPRE:
   bit_size: 4
   variants:
@@ -1709,6 +1747,74 @@ enum/HSEPRE:
     value: 0
   - name: Div2
     value: 1
+enum/I2C1SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK clock selected
+    value: 0
+  - name: SYS
+    description: SYSCLK clock selected
+    value: 1
+  - name: HSI
+    description: HSI clock selected
+    value: 2
+enum/I2C3SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK clock selected
+    value: 0
+  - name: SYS
+    description: SYSCLK clock selected
+    value: 1
+  - name: HSI
+    description: HSI clock selected
+    value: 2
+enum/LPTIM1SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK clock selected
+    value: 0
+  - name: LSI
+    description: LSI clock selected
+    value: 1
+  - name: HSI
+    description: HSI clock selected
+    value: 2
+  - name: LSE
+    description: LSE clock selected
+    value: 3
+enum/LPTIM2SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK clock selected
+    value: 0
+  - name: LSI
+    description: LSI clock selected
+    value: 1
+  - name: HSI
+    description: HSI clock selected
+    value: 2
+  - name: LSE
+    description: LSE clock selected
+    value: 3
+enum/LPUART1SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK clock selected
+    value: 0
+  - name: SYS
+    description: SYSCLK clock selected
+    value: 1
+  - name: HSI
+    description: HSI clock selected
+    value: 2
+  - name: HSE
+    value: 3
 enum/LSEDRV:
   bit_size: 2
   variants:
@@ -2170,6 +2276,18 @@ enum/PPRE:
   - name: Div16
     description: HCLK divided by 16
     value: 7
+enum/RNGSEL:
+  bit_size: 2
+  variants:
+  - name: CLK48
+    description: CLK48
+    value: 0
+  - name: LSI
+    description: LSI clock selected
+    value: 1
+  - name: LSE
+    description: LSE clock selected
+    value: 2
 enum/RTCSEL:
   bit_size: 2
   variants:
@@ -2185,6 +2303,17 @@ enum/RTCSEL:
   - name: HSE
     description: HSE oscillator clock divided by 32 selected
     value: 3
+enum/SAI1SEL:
+  bit_size: 2
+  variants:
+  - name: PLLSAI1_P
+    value: 0
+  - name: PLL1_P
+    value: 1
+  - name: HSI
+    value: 2
+  - name: SAI1_EXTCLK
+    value: 3
 enum/SW:
   bit_size: 2
   variants:
@@ -2195,4 +2324,18 @@ enum/SW:
   - name: HSE
     value: 2
   - name: PLL1_R
+    value: 3
+enum/USART1SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK clock selected
+    value: 0
+  - name: SYS
+    description: SYSCLK clock selected
+    value: 1
+  - name: HSI
+    description: HSI clock selected
+    value: 2
+  - name: HSE
     value: 3
