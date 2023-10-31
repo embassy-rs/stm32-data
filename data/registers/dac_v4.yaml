@@ -1,0 +1,475 @@
+block/DAC1:
+  description: Digital-to-analog converter.
+  items:
+  - name: DAC_CR
+    description: DAC control register.
+    byte_offset: 0
+    fieldset: DAC_CR
+  - name: DAC_SWTRGR
+    description: DAC software trigger register.
+    byte_offset: 4
+    access: Write
+    fieldset: DAC_SWTRGR
+  - name: DAC_DHR12R1
+    description: DAC channel1 12-bit right-aligned data holding register.
+    byte_offset: 8
+    fieldset: DAC_DHR12R1
+  - name: DAC_DHR12L1
+    description: DAC channel1 12-bit left aligned data holding register.
+    byte_offset: 12
+    fieldset: DAC_DHR12L1
+  - name: DAC_DHR8R1
+    description: DAC channel1 8-bit right aligned data holding register.
+    byte_offset: 16
+    fieldset: DAC_DHR8R1
+  - name: DAC_DHR12R2
+    description: DAC channel2 12-bit right aligned data holding register.
+    byte_offset: 20
+    fieldset: DAC_DHR12R2
+  - name: DAC_DHR12L2
+    description: DAC channel2 12-bit left aligned data holding register.
+    byte_offset: 24
+    fieldset: DAC_DHR12L2
+  - name: DAC_DHR8R2
+    description: DAC channel2 8-bit right-aligned data holding register.
+    byte_offset: 28
+    fieldset: DAC_DHR8R2
+  - name: DAC_DHR12RD
+    description: Dual DAC 12-bit right-aligned data holding register.
+    byte_offset: 32
+    fieldset: DAC_DHR12RD
+  - name: DAC_DHR12LD
+    description: DUAL DAC 12-bit left aligned data holding register.
+    byte_offset: 36
+    fieldset: DAC_DHR12LD
+  - name: DAC_DHR8RD
+    description: DUAL DAC 8-bit right aligned data holding register.
+    byte_offset: 40
+    fieldset: DAC_DHR8RD
+  - name: DAC_DOR1
+    description: DAC channel1 data output register.
+    byte_offset: 44
+    access: Read
+    fieldset: DAC_DOR1
+  - name: DAC_DOR2
+    description: DAC channel2 data output register.
+    byte_offset: 48
+    access: Read
+    fieldset: DAC_DOR2
+  - name: DAC_SR
+    description: DAC status register.
+    byte_offset: 52
+    fieldset: DAC_SR
+  - name: DAC_CCR
+    description: DAC calibration control register.
+    byte_offset: 56
+    fieldset: DAC_CCR
+  - name: DAC_MCR
+    description: DAC mode control register.
+    byte_offset: 60
+    fieldset: DAC_MCR
+  - name: DAC_SHSR1
+    description: DAC Sample and Hold sample time register 1.
+    byte_offset: 64
+    fieldset: DAC_SHSR1
+  - name: DAC_SHSR2
+    description: DAC Sample and Hold sample time register 2.
+    byte_offset: 68
+    fieldset: DAC_SHSR2
+  - name: DAC_SHHR
+    description: DAC Sample and Hold hold time register.
+    byte_offset: 72
+    fieldset: DAC_SHHR
+  - name: DAC_SHRR
+    description: DAC Sample and Hold refresh time register.
+    byte_offset: 76
+    fieldset: DAC_SHRR
+  - name: DAC_STR1
+    description: Sawtooth register.
+    byte_offset: 88
+    fieldset: DAC_STR1
+  - name: DAC_STR2
+    description: Sawtooth register.
+    byte_offset: 92
+    fieldset: DAC_STR2
+  - name: DAC_STMODR
+    description: Sawtooth Mode register.
+    byte_offset: 96
+    fieldset: DAC_STMODR
+fieldset/DAC_CCR:
+  description: DAC calibration control register.
+  fields:
+  - name: OTRIM1
+    description: DAC Channel 1 offset trimming value.
+    bit_offset: 0
+    bit_size: 5
+  - name: OTRIM2
+    description: DAC Channel 2 offset trimming value.
+    bit_offset: 16
+    bit_size: 5
+fieldset/DAC_CR:
+  description: DAC control register.
+  fields:
+  - name: EN1
+    description: DAC channel1 enable This bit is set and cleared by software to enable/disable DAC channel1.
+    bit_offset: 0
+    bit_size: 1
+  - name: TEN1
+    description: DAC channel1 trigger enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: TSEL1
+    description: 'DAC channel1 trigger selection These bits select the external event used to trigger DAC channel1. Note: Only used if bit TEN1 = 1 (DAC channel1 trigger enabled).'
+    bit_offset: 2
+    bit_size: 4
+  - name: WAVE1
+    description: 'DAC channel1 noise/triangle wave generation enable These bits are set and cleared by software. Note: Only used if bit TEN1 = 1 (DAC channel1 trigger enabled).'
+    bit_offset: 6
+    bit_size: 2
+  - name: MAMP1
+    description: 'DAC channel1 mask/amplitude selector These bits are written by software to select mask in wave generation mode or amplitude in triangle generation mode. = 1011: Unmask bits[11:0] of LFSR/ triangle amplitude equal to 4095.'
+    bit_offset: 8
+    bit_size: 4
+  - name: DMAEN1
+    description: DAC channel1 DMA enable This bit is set and cleared by software.
+    bit_offset: 12
+    bit_size: 1
+  - name: DMAUDRIE1
+    description: DAC channel1 DMA Underrun Interrupt enable This bit is set and cleared by software.
+    bit_offset: 13
+    bit_size: 1
+  - name: CEN1
+    description: DAC Channel 1 calibration enable This bit is set and cleared by software to enable/disable DAC channel 1 calibration, it can be written only if bit EN1=0 into DAC_CR (the calibration mode can be entered/exit only when the DAC channel is disabled) Otherwise, the write operation is ignored.
+    bit_offset: 14
+    bit_size: 1
+  - name: EN2
+    description: DAC channel2 enable This bit is set and cleared by software to enable/disable DAC channel2.
+    bit_offset: 16
+    bit_size: 1
+  - name: TEN2
+    description: DAC channel2 trigger enable.
+    bit_offset: 17
+    bit_size: 1
+  - name: TSEL2
+    description: 'DAC channel2 trigger selection These bits select the external event used to trigger DAC channel2 Note: Only used if bit TEN2 = 1 (DAC channel2 trigger enabled).'
+    bit_offset: 18
+    bit_size: 4
+  - name: WAVE2
+    description: 'DAC channel2 noise/triangle wave generation enable These bits are set/reset by software. 1x: Triangle wave generation enabled Note: Only used if bit TEN2 = 1 (DAC channel2 trigger enabled).'
+    bit_offset: 22
+    bit_size: 2
+  - name: MAMP2
+    description: 'DAC channel2 mask/amplitude selector These bits are written by software to select mask in wave generation mode or amplitude in triangle generation mode. = 1011: Unmask bits[11:0] of LFSR/ triangle amplitude equal to 4095.'
+    bit_offset: 24
+    bit_size: 4
+  - name: DMAEN2
+    description: DAC channel2 DMA enable This bit is set and cleared by software.
+    bit_offset: 28
+    bit_size: 1
+  - name: DMAUDRIE2
+    description: DAC channel2 DMA underrun interrupt enable This bit is set and cleared by software.
+    bit_offset: 29
+    bit_size: 1
+  - name: CEN2
+    description: DAC Channel 2 calibration enable This bit is set and cleared by software to enable/disable DAC channel 2 calibration, it can be written only if bit EN2=0 into DAC_CR (the calibration mode can be entered/exit only when the DAC channel is disabled) Otherwise, the write operation is ignored.
+    bit_offset: 30
+    bit_size: 1
+fieldset/DAC_DHR12L1:
+  description: DAC channel1 12-bit left aligned data holding register.
+  fields:
+  - name: DACC1DHR
+    description: DAC channel1 12-bit left-aligned data These bits are written by software which specifies 12-bit data for DAC channel1.
+    bit_offset: 4
+    bit_size: 12
+  - name: DACC1DHRB
+    description: DAC channel1 12-bit left-aligned data B.
+    bit_offset: 20
+    bit_size: 12
+fieldset/DAC_DHR12L2:
+  description: DAC channel2 12-bit left aligned data holding register.
+  fields:
+  - name: DACC2DHR
+    description: DAC channel2 12-bit left-aligned data These bits are written by software which specify 12-bit data for DAC channel2.
+    bit_offset: 4
+    bit_size: 12
+  - name: DACC2DHRB
+    description: DAC channel2 12-bit left-aligned data B.
+    bit_offset: 20
+    bit_size: 12
+fieldset/DAC_DHR12LD:
+  description: DUAL DAC 12-bit left aligned data holding register.
+  fields:
+  - name: DACC1DHR
+    description: DAC channel1 12-bit left-aligned data These bits are written by software which specifies 12-bit data for DAC channel1.
+    bit_offset: 4
+    bit_size: 12
+  - name: DACC2DHR
+    description: DAC channel2 12-bit left-aligned data These bits are written by software which specifies 12-bit data for DAC channel2.
+    bit_offset: 20
+    bit_size: 12
+fieldset/DAC_DHR12R1:
+  description: DAC channel1 12-bit right-aligned data holding register.
+  fields:
+  - name: DACC1DHR
+    description: DAC channel1 12-bit right-aligned data These bits are written by software which specifies 12-bit data for DAC channel1.
+    bit_offset: 0
+    bit_size: 12
+  - name: DACC1DHRB
+    description: DAC channel1 12-bit right-aligned data B.
+    bit_offset: 16
+    bit_size: 12
+fieldset/DAC_DHR12R2:
+  description: DAC channel2 12-bit right aligned data holding register.
+  fields:
+  - name: DACC2DHR
+    description: DAC channel2 12-bit right-aligned data These bits are written by software which specifies 12-bit data for DAC channel2.
+    bit_offset: 0
+    bit_size: 12
+  - name: DACC2DHRB
+    description: DAC channel2 12-bit right-aligned data.
+    bit_offset: 16
+    bit_size: 12
+fieldset/DAC_DHR12RD:
+  description: Dual DAC 12-bit right-aligned data holding register.
+  fields:
+  - name: DACC1DHR
+    description: DAC channel1 12-bit right-aligned data These bits are written by software which specifies 12-bit data for DAC channel1.
+    bit_offset: 0
+    bit_size: 12
+  - name: DACC2DHR
+    description: DAC channel2 12-bit right-aligned data These bits are written by software which specifies 12-bit data for DAC channel2.
+    bit_offset: 16
+    bit_size: 12
+fieldset/DAC_DHR8R1:
+  description: DAC channel1 8-bit right aligned data holding register.
+  fields:
+  - name: DACC1DHR
+    description: DAC channel1 8-bit right-aligned data These bits are written by software which specifies 8-bit data for DAC channel1.
+    bit_offset: 0
+    bit_size: 8
+  - name: DACC1DHRB
+    description: DAC channel1 8-bit right-aligned data.
+    bit_offset: 8
+    bit_size: 8
+fieldset/DAC_DHR8R2:
+  description: DAC channel2 8-bit right-aligned data holding register.
+  fields:
+  - name: DACC2DHR
+    description: DAC channel2 8-bit right-aligned data These bits are written by software which specifies 8-bit data for DAC channel2.
+    bit_offset: 0
+    bit_size: 8
+  - name: DACC2DHRB
+    description: DAC channel2 8-bit right-aligned data.
+    bit_offset: 8
+    bit_size: 8
+fieldset/DAC_DHR8RD:
+  description: DUAL DAC 8-bit right aligned data holding register.
+  fields:
+  - name: DACC1DHR
+    description: DAC channel1 8-bit right-aligned data These bits are written by software which specifies 8-bit data for DAC channel1.
+    bit_offset: 0
+    bit_size: 8
+  - name: DACC2DHR
+    description: DAC channel2 8-bit right-aligned data These bits are written by software which specifies 8-bit data for DAC channel2.
+    bit_offset: 8
+    bit_size: 8
+fieldset/DAC_DOR1:
+  description: DAC channel1 data output register.
+  fields:
+  - name: DACC1DOR
+    description: DAC channel1 data output These bits are read-only, they contain data output for DAC channel1.
+    bit_offset: 0
+    bit_size: 12
+  - name: DACC1DORB
+    description: DAC channel1 data output.
+    bit_offset: 16
+    bit_size: 12
+fieldset/DAC_DOR2:
+  description: DAC channel2 data output register.
+  fields:
+  - name: DACC2DOR
+    description: DAC channel2 data output These bits are read-only, they contain data output for DAC channel2.
+    bit_offset: 0
+    bit_size: 12
+  - name: DACC2DORB
+    description: DAC channel2 data output.
+    bit_offset: 16
+    bit_size: 12
+fieldset/DAC_MCR:
+  description: DAC mode control register.
+  fields:
+  - name: MODE1
+    description: 'DAC Channel 1 mode These bits can be written only when the DAC is disabled and not in the calibration mode (when bit EN1=0 and bit CEN1 =0 in the DAC_CR register). If EN1=1 or CEN1 =1 the write operation is ignored. They can be set and cleared by software to select the DAC Channel 1 mode: DAC Channel 1 in normal Mode DAC Channel 1 in sample &amp; hold mode.'
+    bit_offset: 0
+    bit_size: 3
+  - name: DMADOUBLE1
+    description: DAC Channel1 DMA double data mode.
+    bit_offset: 8
+    bit_size: 1
+  - name: SINFORMAT1
+    description: Enable signed format for DAC channel1.
+    bit_offset: 9
+    bit_size: 1
+  - name: HFSEL
+    description: High frequency interface mode selection.
+    bit_offset: 14
+    bit_size: 2
+  - name: MODE2
+    description: 'DAC Channel 2 mode These bits can be written only when the DAC is disabled and not in the calibration mode (when bit EN2=0 and bit CEN2 =0 in the DAC_CR register). If EN2=1 or CEN2 =1 the write operation is ignored. They can be set and cleared by software to select the DAC Channel 2 mode: DAC Channel 2 in normal Mode DAC Channel 2 in sample &amp; hold mode.'
+    bit_offset: 16
+    bit_size: 3
+  - name: DMADOUBLE2
+    description: DAC Channel2 DMA double data mode.
+    bit_offset: 24
+    bit_size: 1
+  - name: SINFORMAT2
+    description: Enable signed format for DAC channel2.
+    bit_offset: 25
+    bit_size: 1
+fieldset/DAC_SHHR:
+  description: DAC Sample and Hold hold time register.
+  fields:
+  - name: THOLD1
+    description: DAC Channel 1 hold Time (only valid in sample &amp; hold mode) Hold time= (THOLD[9:0]) x T LSI.
+    bit_offset: 0
+    bit_size: 10
+  - name: THOLD2
+    description: DAC Channel 2 hold time (only valid in sample &amp; hold mode). Hold time= (THOLD[9:0]) x T LSI.
+    bit_offset: 16
+    bit_size: 10
+fieldset/DAC_SHRR:
+  description: DAC Sample and Hold refresh time register.
+  fields:
+  - name: TREFRESH1
+    description: DAC Channel 1 refresh Time (only valid in sample &amp; hold mode) Refresh time= (TREFRESH[7:0]) x T LSI.
+    bit_offset: 0
+    bit_size: 8
+  - name: TREFRESH2
+    description: DAC Channel 2 refresh Time (only valid in sample &amp; hold mode) Refresh time= (TREFRESH[7:0]) x T LSI.
+    bit_offset: 16
+    bit_size: 8
+fieldset/DAC_SHSR1:
+  description: DAC Sample and Hold sample time register 1.
+  fields:
+  - name: TSAMPLE1
+    description: DAC Channel 1 sample Time (only valid in sample &amp; hold mode) These bits can be written when the DAC channel1 is disabled or also during normal operation. in the latter case, the write can be done only when BWSTx of DAC_SR register is low, If BWSTx=1, the write operation is ignored.
+    bit_offset: 0
+    bit_size: 10
+fieldset/DAC_SHSR2:
+  description: DAC Sample and Hold sample time register 2.
+  fields:
+  - name: TSAMPLE2
+    description: DAC Channel 2 sample Time (only valid in sample &amp; hold mode) These bits can be written when the DAC channel2 is disabled or also during normal operation. in the latter case, the write can be done only when BWSTx of DAC_SR register is low, if BWSTx=1, the write operation is ignored.
+    bit_offset: 0
+    bit_size: 10
+fieldset/DAC_SR:
+  description: DAC status register.
+  fields:
+  - name: DAC1RDY
+    description: DAC channel1 ready status bit.
+    bit_offset: 11
+    bit_size: 1
+  - name: DORSTAT1
+    description: DAC channel1 output register status bit.
+    bit_offset: 12
+    bit_size: 1
+  - name: DMAUDR1
+    description: DAC channel1 DMA underrun flag This bit is set by hardware and cleared by software (by writing it to 1).
+    bit_offset: 13
+    bit_size: 1
+  - name: CAL_FLAG1
+    description: DAC Channel 1 calibration offset status This bit is set and cleared by hardware.
+    bit_offset: 14
+    bit_size: 1
+  - name: BWST1
+    description: DAC Channel 1 busy writing sample time flag This bit is systematically set just after Sample & Hold mode enable and is set each time the software writes the register DAC_SHSR1, It is cleared by hardware when the write operation of DAC_SHSR1 is complete. (It takes about 3LSI periods of synchronization).
+    bit_offset: 15
+    bit_size: 1
+  - name: DAC2RDY
+    description: DAC channel 2 ready status bit.
+    bit_offset: 27
+    bit_size: 1
+  - name: DORSTAT2
+    description: DAC channel 2 output register status bit.
+    bit_offset: 28
+    bit_size: 1
+  - name: DMAUDR2
+    description: DAC channel2 DMA underrun flag This bit is set by hardware and cleared by software (by writing it to 1).
+    bit_offset: 29
+    bit_size: 1
+  - name: CAL_FLAG2
+    description: DAC Channel 2 calibration offset status This bit is set and cleared by hardware.
+    bit_offset: 30
+    bit_size: 1
+  - name: BWST2
+    description: DAC Channel 2 busy writing sample time flag This bit is systematically set just after Sample & Hold mode enable and is set each time the software writes the register DAC_SHSR2, It is cleared by hardware when the write operation of DAC_SHSR2 is complete. (It takes about 3 LSI periods of synchronization).
+    bit_offset: 31
+    bit_size: 1
+fieldset/DAC_STMODR:
+  description: Sawtooth Mode register.
+  fields:
+  - name: STRSTTRIGSEL1
+    description: DAC Channel 1 Sawtooth Reset trigger selection.
+    bit_offset: 0
+    bit_size: 4
+  - name: STINCTRIGSEL1
+    description: DAC Channel 1 Sawtooth Increment trigger selection.
+    bit_offset: 8
+    bit_size: 4
+  - name: STRSTTRIGSEL2
+    description: DAC Channel 1 Sawtooth Reset trigger selection.
+    bit_offset: 16
+    bit_size: 4
+  - name: STINCTRIGSEL2
+    description: DAC Channel 2 Sawtooth Increment trigger selection.
+    bit_offset: 24
+    bit_size: 4
+fieldset/DAC_STR1:
+  description: Sawtooth register.
+  fields:
+  - name: STRSTDATA1
+    description: DAC Channel 1 Sawtooth reset value.
+    bit_offset: 0
+    bit_size: 12
+  - name: STDIR1
+    description: DAC Channel1 Sawtooth direction setting.
+    bit_offset: 12
+    bit_size: 1
+  - name: STINCDATA1
+    description: DAC CH1 Sawtooth increment value (12.4 bit format).
+    bit_offset: 16
+    bit_size: 16
+fieldset/DAC_STR2:
+  description: Sawtooth register.
+  fields:
+  - name: STRSTDATA2
+    description: DAC Channel 2 Sawtooth reset value.
+    bit_offset: 0
+    bit_size: 12
+  - name: STDIR2
+    description: DAC Channel2 Sawtooth direction setting.
+    bit_offset: 12
+    bit_size: 1
+  - name: STINCDATA2
+    description: DAC CH2 Sawtooth increment value (12.4 bit format).
+    bit_offset: 16
+    bit_size: 16
+fieldset/DAC_SWTRGR:
+  description: DAC software trigger register.
+  fields:
+  - name: SWTRIG1
+    description: 'DAC channel1 software trigger This bit is set by software to trigger the DAC in software trigger mode. Note: This bit is cleared by hardware (one APB1 clock cycle later) once the DAC_DHR1 register value has been loaded into the DAC_DOR1 register.'
+    bit_offset: 0
+    bit_size: 1
+  - name: SWTRIG2
+    description: 'DAC channel2 software trigger This bit is set by software to trigger the DAC in software trigger mode. Note: This bit is cleared by hardware (one APB1 clock cycle later) once the DAC_DHR2 register value has been loaded into the DAC_DOR2 register.'
+    bit_offset: 1
+    bit_size: 1
+  - name: SWTRIGB1
+    description: DAC channel1 software trigger B.
+    bit_offset: 16
+    bit_size: 1
+  - name: SWTRIGB2
+    description: DAC channel2 software trigger B.
+    bit_offset: 17
+    bit_size: 1
