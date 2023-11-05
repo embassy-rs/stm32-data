@@ -17,7 +17,7 @@ cargo fmt -- --check
 # so the diff will show this PR's effect
 git remote add upstream https://github.com/embassy-rs/stm32-data
 git fetch --depth 15 upstream main
-git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build
+git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build -q
 
 # move the sources directory out of the cache if it exists
 mv /ci/cache/sources ./sources || true

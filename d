@@ -10,7 +10,7 @@ shift
 case "$CMD" in
     download-all)
         rm -rf ./sources/
-        git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
+        git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/ -q
         cd ./sources/
         git checkout $REV
     ;;
