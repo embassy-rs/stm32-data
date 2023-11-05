@@ -18,6 +18,6 @@ git clone --depth 1 https://github.com/embassy-rs/stm32-data-generated/ build
 COMMIT=$(git rev-parse HEAD)
 cd build
 git add data stm32-metapac
-git commit -m "Generated from stm32-data $COMMIT"
+git commit -m "Generated from stm32-data $COMMIT" --allow-empty
 git tag -a stm32-data-$COMMIT -m "Generated from stm32-data $COMMIT"
 git push --follow-tags
