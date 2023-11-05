@@ -394,15 +394,10 @@ fn stringify<T: Debug>(metadata: T) -> String {
 
     metadata
         .replace(": [", ": &[")
-        .replace("kind: Ram", "kind: MemoryRegionKind::Ram")
-        .replace("kind: Flash", "kind: MemoryRegionKind::Flash")
         .replace("Register(", "BlockItemInner::Register(")
         .replace("Block(", "BlockItemInner::Block(")
         .replace("Regular(", "Array::Regular(")
         .replace("Cursed(", "Array::Cursed(")
-        .replace("Read,", "Access::Read,")
-        .replace("Write,", "Access::Write,")
-        .replace("ReadAccess::Write,", "Access::ReadWrite,")
 }
 
 fn gen_opts() -> generate::Options {
