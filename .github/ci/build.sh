@@ -19,7 +19,13 @@ git remote add upstream https://github.com/embassy-rs/stm32-data
 git fetch --depth 15 upstream main
 git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build
 
+# move the sources directory out of the cache if it exists
+mv /ci/cache/sources ./sources || true
+
 ./d ci
+
+# move the sources directory into the cache
+mv ./sources /ci/cache/sources
 
 # upload diff
 (

@@ -4,6 +4,7 @@ set -e
 cd $(dirname $0)
 
 CMD=$1
+REV=7b078cef5335129b38245f0a7566103b9245973f
 shift
 
 case "$CMD" in
@@ -11,7 +12,7 @@ case "$CMD" in
         rm -rf ./sources/
         git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
         cd ./sources/
-        git checkout 7b078cef5335129b38245f0a7566103b9245973f
+        git checkout $REV
     ;;
     install-chiptool)
         cargo install --git https://github.com/embassy-rs/chiptool
@@ -43,6 +44,10 @@ case "$CMD" in
     ;;
     ci)
         [ -d sources ] || ./d download-all
+        cd ./sources/
+        git fetch origin $REV
+        git checkout $REV
+        cd ..
         rm -rf build/{data,stm32-metapac}
         cargo run --release --bin stm32-data-gen
         cargo run --release --bin stm32-metapac-gen
