@@ -116,6 +116,7 @@ pub mod chip {
                 pub reset: Option<rcc::Reset>,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub mux: Option<rcc::Mux>,
+                pub stop_mode: rcc::StopMode,
             }
 
             pub mod rcc {
@@ -137,6 +138,13 @@ pub mod chip {
                 pub struct Mux {
                     pub register: String,
                     pub field: String,
+                }
+
+                #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+                pub enum StopMode {
+                    Stop1,   // Peripheral prevents chip from entering Stop1
+                    Stop2,   // Peripheral prevents chip from entering Stop2
+                    Standby, // Peripheral does not prevent chip from entering Stop
                 }
             }
 

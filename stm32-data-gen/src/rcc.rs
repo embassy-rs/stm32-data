@@ -6,7 +6,7 @@ use std::hash::Hash;
 use anyhow::{anyhow, Ok};
 use chiptool::ir::{BlockItemInner, Enum};
 use stm32_data_serde::chip::core::peripheral;
-use stm32_data_serde::chip::core::peripheral::rcc::Mux;
+use stm32_data_serde::chip::core::peripheral::rcc::{Mux, StopMode};
 
 use crate::regex;
 use crate::registers::Registers;
@@ -245,6 +245,13 @@ impl PeripheralToClock {
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("EN") {
                                 let peri = if peri == "RTCAPB" { "RTC" } else { peri };
+                                let stop_mode = if peri == "RTC" {
+                                    StopMode::Standby
+                                } else if peri.starts_with("LP") {
+                                    StopMode::Stop2
+                                } else {
+                                    StopMode::Stop1
+                                };
 
                                 // Timers are a bit special, they may have a x2 freq
                                 let peri_clock = {
@@ -280,6 +287,7 @@ impl PeripheralToClock {
                                                 register: reg.to_ascii_lowercase(),
                                                 field: field.name.to_ascii_lowercase(),
                                             },
+                                            stop_mode,
                                             reset,
                                             mux,
                                         });
