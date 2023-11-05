@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use stm32_data_macros::EnumDebug;
 
 pub mod ir {
     use super::*;
@@ -176,7 +177,7 @@ pub mod ir {
         pub block: String,
     }
 
-    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    #[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize)]
     pub enum Access {
         ReadWrite,
         Read,
@@ -263,7 +264,7 @@ pub struct FlashSettings {
     pub erase_value: u8,
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+#[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize)]
 pub enum MemoryRegionKind {
     #[serde(rename = "flash")]
     Flash,
