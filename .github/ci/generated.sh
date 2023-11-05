@@ -12,7 +12,7 @@ export CARGO_TARGET_DIR=/ci/cache/target
 hashtime restore /ci/cache/filetime.json || true
 hashtime save /ci/cache/filetime.json
 
-git clone --depth 1 https://github.com/embassy-rs/stm32-data-generated/ build
+git clone --depth 1 https://github.com/embassy-rs/stm32-data-generated/ build -q
 ./d ci
 
 COMMIT=$(git rev-parse HEAD)
