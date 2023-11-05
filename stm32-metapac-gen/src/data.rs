@@ -325,12 +325,22 @@ pub struct PeripheralRcc {
     pub reset: Option<PeripheralRccRegister>,
     #[serde(default)]
     pub mux: Option<PeripheralRccRegister>,
+    #[serde(default)]
+    pub stop_mode: StopMode,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
 pub struct PeripheralRccRegister {
     pub register: String,
     pub field: String,
+}
+
+#[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize, Default)]
+pub enum StopMode {
+    #[default]
+    Stop1, // Peripheral prevents chip from entering Stop1
+    Stop2,   // Peripheral prevents chip from entering Stop2
+    Standby, // Peripheral does not prevent chip from entering Stop
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
