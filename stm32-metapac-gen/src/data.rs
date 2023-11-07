@@ -159,7 +159,7 @@ pub mod ir {
         pub inner: BlockItemInner,
     }
 
-    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    #[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize)]
     pub enum BlockItemInner {
         Block(BlockItemBlock),
         Register(Register),
@@ -205,7 +205,7 @@ pub mod ir {
         pub enumm: Option<String>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    #[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize)]
     pub enum Array {
         Regular(RegularArray),
         Cursed(CursedArray),

@@ -24,8 +24,16 @@ fn impl_enum_derive(ast: &syn::DeriveInput) -> TokenStream {
             let variant_name = &v.ident;
             let variant_debug = format!("{}::{}", name, variant_name);
 
-            quote! {
-                #name::#variant_name => #variant_debug,
+            match v.fields.len() {
+                0 => quote! {
+                    #name::#variant_name => ::core::fmt::Formatter::write_str(f, #variant_debug),
+                },
+                1 => quote! {
+                    #name::#variant_name(__self_0) => ::core::fmt::Formatter::debug_tuple(f, #variant_debug)
+                        .field(&__self_0)
+                        .finish(),
+                },
+                _ => unimplemented!(),
             }
         })
         .collect();
@@ -34,9 +42,9 @@ fn impl_enum_derive(ast: &syn::DeriveInput) -> TokenStream {
         #[automatically_derived]
         impl ::core::fmt::Debug for #name {
             fn fmt(self: &Self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
-                ::core::fmt::Formatter::write_str(f, match self {
+                match self {
                     #match_variants
-                })
+                }
             }
         }
     }
