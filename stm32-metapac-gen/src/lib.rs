@@ -392,12 +392,7 @@ fn stringify<T: Debug>(metadata: T) -> String {
         metadata = format!("&{}", metadata);
     }
 
-    metadata
-        .replace(": [", ": &[")
-        .replace("Register(", "BlockItemInner::Register(")
-        .replace("Block(", "BlockItemInner::Block(")
-        .replace("Regular(", "Array::Regular(")
-        .replace("Cursed(", "Array::Cursed(")
+    metadata.replace(": [", ": &[")
 }
 
 fn gen_opts() -> generate::Options {
