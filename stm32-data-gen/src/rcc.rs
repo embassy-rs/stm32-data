@@ -72,6 +72,7 @@ impl PeripheralToClock {
             "PLL1_P",
             "PLL1_Q",
             "PLL1_R",
+            "PLL1_VCO", // used for L0 USB
             "PLL2_P",
             "PLL2_Q",
             "PLL2_R",
