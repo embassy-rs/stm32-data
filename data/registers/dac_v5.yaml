@@ -1,7 +1,5 @@
-# DAC v3, only used in L4.
-# Adds CCR, MCR, SHSR, SHHR, SHRR registers.
-# Adds CEN fields to CR and BWST and CAL_FLAG fields to SR.
-# Deletes BOFF fields from CR.
+# DAC v5, used in L4+ and L5.
+# Adds HFSEL field to CR.
 
 block/DAC:
   description: Digital-to-analog converter
@@ -105,15 +103,15 @@ fieldset/CR:
       stride: 16
   - name: TEN
     description: channel trigger enable
-    bit_offset: 2
+    bit_offset: 1
     bit_size: 1
     array:
       len: 2
       stride: 16
   - name: TSEL
     description: channel trigger selection
-    bit_offset: 3
-    bit_size: 3
+    bit_offset: 2
+    bit_size: 4
     array:
       len: 2
       stride: 16
@@ -153,6 +151,10 @@ fieldset/CR:
     array:
       len: 2
       stride: 16
+  - name: HFSEL
+    description: high frequency interface mode enable
+    bit_offset: 15
+    bit_size: 1
 fieldset/DHR12L:
   description: channel 12-bit left-aligned data holding register
   fields:
