@@ -378,6 +378,11 @@ impl PeripheralToClock {
             return clocks.get("ADC");
         }
 
+        // Absolute fallback, match against the clocks for just the first ADC
+        if clocks.contains_key("ADC1") {
+            return clocks.get("ADC1");
+        }
+
         None
     }
 }

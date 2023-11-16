@@ -516,6 +516,7 @@ impl PeriMatcher {
             ("STM32WB55.*:TSC:.*", ("tsc", "v2", "TSC")),
             ("STM32L[045].*:TSC:.*", ("tsc", "v3", "TSC")),
             ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
+            ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
         ];
 
         Self {
@@ -879,9 +880,43 @@ fn process_core(
         peri_kinds.insert(pname, pkind.to_string());
     }
     const GHOST_PERIS: &[&str] = &[
-        "GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOE", "GPIOF", "GPIOG", "GPIOH", "GPIOI", "GPIOJ", "GPIOK", "GPIOL",
-        "GPIOM", "GPION", "GPIOO", "GPIOP", "GPIOQ", "GPIOR", "GPIOS", "GPIOT", "DMA1", "DMA2", "BDMA", "DMAMUX",
-        "DMAMUX1", "DMAMUX2", "SBS", "SYSCFG", "EXTI", "FLASH", "DBGMCU", "CRS", "PWR", "AFIO", "BKP", "USBRAM",
+        "GPIOA",
+        "GPIOB",
+        "GPIOC",
+        "GPIOD",
+        "GPIOE",
+        "GPIOF",
+        "GPIOG",
+        "GPIOH",
+        "GPIOI",
+        "GPIOJ",
+        "GPIOK",
+        "GPIOL",
+        "GPIOM",
+        "GPION",
+        "GPIOO",
+        "GPIOP",
+        "GPIOQ",
+        "GPIOR",
+        "GPIOS",
+        "GPIOT",
+        "DMA1",
+        "DMA2",
+        "BDMA",
+        "DMAMUX",
+        "DMAMUX1",
+        "DMAMUX2",
+        "SBS",
+        "SYSCFG",
+        "EXTI",
+        "FLASH",
+        "DBGMCU",
+        "CRS",
+        "PWR",
+        "AFIO",
+        "BKP",
+        "USBRAM",
+        "VREFINTCAL",
     ];
     for pname in GHOST_PERIS {
         if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
