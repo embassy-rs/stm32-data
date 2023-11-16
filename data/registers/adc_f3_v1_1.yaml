@@ -1,0 +1,720 @@
+block/ADC:
+  description: Analog-to-digital converter
+  items:
+    - name: SR
+      description: status register
+      byte_offset: 0
+      fieldset: SR
+    - name: CR1
+      description: control register 1
+      byte_offset: 4
+      fieldset: CR1
+    - name: CR2
+      description: control register 2
+      byte_offset: 8
+      fieldset: CR2
+    - name: SMPR1
+      description: sample time register 1
+      byte_offset: 12
+      fieldset: SMPR1
+    - name: SMPR2
+      description: sample time register 2
+      byte_offset: 16
+      fieldset: SMPR2
+    - name: SMPR3
+      description: sample time register 3
+      byte_offset: 20
+      fieldset: SMPR3
+    - name: JOFR1
+      description: injected channel data offset register 1
+      byte_offset: 24
+      fieldset: JOFR1
+    - name: JOFR2
+      description: injected channel data offset register 2
+      byte_offset: 28
+      fieldset: JOFR2
+    - name: JOFR3
+      description: injected channel data offset register 3
+      byte_offset: 32
+      fieldset: JOFR3
+    - name: JOFR4
+      description: injected channel data offset register 4
+      byte_offset: 36
+      fieldset: JOFR4
+    - name: HTR
+      description: watchdog higher threshold register
+      byte_offset: 40
+      fieldset: HTR
+    - name: LTR
+      description: watchdog lower threshold register
+      byte_offset: 44
+      fieldset: LTR
+    - name: SQR1
+      description: regular sequence register 1
+      byte_offset: 48
+      fieldset: SQR1
+    - name: SQR2
+      description: regular sequence register 2
+      byte_offset: 52
+      fieldset: SQR2
+    - name: SQR3
+      description: regular sequence register 3
+      byte_offset: 56
+      fieldset: SQR3
+    - name: SQR4
+      description: regular sequence register 4
+      byte_offset: 60
+      fieldset: SQR4
+    - name: SQR5
+      description: regular sequence register 5
+      byte_offset: 64
+      fieldset: SQR5
+    - name: JSQR
+      description: injected sequence register
+      byte_offset: 68
+      fieldset: JSQR
+    - name: JDR1
+      description: injected data register x1
+      byte_offset: 72
+      access: Read
+      fieldset: JDR1
+    - name: JDR2
+      description: injected data register 2
+      byte_offset: 76
+      access: Read
+      fieldset: JDR2
+    - name: JDR3
+      description: injected data register 3
+      byte_offset: 80
+      access: Read
+      fieldset: JDR3
+    - name: JDR4
+      description: injected data register 4
+      byte_offset: 84
+      access: Read
+      fieldset: JDR4
+    - name: DR
+      description: regular data register
+      byte_offset: 88
+      access: Read
+      fieldset: DR
+    - name: SMPR0
+      description: sample time register 0
+      byte_offset: 92
+      fieldset: SMPR0
+    - name: CSR
+      description: ADC common status register
+      byte_offset: 768
+      access: Read
+      fieldset: CSR
+    - name: CCR
+      description: ADC common control register
+      byte_offset: 772
+      fieldset: CCR
+fieldset/CCR:
+  description: ADC common control register
+  fields:
+    - name: ADCPRE
+      description: ADC prescaler
+      bit_offset: 16
+      bit_size: 2
+    - name: TSVREFE
+      description: Temperature sensor and VREFINT enable
+      bit_offset: 23
+      bit_size: 1
+fieldset/CR1:
+  description: control register 1
+  fields:
+    - name: AWDCH
+      description: Analog watchdog channel select bits
+      bit_offset: 0
+      bit_size: 5
+    - name: EOCIE
+      description: Interrupt enable for EOC
+      bit_offset: 5
+      bit_size: 1
+    - name: AWDIE
+      description: Analog watchdog interrupt enable
+      bit_offset: 6
+      bit_size: 1
+    - name: JEOCIE
+      description: Interrupt enable for injected channels
+      bit_offset: 7
+      bit_size: 1
+    - name: SCAN
+      description: Scan mode
+      bit_offset: 8
+      bit_size: 1
+    - name: AWDSGL
+      description: Enable the watchdog on a single channel in scan mode
+      bit_offset: 9
+      bit_size: 1
+    - name: JAUTO
+      description: Automatic injected group conversion
+      bit_offset: 10
+      bit_size: 1
+    - name: DISCEN
+      description: Discontinuous mode on regular channels
+      bit_offset: 11
+      bit_size: 1
+    - name: JDISCEN
+      description: Discontinuous mode on injected channels
+      bit_offset: 12
+      bit_size: 1
+    - name: DISCNUM
+      description: Discontinuous mode channel count
+      bit_offset: 13
+      bit_size: 3
+      enum: DISCNUM
+    - name: PDD
+      description: Power down during the delay phase
+      bit_offset: 16
+      bit_size: 1
+    - name: PDI
+      description: Power down during the idle phase
+      bit_offset: 17
+      bit_size: 1
+    - name: JAWDEN
+      description: Analog watchdog enable on injected channels
+      bit_offset: 22
+      bit_size: 1
+    - name: AWDEN
+      description: Analog watchdog enable on regular channels
+      bit_offset: 23
+      bit_size: 1
+    - name: RES
+      description: Resolution
+      bit_offset: 24
+      bit_size: 2
+      enum: RES
+    - name: OVRIE
+      description: Overrun interrupt enable
+      bit_offset: 26
+      bit_size: 1
+fieldset/CR2:
+  description: control register 2
+  fields:
+    - name: ADON
+      description: A/D Converter ON / OFF
+      bit_offset: 0
+      bit_size: 1
+    - name: CONT
+      description: Continuous conversion
+      bit_offset: 1
+      bit_size: 1
+    - name: ADC_CFG
+      description: ADC configuration
+      bit_offset: 2
+      bit_size: 1
+      enum: ADC_CFG
+    - name: DELS
+      description: Delay selection
+      bit_offset: 4
+      bit_size: 3
+      enum: DELS
+    - name: DMA
+      description: Direct memory access mode
+      bit_offset: 8
+      bit_size: 1
+    - name: DDS
+      description: DMA disable selection
+      bit_offset: 9
+      bit_size: 1
+    - name: EOCS
+      description: End of conversion selection
+      bit_offset: 10
+      bit_size: 1
+    - name: ALIGN
+      description: Data alignment
+      bit_offset: 11
+      bit_size: 1
+    - name: JEXTSEL
+      description: External event select for injected group
+      bit_offset: 16
+      bit_size: 4
+    - name: JEXTEN
+      description: External trigger enable for injected channels
+      bit_offset: 20
+      bit_size: 2
+    - name: JSWSTART
+      description: Start conversion of injected channels
+      bit_offset: 22
+      bit_size: 1
+    - name: EXTSEL
+      description: External event select for regular group
+      bit_offset: 24
+      bit_size: 4
+    - name: EXTEN
+      description: External trigger enable for regular channels
+      bit_offset: 28
+      bit_size: 2
+    - name: SWSTART
+      description: Start conversion of regular channels
+      bit_offset: 30
+      bit_size: 1
+fieldset/CSR:
+  description: ADC common status register
+  fields:
+    - name: AWD1
+      description: Analog watchdog flag of the ADC
+      bit_offset: 0
+      bit_size: 1
+    - name: EOC1
+      description: End of conversion of the ADC
+      bit_offset: 1
+      bit_size: 1
+    - name: JEOC1
+      description: Injected channel end of conversion of the ADC
+      bit_offset: 2
+      bit_size: 1
+    - name: JSTRT1
+      description: Injected channel Start flag of the ADC
+      bit_offset: 3
+      bit_size: 1
+    - name: STRT1
+      description: Regular channel Start flag of the ADC
+      bit_offset: 4
+      bit_size: 1
+    - name: OVR1
+      description: Overrun flag of the ADC
+      bit_offset: 5
+      bit_size: 1
+    - name: ADONS1
+      description: ADON Status of ADC1
+      bit_offset: 6
+      bit_size: 1
+fieldset/DR:
+  description: regular data register
+  fields:
+    - name: rdata
+      description: Regular data
+      bit_offset: 0
+      bit_size: 16
+fieldset/HTR:
+  description: watchdog higher threshold register
+  fields:
+    - name: HT
+      description: Analog watchdog higher threshold
+      bit_offset: 0
+      bit_size: 12
+fieldset/JDR1:
+  description: injected data register x
+  fields:
+    - name: JDATA
+      description: Injected data
+      bit_offset: 0
+      bit_size: 16
+fieldset/JDR2:
+  description: injected data register x
+  fields:
+    - name: JDATA
+      description: Injected data
+      bit_offset: 0
+      bit_size: 16
+fieldset/JDR3:
+  description: injected data register x
+  fields:
+    - name: JDATA
+      description: Injected data
+      bit_offset: 0
+      bit_size: 16
+fieldset/JDR4:
+  description: injected data register x
+  fields:
+    - name: JDATA
+      description: Injected data
+      bit_offset: 0
+      bit_size: 16
+fieldset/JOFR1:
+  description: injected channel data offset register x
+  fields:
+    - name: JOFFSET1
+      description: Data offset for injected channel x
+      bit_offset: 0
+      bit_size: 12
+fieldset/JOFR2:
+  description: injected channel data offset register x
+  fields:
+    - name: JOFFSET2
+      description: Data offset for injected channel x
+      bit_offset: 0
+      bit_size: 12
+fieldset/JOFR3:
+  description: injected channel data offset register x
+  fields:
+    - name: JOFFSET3
+      description: Data offset for injected channel x
+      bit_offset: 0
+      bit_size: 12
+fieldset/JOFR4:
+  description: injected channel data offset register x
+  fields:
+    - name: JOFFSET4
+      description: Data offset for injected channel x
+      bit_offset: 0
+      bit_size: 12
+fieldset/JSQR:
+  description: injected sequence register
+  fields:
+    - name: JSQ1
+      description: 1st conversion in injected sequence
+      bit_offset: 0
+      bit_size: 5
+    - name: JSQ2
+      description: 2nd conversion in injected sequence
+      bit_offset: 5
+      bit_size: 5
+    - name: JSQ3
+      description: 3rd conversion in injected sequence
+      bit_offset: 10
+      bit_size: 5
+    - name: JSQ4
+      description: 4th conversion in injected sequence
+      bit_offset: 15
+      bit_size: 5
+    - name: JL
+      description: Injected sequence length
+      bit_offset: 20
+      bit_size: 2
+fieldset/LTR:
+  description: watchdog lower threshold register
+  fields:
+    - name: LT
+      description: Analog watchdog lower threshold
+      bit_offset: 0
+      bit_size: 12
+fieldset/SMPR0:
+  description: sample time register 0
+  fields:
+    - name: SMP
+      description: channel 30-31 sampling time selection
+      bit_offset: 0
+      bit_size: 3
+      enum: SAMPLE_TIME
+      array:
+        len: 2
+        stride: 3
+fieldset/SMPR1:
+  description: sample time register 1
+  fields:
+    - name: SMP
+      description: channel 20-29 sampling time selection
+      bit_offset: 0
+      bit_size: 3
+      enum: SAMPLE_TIME
+      array:
+        len: 10
+        stride: 3
+fieldset/SMPR2:
+  description: sample time register 2
+  fields:
+    - name: SMP
+      description: channel 10-19 sampling time selection
+      bit_offset: 0
+      bit_size: 3
+      enum: SAMPLE_TIME
+      array:
+        len: 10
+        stride: 3
+fieldset/SMPR3:
+  description: sample time register 3
+  fields:
+    - name: SMP
+      description: channel 0-9 sampling time selection
+      bit_offset: 0
+      bit_size: 3
+      enum: SAMPLE_TIME
+      array:
+        len: 10
+        stride: 3
+fieldset/SQR1:
+  description: regular sequence register 1
+  fields:
+    - name: SQ
+      description: 25th-29th conversion in regular sequence
+      bit_offset: 0
+      bit_size: 5
+      array:
+        len: 4
+        stride: 5
+    - name: L
+      description: Regular channel sequence length
+      bit_offset: 20
+      bit_size: 4
+fieldset/SQR2:
+  description: regular sequence register 2
+  fields:
+    - name: SQ
+      description: 19th-24th conversion in regular sequence
+      bit_offset: 0
+      bit_size: 5
+      array:
+        len: 6
+        stride: 5
+fieldset/SQR3:
+  description: regular sequence register 3
+  fields:
+    - name: SQ
+      description: 13th-18th conversion in regular sequence
+      bit_offset: 0
+      bit_size: 5
+      array:
+        len: 6
+        stride: 5
+fieldset/SQR4:
+  description: regular sequence register 4
+  fields:
+    - name: SQ
+      description: 7th-12th conversion in regular sequence
+      bit_offset: 0
+      bit_size: 5
+      array:
+        len: 6
+        stride: 5
+fieldset/SQR5:
+  description: regular sequence register 5
+  fields:
+    - name: SQ
+      description: 1st-6th conversion in regular sequence
+      bit_offset: 0
+      bit_size: 5
+      array:
+        len: 6
+        stride: 5
+fieldset/SR:
+  description: status register
+  fields:
+    - name: AWD
+      description: Analog watchdog flag
+      bit_offset: 0
+      bit_size: 1
+    - name: EOC
+      description: Regular channel end of conversion
+      bit_offset: 1
+      bit_size: 1
+    - name: JEOC
+      description: Injected channel end of conversion
+      bit_offset: 2
+      bit_size: 1
+    - name: JSTRT
+      description: Injected channel start flag
+      bit_offset: 3
+      bit_size: 1
+    - name: STRT
+      description: Regular channel start flag
+      bit_offset: 4
+      bit_size: 1
+    - name: OVR
+      description: Overrun
+      bit_offset: 5
+      bit_size: 1
+    - name: ADONS
+      description: ADC ON status
+      bit_offset: 6
+      bit_size: 1
+    - name: RCNR
+      description: Regular channel not ready
+      bit_offset: 8
+      bit_size: 1
+    - name: JCNR
+      description: Injected channel not ready
+      bit_offset: 9
+      bit_size: 1
+enum/ADC_CFG:
+  bit_size: 1
+  variants:
+    - name: BANK_A
+      description: Bank A selected for channels ADC_IN0..31
+      value: 0
+    - name: BANK_B
+      description: Bank B selected for channels ADC_IN0..31b
+      value: 1
+enum/DISCNUM:
+  bit_size: 3
+  variants:
+    - name: DISCNUM_1
+      description: 1 conversions are discontinued and the conversion is carried out on one channel
+      value: 0
+    - name: DISCNUM_2
+      description: 2 conversion is discontinued and the conversions are carried out on 2 channels
+      value: 1
+    - name: DISCNUM_3
+      description: 3 conversions are discontinued and the conversions are carried out on 3 channels
+      value: 2
+    - name: DISCNUM_4
+      description: 4 conversions are discontinued and the conversions are carried out on 4 channels
+      value: 3
+    - name: DISCNUM_5
+      description: 5 conversions are discontinued and the conversions are carried out on 5 channels
+      value: 4
+    - name: DISCNUM_6
+      description: 6 conversions are discontinued and the conversions are carried out on 6 channels
+      value: 5
+    - name: DISCNUM_7
+      description: 7 conversions are discontinued and the conversions are carried out on 7 channels
+      value: 6
+    - name: DISCNUM_8
+      description: 8 conversions are discontinued and the conversions are carried out on 8 channels
+      value: 7
+enum/DELS:
+  bit_size: 3
+  variants:
+    - name: NO_DELAY
+      description: No Delay
+      value: 0
+    - name: AFTER_READ
+      description: Until the converted data have been read
+      value: 1
+    - name: DELAY_7_CLK
+      description: Delay 7 APB clock cycles after the conversion
+      value: 2
+    - name: DELAY_15_CLK
+      description: Delay 16 APB clock cycles after the conversion
+      value: 3
+    - name: DELAY_31_CLK
+      description: Delay 31 APB clock cycles after the conversion
+      value: 4
+    - name: DELAY_63_CLK
+      description: Delay 63 APB clock cycles after the conversion
+      value: 5
+    - name: DELAY_127_CLK
+      description:  Delay 127 APB clock cycles after the conversion
+      value: 6
+    - name: DELAY_255_CLK
+      description:  Delay 255 APB clock cycles after the conversion
+      value: 7
+enum/EXTEN:
+  bit_size: 3
+  variants:
+    - name: DISABLED
+      description: Trigger detection disabled
+      value: 0
+    - name: RISING
+      description: Trigger detection on the rising edge
+      value: 1
+    - name: FALLING
+      description: Trigger detection on the falling edge
+      value: 2
+    - name: BOTH
+      description: Trigger detection on both edges
+      value: 3
+enum/EXTSEL:
+  bit_size: 3
+  variants:
+    - name: TIM9_CC2
+      description: Timer 9 CC2 event
+      value: 0
+    - name: TIM9_TRGO
+      description: Timer 9 TRGO event
+      value: 1
+    - name: TIM2_CC3
+      description: Timer 2 CC3 event
+      value: 2
+    - name: TIM2_CC2
+      description: Timer 2 CC2 event
+      value: 3
+    - name: TIM3_TRGO
+      description: Timer 3 TRGO event
+      value: 4
+    - name: TIM4_CC4
+      description: Timer 4 CC4 event
+      value: 5
+    - name: TIM2_TRGO
+      description: Timer 2 TRGO event
+      value: 6
+    - name: TIM3_CC1
+      description: Timer 3 CC1 event
+      value: 7
+    - name: TIM3_CC3
+      description: Timer 3 CC3 event
+      value: 8
+    - name: TIM4_TRGO
+      description: Timer 4 TRGO event
+      value: 9
+    - name: TIM6_TRGO
+      description: Timer 6 TRGO event
+      value: 10
+    - name: EXTI_LINE11
+      description: External interrupt line 11
+      value: 15
+enum/JEXTSEL:
+  bit_size: 3
+  variants:
+    - name: TIM9_CC1
+      description: Timer 9 CC1 event
+      value: 0
+    - name: TIM9_TRGO
+      description: Timer 9 TRGO event
+      value: 1
+    - name: TIM2_TRGO
+      description: Timer 2 TRGO event
+      value: 2
+    - name: TIM2_CC1
+      description: Timer 2 CC1 event
+      value: 3
+    - name: TIM3_CC4
+      description: Timer 3 CC4 event
+      value: 4
+    - name: TIM4_TRGO
+      description: Timer 4 TRGO event
+      value: 5
+    - name: TIM4_CC1
+      description: Timer 4 CC1 event
+      value: 6
+    - name: TIM4_CC2
+      description: Timer 4 CC2 event
+      value: 7
+    - name: TIM4_CC3
+      description: Timer 4 CC3 event
+      value: 8
+    - name: TIM10_CC1
+      description: Timer 4 CC3 event
+      value: 9
+    - name: TIM7_TRGO
+      description: Timer 7 TRGO event
+      value: 10
+    - name: EXTI_LINE15
+      description: External interrupt line 15
+      value: 15
+enum/RES:
+  bit_size: 2
+  variants:
+  - name: TwelveBit
+    description: 12-bit resolution
+    value: 0
+  - name: TenBit
+    description: 10-bit resolution
+    value: 1
+  - name: EightBit
+    description: 8-bit resolution
+    value: 2
+  - name: SixBit
+    description: 6-bit resolution
+    value: 3
+enum/SAMPLE_TIME:
+  bit_size: 3
+  variants:
+    - name: Cycles4
+      description: 4 ADC clock cycles
+      value: 0
+    - name: Cycles9
+      description: 9 ADC clock cycles
+      value: 1
+    - name: Cycles16
+      description: 16 ADC clock cycles
+      value: 2
+    - name: Cycles24
+      description: 24 ADC clock cycles
+      value: 3
+    - name: Cycles48
+      description: 48 ADC clock cycles
+      value: 4
+    - name: Cycles96
+      description: 96 ADC clock cycles
+      value: 5
+    - name: Cycles192
+      description: 192 ADC clock cycles
+      value: 6
+    - name: Cycles384
+      description: 384 ADC clock cycles
+      value: 7

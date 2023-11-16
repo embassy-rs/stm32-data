@@ -192,6 +192,7 @@ impl PeriMatcher {
             (".*:ADC:aditf_v2_5F1", ("adc", "f1", "ADC")),
             (".*:ADC:aditf5_v1_1", ("adc", "f3", "ADC")),
             (".*:ADC:aditf_v2_5", ("adc", "f3_v2", "ADC")),
+            (".*:ADC:aditf3_v1_1", ("adc", "f3_v1_1", "ADC")),
             (".*:ADC:aditf4_v1_1", ("adc", "v1", "ADC")),
             (".*:ADC:aditf2_v1_1", ("adc", "v2", "ADC")),
             (".*:ADC:aditf5_v2_0", ("adc", "v3", "ADC")),
