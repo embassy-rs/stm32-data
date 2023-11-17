@@ -115,6 +115,8 @@ impl ChipInterrupts {
 
         let mut chip_signals = HashMap::<_, Vec<_>>::new();
 
+        let exists_irq: HashSet<String> = core.interrupts.iter().map(|i| i.name.clone()).collect();
+
         for nvic_string in nvic_strings {
             trace!("  irq={nvic_string:?}");
             let parts = {
@@ -133,7 +135,23 @@ impl ChipInterrupts {
             }
 
             // More typos
-            let name = name.replace("USAR11", "USART11");
+            let mut name = name.replace("USAR11", "USART11");
+
+            // Skip interrupts that don't exist.
+            // This is needed because NVIC files are shared between many chips.
+            static EQUIVALENT_IRQS: &[(&str, &[&str])] = &[
+                ("HASH_RNG", &["RNG"]),
+                ("USB_HP_CAN_TX", &["CAN_TX"]),
+                ("USB_LP_CAN_RX0", &["CAN_RX0"]),
+            ];
+            if !exists_irq.contains(&name) {
+                let &(_, eq_irqs) = EQUIVALENT_IRQS
+                    .iter()
+                    .find(|(irq, _)| irq == &name)
+                    .unwrap_or(&("", &[]));
+                let Some(new_name) = eq_irqs.iter().find(|i| exists_irq.contains(**i)) else { continue };
+                name = new_name.to_string();
+            }
 
             // Flags.
             // Y
@@ -327,35 +345,7 @@ impl ChipInterrupts {
 
         for p in &mut core.peripherals {
             if let Some(peri_irqs) = chip_signals.get(&p.name) {
-                use stm32_data_serde::chip::core::peripheral::Interrupt;
-
-                //filter by available, because some are conditioned on <Die>
-
-                static EQUIVALENT_IRQS: &[(&str, &[&str])] = &[
-                    ("HASH_RNG", &["RNG"]),
-                    ("USB_HP_CAN_TX", &["CAN_TX"]),
-                    ("USB_LP_CAN_RX0", &["CAN_RX0"]),
-                ];
-
-                let mut irqs: Vec<_> = peri_irqs
-                    .iter()
-                    .filter_map(|i| {
-                        if header_irqs.contains_key(&i.interrupt) {
-                            return Some(i.clone());
-                        }
-                        if let Some((_, eq_irqs)) = EQUIVALENT_IRQS.iter().find(|(irq, _)| irq == &i.interrupt) {
-                            for eq_irq in *eq_irqs {
-                                if header_irqs.contains_key(*eq_irq) {
-                                    return Some(Interrupt {
-                                        signal: i.signal.clone(),
-                                        interrupt: eq_irq.to_string(),
-                                    });
-                                }
-                            }
-                        }
-                        None
-                    })
-                    .collect();
+                let mut irqs: Vec<_> = peri_irqs.clone();
                 irqs.sort_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
                 irqs.dedup_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
 
