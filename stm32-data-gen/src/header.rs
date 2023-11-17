@@ -196,6 +196,26 @@ pub struct ParsedHeader {
 }
 
 impl ParsedHeader {
+    /// Get C header defines for this core.
+    pub fn get_defines(&self, core_name: &str) -> &Defines {
+        let core_name = if !self.interrupts.contains_key(core_name) || !self.defines.contains_key(core_name) {
+            "all"
+        } else {
+            core_name
+        };
+        self.defines.get(core_name).unwrap()
+    }
+
+    /// Get interrupts for this core.
+    pub fn get_interrupts(&self, core_name: &str) -> &HashMap<String, u8> {
+        let core_name = if !self.interrupts.contains_key(core_name) || !self.defines.contains_key(core_name) {
+            "all"
+        } else {
+            core_name
+        };
+        self.interrupts.get(core_name).unwrap()
+    }
+
     fn parse(f: impl AsRef<std::path::Path>) -> anyhow::Result<Self> {
         let mut irqs = HashMap::<String, HashMap<String, u8>>::new();
         let mut defines = HashMap::<String, Defines>::new();

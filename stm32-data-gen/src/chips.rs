@@ -67,7 +67,7 @@ pub struct Chip {
 pub struct ChipGroup {
     chip_names: Vec<String>,
     xml: xml::Mcu,
-    ips: HashMap<String, xml::Ip>,
+    pub ips: HashMap<String, xml::Ip>,
     pins: HashMap<String, xml::Pin>,
     family: Option<String>,
     line: Option<String>,
@@ -810,73 +810,9 @@ fn process_core(
     chip_af: Option<&HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>>,
     dma_channels: &dma::DmaChannels,
 ) -> stm32_data_serde::chip::Core {
-    let real_core_name = corename(core_xml);
+    let core_name = corename(core_xml);
+    let defines = h.get_defines(&core_name);
 
-    let core_name = if !h.interrupts.contains_key(&real_core_name) || !h.defines.contains_key(&real_core_name) {
-        "all"
-    } else {
-        &real_core_name
-    };
-    // C header defines for this core.
-    let defines = h.defines.get(core_name).unwrap();
-    // Interrupts!
-    let want_nvic_name = {
-        // Most chips have a single NVIC, named "NVIC"
-        let mut want_nvic_name = "NVIC";
-
-        // Exception 1: Multicore: NVIC1 is the first core, NVIC2 is the second. We have to pick the right one.
-        if ["H745", "H747", "H755", "H757", "WL54", "WL55"].contains(&&chip_name[5..9]) {
-            if core_name == "cm7" {
-                want_nvic_name = "NVIC1";
-            } else {
-                want_nvic_name = "NVIC2"
-            }
-        }
-        if &chip_name[5..8] == "WL5" {
-            if core_name == "cm4" {
-                want_nvic_name = "NVIC1";
-            } else {
-                want_nvic_name = "NVIC2"
-            }
-        }
-        // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-        if ["L5", "U5"].contains(&&chip_name[5..7]) {
-            want_nvic_name = "NVIC2"
-        }
-        if ["H56", "H57", "WBA"].contains(&&chip_name[5..8]) {
-            want_nvic_name = "NVIC2"
-        }
-
-        want_nvic_name
-    };
-    let chip_nvic = group
-        .ips
-        .values()
-        .find(|x| x.name == want_nvic_name)
-        .ok_or_else(|| format!("couldn't find nvic. chip_name={chip_name} want_nvic_name={want_nvic_name}"))
-        .unwrap();
-
-    // With the current data sources, this value is always either 2 or 4, and never resolves to None
-    let nvic_priority_bits = defines.0.get("__NVIC_PRIO_BITS").map(|bits| *bits as u8);
-
-    let mut header_irqs = h.interrupts.get(core_name).unwrap().clone();
-    let chip_irqs = chip_interrupts
-        .0
-        .get(&(chip_nvic.name.clone(), chip_nvic.version.clone()))
-        .unwrap();
-    // F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
-    // to the same IRQ number.
-    if chip_name.starts_with("STM32F100") {
-        header_irqs.remove("DMA2_Channel4_5");
-    }
-    let mut interrupts: Vec<_> = header_irqs
-        .iter()
-        .map(|(k, v)| stm32_data_serde::chip::core::Interrupt {
-            name: k.clone(),
-            number: *v,
-        })
-        .collect();
-    interrupts.sort_unstable_by_key(|x| x.number);
     let mut peri_kinds = HashMap::new();
     peri_kinds.insert("UID".to_string(), "UID".to_string());
     for ip in group.ips.values() {
@@ -1067,41 +1003,6 @@ fn process_core(
         // sort pins to avoid diff for c pins
         p.pins.sort_by_key(|x| (x.pin.clone(), x.signal.clone()));
 
-        if let Some(peri_irqs) = chip_irqs.get(&pname) {
-            use stm32_data_serde::chip::core::peripheral::Interrupt;
-
-            //filter by available, because some are conditioned on <Die>
-
-            static EQUIVALENT_IRQS: &[(&str, &[&str])] = &[
-                ("HASH_RNG", &["RNG"]),
-                ("USB_HP_CAN_TX", &["CAN_TX"]),
-                ("USB_LP_CAN_RX0", &["CAN_RX0"]),
-            ];
-
-            let mut irqs: Vec<_> = peri_irqs
-                .iter()
-                .filter_map(|i| {
-                    if header_irqs.contains_key(&i.interrupt) {
-                        return Some(i.clone());
-                    }
-                    if let Some((_, eq_irqs)) = EQUIVALENT_IRQS.iter().find(|(irq, _)| irq == &i.interrupt) {
-                        for eq_irq in *eq_irqs {
-                            if header_irqs.contains_key(*eq_irq) {
-                                return Some(Interrupt {
-                                    signal: i.signal.clone(),
-                                    interrupt: eq_irq.to_string(),
-                                });
-                            }
-                        }
-                    }
-                    None
-                })
-                .collect();
-            irqs.sort_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
-            irqs.dedup_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
-
-            p.interrupts = Some(irqs);
-        }
         peripherals.insert(p.name.clone(), p);
     }
     if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family.as_ref().unwrap())) {
@@ -1189,13 +1090,18 @@ fn process_core(
             p.dma_channels = chs;
         }
     }
-    stm32_data_serde::chip::Core {
-        name: real_core_name.clone(),
+
+    let mut core = stm32_data_serde::chip::Core {
+        name: core_name.clone(),
         peripherals,
-        nvic_priority_bits,
-        interrupts,
+        nvic_priority_bits: None,
+        interrupts: vec![],
         dma_channels: core_dma_channels,
-    }
+    };
+
+    chip_interrupts.process(&mut core, chip_name, h, group);
+
+    core
 }
 
 fn process_chip(
