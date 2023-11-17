@@ -79,6 +79,8 @@ impl ChipInterrupts {
         h: &crate::header::ParsedHeader,
         group: &ChipGroup,
     ) {
+        trace!("parsing interrupts for chip {} core {}", chip_name, core.name);
+
         // =================== Populate nvic_priority_bits
         // With the current data sources, this value is always either 2 or 4, and never resolves to None
         let header_defines = h.get_defines(&core.name);
@@ -113,7 +115,8 @@ impl ChipInterrupts {
             .get(&(chip_nvic.name.clone(), chip_nvic.version.clone()))
             .unwrap();
 
-        let mut chip_signals = HashMap::<_, Vec<_>>::new();
+        // peripheral -> signal -> interrupts
+        let mut chip_signals = HashMap::<String, HashMap<String, HashSet<String>>>::new();
 
         let exists_irq: HashSet<String> = core.interrupts.iter().map(|i| i.name.clone()).collect();
 
@@ -135,7 +138,8 @@ impl ChipInterrupts {
             }
 
             // More typos
-            let mut name = name.replace("USAR11", "USART11");
+            let name = name.replace("USAR11", "USART11");
+            trace!("    name={name}");
 
             // Skip interrupts that don't exist.
             // This is needed because NVIC files are shared between many chips.
@@ -144,13 +148,14 @@ impl ChipInterrupts {
                 ("USB_HP_CAN_TX", &["CAN_TX"]),
                 ("USB_LP_CAN_RX0", &["CAN_RX0"]),
             ];
+            let mut header_name = name.clone();
             if !exists_irq.contains(&name) {
                 let &(_, eq_irqs) = EQUIVALENT_IRQS
                     .iter()
                     .find(|(irq, _)| irq == &name)
                     .unwrap_or(&("", &[]));
                 let Some(new_name) = eq_irqs.iter().find(|i| exists_irq.contains(**i)) else { continue };
-                name = new_name.to_string();
+                header_name = new_name.to_string();
             }
 
             // Flags.
@@ -306,65 +311,57 @@ impl ChipInterrupts {
                         if !known.contains(&s.clone()) {
                             panic!("Unknown signal {s} for peri {p}, known={known:?}, parts={parts:?}");
                         }
+                        trace!("    signal: {} {}", p, s);
                         interrupt_signals.insert((p.clone(), s));
                     }
                 }
             }
 
             for (p, s) in interrupt_signals {
-                let irqs = chip_signals.entry(p).or_default();
-                let irq = stm32_data_serde::chip::core::peripheral::Interrupt {
-                    signal: s,
-                    interrupt: name.clone(),
-                };
-                if !irqs.contains(&irq) {
-                    irqs.push(irq);
-                }
+                let signals = chip_signals.entry(p).or_default();
+                let irqs = signals.entry(s).or_default();
+                irqs.insert(header_name.clone());
             }
         }
-
-        /*
-        for (p, s) in &chip_signals {
-            let mut m: HashMap<&str, Vec<&str>> = HashMap::new();
-            for i in s {
-                m.entry(&i.signal).or_default().push(&i.interrupt);
-            }
-
-            for (signal, irqs) in &mut m {
-                if irqs.len() != 1 {
-                    *irqs = irqs.iter().copied().filter(|_| true).collect();
-                }
-
-                if irqs.len() != 1 {
-                    panic!("dup irqs on file {:?} peri {} signal {}: {:?}", f, p, signal, irqs);
-                }
-            }
-        }
-         */
 
         for p in &mut core.peripherals {
-            if let Some(peri_irqs) = chip_signals.get(&p.name) {
-                let mut irqs: Vec<_> = peri_irqs.clone();
-                irqs.sort_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
-                irqs.dedup_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
+            if let Some(signals) = chip_signals.get(&p.name) {
+                let mut all_irqs: Vec<stm32_data_serde::chip::core::peripheral::Interrupt> = Vec::new();
 
-                /*
-                // check there are no duplicate signals.
-                for i in 0..(irqs.len() - 1) {
-                    if irqs[i].signal == irqs[i + 1].signal {
+                // remove duplicates
+                let globals = signals.get("GLOBAL").cloned().unwrap_or_default();
+                for (signal, irqs) in signals {
+                    let mut irqs = irqs.clone();
+
+                    // If there's a duplicate irqs in a signal other than "global", keep the non-global one.
+                    if irqs.len() != 1 && signal != &"GLOBAL" {
+                        irqs.retain(|irq| !globals.contains(irq));
+                    }
+
+                    // If there's still duplicate irqs, keep the one that doesn't match the peri name.
+                    if irqs.len() != 1 && signal != &"GLOBAL" {
+                        irqs.retain(|irq| irq != &p.name);
+                    }
+
+                    if irqs.len() != 1 {
                         panic!(
-                            "duplicate interrupt on chip {} peripheral {} signal {}: irqs {} and {}",
-                            chip_name,
-                            p.name,
-                            irqs[i].signal,
-                            irqs[i].interrupt,
-                            irqs[i + 1].interrupt
+                            "dup irqs on chip {:?} nvic {:?} peri {} signal {}: {:?}",
+                            chip_name, chip_nvic.version, p.name, signal, irqs
                         );
                     }
-                }
-                 */
 
-                p.interrupts = Some(irqs);
+                    for irq in irqs {
+                        all_irqs.push(stm32_data_serde::chip::core::peripheral::Interrupt {
+                            signal: signal.clone(),
+                            interrupt: irq,
+                        })
+                    }
+                }
+
+                all_irqs.sort_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
+                all_irqs.dedup_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
+
+                p.interrupts = Some(all_irqs);
             }
         }
     }
