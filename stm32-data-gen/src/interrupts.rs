@@ -312,8 +312,7 @@ impl ChipInterrupts {
             }
 
             for (p, s) in interrupt_signals {
-                let key = if p == "USB_DRD_FS" { "USB".to_string() } else { p };
-                let irqs = chip_signals.entry(key).or_default();
+                let irqs = chip_signals.entry(p).or_default();
                 let irq = stm32_data_serde::chip::core::peripheral::Interrupt {
                     signal: s,
                     interrupt: name.clone(),
@@ -386,6 +385,7 @@ fn tokenize_name(name: &str) -> Vec<String> {
 fn match_peris(peris: &[String], name: &str) -> Vec<String> {
     const PERI_OVERRIDE: &[(&str, &[&str])] = &[
         ("USB_FS", &["USB"]),
+        ("USB_DRD_FS", &["USB"]),
         ("OTG_HS", &["USB_OTG_HS"]),
         ("OTG_FS", &["USB_OTG_FS"]),
         ("USB", &["USB_DRD_FS"]),
