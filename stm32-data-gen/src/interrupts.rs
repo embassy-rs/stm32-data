@@ -243,7 +243,11 @@ impl ChipInterrupts {
                     continue;
                 }
 
-                let peri_names: Vec<_> = parts[2].split(',').map(ToString::to_string).collect();
+                let peri_names: Vec<_> = parts[2]
+                    .split(',')
+                    .map(|x| if x == "USB_DRD_FS" { "USB" } else { x })
+                    .map(ToString::to_string)
+                    .collect();
 
                 let name2 = {
                     if name == "USBWakeUp" || name == "USBWakeUp_RMP" {
