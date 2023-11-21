@@ -772,7 +772,10 @@ fieldset/TXBAR:
   - name: AR
     description: Add request. Each Tx buffer has its own add request bit. Writing a 1 sets the corresponding add request bit; writing a 0 has no impact. This enables the Host to set transmission requests for multiple Tx buffers with one write to TXBAR. When no Tx scan is running, the bits are reset immediately, else the bits remain set until the Tx scan process has completed
     bit_offset: 0
-    bit_size: 3
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 fieldset/TXBC:
   description: FDCAN Tx buffer configuration register
   fields:
@@ -786,42 +789,60 @@ fieldset/TXBCF:
   - name: CF
     description: Cancellation finished. Each Tx buffer has its own CF bit. The bits are set when the corresponding TXBRP bit is cleared after a cancellation was requested via TXBCR. In case the corresponding TXBRP bit was not set at the point of cancellation, CF is set immediately. The bits are reset when a new transmission is requested by writing a 1 to the corresponding bit of register TXBAR
     bit_offset: 0
-    bit_size: 3
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 fieldset/TXBCIE:
   description: FDCAN Tx buffer cancellation finished interrupt enable register
   fields:
   - name: CFIE
     description: Cancellation finished interrupt enable.. Each Tx buffer has its own CFIE bit
     bit_offset: 0
-    bit_size: 3
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 fieldset/TXBCR:
   description: FDCAN Tx buffer cancellation request register
   fields:
   - name: CR
     description: Cancellation request. Each Tx buffer has its own cancellation request bit. Writing a 1 sets the corresponding CR bit; writing a 0 has no impact.  This enables the Host to set cancellation requests for multiple Tx buffers with one write to TXBCR. The bits remain set until the corresponding TXBRP bit is reset
     bit_offset: 0
-    bit_size: 3
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 fieldset/TXBRP:
   description: FDCAN Tx buffer request pending register
   fields:
   - name: TRP
     description: Transmission request pending. Each Tx buffer has its own transmission request pending bit. The bits are set via register TXBAR. The bits are reset after a requested transmission has completed or has been canceled via register TXBCR.  After a TXBRP bit has been set, a Tx scan is started to check for the pending Tx request with the highest priority (Tx buffer with lowest Message ID).  A cancellation request resets the corresponding transmission request pending bit of register TXBRP. In case a transmission has already been started when a cancellation is requested, this is done at the end of the transmission, regardless whether the transmission was successful or not. The cancellation request bits are reset directly after the corresponding TXBRP bit has been reset.  After a cancellation has been requested, a finished cancellation is signaled via TXBCF  after successful transmission together with the corresponding TXBTO bit  when the transmission has not yet been started at the point of cancellation  when the transmission has been aborted due to lost arbitration  when an error occurred during frame transmission  In DAR mode all transmissions are automatically canceled if they are not successful. The corresponding TXBCF bit is set for all unsuccessful transmissions
     bit_offset: 0
-    bit_size: 3
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 fieldset/TXBTIE:
   description: FDCAN Tx buffer transmission interrupt enable register
   fields:
   - name: TIE
     description: Transmission interrupt enable. Each Tx buffer has its own TIE bit
     bit_offset: 0
-    bit_size: 3
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 fieldset/TXBTO:
   description: FDCAN Tx buffer transmission occurred register
   fields:
   - name: TO
     description: Transmission occurred.. Each Tx buffer has its own TO bit. The bits are set when the corresponding TXBRP bit is cleared after a successful transmission. The bits are reset when a new transmission is requested by writing a 1 to the corresponding bit of register TXBAR
     bit_offset: 0
-    bit_size: 3
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 fieldset/TXEFA:
   description: FDCAN Tx event FIFO acknowledge register
   fields:
