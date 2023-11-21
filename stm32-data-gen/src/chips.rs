@@ -459,6 +459,8 @@ impl PeriMatcher {
             (".*:CAN:bxcan1_v1_1.*", ("can", "bxcan", "CAN")),
             ("STM32H7.*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_h7", "FDCAN")),
             (".*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
+            ("STM32H7.*:FDCANRAM.*", ("fdcanram", "h7", "FDCANRAM")),
+            (".*:FDCANRAM.*", ("fdcanram", "v1", "FDCANRAM")),
             // # stm32F4 CRC peripheral
             // # ("STM32F4*:CRC:CRC:crc_f4")
             // # v1: F1, F2, F4, L1
@@ -883,6 +885,29 @@ fn process_core(
     if peri_kinds.contains_key("BDMA1") {
         peri_kinds.remove("BDMA");
     }
+    let fdcans = peri_kinds
+        .keys()
+        .filter_map(|pname| {
+            regex!(r"^FDCAN(?<idx>[0-9]+)$")
+                .captures(pname)
+                .map(|cap| cap["idx"].to_string())
+        })
+        .collect::<Vec<_>>();
+    if !fdcans.is_empty() {
+        if chip_name.starts_with("STM32H7") {
+            // H7 has one message RAM shared between FDCANs
+            peri_kinds
+                .entry("FDCANRAM".to_string())
+                .or_insert("unknown".to_string());
+        } else {
+            // Other chips with FDCANs have separate message RAM per module
+            for fdcan in fdcans {
+                peri_kinds
+                    .entry(format!("FDCANRAM{}", fdcan))
+                    .or_insert("unknown".to_string());
+            }
+        }
+    }
     // get possible used GPIOs for each peripheral from the chip xml
     // it's not the full info we would want (stuff like AFIO info which comes from GPIO xml),
     //   but we actually need to use it because of F1 line
@@ -929,6 +954,17 @@ fn process_core(
             defines.get_peri_addr("ADC1")
         } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
             defines.get_peri_addr("HRTIM1")
+        } else if let Some(cap) = regex!(r"^FDCANRAM(?<idx>[0-9]+)$").captures(&pname) {
+            defines.get_peri_addr("FDCANRAM").and_then(|addr| {
+                if chip_name.starts_with("STM32H7") {
+                    Some(addr)
+                } else {
+                    let idx = u32::from_str_radix(&cap["idx"], 10).unwrap();
+                    // FIXME: this offset should not be hardcoded, but I think
+                    // it appears in no data sources (only in RMs)
+                    Some(addr + (idx - 1) * 0x350)
+                }
+            })
         } else {
             defines.get_peri_addr(&pname)
         };
