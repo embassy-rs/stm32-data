@@ -379,7 +379,7 @@ impl PeripheralToClock {
         }
 
         // Absolute fallback, match against the clocks for just the first ADC
-        if clocks.contains_key("ADC1") {
+        if peri_name == "ADC" && clocks.contains_key("ADC1") {
             return clocks.get("ADC1");
         }
 
