@@ -1,7 +1,5 @@
-# DAC v3, only used in L4.
-# Adds CCR, MCR, SHSR, SHHR, SHRR registers.
-# Adds CEN fields to CR and BWST and CAL_FLAG fields to SR.
-# Deletes BOFF fields from CR.
+# DAC v7, used in G4.
+# Adds STR, STMODR for sawtooth control.
 
 block/DAC:
   description: Digital-to-analog converter
@@ -83,6 +81,17 @@ block/DAC:
     description: sample and hold refresh time register
     byte_offset: 76
     fieldset: SHRR
+  - name: STR
+    description: Sawtooth register
+    byte_offset: 88
+    fieldset: STR
+    array:
+      len: 2
+      stride: 4
+  - name: STMODR
+    description: Sawtooth Mode register
+    byte_offset: 96
+    fieldset: STMODR
 fieldset/CCR:
   description: calibration control register
   fields:
@@ -105,15 +114,15 @@ fieldset/CR:
       stride: 16
   - name: TEN
     description: channel trigger enable
-    bit_offset: 2
+    bit_offset: 1
     bit_size: 1
     array:
       len: 2
       stride: 16
   - name: TSEL
     description: channel trigger selection
-    bit_offset: 3
-    bit_size: 3
+    bit_offset: 2
+    bit_size: 4
     array:
       len: 2
       stride: 16
@@ -160,6 +169,10 @@ fieldset/DHR12L:
     description: channel 12-bit left-aligned data
     bit_offset: 4
     bit_size: 12
+  - name: DHRB
+    description: channel 12-bit left-aligned data B
+    bit_offset: 20
+    bit_size: 12
 fieldset/DHR12LD:
   description: dual 12-bit left aligned data holding register
   fields:
@@ -176,6 +189,10 @@ fieldset/DHR12R:
   - name: DHR
     description: channel 12-bit right-aligned data
     bit_offset: 0
+    bit_size: 12
+  - name: DHRB
+    description: channel 12-bit right-aligned data B
+    bit_offset: 16
     bit_size: 12
 fieldset/DHR12RD:
   description: dual 12-bit right-aligned data holding register
@@ -194,6 +211,10 @@ fieldset/DHR8R:
     description: channel 8-bit right-aligned data
     bit_offset: 0
     bit_size: 8
+  - name: DHRB
+    description: channel 8-bit right-aligned data B
+    bit_offset: 8
+    bit_size: 8
 fieldset/DHR8RD:
   description: dual 8-bit right aligned data holding register
   fields:
@@ -211,6 +232,10 @@ fieldset/DOR:
     description: channel data output
     bit_offset: 0
     bit_size: 12
+  - name: DORB
+    description: channel data output B
+    bit_offset: 16
+    bit_size: 12
 fieldset/MCR:
   description: mode control register
   fields:
@@ -222,6 +247,24 @@ fieldset/MCR:
     array:
       len: 2
       stride: 16
+  - name: DMADOUBLE
+    description: channel DMA double data mode.
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 2
+      stride: 16
+  - name: SINFORMAT
+    description: enable signed format for DAC channel
+    bit_offset: 9
+    bit_size: 1
+    array:
+      len: 2
+      stride: 16
+  - name: HFSEL
+    description: high frequency interface mode selection
+    bit_offset: 14
+    bit_size: 2
 fieldset/SHHR:
   description: sample and hold hold time register
   fields:
@@ -252,6 +295,20 @@ fieldset/SHSR:
 fieldset/SR:
   description: status register
   fields:
+  - name: DACRDY
+    description: channel ready status bit
+    bit_offset: 11
+    bit_size: 1
+    array:
+      len: 2
+      stride: 16
+  - name: DORSTAT
+    description: channel output register status bit
+    bit_offset: 12
+    bit_size: 1
+    array:
+      len: 2
+      stride: 16
   - name: DMAUDR
     description: channel DMA underrun flag
     bit_offset: 13
@@ -273,12 +330,51 @@ fieldset/SR:
     array:
       len: 2
       stride: 16
+fieldset/STMODR:
+  description: sawtooth mode register
+  fields:
+  - name: STRSTTRIGSEL
+    description: channel sawtooth reset trigger selection
+    bit_offset: 0
+    bit_size: 4
+    array:
+      len: 2
+      stride: 16
+  - name: STINCTRIGSEL
+    description: channel sawtooth increment trigger selection
+    bit_offset: 8
+    bit_size: 4
+    array:
+      len: 2
+      stride: 16
+fieldset/STR:
+  description: sawtooth register
+  fields:
+  - name: RSTDATA
+    description: channel sawtooth reset value.
+    bit_offset: 0
+    bit_size: 12
+  - name: DIR
+    description: channel sawtooth direction setting
+    bit_offset: 12
+    bit_size: 1
+  - name: INCDATA
+    description: channel sawtooth increment value (12.4 bit format)
+    bit_offset: 16
+    bit_size: 16
 fieldset/SWTRIGR:
   description: software trigger register
   fields:
   - name: SWTRIG
     description: channel software trigger
     bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: SWTRIGB
+    description: channel software trigger B
+    bit_offset: 16
     bit_size: 1
     array:
       len: 2
@@ -322,3 +418,6 @@ enum/WAVE:
   - name: Triangle
     description: Triangle wave generation enabled
     value: 2
+  - name: Sawtooth
+    description: Sawtooth wave generation enabled
+    value: 3
