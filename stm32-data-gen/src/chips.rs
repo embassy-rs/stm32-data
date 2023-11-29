@@ -251,6 +251,7 @@ impl PeriMatcher {
             (".*:LTDC:lcdtft1_v1_1", ("ltdc", "v1", "LTDC")),
             (".*:MDIOS:mdios1_v1_0", ("mdios", "v1", "MDIOS")),
             (".*:QUADSPI:quadspi1_v1_0", ("quadspi", "v1", "QUADSPI")),
+            (".*:QUADSPI:quadspi1_v4_1", ("quadspi", "v4", "QUADSPI")),
             ("STM32F1.*:BKP.*", ("bkp", "v1", "BKP")),
             (".*:RTC:rtc1_v1_1", ("rtc", "v1", "RTC")),
             ("STM32F0.*:RTC:rtc2_.*", ("rtc", "v2f0", "RTC")),
@@ -935,6 +936,8 @@ fn process_core(
             defines.get_peri_addr("ADC1")
         } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
             defines.get_peri_addr("HRTIM1")
+        } else if pname.starts_with("QUADSPI") && chip_name.starts_with("STM32G474") {
+            defines.get_peri_addr("QSPI")
         } else {
             defines.get_peri_addr(&pname)
         };
