@@ -937,7 +937,7 @@ fn process_core(
         } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
             defines.get_peri_addr("HRTIM1")
         } else if pname.starts_with("QUADSPI") && chip_name.starts_with("STM32G474") {
-            defines.get_peri_addr("QSPI")
+            defines.get_peri_addr("QSPI_R")
         } else {
             defines.get_peri_addr(&pname)
         };
