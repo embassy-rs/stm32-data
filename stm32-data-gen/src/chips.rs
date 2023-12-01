@@ -993,7 +993,7 @@ fn process_core(
             continue;
         }
 
-        let addr = if chip_name.starts_with("STM32F0") && pname == "ADC" {
+        let addr = if (chip_name.starts_with("STM32F0") || chip_name.starts_with("STM32L1")) && pname == "ADC" {
             defines.get_peri_addr("ADC1")
         } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
             defines.get_peri_addr("HRTIM1")
