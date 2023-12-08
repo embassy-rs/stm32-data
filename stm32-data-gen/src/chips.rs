@@ -192,6 +192,7 @@ impl PeriMatcher {
             (".*:ADC:aditf_v2_5F1", ("adc", "f1", "ADC")),
             (".*:ADC:aditf5_v1_1", ("adc", "f3", "ADC")),
             (".*:ADC:aditf_v2_5", ("adc", "f3_v2", "ADC")),
+            (".*:ADC:aditf3_v1_1", ("adc", "f3_v1_1", "ADC")),
             (".*:ADC:aditf4_v1_1", ("adc", "v1", "ADC")),
             (".*:ADC:aditf2_v1_1", ("adc", "v2", "ADC")),
             (".*:ADC:aditf5_v2_0", ("adc", "v3", "ADC")),
@@ -515,6 +516,7 @@ impl PeriMatcher {
             ("STM32WB55.*:TSC:.*", ("tsc", "v2", "TSC")),
             ("STM32L[045].*:TSC:.*", ("tsc", "v3", "TSC")),
             ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
+            ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
         ];
 
         Self {
@@ -878,9 +880,43 @@ fn process_core(
         peri_kinds.insert(pname, pkind.to_string());
     }
     const GHOST_PERIS: &[&str] = &[
-        "GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOE", "GPIOF", "GPIOG", "GPIOH", "GPIOI", "GPIOJ", "GPIOK", "GPIOL",
-        "GPIOM", "GPION", "GPIOO", "GPIOP", "GPIOQ", "GPIOR", "GPIOS", "GPIOT", "DMA1", "DMA2", "BDMA", "DMAMUX",
-        "DMAMUX1", "DMAMUX2", "SBS", "SYSCFG", "EXTI", "FLASH", "DBGMCU", "CRS", "PWR", "AFIO", "BKP", "USBRAM",
+        "GPIOA",
+        "GPIOB",
+        "GPIOC",
+        "GPIOD",
+        "GPIOE",
+        "GPIOF",
+        "GPIOG",
+        "GPIOH",
+        "GPIOI",
+        "GPIOJ",
+        "GPIOK",
+        "GPIOL",
+        "GPIOM",
+        "GPION",
+        "GPIOO",
+        "GPIOP",
+        "GPIOQ",
+        "GPIOR",
+        "GPIOS",
+        "GPIOT",
+        "DMA1",
+        "DMA2",
+        "BDMA",
+        "DMAMUX",
+        "DMAMUX1",
+        "DMAMUX2",
+        "SBS",
+        "SYSCFG",
+        "EXTI",
+        "FLASH",
+        "DBGMCU",
+        "CRS",
+        "PWR",
+        "AFIO",
+        "BKP",
+        "USBRAM",
+        "VREFINTCAL",
     ];
     for pname in GHOST_PERIS {
         if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
@@ -957,7 +993,7 @@ fn process_core(
             continue;
         }
 
-        let addr = if chip_name.starts_with("STM32F0") && pname == "ADC" {
+        let addr = if (chip_name.starts_with("STM32F0") || chip_name.starts_with("STM32L1")) && pname == "ADC" {
             defines.get_peri_addr("ADC1")
         } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
             defines.get_peri_addr("HRTIM1")

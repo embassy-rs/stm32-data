@@ -175,6 +175,7 @@ impl Defines {
                 &["USB_PMAADDR", "USB_DRD_PMAADDR", "USB_PMAADDR_NS", "USB_DRD_PMAADDR_NS"],
             ),
             ("FDCANRAM", &["SRAMCAN_BASE", "SRAMCAN_BASE_NS"]),
+            ("VREFINTCAL", &["VREFINT_CAL_ADDR_CMSIS"]),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 
