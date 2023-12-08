@@ -251,7 +251,7 @@ impl PeriMatcher {
             (".*:HRTIM:hrtim_G4", ("hrtim", "v2", "HRTIM")),
             (".*:LTDC:lcdtft1_v1_1", ("ltdc", "v1", "LTDC")),
             (".*:MDIOS:mdios1_v1_0", ("mdios", "v1", "MDIOS")),
-            (".*:QUADSPI:quadspi1_v1_0", ("quadspi", "v1", "QUADSPI")),
+            (".*:QUADSPI:.*", ("quadspi", "v1", "QUADSPI")),
             ("STM32F1.*:BKP.*", ("bkp", "v1", "BKP")),
             (".*:RTC:rtc1_v1_1", ("rtc", "v1", "RTC")),
             ("STM32F0.*:RTC:rtc2_.*", ("rtc", "v2f0", "RTC")),
