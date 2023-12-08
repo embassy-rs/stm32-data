@@ -322,6 +322,11 @@ impl PeripheralToClock {
         if peri_name.starts_with("ADC") && !peri_name.contains("COMMON") {
             return self.match_adc_peri_clock(clocks, peri_name);
         }
+        if regex!("^FDCAN[0-9]*$").is_match(peri_name) {
+            return [peri_name, "FDCAN12", "FDCAN"]
+                .into_iter()
+                .find_map(|name| clocks.get(name));
+        }
         if let Some(res) = clocks.get(peri_name) {
             Some(res)
         } else if let Some(peri_name) = peri_name.strip_suffix('1') {
