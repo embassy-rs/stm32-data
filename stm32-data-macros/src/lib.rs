@@ -1,6 +1,5 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn;
 use syn::Data;
 
 #[proc_macro_derive(EnumDebug)]
@@ -48,5 +47,4 @@ fn impl_enum_derive(ast: &syn::DeriveInput) -> TokenStream {
             }
         }
     }
-    .into()
 }

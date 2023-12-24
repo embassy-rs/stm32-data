@@ -21,12 +21,11 @@ where
         Entry::Vacant(e) => {
             e.insert(value);
         }
-        Entry::Occupied(mut e) => match compare(&value, e.get()) {
-            Ordering::Less => {
+        Entry::Occupied(mut e) => {
+            if compare(&value, e.get()) == Ordering::Less {
                 e.insert(value);
             }
-            _ => {}
-        },
+        }
     };
 }
 
@@ -178,7 +177,7 @@ impl PeripheralToClock {
                 let mut family_muxes = HashMap::new();
                 for (reg, body) in &ir.fieldsets {
                     let key = format!("fieldset/{reg}");
-                    if let Some(_) = regex!(r"^fieldset/CCIPR\d?$").captures(&key) {
+                    if regex!(r"^fieldset/CCIPR\d?$").captures(&key).is_some() {
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("SEL") {
                                 check_mux(reg, &field.name)?;
@@ -194,7 +193,7 @@ impl PeripheralToClock {
                                 );
                             }
                         }
-                    } else if let Some(_) = regex!(r"^fieldset/CFGR\d?$").captures(&key) {
+                    } else if regex!(r"^fieldset/CFGR\d?$").captures(&key).is_some() {
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("SW") {
                                 check_mux(reg, &field.name)?;
@@ -210,7 +209,7 @@ impl PeripheralToClock {
                                 );
                             }
                         }
-                    } else if let Some(_) = regex!(r"^fieldset/D\d?CCIPR$").captures(&key) {
+                    } else if regex!(r"^fieldset/D\d?CCIPR$").captures(&key).is_some() {
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("SEL") {
                                 if family_muxes.get(peri).is_some() && reg != "D1CCIPR" {
@@ -275,7 +274,7 @@ impl PeripheralToClock {
                                     }
                                 }
 
-                                let mux = family_muxes.get(peri).map(|peri| peri.clone());
+                                let mux = family_muxes.get(peri).cloned();
 
                                 match family_clocks.entry(peri.to_string()) {
                                     Entry::Vacant(e) => {
