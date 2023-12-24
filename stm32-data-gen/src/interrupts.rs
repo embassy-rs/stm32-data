@@ -338,12 +338,12 @@ impl ChipInterrupts {
                     let mut irqs = irqs.clone();
 
                     // If there's a duplicate irqs in a signal other than "global", keep the non-global one.
-                    if irqs.len() != 1 && signal != &"GLOBAL" {
+                    if irqs.len() != 1 && signal != "GLOBAL" {
                         irqs.retain(|irq| !globals.contains(irq));
                     }
 
                     // If there's still duplicate irqs, keep the one that doesn't match the peri name.
-                    if irqs.len() != 1 && signal != &"GLOBAL" {
+                    if irqs.len() != 1 && signal != "GLOBAL" {
                         irqs.retain(|irq| irq != &p.name);
                     }
 
