@@ -55,6 +55,7 @@ pub mod ir {
                         })
                         .collect();
 
+                    #[allow(clippy::redundant_field_names)]
                     Block {
                         name: name.to_string(),
                         items: items,
@@ -94,6 +95,7 @@ pub mod ir {
                         })
                         .collect();
 
+                    #[allow(clippy::redundant_field_names)]
                     FieldSet {
                         name: name.strip_prefix("regs::").unwrap().to_owned(),
                         fields: fields,
@@ -120,6 +122,7 @@ pub mod ir {
                         })
                         .collect();
 
+                    #[allow(clippy::redundant_field_names)]
                     Enum {
                         name: name.strip_prefix("vals::").unwrap().to_owned(),
                         description: enumm.description.clone(),

@@ -233,7 +233,7 @@ impl Memories {
 
                     for bank in config.bank.iter() {
                         let flash_bank = match kind {
-                            BlockKind::Main => match bank.name.as_ref().map(|x| x.as_str()) {
+                            BlockKind::Main => match bank.name.as_deref() {
                                 Some("Bank 1") => Some(FlashBank::Bank1),
                                 Some("Bank 2") => Some(FlashBank::Bank2),
                                 Some("EEPROM1") => None,

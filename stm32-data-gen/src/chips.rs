@@ -551,7 +551,7 @@ fn corename(d: &str) -> String {
 fn merge_periph_pins_info(
     chip_name: &str,
     periph_name: &str,
-    core_pins: &mut Vec<stm32_data_serde::chip::core::peripheral::Pin>,
+    core_pins: &mut [stm32_data_serde::chip::core::peripheral::Pin],
     af_pins: &[stm32_data_serde::chip::core::peripheral::Pin],
 ) {
     if chip_name.contains("STM32F1") {
@@ -931,7 +931,7 @@ fn process_core(
     let fdcans = peri_kinds
         .keys()
         .filter_map(|pname| {
-            regex!(r"^FDCAN(?<idx>[0-9]+)$")
+            regex!(r"^FDCAN(?P<idx>[0-9]+)$")
                 .captures(pname)
                 .map(|cap| cap["idx"].to_string())
         })
@@ -997,15 +997,15 @@ fn process_core(
             defines.get_peri_addr("ADC1")
         } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
             defines.get_peri_addr("HRTIM1")
-        } else if let Some(cap) = regex!(r"^FDCANRAM(?<idx>[0-9]+)$").captures(&pname) {
-            defines.get_peri_addr("FDCANRAM").and_then(|addr| {
+        } else if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(&pname) {
+            defines.get_peri_addr("FDCANRAM").map(|addr| {
                 if chip_name.starts_with("STM32H7") {
-                    Some(addr)
+                    addr
                 } else {
-                    let idx = u32::from_str_radix(&cap["idx"], 10).unwrap();
+                    let idx = cap["idx"].parse::<u32>().unwrap();
                     // FIXME: this offset should not be hardcoded, but I think
                     // it appears in no data sources (only in RMs)
-                    Some(addr + (idx - 1) * 0x350)
+                    addr + (idx - 1) * 0x350
                 }
             })
         } else {
