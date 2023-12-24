@@ -227,7 +227,6 @@ fieldset/CR:
     description: RTC_REFIN reference clock detection enable (50 or 60 Hz)
     bit_offset: 4
     bit_size: 1
-    enum: REFCKON
   - name: BYPSHAD
     description: Bypass the shadow registers
     bit_offset: 5
@@ -318,7 +317,6 @@ fieldset/CR:
     description: TAMPALRM pull-up enable
     bit_offset: 29
     bit_size: 1
-    enum: TAMPALRM_PU
   - name: TAMPALRM_TYPE
     description: TAMPALRM output type
     bit_offset: 30
@@ -363,7 +361,7 @@ fieldset/ICSR:
   description: Initialization control and status register
   fields:
   - name: WUTWF
-    description: Wakeup timer write flag
+    description: Wakeup timer write enabled
     bit_offset: 2
     bit_size: 1
   - name: SHPF
@@ -383,10 +381,9 @@ fieldset/ICSR:
     bit_offset: 6
     bit_size: 1
   - name: INIT
-    description: Initialization mode
+    description: Enter Initialization mode
     bit_offset: 7
     bit_size: 1
-    enum: INIT
   - name: BIN
     description: Binary mode
     bit_offset: 8
@@ -666,10 +663,10 @@ enum/ALRMF:
 enum/ALRMR_MSK:
   bit_size: 1
   variants:
-  - name: Mask
+  - name: ToMatch
     description: Alarm set if the date/day match
     value: 0
-  - name: NotMask
+  - name: NotMatch
     description: Date/day don’t care in Alarm comparison
     value: 1
 enum/ALRMR_PM:
@@ -795,15 +792,6 @@ enum/FMT:
   - name: AmPm
     description: AM/PM hour format
     value: 1
-enum/INIT:
-  bit_size: 1
-  variants:
-  - name: FreeRunningMode
-    description: Free running mode
-    value: 0
-  - name: InitMode
-    description: Initialization mode used to program time and date register (RTC_TR and RTC_DR), and prescaler register (RTC_PRER). Counters are stopped and start counting from the new value when INIT is reset.
-    value: 1
 enum/ITSF:
   bit_size: 1
   variants:
@@ -867,15 +855,6 @@ enum/RECALPF:
   - name: Pending
     description: The RECALPF status flag is automatically set to 1 when software writes to the RTC_CALR register, indicating that the RTC_CALR register is blocked. When the new calibration settings are taken into account, this bit returns to 0
     value: 1
-enum/REFCKON:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: RTC_REFIN detection disabled
-    value: 0
-  - name: Enabled
-    description: RTC_REFIN detection enabled
-    value: 1
 enum/SSRUF:
   bit_size: 1
   variants:
@@ -887,15 +866,6 @@ enum/SSRUMF:
   variants:
   - name: Underflow
     description: This flag is set by hardware when the SSR rolls under 0. SSRUF is not set when SSCLR=1
-    value: 1
-enum/TAMPALRM_PU:
-  bit_size: 1
-  variants:
-  - name: NoPullUp
-    description: No pull-up is applied on TAMPALRM output
-    value: 0
-  - name: PullUp
-    description: A pull-up is applied on TAMPALRM output
     value: 1
 enum/TAMPALRM_TYPE:
   bit_size: 1
