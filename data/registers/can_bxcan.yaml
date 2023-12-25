@@ -145,10 +145,9 @@ fieldset/BTR:
     bit_offset: 24
     bit_size: 2
   - name: LBKM
-    description: LBKM
+    description: Loop Back Mode enabled
     bit_offset: 30
     bit_size: 1
-    enum: LBKM
   - name: SILM
     description: SILM
     bit_offset: 31
@@ -260,7 +259,6 @@ fieldset/IER:
     description: TMEIE
     bit_offset: 0
     bit_size: 1
-    enum: TMEIE
   - name: FMPIE
     description: FMPIE0
     bit_offset: 1
@@ -268,7 +266,6 @@ fieldset/IER:
     array:
       len: 2
       stride: 3
-    enum: FMPIE
   - name: FFIE
     description: FFIE0
     bit_offset: 2
@@ -276,7 +273,6 @@ fieldset/IER:
     array:
       len: 2
       stride: 3
-    enum: FFIE
   - name: FOVIE
     description: FOVIE0
     bit_offset: 3
@@ -284,42 +280,34 @@ fieldset/IER:
     array:
       len: 2
       stride: 3
-    enum: FOVIE
   - name: EWGIE
     description: EWGIE
     bit_offset: 8
     bit_size: 1
-    enum: EWGIE
   - name: EPVIE
     description: EPVIE
     bit_offset: 9
     bit_size: 1
-    enum: EPVIE
   - name: BOFIE
     description: BOFIE
     bit_offset: 10
     bit_size: 1
-    enum: BOFIE
   - name: LECIE
     description: LECIE
     bit_offset: 11
     bit_size: 1
-    enum: LECIE
   - name: ERRIE
     description: ERRIE
     bit_offset: 15
     bit_size: 1
-    enum: ERRIE
   - name: WKUIE
     description: WKUIE
     bit_offset: 16
     bit_size: 1
-    enum: WKUIE
   - name: SLKIE
     description: SLKIE
     bit_offset: 17
     bit_size: 1
-    enum: SLKIE
 fieldset/MCR:
   description: master control register
   fields:
@@ -463,12 +451,12 @@ fieldset/RIR:
     description: RTR
     bit_offset: 1
     bit_size: 1
-    enum: RIR_RTR
+    enum: RTR
   - name: IDE
     description: IDE
     bit_offset: 2
     bit_size: 1
-    enum: RIR_IDE
+    enum: IDE
   - name: EXID
     description: EXID
     bit_offset: 3
@@ -523,12 +511,12 @@ fieldset/TIR:
     description: RTR
     bit_offset: 1
     bit_size: 1
-    enum: TIR_RTR
+    enum: RTR
   - name: IDE
     description: IDE
     bit_offset: 2
     bit_size: 1
-    enum: TIR_IDE
+    enum: IDE
   - name: EXID
     description: EXID
     bit_offset: 3
@@ -593,78 +581,6 @@ fieldset/TSR:
     array:
       len: 3
       stride: 1
-enum/BOFIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: ERRI bit will not be set when BOFF is set
-    value: 0
-  - name: Enabled
-    description: ERRI bit will be set when BOFF is set
-    value: 1
-enum/EPVIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: ERRI bit will not be set when EPVF is set
-    value: 0
-  - name: Enabled
-    description: ERRI bit will be set when EPVF is set
-    value: 1
-enum/ERRIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt will be generated when an error condition is pending in the CAN_ESR
-    value: 0
-  - name: Enabled
-    description: An interrupt will be generation when an error condition is pending in the CAN_ESR
-    value: 1
-enum/EWGIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: ERRI bit will not be set when EWGF is set
-    value: 0
-  - name: Enabled
-    description: ERRI bit will be set when EWGF is set
-    value: 1
-enum/FFIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt when FULL bit is set
-    value: 0
-  - name: Enabled
-    description: Interrupt generated when FULL bit is set
-    value: 1
-enum/FMPIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt generated when state of FMP[1:0] bits are not 00b
-    value: 0
-  - name: Enabled
-    description: Interrupt generated when state of FMP[1:0] bits are not 00b
-    value: 1
-enum/FOVIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt when FOVR bit is set
-    value: 0
-  - name: Enabled
-    description: Interrupt generated when FOVR bit is set
-    value: 1
-enum/LBKM:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Loop Back Mode disabled
-    value: 0
-  - name: Enabled
-    description: Loop Back Mode enabled
-    value: 1
 enum/LEC:
   bit_size: 3
   variants:
@@ -692,16 +608,7 @@ enum/LEC:
   - name: Custom
     description: Set by software
     value: 7
-enum/LECIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: ERRI bit will not be set when the error code in LEC[2:0] is set by hardware on error detection
-    value: 0
-  - name: Enabled
-    description: ERRI bit will be set when the error code in LEC[2:0] is set by hardware on error detection
-    value: 1
-enum/RIR_IDE:
+enum/IDE:
   bit_size: 1
   variants:
   - name: Standard
@@ -710,7 +617,7 @@ enum/RIR_IDE:
   - name: Extended
     description: Extended identifier
     value: 1
-enum/RIR_RTR:
+enum/RTR:
   bit_size: 1
   variants:
   - name: Data
@@ -727,49 +634,4 @@ enum/SILM:
     value: 0
   - name: Silent
     description: Silent Mode
-    value: 1
-enum/SLKIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt when SLAKI bit is set
-    value: 0
-  - name: Enabled
-    description: Interrupt generated when SLAKI bit is set
-    value: 1
-enum/TIR_IDE:
-  bit_size: 1
-  variants:
-  - name: Standard
-    description: Standard identifier
-    value: 0
-  - name: Extended
-    description: Extended identifier
-    value: 1
-enum/TIR_RTR:
-  bit_size: 1
-  variants:
-  - name: Data
-    description: Data frame
-    value: 0
-  - name: Remote
-    description: Remote frame
-    value: 1
-enum/TMEIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt when RQCPx bit is set
-    value: 0
-  - name: Enabled
-    description: Interrupt generated when RQCPx bit is set
-    value: 1
-enum/WKUIE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt when WKUI is set
-    value: 0
-  - name: Enabled
-    description: Interrupt generated when WKUI bit is set
     value: 1
