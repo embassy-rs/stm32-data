@@ -139,30 +139,6 @@ block/ETHERNET_MAC:
     description: Ethernet MAC address 0 low register
     byte_offset: 68
     fieldset: MACA0LR
-  - name: MACA1HR
-    description: Ethernet MAC address 1 high register
-    byte_offset: 72
-    fieldset: MACA1HR
-  - name: MACA1LR
-    description: Ethernet MAC address1 low register
-    byte_offset: 76
-    fieldset: MACA1LR
-  - name: MACA2HR
-    description: Ethernet MAC address 2 high register
-    byte_offset: 80
-    fieldset: MACA2HR
-  - name: MACA2LR
-    description: Ethernet MAC address 2 low register
-    byte_offset: 84
-    fieldset: MACA2LR
-  - name: MACA3HR
-    description: Ethernet MAC address 3 high register
-    byte_offset: 88
-    fieldset: MACA3HR
-  - name: MACA3LR
-    description: Ethernet MAC address 3 low register
-    byte_offset: 92
-    fieldset: MACA3LR
   - name: MMCCR
     description: Ethernet MMC control register
     byte_offset: 256
@@ -214,6 +190,20 @@ block/ETHERNET_MAC:
     byte_offset: 452
     access: Read
     fieldset: MMCRGUFCR
+  - name: MACAHR
+    description: Ethernet MAC address 1/2/3 high register
+    array:
+      len: 3
+      stride: 8
+    byte_offset: 72
+    fieldset: MACAHR
+  - name: MACALR
+    description: Ethernet MAC address 1/2/3 low register
+    array:
+      len: 3
+      stride: 8
+    byte_offset: 76
+    fieldset: MACALR
 block/ETHERNET_PTP:
   description: 'Ethernet: Precision time protocol'
   items:
@@ -285,7 +275,6 @@ fieldset/DMABMR:
     description: Enhanced descriptor format enable
     bit_offset: 7
     bit_size: 1
-    enum: EDFE
   - name: PBL
     description: Programmable burst length
     bit_offset: 8
@@ -627,7 +616,7 @@ fieldset/MACA0HR:
   description: Ethernet MAC address 0 high register
   fields:
   - name: MACA0H
-    description: MAC address0 high
+    description: Ethernet MAC address 0 high
     bit_offset: 0
     bit_size: 16
   - name: MO
@@ -638,14 +627,14 @@ fieldset/MACA0LR:
   description: Ethernet MAC address 0 low register
   fields:
   - name: MACA0L
-    description: '0'
+    description: Ethernet MAC address 0 low
     bit_offset: 0
     bit_size: 32
-fieldset/MACA1HR:
-  description: Ethernet MAC address 1 high register
+fieldset/MACAHR:
+  description: Ethernet MAC address 1/2/3 high register
   fields:
-  - name: MACA1H
-    description: MACA1H
+  - name: MACAH
+    description: Ethernet MAC address 1/2/3 high
     bit_offset: 0
     bit_size: 16
   - name: MBC
@@ -661,68 +650,11 @@ fieldset/MACA1HR:
     description: AE
     bit_offset: 31
     bit_size: 1
-    enum: MACAHR_AE
-fieldset/MACA1LR:
-  description: Ethernet MAC address1 low register
+fieldset/MACALR:
+  description: Ethernet MAC address 1/2/3 low register
   fields:
-  - name: MACA1L
-    description: MACA1LR
-    bit_offset: 0
-    bit_size: 32
-fieldset/MACA2HR:
-  description: Ethernet MAC address 2 high register
-  fields:
-  - name: MACA2H
-    description: MAC2AH
-    bit_offset: 0
-    bit_size: 16
-  - name: MBC
-    description: MBC
-    bit_offset: 24
-    bit_size: 6
-  - name: SA
-    description: SA
-    bit_offset: 30
-    bit_size: 1
-    enum: MACAHR_SA
-  - name: AE
-    description: AE
-    bit_offset: 31
-    bit_size: 1
-    enum: MACAHR_AE
-fieldset/MACA2LR:
-  description: Ethernet MAC address 2 low register
-  fields:
-  - name: MACA2L
-    description: MACA2L
-    bit_offset: 0
-    bit_size: 32
-fieldset/MACA3HR:
-  description: Ethernet MAC address 3 high register
-  fields:
-  - name: MACA3H
-    description: MACA3H
-    bit_offset: 0
-    bit_size: 16
-  - name: MBC
-    description: MBC
-    bit_offset: 24
-    bit_size: 6
-  - name: SA
-    description: SA
-    bit_offset: 30
-    bit_size: 1
-    enum: MACAHR_SA
-  - name: AE
-    description: AE
-    bit_offset: 31
-    bit_size: 1
-    enum: MACAHR_AE
-fieldset/MACA3LR:
-  description: Ethernet MAC address 3 low register
-  fields:
-  - name: MACA3L
-    description: MBCA3L
+  - name: MACAL
+    description: Ethernet MAC address 1/2/3 low
     bit_offset: 0
     bit_size: 32
 fieldset/MACCR:
@@ -740,7 +672,6 @@ fieldset/MACCR:
     description: Deferral check
     bit_offset: 4
     bit_size: 1
-    enum: DC
   - name: BL
     description: Back-off limit
     bit_offset: 5
@@ -805,7 +736,6 @@ fieldset/MACCR:
     description: CRC stripping for type frames
     bit_offset: 25
     bit_size: 1
-    enum: CSTF
 fieldset/MACDBGR:
   description: Ethernet MAC debug register
   fields:
@@ -869,17 +799,14 @@ fieldset/MACFCR:
     description: Transmit flow control enable
     bit_offset: 1
     bit_size: 1
-    enum: TFCE
   - name: RFCE
     description: Receive flow control enable
     bit_offset: 2
     bit_size: 1
-    enum: RFCE
   - name: UPFD
     description: Unicast pause frame detect
     bit_offset: 3
     bit_size: 1
-    enum: UPFD
   - name: PLT
     description: Pause low threshold
     bit_offset: 4
@@ -901,7 +828,6 @@ fieldset/MACFFR:
     description: Promiscuous mode
     bit_offset: 0
     bit_size: 1
-    enum: PM
   - name: HU
     description: Hash unicast
     bit_offset: 1
@@ -921,7 +847,6 @@ fieldset/MACFFR:
     description: Pass all multicast
     bit_offset: 4
     bit_size: 1
-    enum: PAM
   - name: BFD
     description: Broadcast frames disable
     bit_offset: 5
@@ -941,7 +866,6 @@ fieldset/MACFFR:
     description: Source address filter
     bit_offset: 8
     bit_size: 1
-    enum: SAF
   - name: HPF
     description: Hash or perfect filter
     bit_offset: 9
@@ -951,7 +875,6 @@ fieldset/MACFFR:
     description: Receive all
     bit_offset: 31
     bit_size: 1
-    enum: RA
 fieldset/MACHTHR:
   description: Ethernet MAC hash table high register
   fields:
@@ -1024,12 +947,10 @@ fieldset/MACPMTCSR:
     description: Magic packet enable
     bit_offset: 1
     bit_size: 1
-    enum: MPE
   - name: WFE
     description: Wakeup frame enable
     bit_offset: 2
     bit_size: 1
-    enum: WFE
   - name: MPR
     description: Magic packet received
     bit_offset: 5
@@ -1042,7 +963,6 @@ fieldset/MACPMTCSR:
     description: Global unicast
     bit_offset: 9
     bit_size: 1
-    enum: GU
   - name: WFFRPR
     description: Wakeup frame filter register pointer reset
     bit_offset: 31
@@ -1100,7 +1020,6 @@ fieldset/MMCCR:
     description: Reset on read
     bit_offset: 2
     bit_size: 1
-    enum: ROR
   - name: MCF
     description: MMC counter freeze
     bit_offset: 3
@@ -1449,20 +1368,11 @@ enum/CSD:
 enum/CSR:
   bit_size: 1
   variants:
-  - name: Disabled
+  - name: Rollover
     description: Counters roll over to zero after reaching the maximum value
     value: 0
-  - name: Enabled
+  - name: NotRollover
     description: Counters do not roll over to zero after reaching the maximum value
-    value: 1
-enum/CSTF:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: CRC not stripped
-    value: 0
-  - name: Enabled
-    description: CRC stripped
     value: 1
 enum/CounterReset:
   bit_size: 1
@@ -1487,15 +1397,6 @@ enum/DAIF:
     value: 0
   - name: Invert
     description: Address check block operates in inverse filtering mode for the DA address comparison
-    value: 1
-enum/DC:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: MAC defers until CRS signal goes inactive
-    value: 0
-  - name: Enabled
-    description: Deferral check function enabled
     value: 1
 enum/DM:
   bit_size: 1
@@ -1523,15 +1424,6 @@ enum/DTCEFD:
     value: 0
   - name: Disabled
     description: Do not drop frames that only have errors in the receive checksum offload engine
-    value: 1
-enum/EDFE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Normal descriptor format
-    value: 0
-  - name: Enabled
-    description: Enhanced 32-byte descriptor format, required for timestamping and IPv4 checksum offload
     value: 1
 enum/FB:
   bit_size: 1
@@ -1592,15 +1484,6 @@ enum/FUGF:
     value: 0
   - name: Forward
     description: Rx FIFO forwards undersized frames
-    value: 1
-enum/GU:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Normal operation
-    value: 0
-  - name: Enabled
-    description: Any unicast packet filtered by the MAC address recognition may be a wakeup frame
     value: 1
 enum/HM:
   bit_size: 1
@@ -1683,15 +1566,6 @@ enum/LM:
   - name: Loopback
     description: MAC operates in loopback mode at the MII
     value: 1
-enum/MACAHR_AE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Address filters ignore this address
-    value: 0
-  - name: Enabled
-    description: Address filters use this address
-    value: 1
 enum/MACAHR_SA:
   bit_size: 1
   variants:
@@ -1740,15 +1614,6 @@ enum/MCP:
   - name: Preset
     description: MMC counters will be preset to almost full or almost half. Cleared automatically
     value: 1
-enum/MPE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No power management event generated due to Magic Packet reception
-    value: 0
-  - name: Enabled
-    description: Enable generation of a power management event due to Magic Packet reception
-    value: 1
 enum/MW:
   bit_size: 1
   variants:
@@ -1757,15 +1622,6 @@ enum/MW:
     value: 0
   - name: Write
     description: Write operation
-    value: 1
-enum/PAM:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Filtering of multicast frames depends on HM
-    value: 0
-  - name: Enabled
-    description: All received frames with a multicast destination address are passed
     value: 1
 enum/PBL:
   bit_size: 6
@@ -1824,15 +1680,6 @@ enum/PLT:
   - name: PLT256
     description: Pause time minus 256 slot times
     value: 3
-enum/PM:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Normal address filtering
-    value: 0
-  - name: Enabled
-    description: Address filters pass all incoming frames regardless of their destination or source address
-    value: 1
 enum/PMTIM:
   bit_size: 1
   variants:
@@ -1857,15 +1704,6 @@ enum/PriorityRxOverTx:
   - name: FourToOne
     description: RxDMA priority over TxDMA is 4:1
     value: 3
-enum/RA:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: MAC receiver passes on to the application only those frames that have passed the SA/DA address file
-    value: 0
-  - name: Enabled
-    description: MAC receiver passes oll received frames on to the application
-    value: 1
 enum/RD:
   bit_size: 1
   variants:
@@ -1905,15 +1743,6 @@ enum/RFAEM:
   - name: Masked
     description: Received-alignment-error counter half-full interrupt disabled
     value: 1
-enum/RFCE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Pause frames are not decoded
-    value: 0
-  - name: Enabled
-    description: MAC decodes received Pause frames and disables its transmitted for a specified time
-    value: 1
 enum/RFCEM:
   bit_size: 1
   variants:
@@ -1940,15 +1769,6 @@ enum/ROD:
     value: 0
   - name: Disabled
     description: MAC disables reception of frames in half-duplex mode
-    value: 1
-enum/ROR:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: MMC counters do not reset on read
-    value: 0
-  - name: Enabled
-    description: MMC counters reset to zero after read
     value: 1
 enum/RPD:
   bit_size: 32
@@ -1998,15 +1818,6 @@ enum/RTC:
   - name: RTC128
     description: 128 bytes
     value: 3
-enum/SAF:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Source address ignored
-    value: 0
-  - name: Enabled
-    description: MAC drops frames that fail the source address filter
-    value: 1
 enum/SAIF:
   bit_size: 1
   variants:
@@ -2024,15 +1835,6 @@ enum/ST:
     value: 0
   - name: Started
     description: Transmission is placed in Running state
-    value: 1
-enum/TFCE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: In full duplex, flow control is disabled. In half duplex, back pressure is disabled
-    value: 0
-  - name: Enabled
-    description: In full duplex, flow control is enabled. In half duplex, back pressure is enabled
     value: 1
 enum/TGFM:
   bit_size: 1
@@ -2133,15 +1935,6 @@ enum/TTC:
   - name: TTC16
     description: 16 bytes
     value: 7
-enum/UPFD:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: MAC detects only a Pause frame with the multicast address specified in the 802.3x standard
-    value: 0
-  - name: Enabled
-    description: MAC additionally detects Pause frames with the station's unicast address
-    value: 1
 enum/USP:
   bit_size: 1
   variants:
@@ -2168,15 +1961,6 @@ enum/WD:
     value: 0
   - name: Disabled
     description: Watchdog disabled, receive frames may be up to to 16384 bytes
-    value: 1
-enum/WFE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No power management event generated due to wakeup frame reception
-    value: 0
-  - name: Enabled
-    description: Enable generation of a power management event due to wakeup frame reception
     value: 1
 enum/WFFRPR:
   bit_size: 1
