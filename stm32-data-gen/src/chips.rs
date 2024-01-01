@@ -263,6 +263,7 @@ impl PeriMatcher {
             ("STM32L0.*:RTC:rtc2_.*", ("rtc", "v2l0", "RTC")),
             ("STM32L1.*:RTC:rtc2_.*", ("rtc", "v2l1", "RTC")),
             ("STM32L4.*:RTC:rtc2_.*", ("rtc", "v2l4", "RTC")),
+            ("STM32L5.*:RTC:rtc2_.*", ("rtc", "v3l5", "RTC")),
             ("STM32WBA.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")),
             ("STM32WB.*:RTC:rtc2_.*", ("rtc", "v2wb", "RTC")),
             ("STM32H5.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")),
