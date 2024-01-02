@@ -1,963 +1,943 @@
----
 block/RTC:
   description: Real-time clock
   items:
-    - name: TR
-      description: Time register
-      byte_offset: 0
-      fieldset: TR
-    - name: DR
-      description: Date register
-      byte_offset: 4
-      fieldset: DR
-    - name: SSR
-      description: Sub second register
-      byte_offset: 8
-      access: Read
-      fieldset: SSR
-    - name: ICSR
-      description: Initialization control and status register
-      byte_offset: 12
-      fieldset: ICSR
-    - name: PRER
-      description: Prescaler register
-      byte_offset: 16
-      fieldset: PRER
-    - name: WUTR
-      description: Wakeup timer register
-      byte_offset: 20
-      fieldset: WUTR
-    - name: CR
-      description: Control register
-      byte_offset: 24
-      fieldset: CR
-    - name: PRIVCR
-      description: Privilege mode control register
-      byte_offset: 28
-      fieldset: PRIVCR
-    - name: SMCR
-      description: 
-      byte_offset: 32
-      fieldset: SMCR
-    - name: WPR
-      description: Write protection register
-      byte_offset: 36
-      access: Write
-      fieldset: WPR
-    - name: CALR
-      description: Calibration register
-      byte_offset: 40
-      fieldset: CALR
-    - name: SHIFTR
-      description: Shift control register
-      byte_offset: 44
-      access: Write
-      fieldset: SHIFTR
-    - name: TSTR
-      description: Timestamp time register
-      byte_offset: 48
-      access: Read
-      fieldset: TSTR
-    - name: TSDR
-      description: Timestamp date register
-      byte_offset: 52
-      access: Read
-      fieldset: TSDR
-    - name: TSSSR
-      description: Timestamp sub second register
-      byte_offset: 56
-      access: Read
-      fieldset: TSSSR
-    - name: ALRMR
-      description: Alarm register
-      array:
-        len: 2
-        stride: 8
-      byte_offset: 64
-      fieldset: ALRMR
-    - name: ALRMSSR
-      description: Alarm sub second register
-      array:
-        len: 2
-        stride: 8
-      byte_offset: 68
-      fieldset: ALRMSSR
-    - name: SR
-      description: Status register
-      byte_offset: 80
-      access: Read
-      fieldset: SR
-    - name: MISR
-      description: Masked interrupt status register
-      byte_offset: 84
-      access: Read
-      fieldset: MISR
-    - name: SMISR
-      description: Secure masked interrupt status register
-      byte_offset: 88
-      access: Read
-      fieldset: SMISR
-    - name: SCR
-      description: Status clear register
-      byte_offset: 92
-      access: Write
-      fieldset: SCR
+  - name: TR
+    description: Time register
+    byte_offset: 0
+    fieldset: TR
+  - name: DR
+    description: Date register
+    byte_offset: 4
+    fieldset: DR
+  - name: SSR
+    description: Sub second register
+    byte_offset: 8
+    access: Read
+    fieldset: SSR
+  - name: ICSR
+    description: Initialization control and status register
+    byte_offset: 12
+    fieldset: ICSR
+  - name: PRER
+    description: Prescaler register
+    byte_offset: 16
+    fieldset: PRER
+  - name: WUTR
+    description: Wakeup timer register
+    byte_offset: 20
+    fieldset: WUTR
+  - name: CR
+    description: Control register
+    byte_offset: 24
+    fieldset: CR
+  - name: PRIVCR
+    description: Privilege mode control register
+    byte_offset: 28
+    fieldset: PRIVCR
+  - name: SMCR
+    byte_offset: 32
+    fieldset: SMCR
+  - name: WPR
+    description: Write protection register
+    byte_offset: 36
+    access: Write
+    fieldset: WPR
+  - name: CALR
+    description: Calibration register
+    byte_offset: 40
+    fieldset: CALR
+  - name: SHIFTR
+    description: Shift control register
+    byte_offset: 44
+    access: Write
+    fieldset: SHIFTR
+  - name: TSTR
+    description: Timestamp time register
+    byte_offset: 48
+    access: Read
+    fieldset: TSTR
+  - name: TSDR
+    description: Timestamp date register
+    byte_offset: 52
+    access: Read
+    fieldset: TSDR
+  - name: TSSSR
+    description: Timestamp sub second register
+    byte_offset: 56
+    access: Read
+    fieldset: TSSSR
+  - name: ALRMR
+    description: Alarm register
+    array:
+      len: 2
+      stride: 8
+    byte_offset: 64
+    fieldset: ALRMR
+  - name: ALRMSSR
+    description: Alarm sub second register
+    array:
+      len: 2
+      stride: 8
+    byte_offset: 68
+    fieldset: ALRMSSR
+  - name: SR
+    description: Status register
+    byte_offset: 80
+    access: Read
+    fieldset: SR
+  - name: MISR
+    description: Masked interrupt status register
+    byte_offset: 84
+    access: Read
+    fieldset: MISR
+  - name: SMISR
+    description: Secure masked interrupt status register
+    byte_offset: 88
+    access: Read
+    fieldset: SMISR
+  - name: SCR
+    description: Status clear register
+    byte_offset: 92
+    access: Write
+    fieldset: SCR
 fieldset/ALRMR:
   description: Alarm register
   fields:
-    - name: SU
-      description: Second units in BCD format
-      bit_offset: 0
-      bit_size: 4
-    - name: ST
-      description: Second tens in BCD format
-      bit_offset: 4
-      bit_size: 3
-    - name: MSK1
-      description: Alarm A seconds mask
-      bit_offset: 7
-      bit_size: 1
-      enum: ALRMR_MSK
-    - name: MNU
-      description: Minute units in BCD format
-      bit_offset: 8
-      bit_size: 4
-    - name: MNT
-      description: Minute tens in BCD format
-      bit_offset: 12
-      bit_size: 3
-    - name: MSK2
-      description: Alarm A minutes mask
-      bit_offset: 15
-      bit_size: 1
-      enum: ALRMR_MSK
-    - name: HU
-      description: Hour units in BCD format
-      bit_offset: 16
-      bit_size: 4
-    - name: HT
-      description: Hour tens in BCD format
-      bit_offset: 20
-      bit_size: 2
-    - name: PM
-      description: AM/PM notation
-      bit_offset: 22
-      bit_size: 1
-      enum: ALRMR_PM
-    - name: MSK3
-      description: Alarm A hours mask
-      bit_offset: 23
-      bit_size: 1
-      enum: ALRMR_MSK
-    - name: DU
-      description: Date units or day in BCD format
-      bit_offset: 24
-      bit_size: 4
-    - name: DT
-      description: Date tens in BCD format
-      bit_offset: 28
-      bit_size: 2
-    - name: WDSEL
-      description: Week day selection
-      bit_offset: 30
-      bit_size: 1
-      enum: ALRMR_WDSEL
-    - name: MSK4
-      description: Alarm A date mask
-      bit_offset: 31
-      bit_size: 1
-      enum: ALRMR_MSK
+  - name: SU
+    description: Second units in BCD format
+    bit_offset: 0
+    bit_size: 4
+  - name: ST
+    description: Second tens in BCD format
+    bit_offset: 4
+    bit_size: 3
+  - name: MSK1
+    description: Alarm A seconds mask
+    bit_offset: 7
+    bit_size: 1
+    enum: ALRMR_MSK
+  - name: MNU
+    description: Minute units in BCD format
+    bit_offset: 8
+    bit_size: 4
+  - name: MNT
+    description: Minute tens in BCD format
+    bit_offset: 12
+    bit_size: 3
+  - name: MSK2
+    description: Alarm A minutes mask
+    bit_offset: 15
+    bit_size: 1
+    enum: ALRMR_MSK
+  - name: HU
+    description: Hour units in BCD format
+    bit_offset: 16
+    bit_size: 4
+  - name: HT
+    description: Hour tens in BCD format
+    bit_offset: 20
+    bit_size: 2
+  - name: PM
+    description: AM/PM notation
+    bit_offset: 22
+    bit_size: 1
+    enum: ALRMR_PM
+  - name: MSK3
+    description: Alarm A hours mask
+    bit_offset: 23
+    bit_size: 1
+    enum: ALRMR_MSK
+  - name: DU
+    description: Date units or day in BCD format
+    bit_offset: 24
+    bit_size: 4
+  - name: DT
+    description: Date tens in BCD format
+    bit_offset: 28
+    bit_size: 2
+  - name: WDSEL
+    description: Week day selection
+    bit_offset: 30
+    bit_size: 1
+    enum: ALRMR_WDSEL
+  - name: MSK4
+    description: Alarm A date mask
+    bit_offset: 31
+    bit_size: 1
+    enum: ALRMR_MSK
 fieldset/ALRMSSR:
   description: Alarm sub second register
   fields:
-    - name: SS
-      description: Sub seconds value
-      bit_offset: 0
-      bit_size: 15
-    - name: MASKSS
-      description: Mask the most-significant bits starting at this bit
-      bit_offset: 24
-      bit_size: 4
+  - name: SS
+    description: Sub seconds value
+    bit_offset: 0
+    bit_size: 15
+  - name: MASKSS
+    description: Mask the most-significant bits starting at this bit
+    bit_offset: 24
+    bit_size: 4
 fieldset/CALR:
   description: Calibration register
   fields:
-    - name: CALM
-      description: Calibration minus
-      bit_offset: 0
-      bit_size: 9
-    - name: LPCAL
-      description: Calibration low-power mode
-      bit_offset: 12
-      bit_size: 1
-      enum: LPCAL
-    - name: CALW16
-      description: Use a 16-second calibration cycle period
-      bit_offset: 13
-      bit_size: 1
-      enum: CALW16
-    - name: CALW8
-      description: Use an 8-second calibration cycle period
-      bit_offset: 14
-      bit_size: 1
-      enum: CALW8
-    - name: CALP
-      description: Increase frequency of RTC by 488.5 ppm
-      bit_offset: 15
-      bit_size: 1
-      enum: CALP
+  - name: CALM
+    description: Calibration minus
+    bit_offset: 0
+    bit_size: 9
+  - name: LPCAL
+    description: Calibration low-power mode
+    bit_offset: 12
+    bit_size: 1
+    enum: LPCAL
+  - name: CALW16
+    description: Use a 16-second calibration cycle period
+    bit_offset: 13
+    bit_size: 1
+    enum: CALW16
+  - name: CALW8
+    description: Use an 8-second calibration cycle period
+    bit_offset: 14
+    bit_size: 1
+    enum: CALW8
+  - name: CALP
+    description: Increase frequency of RTC by 488.5 ppm
+    bit_offset: 15
+    bit_size: 1
+    enum: CALP
 fieldset/CR:
   description: Control register
   fields:
-    - name: WUCKSEL
-      description: Wakeup clock selection
-      bit_offset: 0
-      bit_size: 3
-      enum: WUCKSEL
-    - name: TSEDGE
-      description: Timestamp event active edge
-      bit_offset: 3
-      bit_size: 1
-      enum: TSEDGE
-    - name: REFCKON
-      description: RTC_REFIN reference clock detection enable (50 or 60 Hz)
-      bit_offset: 4
-      bit_size: 1
-    - name: BYPSHAD
-      description: Bypass the shadow registers
-      bit_offset: 5
-      bit_size: 1
-    - name: FMT
-      description: Hour format
-      bit_offset: 6
-      bit_size: 1
-      enum: FMT
-    - name: ALRE
-      description: Alarm enable
-      bit_offset: 8
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
-    - name: WUTE
-      description: Wakeup timer enable
-      bit_offset: 10
-      bit_size: 1
-    - name: TSE
-      description: Timestamp enable
-      bit_offset: 11
-      bit_size: 1
-    - name: ALRIE
-      description: Alarm interrupt enable
-      bit_offset: 12
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
-    - name: WUTIE
-      description: Wakeup timer interrupt enable
-      bit_offset: 14
-      bit_size: 1
-    - name: TSIE
-      description: Timestamp interrupt enable
-      bit_offset: 15
-      bit_size: 1
-    - name: ADD1H
-      description: Add 1 hour (summer time change)
-      bit_offset: 16
-      bit_size: 1
-    - name: SUB1H
-      description: Subtract 1 hour (winter time change)
-      bit_offset: 17
-      bit_size: 1
-    - name: BKP
-      description: Backup
-      bit_offset: 18
-      bit_size: 1
-    - name: COSEL
-      description: Calibration output selection
-      bit_offset: 19
-      bit_size: 1
-      enum: COSEL
-    - name: POL
-      description: Output polarity
-      bit_offset: 20
-      bit_size: 1
-      enum: POL
-    - name: OSEL
-      description: Output selection
-      bit_offset: 21
-      bit_size: 2
-      enum: OSEL
-    - name: COE
-      description: Calibration output enable
-      bit_offset: 23
-      bit_size: 1
-    - name: ITSE
-      description: Timestamp on internal event enable
-      bit_offset: 24
-      bit_size: 1
-    - name: TAMPTS
-      description: Activate timestamp on tamper detection event
-      bit_offset: 25
-      bit_size: 1
-    - name: TAMPOE
-      description: Tamper detection output enable on TAMPALRM
-      bit_offset: 26
-      bit_size: 1
-    - name: TAMPALRM_PU
-      description: TAMPALRM pull-up enable
-      bit_offset: 29
-      bit_size: 1
-    - name: TAMPALRM_TYPE
-      description: TAMPALRM output type
-      bit_offset: 30
-      bit_size: 1
-      enum: TAMPALRM_TYPE
-    - name: OUT2EN
-      description: RTC_OUT2 output enable
-      bit_offset: 31
-      bit_size: 1
+  - name: WUCKSEL
+    description: Wakeup clock selection
+    bit_offset: 0
+    bit_size: 3
+    enum: WUCKSEL
+  - name: TSEDGE
+    description: Timestamp event active edge
+    bit_offset: 3
+    bit_size: 1
+    enum: TSEDGE
+  - name: REFCKON
+    description: RTC_REFIN reference clock detection enable (50 or 60 Hz)
+    bit_offset: 4
+    bit_size: 1
+  - name: BYPSHAD
+    description: Bypass the shadow registers
+    bit_offset: 5
+    bit_size: 1
+  - name: FMT
+    description: Hour format
+    bit_offset: 6
+    bit_size: 1
+    enum: FMT
+  - name: ALRE
+    description: Alarm enable
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: WUTE
+    description: Wakeup timer enable
+    bit_offset: 10
+    bit_size: 1
+  - name: TSE
+    description: Timestamp enable
+    bit_offset: 11
+    bit_size: 1
+  - name: ALRIE
+    description: Alarm interrupt enable
+    bit_offset: 12
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: WUTIE
+    description: Wakeup timer interrupt enable
+    bit_offset: 14
+    bit_size: 1
+  - name: TSIE
+    description: Timestamp interrupt enable
+    bit_offset: 15
+    bit_size: 1
+  - name: ADD1H
+    description: Add 1 hour (summer time change)
+    bit_offset: 16
+    bit_size: 1
+  - name: SUB1H
+    description: Subtract 1 hour (winter time change)
+    bit_offset: 17
+    bit_size: 1
+  - name: BKP
+    description: Backup
+    bit_offset: 18
+    bit_size: 1
+  - name: COSEL
+    description: Calibration output selection
+    bit_offset: 19
+    bit_size: 1
+    enum: COSEL
+  - name: POL
+    description: Output polarity
+    bit_offset: 20
+    bit_size: 1
+    enum: POL
+  - name: OSEL
+    description: Output selection
+    bit_offset: 21
+    bit_size: 2
+    enum: OSEL
+  - name: COE
+    description: Calibration output enable
+    bit_offset: 23
+    bit_size: 1
+  - name: ITSE
+    description: Timestamp on internal event enable
+    bit_offset: 24
+    bit_size: 1
+  - name: TAMPTS
+    description: Activate timestamp on tamper detection event
+    bit_offset: 25
+    bit_size: 1
+  - name: TAMPOE
+    description: Tamper detection output enable on TAMPALRM
+    bit_offset: 26
+    bit_size: 1
+  - name: TAMPALRM_PU
+    description: TAMPALRM pull-up enable
+    bit_offset: 29
+    bit_size: 1
+  - name: TAMPALRM_TYPE
+    description: TAMPALRM output type
+    bit_offset: 30
+    bit_size: 1
+    enum: TAMPALRM_TYPE
+  - name: OUT2EN
+    description: RTC_OUT2 output enable
+    bit_offset: 31
+    bit_size: 1
 fieldset/DR:
   description: Date register
   fields:
-    - name: DU
-      description: Date units in BCD format
-      bit_offset: 0
-      bit_size: 4
-    - name: DT
-      description: Date tens in BCD format
-      bit_offset: 4
-      bit_size: 2
-    - name: MU
-      description: Month units in BCD format
-      bit_offset: 8
-      bit_size: 4
-    - name: MT
-      description: Month tens in BCD format
-      bit_offset: 12
-      bit_size: 1
-    - name: WDU
-      description: Week day units
-      bit_offset: 13
-      bit_size: 3
-    - name: YU
-      description: Year units in BCD format
-      bit_offset: 16
-      bit_size: 4
-    - name: YT
-      description: Year tens in BCD format
-      bit_offset: 20
-      bit_size: 4
+  - name: DU
+    description: Date units in BCD format
+    bit_offset: 0
+    bit_size: 4
+  - name: DT
+    description: Date tens in BCD format
+    bit_offset: 4
+    bit_size: 2
+  - name: MU
+    description: Month units in BCD format
+    bit_offset: 8
+    bit_size: 4
+  - name: MT
+    description: Month tens in BCD format
+    bit_offset: 12
+    bit_size: 1
+  - name: WDU
+    description: Week day units
+    bit_offset: 13
+    bit_size: 3
+  - name: YU
+    description: Year units in BCD format
+    bit_offset: 16
+    bit_size: 4
+  - name: YT
+    description: Year tens in BCD format
+    bit_offset: 20
+    bit_size: 4
 fieldset/ICSR:
   description: Initialization control and status register
   fields:
-    - name: WUTWF
-      description: Wakeup timer write flag
-      bit_offset: 2
-      bit_size: 1
-    - name: SHPF
-      description: Shift operation pending
-      bit_offset: 3
-      bit_size: 1
-    - name: INITS
-      description: Initialization status flag
-      bit_offset: 4
-      bit_size: 1
-    - name: RSF
-      description: Registers synchronization flag
-      bit_offset: 5
-      bit_size: 1
-    - name: INITF
-      description: Initialization flag
-      bit_offset: 6
-      bit_size: 1
-    - name: INIT
-      description: Initialization mode
-      bit_offset: 7
-      bit_size: 1
-    - name: RECALPF
-      description: Recalibration pending Flag
-      bit_offset: 16
-      bit_size: 1
-      enum: RECALPF
+  - name: WUTWF
+    description: Wakeup timer write flag
+    bit_offset: 2
+    bit_size: 1
+  - name: SHPF
+    description: Shift operation pending
+    bit_offset: 3
+    bit_size: 1
+  - name: INITS
+    description: Initialization status flag
+    bit_offset: 4
+    bit_size: 1
+  - name: RSF
+    description: Registers synchronization flag
+    bit_offset: 5
+    bit_size: 1
+  - name: INITF
+    description: Initialization flag
+    bit_offset: 6
+    bit_size: 1
+  - name: INIT
+    description: Initialization mode
+    bit_offset: 7
+    bit_size: 1
+  - name: RECALPF
+    description: Recalibration pending Flag
+    bit_offset: 16
+    bit_size: 1
+    enum: RECALPF
 fieldset/MISR:
   description: Masked interrupt status register
   fields:
-    - name: ALRMF
-      description: Alarm masked flag
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
-      enum: ALRMF
-    - name: WUTMF
-      description: Wakeup timer masked flag
-      bit_offset: 2
-      bit_size: 1
-      enum: WUTMF
-    - name: TSMF
-      description: Timestamp masked flag
-      bit_offset: 3
-      bit_size: 1
-      enum: TSMF
-    - name: TSOVMF
-      description: Timestamp overflow masked flag
-      bit_offset: 4
-      bit_size: 1
-      enum: TSOVMF
-    - name: ITSMF
-      description: Internal timestamp masked flag
-      bit_offset: 5
-      bit_size: 1
-      enum: ITSMF
+  - name: ALRMF
+    description: Alarm masked flag
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+    enum: ALRMF
+  - name: WUTMF
+    description: Wakeup timer masked flag
+    bit_offset: 2
+    bit_size: 1
+    enum: WUTMF
+  - name: TSMF
+    description: Timestamp masked flag
+    bit_offset: 3
+    bit_size: 1
+    enum: TSMF
+  - name: TSOVMF
+    description: Timestamp overflow masked flag
+    bit_offset: 4
+    bit_size: 1
+    enum: TSOVMF
+  - name: ITSMF
+    description: Internal timestamp masked flag
+    bit_offset: 5
+    bit_size: 1
+    enum: ITSMF
 fieldset/PRER:
   description: Prescaler register
   fields:
-    - name: PREDIV_S
-      description: Synchronous prescaler factor
-      bit_offset: 0
-      bit_size: 15
-    - name: PREDIV_A
-      description: Asynchronous prescaler factor
-      bit_offset: 16
-      bit_size: 7
+  - name: PREDIV_S
+    description: Synchronous prescaler factor
+    bit_offset: 0
+    bit_size: 15
+  - name: PREDIV_A
+    description: Asynchronous prescaler factor
+    bit_offset: 16
+    bit_size: 7
 fieldset/PRIVCR:
   description: Privilege mode control register
   fields:
-    - name: ALRPRIV
-      description: ALRAPRIV
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
-    - name: WUTPRIV
-      description: WUTPRIV
-      bit_offset: 2
-      bit_size: 1
-    - name: TSPRIV
-      description: TSPRIV
-      bit_offset: 3
-      bit_size: 1
-    - name: CALPRIV
-      description: CALPRIV
-      bit_offset: 13
-      bit_size: 1
-    - name: INITPRIV
-      description: INITPRIV
-      bit_offset: 14
-      bit_size: 1
-    - name: PRIV
-      description: PRIV
-      bit_offset: 15
-      bit_size: 1
-fieldset/SMCR:
-  description: RTC secure mode control register
-  fields:
-    - name: ALRDPROT
-      description: Alarm x protection
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
-    - name: WUTDPROT
-      description: Wakeup timer protection
-      bit_offset: 2
-      bit_size: 1
-    - name: TSDPROT
-      description: Timestamp protection
-      bit_offset: 3
-      bit_size: 1
-    - name: CALDPROT
-      description: Shift register, daylight saving, calibration and reference clock protection
-      bit_offset: 13
-      bit_size: 1
-    - name: INITDPROT
-      description: Initialization protection
-      bit_offset: 14
-      bit_size: 1
-    - name: DECPROT
-      description: RTC global protection
-      bit_offset: 15
-      bit_size: 1
+  - name: ALRPRIV
+    description: ALRAPRIV
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: WUTPRIV
+    description: WUTPRIV
+    bit_offset: 2
+    bit_size: 1
+  - name: TSPRIV
+    description: TSPRIV
+    bit_offset: 3
+    bit_size: 1
+  - name: CALPRIV
+    description: CALPRIV
+    bit_offset: 13
+    bit_size: 1
+  - name: INITPRIV
+    description: INITPRIV
+    bit_offset: 14
+    bit_size: 1
+  - name: PRIV
+    description: PRIV
+    bit_offset: 15
+    bit_size: 1
 fieldset/SCR:
   description: Status clear register
   fields:
-    - name: CALRF
-      description: Clear alarm x flag
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
-      enum: CALRF
-    - name: CWUTF
-      description: Clear wakeup timer flag
-      bit_offset: 2
-      bit_size: 1
-      enum: CALRF
-    - name: CTSF
-      description: Clear timestamp flag
-      bit_offset: 3
-      bit_size: 1
-      enum: CALRF
-    - name: CTSOVF
-      description: Clear timestamp overflow flag
-      bit_offset: 4
-      bit_size: 1
-      enum: CALRF
-    - name: CITSF
-      description: Clear internal timestamp flag
-      bit_offset: 5
-      bit_size: 1
-      enum: CALRF
+  - name: CALRF
+    description: Clear alarm x flag
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+    enum: CALRF
+  - name: CWUTF
+    description: Clear wakeup timer flag
+    bit_offset: 2
+    bit_size: 1
+    enum: CALRF
+  - name: CTSF
+    description: Clear timestamp flag
+    bit_offset: 3
+    bit_size: 1
+    enum: CALRF
+  - name: CTSOVF
+    description: Clear timestamp overflow flag
+    bit_offset: 4
+    bit_size: 1
+    enum: CALRF
+  - name: CITSF
+    description: Clear internal timestamp flag
+    bit_offset: 5
+    bit_size: 1
+    enum: CALRF
 fieldset/SHIFTR:
   description: Shift control register
   fields:
-    - name: SUBFS
-      description: Subtract a fraction of a second
-      bit_offset: 0
-      bit_size: 15
-    - name: ADD1S
-      description: Add one second
-      bit_offset: 31
-      bit_size: 1
+  - name: SUBFS
+    description: Subtract a fraction of a second
+    bit_offset: 0
+    bit_size: 15
+  - name: ADD1S
+    description: Add one second
+    bit_offset: 31
+    bit_size: 1
+fieldset/SMCR:
+  description: RTC secure mode control register
+  fields:
+  - name: ALRDPROT
+    description: Alarm x protection
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: WUTDPROT
+    description: Wakeup timer protection
+    bit_offset: 2
+    bit_size: 1
+  - name: TSDPROT
+    description: Timestamp protection
+    bit_offset: 3
+    bit_size: 1
+  - name: CALDPROT
+    description: Shift register, daylight saving, calibration and reference clock protection
+    bit_offset: 13
+    bit_size: 1
+  - name: INITDPROT
+    description: Initialization protection
+    bit_offset: 14
+    bit_size: 1
+  - name: DECPROT
+    description: RTC global protection
+    bit_offset: 15
+    bit_size: 1
 fieldset/SMISR:
   description: Secure masked interrupt status register
   fields:
-    - name: ALRMF
-      description: Alarm x interrupt secure masked flag
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
-    - name: WUTMF
-      description: WUTMF
-      bit_offset: 2
-      bit_size: 1
-    - name: TSMF
-      description: TSMF
-      bit_offset: 3
-      bit_size: 1
-    - name: TSOVMF
-      description: TSOVMF
-      bit_offset: 4
-      bit_size: 1
-    - name: ITSMF
-      description: ITSMF
-      bit_offset: 5
-      bit_size: 1
+  - name: ALRMF
+    description: Alarm x interrupt secure masked flag
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: WUTMF
+    description: WUTMF
+    bit_offset: 2
+    bit_size: 1
+  - name: TSMF
+    description: TSMF
+    bit_offset: 3
+    bit_size: 1
+  - name: TSOVMF
+    description: TSOVMF
+    bit_offset: 4
+    bit_size: 1
+  - name: ITSMF
+    description: ITSMF
+    bit_offset: 5
+    bit_size: 1
 fieldset/SR:
   description: Status register
   fields:
-    - name: ALRF
-      description: Alarm flag
-      bit_offset: 0
-      bit_size: 1
-      array:
-        len: 2
-        stride: 1
-      enum: ALRF
-    - name: WUTF
-      description: Wakeup timer flag
-      bit_offset: 2
-      bit_size: 1
-      enum: WUTF
-    - name: TSF
-      description: Timestamp flag
-      bit_offset: 3
-      bit_size: 1
-      enum: TSF
-    - name: TSOVF
-      description: Timestamp overflow flag
-      bit_offset: 4
-      bit_size: 1
-      enum: TSOVF
-    - name: ITSF
-      description: Internal timestamp flag
-      bit_offset: 5
-      bit_size: 1
-      enum: ITSF
+  - name: ALRF
+    description: Alarm flag
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+    enum: ALRF
+  - name: WUTF
+    description: Wakeup timer flag
+    bit_offset: 2
+    bit_size: 1
+    enum: WUTF
+  - name: TSF
+    description: Timestamp flag
+    bit_offset: 3
+    bit_size: 1
+    enum: TSF
+  - name: TSOVF
+    description: Timestamp overflow flag
+    bit_offset: 4
+    bit_size: 1
+    enum: TSOVF
+  - name: ITSF
+    description: Internal timestamp flag
+    bit_offset: 5
+    bit_size: 1
+    enum: ITSF
 fieldset/SSR:
   description: Sub second register
   fields:
-    - name: SS
-      description: Synchronous binary counter
-      bit_offset: 0
-      bit_size: 16
+  - name: SS
+    description: Synchronous binary counter
+    bit_offset: 0
+    bit_size: 16
 fieldset/TR:
   description: Time register
   fields:
-    - name: SU
-      description: Second units in BCD format
-      bit_offset: 0
-      bit_size: 4
-    - name: ST
-      description: Second tens in BCD format
-      bit_offset: 4
-      bit_size: 3
-    - name: MNU
-      description: Minute units in BCD format
-      bit_offset: 8
-      bit_size: 4
-    - name: MNT
-      description: Minute tens in BCD format
-      bit_offset: 12
-      bit_size: 3
-    - name: HU
-      description: Hour units in BCD format
-      bit_offset: 16
-      bit_size: 4
-    - name: HT
-      description: Hour tens in BCD format
-      bit_offset: 20
-      bit_size: 2
-    - name: PM
-      description: AM/PM notation
-      bit_offset: 22
-      bit_size: 1
-      enum: AMPM
+  - name: SU
+    description: Second units in BCD format
+    bit_offset: 0
+    bit_size: 4
+  - name: ST
+    description: Second tens in BCD format
+    bit_offset: 4
+    bit_size: 3
+  - name: MNU
+    description: Minute units in BCD format
+    bit_offset: 8
+    bit_size: 4
+  - name: MNT
+    description: Minute tens in BCD format
+    bit_offset: 12
+    bit_size: 3
+  - name: HU
+    description: Hour units in BCD format
+    bit_offset: 16
+    bit_size: 4
+  - name: HT
+    description: Hour tens in BCD format
+    bit_offset: 20
+    bit_size: 2
+  - name: PM
+    description: AM/PM notation
+    bit_offset: 22
+    bit_size: 1
+    enum: AMPM
 fieldset/TSDR:
   description: Timestamp date register
   fields:
-    - name: DU
-      description: Date units in BCD format
-      bit_offset: 0
-      bit_size: 4
-    - name: DT
-      description: Date tens in BCD format
-      bit_offset: 4
-      bit_size: 2
-    - name: MU
-      description: Month units in BCD format
-      bit_offset: 8
-      bit_size: 4
-    - name: MT
-      description: Month tens in BCD format
-      bit_offset: 12
-      bit_size: 1
-    - name: WDU
-      description: Week day units
-      bit_offset: 13
-      bit_size: 3
+  - name: DU
+    description: Date units in BCD format
+    bit_offset: 0
+    bit_size: 4
+  - name: DT
+    description: Date tens in BCD format
+    bit_offset: 4
+    bit_size: 2
+  - name: MU
+    description: Month units in BCD format
+    bit_offset: 8
+    bit_size: 4
+  - name: MT
+    description: Month tens in BCD format
+    bit_offset: 12
+    bit_size: 1
+  - name: WDU
+    description: Week day units
+    bit_offset: 13
+    bit_size: 3
 fieldset/TSSSR:
   description: Timestamp sub second register
   fields:
-    - name: SS
-      description: Sub second value
-      bit_offset: 0
-      bit_size: 16
+  - name: SS
+    description: Sub second value
+    bit_offset: 0
+    bit_size: 16
 fieldset/TSTR:
   description: Timestamp time register
   fields:
-    - name: SU
-      description: Second units in BCD format
-      bit_offset: 0
-      bit_size: 4
-    - name: ST
-      description: Second tens in BCD format
-      bit_offset: 4
-      bit_size: 3
-    - name: MNU
-      description: Minute units in BCD format
-      bit_offset: 8
-      bit_size: 4
-    - name: MNT
-      description: Minute tens in BCD format
-      bit_offset: 12
-      bit_size: 3
-    - name: HU
-      description: Hour units in BCD format
-      bit_offset: 16
-      bit_size: 4
-    - name: HT
-      description: Hour tens in BCD format
-      bit_offset: 20
-      bit_size: 2
-    - name: PM
-      description: AM/PM notation
-      bit_offset: 22
-      bit_size: 1
+  - name: SU
+    description: Second units in BCD format
+    bit_offset: 0
+    bit_size: 4
+  - name: ST
+    description: Second tens in BCD format
+    bit_offset: 4
+    bit_size: 3
+  - name: MNU
+    description: Minute units in BCD format
+    bit_offset: 8
+    bit_size: 4
+  - name: MNT
+    description: Minute tens in BCD format
+    bit_offset: 12
+    bit_size: 3
+  - name: HU
+    description: Hour units in BCD format
+    bit_offset: 16
+    bit_size: 4
+  - name: HT
+    description: Hour tens in BCD format
+    bit_offset: 20
+    bit_size: 2
+  - name: PM
+    description: AM/PM notation
+    bit_offset: 22
+    bit_size: 1
 fieldset/WPR:
   description: Write protection register
   fields:
-    - name: KEY
-      description: Write protection key
-      bit_offset: 0
-      bit_size: 8
-      enum: KEY
+  - name: KEY
+    description: Write protection key
+    bit_offset: 0
+    bit_size: 8
+    enum: KEY
 fieldset/WUTR:
   description: Wakeup timer register
   fields:
-    - name: WUT
-      description: Wakeup auto-reload value bits
-      bit_offset: 0
-      bit_size: 16
-    - name: WUTOCLR
-      description: Wakeup auto-reload output clear value
-      bit_offset: 16
-      bit_size: 16
+  - name: WUT
+    description: Wakeup auto-reload value bits
+    bit_offset: 0
+    bit_size: 16
+  - name: WUTOCLR
+    description: Wakeup auto-reload output clear value
+    bit_offset: 16
+    bit_size: 16
 enum/ALRF:
   bit_size: 1
   variants:
-    - name: Match
-      description: This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the Alarm A register (RTC_ALRMAR)
-      value: 1
+  - name: Match
+    description: This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the Alarm A register (RTC_ALRMAR)
+    value: 1
 enum/ALRMF:
   bit_size: 1
   variants:
-    - name: Match
-      description: This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the Alarm A register (RTC_ALRMAR)
-      value: 1
+  - name: Match
+    description: This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the Alarm A register (RTC_ALRMAR)
+    value: 1
 enum/ALRMR_MSK:
   bit_size: 1
   variants:
-    - name: Mask
-      description: Alarm set if the date/day match
-      value: 0
-    - name: NotMask
-      description: Date/day don’t care in Alarm comparison
-      value: 1
+  - name: ToMatch
+    description: Alarm set if the date/day match
+    value: 0
+  - name: NotMatch
+    description: Date/day don’t care in Alarm comparison
+    value: 1
 enum/ALRMR_PM:
   bit_size: 1
   variants:
-    - name: AM
-      description: AM or 24-hour format
-      value: 0
-    - name: PM
-      description: PM
-      value: 1
+  - name: AM
+    description: AM or 24-hour format
+    value: 0
+  - name: PM
+    description: PM
+    value: 1
 enum/ALRMR_WDSEL:
   bit_size: 1
   variants:
-    - name: DateUnits
-      description: "DU[3:0] represents the date units"
-      value: 0
-    - name: WeekDay
-      description: "DU[3:0] represents the week day. DT[1:0] is don’t care."
-      value: 1
+  - name: DateUnits
+    description: DU[3:0] represents the date units
+    value: 0
+  - name: WeekDay
+    description: DU[3:0] represents the week day. DT[1:0] is don’t care.
+    value: 1
 enum/AMPM:
   bit_size: 1
   variants:
-    - name: AM
-      description: AM or 24-hour format
-      value: 0
-    - name: PM
-      description: PM
-      value: 1
+  - name: AM
+    description: AM or 24-hour format
+    value: 0
+  - name: PM
+    description: PM
+    value: 1
 enum/CALP:
   bit_size: 1
   variants:
-    - name: NoChange
-      description: No RTCCLK pulses are added
-      value: 0
-    - name: IncreaseFreq
-      description: One RTCCLK pulse is effectively inserted every 2^11 pulses (frequency increased by 488.5 ppm)
-      value: 1
+  - name: NoChange
+    description: No RTCCLK pulses are added
+    value: 0
+  - name: IncreaseFreq
+    description: One RTCCLK pulse is effectively inserted every 2^11 pulses (frequency increased by 488.5 ppm)
+    value: 1
 enum/CALRF:
   bit_size: 1
   variants:
-    - name: Clear
-      description: Clear interrupt flag by writing 1
-      value: 1
+  - name: Clear
+    description: Clear interrupt flag by writing 1
+    value: 1
 enum/CALW16:
   bit_size: 1
   variants:
-    - name: SixteenSeconds
-      description: "When CALW16 is set to ‘1’, the 16-second calibration cycle period is selected.This bit must not be set to ‘1’ if CALW8=1"
-      value: 1
+  - name: SixteenSeconds
+    description: When CALW16 is set to ‘1’, the 16-second calibration cycle period is selected.This bit must not be set to ‘1’ if CALW8=1
+    value: 1
 enum/CALW8:
   bit_size: 1
   variants:
-    - name: EightSeconds
-      description: "When CALW8 is set to ‘1’, the 8-second calibration cycle period is selected"
-      value: 1
+  - name: EightSeconds
+    description: When CALW8 is set to ‘1’, the 8-second calibration cycle period is selected
+    value: 1
 enum/COSEL:
   bit_size: 1
   variants:
-    - name: CalFreq_512Hz
-      description: Calibration output is 512 Hz (with default prescaler setting)
-      value: 0
-    - name: CalFreq_1Hz
-      description: Calibration output is 1 Hz (with default prescaler setting)
-      value: 1
+  - name: CalFreq_512Hz
+    description: Calibration output is 512 Hz (with default prescaler setting)
+    value: 0
+  - name: CalFreq_1Hz
+    description: Calibration output is 1 Hz (with default prescaler setting)
+    value: 1
 enum/FMT:
   bit_size: 1
   variants:
-    - name: TwentyFourHour
-      description: 24 hour/day format
-      value: 0
-    - name: AmPm
-      description: AM/PM hour format
-      value: 1
+  - name: TwentyFourHour
+    description: 24 hour/day format
+    value: 0
+  - name: AmPm
+    description: AM/PM hour format
+    value: 1
 enum/ITSF:
   bit_size: 1
   variants:
-    - name: TimestampEvent
-      description: This flag is set by hardware when a timestamp on the internal event occurs
-      value: 1
+  - name: TimestampEvent
+    description: This flag is set by hardware when a timestamp on the internal event occurs
+    value: 1
 enum/ITSMF:
   bit_size: 1
   variants:
-    - name: TimestampEvent
-      description: This flag is set by hardware when a timestamp on the internal event occurs
-      value: 1
+  - name: TimestampEvent
+    description: This flag is set by hardware when a timestamp on the internal event occurs
+    value: 1
 enum/KEY:
   bit_size: 8
   variants:
-    - name: Activate
-      description: Activate write protection (any value that is not the keys)
-      value: 0
-    - name: Deactivate2
-      description: Key 2
-      value: 83
-    - name: Deactivate1
-      description: Key 1
-      value: 202
+  - name: Activate
+    description: Activate write protection (any value that is not the keys)
+    value: 0
+  - name: Deactivate2
+    description: Key 2
+    value: 83
+  - name: Deactivate1
+    description: Key 1
+    value: 202
 enum/LPCAL:
   bit_size: 1
   variants:
-    - name: RTCCLK
-      description: "Calibration window is 220 RTCCLK, which is a high-consumption mode. This mode should be set only when less than 32s calibration window is required"
-      value: 0
-    - name: CkApre
-      description: "Calibration window is 220 ck_apre, which is the required configuration for ultra-low consumption mode"
-      value: 1
+  - name: RTCCLK
+    description: Calibration window is 220 RTCCLK, which is a high-consumption mode. This mode should be set only when less than 32s calibration window is required
+    value: 0
+  - name: CkApre
+    description: Calibration window is 220 ck_apre, which is the required configuration for ultra-low consumption mode
+    value: 1
 enum/OSEL:
   bit_size: 2
   variants:
-    - name: Disabled
-      description: Output disabled
-      value: 0
-    - name: AlarmA
-      description: Alarm A output enabled
-      value: 1
-    - name: AlarmB
-      description: Alarm B output enabled
-      value: 2
-    - name: Wakeup
-      description: Wakeup output enabled
-      value: 3
+  - name: Disabled
+    description: Output disabled
+    value: 0
+  - name: AlarmA
+    description: Alarm A output enabled
+    value: 1
+  - name: AlarmB
+    description: Alarm B output enabled
+    value: 2
+  - name: Wakeup
+    description: Wakeup output enabled
+    value: 3
 enum/POL:
   bit_size: 1
   variants:
-    - name: High
-      description: "The pin is high when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])"
-      value: 0
-    - name: Low
-      description: "The pin is low when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])"
-      value: 1
+  - name: High
+    description: The pin is high when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])
+    value: 0
+  - name: Low
+    description: The pin is low when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])
+    value: 1
 enum/RECALPF:
   bit_size: 1
   variants:
-    - name: Pending
-      description: "The RECALPF status flag is automatically set to 1 when software writes to the RTC_CALR register, indicating that the RTC_CALR register is blocked. When the new calibration settings are taken into account, this bit returns to 0"
-      value: 1
-enum/REFCKON:
-  bit_size: 1
-  variants:
-    - name: Disabled
-      description: RTC_REFIN detection disabled
-      value: 0
-    - name: Enabled
-      description: RTC_REFIN detection enabled
-      value: 1
+  - name: Pending
+    description: The RECALPF status flag is automatically set to 1 when software writes to the RTC_CALR register, indicating that the RTC_CALR register is blocked. When the new calibration settings are taken into account, this bit returns to 0
+    value: 1
 enum/SSRUF:
   bit_size: 1
   variants:
-    - name: Underflow
-      description: This flag is set by hardware when the SSR rolls under 0. SSRUF is not set when SSCLR=1
-      value: 1
+  - name: Underflow
+    description: This flag is set by hardware when the SSR rolls under 0. SSRUF is not set when SSCLR=1
+    value: 1
 enum/SSRUMF:
   bit_size: 1
   variants:
-    - name: Underflow
-      description: This flag is set by hardware when the SSR rolls under 0. SSRUF is not set when SSCLR=1
-      value: 1
-enum/TAMPALRM_PU:
-  bit_size: 1
-  variants:
-    - name: NoPullUp
-      description: No pull-up is applied on TAMPALRM output
-      value: 0
-    - name: PullUp
-      description: A pull-up is applied on TAMPALRM output
-      value: 1
+  - name: Underflow
+    description: This flag is set by hardware when the SSR rolls under 0. SSRUF is not set when SSCLR=1
+    value: 1
 enum/TAMPALRM_TYPE:
   bit_size: 1
   variants:
-    - name: PushPull
-      description: TAMPALRM is push-pull output
-      value: 0
-    - name: OpenDrain
-      description: TAMPALRM is open-drain output
-      value: 1
+  - name: PushPull
+    description: TAMPALRM is push-pull output
+    value: 0
+  - name: OpenDrain
+    description: TAMPALRM is open-drain output
+    value: 1
 enum/TSEDGE:
   bit_size: 1
   variants:
-    - name: RisingEdge
-      description: RTC_TS input rising edge generates a time-stamp event
-      value: 0
-    - name: FallingEdge
-      description: RTC_TS input falling edge generates a time-stamp event
-      value: 1
+  - name: RisingEdge
+    description: RTC_TS input rising edge generates a time-stamp event
+    value: 0
+  - name: FallingEdge
+    description: RTC_TS input falling edge generates a time-stamp event
+    value: 1
 enum/TSF:
   bit_size: 1
   variants:
-    - name: TimestampEvent
-      description: This flag is set by hardware when a time-stamp event occurs
-      value: 1
+  - name: TimestampEvent
+    description: This flag is set by hardware when a time-stamp event occurs
+    value: 1
 enum/TSMF:
   bit_size: 1
   variants:
-    - name: TimestampEvent
-      description: This flag is set by hardware when a time-stamp event occurs
-      value: 1
+  - name: TimestampEvent
+    description: This flag is set by hardware when a time-stamp event occurs
+    value: 1
 enum/TSOVF:
   bit_size: 1
   variants:
-    - name: Overflow
-      description: This flag is set by hardware when a time-stamp event occurs while TSF is already set
-      value: 1
+  - name: Overflow
+    description: This flag is set by hardware when a time-stamp event occurs while TSF is already set
+    value: 1
 enum/TSOVMF:
   bit_size: 1
   variants:
-    - name: Overflow
-      description: This flag is set by hardware when a time-stamp event occurs while TSF is already set
-      value: 1
+  - name: Overflow
+    description: This flag is set by hardware when a time-stamp event occurs while TSF is already set
+    value: 1
 enum/WUCKSEL:
   bit_size: 3
   variants:
-    - name: Div16
-      description: RTC/16 clock is selected
-      value: 0
-    - name: Div8
-      description: RTC/8 clock is selected
-      value: 1
-    - name: Div4
-      description: RTC/4 clock is selected
-      value: 2
-    - name: Div2
-      description: RTC/2 clock is selected
-      value: 3
-    - name: ClockSpare
-      description: ck_spre (usually 1 Hz) clock is selected
-      value: 4
-    - name: ClockSpareWithOffset
-      description: ck_spre (usually 1 Hz) clock is selected and 2^16 is added to the WUT counter value
-      value: 6
+  - name: Div16
+    description: RTC/16 clock is selected
+    value: 0
+  - name: Div8
+    description: RTC/8 clock is selected
+    value: 1
+  - name: Div4
+    description: RTC/4 clock is selected
+    value: 2
+  - name: Div2
+    description: RTC/2 clock is selected
+    value: 3
+  - name: ClockSpare
+    description: ck_spre (usually 1 Hz) clock is selected
+    value: 4
+  - name: ClockSpareWithOffset
+    description: ck_spre (usually 1 Hz) clock is selected and 2^16 is added to the WUT counter value
+    value: 6
 enum/WUTF:
   bit_size: 1
   variants:
-    - name: Zero
-      description: This flag is set by hardware when the wakeup auto-reload counter reaches 0
-      value: 1
+  - name: Zero
+    description: This flag is set by hardware when the wakeup auto-reload counter reaches 0
+    value: 1
 enum/WUTMF:
   bit_size: 1
   variants:
-    - name: Zero
-      description: This flag is set by hardware when the wakeup auto-reload counter reaches 0
-      value: 1
+  - name: Zero
+    description: This flag is set by hardware when the wakeup auto-reload counter reaches 0
+    value: 1
