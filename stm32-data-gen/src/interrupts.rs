@@ -120,6 +120,10 @@ impl ChipInterrupts {
 
         let exists_irq: HashSet<String> = core.interrupts.iter().map(|i| i.name.clone()).collect();
 
+        for i in &exists_irq {
+            trace!("  irq in header: {i}");
+        }
+
         for nvic_string in nvic_strings {
             trace!("  irq={nvic_string:?}");
             let parts = {
@@ -154,7 +158,10 @@ impl ChipInterrupts {
                     .iter()
                     .find(|(irq, _)| irq == &name)
                     .unwrap_or(&("", &[]));
-                let Some(new_name) = eq_irqs.iter().find(|i| exists_irq.contains(**i)) else { continue };
+                let Some(new_name) = eq_irqs.iter().find(|i| exists_irq.contains(**i)) else {
+                    trace!("    irq missing in C header, ignoring");
+                    continue;
+                };
                 header_name = new_name.to_string();
             }
 
@@ -200,8 +207,7 @@ impl ChipInterrupts {
                 // pass
             } else if flags
                 .iter()
-                .map(|flag| ["DMA", "DMAL0", "DMAF0", "DMAL0_DMAMUX", "DMAF0_DMAMUX"].contains(flag))
-                .any(std::convert::identity)
+                .any(|flag| ["DMA", "DMAL0", "DMAF0", "DMAL0_DMAMUX", "DMAF0_DMAMUX"].contains(flag))
             {
                 let mut dmas_iter = parts[3].split(',');
                 let mut chans_iter = parts[4].split(';');
@@ -240,6 +246,7 @@ impl ChipInterrupts {
                 interrupt_signals.insert(("RCC".to_string(), "GLOBAL".to_string()));
             } else {
                 if parts[2].is_empty() {
+                    trace!("    skipping because parts[2].is_empty()");
                     continue;
                 }
 
@@ -248,6 +255,8 @@ impl ChipInterrupts {
                     .map(|x| if x == "USB_DRD_FS" { "USB" } else { x })
                     .map(ToString::to_string)
                     .collect();
+
+                trace!("    peri_names: {peri_names:?}");
 
                 let name2 = {
                     if name == "USBWakeUp" || name == "USBWakeUp_RMP" {
@@ -269,6 +278,8 @@ impl ChipInterrupts {
 
                 // Parse IRQ interrupt_signals from the IRQ name.
                 for part in tokenize_name(name2) {
+                    trace!("    part={part}");
+
                     let part = {
                         if part == "TAMPER" {
                             "TAMP".to_string()

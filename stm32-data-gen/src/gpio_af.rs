@@ -58,11 +58,13 @@ impl Af {
 
             for pin in parsed.gpio_pins {
                 // Cleanup pin name
-                let Some(pin_name) = clean_pin(&pin.name) else {continue};
+                let Some(pin_name) = clean_pin(&pin.name) else { continue };
 
                 // Extract AFs
                 for signal in pin.pin_signals {
-                    let Some((peri_name, signal_name)) = parse_signal_name(&signal.name) else {continue};
+                    let Some((peri_name, signal_name)) = parse_signal_name(&signal.name) else {
+                        continue;
+                    };
                     let afn = if parsed.version.starts_with("STM32F1") {
                         None
                     } else {
