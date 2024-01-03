@@ -91,7 +91,6 @@ fieldset/CR1:
     description: "SRAM2 retention in Standby mode\r This bit is used to keep the SRAM2 content in Standby retention mode."
     bit_offset: 5
     bit_size: 1
-    enum: RRSB
   - name: ULPMEN
     description: "BOR0 ultra-low-power mode. \r This bit is used to reduce the consumption by configuring the BOR0 in discontinuous mode for Stop 1 and Standby modes. Discontinuous mode is only available when BOR levels 1 to 4 and PVD are disabled.\r Note: This bit must be set to reach the lowest power consumption in the low-power modes.\r Note: This bit must not be set together with autonomous peripherals using HSI as kernel clock.\r Note: When BOR level 1 to 4 or PVD is enabled continuous mode applies independent from ULPMEN."
     bit_offset: 7
@@ -100,12 +99,10 @@ fieldset/CR1:
     description: "2.4 GHz RADIO SRAMs (RXTXRAM and Sequence RAM) and Sleep clock retention in Standby mode.\r This bit is used to keep the 2.4 GHz RADIO SRAMs content in Standby retention mode and the 2.4 GHz RADIO sleep timer counter operational."
     bit_offset: 9
     bit_size: 1
-    enum: RADIORSB
   - name: R1RSB1
     description: "SRAM1 retention in Standby mode\r This bit is used to keep the SRAM1 content in Standby retention mode."
     bit_offset: 12
     bit_size: 1
-    enum: RRSB
 fieldset/CR2:
   description: control register 2
   fields:
@@ -170,12 +167,10 @@ fieldset/PRIVCFGR:
     description: "secure functions privilege configuration\r This bit is set and reset by software.\r It can be written only by a secure privileged access."
     bit_offset: 0
     bit_size: 1
-    enum: PRIV
   - name: NSPRIV
     description: "non-secure functions privilege configuration\r This bit is set and reset by software.\r It can be written only by privileged access, secure or non-secure."
     bit_offset: 1
     bit_size: 1
-    enum: PRIV
 fieldset/RADIOSCR:
   description: 2.4 GHz RADIO status and control register
   fields:
@@ -200,7 +195,6 @@ fieldset/RADIOSCR:
     description: "Ready bit for V<sub>DDHPA</sub> voltage level when selecting VDDRFPA input.\r Note: REGPARDYVDDRFPA does not allow to detect correct V<sub>DDHPA</sub> voltage level when request to lower the level."
     bit_offset: 15
     bit_size: 1
-    enum: REGPARDYVDDRFPA
 fieldset/SECCFGR:
   description: security configuration register
   fields:
@@ -211,22 +205,18 @@ fieldset/SECCFGR:
     array:
       len: 8
       stride: 1
-    enum: SEC
   - name: LPMSEC
     description: Low-power modes secure protection
     bit_offset: 12
     bit_size: 1
-    enum: SEC
   - name: VDMSEC
     description: Voltage detection secure protection
     bit_offset: 13
     bit_size: 1
-    enum: SEC
   - name: VBSEC
     description: Backup domain secure protection
     bit_offset: 14
     bit_size: 1
-    enum: SEC
 fieldset/SR:
   description: status register
   fields:
@@ -412,15 +402,6 @@ enum/MODE:
   - name: Sleep
     description: 2.4 GHz RADIO sleep mode
     value: 1
-enum/PRIV:
-  bit_size: 1
-  variants:
-  - name: Unprivileged
-    description: Read and write to non-secure functions can be done by privileged or unprivileged access.
-    value: 0
-  - name: Privileged
-    description: Read and write to non-secure functions can be done by privileged access only.
-    value: 1
 enum/PVDLS:
   bit_size: 3
   variants:
@@ -456,42 +437,6 @@ enum/PVDO:
     value: 0
   - name: Below
     description: VDD is below the PVD threshold selected by PVDLS[2:0].
-    value: 1
-enum/RADIORSB:
-  bit_size: 1
-  variants:
-  - name: NotRetained
-    description: 2.4 GHz RADIO SRAMs and sleep timer content not retained in Standby mode
-    value: 0
-  - name: Retained
-    description: 2.4 GHz RADIO SRAMs and sleep timer content retained in Standby mode
-    value: 1
-enum/REGPARDYVDDRFPA:
-  bit_size: 1
-  variants:
-  - name: NotReady
-    description: Not ready, V<sub>DDHPA</sub> voltage level < REGPAVOS selected supply level
-    value: 0
-  - name: Ready
-    description: Ready, V<sub>DDHPA</sub> voltage level ≥ REGPAVOS selected supply level
-    value: 1
-enum/RRSB:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: SRAM2 content not retained in Standby mode
-    value: 0
-  - name: B_0x1
-    description: SRAM2 content retained in Standby mode
-    value: 1
-enum/SEC:
-  bit_size: 1
-  variants:
-  - name: NotSecure
-    description: SVMCR and CR3 can be read and written with secure or non-secure access.
-    value: 0
-  - name: Secure
-    description: SVMCR and CR3 can be read and written only with secure access.
     value: 1
 enum/SRAMPDS:
   bit_size: 1
