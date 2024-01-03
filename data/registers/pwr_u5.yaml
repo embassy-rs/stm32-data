@@ -155,12 +155,10 @@ fieldset/CR1:
     description: "SRAM2 page 1 retention in Stop 3 and Standby modes\r This bit is used to keep the SRAM2 page 1 content in Stop 3 and Standby modes. The SRAM2 page 1 corresponds to the first 8 Kbytes of the SRAM2\r (from SRAM2 base address to SRAM2 base address + 0x1FFF).\r Note: This bit has no effect in Shutdown mode."
     bit_offset: 5
     bit_size: 1
-    enum: RRSB
   - name: RRSB2
     description: "SRAM2 page 2 retention in Stop 3 and Standby modes\r This bit is used to keep the SRAM2 page 2 content in Stop 3 and Standby modes. The SRAM2 page 2 corresponds to the last 56 Kbytes of the SRAM2\r (from SRAM2 base address + 0x2000 to SRAM2 base address + 0xFFFF).\r Note: This bit has no effect in Shutdown mode."
     bit_offset: 6
     bit_size: 1
-    enum: RRSB
   - name: ULPMEN
     description: "BOR ultra-low power mode\r This bit is used to reduce the consumption by configuring the BOR in discontinuous mode.\r This bit must be set to reach the lowest power consumption in the low-power modes."
     bit_offset: 7
@@ -333,12 +331,10 @@ fieldset/PRIVCFGR:
     description: "secure functions privilege configuration\r This bit is set and reset by software. It can be written only by a secure privileged access."
     bit_offset: 0
     bit_size: 1
-    enum: PRIV
   - name: NSPRIV
     description: "non-secure functions privilege configuration\r This bit is set and reset by software. It can be written only by privileged access, secure or non-secure."
     bit_offset: 1
     bit_size: 1
-    enum: PRIV
 fieldset/SECCFGR:
   description: security configuration register
   fields:
@@ -349,27 +345,22 @@ fieldset/SECCFGR:
     array:
       len: 8
       stride: 1
-    enum: SEC
   - name: LPMSEC
     description: Low-power modes secure protection
     bit_offset: 12
     bit_size: 1
-    enum: SEC
   - name: VDMSEC
     description: Voltage detection and monitoring secure protection
     bit_offset: 13
     bit_size: 1
-    enum: SEC
   - name: VBSEC
     description: Backup domain secure protection
     bit_offset: 14
     bit_size: 1
-    enum: SEC
   - name: APCSEC
     description: Pull-up/pull-down secure protection
     bit_offset: 15
     bit_size: 1
-    enum: SEC
 fieldset/SR:
   description: status register
   fields:
@@ -675,15 +666,6 @@ enum/PDS:
   - name: Lost
     description: Content lost in Stop modes
     value: 1
-enum/PRIV:
-  bit_size: 1
-  variants:
-  - name: Unprivileged
-    description: Read and write to non-secure functions can be done by privileged or unprivileged access.
-    value: 0
-  - name: Privileged
-    description: Read and write to non-secure functions can be done by privileged access only.
-    value: 1
 enum/PVDLS:
   bit_size: 3
   variants:
@@ -728,24 +710,6 @@ enum/REGSEL:
     value: 0
   - name: SMPS
     description: SMPS selected
-    value: 1
-enum/RRSB:
-  bit_size: 1
-  variants:
-  - name: NotRetained
-    description: SRAM2 page1 content not retained in Stop 3 and Standby modes
-    value: 0
-  - name: Retained
-    description: SRAM2 page1 content retained in Stop 3 and Standby modes
-    value: 1
-enum/SEC:
-  bit_size: 1
-  variants:
-  - name: NonSecure
-    description: CR1, CR2 and CSSF in the SR can be read and written with secure or non-secure access.
-    value: 0
-  - name: Secure
-    description: CR1, CR2, and CSSF in the SR can be read and written only with secure access.
     value: 1
 enum/SRAMFWU:
   bit_size: 1
