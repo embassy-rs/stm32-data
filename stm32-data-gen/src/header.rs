@@ -269,7 +269,7 @@ impl ParsedHeader {
             let irq_entry = irqs.entry(cur_core.clone()).or_default();
             let defines_entry = defines.entry(cur_core.clone()).or_default();
 
-            if let Some(m) = regex!(r"^([a-zA-Z0-9_]+)_IRQn += (\d+),? +/\*!< (.*) \*/").captures(&l) {
+            if let Some(m) = regex!(r"^([a-zA-Z0-9_]+)_IRQn *= *(\d+),? +/\*!<(.*)\*/").captures(&l) {
                 irq_entry.insert(
                     m.get(1).unwrap().as_str().to_string(),
                     m.get(2).unwrap().as_str().parse().unwrap(),
