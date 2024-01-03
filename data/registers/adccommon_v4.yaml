@@ -84,130 +84,80 @@ fieldset/CSR:
     description: Master ADC ready
     bit_offset: 0
     bit_size: 1
-    enum: ADRDY_MST
   - name: EOSMP_MST
     description: End of Sampling phase flag of the master ADC
     bit_offset: 1
     bit_size: 1
-    enum: EOSMP_MST
   - name: EOC_MST
     description: End of regular conversion of the master ADC
     bit_offset: 2
     bit_size: 1
-    enum: EOC_MST
   - name: EOS_MST
     description: End of regular sequence flag of the master ADC
     bit_offset: 3
     bit_size: 1
-    enum: EOS_MST
   - name: OVR_MST
     description: Overrun flag of the master ADC
     bit_offset: 4
     bit_size: 1
-    enum: OVR_MST
   - name: JEOC_MST
     description: End of injected conversion flag of the master ADC
     bit_offset: 5
     bit_size: 1
-    enum: JEOC_MST
   - name: JEOS_MST
     description: End of injected sequence flag of the master ADC
     bit_offset: 6
     bit_size: 1
-    enum: JEOS_MST
-  - name: AWD1_MST
-    description: Analog watchdog 1 flag of the master ADC
-    bit_offset: 7
-    bit_size: 1
-    enum: AWD1_MST
-  - name: AWD2_MST
-    description: Analog watchdog 2 flag of the master ADC
-    bit_offset: 8
-    bit_size: 1
-    enum: AWD1_MST
-  - name: AWD3_MST
-    description: Analog watchdog 3 flag of the master ADC
-    bit_offset: 9
-    bit_size: 1
-    enum: AWD1_MST
   - name: JQOVF_MST
     description: Injected Context Queue Overflow flag of the master ADC
     bit_offset: 10
     bit_size: 1
-    enum: JQOVF_MST
   - name: ADRDY_SLV
     description: Slave ADC ready
     bit_offset: 16
     bit_size: 1
-    enum: ADRDY_MST
   - name: EOSMP_SLV
     description: End of Sampling phase flag of the slave ADC
     bit_offset: 17
     bit_size: 1
-    enum: EOSMP_MST
   - name: EOC_SLV
     description: End of regular conversion of the slave ADC
     bit_offset: 18
     bit_size: 1
-    enum: EOC_MST
   - name: EOS_SLV
     description: End of regular sequence flag of the slave ADC
     bit_offset: 19
     bit_size: 1
-    enum: EOS_MST
   - name: OVR_SLV
     description: Overrun flag of the slave ADC
     bit_offset: 20
     bit_size: 1
-    enum: OVR_MST
   - name: JEOC_SLV
     description: End of injected conversion flag of the slave ADC
     bit_offset: 21
     bit_size: 1
-    enum: JEOC_MST
   - name: JEOS_SLV
     description: End of injected sequence flag of the slave ADC
     bit_offset: 22
     bit_size: 1
-    enum: JEOS_MST
-  - name: AWD1_SLV
-    description: Analog watchdog 1 flag of the slave ADC
-    bit_offset: 23
-    bit_size: 1
-    enum: AWD1_MST
-  - name: AWD2_SLV
-    description: Analog watchdog 2 flag of the slave ADC
-    bit_offset: 24
-    bit_size: 1
-    enum: AWD1_MST
-  - name: AWD3_SLV
-    description: Analog watchdog 3 flag of the slave ADC
-    bit_offset: 25
-    bit_size: 1
-    enum: AWD1_MST
   - name: JQOVF_SLV
     description: Injected Context Queue Overflow flag of the slave ADC
     bit_offset: 26
     bit_size: 1
-    enum: JQOVF_MST
-enum/ADRDY_MST:
-  bit_size: 1
-  variants:
-  - name: NotReady
-    description: ADC is not ready to start conversion
-    value: 0
-  - name: Ready
-    description: ADC is ready to start conversion
-    value: 1
-enum/AWD1_MST:
-  bit_size: 1
-  variants:
-  - name: NoEvent
-    description: No analog watchdog event occurred
-    value: 0
-  - name: Event
-    description: Analog watchdog event occurred
-    value: 1
+  - name: AWD_MST
+    description: Analog watchdog flag of the master ADC
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
+  - name: AWD_SLV
+    description: Analog watchdog flag of the slave ADC
+    bit_offset: 23
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 enum/CKMODE:
   bit_size: 2
   variants:
@@ -262,69 +212,6 @@ enum/DUAL:
   - name: DualA
     description: Dual, alternate trigger mode only
     value: 9
-enum/EOC_MST:
-  bit_size: 1
-  variants:
-  - name: NotComplete
-    description: Regular conversion is not complete
-    value: 0
-  - name: Complete
-    description: Regular conversion complete
-    value: 1
-enum/EOSMP_MST:
-  bit_size: 1
-  variants:
-  - name: NotEnded
-    description: End of sampling phase no yet reached
-    value: 0
-  - name: Ended
-    description: End of sampling phase reached
-    value: 1
-enum/EOS_MST:
-  bit_size: 1
-  variants:
-  - name: NotComplete
-    description: Regular sequence is not complete
-    value: 0
-  - name: Complete
-    description: Regular sequence complete
-    value: 1
-enum/JEOC_MST:
-  bit_size: 1
-  variants:
-  - name: NotComplete
-    description: Injected conversion is not complete
-    value: 0
-  - name: Complete
-    description: Injected conversion complete
-    value: 1
-enum/JEOS_MST:
-  bit_size: 1
-  variants:
-  - name: NotComplete
-    description: Injected sequence is not complete
-    value: 0
-  - name: Complete
-    description: Injected sequence complete
-    value: 1
-enum/JQOVF_MST:
-  bit_size: 1
-  variants:
-  - name: NoOverflow
-    description: No injected context queue overflow has occurred
-    value: 0
-  - name: Overflow
-    description: Injected context queue overflow has occurred
-    value: 1
-enum/OVR_MST:
-  bit_size: 1
-  variants:
-  - name: NoOverrun
-    description: No overrun occurred
-    value: 0
-  - name: Overrun
-    description: Overrun occurred
-    value: 1
 enum/PRESC:
   bit_size: 4
   variants:
