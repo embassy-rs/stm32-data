@@ -159,7 +159,6 @@ fieldset/DFLTCR:
     description: DFLT enable. This bit is set and reset by software. It is used to enable the digital filter.
     bit_offset: 0
     bit_size: 1
-    enum: DFLTEN
   - name: DMAEN
     description: DMA requests enable. This bit is set and reset by software. It is used to control the generation of DMA request to transfer the processed samples into the memory.
     bit_offset: 1
@@ -361,7 +360,6 @@ fieldset/SADCR:
     description: Hysteresis enable.
     bit_offset: 7
     bit_size: 1
-    enum: HYSTEN
   - name: FRSIZE
     description: Frame size.
     bit_offset: 8
@@ -405,7 +403,6 @@ fieldset/SITFCR:
     description: SITFACTIVE.
     bit_offset: 31
     bit_size: 1
-    enum: SITFACTIVE
 enum/TRGSRC:
   description: Digital filter trigger signal selection.
   bit_size: 4
@@ -582,26 +579,6 @@ enum/SADST:
   - name: Detect
     description: SAD in DETECT state.
     value: 2
-enum/HYSTEN:
-  description: Hysteresis enable. This bit is set and cleared by software. It is used to enable the hysteresis function.
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Hysteresis function disabled. THRH is always used
-    value: 0
-  - name: Enabled
-    description: Hysteresis function enabled. THRH is used for MONITOR to DETECT transition and THRL is used for DETECT to MONITOR transition.
-    value: 1
-enum/SITFACTIVE:
-  description: Serial interface active flag. This bit is set and cleared by hardware. It is used by the application to check if the serial interface is effectively enabled (active) or not. The protected fields of this function can only be updated when SITFACTIVE is set to 0. The delay between a transition on SITFEN and a transition on SITFACTIVE is two periods of AHB clock and two periods of adf_proc_ck.
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: The serial interface is not active, and can be configured if needed..
-    value: 0
-  - name: Enabled
-    description: The serial interface is active and protected fields cannot be configured.
-    value: 1 
 enum/SCKSRC:
   description: Serial clock source. This bitfield is set and cleared by software. It is used to select the clock source of the serial interface.
   bit_size: 1
@@ -637,16 +614,6 @@ enum/BSSEL:
     value: 0
   - name: BSF
     description: bs0_f provided to DFLT0.
-    value: 1
-enum/DFLTEN:
-  description: DFLT enable. This bit is set and cleared by software. It is used to control the start of acquisition of the DFLT0 path. This bit behavior depends on ACQMOD[2:0] and external events. The serial or parallel interface delivering the samples must be enabled as well.
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Acquisition immediately stopped
-    value: 0
-  - name: Enabled
-    description: Acquisition immediately started if ACQMOD[2:0] = 00x or 101, or acquisition started when the proper trigger event occurs if ACQMOD[2:0] = 01x.
     value: 1
 enum/DATSRC:
   description: Source data for the digital filter.
