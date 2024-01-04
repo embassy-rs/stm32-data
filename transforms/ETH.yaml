@@ -9,6 +9,13 @@ transforms:
     enum: ^CSR$
     from: Enabled
     to: NotRollover
+
+  - !MakeFieldArray
+    fieldsets: ^MACACR$
+    from: ATSEN\d
+    to: ATSEN
+
+  # merge MAC Address 1/2/3 high/low register
   - !RenameFields
     fieldset: .*
     from: MACA[1-3]([HL])
@@ -27,3 +34,16 @@ transforms:
     blocks: .*
     from: MACA[1-3]LR
     to: MACALR
+
+  # merge Hash Table 0/1 register
+  - !RenameFields
+    fieldset: MACHT\dR
+    from: HT.+
+    to: HT
+  - !MergeFieldsets
+    from: MACHT\dR
+    to: MACHTR
+  - !MakeRegisterArray
+    blocks: ^ETHERNET_MAC$
+    from: MACHT\dR
+    to: MACHTR

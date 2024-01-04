@@ -126,14 +126,6 @@ block/ETHERNET_MAC:
     description: Watchdog timeout register
     byte_offset: 12
     fieldset: MACWTR
-  - name: MACHT0R
-    description: Hash Table 0 register
-    byte_offset: 16
-    fieldset: MACHT0R
-  - name: MACHT1R
-    description: Hash Table 1 register
-    byte_offset: 20
-    fieldset: MACHT1R
   - name: MACVTR
     description: VLAN tag register
     byte_offset: 80
@@ -485,6 +477,13 @@ block/ETHERNET_MAC:
       stride: 8
     byte_offset: 780
     fieldset: MACALR
+  - name: MACHTR
+    description: Hash Table 0/1 register
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 16
+    fieldset: MACHTR
 block/ETHERNET_MTL:
   description: 'Ethernet: MTL mode register (MTL)'
   items:
@@ -892,27 +891,18 @@ fieldset/MACACR:
     description: Auxiliary Snapshot FIFO Clear
     bit_offset: 0
     bit_size: 1
-  - name: ATSEN0
-    description: Auxiliary Snapshot 0 Enable
+  - name: ATSEN
+    description: Auxiliary Snapshot 0-3 Enable
     bit_offset: 4
     bit_size: 1
-  - name: ATSEN1
-    description: Auxiliary Snapshot 1 Enable
-    bit_offset: 5
-    bit_size: 1
-  - name: ATSEN2
-    description: Auxiliary Snapshot 2 Enable
-    bit_offset: 6
-    bit_size: 1
-  - name: ATSEN3
-    description: Auxiliary Snapshot 3 Enable
-    bit_offset: 7
-    bit_size: 1
+    array:
+      len: 4
+      stride: 1
 fieldset/MACAHR:
-  description: Address 3 high register
+  description: Address 1/2/3 high register
   fields:
   - name: ADDRHI
-    description: MAC Address3 [47:32]
+    description: MAC Address 1/2/3 [47:32]
     bit_offset: 0
     bit_size: 16
   - name: MBC
@@ -928,10 +918,10 @@ fieldset/MACAHR:
     bit_offset: 31
     bit_size: 1
 fieldset/MACALR:
-  description: Address 2 low register
+  description: Address 1/2/3 low register
   fields:
   - name: ADDRLO
-    description: MAC Address 2 [31:0]
+    description: MAC Address 1/2/3 [31:0]
     bit_offset: 0
     bit_size: 32
 fieldset/MACARPAR:
@@ -1096,18 +1086,11 @@ fieldset/MACECR:
     description: Extended Inter-Packet Gap
     bit_offset: 25
     bit_size: 5
-fieldset/MACHT0R:
-  description: Hash Table 0 register
+fieldset/MACHTR:
+  description: Hash Table 0/1 register
   fields:
-  - name: HT31T0
-    description: MAC Hash Table First 32 Bits
-    bit_offset: 0
-    bit_size: 32
-fieldset/MACHT1R:
-  description: Hash Table 1 register
-  fields:
-  - name: HT63T32
-    description: MAC Hash Table Second 32 Bits
+  - name: HT
+    description: MAC Hash Table 32 Bits
     bit_offset: 0
     bit_size: 32
 fieldset/MACHWF1R:
