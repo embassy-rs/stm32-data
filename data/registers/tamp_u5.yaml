@@ -223,7 +223,6 @@ fieldset/ERCFGR:
     description: Configurable device secrets configuration
     bit_offset: 0
     bit_size: 1
-    enum: ERCFG
 fieldset/FLTCR:
   description: TAMP filter control register
   fields:
@@ -287,22 +286,18 @@ fieldset/PRIVCR:
     description: Monotonic counter 1 privilege protection
     bit_offset: 15
     bit_size: 1
-    enum: PRIV
   - name: BKPRWPRIV
     description: Backup registers zone 1 privilege protection
     bit_offset: 29
     bit_size: 1
-    enum: PRIV
   - name: BKPWPRIV
     description: Backup registers zone 2 privilege protection
     bit_offset: 30
     bit_size: 1
-    enum: PRIV
   - name: TAMPPRIV
     description: 'Tamper privilege protection (excluding backup registers). Note: Refer to for details on the read protection.'
     bit_offset: 31
     bit_size: 1
-    enum: PRIV
 fieldset/SCR:
   description: TAMP status clear register
   fields:
@@ -331,7 +326,6 @@ fieldset/SECCFGR:
     description: Monotonic counter 1 secure protection
     bit_offset: 15
     bit_size: 1
-    enum: SEC
   - name: BKPWSEC
     description: "Backup registers write protection offset. Protection zone 2 is defined for backup registers from BKPyR (y = BKPRWSEC, from 0 to 128) to BKPzR (z = BKPWSEC-1, from 0 to 128, BKPWSECBKPRWSEC): if TZEN=1, these backup registers can be written only with secure access. They can be read with secure or non-secure access. Protection zone 3 defined for backup registers from BKPtR (t = BKPWSEC, from 0 to 127). They can be read or written with secure or non-secure access. If TZEN=0:\tthe protection zone 2 can be read and written with non-secure access. If BKPWSEC = 0 or if BKPWSEC BKPRWSEC: there is no protection zone 2. If BKPWPRIV is set, BKPRWSEC[7:0] can be written only in privileged mode."
     bit_offset: 16
@@ -340,12 +334,10 @@ fieldset/SECCFGR:
     description: Boot hardware key lock. This bit can be read and can only be written to 1 by software. It is cleared by hardware together with the backup registers following a tamper detection event or when the readout protection (RDP) is disabled.
     bit_offset: 30
     bit_size: 1
-    enum: BHKLOCK
   - name: TAMPSEC
     description: 'Tamper protection (excluding monotonic counters and backup registers). Note: Refer to for details on the read protection.'
     bit_offset: 31
     bit_size: 1
-    enum: SEC
 fieldset/SMISR:
   description: TAMP secure masked interrupt status register
   fields:
@@ -395,42 +387,6 @@ enum/ATCKSEL:
   - name: Div128
     description: RTCCLK/128 is selected when (PREDIV_A+1) = 128 (actually selects 7th flip flop output)
     value: 7
-enum/BHKLOCK:
-  bit_size: 1
-  variants:
-  - name: Unlocked
-    description: The Backup registers from BKP0R to BKP7R can be accessed according to the Protection zone they belong to.
-    value: 0
-  - name: Locked
-    description: The backup registers from BKP0R to BKP7R cannot be accessed neither in read nor in write (they are read as 0 and write ignore).
-    value: 1
-enum/ERCFG:
-  bit_size: 1
-  variants:
-  - name: Unprotected
-    description: Configurable device secrets are not included in the device secrets protected by TAMP peripheral
-    value: 0
-  - name: Protected
-    description: Configurable device secrets are is included in the device secrets protected by TAMP peripheral
-    value: 1
-enum/PRIV:
-  bit_size: 1
-  variants:
-  - name: Unprivileged
-    description: Can be read/written with privileged or unprivileged access.
-    value: 0
-  - name: Privileged
-    description: Can be read/written only with privileged access.
-    value: 1
-enum/SEC:
-  bit_size: 1
-  variants:
-  - name: NonSecure
-    description: Can be written when the APB access is secure or non-secure.
-    value: 0
-  - name: Secure
-    description: Can be written only when the APB access is secure.
-    value: 1
 enum/TAMPFLT:
   bit_size: 2
   variants:
