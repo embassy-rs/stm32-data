@@ -1,7 +1,9 @@
 use std::env;
+#[cfg(any(feature = "rt", feature = "memory-x"))]
 use std::path::PathBuf;
 
 fn main() {
+    #[cfg(any(feature = "rt", feature = "memory-x"))]
     let crate_dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
 
     let chip_core_name = env::vars_os()
