@@ -1,0 +1,187 @@
+block/CORDIC:
+  description: CORDIC co-processor.
+  items:
+  - name: CSR
+    description: Control and status register.
+    byte_offset: 0
+    fieldset: CSR
+  - name: WDATA
+    description: Argument register.
+    byte_offset: 4
+    bit_offset: 0
+    bit_size: 32
+  - name: RDATA
+    description: Result register.
+    byte_offset: 8
+    bit_offset: 0
+    bit_size: 32
+fieldset/CSR:
+  description: Control and status register.
+  fields:
+  - name: FUNC
+    description: Function.
+    bit_offset: 0
+    bit_size: 4
+    enum: FUNC
+  - name: PRECISION
+    description: Precision required (number of iterations/cycles), where PRECISION = (number of iterations/4).
+    bit_offset: 4
+    bit_size: 4
+    enum: PRECISION
+  - name: SCALE
+    description: Scaling factor (2^-n for arguments, 2^n for results).
+    bit_offset: 8
+    bit_size: 3
+  - name: IEN
+    description: Enable interrupt.
+    bit_offset: 16
+    bit_size: 1
+  - name: DMAREN
+    description: Enable DMA wread channel.
+    bit_offset: 17
+    bit_size: 1
+  - name: DMAWEN
+    description: Enable DMA write channel.
+    bit_offset: 18
+    bit_size: 1
+  - name: NRES
+    description: Number of results in the RDATA register.
+    bit_offset: 19
+    bit_size: 1
+    enum: NRES
+  - name: NARGS
+    description: Number of arguments expected by the WDATA register.
+    bit_offset: 20
+    bit_size: 1
+    enum: NARGS
+  - name: RESSIZE
+    description: Width of output data.
+    bit_offset: 21
+    bit_size: 1
+    enum: RESSIZE
+  - name: ARGSIZE
+    description: Width of input data.
+    bit_offset: 22
+    bit_size: 1
+    enum: ARGSIZE
+  - name: RRDY
+    description: Result ready flag.
+    bit_offset: 31
+    bit_size: 1
+enum/ARGSIZE:
+  bit_size: 1
+  variants:
+  - name: Bits32
+    description: Use 32 bit input values.
+    value: 0
+  - name: Bits16
+    description: Use 16 bit input values.
+    value: 1
+enum/FUNC:
+  bit_size: 4
+  variants:
+  - name: Cosine
+    description: Cosine function.
+    value: 0
+  - name: Sine
+    description: Sine function.
+    value: 1
+  - name: Phase
+    description: Phase function.
+    value: 2
+  - name: Modulus
+    description: Modulus function.
+    value: 3
+  - name: Arctangent
+    description: Arctangent function.
+    value: 4
+  - name: HyperbolicCosine
+    description: Hyperbolic Cosine function.
+    value: 5
+  - name: HyperbolicSine
+    description: Hyperbolic Sine function.
+    value: 6
+  - name: Arctanh
+    description: Arctanh function.
+    value: 7
+  - name: NaturalLogarithm
+    description: Natural Logarithm function.
+    value: 8
+  - name: SquareRoot
+    description: Square Root function.
+    value: 9
+enum/NARGS:
+  bit_size: 1
+  variants:
+  - name: Num1
+    description: Only single argument write is needed for next calculation.
+    value: 0
+  - name: Num2
+    description: Two argument writes need to be performed for next calculation.
+    value: 1
+enum/NRES:
+  bit_size: 1
+  variants:
+  - name: Num1
+    description: Only single result value will be returned. After a single read RRDY will be automatically cleared.
+    value: 0
+  - name: Num2
+    description: Two return reads need to be performed. After two reads RRDY will be automatically cleared.
+    value: 1
+enum/PRECISION:
+  bit_size: 4
+  variants:
+  - name: Iters4
+    description: 4 iterations.
+    value: 1
+  - name: Iters8
+    description: 8 iterations.
+    value: 2
+  - name: Iters12
+    description: 12 iterations.
+    value: 3
+  - name: Iters16
+    description: 16 iterations.
+    value: 4
+  - name: Iters20
+    description: 20 iterations.
+    value: 5
+  - name: Iters24
+    description: 24 iterations.
+    value: 6
+  - name: Iters28
+    description: 28 iterations.
+    value: 7
+  - name: Iters32
+    description: 32 iterations.
+    value: 8
+  - name: Iters36
+    description: 36 iterations.
+    value: 9
+  - name: Iters40
+    description: 40 iterations.
+    value: 10
+  - name: Iters44
+    description: 44 iterations.
+    value: 11
+  - name: Iters48
+    description: 48 iterations.
+    value: 12
+  - name: Iters52
+    description: 52 iterations.
+    value: 13
+  - name: Iters56
+    description: 56 iterations.
+    value: 14
+  - name: Iters60
+    description: 60 iterations.
+    value: 15
+enum/RESSIZE:
+  bit_size: 1
+  variants:
+  - name: Bits32
+    description: Use 32 bit output values.
+    value: 0
+  - name: Bits16
+    description: Use 16 bit output values.
+    value: 1
