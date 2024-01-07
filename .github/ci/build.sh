@@ -17,7 +17,10 @@ cargo fmt -- --check
 # so the diff will show this PR's effect
 git remote add upstream https://github.com/embassy-rs/stm32-data
 git fetch --depth 15 upstream main
+set +e
 git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build -q
+DIFF_OK=$?
+set -e
 
 # move the sources directory out of the cache if it exists
 mv /ci/cache/sources ./sources || true
@@ -27,12 +30,18 @@ mv /ci/cache/sources ./sources || true
 # move the sources directory into the cache
 mv ./sources /ci/cache/sources
 
-# upload diff
-(
-    cd build
-    git add .
-    git diff --staged --color data | aha --black > /ci/artifacts/diff.html
-)
+if [ $DIFF_OK -eq 0 ]; then
+    # upload diff
+    (
+        cd build
+        git add .
+        git diff --staged --color data | aha --black > /ci/artifacts/diff.html
+    )
+
+    cat > /ci/comment.md <<EOF
+diff: https://ci.embassy.dev/jobs/$(jq -r .id < /ci/job.json)/artifacts/diff.html
+EOF
+fi
 
 # upload generated data to a fake git repo at
 # https://ci.embassy.dev/jobs/$ID/artifacts/generated.git
@@ -47,7 +56,3 @@ mv ./sources /ci/cache/sources
     git update-server-info  # generate .git/info/refs
     mv .git /ci/artifacts/generated.git
 )
-
-cat > /ci/comment.md <<EOF
-diff: https://ci.embassy.dev/jobs/$(jq -r .id < /ci/job.json)/artifacts/diff.html
-EOF
