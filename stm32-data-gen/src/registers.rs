@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
 use anyhow::anyhow;
-use chiptool::ir::{BlockItemInner, IR};
+use chiptool::ir::IR;
+use chiptool::validate;
 
 pub struct Registers {
     pub registers: HashMap<String, IR>,
@@ -24,28 +25,23 @@ impl Registers {
                 .map_err(|e| anyhow!("failed to parse {f:?}: {e:?}"))?;
 
             // validate yaml file
-            for (name, block) in &ir.blocks {
-                for item in &block.items {
-                    match &item.inner {
-                        BlockItemInner::Block(inner_block) => {
-                            if !ir.blocks.contains_key(&inner_block.block) {
-                                return Err(anyhow!(
-                                    "block {name} specified block {} but it does not exist",
-                                    inner_block.block
-                                ));
-                            }
-                        }
-                        BlockItemInner::Register(inner_register) => {
-                            if let Some(fieldset) = &inner_register.fieldset {
-                                if !ir.fieldsets.contains_key(fieldset) {
-                                    return Err(anyhow!(
-                                        "block {name} specified fieldset {fieldset} but it does not exist",
-                                    ));
-                                }
-                            }
-                        }
-                    }
-                }
+            // we allow register overlap and field overlap for now
+            let validate_option = validate::Options {
+                allow_register_overlap: true,
+                allow_field_overlap: true,
+                allow_enum_dup_value: false,
+                allow_unused_enums: false,
+                allow_unused_fieldsets: false,
+            };
+            let err_vec = validate::validate(&ir, validate_option);
+            let err_string = err_vec.iter().fold(String::new(), |mut acc, cur| {
+                acc.push_str(cur);
+                acc.push('\n');
+                acc
+            });
+
+            if !err_string.is_empty() {
+                return Err(anyhow!(format!("\n{ff}:\n{err_string}")));
             }
 
             registers.insert(ff, ir);
