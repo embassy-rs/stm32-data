@@ -14,126 +14,71 @@ block/IPCC_CPU:
   - name: CR
     description: Control register CPUx
     byte_offset: 0
-    fieldset: C1CR
+    fieldset: CxCR
   - name: MR
     description: Mask register CPUx
     byte_offset: 4
-    fieldset: C1MR
+    fieldset: CxMR
   - name: SCR
-    description: Status Set or Clear register CPU1
+    description: Status Set or Clear register CPUx
     byte_offset: 8
     access: Write
-    fieldset: C1SCR
+    fieldset: CxSCR
   - name: SR
-    description: CPU1 to CPU2 status register
+    description: CPUx to CPUy status register
     byte_offset: 12
     access: Read
-    fieldset: C1TO2SR
-fieldset/C1CR:
-  description: Control register CPU1
+    fieldset: CxTOySR
+fieldset/CxCR:
+  description: Control register CPUx
   fields:
   - name: RXOIE
-    description: processor 1 Receive channel occupied interrupt enable
+    description: processor x Receive channel occupied interrupt enable
     bit_offset: 0
     bit_size: 1
   - name: TXFIE
-    description: processor 1 Transmit channel free interrupt enable
+    description: processor x Transmit channel free interrupt enable
     bit_offset: 16
     bit_size: 1
-fieldset/C1MR:
-  description: Mask register CPU1
+fieldset/CxMR:
+  description: Mask register CPUx
   fields:
   - name: CHOM
-    description: processor 1 Receive channel x occupied interrupt enable
+    description: processor x Receive channel y occupied interrupt enable
     bit_offset: 0
     bit_size: 1
     array:
       len: 6
       stride: 1
   - name: CHFM
-    description: processor 1 Transmit channel x free interrupt mask
+    description: processor x Transmit channel y free interrupt mask
     bit_offset: 16
     bit_size: 1
     array:
       len: 6
       stride: 1
-fieldset/C1SCR:
-  description: Status Set or Clear register CPU1
+fieldset/CxSCR:
+  description: Status Set or Clear register CPUx
   fields:
   - name: CHC
-    description: processor 1 Receive channel x status clear
+    description: processor x Receive channel y status clear
     bit_offset: 0
     bit_size: 1
     array:
       len: 6
       stride: 1
   - name: CHS
-    description: processor 1 Transmit channel x status set
+    description: processor x Transmit channel y status set
     bit_offset: 16
     bit_size: 1
     array:
       len: 6
       stride: 1
-fieldset/C1TO2SR:
-  description: CPU1 to CPU2 status register
+fieldset/CxTOySR:
+  description: CPUx to CPUy status register
   fields:
   - name: CHF
-    description: processor 1 transmit to process 2 Receive channel x status flag
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 6
-      stride: 1
-fieldset/C2CR:
-  description: Control register CPU2
-  fields:
-  - name: RXOIE
-    description: processor 2 Receive channel occupied interrupt enable
-    bit_offset: 0
-    bit_size: 1
-  - name: TXFIE
-    description: processor 2 Transmit channel free interrupt enable
-    bit_offset: 16
-    bit_size: 1
-fieldset/C2MR:
-  description: Mask register CPU2
-  fields:
-  - name: CHOM
-    description: processor 2 Receive channel x occupied interrupt enable
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 6
-      stride: 1
-  - name: CHFM
-    description: processor 2 Transmit channel 1 free interrupt mask
-    bit_offset: 16
-    bit_size: 1
-    array:
-      len: 6
-      stride: 1
-fieldset/C2SCR:
-  description: Status Set or Clear register CPU2
-  fields:
-  - name: CHC
-    description: processor 2 Receive channel x status clear
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 6
-      stride: 1
-  - name: CHS
-    description: processor 2 Transmit channel 1 status set
-    bit_offset: 16
-    bit_size: 1
-    array:
-      len: 6
-      stride: 1
-fieldset/C2TOC1SR:
-  description: CPU2 to CPU1 status register
-  fields:
-  - name: CHF
-    description: processor 2 transmit to process 1 Receive channel x status flag
+    description: processor x transmit to process y Receive channel z status flag
     bit_offset: 0
     bit_size: 1
     array:

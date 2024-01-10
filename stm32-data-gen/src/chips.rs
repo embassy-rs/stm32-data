@@ -491,6 +491,7 @@ impl PeriMatcher {
             ("STM32U5.*:TAMP:.*", ("tamp", "u5", "TAMP")),
             ("STM32WL.*:TAMP:.*", ("tamp", "wl", "TAMP")),
             (".*:OCTOSPIM:OCTOSPIM:.*", ("octospim", "v1", "OCTOSPIM")),
+            // it's actually STM32L4+, not STM32L4
             (
                 "STM32L4.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0.*",
                 ("octospi", "v1", "OCTOSPI"),

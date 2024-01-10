@@ -214,6 +214,7 @@ fieldset/CR:
     description: Flash select. This bit selects the Flash memory to be addressed in Single-, Dual-, Quad-SPI mode in single-memory configuration (when DMM = 0). This bit is ignored when DMM = 1 or when Octal-SPI mode is selected.
     bit_offset: 7
     bit_size: 1
+    enum: FlashSelect
   - name: FTHRES
     description: 'FIFO threshold level. This field defines, in Indirect mode, the threshold number of bytes in the FIFO that causes the FIFO threshold flag FTF in SR, to be set. ... Note: If DMAEN = 1, the DMA controller for the corresponding channel must be disabled before changing the FTHRES[4:0] value.'
     bit_offset: 8
@@ -247,6 +248,7 @@ fieldset/CR:
     description: Polling match mode. This bit indicates which method must be used to determine a match during the Automatic status-polling mode.
     bit_offset: 23
     bit_size: 1
+    enum: MatchMode
   - name: FMODE
     description: Functional mode. This field defines the OCTOSPI functional mode of operation. If DMAEN = 1 already, then the DMA controller for the corresponding channel must be disabled before changing the FMODE[1:0] value. If FMODE[1:0] and FTHRES[4:0] are wrongly updated while DMAEN = 1, the DMA request signal automatically goes to inactive state.
     bit_offset: 28
@@ -349,6 +351,7 @@ fieldset/HLCR:
     description: Latency mode. This bit selects the Latency mode.
     bit_offset: 0
     bit_size: 1
+    enum: LatencyMode
   - name: WZL
     description: Write zero latency. This bit enables zero latency on write operations.
     bit_offset: 1
@@ -595,7 +598,7 @@ fieldset/WPTCR:
     bit_offset: 0
     bit_size: 5
   - name: DHQC
-    description: Delay hold quarter cycle Add a quarter cycle delay on the outputs in DTR communication to match hold requirement.
+    description: Delay hold quarter cycle. Add a quarter cycle delay on the outputs in DTR communication to match hold requirement.
     bit_offset: 28
     bit_size: 1
   - name: SSHIFT
@@ -610,15 +613,6 @@ fieldset/WTCR:
     description: Number of dummy cycles. This field defines the duration of the dummy phase. In both SDR and DTR modes, it specifies a number of CLK cycles (0-31). It is recommended to have at least 5 dummy cycles when using memories with DQS activated.
     bit_offset: 0
     bit_size: 5
-enum/CycleDelay:
-  bit_size: 1
-  variants:
-  - name: None
-    description: No delay hold
-    value: 0
-  - name: QuarterCycle
-    description: 1/4 cycle hold
-    value: 1
 enum/FlashSelect:
   bit_size: 1
   variants:
@@ -643,7 +637,7 @@ enum/FunctionalMode:
   - name: MemoryMapped
     description: Memory-mapped mode
     value: 3
-enum/Latency:
+enum/LatencyMode:
   bit_size: 1
   variants:
   - name: Variable
@@ -682,18 +676,6 @@ enum/MemType:
   - name: HyperBusRegister
     description: HyperBus register mode, addressing register space. The memory-mapped accesses in. this mode must be non-cacheable, or Indirect read/write modes must be used.
     value: 5
-enum/NcsCycleHold:
-  bit_size: 6
-  variants:
-  - name: OneCycle
-    description: NCS stays high for at least 1 cycle between external device commands.
-    value: 0
-  - name: TwoCycles
-    description: NCS stays high for at least 2 cycles between external device commands.
-    value: 1
-  - name: SixtyFourCycles
-    description: NCS stays high for at least 64 cycles between external device commands.
-    value: 63
 enum/PhaseMode:
   bit_size: 3
   variants:
