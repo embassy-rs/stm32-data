@@ -1,0 +1,985 @@
+block/TIM_ADV:
+  extends: TIM_GP16
+  description: Advanced-timers
+  items:
+  - name: CR2
+    description: control register 2
+    byte_offset: 4
+    fieldset: CR2_ADV
+  - name: DIER
+    description: DMA/Interrupt enable register
+    byte_offset: 12
+    fieldset: DIER_ADV
+  - name: SR
+    description: status register
+    byte_offset: 16
+    fieldset: SR_ADV
+  - name: EGR
+    description: event generation register
+    byte_offset: 20
+    access: Write
+    fieldset: EGR_ADV
+  - name: CCER
+    description: capture/compare enable register
+    byte_offset: 32
+    fieldset: CCER_ADV
+  - name: RCR
+    description: repetition counter register
+    byte_offset: 48
+    fieldset: RCR
+  - name: BDTR
+    description: break and dead-time register
+    byte_offset: 68
+    fieldset: BDTR
+block/TIM_BASIC:
+  description: Basic timer
+  items:
+  - name: CR1
+    description: control register 1
+    byte_offset: 0
+    fieldset: CR1_BASIC
+  - name: CR2
+    description: control register 2
+    byte_offset: 4
+    fieldset: CR2_BASIC
+  - name: DIER
+    description: DMA/Interrupt enable register
+    byte_offset: 12
+    fieldset: DIER_BASIC
+  - name: SR
+    description: status register
+    byte_offset: 16
+    fieldset: SR_BASIC
+  - name: EGR
+    description: event generation register
+    byte_offset: 20
+    access: Write
+    fieldset: EGR_BASIC
+  - name: CNT
+    description: counter
+    byte_offset: 36
+    fieldset: CNT_16
+  - name: PSC
+    description: prescaler
+    byte_offset: 40
+    fieldset: PSC
+  - name: ARR
+    description: auto-reload register
+    byte_offset: 44
+    fieldset: ARR_16
+block/TIM_GP16:
+  extends: TIM_BASIC
+  description: General purpose 16-bit timer
+  items:
+  - name: CR1
+    description: control register 1
+    byte_offset: 0
+    fieldset: CR1_GP
+  - name: CR2
+    description: control register 2
+    byte_offset: 4
+    fieldset: CR2_GP
+  - name: SMCR
+    description: slave mode control register
+    byte_offset: 8
+    fieldset: SMCR
+  - name: DIER
+    description: DMA/Interrupt enable register
+    byte_offset: 12
+    fieldset: DIER_GP
+  - name: SR
+    description: status register
+    byte_offset: 16
+    fieldset: SR_GP
+  - name: EGR
+    description: event generation register
+    byte_offset: 20
+    access: Write
+    fieldset: EGR_GP
+  - name: CCMR_Input
+    description: capture/compare mode register 1 (input mode)
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 24
+    fieldset: CCMR_Input
+  - name: CCMR_Output
+    description: capture/compare mode register 1 (output mode)
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 24
+    fieldset: CCMR_Output
+  - name: CCER
+    description: capture/compare enable register
+    byte_offset: 32
+    fieldset: CCER_GP
+  - name: PSC
+    description: prescaler
+    byte_offset: 40
+    fieldset: PSC
+  - name: CCR
+    description: capture/compare register
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_16
+  - name: DCR
+    description: DMA control register
+    byte_offset: 72
+    fieldset: DCR
+  - name: DMAR
+    description: DMA address for full transfer
+    byte_offset: 76
+    fieldset: DMAR
+block/TIM_GP32:
+  extends: TIM_GP16
+  description: General purpose 32-bit timer
+  items:
+  - name: CNT
+    description: counter
+    byte_offset: 36
+    fieldset: CNT_32
+  - name: ARR
+    description: auto-reload register
+    byte_offset: 44
+    fieldset: ARR_32
+  - name: CCR
+    description: capture/compare register
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_32
+fieldset/ARR_16:
+  description: auto-reload register
+  fields:
+  - name: ARR
+    description: Auto-reload value
+    bit_offset: 0
+    bit_size: 16
+fieldset/ARR_32:
+  description: auto-reload register
+  fields:
+  - name: ARR
+    description: Auto-reload value
+    bit_offset: 0
+    bit_size: 32
+fieldset/BDTR:
+  description: break and dead-time register
+  fields:
+  - name: DTG
+    description: Dead-time generator setup
+    bit_offset: 0
+    bit_size: 8
+  - name: LOCK
+    description: Lock configuration
+    bit_offset: 8
+    bit_size: 2
+  - name: OSSI
+    description: Off-state selection for Idle mode
+    bit_offset: 10
+    bit_size: 1
+    enum: OSSI
+  - name: OSSR
+    description: Off-state selection for Run mode
+    bit_offset: 11
+    bit_size: 1
+    enum: OSSR
+  - name: BKE
+    description: Break enable
+    bit_offset: 12
+    bit_size: 1
+  - name: BKP
+    description: Break polarity
+    bit_offset: 13
+    bit_size: 1
+  - name: AOE
+    description: Automatic output enable
+    bit_offset: 14
+    bit_size: 1
+  - name: MOE
+    description: Main output enable
+    bit_offset: 15
+    bit_size: 1
+fieldset/CCER_ADV:
+  extends: CCER_GP
+  description: capture/compare enable register
+  fields:
+  - name: CCNE
+    description: Capture/Compare 1 complementary output enable
+    bit_offset: 2
+    bit_size: 1
+    array:
+      len: 4
+      stride: 4
+fieldset/CCER_GP:
+  description: capture/compare enable register
+  fields:
+  - name: CCE
+    description: Capture/Compare 1 output enable
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 4
+      stride: 4
+  - name: CCP
+    description: Capture/Compare 1 output Polarity
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 4
+      stride: 4
+  - name: CCNP
+    description: Capture/Compare 1 output Polarity
+    bit_offset: 3
+    bit_size: 1
+    array:
+      len: 4
+      stride: 4
+fieldset/CCMR_Input:
+  description: capture/compare mode register 1 (input mode)
+  fields:
+  - name: CCS
+    description: Capture/Compare 1 selection
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 2
+      stride: 8
+    enum: CCMR_Input_CCS
+  - name: ICPSC
+    description: Input capture 1 prescaler
+    bit_offset: 2
+    bit_size: 2
+    array:
+      len: 2
+      stride: 8
+  - name: ICF
+    description: Input capture 1 filter
+    bit_offset: 4
+    bit_size: 4
+    array:
+      len: 2
+      stride: 8
+    enum: ICF
+fieldset/CCMR_Output:
+  description: capture/compare mode register 2 (output mode)
+  fields:
+  - name: CCS
+    description: Capture/Compare 3 selection
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 2
+      stride: 8
+    enum: CCMR_Output_CCS
+  - name: OCFE
+    description: Output compare 3 fast enable
+    bit_offset: 2
+    bit_size: 1
+    array:
+      len: 2
+      stride: 8
+  - name: OCPE
+    description: Output compare 3 preload enable
+    bit_offset: 3
+    bit_size: 1
+    array:
+      len: 2
+      stride: 8
+  - name: OCM
+    description: Output compare 3 mode
+    bit_offset: 4
+    bit_size: 3
+    array:
+      len: 2
+      stride: 8
+    enum: OCM
+  - name: OCCE
+    description: Output compare 3 clear enable
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 2
+      stride: 8
+fieldset/CCR_16:
+  description: capture/compare register 1
+  fields:
+  - name: CCR
+    description: Capture/Compare 1 value
+    bit_offset: 0
+    bit_size: 16
+fieldset/CCR_32:
+  description: capture/compare register 1
+  fields:
+  - name: CCR
+    description: Capture/Compare 1 value
+    bit_offset: 0
+    bit_size: 32
+fieldset/CNT_16:
+  description: counter
+  fields:
+  - name: CNT
+    description: counter value
+    bit_offset: 0
+    bit_size: 16
+fieldset/CNT_32:
+  description: counter
+  fields:
+  - name: CNT
+    description: counter value
+    bit_offset: 0
+    bit_size: 32
+fieldset/CR1_BASIC:
+  description: control register 1
+  fields:
+  - name: CEN
+    description: Counter enable
+    bit_offset: 0
+    bit_size: 1
+  - name: UDIS
+    description: Update disable
+    bit_offset: 1
+    bit_size: 1
+  - name: URS
+    description: Update request source
+    bit_offset: 2
+    bit_size: 1
+    enum: URS
+  - name: OPM
+    description: One-pulse mode enbaled
+    bit_offset: 3
+    bit_size: 1
+  - name: ARPE
+    description: Auto-reload preload enable
+    bit_offset: 7
+    bit_size: 1
+fieldset/CR1_GP:
+  extends: CR1_BASIC
+  description: control register 1
+  fields:
+  - name: DIR
+    description: Direction
+    bit_offset: 4
+    bit_size: 1
+    enum: DIR
+  - name: CMS
+    description: Center-aligned mode selection
+    bit_offset: 5
+    bit_size: 2
+    enum: CMS
+  - name: CKD
+    description: Clock division
+    bit_offset: 8
+    bit_size: 2
+    enum: CKD
+fieldset/CR2_ADV:
+  extends: CR2_GP
+  description: control register 2
+  fields:
+  - name: CCPC
+    description: Capture/compare preloaded control
+    bit_offset: 0
+    bit_size: 1
+  - name: CCUS
+    description: Capture/compare control update selection
+    bit_offset: 2
+    bit_size: 1
+  - name: OIS
+    description: Output Idle state 1
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 4
+      stride: 2
+  - name: OIS1N
+    description: Output Idle state 1
+    bit_offset: 9
+    bit_size: 1
+  - name: OIS2N
+    description: Output Idle state 2
+    bit_offset: 11
+    bit_size: 1
+  - name: OIS3N
+    description: Output Idle state 3
+    bit_offset: 13
+    bit_size: 1
+fieldset/CR2_BASIC:
+  description: control register 2
+  fields:
+  - name: MMS
+    description: Master mode selection
+    bit_offset: 4
+    bit_size: 3
+    enum: MMS
+fieldset/CR2_GP:
+  extends: CR2_BASIC
+  description: control register 2
+  fields:
+  - name: CCDS
+    description: Capture/compare DMA selection
+    bit_offset: 3
+    bit_size: 1
+    enum: CCDS
+  - name: TI1S
+    description: TI1 selection
+    bit_offset: 7
+    bit_size: 1
+    enum: TIS
+fieldset/DCR:
+  description: DMA control register
+  fields:
+  - name: DBA
+    description: DMA base address
+    bit_offset: 0
+    bit_size: 5
+  - name: DBL
+    description: DMA burst length
+    bit_offset: 8
+    bit_size: 5
+fieldset/DIER_ADV:
+  extends: DIER_GP
+  description: DMA/Interrupt enable register
+  fields:
+  - name: COMIE
+    description: COM interrupt enable
+    bit_offset: 5
+    bit_size: 1
+  - name: BIE
+    description: Break interrupt enable
+    bit_offset: 7
+    bit_size: 1
+  - name: COMDE
+    description: COM DMA request enable
+    bit_offset: 13
+    bit_size: 1
+fieldset/DIER_BASIC:
+  description: DMA/Interrupt enable register
+  fields:
+  - name: UIE
+    description: Update interrupt enable
+    bit_offset: 0
+    bit_size: 1
+  - name: UDE
+    description: Update DMA request enable
+    bit_offset: 8
+    bit_size: 1
+fieldset/DIER_GP:
+  extends: DIER_BASIC
+  description: DMA/Interrupt enable register
+  fields:
+  - name: CCIE
+    description: Capture/Compare 1 interrupt enable
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: TIE
+    description: Trigger interrupt enable
+    bit_offset: 6
+    bit_size: 1
+  - name: CCDE
+    description: Capture/Compare 1 DMA request enable
+    bit_offset: 9
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: TDE
+    description: Trigger DMA request enable
+    bit_offset: 14
+    bit_size: 1
+fieldset/DMAR:
+  description: DMA address for full transfer
+  fields:
+  - name: DMAB
+    description: DMA register for burst accesses
+    bit_offset: 0
+    bit_size: 16
+fieldset/EGR_ADV:
+  extends: EGR_GP
+  description: event generation register
+  fields:
+  - name: COMG
+    description: Capture/Compare control update generation
+    bit_offset: 5
+    bit_size: 1
+  - name: BG
+    description: Break generation
+    bit_offset: 7
+    bit_size: 1
+fieldset/EGR_BASIC:
+  description: event generation register
+  fields:
+  - name: UG
+    description: Update generation
+    bit_offset: 0
+    bit_size: 1
+fieldset/EGR_GP:
+  extends: EGR_BASIC
+  description: event generation register
+  fields:
+  - name: CCG
+    description: Capture/compare 1 generation
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: COMG
+    description: Capture/Compare control update generation
+    bit_offset: 5
+    bit_size: 1
+  - name: TG
+    description: Trigger generation
+    bit_offset: 6
+    bit_size: 1
+  - name: BG
+    description: Break generation
+    bit_offset: 7
+    bit_size: 1
+fieldset/PSC:
+  description: prescaler
+  fields:
+  - name: PSC
+    description: Prescaler value
+    bit_offset: 0
+    bit_size: 16
+fieldset/RCR:
+  description: repetition counter register
+  fields:
+  - name: REP
+    description: Repetition counter value
+    bit_offset: 0
+    bit_size: 8
+fieldset/SMCR:
+  description: slave mode control register
+  fields:
+  - name: SMS
+    description: Slave mode selection
+    bit_offset: 0
+    bit_size: 3
+    enum: SMS
+  - name: TS
+    description: Trigger selection
+    bit_offset: 4
+    bit_size: 3
+    enum: TS
+  - name: MSM
+    description: Master/Slave mode
+    bit_offset: 7
+    bit_size: 1
+    enum: MSM
+  - name: ETF
+    description: External trigger filter
+    bit_offset: 8
+    bit_size: 4
+    enum: ETF
+  - name: ETPS
+    description: External trigger prescaler
+    bit_offset: 12
+    bit_size: 2
+    enum: ETPS
+  - name: ECE
+    description: External clock mode 2 enable
+    bit_offset: 14
+    bit_size: 1
+  - name: ETP
+    description: External trigger polarity
+    bit_offset: 15
+    bit_size: 1
+    enum: ETP
+fieldset/SR_ADV:
+  extends: SR_GP
+  description: status register
+  fields:
+  - name: COMIF
+    description: COM interrupt flag
+    bit_offset: 5
+    bit_size: 1
+  - name: BIF
+    description: Break interrupt flag
+    bit_offset: 7
+    bit_size: 1
+fieldset/SR_BASIC:
+  description: status register
+  fields:
+  - name: UIF
+    description: Update interrupt flag
+    bit_offset: 0
+    bit_size: 1
+fieldset/SR_GP:
+  extends: SR_BASIC
+  description: status register
+  fields:
+  - name: CCIF
+    description: Capture/compare 1 interrupt flag
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: COMIF
+    description: COM interrupt flag
+    bit_offset: 5
+    bit_size: 1
+  - name: TIF
+    description: Trigger interrupt flag
+    bit_offset: 6
+    bit_size: 1
+  - name: BIF
+    description: Break interrupt flag
+    bit_offset: 7
+    bit_size: 1
+  - name: CCOF
+    description: Capture/Compare 1 overcapture flag
+    bit_offset: 9
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+enum/CCDS:
+  bit_size: 1
+  variants:
+  - name: OnCompare
+    description: CCx DMA request sent when CCx event occurs
+    value: 0
+  - name: OnUpdate
+    description: CCx DMA request sent when update event occurs
+    value: 1
+enum/CCMR_Input_CCS:
+  bit_size: 2
+  variants:
+  - name: TI4
+    description: 'CCx channel is configured as input, normal mapping: ICx mapped to TIx'
+    value: 1
+  - name: TI3
+    description: CCx channel is configured as input, alternate mapping (switches 1 with 2, 3 with 4)
+    value: 2
+  - name: TRC
+    description: CCx channel is configured as input, ICx is mapped on TRC
+    value: 3
+enum/CCMR_Output_CCS:
+  bit_size: 2
+  variants:
+  - name: Output
+    description: CCx channel is configured as output
+    value: 0
+enum/CKD:
+  bit_size: 2
+  variants:
+  - name: Div1
+    description: t_DTS = t_CK_INT
+    value: 0
+  - name: Div2
+    description: t_DTS = 2 × t_CK_INT
+    value: 1
+  - name: Div4
+    description: t_DTS = 4 × t_CK_INT
+    value: 2
+enum/CMS:
+  bit_size: 2
+  variants:
+  - name: EdgeAligned
+    description: The counter counts up or down depending on the direction bit
+    value: 0
+  - name: CenterAligned1
+    description: The counter counts up and down alternatively. Output compare interrupt flags are set only when the counter is counting down.
+    value: 1
+  - name: CenterAligned2
+    description: The counter counts up and down alternatively. Output compare interrupt flags are set only when the counter is counting up.
+    value: 2
+  - name: CenterAligned3
+    description: The counter counts up and down alternatively. Output compare interrupt flags are set both when the counter is counting up or down.
+    value: 3
+enum/DIR:
+  bit_size: 1
+  variants:
+  - name: Up
+    description: Counter used as upcounter
+    value: 0
+  - name: Down
+    description: Counter used as downcounter
+    value: 1
+enum/ETF:
+  bit_size: 4
+  variants:
+  - name: NoFilter
+    description: No filter, sampling is done at fDTS
+    value: 0
+  - name: FCK_INT_N2
+    description: fSAMPLING=fCK_INT, N=2
+    value: 1
+  - name: FCK_INT_N4
+    description: fSAMPLING=fCK_INT, N=4
+    value: 2
+  - name: FCK_INT_N8
+    description: fSAMPLING=fCK_INT, N=8
+    value: 3
+  - name: FDTS_Div2_N6
+    description: fSAMPLING=fDTS/2, N=6
+    value: 4
+  - name: FDTS_Div2_N8
+    description: fSAMPLING=fDTS/2, N=8
+    value: 5
+  - name: FDTS_Div4_N6
+    description: fSAMPLING=fDTS/4, N=6
+    value: 6
+  - name: FDTS_Div4_N8
+    description: fSAMPLING=fDTS/4, N=8
+    value: 7
+  - name: FDTS_Div8_N6
+    description: fSAMPLING=fDTS/8, N=6
+    value: 8
+  - name: FDTS_Div8_N8
+    description: fSAMPLING=fDTS/8, N=8
+    value: 9
+  - name: FDTS_Div16_N5
+    description: fSAMPLING=fDTS/16, N=5
+    value: 10
+  - name: FDTS_Div16_N6
+    description: fSAMPLING=fDTS/16, N=6
+    value: 11
+  - name: FDTS_Div16_N8
+    description: fSAMPLING=fDTS/16, N=8
+    value: 12
+  - name: FDTS_Div32_N5
+    description: fSAMPLING=fDTS/32, N=5
+    value: 13
+  - name: FDTS_Div32_N6
+    description: fSAMPLING=fDTS/32, N=6
+    value: 14
+  - name: FDTS_Div32_N8
+    description: fSAMPLING=fDTS/32, N=8
+    value: 15
+enum/ETP:
+  bit_size: 1
+  variants:
+  - name: NotInverted
+    description: ETR is noninverted, active at high level or rising edge
+    value: 0
+  - name: Inverted
+    description: ETR is inverted, active at low level or falling edge
+    value: 1
+enum/ETPS:
+  bit_size: 2
+  variants:
+  - name: Div1
+    description: Prescaler OFF
+    value: 0
+  - name: Div2
+    description: ETRP frequency divided by 2
+    value: 1
+  - name: Div4
+    description: ETRP frequency divided by 4
+    value: 2
+  - name: Div8
+    description: ETRP frequency divided by 8
+    value: 3
+enum/ICF:
+  bit_size: 4
+  variants:
+  - name: NoFilter
+    description: No filter, sampling is done at fDTS
+    value: 0
+  - name: FCK_INT_N2
+    description: fSAMPLING=fCK_INT, N=2
+    value: 1
+  - name: FCK_INT_N4
+    description: fSAMPLING=fCK_INT, N=4
+    value: 2
+  - name: FCK_INT_N8
+    description: fSAMPLING=fCK_INT, N=8
+    value: 3
+  - name: FDTS_Div2_N6
+    description: fSAMPLING=fDTS/2, N=6
+    value: 4
+  - name: FDTS_Div2_N8
+    description: fSAMPLING=fDTS/2, N=8
+    value: 5
+  - name: FDTS_Div4_N6
+    description: fSAMPLING=fDTS/4, N=6
+    value: 6
+  - name: FDTS_Div4_N8
+    description: fSAMPLING=fDTS/4, N=8
+    value: 7
+  - name: FDTS_Div8_N6
+    description: fSAMPLING=fDTS/8, N=6
+    value: 8
+  - name: FDTS_Div8_N8
+    description: fSAMPLING=fDTS/8, N=8
+    value: 9
+  - name: FDTS_Div16_N5
+    description: fSAMPLING=fDTS/16, N=5
+    value: 10
+  - name: FDTS_Div16_N6
+    description: fSAMPLING=fDTS/16, N=6
+    value: 11
+  - name: FDTS_Div16_N8
+    description: fSAMPLING=fDTS/16, N=8
+    value: 12
+  - name: FDTS_Div32_N5
+    description: fSAMPLING=fDTS/32, N=5
+    value: 13
+  - name: FDTS_Div32_N6
+    description: fSAMPLING=fDTS/32, N=6
+    value: 14
+  - name: FDTS_Div32_N8
+    description: fSAMPLING=fDTS/32, N=8
+    value: 15
+enum/MMS:
+  bit_size: 3
+  variants:
+  - name: Reset
+    description: The UG bit from the TIMx_EGR register is used as trigger output
+    value: 0
+  - name: Enable
+    description: The counter enable signal, CNT_EN, is used as trigger output
+    value: 1
+  - name: Update
+    description: The update event is selected as trigger output
+    value: 2
+  - name: ComparePulse
+    description: The trigger output send a positive pulse when the CC1IF flag it to be set, as soon as a capture or a compare match occurred
+    value: 3
+  - name: CompareOC1
+    description: OC1REF signal is used as trigger output
+    value: 4
+  - name: CompareOC2
+    description: OC2REF signal is used as trigger output
+    value: 5
+  - name: CompareOC3
+    description: OC3REF signal is used as trigger output
+    value: 6
+  - name: CompareOC4
+    description: OC4REF signal is used as trigger output
+    value: 7
+enum/MSM:
+  bit_size: 1
+  variants:
+  - name: NoSync
+    description: No action
+    value: 0
+  - name: Sync
+    description: The effect of an event on the trigger input (TRGI) is delayed to allow a perfect synchronization between the current timer and its slaves (through TRGO). It is useful if we want to synchronize several timers on a single external event.
+    value: 1
+enum/OCM:
+  bit_size: 3
+  variants:
+  - name: Frozen
+    description: The comparison between the output compare register TIMx_CCRy and the counter TIMx_CNT has no effect on the outputs
+    value: 0
+  - name: ActiveOnMatch
+    description: Set channel to active level on match. OCyREF signal is forced high when the counter matches the capture/compare register
+    value: 1
+  - name: InactiveOnMatch
+    description: Set channel to inactive level on match. OCyREF signal is forced low when the counter matches the capture/compare register
+    value: 2
+  - name: Toggle
+    description: OCyREF toggles when TIMx_CNT=TIMx_CCRy
+    value: 3
+  - name: ForceInactive
+    description: OCyREF is forced low
+    value: 4
+  - name: ForceActive
+    description: OCyREF is forced high
+    value: 5
+  - name: PwmMode1
+    description: In upcounting, channel is active as long as TIMx_CNT<TIMx_CCRy else inactive. In downcounting, channel is inactive as long as TIMx_CNT>TIMx_CCRy else active
+    value: 6
+  - name: PwmMode2
+    description: Inversely to PwmMode1
+    value: 7
+enum/OSSI:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: When inactive, OC/OCN outputs are disabled
+    value: 0
+  - name: IdleLevel
+    description: When inactive, OC/OCN outputs are forced to idle level
+    value: 1
+enum/OSSR:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: When inactive, OC/OCN outputs are disabled
+    value: 0
+  - name: IdleLevel
+    description: When inactive, OC/OCN outputs are enabled with their inactive level
+    value: 1
+enum/SMS:
+  bit_size: 3
+  variants:
+  - name: Disabled
+    description: Slave mode disabled - if CEN = ‘1 then the prescaler is clocked directly by the internal clock.
+    value: 0
+  - name: Encoder_Mode_1
+    description: Encoder mode 1 - Counter counts up/down on TI2FP1 edge depending on TI1FP2 level.
+    value: 1
+  - name: Encoder_Mode_2
+    description: Encoder mode 2 - Counter counts up/down on TI1FP2 edge depending on TI2FP1 level.
+    value: 2
+  - name: Encoder_Mode_3
+    description: Encoder mode 3 - Counter counts up/down on both TI1FP1 and TI2FP2 edges depending on the level of the other input.
+    value: 3
+  - name: Reset_Mode
+    description: Reset Mode - Rising edge of the selected trigger input (TRGI) reinitializes the counter and generates an update of the registers.
+    value: 4
+  - name: Gated_Mode
+    description: Gated Mode - The counter clock is enabled when the trigger input (TRGI) is high. The counter stops (but is not reset) as soon as the trigger becomes low. Both start and stop of the counter are controlled.
+    value: 5
+  - name: Trigger_Mode
+    description: Trigger Mode - The counter starts at a rising edge of the trigger TRGI (but it is not reset). Only the start of the counter is controlled.
+    value: 6
+  - name: Ext_Clock_Mode
+    description: External Clock Mode 1 - Rising edges of the selected trigger (TRGI) clock the counter.
+    value: 7
+enum/TIS:
+  bit_size: 1
+  variants:
+  - name: Normal
+    description: The TIMx_CH1 pin is connected to TI1 input
+    value: 0
+  - name: XOR
+    description: The TIMx_CH1, CH2, CH3 pins are connected to TI1 input
+    value: 1
+enum/TS:
+  bit_size: 3
+  variants:
+  - name: ITR0
+    description: Internal Trigger 0 (ITR0)
+    value: 0
+  - name: ITR1
+    description: Internal Trigger 1 (ITR1)
+    value: 1
+  - name: ITR2
+    description: Internal Trigger 2 (ITR2)
+    value: 2
+  - name: ITR3
+    description: Internal Trigger 3 (ITR3)
+    value: 3
+  - name: TI1F_ED
+    description: TI1 Edge Detector (TI1F_ED)
+    value: 4
+  - name: TI1FP1
+    description: Filtered Timer Input 1 (TI1FP1)
+    value: 5
+  - name: TI2FP2
+    description: Filtered Timer Input 2 (TI2FP2)
+    value: 6
+  - name: ETRF
+    description: External Trigger input (ETRF)
+    value: 7
+enum/URS:
+  bit_size: 1
+  variants:
+  - name: AnyEvent
+    description: Any of counter overflow/underflow, setting UG, or update through slave mode, generates an update interrupt or DMA request
+    value: 0
+  - name: CounterOnly
+    description: Only counter overflow/underflow generates an update interrupt or DMA request
+    value: 1
