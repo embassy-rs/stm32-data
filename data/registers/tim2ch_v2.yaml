@@ -60,10 +60,6 @@ block/TIM:
     description: auto-reload register (Dither mode enabled)
     byte_offset: 44
     fieldset: ARR_DITHER
-  - name: RCR
-    description: repetition counter register
-    byte_offset: 48
-    fieldset: RCR
   - name: CCR
     description: capture/compare register x (x=1-2) (Dither mode disabled)
     array:
@@ -78,68 +74,10 @@ block/TIM:
       stride: 4
     byte_offset: 52
     fieldset: CCR_DITHER
-  - name: BDTR
-    description: break and dead-time register
-    byte_offset: 68
-    fieldset: BDTR
-  - name: DTR2
-    description: break and dead-time register
-    byte_offset: 84
-    fieldset: DTR2
   - name: TISEL
     description: input selection register
     byte_offset: 92
     fieldset: TISEL
-  - name: AF1
-    description: alternate function register 1
-    byte_offset: 96
-    fieldset: AF1
-  - name: AF2
-    description: alternate function register 2
-    byte_offset: 100
-    fieldset: AF2
-  - name: DCR
-    description: DMA control register
-    byte_offset: 988
-    fieldset: DCR
-  - name: DMAR
-    description: DMA address for full transfer
-    byte_offset: 992
-    fieldset: DMAR
-fieldset/AF1:
-  description: alternate function register 1
-  fields:
-  - name: BKINE
-    description: TIMx_BKIN input enable
-    bit_offset: 0
-    bit_size: 1
-  - name: BKCMPE
-    description: TIM_BRK_CMPx (x=1-8) enable
-    bit_offset: 1
-    bit_size: 1
-    array:
-      len: 8
-      stride: 1
-  - name: BKINP
-    description: TIMx_BKIN input polarity
-    bit_offset: 9
-    bit_size: 1
-    enum: BKINP
-  - name: BKCMPP
-    description: TIM_BRK_CMPx (x=1-4) input polarity
-    bit_offset: 10
-    bit_size: 1
-    array:
-      len: 4
-      stride: 1
-    enum: BKINP
-fieldset/AF2:
-  description: alternate function register 2
-  fields:
-  - name: OCRSEL
-    description: ocref_clr source selection
-    bit_offset: 16
-    bit_size: 3
 fieldset/ARR:
   description: auto-reload register (Dither mode disabled)
   fields:
@@ -158,75 +96,6 @@ fieldset/ARR_DITHER:
     description: Auto-reload value
     bit_offset: 4
     bit_size: 16
-fieldset/BDTR:
-  description: break and dead-time register
-  fields:
-  - name: DTG
-    description: Dead-time generator setup
-    bit_offset: 0
-    bit_size: 8
-  - name: LOCK
-    description: Lock configuration
-    bit_offset: 8
-    bit_size: 2
-    enum: LOCK
-  - name: OSSI
-    description: Off-state selection for Idle mode
-    bit_offset: 10
-    bit_size: 1
-    enum: OSSI
-  - name: OSSR
-    description: Off-state selection for Run mode
-    bit_offset: 11
-    bit_size: 1
-    enum: OSSR
-  - name: BKE
-    description: Break x (x=1) enable
-    bit_offset: 12
-    bit_size: 1
-    array:
-      len: 1
-      stride: 12
-  - name: BKP
-    description: Break x (x=1) polarity
-    bit_offset: 13
-    bit_size: 1
-    array:
-      len: 1
-      stride: 12
-    enum: BKP
-  - name: AOE
-    description: Automatic output enable
-    bit_offset: 14
-    bit_size: 1
-  - name: MOE
-    description: Main output enable
-    bit_offset: 15
-    bit_size: 1
-  - name: BKF
-    description: Break x (x=1) filter
-    bit_offset: 16
-    bit_size: 4
-    array:
-      len: 1
-      stride: 4
-    enum: FilterValue
-  - name: BKDSRM
-    description: Break x (x=1) Disarm
-    bit_offset: 26
-    bit_size: 1
-    array:
-      len: 1
-      stride: 1
-    enum: BKDSRM
-  - name: BKBID
-    description: Break x (x=1) bidirectional
-    bit_offset: 28
-    bit_size: 1
-    array:
-      len: 1
-      stride: 1
-    enum: BKBID
 fieldset/CCER:
   description: capture/compare enable register
   fields:
@@ -243,13 +112,6 @@ fieldset/CCER:
     bit_size: 1
     array:
       len: 2
-      stride: 4
-  - name: CCNE
-    description: Capture/Compare x (x=1) complementary output enable
-    bit_offset: 2
-    bit_size: 1
-    array:
-      len: 1
       stride: 4
   - name: CCNP
     description: Capture/Compare x (x=1-2) output Polarity
@@ -317,13 +179,6 @@ fieldset/CCMR_Output:
       len: 2
       stride: 8
     enum: OCM
-  - name: OCCE
-    description: Output compare y clear enable
-    bit_offset: 7
-    bit_size: 1
-    array:
-      len: 2
-      stride: 8
 fieldset/CCR:
   description: capture/compare register x (x=1,2) (Dither mode disabled)
   fields:
@@ -393,19 +248,6 @@ fieldset/CR1:
 fieldset/CR2:
   description: control register 2
   fields:
-  - name: CCPC
-    description: Capture/compare preloaded control
-    bit_offset: 0
-    bit_size: 1
-  - name: CCUS
-    description: Capture/compare control update selection
-    bit_offset: 2
-    bit_size: 1
-  - name: CCDS
-    description: Capture/compare DMA selection
-    bit_offset: 3
-    bit_size: 1
-    enum: CCDS
   - name: MMS
     description: Master mode selection
     bit_offset: 4
@@ -416,36 +258,6 @@ fieldset/CR2:
     bit_offset: 7
     bit_size: 1
     enum: TI1S
-  - name: OIS
-    description: Output Idle state x (x=1,2)
-    bit_offset: 8
-    bit_size: 1
-    array:
-      len: 2
-      stride: 2
-  - name: OISN
-    description: Output Idle state x (x=1)
-    bit_offset: 9
-    bit_size: 1
-    array:
-      len: 1
-      stride: 2
-fieldset/DCR:
-  description: DMA control register
-  fields:
-  - name: DBA
-    description: DMA base address
-    bit_offset: 0
-    bit_size: 5
-  - name: DBL
-    description: DMA burst length
-    bit_offset: 8
-    bit_size: 5
-  - name: DBSS
-    description: DMA burst source selection
-    bit_offset: 16
-    bit_size: 4
-    enum: DBSS
 fieldset/DIER:
   description: DMA/Interrupt enable register
   fields:
@@ -460,59 +272,9 @@ fieldset/DIER:
     array:
       len: 2
       stride: 1
-  - name: COMIE
-    description: COM interrupt enable
-    bit_offset: 5
-    bit_size: 1
   - name: TIE
     description: Trigger interrupt enable
     bit_offset: 6
-    bit_size: 1
-  - name: BIE
-    description: Break interrupt enable
-    bit_offset: 7
-    bit_size: 1
-  - name: UDE
-    description: Update DMA request enable
-    bit_offset: 8
-    bit_size: 1
-  - name: CCDE
-    description: Capture/Compare x (x=1) DMA request enable
-    bit_offset: 9
-    bit_size: 1
-    array:
-      len: 1
-      stride: 1
-  - name: COMDE
-    description: COM DMA request enable
-    bit_offset: 13
-    bit_size: 1
-  - name: TDE
-    description: Trigger DMA request enable
-    bit_offset: 14
-    bit_size: 1
-fieldset/DMAR:
-  description: DMA address for full transfer
-  fields:
-  - name: DMAB
-    description: DMA register for burst accesses
-    bit_offset: 0
-    bit_size: 32
-fieldset/DTR2:
-  description: deadtime register 2
-  fields:
-  - name: DTGF
-    description: Dead-time falling edge generator setup
-    bit_offset: 0
-    bit_size: 8
-  - name: DTAE
-    description: Deadtime asymmetric enable
-    bit_offset: 16
-    bit_size: 1
-    enum: DTAE
-  - name: DTPE
-    description: Deadtime preload enable
-    bit_offset: 17
     bit_size: 1
 fieldset/EGR:
   description: event generation register
@@ -528,21 +290,10 @@ fieldset/EGR:
     array:
       len: 2
       stride: 1
-  - name: COMG
-    description: Capture/Compare control update generation
-    bit_offset: 5
-    bit_size: 1
   - name: TG
     description: Trigger generation
     bit_offset: 6
     bit_size: 1
-  - name: BG
-    description: Break x (x=1) generation
-    bit_offset: 7
-    bit_size: 1
-    array:
-      len: 1
-      stride: 1
 fieldset/PSC:
   description: prescaler
   fields:
@@ -550,13 +301,6 @@ fieldset/PSC:
     description: Prescaler value
     bit_offset: 0
     bit_size: 16
-fieldset/RCR:
-  description: repetition counter register
-  fields:
-  - name: REP
-    description: Repetition counter value
-    bit_offset: 0
-    bit_size: 8
 fieldset/SMCR:
   description: slave mode control register
   fields:
@@ -575,10 +319,6 @@ fieldset/SMCR:
     bit_offset: 7
     bit_size: 1
     enum: MSM
-  - name: SMSPE
-    description: SMS preload enable
-    bit_offset: 24
-    bit_size: 1
 fieldset/SR:
   description: status register
   fields:
@@ -593,21 +333,10 @@ fieldset/SR:
     array:
       len: 2
       stride: 1
-  - name: COMIF
-    description: COM interrupt flag
-    bit_offset: 5
-    bit_size: 1
   - name: TIF
     description: Trigger interrupt flag
     bit_offset: 6
     bit_size: 1
-  - name: BIF
-    description: Break x (x=1) interrupt flag
-    bit_offset: 7
-    bit_size: 1
-    array:
-      len: 1
-      stride: 1
   - name: CCOF
     description: Capture/Compare x (x=1-2) overcapture flag
     bit_offset: 9
@@ -625,51 +354,6 @@ fieldset/TISEL:
     array:
       len: 2
       stride: 8
-enum/BKBID:
-  bit_size: 1
-  variants:
-  - name: Input
-    description: Break input tim_brk in input mode
-    value: 0
-  - name: Bidirectional
-    description: Break input tim_brk in bidirectional mode
-    value: 1
-enum/BKDSRM:
-  bit_size: 1
-  variants:
-  - name: Armed
-    description: Break input tim_brk is armed
-    value: 0
-  - name: Disarmed
-    description: Break input tim_brk is disarmed
-    value: 1
-enum/BKINP:
-  bit_size: 1
-  variants:
-  - name: NotInverted
-    description: input polarity is not inverted (active low if BKxP = 0, active high if BKxP = 1)
-    value: 0
-  - name: Inverted
-    description: input polarity is inverted (active high if BKxP = 0, active low if BKxP = 1)
-    value: 1
-enum/BKP:
-  bit_size: 1
-  variants:
-  - name: ActiveLow
-    description: Break input tim_brk is active low
-    value: 0
-  - name: ActiveHigh
-    description: Break input tim_brk is active high
-    value: 1
-enum/CCDS:
-  bit_size: 1
-  variants:
-  - name: OnCompare
-    description: CCx DMA request sent when CCx event occurs
-    value: 0
-  - name: OnUpdate
-    description: CCx DMA request sent when update event occurs
-    value: 1
 enum/CCMR_Input_CCS:
   bit_size: 2
   variants:
@@ -700,39 +384,6 @@ enum/CKD:
   - name: Div4
     description: t_DTS = 4 × t_CK_INT
     value: 2
-enum/DBSS:
-  bit_size: 4
-  variants:
-  - name: Update
-    description: Update
-    value: 1
-  - name: CC1
-    description: CC1
-    value: 2
-  - name: CC2
-    description: CC2
-    value: 3
-  - name: CC3
-    description: CC3
-    value: 4
-  - name: CC4
-    description: CC4
-    value: 5
-  - name: COM
-    description: COM
-    value: 6
-  - name: Trigger
-    description: Trigger
-    value: 7
-enum/DTAE:
-  bit_size: 1
-  variants:
-  - name: Identical
-    description: Deadtime on rising and falling edges are identical, and defined with DTG[7:0] register
-    value: 0
-  - name: Distinct
-    description: Deadtime on rising edge is defined with DTG[7:0] register and deadtime on falling edge is defined with DTGF[7:0] bits.
-    value: 1
 enum/FilterValue:
   bit_size: 4
   variants:
@@ -784,21 +435,6 @@ enum/FilterValue:
   - name: FDTS_Div32_N8
     description: fSAMPLING=fDTS/32, N=8
     value: 15
-enum/LOCK:
-  bit_size: 2
-  variants:
-  - name: Disabled
-    description: No bit is write protected
-    value: 0
-  - name: Level1
-    description: DTG bits in TIMx_BDTR register, OISx and OISxN bits in TIMx_CR2 register and BKBID/BKE/BKP/AOE bits in TIMx_BDTR register can no longer be written
-    value: 1
-  - name: Level2
-    description: LOCK Level 1 + CC Polarity bits (CCxP/CCxNP bits in TIMx_CCER register, as long as the related channel is configured in output through the CCxS bits) as well as OSSR and OSSI bits can no longer be written.
-    value: 2
-  - name: Level3
-    description: LOCK Level 2 + CC Control bits (OCxM and OCxPE bits in TIMx_CCMRx registers, as long as the related channel is configured in output through the CCxS bits) can no longer be written.
-    value: 3
 enum/MMS:
   bit_size: 3
   variants:
@@ -862,24 +498,6 @@ enum/OCM:
   - name: PwmMode2
     description: Inversely to PwmMode1
     value: 7
-enum/OSSI:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: When inactive, OC/OCN outputs are disabled
-    value: 0
-  - name: IdleLevel
-    description: When inactive, OC/OCN outputs are forced to idle level
-    value: 1
-enum/OSSR:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: When inactive, OC/OCN outputs are disabled
-    value: 0
-  - name: IdleLevel
-    description: When inactive, OC/OCN outputs are enabled with their inactive level
-    value: 1
 enum/SMS:
   bit_size: 3
   variants:
