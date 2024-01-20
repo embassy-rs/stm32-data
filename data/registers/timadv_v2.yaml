@@ -168,7 +168,7 @@ fieldset/AF2:
     array:
       len: 1
       stride: 4
-    enum: BKxINP
+    enum: BKINP
   - name: OCRSEL
     description: ocref_clr source selection
     bit_offset: 16
@@ -385,14 +385,22 @@ fieldset/CCMR_Output:
 fieldset/CCR:
   description: capture/compare register x (x=1-4,6)
   fields:
-  - name: CCR
-    description: Capture/Compare x (x=1-4,6) value (Dither mode disabled)
+  - name: CCR_INPUT
+    description: Input capture x (x=1-4,6) value (Dither mode disabled)
     bit_offset: 0
     bit_size: 16
-  - name: CCR_DITHER
-    description: Capture/Compare x (x=1-4,6) value (Dither mode enabled)
+  - name: CCR_OUTPUT
+    description: Output compare x (x=1-4,6) value (Dither mode disabled)
+    bit_offset: 0
+    bit_size: 16
+  - name: CCR_OUTPUT_DITHER
+    description: Output compare x (x=1-4,6) value (Dither mode enabled)
     bit_offset: 0
     bit_size: 20
+  - name: CCR_INPUT_DITHER
+    description: Input capture x (x=1-4,6) value (Dither mode enabled)
+    bit_offset: 4
+    bit_size: 16
 fieldset/CCR5:
   extends: CCR
   description: capture/compare register 5
@@ -488,7 +496,7 @@ fieldset/CR2:
     description: TI1 selection
     bit_offset: 7
     bit_size: 1
-    enum: TIS
+    enum: TI1S
   - name: OIS
     description: Output Idle state 1(N)-4(N)
     bit_offset: 8
@@ -621,6 +629,11 @@ fieldset/ECR:
     bit_offset: 1
     bit_size: 2
     enum: IDIR
+  - name: IBLK
+    description: Index blanking
+    bit_offset: 3
+    bit_size: 2
+    enum: IBLK
   - name: FIDX
     description: First index
     bit_offset: 5
@@ -690,10 +703,10 @@ fieldset/SMCR:
     bit_size: 3
     enum: SMS
   - name: OCCS
-    description: a????????
+    description: OCREF clear selection
     bit_offset: 3
     bit_size: 1
-    enum: SMS
+    enum: OCCS
   - name: TS
     description: Trigger selection
     bit_offset: 4
@@ -708,7 +721,7 @@ fieldset/SMCR:
     description: External trigger filter
     bit_offset: 8
     bit_size: 4
-    enum: ETF
+    enum: FilterValue
   - name: ETPS
     description: External trigger prescaler
     bit_offset: 12
@@ -802,3 +815,489 @@ fieldset/TISEL:
     array:
       len: 4
       stride: 8
+enum/BKBID:
+  bit_size: 1
+  variants:
+  - name: Input
+    description: Break input tim_brk in input mode
+    value: 0
+  - name: Bidirectional
+    description: Break input tim_brk in bidirectional mode
+    value: 1
+enum/BKDSRM:
+  bit_size: 1
+  variants:
+  - name: Armed
+    description: Break input tim_brk is armed
+    value: 0
+  - name: Disarmed
+    description: Break input tim_brk is disarmed
+    value: 1
+enum/BKINP:
+  bit_size: 1
+  variants:
+  - name: NotInverted
+    description: input polarity is not inverted (active low if BKxP = 0, active high if BKxP = 1)
+    value: 0
+  - name: Inverted
+    description: input polarity is inverted (active high if BKxP = 0, active low if BKxP = 1)
+    value: 1
+enum/BKP:
+  bit_size: 1
+  variants:
+  - name: ActiveLow
+    description: Break input tim_brk is active low
+    value: 0
+  - name: ActiveHigh
+    description: Break input tim_brk is active high
+    value: 1
+enum/CCDS:
+  bit_size: 1
+  variants:
+  - name: OnCompare
+    description: CCx DMA request sent when CCx event occurs
+    value: 0
+  - name: OnUpdate
+    description: CCx DMA request sent when update event occurs
+    value: 1
+enum/CCMR_Input_CCS:
+  bit_size: 2
+  variants:
+  - name: TI4
+    description: 'CCx channel is configured as input, normal mapping: ICx mapped to TIx'
+    value: 1
+  - name: TI3
+    description: CCx channel is configured as input, alternate mapping (switches 1 with 2, 3 with 4)
+    value: 2
+  - name: TRC
+    description: CCx channel is configured as input, ICx is mapped on TRC
+    value: 3
+enum/CCMR_Output_CCS:
+  bit_size: 2
+  variants:
+  - name: Output
+    description: CCx channel is configured as output
+    value: 0
+enum/CKD:
+  bit_size: 2
+  variants:
+  - name: Div1
+    description: t_DTS = t_CK_INT
+    value: 0
+  - name: Div2
+    description: t_DTS = 2 × t_CK_INT
+    value: 1
+  - name: Div4
+    description: t_DTS = 4 × t_CK_INT
+    value: 2
+enum/CMS:
+  bit_size: 2
+  variants:
+  - name: EdgeAligned
+    description: The counter counts up or down depending on the direction bit
+    value: 0
+  - name: CenterAligned1
+    description: The counter counts up and down alternatively. Output compare interrupt flags are set only when the counter is counting down.
+    value: 1
+  - name: CenterAligned2
+    description: The counter counts up and down alternatively. Output compare interrupt flags are set only when the counter is counting up.
+    value: 2
+  - name: CenterAligned3
+    description: The counter counts up and down alternatively. Output compare interrupt flags are set both when the counter is counting up or down.
+    value: 3
+enum/DBSS:
+  bit_size: 4
+  variants:
+  - name: Update
+    description: Update
+    value: 1
+  - name: CC1
+    description: CC1
+    value: 2
+  - name: CC2
+    description: CC2
+    value: 3
+  - name: CC3
+    description: CC3
+    value: 4
+  - name: CC4
+    description: CC4
+    value: 5
+  - name: COM
+    description: COM
+    value: 6
+  - name: Trigger
+    description: Trigger
+    value: 7
+enum/DIR:
+  bit_size: 1
+  variants:
+  - name: Up
+    description: Counter used as upcounter
+    value: 0
+  - name: Down
+    description: Counter used as downcounter
+    value: 1
+enum/DTAE:
+  bit_size: 1
+  variants:
+  - name: Identical
+    description: Deadtime on rising and falling edges are identical, and defined with DTG[7:0] register
+    value: 0
+  - name: Distinct
+    description: Deadtime on rising edge is defined with DTG[7:0] register and deadtime on falling edge is defined with DTGF[7:0] bits.
+    value: 1
+enum/ETP:
+  bit_size: 1
+  variants:
+  - name: NotInverted
+    description: ETR is noninverted, active at high level or rising edge
+    value: 0
+  - name: Inverted
+    description: ETR is inverted, active at low level or falling edge
+    value: 1
+enum/ETPS:
+  bit_size: 2
+  variants:
+  - name: Div1
+    description: Prescaler OFF
+    value: 0
+  - name: Div2
+    description: ETRP frequency divided by 2
+    value: 1
+  - name: Div4
+    description: ETRP frequency divided by 4
+    value: 2
+  - name: Div8
+    description: ETRP frequency divided by 8
+    value: 3
+enum/FIDX:
+  bit_size: 1
+  variants:
+  - name: AlwaysActive
+    description: Index is always active
+    value: 0
+  - name: FirstOnly
+    description: the first Index only resets the counter
+    value: 1
+enum/FilterValue:
+  bit_size: 4
+  variants:
+  - name: NoFilter
+    description: No filter, sampling is done at fDTS
+    value: 0
+  - name: FCK_INT_N2
+    description: fSAMPLING=fCK_INT, N=2
+    value: 1
+  - name: FCK_INT_N4
+    description: fSAMPLING=fCK_INT, N=4
+    value: 2
+  - name: FCK_INT_N8
+    description: fSAMPLING=fCK_INT, N=8
+    value: 3
+  - name: FDTS_Div2_N6
+    description: fSAMPLING=fDTS/2, N=6
+    value: 4
+  - name: FDTS_Div2_N8
+    description: fSAMPLING=fDTS/2, N=8
+    value: 5
+  - name: FDTS_Div4_N6
+    description: fSAMPLING=fDTS/4, N=6
+    value: 6
+  - name: FDTS_Div4_N8
+    description: fSAMPLING=fDTS/4, N=8
+    value: 7
+  - name: FDTS_Div8_N6
+    description: fSAMPLING=fDTS/8, N=6
+    value: 8
+  - name: FDTS_Div8_N8
+    description: fSAMPLING=fDTS/8, N=8
+    value: 9
+  - name: FDTS_Div16_N5
+    description: fSAMPLING=fDTS/16, N=5
+    value: 10
+  - name: FDTS_Div16_N6
+    description: fSAMPLING=fDTS/16, N=6
+    value: 11
+  - name: FDTS_Div16_N8
+    description: fSAMPLING=fDTS/16, N=8
+    value: 12
+  - name: FDTS_Div32_N5
+    description: fSAMPLING=fDTS/32, N=5
+    value: 13
+  - name: FDTS_Div32_N6
+    description: fSAMPLING=fDTS/32, N=6
+    value: 14
+  - name: FDTS_Div32_N8
+    description: fSAMPLING=fDTS/32, N=8
+    value: 15
+enum/GC5C:
+  bit_size: 1
+  variants:
+  - name: NoEffect
+    description: No effect of TIM_OC5REF on TIM_OCxREFC (x=1-3)
+    value: 0
+  - name: LogicalAND
+    description: TIM_OCxREFC is the logical AND of TIM_OCxREF and TIM_OC5REF
+    value: 1
+enum/IBLK:
+  bit_size: 2
+  variants:
+  - name: AlwaysActive
+    description: Index always active
+    value: 0
+  - name: CC3P
+    description: Index disabled when tim_ti3 input is active, as per CC3P bitfield
+    value: 1
+  - name: CC4P
+    description: Index disabled when tim_ti4 input is active, as per CC4P bitfield
+    value: 2
+enum/IDIR:
+  bit_size: 2
+  variants:
+  - name: Both
+    description: Index resets the counter whatever the direction
+    value: 0
+  - name: Up
+    description: Index resets the counter when up-counting only
+    value: 1
+  - name: Down
+    description: Index resets the counter when down-counting only
+    value: 2
+enum/LOCK:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: No bit is write protected
+    value: 0
+  - name: Level1
+    description: DTG bits in TIMx_BDTR register, OISx and OISxN bits in TIMx_CR2 register and BKBID/BKE/BKP/AOE bits in TIMx_BDTR register can no longer be written
+    value: 1
+  - name: Level2
+    description: LOCK Level 1 + CC Polarity bits (CCxP/CCxNP bits in TIMx_CCER register, as long as the related channel is configured in output through the CCxS bits) as well as OSSR and OSSI bits can no longer be written.
+    value: 2
+  - name: Level3
+    description: LOCK Level 2 + CC Control bits (OCxM and OCxPE bits in TIMx_CCMRx registers, as long as the related channel is configured in output through the CCxS bits) can no longer be written.
+    value: 3
+enum/MMS:
+  bit_size: 3
+  variants:
+  - name: Reset
+    description: The UG bit from the TIMx_EGR register is used as trigger output
+    value: 0
+  - name: Enable
+    description: The counter enable signal, CNT_EN, is used as trigger output
+    value: 1
+  - name: Update
+    description: The update event is selected as trigger output
+    value: 2
+  - name: ComparePulse
+    description: The trigger output send a positive pulse when the CC1IF flag it to be set, as soon as a capture or a compare match occurred
+    value: 3
+  - name: CompareOC1
+    description: OC1REF signal is used as trigger output
+    value: 4
+  - name: CompareOC2
+    description: OC2REF signal is used as trigger output
+    value: 5
+  - name: CompareOC3
+    description: OC3REF signal is used as trigger output
+    value: 6
+  - name: CompareOC4
+    description: OC4REF signal is used as trigger output
+    value: 7
+enum/MMS2:
+  bit_size: 4
+  variants:
+  - name: Reset
+    description: The UG bit from the TIMx_EGR register is used as TRGO2
+    value: 0
+  - name: Enable
+    description: The counter enable signal, CNT_EN, is used as TRGO2
+    value: 1
+  - name: Update
+    description: The update event is selected as TRGO2
+    value: 2
+  - name: ComparePulse
+    description: TRGO2 send a positive pulse when the CC1IF flag it to be set, as soon as a capture or a compare match occurred
+    value: 3
+  - name: CompareOC1
+    description: OC1REF signal is used as TRGO2
+    value: 4
+  - name: CompareOC2
+    description: OC2REF signal is used as TRGO2
+    value: 5
+  - name: CompareOC3
+    description: OC3REF signal is used as TRGO2
+    value: 6
+  - name: CompareOC4
+    description: OC4REF signal is used as TRGO2
+    value: 7
+  - name: CompareOC5
+    description: OC5REF signal is used as TRGO2
+    value: 8
+  - name: CompareOC6
+    description: OC6REF signal is used as TRGO2
+    value: 9
+  - name: ComparePulse_OC4
+    description: OC4REF rising or falling edges generate pulses on TRGO2
+    value: 10
+  - name: ComparePulse_OC6
+    description: OC6REF rising or falling edges generate pulses on TRGO2
+    value: 11
+  - name: ComparePulse_OC4_Or_OC6_Rising
+    description: OC4REF or OC6REF rising edges generate pulses on TRGO2
+    value: 12
+  - name: ComparePulse_OC4_Rising_Or_OC6_Falling
+    description: OC4REF rising or OC6REF falling edges generate pulses on TRGO2
+    value: 13
+  - name: ComparePulse_OC5_Or_OC6_Rising
+    description: OC5REF or OC6REF rising edges generate pulses on TRGO2
+    value: 14
+  - name: ComparePulse_OC5_Rising_Or_OC6_Falling
+    description: OC5REF rising or OC6REF falling edges generate pulses on TRGO2
+    value: 15
+enum/MSM:
+  bit_size: 1
+  variants:
+  - name: NoSync
+    description: No action
+    value: 0
+  - name: Sync
+    description: The effect of an event on the trigger input (TRGI) is delayed to allow a perfect synchronization between the current timer and its slaves (through TRGO). It is useful if we want to synchronize several timers on a single external event.
+    value: 1
+enum/OCCS:
+  bit_size: 1
+  variants:
+  - name: Input
+    description: tim_ocref_clr_int is connected to the tim_ocref_clr input
+    value: 0
+  - name: ETRF
+    description: tim_ocref_clr_int is connected to tim_etrf
+    value: 1
+enum/OCM:
+  bit_size: 3
+  variants:
+  - name: Frozen
+    description: The comparison between the output compare register TIMx_CCRy and the counter TIMx_CNT has no effect on the outputs
+    value: 0
+  - name: ActiveOnMatch
+    description: Set channel to active level on match. OCyREF signal is forced high when the counter matches the capture/compare register
+    value: 1
+  - name: InactiveOnMatch
+    description: Set channel to inactive level on match. OCyREF signal is forced low when the counter matches the capture/compare register
+    value: 2
+  - name: Toggle
+    description: OCyREF toggles when TIMx_CNT=TIMx_CCRy
+    value: 3
+  - name: ForceInactive
+    description: OCyREF is forced low
+    value: 4
+  - name: ForceActive
+    description: OCyREF is forced high
+    value: 5
+  - name: PwmMode1
+    description: In upcounting, channel is active as long as TIMx_CNT<TIMx_CCRy else inactive. In downcounting, channel is inactive as long as TIMx_CNT>TIMx_CCRy else active
+    value: 6
+  - name: PwmMode2
+    description: Inversely to PwmMode1
+    value: 7
+enum/OSSI:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: When inactive, OC/OCN outputs are disabled
+    value: 0
+  - name: IdleLevel
+    description: When inactive, OC/OCN outputs are forced to idle level
+    value: 1
+enum/OSSR:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: When inactive, OC/OCN outputs are disabled
+    value: 0
+  - name: IdleLevel
+    description: When inactive, OC/OCN outputs are enabled with their inactive level
+    value: 1
+enum/SMS:
+  bit_size: 3
+  variants:
+  - name: Disabled
+    description: Slave mode disabled - if CEN = ‘1 then the prescaler is clocked directly by the internal clock.
+    value: 0
+  - name: Encoder_Mode_1
+    description: Encoder mode 1 - Counter counts up/down on TI2FP1 edge depending on TI1FP2 level.
+    value: 1
+  - name: Encoder_Mode_2
+    description: Encoder mode 2 - Counter counts up/down on TI1FP2 edge depending on TI2FP1 level.
+    value: 2
+  - name: Encoder_Mode_3
+    description: Encoder mode 3 - Counter counts up/down on both TI1FP1 and TI2FP2 edges depending on the level of the other input.
+    value: 3
+  - name: Reset_Mode
+    description: Reset Mode - Rising edge of the selected trigger input (TRGI) reinitializes the counter and generates an update of the registers.
+    value: 4
+  - name: Gated_Mode
+    description: Gated Mode - The counter clock is enabled when the trigger input (TRGI) is high. The counter stops (but is not reset) as soon as the trigger becomes low. Both start and stop of the counter are controlled.
+    value: 5
+  - name: Trigger_Mode
+    description: Trigger Mode - The counter starts at a rising edge of the trigger TRGI (but it is not reset). Only the start of the counter is controlled.
+    value: 6
+  - name: Ext_Clock_Mode
+    description: External Clock Mode 1 - Rising edges of the selected trigger (TRGI) clock the counter.
+    value: 7
+enum/SMSPS:
+  bit_size: 1
+  variants:
+  - name: Update
+    description: The transfer is triggered by the Timer’s Update event
+    value: 0
+  - name: Index
+    description: The transfer is triggered by the Index event
+    value: 1
+enum/TI1S:
+  bit_size: 1
+  variants:
+  - name: Normal
+    description: The TIMx_CH1 pin is connected to TI1 input
+    value: 0
+  - name: XOR
+    description: The TIMx_CH1, CH2, CH3 pins are connected to TI1 input
+    value: 1
+enum/TS:
+  bit_size: 3
+  variants:
+  - name: ITR0
+    description: Internal Trigger 0 (ITR0)
+    value: 0
+  - name: ITR1
+    description: Internal Trigger 1 (ITR1)
+    value: 1
+  - name: ITR2
+    description: Internal Trigger 2 (ITR2)
+    value: 2
+  - name: ITR3
+    description: Internal Trigger 3 (ITR3)
+    value: 3
+  - name: TI1F_ED
+    description: TI1 Edge Detector (TI1F_ED)
+    value: 4
+  - name: TI1FP1
+    description: Filtered Timer Input 1 (TI1FP1)
+    value: 5
+  - name: TI2FP2
+    description: Filtered Timer Input 2 (TI2FP2)
+    value: 6
+  - name: ETRF
+    description: External Trigger input (ETRF)
+    value: 7
+enum/URS:
+  bit_size: 1
+  variants:
+  - name: AnyEvent
+    description: Any of counter overflow/underflow, setting UG, or update through slave mode, generates an update interrupt or DMA request
+    value: 0
+  - name: CounterOnly
+    description: Only counter overflow/underflow generates an update interrupt or DMA request
+    value: 1
