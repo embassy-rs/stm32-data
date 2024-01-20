@@ -45,9 +45,13 @@ block/TIM:
     byte_offset: 32
     fieldset: CCER
   - name: CNT
-    description: counter
+    description: counter (Dither mode disabled)
     byte_offset: 36
     fieldset: CNT
+  - name: CNT_DITHER
+    description: counter (Dither mode enbled)
+    byte_offset: 36
+    fieldset: CNT_DITHER
   - name: PSC
     description: prescaler
     byte_offset: 40
@@ -122,7 +126,7 @@ fieldset/ARR:
   - name: ARR
     description: Auto-reload value
     bit_offset: 0
-    bit_size: 16
+    bit_size: 32
 fieldset/ARR_DITHER:
   description: auto-reload register (Dither mode enabled)
   fields:
@@ -133,7 +137,7 @@ fieldset/ARR_DITHER:
   - name: ARR
     description: Auto-reload value
     bit_offset: 4
-    bit_size: 16
+    bit_size: 28
 fieldset/CCER:
   description: capture/compare enable register
   fields:
@@ -230,25 +234,32 @@ fieldset/CCR:
   - name: CCR
     description: capture/compare x (x=1-4,6) value
     bit_offset: 0
-    bit_size: 16
+    bit_size: 32
 fieldset/CCR_DITHER:
   description: capture/compare register x (x=1-4,6) (Dither mode enabled)
   fields:
   - name: DITHER
-    description: capture/compare x (x=1-4,6) value
+    description: Dither value
     bit_offset: 0
     bit_size: 4
   - name: CCR
     description: capture/compare x (x=1-4,6) value
     bit_offset: 4
-    bit_size: 16
+    bit_size: 28
 fieldset/CNT:
-  description: counter
+  description: counter (Dither mode disabled)
   fields:
   - name: CNT
     description: counter value
     bit_offset: 0
-    bit_size: 16
+    bit_size: 32
+fieldset/CNT_DITHER:
+  description: counter (Dither mode enabled)
+  fields:
+  - name: CNT
+    description: counter value
+    bit_offset: 0
+    bit_size: 31
   - name: UIFCPY
     description: UIF copy
     bit_offset: 31
