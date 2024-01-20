@@ -9,10 +9,6 @@ block/TIM:
     description: control register 2
     byte_offset: 4
     fieldset: CR2
-  - name: SMCR
-    description: slave mode control register
-    byte_offset: 8
-    fieldset: SMCR
   - name: DIER
     description: DMA/Interrupt enable register
     byte_offset: 12
@@ -65,16 +61,16 @@ block/TIM:
     byte_offset: 48
     fieldset: RCR
   - name: CCR
-    description: capture/compare register x (x=1-2) (Dither mode disabled)
+    description: capture/compare register x (x=1) (Dither mode disabled)
     array:
-      len: 2
+      len: 1
       stride: 4
     byte_offset: 52
     fieldset: CCR
   - name: CCR_DITHER
-    description: capture/compare register x (x=1-2) (Dither mode enabled)
+    description: capture/compare register x (x=1) (Dither mode enabled)
     array:
-      len: 2
+      len: 1
       stride: 4
     byte_offset: 52
     fieldset: CCR_DITHER
@@ -231,18 +227,18 @@ fieldset/CCER:
   description: capture/compare enable register
   fields:
   - name: CCE
-    description: Capture/Compare x (x=1-2) output enable
+    description: Capture/Compare x (x=1) output enable
     bit_offset: 0
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 4
   - name: CCP
-    description: Capture/Compare x (x=1-2) output Polarity
+    description: Capture/Compare x (x=1) output Polarity
     bit_offset: 1
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 4
   - name: CCNE
     description: Capture/Compare x (x=1) complementary output enable
@@ -252,11 +248,11 @@ fieldset/CCER:
       len: 1
       stride: 4
   - name: CCNP
-    description: Capture/Compare x (x=1-2) output Polarity
+    description: Capture/Compare x (x=1) output Polarity
     bit_offset: 3
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 4
 fieldset/CCMR_Input:
   description: capture/compare mode register x (x=1) (input mode)
@@ -266,7 +262,7 @@ fieldset/CCMR_Input:
     bit_offset: 0
     bit_size: 2
     array:
-      len: 2
+      len: 1
       stride: 8
     enum: CCMR_Input_CCS
   - name: ICPSC
@@ -274,14 +270,14 @@ fieldset/CCMR_Input:
     bit_offset: 2
     bit_size: 2
     array:
-      len: 2
+      len: 1
       stride: 8
   - name: ICF
     description: Input capture y filter
     bit_offset: 4
     bit_size: 4
     array:
-      len: 2
+      len: 1
       stride: 8
     enum: FilterValue
 fieldset/CCMR_Output:
@@ -292,7 +288,7 @@ fieldset/CCMR_Output:
     bit_offset: 0
     bit_size: 2
     array:
-      len: 2
+      len: 1
       stride: 8
     enum: CCMR_Output_CCS
   - name: OCFE
@@ -300,21 +296,21 @@ fieldset/CCMR_Output:
     bit_offset: 2
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 8
   - name: OCPE
     description: Output compare y preload enable
     bit_offset: 3
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 8
   - name: OCM
     description: Output compare y mode
     bit_offset: 4
     bit_size: 3
     array:
-      len: 2
+      len: 1
       stride: 8
     enum: OCM
   - name: OCCE
@@ -322,24 +318,24 @@ fieldset/CCMR_Output:
     bit_offset: 7
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 8
 fieldset/CCR:
-  description: capture/compare register x (x=1,2) (Dither mode disabled)
+  description: capture/compare register x (x=1) (Dither mode disabled)
   fields:
   - name: CCR
-    description: capture/compare x (x=1,2) value
+    description: capture/compare x (x=1) value
     bit_offset: 0
     bit_size: 16
 fieldset/CCR_DITHER:
-  description: capture/compare register x (x=1,2) (Dither mode enabled)
+  description: capture/compare register x (x=1) (Dither mode enabled)
   fields:
   - name: DITHER
     description: Dither value
     bit_offset: 0
     bit_size: 4
   - name: CCR
-    description: capture/compare x (x=1-2) value
+    description: capture/compare x (x=1) value
     bit_offset: 4
     bit_size: 16
 fieldset/CNT:
@@ -406,22 +402,12 @@ fieldset/CR2:
     bit_offset: 3
     bit_size: 1
     enum: CCDS
-  - name: MMS
-    description: Master mode selection
-    bit_offset: 4
-    bit_size: 3
-    enum: MMS
-  - name: TI1S
-    description: TI1 selection
-    bit_offset: 7
-    bit_size: 1
-    enum: TI1S
   - name: OIS
-    description: Output Idle state x (x=1,2)
+    description: Output Idle state x (x=1)
     bit_offset: 8
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 2
   - name: OISN
     description: Output Idle state x (x=1)
@@ -464,10 +450,6 @@ fieldset/DIER:
     description: COM interrupt enable
     bit_offset: 5
     bit_size: 1
-  - name: TIE
-    description: Trigger interrupt enable
-    bit_offset: 6
-    bit_size: 1
   - name: BIE
     description: Break interrupt enable
     bit_offset: 7
@@ -483,14 +465,6 @@ fieldset/DIER:
     array:
       len: 1
       stride: 1
-  - name: COMDE
-    description: COM DMA request enable
-    bit_offset: 13
-    bit_size: 1
-  - name: TDE
-    description: Trigger DMA request enable
-    bit_offset: 14
-    bit_size: 1
 fieldset/DMAR:
   description: DMA address for full transfer
   fields:
@@ -522,19 +496,15 @@ fieldset/EGR:
     bit_offset: 0
     bit_size: 1
   - name: CCG
-    description: Capture/compare x (x=1-2) generation
+    description: Capture/compare x (x=1) generation
     bit_offset: 1
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 1
   - name: COMG
     description: Capture/Compare control update generation
     bit_offset: 5
-    bit_size: 1
-  - name: TG
-    description: Trigger generation
-    bit_offset: 6
     bit_size: 1
   - name: BG
     description: Break x (x=1) generation
@@ -557,28 +527,6 @@ fieldset/RCR:
     description: Repetition counter value
     bit_offset: 0
     bit_size: 8
-fieldset/SMCR:
-  description: slave mode control register
-  fields:
-  - name: SMS
-    description: Slave mode selection
-    bit_offset: 0
-    bit_size: 3
-    enum: SMS
-  - name: TS
-    description: Trigger selection
-    bit_offset: 4
-    bit_size: 3
-    enum: TS
-  - name: MSM
-    description: Master/Slave mode
-    bit_offset: 7
-    bit_size: 1
-    enum: MSM
-  - name: SMSPE
-    description: SMS preload enable
-    bit_offset: 24
-    bit_size: 1
 fieldset/SR:
   description: status register
   fields:
@@ -587,19 +535,15 @@ fieldset/SR:
     bit_offset: 0
     bit_size: 1
   - name: CCIF
-    description: Capture/compare x (x=1-2) interrupt flag
+    description: Capture/compare x (x=1) interrupt flag
     bit_offset: 1
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 1
   - name: COMIF
     description: COM interrupt flag
     bit_offset: 5
-    bit_size: 1
-  - name: TIF
-    description: Trigger interrupt flag
-    bit_offset: 6
     bit_size: 1
   - name: BIF
     description: Break x (x=1) interrupt flag
@@ -609,21 +553,21 @@ fieldset/SR:
       len: 1
       stride: 1
   - name: CCOF
-    description: Capture/Compare x (x=1-2) overcapture flag
+    description: Capture/Compare x (x=1) overcapture flag
     bit_offset: 9
     bit_size: 1
     array:
-      len: 2
+      len: 1
       stride: 1
 fieldset/TISEL:
   description: input selection register
   fields:
   - name: TISEL
-    description: Selects TIM_TIx (x=1-2) input
+    description: Selects TIM_TIx (x=1) input
     bit_offset: 0
     bit_size: 4
     array:
-      len: 2
+      len: 1
       stride: 8
 enum/BKBID:
   bit_size: 1
@@ -799,42 +743,6 @@ enum/LOCK:
   - name: Level3
     description: LOCK Level 2 + CC Control bits (OCxM and OCxPE bits in TIMx_CCMRx registers, as long as the related channel is configured in output through the CCxS bits) can no longer be written.
     value: 3
-enum/MMS:
-  bit_size: 3
-  variants:
-  - name: Reset
-    description: The UG bit from the TIMx_EGR register is used as trigger output
-    value: 0
-  - name: Enable
-    description: The counter enable signal, CNT_EN, is used as trigger output
-    value: 1
-  - name: Update
-    description: The update event is selected as trigger output
-    value: 2
-  - name: ComparePulse
-    description: The trigger output send a positive pulse when the CC1IF flag it to be set, as soon as a capture or a compare match occurred
-    value: 3
-  - name: CompareOC1
-    description: OC1REF signal is used as trigger output
-    value: 4
-  - name: CompareOC2
-    description: OC2REF signal is used as trigger output
-    value: 5
-  - name: CompareOC3
-    description: OC3REF signal is used as trigger output
-    value: 6
-  - name: CompareOC4
-    description: OC4REF signal is used as trigger output
-    value: 7
-enum/MSM:
-  bit_size: 1
-  variants:
-  - name: NoSync
-    description: No action
-    value: 0
-  - name: Sync
-    description: The effect of an event on the trigger input (TRGI) is delayed to allow a perfect synchronization between the current timer and its slaves (through TRGO). It is useful if we want to synchronize several timers on a single external event.
-    value: 1
 enum/OCM:
   bit_size: 3
   variants:
@@ -880,69 +788,6 @@ enum/OSSR:
   - name: IdleLevel
     description: When inactive, OC/OCN outputs are enabled with their inactive level
     value: 1
-enum/SMS:
-  bit_size: 3
-  variants:
-  - name: Disabled
-    description: Slave mode disabled - if CEN = ‘1 then the prescaler is clocked directly by the internal clock.
-    value: 0
-  - name: Encoder_Mode_1
-    description: Encoder mode 1 - Counter counts up/down on TI2FP1 edge depending on TI1FP2 level.
-    value: 1
-  - name: Encoder_Mode_2
-    description: Encoder mode 2 - Counter counts up/down on TI1FP2 edge depending on TI2FP1 level.
-    value: 2
-  - name: Encoder_Mode_3
-    description: Encoder mode 3 - Counter counts up/down on both TI1FP1 and TI2FP2 edges depending on the level of the other input.
-    value: 3
-  - name: Reset_Mode
-    description: Reset Mode - Rising edge of the selected trigger input (TRGI) reinitializes the counter and generates an update of the registers.
-    value: 4
-  - name: Gated_Mode
-    description: Gated Mode - The counter clock is enabled when the trigger input (TRGI) is high. The counter stops (but is not reset) as soon as the trigger becomes low. Both start and stop of the counter are controlled.
-    value: 5
-  - name: Trigger_Mode
-    description: Trigger Mode - The counter starts at a rising edge of the trigger TRGI (but it is not reset). Only the start of the counter is controlled.
-    value: 6
-  - name: Ext_Clock_Mode
-    description: External Clock Mode 1 - Rising edges of the selected trigger (TRGI) clock the counter.
-    value: 7
-enum/TI1S:
-  bit_size: 1
-  variants:
-  - name: Normal
-    description: The TIMx_CH1 pin is connected to TI1 input
-    value: 0
-  - name: XOR
-    description: The TIMx_CH1, CH2, CH3 pins are connected to TI1 input
-    value: 1
-enum/TS:
-  bit_size: 3
-  variants:
-  - name: ITR0
-    description: Internal Trigger 0 (ITR0)
-    value: 0
-  - name: ITR1
-    description: Internal Trigger 1 (ITR1)
-    value: 1
-  - name: ITR2
-    description: Internal Trigger 2 (ITR2)
-    value: 2
-  - name: ITR3
-    description: Internal Trigger 3 (ITR3)
-    value: 3
-  - name: TI1F_ED
-    description: TI1 Edge Detector (TI1F_ED)
-    value: 4
-  - name: TI1FP1
-    description: Filtered Timer Input 1 (TI1FP1)
-    value: 5
-  - name: TI2FP2
-    description: Filtered Timer Input 2 (TI2FP2)
-    value: 6
-  - name: ETRF
-    description: External Trigger input (ETRF)
-    value: 7
 enum/URS:
   bit_size: 1
   variants:
