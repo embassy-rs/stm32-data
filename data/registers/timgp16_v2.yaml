@@ -53,20 +53,31 @@ block/TIM:
     byte_offset: 40
     fieldset: PSC
   - name: ARR
-    description: auto-reload register
+    description: auto-reload register (Dither mode disabled)
     byte_offset: 44
     fieldset: ARR
+  - name: ARR_DITHER
+    description: auto-reload register (Dither mode enabled)
+    byte_offset: 44
+    fieldset: ARR_DITHER
   - name: RCR
     description: repetition counter register
     byte_offset: 48
     fieldset: RCR
   - name: CCR
-    description: capture/compare register x (x=1-4)
+    description: capture/compare register x (x=1-4) (Dither mode disabled)
     array:
       len: 4
       stride: 4
     byte_offset: 52
     fieldset: CCR
+  - name: CCR_DITHER
+    description: capture/compare register x (x=1-4) (Dither mode enabled)
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_DITHER
   - name: ECR
     description: encoder control register
     byte_offset: 88
@@ -106,16 +117,23 @@ fieldset/AF2:
     bit_offset: 16
     bit_size: 3
 fieldset/ARR:
-  description: auto-reload register
+  description: auto-reload register (Dither mode disabled)
   fields:
   - name: ARR
-    description: Auto-reload value (Dither mode disabled)
+    description: Auto-reload value
     bit_offset: 0
     bit_size: 16
-  - name: ARR_DITHER
-    description: Auto-reload value (Dither mode enabled)
+fieldset/ARR_DITHER:
+  description: auto-reload register (Dither mode enabled)
+  fields:
+  - name: DITHER
+    description: Dither value
     bit_offset: 0
-    bit_size: 20
+    bit_size: 4
+  - name: ARR
+    description: Auto-reload value
+    bit_offset: 4
+    bit_size: 16
 fieldset/CCER:
   description: capture/compare enable register
   fields:
@@ -207,22 +225,21 @@ fieldset/CCMR_Output:
       len: 2
       stride: 8
 fieldset/CCR:
-  description: capture/compare register x (x=1-4,6)
+  description: capture/compare register x (x=1-4,6) (Dither mode disabled)
   fields:
-  - name: CCR_INPUT
-    description: Input capture x (x=1-4,6) value (Dither mode disabled)
+  - name: CCR
+    description: capture/compare x (x=1-4,6) value
     bit_offset: 0
     bit_size: 16
-  - name: CCR_OUTPUT
-    description: Output compare x (x=1-4,6) value (Dither mode disabled)
+fieldset/CCR_DITHER:
+  description: capture/compare register x (x=1-4,6) (Dither mode enabled)
+  fields:
+  - name: DITHER
+    description: capture/compare x (x=1-4,6) value
     bit_offset: 0
-    bit_size: 16
-  - name: CCR_OUTPUT_DITHER
-    description: Output compare x (x=1-4,6) value (Dither mode enabled)
-    bit_offset: 0
-    bit_size: 20
-  - name: CCR_INPUT_DITHER
-    description: Input capture x (x=1-4,6) value (Dither mode enabled)
+    bit_size: 4
+  - name: CCR
+    description: capture/compare x (x=1-4,6) value
     bit_offset: 4
     bit_size: 16
 fieldset/CNT:
