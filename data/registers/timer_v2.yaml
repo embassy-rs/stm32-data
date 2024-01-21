@@ -1,3 +1,91 @@
+block/TIM_GP32:
+  extends: TIM_GP16
+  description: General purpose 32-bit timers
+  items:
+  - name: CNT
+    description: counter (Dither mode disabled)
+    byte_offset: 36
+    fieldset: CNT_GP32
+  - name: CNT_DITHER
+    description: counter (Dither mode enbled)
+    byte_offset: 36
+    fieldset: CNT_DITHER_GP32
+  - name: ARR
+    description: auto-reload register (Dither mode disabled)
+    byte_offset: 44
+    fieldset: ARR_GP32
+  - name: ARR_DITHER
+    description: auto-reload register (Dither mode enabled)
+    byte_offset: 44
+    fieldset: ARR_DITHER_GP32
+  - name: CCR
+    description: capture/compare register x (x=1-4) (Dither mode disabled)
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_GP32
+  - name: CCR_DITHER
+    description: capture/compare register x (x=1-4) (Dither mode enabled)
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_DITHER_GP32
+fieldset/CNT_GP32:
+  description: counter (Dither mode disabled)
+  fields:
+  - name: CNT
+    description: counter value
+    bit_offset: 0
+    bit_size: 32
+fieldset/CNT_DITHER_GP32:
+  description: counter (Dither mode enabled)
+  fields:
+  - name: CNT
+    description: counter value
+    bit_offset: 0
+    bit_size: 31
+  - name: UIFCPY
+    description: UIF copy
+    bit_offset: 31
+    bit_size: 1
+fieldset/ARR_GP32:
+  description: auto-reload register (Dither mode disabled)
+  fields:
+  - name: ARR
+    description: Auto-reload value
+    bit_offset: 0
+    bit_size: 32
+fieldset/ARR_DITHER_GP32:
+  description: auto-reload register (Dither mode enabled)
+  fields:
+  - name: DITHER
+    description: Dither value
+    bit_offset: 0
+    bit_size: 4
+  - name: ARR
+    description: Auto-reload value
+    bit_offset: 4
+    bit_size: 28
+fieldset/CCR_DITHER_GP32:
+  description: capture/compare register x (x=1-4,6) (Dither mode enabled)
+  fields:
+  - name: DITHER
+    description: Dither value
+    bit_offset: 0
+    bit_size: 4
+  - name: CCR
+    description: capture/compare x (x=1-4,6) value
+    bit_offset: 4
+    bit_size: 28
+fieldset/CCR_GP32:
+  description: capture/compare register x (x=1-4,6) (Dither mode disabled)
+  fields:
+  - name: CCR
+    description: capture/compare x (x=1-4,6) value
+    bit_offset: 0
+    bit_size: 32
 block/TIM_ADV:
   extends: TIM_GP16
   description: Advanced Control timers
