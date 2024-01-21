@@ -1,10 +1,79 @@
-block/TIM_2CH:
-  description: 2-channel timers
+block/TIM_1CH:
+  description: 1-channel timers
   items:
   - name: CR1
     description: control register 1
     byte_offset: 0
-    fieldset: CR1_2CH
+    fieldset: CR1_1CH
+  - name: DIER
+    description: DMA/Interrupt enable register
+    byte_offset: 12
+    fieldset: DIER_1CH
+  - name: SR
+    description: status register
+    byte_offset: 16
+    fieldset: SR_1CH
+  - name: EGR
+    description: event generation register
+    byte_offset: 20
+    access: Write
+    fieldset: EGR_1CH
+  - name: CCMR_Input
+    description: capture/compare mode register 1 (input mode)
+    array:
+      len: 1
+      stride: 4
+    byte_offset: 24
+    fieldset: CCMR_Input_1CH
+  - name: CCMR_Output
+    description: capture/compare mode register 1 (output mode)
+    array:
+      len: 1
+      stride: 4
+    byte_offset: 24
+    fieldset: CCMR_Output_1CH
+  - name: CCER
+    description: capture/compare enable register
+    byte_offset: 32
+    fieldset: CCER_1CH
+  - name: CNT
+    description: counter
+    byte_offset: 36
+    fieldset: CNT_1CH
+  - name: PSC
+    description: prescaler
+    byte_offset: 40
+    fieldset: PSC_1CH
+  - name: ARR
+    description: auto-reload register (Dither mode disabled)
+    byte_offset: 44
+    fieldset: ARR_1CH
+  - name: ARR_DITHER
+    description: auto-reload register (Dither mode enabled)
+    byte_offset: 44
+    fieldset: ARR_DITHER_1CH
+  - name: CCR
+    description: capture/compare register x (x=1) (Dither mode disabled)
+    array:
+      len: 1
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_1CH
+  - name: CCR_DITHER
+    description: capture/compare register x (x=1) (Dither mode enabled)
+    array:
+      len: 1
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_DITHER_1CH
+  - name: TISEL
+    description: input selection register
+    byte_offset: 92
+    fieldset: TISEL_1CH
+block/TIM_2CH:
+  extends: TIM_1CH
+  description: 2-channel timers
+  items:
   - name: CR2
     description: control register 2
     byte_offset: 4
@@ -44,22 +113,6 @@ block/TIM_2CH:
     description: capture/compare enable register
     byte_offset: 32
     fieldset: CCER_2CH
-  - name: CNT
-    description: counter
-    byte_offset: 36
-    fieldset: CNT_2CH
-  - name: PSC
-    description: prescaler
-    byte_offset: 40
-    fieldset: PSC_2CH
-  - name: ARR
-    description: auto-reload register (Dither mode disabled)
-    byte_offset: 44
-    fieldset: ARR_2CH
-  - name: ARR_DITHER
-    description: auto-reload register (Dither mode enabled)
-    byte_offset: 44
-    fieldset: ARR_DITHER_2CH
   - name: CCR
     description: capture/compare register x (x=1-2) (Dither mode disabled)
     array:
@@ -173,14 +226,14 @@ fieldset/AF2_2CH_CMP:
     description: ocref_clr source selection
     bit_offset: 16
     bit_size: 3
-fieldset/ARR_2CH:
+fieldset/ARR_1CH:
   description: auto-reload register (Dither mode disabled)
   fields:
   - name: ARR
     description: Auto-reload value
     bit_offset: 0
     bit_size: 16
-fieldset/ARR_DITHER_2CH:
+fieldset/ARR_DITHER_1CH:
   description: auto-reload register (Dither mode enabled)
   fields:
   - name: DITHER
@@ -260,7 +313,32 @@ fieldset/BDTR_2CH_CMP:
       len: 1
       stride: 1
     enum: BKBID
+fieldset/CCER_1CH:
+  description: capture/compare enable register
+  fields:
+  - name: CCE
+    description: Capture/Compare x (x=1) output enable
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 1
+      stride: 4
+  - name: CCP
+    description: Capture/Compare x (x=1) output Polarity
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 1
+      stride: 4
+  - name: CCNP
+    description: Capture/Compare x (x=1) output Polarity
+    bit_offset: 3
+    bit_size: 1
+    array:
+      len: 1
+      stride: 4
 fieldset/CCER_2CH:
+  extends: CCER_1CH
   description: capture/compare enable register
   fields:
   - name: CCE
@@ -295,7 +373,34 @@ fieldset/CCER_2CH_CMP:
     array:
       len: 1
       stride: 4
+fieldset/CCMR_Input_1CH:
+  description: capture/compare mode register x (x=1) (input mode)
+  fields:
+  - name: CCS
+    description: Capture/Compare y selection
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 1
+      stride: 8
+    enum: CCMR_Input_CCS
+  - name: ICPSC
+    description: Input capture y prescaler
+    bit_offset: 2
+    bit_size: 2
+    array:
+      len: 1
+      stride: 8
+  - name: ICF
+    description: Input capture y filter
+    bit_offset: 4
+    bit_size: 4
+    array:
+      len: 1
+      stride: 8
+    enum: FilterValue
 fieldset/CCMR_Input_2CH:
+  extends: CCMR_Input_1CH
   description: capture/compare mode register x (x=1) (input mode)
   fields:
   - name: CCS
@@ -321,7 +426,41 @@ fieldset/CCMR_Input_2CH:
       len: 2
       stride: 8
     enum: FilterValue
+fieldset/CCMR_Output_1CH:
+  description: capture/compare mode register x (x=1) (output mode)
+  fields:
+  - name: CCS
+    description: Capture/Compare y selection
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 1
+      stride: 8
+    enum: CCMR_Output_CCS
+  - name: OCFE
+    description: Output compare y fast enable
+    bit_offset: 2
+    bit_size: 1
+    array:
+      len: 1
+      stride: 8
+  - name: OCPE
+    description: Output compare y preload enable
+    bit_offset: 3
+    bit_size: 1
+    array:
+      len: 1
+      stride: 8
+  - name: OCM
+    description: Output compare y mode
+    bit_offset: 4
+    bit_size: 3
+    array:
+      len: 1
+      stride: 8
+    enum: OCM
 fieldset/CCMR_Output_2CH:
+  extends: CCMR_Output_1CH
   description: capture/compare mode register x (x=1) (output mode)
   fields:
   - name: CCS
@@ -354,12 +493,30 @@ fieldset/CCMR_Output_2CH:
       len: 2
       stride: 8
     enum: OCM
+fieldset/CCR_1CH:
+  description: capture/compare register x (x=1) (Dither mode disabled)
+  fields:
+  - name: CCR
+    description: capture/compare x (x=1) value
+    bit_offset: 0
+    bit_size: 16
 fieldset/CCR_2CH:
   description: capture/compare register x (x=1,2) (Dither mode disabled)
   fields:
   - name: CCR
     description: capture/compare x (x=1,2) value
     bit_offset: 0
+    bit_size: 16
+fieldset/CCR_DITHER_1CH:
+  description: capture/compare register x (x=1) (Dither mode enabled)
+  fields:
+  - name: DITHER
+    description: Dither value
+    bit_offset: 0
+    bit_size: 4
+  - name: CCR
+    description: capture/compare x (x=1) value
+    bit_offset: 4
     bit_size: 16
 fieldset/CCR_DITHER_2CH:
   description: capture/compare register x (x=1,2) (Dither mode enabled)
@@ -372,7 +529,7 @@ fieldset/CCR_DITHER_2CH:
     description: capture/compare x (x=1-2) value
     bit_offset: 4
     bit_size: 16
-fieldset/CNT_2CH:
+fieldset/CNT_1CH:
   description: counter
   fields:
   - name: CNT
@@ -383,7 +540,7 @@ fieldset/CNT_2CH:
     description: UIF copy
     bit_offset: 31
     bit_size: 1
-fieldset/CR1_2CH:
+fieldset/CR1_1CH:
   description: control register 1
   fields:
   - name: CEN
@@ -420,7 +577,6 @@ fieldset/CR1_2CH:
     description: Dithering enable
     bit_offset: 12
     bit_size: 1
-
 fieldset/CR2_2CH:
   description: control register 2
   fields:
@@ -481,13 +637,24 @@ fieldset/DCR_2CH_CMP:
     bit_offset: 16
     bit_size: 4
     enum: DBSS
-fieldset/DIER_2CH:
+fieldset/DIER_1CH:
   description: DMA/Interrupt enable register
   fields:
   - name: UIE
     description: Update interrupt enable
     bit_offset: 0
     bit_size: 1
+  - name: CCIE
+    description: Capture/Compare x (x=1) interrupt enable
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 1
+      stride: 1
+fieldset/DIER_2CH:
+  extends: DIER_1CH
+  description: DMA/Interrupt enable register
+  fields:
   - name: CCIE
     description: Capture/Compare x (x=1-2) interrupt enable
     bit_offset: 1
@@ -553,13 +720,24 @@ fieldset/DTR2_2CH_CMP:
     description: Deadtime preload enable
     bit_offset: 17
     bit_size: 1
-fieldset/EGR_2CH:
+fieldset/EGR_1CH:
   description: event generation register
   fields:
   - name: UG
     description: Update generation
     bit_offset: 0
     bit_size: 1
+  - name: CCG
+    description: Capture/compare x (x=1) generation
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 1
+      stride: 1
+fieldset/EGR_2CH:
+  extends: EGR_1CH
+  description: event generation register
+  fields:
   - name: CCG
     description: Capture/compare x (x=1-2) generation
     bit_offset: 1
@@ -586,7 +764,7 @@ fieldset/EGR_2CH_CMP:
     array:
       len: 1
       stride: 1
-fieldset/PSC_2CH:
+fieldset/PSC_1CH:
   description: prescaler
   fields:
   - name: PSC
@@ -626,13 +804,31 @@ fieldset/SMCR_2CH_CMP:
     description: SMS preload enable
     bit_offset: 24
     bit_size: 1
-fieldset/SR_2CH:
+fieldset/SR_1CH:
   description: status register
   fields:
   - name: UIF
     description: Update interrupt flag
     bit_offset: 0
     bit_size: 1
+  - name: CCIF
+    description: Capture/compare x (x=1) interrupt flag
+    bit_offset: 1
+    bit_size: 1
+    array:
+      len: 1
+      stride: 1
+  - name: CCOF
+    description: Capture/Compare x (x=1) overcapture flag
+    bit_offset: 9
+    bit_size: 1
+    array:
+      len: 1
+      stride: 1
+fieldset/SR_2CH:
+  extends: SR_1CH
+  description: status register
+  fields:
   - name: CCIF
     description: Capture/compare x (x=1-2) interrupt flag
     bit_offset: 1
@@ -666,7 +862,18 @@ fieldset/SR_2CH_CMP:
     array:
       len: 1
       stride: 1
+fieldset/TISEL_1CH:
+  description: input selection register
+  fields:
+  - name: TISEL
+    description: Selects TIM_TIx (x=1) input
+    bit_offset: 0
+    bit_size: 4
+    array:
+      len: 1
+      stride: 8
 fieldset/TISEL_2CH:
+  extends: TISEL_1CH
   description: input selection register
   fields:
   - name: TISEL
