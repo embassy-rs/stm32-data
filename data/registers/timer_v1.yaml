@@ -100,10 +100,6 @@ block/TIM_1CH_CMP:
     description: DMA address for full transfer
     byte_offset: 76
     fieldset: DMAR_GP16
-  - name: DTR2
-    description: break and dead-time register
-    byte_offset: 84
-    fieldset: DTR2_ADV
   - name: AF1
     description: alternate function register 1
     byte_offset: 96
@@ -207,10 +203,6 @@ block/TIM_2CH_CMP:
     description: DMA address for full transfer
     byte_offset: 76
     fieldset: DMAR_GP16
-  - name: DTR2
-    description: break and dead-time register
-    byte_offset: 84
-    fieldset: DTR2_ADV
   - name: AF1
     description: alternate function register 1
     byte_offset: 96
@@ -262,12 +254,8 @@ block/TIM_ADV:
     fieldset: DMAR_ADV
   - name: CCMR3
     description: capture/compare mode register 3
-    byte_offset: 80
-    fieldset: CCMR3_ADV
-  - name: DTR2
-    description: break and dead-time register
     byte_offset: 84
-    fieldset: DTR2_ADV
+    fieldset: CCMR3_ADV
   - name: CCR5
     description: capture/compare register 5
     byte_offset: 88
@@ -488,7 +476,6 @@ fieldset/AF1_GP16:
     bit_offset: 14
     bit_size: 4
 fieldset/AF2_ADV:
-  extends: AF2_GP16
   description: alternate function register 2
   fields:
   - name: BK2INE
@@ -1399,22 +1386,6 @@ fieldset/DMAR_GP16:
     description: DMA register for burst accesses
     bit_offset: 0
     bit_size: 16
-fieldset/DTR2_ADV:
-  description: deadtime register 2
-  fields:
-  - name: DTGF
-    description: Dead-time falling edge generator setup
-    bit_offset: 0
-    bit_size: 8
-  - name: DTAE
-    description: Deadtime asymmetric enable
-    bit_offset: 16
-    bit_size: 1
-    enum: DTAE
-  - name: DTPE
-    description: Deadtime preload enable
-    bit_offset: 17
-    bit_size: 1
 fieldset/ECR_GP16:
   description: encoder control register
   fields:
@@ -1878,15 +1849,6 @@ enum/DIR:
     value: 0
   - name: Down
     description: Counter used as downcounter
-    value: 1
-enum/DTAE:
-  bit_size: 1
-  variants:
-  - name: Identical
-    description: Deadtime on rising and falling edges are identical, and defined with DTG[7:0] register
-    value: 0
-  - name: Distinct
-    description: Deadtime on rising edge is defined with DTG[7:0] register and deadtime on falling edge is defined with DTGF[7:0] bits.
     value: 1
 enum/ETP:
   bit_size: 1
