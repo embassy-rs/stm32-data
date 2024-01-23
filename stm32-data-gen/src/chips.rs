@@ -500,7 +500,11 @@ impl PeriMatcher {
                 ("octospi", "v1", "OCTOSPI"),
             ),
             (
-                "STM32U5.*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*",
+                "STM32U5[34].*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*",
+                ("octospi", "v1", "OCTOSPI"),
+            ),
+            (
+                "STM32U5[AFG789].*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*",
                 ("octospi", "v1", "OCTOSPI"),
             ),
             (
