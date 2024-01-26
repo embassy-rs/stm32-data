@@ -91,7 +91,7 @@ block/TIM_1CH_CMP:
   - name: DTR2
     description: break and dead-time register
     byte_offset: 84
-    fieldset: DTR2_ADV
+    fieldset: DTR2_1CH_CMP
   - name: AF1
     description: alternate function register 1
     byte_offset: 96
@@ -99,15 +99,15 @@ block/TIM_1CH_CMP:
   - name: AF2
     description: alternate function register 2
     byte_offset: 100
-    fieldset: AF2_GP16
+    fieldset: AF2_1CH_CMP
   - name: DCR
     description: DMA control register
     byte_offset: 988
-    fieldset: DCR_GP16
+    fieldset: DCR_1CH_CMP
   - name: DMAR
     description: DMA address for full transfer
     byte_offset: 992
-    fieldset: DMAR_GP16
+    fieldset: DMAR_1CH_CMP
 block/TIM_2CH:
   extends: TIM_1CH
   description: 2-channel timers
@@ -228,9 +228,13 @@ block/TIM_2CH_CMP:
     byte_offset: 92
     fieldset: TISEL_2CH
 block/TIM_ADV:
-  extends: TIM_GP16
+  extends: TIM_2CH_CMP
   description: Advanced Control timers
   items:
+  - name: CR1
+    description: control register 1
+    byte_offset: 0
+    fieldset: CR1_GP16
   - name: CR2
     description: control register 2
     byte_offset: 4
@@ -252,6 +256,20 @@ block/TIM_ADV:
     byte_offset: 20
     access: Write
     fieldset: EGR_ADV
+  - name: CCMR_Input
+    description: capture/compare mode register 1-2 (input mode)
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 24
+    fieldset: CCMR_Input_2CH
+  - name: CCMR_Output
+    description: capture/compare mode register 1-2 (output mode)
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 24
+    fieldset: CCMR_Output_GP16
   - name: CCER
     description: capture/compare enable register
     byte_offset: 32
@@ -260,6 +278,13 @@ block/TIM_ADV:
     description: repetition counter register
     byte_offset: 48
     fieldset: RCR_ADV
+  - name: CCR
+    description: capture/compare register x (x=1-4)
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_1CH
   - name: BDTR
     description: break and dead-time register
     byte_offset: 68
@@ -284,10 +309,10 @@ block/TIM_ADV:
     description: capture/compare mode register 3
     byte_offset: 80
     fieldset: CCMR3_ADV
-  - name: DTR2
-    description: break and dead-time register
-    byte_offset: 84
-    fieldset: DTR2_ADV
+  - name: TISEL
+    description: input selection register
+    byte_offset: 92
+    fieldset: TISEL_GP16
   - name: AF1
     description: alternate function register 1
     byte_offset: 96
@@ -420,15 +445,15 @@ block/TIM_GP16:
   - name: AF2
     description: alternate function register 2
     byte_offset: 100
-    fieldset: AF2_GP16
+    fieldset: AF2_1CH_CMP
   - name: DCR
     description: DMA control register
     byte_offset: 988
-    fieldset: DCR_GP16
+    fieldset: DCR_1CH_CMP
   - name: DMAR
     description: DMA address for full transfer
     byte_offset: 992
-    fieldset: DMAR_GP16
+    fieldset: DMAR_1CH_CMP
 block/TIM_GP32:
   extends: TIM_GP16
   description: General purpose 32-bit timers
@@ -491,33 +516,13 @@ fieldset/AF1_1CH_CMP:
       stride: 1
     enum: BKINP
 fieldset/AF1_ADV:
-  extends: AF1_GP16
+  extends: AF1_1CH_CMP
   description: alternate function register 1
   fields:
-  - name: BKINE
-    description: TIMx_BKIN input enable
-    bit_offset: 0
-    bit_size: 1
-  - name: BKCMPE
-    description: TIM_BRK_CMPx (x=1-8) enable
-    bit_offset: 1
-    bit_size: 1
-    array:
-      len: 8
-      stride: 1
-  - name: BKINP
-    description: TIMx_BKIN input polarity
-    bit_offset: 9
-    bit_size: 1
-    enum: BKINP
-  - name: BKCMPP
-    description: TIM_BRK_CMPx (x=1-4) input polarity
-    bit_offset: 10
-    bit_size: 1
-    array:
-      len: 4
-      stride: 1
-    enum: BKINP
+  - name: ETRSEL
+    description: etr_in source selection
+    bit_offset: 14
+    bit_size: 4
 fieldset/AF1_GP16:
   description: alternate function register 1
   fields:
@@ -525,8 +530,15 @@ fieldset/AF1_GP16:
     description: etr_in source selection
     bit_offset: 14
     bit_size: 4
+fieldset/AF2_1CH_CMP:
+  description: alternate function register 2
+  fields:
+  - name: OCRSEL
+    description: ocref_clr source selection
+    bit_offset: 16
+    bit_size: 3
 fieldset/AF2_ADV:
-  extends: AF2_GP16
+  extends: AF2_1CH_CMP
   description: alternate function register 2
   fields:
   - name: BK2INE
@@ -538,8 +550,8 @@ fieldset/AF2_ADV:
     bit_offset: 1
     bit_size: 1
     array:
-      len: 1
-      stride: 8
+      len: 8
+      stride: 1
   - name: BK2INP
     description: TIMx_BK2IN input polarity
     bit_offset: 9
@@ -553,13 +565,6 @@ fieldset/AF2_ADV:
       len: 4
       stride: 1
     enum: BKINP
-fieldset/AF2_GP16:
-  description: alternate function register 2
-  fields:
-  - name: OCRSEL
-    description: ocref_clr source selection
-    bit_offset: 16
-    bit_size: 3
 fieldset/ARR_CORE:
   description: auto-reload register (Dither mode disabled)
   fields:
@@ -666,27 +671,9 @@ fieldset/BDTR_1CH_CMP:
       stride: 1
     enum: BKBID
 fieldset/BDTR_ADV:
+  extends: BDTR_1CH_CMP
   description: break and dead-time register
   fields:
-  - name: DTG
-    description: Dead-time generator setup
-    bit_offset: 0
-    bit_size: 8
-  - name: LOCK
-    description: Lock configuration
-    bit_offset: 8
-    bit_size: 2
-    enum: LOCK
-  - name: OSSI
-    description: Off-state selection for Idle mode
-    bit_offset: 10
-    bit_size: 1
-    enum: OSSI
-  - name: OSSR
-    description: Off-state selection for Run mode
-    bit_offset: 11
-    bit_size: 1
-    enum: OSSR
   - name: BKE
     description: Break x (x=1,2) enable
     bit_offset: 12
@@ -702,14 +689,6 @@ fieldset/BDTR_ADV:
       len: 2
       stride: 12
     enum: BKP
-  - name: AOE
-    description: Automatic output enable
-    bit_offset: 14
-    bit_size: 1
-  - name: MOE
-    description: Main output enable
-    bit_offset: 15
-    bit_size: 1
   - name: BKF
     description: Break x (x=1,2) filter
     bit_offset: 16
@@ -806,7 +785,7 @@ fieldset/CCER_2CH_CMP:
       len: 1
       stride: 4
 fieldset/CCER_ADV:
-  extends: CCER_GP16
+  extends: CCER_2CH_CMP
   description: capture/compare enable register
   fields:
   - name: CCE
@@ -826,6 +805,13 @@ fieldset/CCER_ADV:
   - name: CCNE
     description: Capture/Compare x (x=1-4) complementary output enable
     bit_offset: 2
+    bit_size: 1
+    array:
+      len: 4
+      stride: 4
+  - name: CCNP
+    description: Capture/Compare x (x=1-4) output Polarity
+    bit_offset: 3
     bit_size: 1
     array:
       len: 4
@@ -1231,17 +1217,9 @@ fieldset/CR2_2CH_CMP:
       len: 2
       stride: 2
 fieldset/CR2_ADV:
-  extends: CR2_GP16
+  extends: CR2_2CH_CMP
   description: control register 2
   fields:
-  - name: CCPC
-    description: Capture/compare preloaded control
-    bit_offset: 0
-    bit_size: 1
-  - name: CCUS
-    description: Capture/compare control update selection
-    bit_offset: 2
-    bit_size: 1
   - name: OIS
     description: Output Idle state x (x=1-6)
     bit_offset: 8
@@ -1283,7 +1261,7 @@ fieldset/CR2_GP16:
     bit_offset: 7
     bit_size: 1
     enum: TI1S
-fieldset/DCR_GP16:
+fieldset/DCR_1CH_CMP:
   description: DMA control register
   fields:
   - name: DBA
@@ -1361,20 +1339,38 @@ fieldset/DIER_2CH_CMP:
     bit_offset: 14
     bit_size: 1
 fieldset/DIER_ADV:
-  extends: DIER_GP16
+  extends: DIER_2CH_CMP
   description: DMA/Interrupt enable register
   fields:
-  - name: COMIE
-    description: COM interrupt enable
-    bit_offset: 5
+  - name: CCIE
+    description: Capture/Compare x (x=1-4) interrupt enable
+    bit_offset: 1
     bit_size: 1
-  - name: BIE
-    description: Break interrupt enable
-    bit_offset: 7
+    array:
+      len: 4
+      stride: 1
+  - name: CCDE
+    description: Capture/Compare x (x=1) DMA request enable
+    bit_offset: 9
     bit_size: 1
-  - name: COMDE
-    description: COM DMA request enable
-    bit_offset: 13
+    array:
+      len: 4
+      stride: 1
+  - name: IDXIE
+    description: Index interrupt enable
+    bit_offset: 20
+    bit_size: 1
+  - name: DIRIE
+    description: Direction change interrupt enable
+    bit_offset: 21
+    bit_size: 1
+  - name: IERRIE
+    description: Index error interrupt enable
+    bit_offset: 22
+    bit_size: 1
+  - name: TERRIE
+    description: Transition error interrupt enable
+    bit_offset: 23
     bit_size: 1
 fieldset/DIER_BASIC:
   extends: DIER_CORE
@@ -1437,14 +1433,14 @@ fieldset/DIER_GP16:
     description: Transition error interrupt enable
     bit_offset: 23
     bit_size: 1
-fieldset/DMAR_GP16:
+fieldset/DMAR_1CH_CMP:
   description: DMA address for full transfer
   fields:
   - name: DMAB
     description: DMA register for burst accesses
     bit_offset: 0
     bit_size: 32
-fieldset/DTR2_ADV:
+fieldset/DTR2_1CH_CMP:
   description: deadtime register 2
   fields:
   - name: DTGF
@@ -1551,13 +1547,16 @@ fieldset/EGR_2CH_CMP:
     bit_offset: 6
     bit_size: 1
 fieldset/EGR_ADV:
-  extends: EGR_GP16
+  extends: EGR_2CH_CMP
   description: event generation register
   fields:
-  - name: COMG
-    description: Capture/Compare control update generation
-    bit_offset: 5
+  - name: CCG
+    description: Capture/compare x (x=1-4) generation
+    bit_offset: 1
     bit_size: 1
+    array:
+      len: 4
+      stride: 1
   - name: BG
     description: Break x (x=1-2) generation
     bit_offset: 7
@@ -1635,7 +1634,7 @@ fieldset/SMCR_2CH_CMP:
     bit_offset: 24
     bit_size: 1
 fieldset/SMCR_ADV:
-  extends: SMCR_GP16
+  extends: SMCR_2CH_CMP
   description: slave mode control register
   fields:
   - name: OCCS
@@ -1643,24 +1642,34 @@ fieldset/SMCR_ADV:
     bit_offset: 3
     bit_size: 1
     enum: OCCS
+  - name: ETF
+    description: External trigger filter
+    bit_offset: 8
+    bit_size: 4
+    enum: FilterValue
+  - name: ETPS
+    description: External trigger prescaler
+    bit_offset: 12
+    bit_size: 2
+    enum: ETPS
+  - name: ECE
+    description: External clock mode 2 enable
+    bit_offset: 14
+    bit_size: 1
+  - name: ETP
+    description: External trigger polarity
+    bit_offset: 15
+    bit_size: 1
+    enum: ETP
+  - name: SMSPS
+    description: SMS preload source
+    bit_offset: 25
+    bit_size: 1
+    enum: SMSPS
 fieldset/SMCR_GP16:
+  extends: SMCR_2CH
   description: slave mode control register
   fields:
-  - name: SMS
-    description: Slave mode selection
-    bit_offset: 0
-    bit_size: 3
-    enum: SMS
-  - name: TS
-    description: Trigger selection
-    bit_offset: 4
-    bit_size: 3
-    enum: TS
-  - name: MSM
-    description: Master/Slave mode
-    bit_offset: 7
-    bit_size: 1
-    enum: MSM
   - name: ETF
     description: External trigger filter
     bit_offset: 8
@@ -1767,13 +1776,16 @@ fieldset/SR_2CH_CMP:
       len: 2
       stride: 1
 fieldset/SR_ADV:
-  extends: SR_GP16
+  extends: SR_2CH_CMP
   description: status register
   fields:
-  - name: COMIF
-    description: COM interrupt flag
-    bit_offset: 5
+  - name: CCIF
+    description: Capture/compare x (x=1-4) interrupt flag
+    bit_offset: 1
     bit_size: 1
+    array:
+      len: 4
+      stride: 1
   - name: BIF
     description: Break x (x=1,2) interrupt flag
     bit_offset: 7
@@ -1781,6 +1793,17 @@ fieldset/SR_ADV:
     array:
       len: 2
       stride: 1
+  - name: CCOF
+    description: Capture/Compare x (x=1-4) overcapture flag
+    bit_offset: 9
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: SBIF
+    description: System break interrupt flag
+    bit_offset: 13
+    bit_size: 1
   - name: CCIF5
     description: Capture/compare 5 interrupt flag
     bit_offset: 16
@@ -1788,6 +1811,22 @@ fieldset/SR_ADV:
   - name: CCIF6
     description: Capture/compare 6 interrupt flag
     bit_offset: 17
+    bit_size: 1
+  - name: IDXIF
+    description: Index interrupt flag
+    bit_offset: 20
+    bit_size: 1
+  - name: DIRIF
+    description: Direction change interrupt flag
+    bit_offset: 21
+    bit_size: 1
+  - name: IERRIF
+    description: Index error interrupt flag
+    bit_offset: 22
+    bit_size: 1
+  - name: TERRIF
+    description: Transition error interrupt flag
+    bit_offset: 23
     bit_size: 1
 fieldset/SR_CORE:
   description: status register
