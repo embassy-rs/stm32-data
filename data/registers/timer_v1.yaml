@@ -1,4 +1,5 @@
 block/TIM_1CH:
+  extends: TIM_CORE
   description: 1-channel timers
   items:
   - name: CR1
@@ -36,18 +37,6 @@ block/TIM_1CH:
     description: capture/compare enable register
     byte_offset: 32
     fieldset: CCER_1CH
-  - name: CNT
-    description: counter
-    byte_offset: 36
-    fieldset: CNT_BASIC
-  - name: PSC
-    description: prescaler
-    byte_offset: 40
-    fieldset: PSC_BASIC
-  - name: ARR
-    description: auto-reload register
-    byte_offset: 44
-    fieldset: ARR_BASIC
   - name: CCR
     description: capture/compare register x (x=1)
     array:
@@ -286,12 +275,9 @@ block/TIM_ADV:
     byte_offset: 100
     fieldset: AF2_ADV
 block/TIM_BASIC:
+  extends: TIM_CORE
   description: Basic timers
   items:
-  - name: CR1
-    description: control register 1
-    byte_offset: 0
-    fieldset: CR1_BASIC
   - name: CR2
     description: control register 2
     byte_offset: 4
@@ -300,27 +286,38 @@ block/TIM_BASIC:
     description: DMA/Interrupt enable register
     byte_offset: 12
     fieldset: DIER_BASIC
+block/TIM_CORE:
+  description: Virtual timer for common part of TIM_BASIC and TIM_1CH
+  items:
+  - name: CR1
+    description: control register 1
+    byte_offset: 0
+    fieldset: CR1_CORE
+  - name: DIER
+    description: DMA/Interrupt enable register
+    byte_offset: 12
+    fieldset: DIER_CORE
   - name: SR
     description: status register
     byte_offset: 16
-    fieldset: SR_BASIC
+    fieldset: SR_CORE
   - name: EGR
     description: event generation register
     byte_offset: 20
     access: Write
-    fieldset: EGR_BASIC
+    fieldset: EGR_CORE
   - name: CNT
     description: counter
     byte_offset: 36
-    fieldset: CNT_BASIC
+    fieldset: CNT_CORE
   - name: PSC
     description: prescaler
     byte_offset: 40
-    fieldset: PSC_BASIC
+    fieldset: PSC_CORE
   - name: ARR
     description: auto-reload register
     byte_offset: 44
-    fieldset: ARR_BASIC
+    fieldset: ARR_CORE
 block/TIM_GP16:
   extends: TIM_BASIC
   description: General purpose 16-bit timers
@@ -519,7 +516,7 @@ fieldset/AF2_ADV:
       len: 2
       stride: 1
     enum: BKINP
-fieldset/ARR_BASIC:
+fieldset/ARR_CORE:
   description: auto-reload register
   fields:
   - name: ARR
@@ -1019,7 +1016,7 @@ fieldset/CCR_GP32:
     description: capture/compare x (x=1-4,6) value
     bit_offset: 0
     bit_size: 32
-fieldset/CNT_BASIC:
+fieldset/CNT_CORE:
   description: counter
   fields:
   - name: CNT
@@ -1038,39 +1035,15 @@ fieldset/CNT_GP32:
     bit_offset: 0
     bit_size: 32
 fieldset/CR1_1CH:
+  extends: CR1_CORE
   description: control register 1
   fields:
-  - name: CEN
-    description: Counter enable
-    bit_offset: 0
-    bit_size: 1
-  - name: UDIS
-    description: Update disable
-    bit_offset: 1
-    bit_size: 1
-  - name: URS
-    description: Update request source
-    bit_offset: 2
-    bit_size: 1
-    enum: URS
-  - name: OPM
-    description: One-pulse mode enbaled
-    bit_offset: 3
-    bit_size: 1
-  - name: ARPE
-    description: Auto-reload preload enable
-    bit_offset: 7
-    bit_size: 1
   - name: CKD
     description: Clock division
     bit_offset: 8
     bit_size: 2
     enum: CKD
-  - name: UIFREMAP
-    description: UIF status bit remapping enable
-    bit_offset: 11
-    bit_size: 1
-fieldset/CR1_BASIC:
+fieldset/CR1_CORE:
   description: control register 1
   fields:
   - name: CEN
@@ -1099,7 +1072,7 @@ fieldset/CR1_BASIC:
     bit_offset: 11
     bit_size: 1
 fieldset/CR1_GP16:
-  extends: CR1_BASIC
+  extends: CR1_CORE
   description: control register 1
   fields:
   - name: DIR
@@ -1255,12 +1228,9 @@ fieldset/DCR_GP16:
     bit_size: 4
     enum: DBSS
 fieldset/DIER_1CH:
+  extends: DIER_CORE
   description: DMA/Interrupt enable register
   fields:
-  - name: UIE
-    description: Update interrupt enable
-    bit_offset: 0
-    bit_size: 1
   - name: CCIE
     description: Capture/Compare x (x=1) interrupt enable
     bit_offset: 1
@@ -1335,15 +1305,19 @@ fieldset/DIER_ADV:
     bit_offset: 13
     bit_size: 1
 fieldset/DIER_BASIC:
+  extends: DIER_CORE
+  description: DMA/Interrupt enable register
+  fields:
+  - name: UDE
+    description: Update DMA request enable
+    bit_offset: 8
+    bit_size: 1
+fieldset/DIER_CORE:
   description: DMA/Interrupt enable register
   fields:
   - name: UIE
     description: Update interrupt enable
     bit_offset: 0
-    bit_size: 1
-  - name: UDE
-    description: Update DMA request enable
-    bit_offset: 8
     bit_size: 1
 fieldset/DIER_GP16:
   extends: DIER_BASIC
@@ -1424,12 +1398,9 @@ fieldset/ECR_GP16:
     bit_offset: 24
     bit_size: 2
 fieldset/EGR_1CH:
+  extends: EGR_CORE
   description: event generation register
   fields:
-  - name: UG
-    description: Update generation
-    bit_offset: 0
-    bit_size: 1
   - name: CCG
     description: Capture/compare x (x=1) generation
     bit_offset: 1
@@ -1497,7 +1468,7 @@ fieldset/EGR_ADV:
     array:
       len: 2
       stride: 1
-fieldset/EGR_BASIC:
+fieldset/EGR_CORE:
   description: event generation register
   fields:
   - name: UG
@@ -1505,7 +1476,7 @@ fieldset/EGR_BASIC:
     bit_offset: 0
     bit_size: 1
 fieldset/EGR_GP16:
-  extends: EGR_BASIC
+  extends: EGR_CORE
   description: event generation register
   fields:
   - name: CCG
@@ -1519,7 +1490,7 @@ fieldset/EGR_GP16:
     description: Trigger generation
     bit_offset: 6
     bit_size: 1
-fieldset/PSC_BASIC:
+fieldset/PSC_CORE:
   description: prescaler
   fields:
   - name: PSC
@@ -1605,12 +1576,9 @@ fieldset/SMCR_GP16:
     bit_size: 1
     enum: ETP
 fieldset/SR_1CH:
+  extends: SR_CORE
   description: status register
   fields:
-  - name: UIF
-    description: Update interrupt flag
-    bit_offset: 0
-    bit_size: 1
   - name: CCIF
     description: Capture/compare x (x=1) interrupt flag
     bit_offset: 1
@@ -1707,7 +1675,7 @@ fieldset/SR_ADV:
     description: Capture/compare 6 interrupt flag
     bit_offset: 17
     bit_size: 1
-fieldset/SR_BASIC:
+fieldset/SR_CORE:
   description: status register
   fields:
   - name: UIF
@@ -1715,7 +1683,7 @@ fieldset/SR_BASIC:
     bit_offset: 0
     bit_size: 1
 fieldset/SR_GP16:
-  extends: SR_BASIC
+  extends: SR_CORE
   description: status register
   fields:
   - name: CCIF
