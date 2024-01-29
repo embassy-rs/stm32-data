@@ -471,15 +471,16 @@ impl PeriMatcher {
             (".*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
             ("STM32H7.*:FDCANRAM.*", ("fdcanram", "h7", "FDCANRAM")),
             (".*:FDCANRAM.*", ("fdcanram", "v1", "FDCANRAM")),
-            // # stm32F4 CRC peripheral
-            // # ("STM32F4*:CRC:CRC:crc_f4")
-            // # v1: F1, F2, F4, L1
-            // # v2, adds INIT reg: F0
-            // # v3, adds POL reg: F3, F7, G0, G4, H7, L0, L4, L5, WB, WL
-            (".*:CRC:integtest1_v1_0", ("crc", "v1", "CRC")),
-            ("STM32L[04].*:CRC:integtest1_v2_0", ("crc", "v3", "CRC")),
-            (".*:CRC:integtest1_v2_0", ("crc", "v2", "CRC")),
-            (".*:CRC:integtest1_v2_2", ("crc", "v3", "CRC")),
+            ("STM32F[124].*:CRC:.*", ("crc", "v1", "CRC")),
+            ("STM32L1.*:CRC:.*", ("crc", "v1", "CRC")),
+            ("STM32F0.*:CRC:.*", ("crc", "v2", "CRC")),
+            ("STM32F[37].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32G[04].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32H[57].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32L[045].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32W[BL].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32C[0].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32U[5].*:CRC:.*", ("crc", "v3", "CRC")),
             (".*:LCD:lcdc1_v1.0.*", ("lcd", "v1", "LCD")),
             (".*:LCD:lcdc1_v1.2.*", ("lcd", "v2", "LCD")),
             (".*:LCD:lcdc1_v1.3.*", ("lcd", "v2", "LCD")),
