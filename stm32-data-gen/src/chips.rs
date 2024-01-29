@@ -528,6 +528,10 @@ impl PeriMatcher {
             ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
             ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
             ("STM32U5.*:ADF[12]:.*", ("adf", "v1", "ADF")),
+            (".*:HASH:hash1_v1_0", ("hash", "v1", "HASH")),
+            (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
+            (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
+            (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
         ];
 
         Self {
