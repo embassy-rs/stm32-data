@@ -122,6 +122,7 @@ impl PeriMatcher {
             (".*:USART:sci3_v1_2", ("usart", "v4", "USART")),
             (".*:USART:sci3_v2_0", ("usart", "v4", "USART")),
             (".*:USART:sci3_v2_1", ("usart", "v4", "USART")),
+            (".*:UART:sci2_v1_1", ("usart", "v1", "USART")),
             (".*:UART:sci2_v1_2_F4", ("usart", "v2", "USART")),
             (".*:UART:sci2_v2_1", ("usart", "v3", "USART")),
             (".*:UART:sci2_v3_0", ("usart", "v4", "USART")),
