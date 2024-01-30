@@ -533,9 +533,9 @@ impl PeriMatcher {
             (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
             (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
             (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
-            (".*:CRYP:cryp1_v1_0", ("cryp", "v1", "CRYP")),
-            (".*:CRYP:cryp1_v2_0", ("cryp", "v2", "CRYP")),
-            (".*:CRYP:cryp1_v2_2", ("cryp", "v2", "CRYP")),
+            (".*:CRYP:cryp1_v1_0.*", ("cryp", "v1", "CRYP")),
+            (".*:CRYP:cryp1_v2_0.*", ("cryp", "v2", "CRYP")),
+            (".*:CRYP:cryp1_v2_2.*", ("cryp", "v2", "CRYP")),
         ];
 
         Self {
