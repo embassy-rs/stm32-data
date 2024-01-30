@@ -304,17 +304,21 @@ block/TIM_ADV:
     byte_offset: 104
     fieldset: TISEL_GP16
 block/TIM_BASIC:
-  extends: TIM_CORE
+  extends: TIM_BASIC_NO_CR2
   description: Basic timers
   items:
   - name: CR2
     description: control register 2
     byte_offset: 4
     fieldset: CR2_BASIC
+block/TIM_BASIC_NO_CR2:
+  extends: TIM_CORE
+  description: Virtual Basic timers without CR2 register for common part of TIM_BASIC and TIM_1CH_CMP
+  items:
   - name: DIER
     description: DMA/Interrupt enable register
     byte_offset: 12
-    fieldset: DIER_BASIC
+    fieldset: DIER_BASIC_NO_CR2
 block/TIM_CORE:
   description: Virtual timer for common part of TIM_BASIC and TIM_1CH
   items:
@@ -1213,7 +1217,7 @@ fieldset/DIER_ADV:
     array:
       len: 4
       stride: 1
-fieldset/DIER_BASIC:
+fieldset/DIER_BASIC_NO_CR2:
   extends: DIER_CORE
   description: DMA/Interrupt enable register
   fields:
@@ -1229,7 +1233,7 @@ fieldset/DIER_CORE:
     bit_offset: 0
     bit_size: 1
 fieldset/DIER_GP16:
-  extends: DIER_BASIC
+  extends: DIER_BASIC_NO_CR2
   description: DMA/Interrupt enable register
   fields:
   - name: CCIE
