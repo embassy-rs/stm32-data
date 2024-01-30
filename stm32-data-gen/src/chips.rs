@@ -523,6 +523,8 @@ impl PeriMatcher {
             ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
             ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
             ("STM32U5.*:ADF[12]:.*", ("adf", "v1", "ADF")),
+            ("STM32G0.*1.*:.*:COMP:.*", ("comp", "v1", "COMP")),
+            ("STM32G4.*:.*:COMP:.*", ("comp", "v2", "COMP")),
         ];
 
         Self {
