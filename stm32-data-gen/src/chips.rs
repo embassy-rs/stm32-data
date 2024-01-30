@@ -122,6 +122,7 @@ impl PeriMatcher {
             (".*:USART:sci3_v1_2", ("usart", "v4", "USART")),
             (".*:USART:sci3_v2_0", ("usart", "v4", "USART")),
             (".*:USART:sci3_v2_1", ("usart", "v4", "USART")),
+            (".*:UART:sci2_v1_1", ("usart", "v1", "USART")),
             (".*:UART:sci2_v1_2_F4", ("usart", "v2", "USART")),
             (".*:UART:sci2_v2_1", ("usart", "v3", "USART")),
             (".*:UART:sci2_v3_0", ("usart", "v4", "USART")),
@@ -528,6 +529,10 @@ impl PeriMatcher {
             ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
             ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
             ("STM32U5.*:ADF[12]:.*", ("adf", "v1", "ADF")),
+            (".*:HASH:hash1_v1_0", ("hash", "v1", "HASH")),
+            (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
+            (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
+            (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
         ];
 
         Self {
