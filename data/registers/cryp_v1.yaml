@@ -1,0 +1,165 @@
+block/CRYP:
+  description: Cryptographic processor.
+  items:
+    - name: CR
+      description: control register.
+      byte_offset: 0
+      fieldset: CR
+    - name: SR
+      description: status register.
+      byte_offset: 4
+      access: Read
+      fieldset: SR
+    - name: DIN
+      description: data input register.
+      byte_offset: 8
+    - name: DOUT
+      description: data output register.
+      byte_offset: 12
+      access: Read
+    - name: DMACR
+      description: DMA control register.
+      byte_offset: 16
+      fieldset: DMACR
+    - name: IMSCR
+      description: interrupt mask set/clear register.
+      byte_offset: 20
+      fieldset: IMSCR
+    - name: RISR
+      description: raw interrupt status register.
+      byte_offset: 24
+      access: Read
+      fieldset: RISR
+    - name: MISR
+      description: masked interrupt status register.
+      byte_offset: 28
+      access: Read
+      fieldset: MISR
+    - name: KEY
+      description: Cluster KEY%s, containing K?LR, K?RR.
+      array:
+        len: 4
+        stride: 8
+      byte_offset: 32
+      block: KEY
+    - name: INIT
+      description: Cluster INIT%s, containing IV?LR, IV?RR.
+      array:
+        len: 2
+        stride: 8
+      byte_offset: 64
+      block: INIT
+block/INIT:
+  description: Cluster INIT%s, containing IV?LR, IV?RR.
+  items:
+    - name: IVLR
+      description: initialization vector registers.
+      byte_offset: 0
+    - name: IVRR
+      description: initialization vector registers.
+      byte_offset: 4
+block/KEY:
+  description: Cluster KEY%s, containing K?LR, K?RR.
+  items:
+    - name: KLR
+      description: key registers.
+      byte_offset: 0
+      access: Write
+    - name: KRR
+      description: key registers.
+      byte_offset: 4
+      access: Write
+fieldset/CR:
+  description: control register.
+  fields:
+    - name: ALGODIR
+      description: Algorithm direction.
+      bit_offset: 2
+      bit_size: 1
+    - name: ALGOMODE
+      description: Algorithm mode.
+      bit_offset: 3
+      bit_size: 3
+    - name: DATATYPE
+      description: Data type selection.
+      bit_offset: 6
+      bit_size: 2
+    - name: KEYSIZE
+      description: Key size selection (AES mode only).
+      bit_offset: 8
+      bit_size: 2
+    - name: FFLUSH
+      description: FIFO flush.
+      bit_offset: 14
+      bit_size: 1
+    - name: CRYPEN
+      description: Cryptographic processor enable.
+      bit_offset: 15
+      bit_size: 1
+fieldset/DMACR:
+  description: DMA control register.
+  fields:
+    - name: DIEN
+      description: DMA input enable.
+      bit_offset: 0
+      bit_size: 1
+    - name: DOEN
+      description: DMA output enable.
+      bit_offset: 1
+      bit_size: 1
+fieldset/IMSCR:
+  description: interrupt mask set/clear register.
+  fields:
+    - name: INIM
+      description: Input FIFO service interrupt mask.
+      bit_offset: 0
+      bit_size: 1
+    - name: OUTIM
+      description: Output FIFO service interrupt mask.
+      bit_offset: 1
+      bit_size: 1
+fieldset/MISR:
+  description: masked interrupt status register.
+  fields:
+    - name: INMIS
+      description: Input FIFO service masked interrupt status.
+      bit_offset: 0
+      bit_size: 1
+    - name: OUTMIS
+      description: Output FIFO service masked interrupt status.
+      bit_offset: 1
+      bit_size: 1
+fieldset/RISR:
+  description: raw interrupt status register.
+  fields:
+    - name: INRIS
+      description: Input FIFO service raw interrupt status.
+      bit_offset: 0
+      bit_size: 1
+    - name: OUTRIS
+      description: Output FIFO service raw interrupt status.
+      bit_offset: 1
+      bit_size: 1
+fieldset/SR:
+  description: status register.
+  fields:
+    - name: IFEM
+      description: Input FIFO empty.
+      bit_offset: 0
+      bit_size: 1
+    - name: IFNF
+      description: Input FIFO not full.
+      bit_offset: 1
+      bit_size: 1
+    - name: OFNE
+      description: Output FIFO not empty.
+      bit_offset: 2
+      bit_size: 1
+    - name: OFFU
+      description: Output FIFO full.
+      bit_offset: 3
+      bit_size: 1
+    - name: BUSY
+      description: Busy bit.
+      bit_offset: 4
+      bit_size: 1
