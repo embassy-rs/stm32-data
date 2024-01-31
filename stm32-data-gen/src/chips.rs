@@ -536,7 +536,7 @@ impl PeriMatcher {
             (".*:CRYP:cryp1_v1_0.*", ("cryp", "v1", "CRYP")),
             (".*:CRYP:cryp1_v2_0.*", ("cryp", "v2", "CRYP")),
             (".*:CRYP:cryp1_v2_2.*", ("cryp", "v2", "CRYP")),
-            ("STM32G0.*1.*:.*:COMP:.*", ("comp", "v1", "COMP")),
+            ("STM32G0.1.*:.*:COMP:.*", ("comp", "v1", "COMP")),
             ("STM32G4.*:.*:COMP:.*", ("comp", "v2", "COMP")),
         ];
 
