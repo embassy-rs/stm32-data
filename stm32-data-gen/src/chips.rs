@@ -122,6 +122,7 @@ impl PeriMatcher {
             (".*:USART:sci3_v1_2", ("usart", "v4", "USART")),
             (".*:USART:sci3_v2_0", ("usart", "v4", "USART")),
             (".*:USART:sci3_v2_1", ("usart", "v4", "USART")),
+            (".*:UART:sci2_v1_1", ("usart", "v1", "USART")),
             (".*:UART:sci2_v1_2_F4", ("usart", "v2", "USART")),
             (".*:UART:sci2_v2_1", ("usart", "v3", "USART")),
             (".*:UART:sci2_v3_0", ("usart", "v4", "USART")),
@@ -274,6 +275,7 @@ impl PeriMatcher {
             (".*:RTC:rtc3_v3_0", ("rtc", "v3", "RTC")),
             (".*:SAI:sai1_v1_0", ("sai", "v1", "SAI")),
             (".*:SAI:sai1_v1_1", ("sai", "v2", "SAI")),
+            (".*:SAI:sai1_v1_2", ("sai", "v2", "SAI")),
             (".*:SAI:sai1_v2_0", ("sai", "v1", "SAI")),
             (".*:SAI:sai1_H7", ("sai", "v3", "SAI")),
             (".*:SAI:sai1_v2_1", ("sai", "v4", "SAI")),
@@ -470,15 +472,16 @@ impl PeriMatcher {
             (".*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
             ("STM32H7.*:FDCANRAM.*", ("fdcanram", "h7", "FDCANRAM")),
             (".*:FDCANRAM.*", ("fdcanram", "v1", "FDCANRAM")),
-            // # stm32F4 CRC peripheral
-            // # ("STM32F4*:CRC:CRC:crc_f4")
-            // # v1: F1, F2, F4, L1
-            // # v2, adds INIT reg: F0
-            // # v3, adds POL reg: F3, F7, G0, G4, H7, L0, L4, L5, WB, WL
-            (".*:CRC:integtest1_v1_0", ("crc", "v1", "CRC")),
-            ("STM32L[04].*:CRC:integtest1_v2_0", ("crc", "v3", "CRC")),
-            (".*:CRC:integtest1_v2_0", ("crc", "v2", "CRC")),
-            (".*:CRC:integtest1_v2_2", ("crc", "v3", "CRC")),
+            ("STM32F[124].*:CRC:.*", ("crc", "v1", "CRC")),
+            ("STM32L1.*:CRC:.*", ("crc", "v1", "CRC")),
+            ("STM32F0.*:CRC:.*", ("crc", "v2", "CRC")),
+            ("STM32F[37].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32G[04].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32H[57].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32L[045].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32W[BL].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32C[0].*:CRC:.*", ("crc", "v3", "CRC")),
+            ("STM32U[5].*:CRC:.*", ("crc", "v3", "CRC")),
             (".*:LCD:lcdc1_v1.0.*", ("lcd", "v1", "LCD")),
             (".*:LCD:lcdc1_v1.2.*", ("lcd", "v2", "LCD")),
             (".*:LCD:lcdc1_v1.3.*", ("lcd", "v2", "LCD")),
@@ -500,7 +503,11 @@ impl PeriMatcher {
                 ("octospi", "v1", "OCTOSPI"),
             ),
             (
-                "STM32U5.*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*",
+                "STM32U5[34].*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*",
+                ("octospi", "v1", "OCTOSPI"),
+            ),
+            (
+                "STM32U5[AFG789].*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*",
                 ("octospi", "v1", "OCTOSPI"),
             ),
             (
@@ -522,6 +529,13 @@ impl PeriMatcher {
             ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
             ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
             ("STM32U5.*:ADF[12]:.*", ("adf", "v1", "ADF")),
+            (".*:HASH:hash1_v1_0", ("hash", "v1", "HASH")),
+            (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
+            (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
+            (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
+            (".*:CRYP:cryp1_v1_0.*", ("cryp", "v1", "CRYP")),
+            (".*:CRYP:cryp1_v2_0.*", ("cryp", "v2", "CRYP")),
+            (".*:CRYP:cryp1_v2_2.*", ("cryp", "v2", "CRYP")),
             ("STM32G0.*1.*:.*:COMP:.*", ("comp", "v1", "COMP")),
             ("STM32G4.*:.*:COMP:.*", ("comp", "v2", "COMP")),
         ];
