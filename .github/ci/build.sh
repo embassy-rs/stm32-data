@@ -4,6 +4,9 @@
 
 set -euxo pipefail
 
+# prevent "fatal: gc is already running" errors
+git config --global gc.autoDetach false
+
 export RUSTUP_HOME=/ci/cache/rustup
 export CARGO_HOME=/ci/cache/cargo
 export CARGO_TARGET_DIR=/ci/cache/target
