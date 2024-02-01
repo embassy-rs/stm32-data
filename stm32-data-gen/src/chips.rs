@@ -593,7 +593,7 @@ fn merge_periph_pins_info(
                 // for some godforsaken reason UART4's and UART5's CTS are called CTS_NSS in the GPIO xml
                 // so try to match with these
                 af_pins.get(&(pin.pin.as_str(), "CTS_NSS")).copied().flatten()
-            } else if periph_name == "I2C1" {
+            } else if chip_name.starts_with("STM32F0") && periph_name == "I2C1" {
                 // it appears that for __some__ STM32 MCUs there is no AFIO specified in GPIO file
                 // (notably - STM32F030C6 with it's I2C1 on PF6 and PF7)
                 // but the peripheral can actually be mapped to different pins
@@ -1099,8 +1099,20 @@ fn process_core(
             }));
         }
 
+        // H7 has some _C pin variants (e.g. PC2 and PC2_C). Digital stuff should always be in the non-C pin.
+        // cubedb puts it either in both, or in the -C pin only! (in chips where the package has only the -C pin)
+        // so we fix that up here.
+        if !pname.starts_with("ADC") && !pname.starts_with("DAC") && !pname.starts_with("COMP") {
+            for pin in &mut p.pins {
+                if let Some(p) = pin.pin.strip_suffix("_C") {
+                    pin.pin = p.to_string();
+                }
+            }
+        }
+
         // sort pins to avoid diff for c pins
         p.pins.sort_by_key(|x| (x.pin.clone(), x.signal.clone()));
+        p.pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
 
         peripherals.insert(p.name.clone(), p);
     }
