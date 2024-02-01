@@ -1111,7 +1111,9 @@ fn process_core(
         }
 
         // sort pins to avoid diff for c pins
-        p.pins.sort_by_key(|x| (x.pin.clone(), x.signal.clone()));
+        // put the ones with AF number first, so we keep them.
+        p.pins
+            .sort_by_key(|x| (x.pin.clone(), x.signal.clone(), x.af.is_none()));
         p.pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
 
         peripherals.insert(p.name.clone(), p);
