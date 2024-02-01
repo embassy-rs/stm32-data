@@ -440,8 +440,12 @@ impl PeriMatcher {
             ("STM32F.*:LPTIM1:.*", ("lptim", "v1", "LPTIM")),
             ("STM32F.*:HRTIM:.*", ("hrtim", "v1", "HRTIM")),
             // AN4013 Table 3: STM32Lx serials
-            // Override for STM32Lx serials
-            ("STM32L(0|1).*:TIM2:.*", ("timer", "v1", "TIM_GP16")),
+            // Override for STM32L0 serial
+            ("STM32L0.*:TIM(2|3):.*", ("timer", "l0", "TIM_GP16")),
+            ("STM32L0.*:TIM(6|7):.*", ("timer", "l0", "TIM_BASIC")),
+            ("STM32L0.*:TIM(21|22):.*", ("timer", "l0", "TIM_2CH")),
+            // Override for STM32L1 serials
+            ("STM32L1.*:TIM2:.*", ("timer", "v1", "TIM_GP16")),
             // Normal STM32Lx serials
             ("STM32L.*:TIM(1|8):.*", ("timer", "v1", "TIM_ADV")),
             ("STM32L.*:TIM(2|5):.*", ("timer", "v1", "TIM_GP32")),
