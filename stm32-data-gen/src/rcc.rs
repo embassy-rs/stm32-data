@@ -315,71 +315,37 @@ impl PeripheralToClock {
         rcc_block: &(String, String, String),
         peri_name: &str,
     ) -> Option<&stm32_data_serde::chip::core::peripheral::Rcc> {
-        const PERI_OVERRIDE: &[(&str, &[&str])] = &[("DCMI", &["DCMI_PSSI"]), ("PSSI", &["DCMI_PSSI"])];
+        const PERI_OVERRIDE: &[(&str, &[&str])] = &[
+            ("DCMI", &["DCMI_PSSI"]),
+            ("PSSI", &["DCMI_PSSI"]),
+            ("FDCAN1", &["FDCAN12", "FDCAN"]),
+            ("FDCAN2", &["FDCAN12", "FDCAN"]),
+            ("FDCAN3", &["FDCAN"]),
+            ("ADC", &["ADC1"]),
+            ("ADC1", &["ADC12", "ADC"]),
+            ("ADC2", &["ADC12", "ADC"]),
+            ("ADC3", &["ADC34", "ADC345", "ADC"]),
+            ("ADC4", &["ADC34", "ADC345"]),
+            ("ADC5", &["ADC345"]),
+        ];
 
         let clocks = self.0.get(rcc_block)?;
-        if peri_name.starts_with("ADC") && !peri_name.contains("COMMON") {
-            return self.match_adc_peri_clock(clocks, peri_name);
-        }
-        if regex!("^FDCAN[0-9]*$").is_match(peri_name) {
-            return [peri_name, "FDCAN12", "FDCAN"]
-                .into_iter()
-                .find_map(|name| clocks.get(name));
-        }
         if let Some(res) = clocks.get(peri_name) {
-            Some(res)
-        } else if let Some(peri_name) = peri_name.strip_suffix('1') {
-            self.match_peri_clock(rcc_block, peri_name)
-        } else if let Some((_, rename)) = PERI_OVERRIDE.iter().find(|(n, _)| *n == peri_name) {
-            for n in *rename {
-                if let Some(res) = self.match_peri_clock(rcc_block, n) {
+            return Some(res);
+        }
+
+        if let Some((_, rename)) = PERI_OVERRIDE.iter().find(|(n, _)| *n == peri_name) {
+            for &n in *rename {
+                if let Some(res) = clocks.get(n) {
                     return Some(res);
                 }
             }
-            None
-        } else {
-            None
-        }
-    }
-
-    fn match_adc_peri_clock<'a>(
-        &'a self,
-        clocks: &'a HashMap<String, stm32_data_serde::chip::core::peripheral::Rcc>,
-        peri_name: &str,
-    ) -> Option<&stm32_data_serde::chip::core::peripheral::Rcc> {
-        // Direct match
-        if clocks.contains_key(peri_name) {
-            return clocks.get(peri_name);
         }
 
-        // Paired match based on odd/even
-        if let Some(digit_char) = peri_name.chars().last() {
-            if let Some(digit) = digit_char.to_digit(10) {
-                let paired = if digit % 2 == 1 {
-                    format!("ADC{}{}", digit, digit + 1)
-                } else {
-                    format!("ADC{}{}", digit - 1, digit)
-                };
-
-                if clocks.contains_key(paired.as_str()) {
-                    return clocks.get(paired.as_str());
-                }
+        if let Some(n) = peri_name.strip_suffix('1') {
+            if let Some(res) = clocks.get(n) {
+                return Some(res);
             }
-        }
-
-        // If adc is 3, 4, or 5, check for ADC345
-        if (peri_name == "ADC3" || peri_name == "ADC4" || peri_name == "ADC5") && clocks.contains_key("ADC345") {
-            return clocks.get("ADC345");
-        }
-
-        // Look for bare ADC clock register
-        if clocks.contains_key("ADC") {
-            return clocks.get("ADC");
-        }
-
-        // Absolute fallback, match against the clocks for just the first ADC
-        if peri_name == "ADC" && clocks.contains_key("ADC1") {
-            return clocks.get("ADC1");
         }
 
         None
