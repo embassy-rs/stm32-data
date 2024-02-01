@@ -427,7 +427,7 @@ impl PeriMatcher {
             //
             // AN4013 Table 2: STM32Fx serials
             // Override for STM32Fx serials
-            ("STM32F(101|102|103|105|107).*:TIM(2|5):.*", ("timer", "v1", "TIM_GP16")),
+            ("STM32F1.*:TIM(2|5):.*", ("timer", "v1", "TIM_GP16")),
             // Normal STM32Fx serials
             ("STM32F.*:TIM(1|8|20):.*", ("timer", "v1", "TIM_ADV")),
             ("STM32F.*:TIM(2|5):.*", ("timer", "v1", "TIM_GP32")),
