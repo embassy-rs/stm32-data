@@ -327,6 +327,9 @@ impl PeripheralToClock {
             ("ADC3", &["ADC34", "ADC345", "ADC"]),
             ("ADC4", &["ADC34", "ADC345"]),
             ("ADC5", &["ADC345"]),
+            ("DAC", &["DAC1"]),
+            ("DAC1", &["DAC12", "DAC"]),
+            ("DAC2", &["DAC12", "DAC"]),
         ];
 
         let clocks = self.0.get(rcc_block)?;
