@@ -92,6 +92,10 @@ impl PeripheralToClock {
             "PER",
             "CLK48",
             // TODO: variants to cleanup
+            "AFIF",
+            "HSI_HSE",
+            "DSI_PHY",
+            "HSI_Div488",
             "SAI1_EXTCLK",
             "SAI2_EXTCLK",
             "B_0x0",
@@ -104,6 +108,10 @@ impl PeripheralToClock {
             "DSIPHY",
             "ICLK",
             "DCLK",
+            "I2S1",
+            "I2S2",
+            "SAI1",
+            "SAI2",
             "HSI256_MSIS1024_MSIS4",
             "HSI256_MSIS1024_MSIK4",
             "HSI256_MSIK1024_MSIS4",
@@ -177,7 +185,7 @@ impl PeripheralToClock {
                 let mut family_muxes = HashMap::new();
                 for (reg, body) in &ir.fieldsets {
                     let key = format!("fieldset/{reg}");
-                    if regex!(r"^fieldset/CCIPR\d?$").captures(&key).is_some() {
+                    if regex!(r"^fieldset/(CCIPR|DCKCFGR)\d?$").captures(&key).is_some() {
                         for field in &body.fields {
                             if let Some(peri) = field.name.strip_suffix("SEL") {
                                 check_mux(reg, &field.name)?;
@@ -330,6 +338,7 @@ impl PeripheralToClock {
             ("DAC", &["DAC1"]),
             ("DAC1", &["DAC12", "DAC"]),
             ("DAC2", &["DAC12", "DAC"]),
+            ("ETH", &["ETHMAC", "ETH1MAC"]),
         ];
 
         let clocks = self.0.get(rcc_block)?;
