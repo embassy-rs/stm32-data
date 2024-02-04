@@ -375,7 +375,7 @@ impl PeriMatcher {
             ("STM32U5.*:PWR:.*", ("pwr", "u5", "PWR")),
             ("STM32WL.*:PWR:.*", ("pwr", "wl5", "PWR")),
             ("STM32WBA.*:PWR:.*", ("pwr", "wba", "PWR")),
-            ("STM32WB55.*:PWR:.*", ("pwr", "wb55", "PWR")),
+            ("STM32WB[35]5.*:PWR:.*", ("pwr", "wb55", "PWR")),
             ("STM32WB.*:PWR:.*", ("pwr", "wb", "PWR")),
             ("STM32H50.*:PWR:.*", ("pwr", "h50", "PWR")),
             ("STM32H5.*:PWR:.*", ("pwr", "h5", "PWR")),
