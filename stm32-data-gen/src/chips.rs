@@ -195,6 +195,7 @@ impl PeriMatcher {
             (".*:ADC:aditf_v2_5", ("adc", "f3_v2", "ADC")),
             (".*:ADC:aditf3_v1_1", ("adc", "f3_v1_1", "ADC")),
             (".*:ADC:aditf4_v1_1", ("adc", "v1", "ADC")),
+            (".*:ADC:aditf4_v2_0", ("adc", "l0", "ADC")),            
             (".*:ADC:aditf2_v1_1", ("adc", "v2", "ADC")),
             (".*:ADC:aditf5_v2_0", ("adc", "v3", "ADC")),
             (".*:ADC:aditf5_v2_2", ("adc", "v3", "ADC")),
@@ -1014,7 +1015,7 @@ fn process_core(
             continue;
         }
 
-        let addr = if (chip_name.starts_with("STM32F0") || chip_name.starts_with("STM32L1")) && pname == "ADC" {
+        let addr = if (chip_name.starts_with("STM32F0") || chip_name.starts_with("STM32L1") || chip_name.starts_with("STM32L0")) && pname == "ADC" {
             defines.get_peri_addr("ADC1")
         } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
             defines.get_peri_addr("HRTIM1")
