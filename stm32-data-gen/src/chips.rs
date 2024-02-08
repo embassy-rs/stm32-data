@@ -532,6 +532,8 @@ impl PeriMatcher {
             ("STM32U5.*:ADF[12]:.*", ("adf", "v1", "ADF")),
             (".*:HASH:hash1_v1_0", ("hash", "v1", "HASH")),
             (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
+            ("STM32U5.*:HASH:.*", ("hash", "v4", "HASH")),
+            ("STM32WBA.*:HASH:.*", ("hash", "v4", "HASH")),
             (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
             (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
             (".*:CRYP:cryp1_v1_0.*", ("cryp", "v1", "CRYP")),
