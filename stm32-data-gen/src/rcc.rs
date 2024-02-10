@@ -294,18 +294,17 @@ impl ParsedRccs {
         const FALLBACKS: &[(&str, &[&str])] = &[
             ("DCMI", &["DCMI_PSSI"]),
             ("PSSI", &["DCMI_PSSI"]),
-            ("FDCAN1", &["FDCAN12", "FDCAN"]),
-            ("FDCAN2", &["FDCAN12", "FDCAN"]),
-            ("FDCAN3", &["FDCAN"]),
+            ("FDCAN1", &["FDCAN12"]),
+            ("FDCAN2", &["FDCAN12"]),
             ("ADC", &["ADC1"]),
-            ("ADC1", &["ADC12", "ADC"]),
-            ("ADC2", &["ADC12", "ADC"]),
-            ("ADC3", &["ADC34", "ADC345", "ADC"]),
+            ("ADC1", &["ADC12"]),
+            ("ADC2", &["ADC12"]),
+            ("ADC3", &["ADC34", "ADC345"]),
             ("ADC4", &["ADC34", "ADC345"]),
             ("ADC5", &["ADC345"]),
             ("DAC", &["DAC1"]),
-            ("DAC1", &["DAC12", "DAC"]),
-            ("DAC2", &["DAC12", "DAC"]),
+            ("DAC1", &["DAC12"]),
+            ("DAC2", &["DAC12"]),
             ("ETH", &["ETHMAC", "ETH1MAC"]),
             ("SPI1", &["SPI12", "SPI123"]),
             ("SPI2", &["SPI12", "SPI123"]),
@@ -359,8 +358,8 @@ fn get_with_fallback<'a, T>(key: &str, map: &'a HashMap<String, T>, fallbacks: &
         }
     }
 
-    if let Some(n) = key.strip_suffix('1') {
-        if let Some(res) = map.get(n) {
+    if let Some(capture) = regex!("^([A-Z]+)\\d+$").captures(key) {
+        if let Some(res) = map.get(capture.get(1).unwrap().as_str()) {
             return Some(res);
         }
     }
