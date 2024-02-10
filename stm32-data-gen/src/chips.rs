@@ -834,7 +834,7 @@ fn process_group(
     headers: &header::Headers,
     af: &gpio_af::Af,
     chip_interrupts: &interrupts::ChipInterrupts,
-    peripheral_to_clock: &rcc::PeripheralToClock,
+    peripheral_to_clock: &rcc::ParsedRccs,
     dma_channels: &dma::DmaChannels,
     chips: &HashMap<String, Chip>,
     memories: &memory::Memories,
@@ -889,7 +889,7 @@ fn process_core(
     group: &ChipGroup,
     chip_interrupts: &interrupts::ChipInterrupts,
     peri_matcher: &mut PeriMatcher,
-    peripheral_to_clock: &rcc::PeripheralToClock,
+    peripheral_to_clock: &rcc::ParsedRccs,
     rcc_block: (&str, &str, &str),
     chip_af: Option<&HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>>,
     dma_channels: &dma::DmaChannels,
@@ -1115,15 +1115,8 @@ fn process_core(
             });
         }
 
-        if let Some(rcc_info) = peripheral_to_clock.match_peri_clock(
-            &(
-                rcc_block.0.to_string(),
-                rcc_block.1.to_string(),
-                rcc_block.2.to_string(),
-            ),
-            &pname,
-        ) {
-            p.rcc = Some(rcc_info.clone());
+        if let Some(rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &pname) {
+            p.rcc = Some(rcc_info);
         }
         if let Some(pins) = periph_pins.get_mut(&pname) {
             // merge the core xml info with GPIO xml info to hopefully get the full picture
@@ -1468,7 +1461,7 @@ pub fn dump_all_chips(
     headers: header::Headers,
     af: gpio_af::Af,
     chip_interrupts: interrupts::ChipInterrupts,
-    peripheral_to_clock: rcc::PeripheralToClock,
+    peripheral_to_clock: rcc::ParsedRccs,
     dma_channels: dma::DmaChannels,
     chips: std::collections::HashMap<String, Chip>,
     memories: memory::Memories,

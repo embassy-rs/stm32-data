@@ -76,7 +76,7 @@ fn main() -> anyhow::Result<()> {
     let chip_interrupts = interrupts::ChipInterrupts::parse()?;
 
     // stopwatch.section("Parsing RCC registers");
-    let peripheral_to_clock = rcc::PeripheralToClock::parse(&registers)?;
+    let peripheral_to_clock = rcc::ParsedRccs::parse(&registers)?;
 
     // stopwatch.section("Parsing docs");
     let docs = docs::Docs::parse()?;
