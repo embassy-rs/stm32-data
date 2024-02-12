@@ -5,36 +5,6 @@ block/CRR:
     description: ICACHE control register.
     byte_offset: 0
     fieldset: CRRX
-fieldset/CRRX:
-  description: ICACHE region configuration register.
-  fields:
-  - name: BASEADDR
-    description: base address for region.
-    bit_offset: 0
-    bit_size: 8
-  - name: RSIZE
-    description: size for region.
-    bit_offset: 9
-    bit_size: 3
-    enum: RSIZE
-  - name: REN
-    description: enable for region.
-    bit_offset: 15
-    bit_size: 1
-  - name: REMAPADDR
-    description: remapped address for region.
-    bit_offset: 16
-    bit_size: 11
-  - name: MSTSEL
-    description: AHB cache master selection for region.
-    bit_offset: 28
-    bit_size: 1
-    enum: MSTSEL
-  - name: HBURST
-    description: output burst type for region.
-    bit_offset: 31
-    bit_size: 1
-    enum: HBURST
 block/ICACHE:
   description: Instruction Cache Control Registers.
   items:
@@ -108,6 +78,36 @@ fieldset/CR:
     bit_offset: 19
     bit_size: 1
     enum: MISSMRST
+fieldset/CRRX:
+  description: ICACHE region configuration register.
+  fields:
+  - name: BASEADDR
+    description: base address for region.
+    bit_offset: 0
+    bit_size: 8
+  - name: RSIZE
+    description: size for region.
+    bit_offset: 9
+    bit_size: 3
+    enum: RSIZE
+  - name: REN
+    description: enable for region.
+    bit_offset: 15
+    bit_size: 1
+  - name: REMAPADDR
+    description: remapped address for region.
+    bit_offset: 16
+    bit_size: 11
+  - name: MSTSEL
+    description: AHB cache master selection for region.
+    bit_offset: 28
+    bit_size: 1
+    enum: MSTSEL
+  - name: HBURST
+    description: output burst type for region.
+    bit_offset: 31
+    bit_size: 1
+    enum: HBURST
 fieldset/FCR:
   description: ICACHE flag clear register.
   fields:
@@ -165,6 +165,32 @@ enum/CACHEINV:
   - name: Invalidate
     description: Invalidate entire cache
     value: 1
+enum/HBURST:
+  bit_size: 1
+  variants:
+  - name: Wrap
+    value: 0
+  - name: Increment
+    value: 1
+enum/HITMRST:
+  bit_size: 1
+  variants:
+  - name: Reset
+    description: Reset cache hit monitor
+    value: 1
+enum/MISSMRST:
+  bit_size: 1
+  variants:
+  - name: Reset
+    description: Reset cache miss monitor
+    value: 1
+enum/MSTSEL:
+  bit_size: 1
+  variants:
+  - name: Master1Selected
+    value: 0
+  - name: Master2Selected
+    value: 1
 enum/RSIZE:
   bit_size: 3
   variants:
@@ -182,32 +208,6 @@ enum/RSIZE:
     value: 6
   - name: OneTwentyEightMegabytes
     value: 7
-enum/HBURST:
-  bit_size: 1
-  variants:
-  - name: Wrap
-    value: 0
-  - name: Increment
-    value: 1
-enum/MSTSEL:
-  bit_size: 1
-  variants:
-  - name: Master1Selected
-    value: 0
-  - name: Master2Selected
-    value: 1
-enum/MISSMRST:
-  bit_size: 1
-  variants:
-  - name: Reset
-    description: Reset cache miss monitor
-    value: 1
-enum/HITMRST:
-  bit_size: 1
-  variants:
-  - name: Reset
-    description: Reset cache hit monitor
-    value: 1
 enum/WAYSEL:
   bit_size: 1
   variants:

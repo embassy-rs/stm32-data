@@ -403,214 +403,25 @@ fieldset/SITFCR:
     description: SITFACTIVE.
     bit_offset: 31
     bit_size: 1
-enum/TRGSRC:
-  description: Digital filter trigger signal selection.
-  bit_size: 4
-  variants:
-  - name: TRGO
-    description: TRGO Selected.
-    value: 0
-  - name: TRG1
-    description: adf_trg1 selected.
-    value: 2
-enum/TRGSENS:
-  description: CKGEN trigger sensitivity selection. This bit is set and cleared by software. It is used to select the trigger sensitivity of the trigger signals. This bit is not significant if the CKGMOD = 0.
-  bit_size: 1
-  variants:
-  - name: RisingEdge
-    description: A rising edge event triggers the activation of CKGEN dividers.
-    value: 0
-  - name: FallingEdge
-    description: A falling edge even triggers the activation of CKGEN dividers.
-    value: 1
-enum/CCKDIR:
-  description: CCK1 direction. This bit is set and reset by software. It is used to control the direction of the ADF_CCK1 pin.
-  bit_size: 1
-  variants:
-  - name: Input
-    description: CCK is an input.
-    value: 0
-  - name: Output
-    description: CCK is an output.
-    value: 1
-enum/CKGMOD:
-  description: Clock generator mode. This bit is set and reset by software. It is used to define the way the clock generator is enabled. This bit must not be changed if the filter is enabled (DFTEN = 1).
-  bit_size: 1
-  variants:
-  - name: Immediate
-    description: The kernel clock is provided to the dividers as soon as CKGDEN is set to 1.
-    value: 0
-  - name: Trigger
-    description: The kernel clock is provided to the dividers when CKGDEN is set to 1 and the trigger condition met.
-    value: 1
-enum/CCKEN:
-  description: CCK clock enable. This bit is set and reset by software. It is used to control the generation of the bitstream clock on the CCK pin.
-  bit_size: 1
-  variants:
-  - name: NotGenerated
-    description: Bitstream clock not generated.
-    value: 0
-  - name: Generated
-    description: Bitstream clock generated on the CCK pin.
-    value: 1
-enum/CCKDIV:
-  description: Divider to control the CCK clock. This bit is set and reset by software. It is used to control the frequency of the bitstream clock on the CCK pin.
-  bit_size: 4
-  variants:
-  - name: DIV1
-    description: The ADF_CCK clock is adf_proc_ck.
-    value: 0
-  - name: DIV2
-    description: The ADF_CCK clock is adf_proc_ck divided by 2.
-    value: 1
-  - name: DIV3
-    description: The ADF_CCK clock is adf_proc_ck divided by 3.
-    value: 2
-  - name: DIV4
-    description: The ADF_CCK clock is adf_proc_ck divided by 4.
-    value: 3
-  - name: DIV5
-    description: The ADF_CCK clock is adf_proc_ck divided by 5.
-    value: 4
-  - name: DIV6
-    description: The ADF_CCK clock is adf_proc_ck divided by 6.
-    value: 5
-  - name: DIV7
-    description: The ADF_CCK clock is adf_proc_ck divided by 7.
-    value: 6
-  - name: DIV8
-    description: The ADF_CCK clock is adf_proc_ck divided by 8.
-    value: 7
-  - name: DIV9
-    description: The ADF_CCK clock is adf_proc_ck divided by 9.
-    value: 8
-  - name: DIV10
-    description: The ADF_CCK clock is adf_proc_ck divided by 10.
-    value: 9
-  - name: DIV11
-    description: The ADF_CCK clock is adf_proc_ck divided by 11.
-    value: 10
-  - name: DIV12
-    description: The ADF_CCK clock is adf_proc_ck divided by 12.
-    value: 11
-  - name: DIV13
-    description: The ADF_CCK clock is adf_proc_ck divided by 13.
-    value: 12
-  - name: DIV14
-    description: The ADF_CCK clock is adf_proc_ck divided by 14.
-    value: 13
-  - name: DIV15
-    description: The ADF_CCK clock is adf_proc_ck divided by 15.
-    value: 14
-  - name: DIV16
-    description: The ADF_CCK clock is adf_proc_ck divided by 16.
-    value: 15
-enum/SADMOD:
-  description: SAD working mode. This bitfield is set and cleared by software. It is used to define the way the SAD works
-  bit_size: 2
-  variants:
-  - name: ThresholdEstimatedAmbientNoise
-    description:  Threshold value computed according to the estimated ambient noise. The SAD triggers when the sound level (SDLVL) is bigger than the defined threshold. In this mode, the SAD works like a voice activity detector.
-    value: 0
-  - name: ThresholdMinimumNoiselevel
-    description: Threshold value equal to ANMIN[12:0], multiplied by the gain selected by SNTHR[3:0] The SAD triggers when the sound level (SDLVL) is bigger than the defined threshold. In this mode, the SAD works like a sound detector.
-    value: 1
-  - name: ThresholdMinimumNoiselevelx4
-    description: Threshold value given by 4 x ANMIN[12:0]. The SAD triggers when the estimated ambient noise (ANLVL), multiplied by the gain selected by SNTHR[3:0] is bigger than the defined threshold. In this mode, the SAD is working like an ambient noise estimator. Hysteresis function cannot be used in this mode.
-    value: 2
-enum/FRSIZE:
-  description: Frame size. This bitfield is set and cleared by software. it is used to define the size of one frame and also to define how many samples are taken into account to compute the short-term signal level.
+enum/ACQMOD:
+  description: DFLT trigger mode. This bitfield is set and cleared by software. It is used to select the trigger mode of the DFLT0.
   bit_size: 3
   variants:
-  - name: Samples8
-    description: 8 sample.
+  - name: AsynchronousContinuous
+    description: Asynchronous continuous acquisition mode.
     value: 0
-  - name: Samples16
-    description: 16 samples.
+  - name: AsynchronousSingleShot
+    description: Asynchronous single-shot acquisition mode
     value: 1
-  - name: Samples32
-    description: 32 samples.
+  - name: SyncronousContinuous
+    description: Synchronous continuous acquisition mode.
     value: 2
-  - name: Samples64
-    description: 64 samples.
+  - name: SyncronousSingleShot
+    description: Synchronous single-shot acquisition mode.
     value: 3
-  - name: Samples128
-    description: 128 samples.
+  - name: WindowContinuous
+    description: Window continuous acquisition mode.
     value: 4
-  - name: Samples256
-    description: 256 samples.
-    value: 5
-  - name: Samples512
-    description: 512 samples.
-    value: 6
-enum/DATCAP:
-  description: Data capture mode. This bitfield is set and cleared by software. It is used to define in which conditions, the samples provided by DLFT0 are stored into the memory.
-  bit_size: 2
-  variants:
-  - name: Disabled
-    description: Samples from DFLT0 not transfered into the memory.
-    value: 0
-  - name: OnDetected
-    description: Samples from DFLT0 transfered into the memory when SAD is in DETECT state.
-    value: 1
-  - name: Enabled
-    description: Samples from DFLT0 transfered into memory when SAD and DFLT0 are enabled.
-    value: 2
-enum/DETCFG:
-  description: Sound trigger event configuration. This bit is set and cleared by software. It is used to define if the sddet_evt event is generated only when the SAD enters to MONITOR state or when the SAD enters or exits the DETECT state.
-  bit_size: 1
-  variants:
-  - name: Monitor
-    description: sddet_evt generated when SAD enters the MONITOR state.
-    value: 0
-  - name: Detect
-    description: sddet_evt generated when SAD enters or exits the DETECT state.
-    value: 1
-enum/SADST:
-  description: SAD state. This bitfield is set and cleared by hardware. It indicates the SAD state and is meaningful only when SADEN = 1.
-  bit_size: 2
-  variants:
-  - name: Learn
-    description: SAD in LEARN state.
-    value: 0
-  - name: Monitor
-    description: SAD in MONITOR state.
-    value: 1
-  - name: Detect
-    description: SAD in DETECT state.
-    value: 2
-enum/SCKSRC:
-  description: Serial clock source. This bitfield is set and cleared by software. It is used to select the clock source of the serial interface.
-  bit_size: 2
-  variants:
-  - name: CCK0
-    description: Serial clock source is CCK0.
-    value: 0
-  - name: CCK1
-    description: Serial clock source is CCK1.
-    value: 1
-  - name: CKI0
-    description: Serial clock source is CCI0.
-    value: 2
-  - name: CKI1
-    description: Serial clock source is CCI1.
-    value: 3
-enum/SITFMOD:
-  description: Serial interface mode. This bitfield is set and cleared by software. It is used to select the serial interface mode.
-  bit_size: 2
-  variants:
-  - name: MasterSPI
-    description: LF_MASTER SPI mode.
-    value: 0
-  - name: NormalSPI
-    description: Normal SPI mode.
-    value: 1
-  - name: ManchesterFalling
-    description: Manchester mode rising edge = logic 0, falling edge = logic 1.
-    value: 2
-  - name: ManchesterRising
-    description: Manchester mode rising edge = logic 1, falling edge = logic 0.
-    value: 3
 enum/BSSEL:
   description: Bitstream selection. This bitfield is set and cleared by software. It is used to select the bitstream to be used by the DFLT0.
   bit_size: 5
@@ -711,6 +522,111 @@ enum/BSSEL:
   - name: BS15_F
     description: bsx_f provided to DFLTy (and SCDy).
     value: 31
+enum/CCKDIR:
+  description: CCK1 direction. This bit is set and reset by software. It is used to control the direction of the ADF_CCK1 pin.
+  bit_size: 1
+  variants:
+  - name: Input
+    description: CCK is an input.
+    value: 0
+  - name: Output
+    description: CCK is an output.
+    value: 1
+enum/CCKDIV:
+  description: Divider to control the CCK clock. This bit is set and reset by software. It is used to control the frequency of the bitstream clock on the CCK pin.
+  bit_size: 4
+  variants:
+  - name: DIV1
+    description: The ADF_CCK clock is adf_proc_ck.
+    value: 0
+  - name: DIV2
+    description: The ADF_CCK clock is adf_proc_ck divided by 2.
+    value: 1
+  - name: DIV3
+    description: The ADF_CCK clock is adf_proc_ck divided by 3.
+    value: 2
+  - name: DIV4
+    description: The ADF_CCK clock is adf_proc_ck divided by 4.
+    value: 3
+  - name: DIV5
+    description: The ADF_CCK clock is adf_proc_ck divided by 5.
+    value: 4
+  - name: DIV6
+    description: The ADF_CCK clock is adf_proc_ck divided by 6.
+    value: 5
+  - name: DIV7
+    description: The ADF_CCK clock is adf_proc_ck divided by 7.
+    value: 6
+  - name: DIV8
+    description: The ADF_CCK clock is adf_proc_ck divided by 8.
+    value: 7
+  - name: DIV9
+    description: The ADF_CCK clock is adf_proc_ck divided by 9.
+    value: 8
+  - name: DIV10
+    description: The ADF_CCK clock is adf_proc_ck divided by 10.
+    value: 9
+  - name: DIV11
+    description: The ADF_CCK clock is adf_proc_ck divided by 11.
+    value: 10
+  - name: DIV12
+    description: The ADF_CCK clock is adf_proc_ck divided by 12.
+    value: 11
+  - name: DIV13
+    description: The ADF_CCK clock is adf_proc_ck divided by 13.
+    value: 12
+  - name: DIV14
+    description: The ADF_CCK clock is adf_proc_ck divided by 14.
+    value: 13
+  - name: DIV15
+    description: The ADF_CCK clock is adf_proc_ck divided by 15.
+    value: 14
+  - name: DIV16
+    description: The ADF_CCK clock is adf_proc_ck divided by 16.
+    value: 15
+enum/CCKEN:
+  description: CCK clock enable. This bit is set and reset by software. It is used to control the generation of the bitstream clock on the CCK pin.
+  bit_size: 1
+  variants:
+  - name: NotGenerated
+    description: Bitstream clock not generated.
+    value: 0
+  - name: Generated
+    description: Bitstream clock generated on the CCK pin.
+    value: 1
+enum/CICMOD:
+  description: Select the CIC order. This bitfield is set and cleared by software. It is used to select the MCIC order.
+  bit_size: 3
+  variants:
+  - name: SINC4
+    description: MCIC configured in single Sinc4 filter.
+    value: 4
+  - name: SINC5
+    description: MCIC configured in single Sinc5 filter.
+    value: 5
+enum/CKGMOD:
+  description: Clock generator mode. This bit is set and reset by software. It is used to define the way the clock generator is enabled. This bit must not be changed if the filter is enabled (DFTEN = 1).
+  bit_size: 1
+  variants:
+  - name: Immediate
+    description: The kernel clock is provided to the dividers as soon as CKGDEN is set to 1.
+    value: 0
+  - name: Trigger
+    description: The kernel clock is provided to the dividers when CKGDEN is set to 1 and the trigger condition met.
+    value: 1
+enum/DATCAP:
+  description: Data capture mode. This bitfield is set and cleared by software. It is used to define in which conditions, the samples provided by DLFT0 are stored into the memory.
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: Samples from DFLT0 not transfered into the memory.
+    value: 0
+  - name: OnDetected
+    description: Samples from DFLT0 transfered into the memory when SAD is in DETECT state.
+    value: 1
+  - name: Enabled
+    description: Samples from DFLT0 transfered into memory when SAD and DFLT0 are enabled.
+    value: 2
 enum/DATSRC:
   description: Source data for the digital filter.
   bit_size: 2
@@ -724,71 +640,41 @@ enum/DATSRC:
   - name: ADCITF2
     description: Stream coming from the ADCITF2 selected
     value: 3
-enum/CICMOD:
-  description: Select the CIC order. This bitfield is set and cleared by software. It is used to select the MCIC order.
+enum/DETCFG:
+  description: Sound trigger event configuration. This bit is set and cleared by software. It is used to define if the sddet_evt event is generated only when the SAD enters to MONITOR state or when the SAD enters or exits the DETECT state.
+  bit_size: 1
+  variants:
+  - name: Monitor
+    description: sddet_evt generated when SAD enters the MONITOR state.
+    value: 0
+  - name: Detect
+    description: sddet_evt generated when SAD enters or exits the DETECT state.
+    value: 1
+enum/FRSIZE:
+  description: Frame size. This bitfield is set and cleared by software. it is used to define the size of one frame and also to define how many samples are taken into account to compute the short-term signal level.
   bit_size: 3
   variants:
-  - name: SINC4
-    description: MCIC configured in single Sinc4 filter.
+  - name: Samples8
+    description: 8 sample.
+    value: 0
+  - name: Samples16
+    description: 16 samples.
+    value: 1
+  - name: Samples32
+    description: 32 samples.
+    value: 2
+  - name: Samples64
+    description: 64 samples.
+    value: 3
+  - name: Samples128
+    description: 128 samples.
     value: 4
-  - name: SINC5
-    description: MCIC configured in single Sinc5 filter.
+  - name: Samples256
+    description: 256 samples.
     value: 5
-enum/RSFLTD:
-  description: Reshaper filter decimation ratio. This bitfield is set and cleared by software. It is used to select the decimation ratio of the reshaper filter.
-  bit_size: 1
-  variants:
-  - name: Decimation4
-    description: Decimation ratio is 4 (default value).
-    value: 0
-  - name: Decimation1
-    description: Decimation ratio is 1.
-    value: 1
-enum/HPFC:
-  description: High-pass filter cut-off frequency. This bitfield is set and cleared by software. it is used to select the cut-off frequency of the high-pass filter. F PCM represents the sampling frequency at HPF input.
-  bit_size: 2
-  variants:
-  - name: Low
-    description: Cut-off frequency = 0.000625 x FPCM.
-    value: 0
-  - name: Medium
-    description: Cut-off frequency = 0.00125 x FPCM.
-    value: 1
-  - name: High
-    description: Cut-off frequency = 0.00250 x FPCM
-    value: 2
-  - name: Maximum
-    description: Cut-off frequency = 0.00950 x FPCM
-    value: 3
-enum/ACQMOD:
-  description: DFLT trigger mode. This bitfield is set and cleared by software. It is used to select the trigger mode of the DFLT0.
-  bit_size: 3
-  variants:
-  - name: AsynchronousContinuous
-    description: Asynchronous continuous acquisition mode.
-    value: 0
-  - name: AsynchronousSingleShot
-    description: Asynchronous single-shot acquisition mode
-    value: 1
-  - name: SyncronousContinuous
-    description: Synchronous continuous acquisition mode.
-    value: 2
-  - name: SyncronousSingleShot
-    description: Synchronous single-shot acquisition mode.
-    value: 3
-  - name: WindowContinuous
-    description: Window continuous acquisition mode.
-    value: 4
-enum/RXFIFO:
-  description: RXFIFO threshold selection. This bitfield is set and cleared by software. It is used to select the RXFIFO threshold.
-  bit_size: 1
-  variants:
-  - name: NotEmpty
-    description: RXFIFO threshold event generated when the RXFIFO is not empty
-    value: 0
-  - name: HalfFull
-    description: RXFIFO threshold event generated when the RXFIFO is half-full
-    value: 1
+  - name: Samples512
+    description: 512 samples.
+    value: 6
 enum/HGOVR:
   description: Hangover time window. This bitfield is set and cleared by software. It is used to select the hangover time window.
   bit_size: 3
@@ -817,6 +703,22 @@ enum/HGOVR:
   - name: Frames 512
     description: SAD back to MONITOR state if sound is below threshold for 4 frames.
     value: 7
+enum/HPFC:
+  description: High-pass filter cut-off frequency. This bitfield is set and cleared by software. it is used to select the cut-off frequency of the high-pass filter. F PCM represents the sampling frequency at HPF input.
+  bit_size: 2
+  variants:
+  - name: Low
+    description: Cut-off frequency = 0.000625 x FPCM.
+    value: 0
+  - name: Medium
+    description: Cut-off frequency = 0.00125 x FPCM.
+    value: 1
+  - name: High
+    description: Cut-off frequency = 0.00250 x FPCM
+    value: 2
+  - name: Maximum
+    description: Cut-off frequency = 0.00950 x FPCM
+    value: 3
 enum/LFRNB:
   description: LFRNB. This bitfield is set and cleared by software. It is used to define the number of learning frames to perform the first estimate of the noise level.
   bit_size: 3
@@ -836,6 +738,84 @@ enum/LFRNB:
   - name: Frames 32
     description: 32 samples.
     value: 4
+enum/RSFLTD:
+  description: Reshaper filter decimation ratio. This bitfield is set and cleared by software. It is used to select the decimation ratio of the reshaper filter.
+  bit_size: 1
+  variants:
+  - name: Decimation4
+    description: Decimation ratio is 4 (default value).
+    value: 0
+  - name: Decimation1
+    description: Decimation ratio is 1.
+    value: 1
+enum/RXFIFO:
+  description: RXFIFO threshold selection. This bitfield is set and cleared by software. It is used to select the RXFIFO threshold.
+  bit_size: 1
+  variants:
+  - name: NotEmpty
+    description: RXFIFO threshold event generated when the RXFIFO is not empty
+    value: 0
+  - name: HalfFull
+    description: RXFIFO threshold event generated when the RXFIFO is half-full
+    value: 1
+enum/SADMOD:
+  description: SAD working mode. This bitfield is set and cleared by software. It is used to define the way the SAD works
+  bit_size: 2
+  variants:
+  - name: ThresholdEstimatedAmbientNoise
+    description: Threshold value computed according to the estimated ambient noise. The SAD triggers when the sound level (SDLVL) is bigger than the defined threshold. In this mode, the SAD works like a voice activity detector.
+    value: 0
+  - name: ThresholdMinimumNoiselevel
+    description: Threshold value equal to ANMIN[12:0], multiplied by the gain selected by SNTHR[3:0] The SAD triggers when the sound level (SDLVL) is bigger than the defined threshold. In this mode, the SAD works like a sound detector.
+    value: 1
+  - name: ThresholdMinimumNoiselevelx4
+    description: Threshold value given by 4 x ANMIN[12:0]. The SAD triggers when the estimated ambient noise (ANLVL), multiplied by the gain selected by SNTHR[3:0] is bigger than the defined threshold. In this mode, the SAD is working like an ambient noise estimator. Hysteresis function cannot be used in this mode.
+    value: 2
+enum/SADST:
+  description: SAD state. This bitfield is set and cleared by hardware. It indicates the SAD state and is meaningful only when SADEN = 1.
+  bit_size: 2
+  variants:
+  - name: Learn
+    description: SAD in LEARN state.
+    value: 0
+  - name: Monitor
+    description: SAD in MONITOR state.
+    value: 1
+  - name: Detect
+    description: SAD in DETECT state.
+    value: 2
+enum/SCKSRC:
+  description: Serial clock source. This bitfield is set and cleared by software. It is used to select the clock source of the serial interface.
+  bit_size: 2
+  variants:
+  - name: CCK0
+    description: Serial clock source is CCK0.
+    value: 0
+  - name: CCK1
+    description: Serial clock source is CCK1.
+    value: 1
+  - name: CKI0
+    description: Serial clock source is CCI0.
+    value: 2
+  - name: CKI1
+    description: Serial clock source is CCI1.
+    value: 3
+enum/SITFMOD:
+  description: Serial interface mode. This bitfield is set and cleared by software. It is used to select the serial interface mode.
+  bit_size: 2
+  variants:
+  - name: MasterSPI
+    description: LF_MASTER SPI mode.
+    value: 0
+  - name: NormalSPI
+    description: Normal SPI mode.
+    value: 1
+  - name: ManchesterFalling
+    description: Manchester mode rising edge = logic 0, falling edge = logic 1.
+    value: 2
+  - name: ManchesterRising
+    description: Manchester mode rising edge = logic 1, falling edge = logic 0.
+    value: 3
 enum/SNTHR:
   description: SNTHR. This bitfield is set and cleared by software. It is used to select the gain to be applied at CIC output. If the application attempts to write a new gain value while the previous one is not yet applied, this new gain value is ignored. Reading back this bitfield informs the application on the current gain value.
   bit_size: 4
@@ -870,3 +850,23 @@ enum/SNTHR:
   - name: NOISE PLUS 30_1
     description: Threshold is 30.1 dB higher than ANLVL
     value: 9
+enum/TRGSENS:
+  description: CKGEN trigger sensitivity selection. This bit is set and cleared by software. It is used to select the trigger sensitivity of the trigger signals. This bit is not significant if the CKGMOD = 0.
+  bit_size: 1
+  variants:
+  - name: RisingEdge
+    description: A rising edge event triggers the activation of CKGEN dividers.
+    value: 0
+  - name: FallingEdge
+    description: A falling edge even triggers the activation of CKGEN dividers.
+    value: 1
+enum/TRGSRC:
+  description: Digital filter trigger signal selection.
+  bit_size: 4
+  variants:
+  - name: TRGO
+    description: TRGO Selected.
+    value: 0
+  - name: TRG1
+    description: adf_trg1 selected.
+    value: 2
