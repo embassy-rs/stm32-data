@@ -72,9 +72,17 @@ fieldset/AHBENR:
     description: FLASH clock enable
     bit_offset: 4
     bit_size: 1
+  - name: FMCEN
+    description: FMC clock enable
+    bit_offset: 5
+    bit_size: 1
   - name: CRCEN
     description: CRC clock enable
     bit_offset: 6
+    bit_size: 1
+  - name: GPIOHEN
+    description: IO port H clock enable
+    bit_offset: 16
     bit_size: 1
   - name: GPIOAEN
     description: I/O port A clock enable
@@ -100,13 +108,33 @@ fieldset/AHBENR:
     description: I/O port F clock enable
     bit_offset: 22
     bit_size: 1
+  - name: GPIOGEN
+    description: IO port G clock enable
+    bit_offset: 23
+    bit_size: 1
   - name: TSCEN
     description: Touch sensing controller clock enable
     bit_offset: 24
     bit_size: 1
+  - name: ADC12EN
+    description: ADC1 and ADC2 clock enable
+    bit_offset: 28
+    bit_size: 1
+  - name: ADC34EN
+    description: ADC3 and ADC4 clock enable
+    bit_offset: 29
+    bit_size: 1
 fieldset/AHBRSTR:
   description: AHB peripheral reset register
   fields:
+  - name: FMCRST
+    description: FMC reset
+    bit_offset: 5
+    bit_size: 1
+  - name: GPIOHRST
+    description: IO port H reset
+    bit_offset: 16
+    bit_size: 1
   - name: GPIOARST
     description: I/O port A reset
     bit_offset: 17
@@ -131,9 +159,21 @@ fieldset/AHBRSTR:
     description: I/O port F reset
     bit_offset: 22
     bit_size: 1
+  - name: GPIOGRST
+    description: IO port G reset
+    bit_offset: 23
+    bit_size: 1
   - name: TSCRST
     description: Touch sensing controller reset
     bit_offset: 24
+    bit_size: 1
+  - name: ADC12RST
+    description: ADC1 and ADC2 reset
+    bit_offset: 28
+    bit_size: 1
+  - name: ADC34RST
+    description: ADC3 and ADC4 reset
+    bit_offset: 29
     bit_size: 1
 fieldset/APB1ENR:
   description: APB1 peripheral clock enable register (RCC_APB1ENR)
@@ -150,10 +190,6 @@ fieldset/APB1ENR:
     description: Timer 4 clock enable
     bit_offset: 2
     bit_size: 1
-  - name: TIM5EN
-    description: Timer 5 clock enable
-    bit_offset: 3
-    bit_size: 1
   - name: TIM6EN
     description: Timer 6 clock enable
     bit_offset: 4
@@ -161,22 +197,6 @@ fieldset/APB1ENR:
   - name: TIM7EN
     description: Timer 7 clock enable
     bit_offset: 5
-    bit_size: 1
-  - name: TIM12EN
-    description: Timer 12 clock enable
-    bit_offset: 6
-    bit_size: 1
-  - name: TIM13EN
-    description: Timer 13 clock enable
-    bit_offset: 7
-    bit_size: 1
-  - name: TIM14EN
-    description: Timer 14 clock enable
-    bit_offset: 8
-    bit_size: 1
-  - name: TIM18EN
-    description: Timer 18 clock enable
-    bit_offset: 9
     bit_size: 1
   - name: WWDGEN
     description: Window watchdog clock enable
@@ -197,6 +217,14 @@ fieldset/APB1ENR:
   - name: USART3EN
     description: USART 3 clock enable
     bit_offset: 18
+    bit_size: 1
+  - name: UART4EN
+    description: UART4 clock enable
+    bit_offset: 19
+    bit_size: 1
+  - name: UART5EN
+    description: UART5 clock enable
+    bit_offset: 20
     bit_size: 1
   - name: I2C1EN
     description: I2C 1 clock enable
@@ -226,8 +254,8 @@ fieldset/APB1ENR:
     description: DAC interface clock enable
     bit_offset: 29
     bit_size: 1
-  - name: CECEN
-    description: HDMI CEC interface clock enable
+  - name: I2C3EN
+    description: I2C3 clock enable
     bit_offset: 30
     bit_size: 1
 fieldset/APB1RSTR:
@@ -245,10 +273,6 @@ fieldset/APB1RSTR:
     description: Timer 14 reset
     bit_offset: 2
     bit_size: 1
-  - name: TIM5RST
-    description: Timer 5 reset
-    bit_offset: 3
-    bit_size: 1
   - name: TIM6RST
     description: Timer 6 reset
     bit_offset: 4
@@ -256,22 +280,6 @@ fieldset/APB1RSTR:
   - name: TIM7RST
     description: Timer 7 reset
     bit_offset: 5
-    bit_size: 1
-  - name: TIM12RST
-    description: Timer 12 reset
-    bit_offset: 6
-    bit_size: 1
-  - name: TIM13RST
-    description: Timer 13 reset
-    bit_offset: 7
-    bit_size: 1
-  - name: TIM14RST
-    description: Timer 14 reset
-    bit_offset: 8
-    bit_size: 1
-  - name: TIM18RST
-    description: Timer 18 reset
-    bit_offset: 9
     bit_size: 1
   - name: WWDGRST
     description: Window watchdog reset
@@ -292,6 +300,14 @@ fieldset/APB1RSTR:
   - name: USART3RST
     description: USART3 reset
     bit_offset: 18
+    bit_size: 1
+  - name: UART4RST
+    description: UART 4 reset
+    bit_offset: 19
+    bit_size: 1
+  - name: UART5RST
+    description: UART 5 reset
+    bit_offset: 20
     bit_size: 1
   - name: I2C1RST
     description: I2C1 reset
@@ -321,8 +337,8 @@ fieldset/APB1RSTR:
     description: DAC interface reset
     bit_offset: 29
     bit_size: 1
-  - name: CECRST
-    description: HDMI CEC reset
+  - name: I2C3RST
+    description: I2C3 reset
     bit_offset: 30
     bit_size: 1
 fieldset/APB2ENR:
@@ -332,17 +348,25 @@ fieldset/APB2ENR:
     description: SYSCFG clock enable
     bit_offset: 0
     bit_size: 1
-  - name: ADCEN
-    description: ADC 1 interface clock enable
-    bit_offset: 9
+  - name: TIM1EN
+    description: TIM1 Timer clock enable
+    bit_offset: 11
     bit_size: 1
   - name: SPI1EN
     description: SPI 1 clock enable
     bit_offset: 12
     bit_size: 1
+  - name: TIM8EN
+    description: TIM8 Timer clock enable
+    bit_offset: 13
+    bit_size: 1
   - name: USART1EN
     description: USART1 clock enable
     bit_offset: 14
+    bit_size: 1
+  - name: SPI4EN
+    description: SPI4 clock enable
+    bit_offset: 15
     bit_size: 1
   - name: TIM15EN
     description: TIM15 timer clock enable
@@ -360,21 +384,17 @@ fieldset/APB2ENR:
     description: TIM19 timer clock enable
     bit_offset: 19
     bit_size: 1
+  - name: TIM20EN
+    description: TIM20 timer clock enable
+    bit_offset: 20
+    bit_size: 1
   - name: DBGMCUEN
     description: MCU debug module clock enable
     bit_offset: 22
     bit_size: 1
-  - name: SDADC1EN
-    description: SDADC1 (Sigma Delta ADC 1) clock enable
-    bit_offset: 24
-    bit_size: 1
-  - name: SDADC2EN
-    description: SDADC2 (Sigma Delta ADC 2) clock enable
-    bit_offset: 25
-    bit_size: 1
-  - name: SDADC3EN
-    description: SDADC3 (Sigma Delta ADC 3) clock enable
-    bit_offset: 26
+  - name: HRTIM1EN
+    description: High Resolution Timer 1 clock enable
+    bit_offset: 29
     bit_size: 1
 fieldset/APB2RSTR:
   description: APB2 peripheral reset register (RCC_APB2RSTR)
@@ -383,17 +403,25 @@ fieldset/APB2RSTR:
     description: SYSCFG and COMP reset
     bit_offset: 0
     bit_size: 1
-  - name: ADCRST
-    description: ADC interface reset
-    bit_offset: 9
+  - name: TIM1RST
+    description: TIM1 timer reset
+    bit_offset: 11
     bit_size: 1
   - name: SPI1RST
     description: SPI 1 reset
     bit_offset: 12
     bit_size: 1
+  - name: TIM8RST
+    description: TIM8 timer reset
+    bit_offset: 13
+    bit_size: 1
   - name: USART1RST
     description: USART1 reset
     bit_offset: 14
+    bit_size: 1
+  - name: SPI4RST
+    description: SPI4 reset
+    bit_offset: 15
     bit_size: 1
   - name: TIM15RST
     description: TIM15 timer reset
@@ -411,21 +439,17 @@ fieldset/APB2RSTR:
     description: TIM19 timer reset
     bit_offset: 19
     bit_size: 1
+  - name: TIM20RST
+    description: TIM20 timer reset
+    bit_offset: 20
+    bit_size: 1
   - name: DBGMCURST
-    description: MCU debug module clock enable
+    description: Debug MCU reset
     bit_offset: 22
     bit_size: 1
-  - name: SDADC1RST
-    description: SDADC1 (Sigma delta ADC 1) reset
-    bit_offset: 24
-    bit_size: 1
-  - name: SDADC2RST
-    description: SDADC2 (Sigma delta ADC 2) reset
-    bit_offset: 25
-    bit_size: 1
-  - name: SDADC3RST
-    description: SDADC3 (Sigma delta ADC 3) reset
-    bit_offset: 26
+  - name: HRTIM1RST
+    description: High Resolution Timer1 reset
+    bit_offset: 29
     bit_size: 1
 fieldset/BDCR:
   description: Backup domain control register (RCC_BDCR)
@@ -495,11 +519,11 @@ fieldset/CFGR:
     enum: ADCPRE
   - name: PLLSRC
     description: PLL entry clock source
-    bit_offset: 15
-    bit_size: 2
+    bit_offset: 16
+    bit_size: 1
     enum: PLLSRC
   - name: PLLXTPRE
-    description: HSE divider for PLL entry
+    description: "HSE divider for PLL entry. Note: This bit is the same as the LSB of PREDIV in CFGR2, for compatibility with other STM32 products."
     bit_offset: 17
     bit_size: 1
     enum: PLLXTPRE
@@ -523,21 +547,10 @@ fieldset/CFGR:
     bit_offset: 24
     bit_size: 3
     enum: MCOSEL
-  - name: SDPRE
-    description: SDADC prescaler
-    bit_offset: 27
-    bit_size: 5
-    enum: SDPRE
-  - name: MCOPRE
-    description: Microcontroller Clock Output Prescaler
+  - name: MCOF
+    description: Microcontroller Clock Output Flag. Set and reset by hardware. It is reset by hardware when MCO field is written with a new value. It is set by hardware when the switch to the new MCO source is effective.
     bit_offset: 28
-    bit_size: 3
-    enum: MCOPRE
-  - name: PLLMCODIV
-    description: Do not divide PLL to MCO
-    bit_offset: 31
     bit_size: 1
-    enum: PLLMCODIV
 fieldset/CFGR2:
   description: Clock configuration register 2
   fields:
@@ -941,37 +954,10 @@ enum/LSEDRV:
   - name: High
     description: High driving capability
     value: 3
-enum/MCOPRE:
-  bit_size: 3
-  variants:
-  - name: Div1
-    description: MCO is divided by 1
-    value: 0
-  - name: Div2
-    description: MCO is divided by 2
-    value: 1
-  - name: Div4
-    description: MCO is divided by 4
-    value: 2
-  - name: Div8
-    description: MCO is divided by 8
-    value: 3
-  - name: Div16
-    description: MCO is divided by 16
-    value: 4
-  - name: Div32
-    description: MCO is divided by 32
-    value: 5
-  - name: Div64
-    description: MCO is divided by 64
-    value: 6
-  - name: Div128
-    description: MCO is divided by 128
-    value: 7
 enum/MCOSEL:
   bit_size: 3
   variants:
-  - name: DISABLE
+  - name: NoMCO
     description: MCO output disabled, no clock on MCO
     value: 0
   - name: LSI
@@ -989,18 +975,9 @@ enum/MCOSEL:
   - name: HSE
     description: External 4-32 MHz (HSE) oscillator clock selected
     value: 6
-  - name: PLL
-    description: PLL clock selected (divided by 1 or 2, depending en PLLMCODIV)
+  - name: PLL_DIV_2
+    description: PLL clock divided by 2
     value: 7
-enum/PLLMCODIV:
-  bit_size: 1
-  variants:
-  - name: Div2
-    description: PLL is divided by 2 for MCO
-    value: 0
-  - name: Div1
-    description: PLL is not divided for MCO
-    value: 1
 enum/PLLMUL:
   bit_size: 4
   variants:
@@ -1050,17 +1027,14 @@ enum/PLLMUL:
     description: PLL input clock x16
     value: 14
 enum/PLLSRC:
-  bit_size: 2
+  bit_size: 1
   variants:
   - name: HSI_Div2
     description: HSI divided by 2 selected as PLL input clock
     value: 0
-  - name: HSI_Div_PREDIV
-    description: HSI divided by PREDIV selected as PLL input clock
-    value: 1
   - name: HSE_Div_PREDIV
     description: HSE divided by PREDIV selected as PLL input clock
-    value: 2
+    value: 1
 enum/PLLXTPRE:
   bit_size: 1
   variants:
@@ -1154,57 +1128,6 @@ enum/RTCSEL:
   - name: HSE
     description: HSE oscillator clock divided by a prescaler used as RTC clock
     value: 3
-enum/SDPRE:
-  bit_size: 5
-  variants:
-  - name: Div2
-    description: SYSCLK divided by 2
-    value: 0
-  - name: Div4
-    description: SYSCLK divided by 4
-    value: 17
-  - name: Div6
-    description: SYSCLK divided by 6
-    value: 18
-  - name: Div8
-    description: SYSCLK divided by 8
-    value: 19
-  - name: Div10
-    description: SYSCLK divided by 10
-    value: 20
-  - name: Div12
-    description: SYSCLK divided by 12
-    value: 21
-  - name: Div14
-    description: SYSCLK divided by 14
-    value: 22
-  - name: Div16
-    description: SYSCLK divided by 16
-    value: 23
-  - name: Div20
-    description: SYSCLK divided by 20
-    value: 24
-  - name: Div24
-    description: SYSCLK divided by 24
-    value: 25
-  - name: Div28
-    description: SYSCLK divided by 28
-    value: 26
-  - name: Div32
-    description: SYSCLK divided by 32
-    value: 27
-  - name: Div36
-    description: SYSCLK divided by 36
-    value: 28
-  - name: Div40
-    description: SYSCLK divided by 40
-    value: 29
-  - name: Div44
-    description: SYSCLK divided by 44
-    value: 30
-  - name: Div48
-    description: SYSCLK divided by 48
-    value: 31
 enum/SW:
   bit_size: 2
   variants:
