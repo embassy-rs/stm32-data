@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, bail, Ok};
-use chiptool::ir::{BlockItemInner, Enum, IR};
+use chiptool::ir::IR;
 use stm32_data_serde::chip::core::peripheral::rcc::{Mux, StopMode};
 use stm32_data_serde::chip::core::peripheral::{self, rcc};
 
@@ -125,68 +125,6 @@ impl ParsedRccs {
             "HSI256_MSIK1024_MSIK4",
         ]);
 
-        let rcc_enum_map: HashMap<&String, HashMap<&String, (&String, &Enum)>> = {
-            let rcc_blocks = &ir.blocks.get("RCC").unwrap().items;
-
-            rcc_blocks
-                .iter()
-                .filter_map(|b| match &b.inner {
-                    BlockItemInner::Register(register) => register.fieldset.as_ref().map(|f| {
-                        let f = ir.fieldsets.get(f).unwrap();
-                        (
-                            &b.name,
-                            f.fields
-                                .iter()
-                                .filter_map(|f| {
-                                    let enumm_name = f.enumm.as_ref()?;
-                                    let enumm = ir.enums.get(enumm_name)?;
-
-                                    Some((&f.name, (enumm_name, enumm)))
-                                })
-                                .collect(),
-                        )
-                    }),
-                    _ => None,
-                })
-                .collect()
-        };
-
-        let check_mux = |register: &String, field: &String| -> Result<(), anyhow::Error> {
-            let block_map = match rcc_enum_map.get(register) {
-                Some(block_map) => block_map,
-                _ => return Ok(()),
-            };
-
-            let (enumm_name, enumm) = match block_map.get(field) {
-                Some(enumm) => enumm,
-                _ => return Ok(()),
-            };
-
-            for v in &enumm.variants {
-                if let Some(captures) = regex!(r"^([A-Z0-9_]+)_DIV_\d+?$").captures(v.name.as_str()) {
-                    let name = captures.get(1).unwrap();
-
-                    if !allowed_variants.contains(name.as_str()) {
-                        return Err(anyhow!(
-                            "rcc: prohibited variant name {} in enum {} for rcc_{}",
-                            v.name.as_str(),
-                            enumm_name,
-                            rcc_version
-                        ));
-                    }
-                } else if !allowed_variants.contains(v.name.as_str()) {
-                    return Err(anyhow!(
-                        "rcc: prohibited variant name {} in enum {} for rcc_{}",
-                        v.name.as_str(),
-                        enumm_name,
-                        rcc_version
-                    ));
-                }
-            }
-
-            Ok(())
-        };
-
         let mux_regexes = &[
             regex!(r"^DCKCFGR\d?/(.+)SEL$"),
             regex!(r"^CCIPR\d?/(.+)SEL$"),
@@ -206,7 +144,27 @@ impl ParsedRccs {
                         continue;
                     }
 
-                    check_mux(reg, &field.name)?;
+                    // ignore switches with missing enum.
+                    let Some(enum_name) = field.enumm.as_deref() else {
+                        continue;
+                    };
+
+                    let enumm = ir.enums.get(enum_name).unwrap();
+                    for v in &enumm.variants {
+                        let mut vname = v.name.as_str();
+                        if let Some(captures) = regex!(r"^([A-Z0-9_]+)_DIV_\d+?$").captures(v.name.as_str()) {
+                            vname = captures.get(1).unwrap().as_str();
+                        }
+
+                        if !allowed_variants.contains(vname) {
+                            return Err(anyhow!(
+                                "rcc: prohibited variant name {} in enum {} for rcc_{}",
+                                v.name.as_str(),
+                                enum_name,
+                                rcc_version
+                            ));
+                        }
+                    }
 
                     let val = Mux {
                         register: reg.to_ascii_lowercase(),
