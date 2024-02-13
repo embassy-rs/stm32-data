@@ -461,11 +461,11 @@ fieldset/CFGR:
     bit_size: 1
   - name: PLLSRC
     description: PLL input clock source
-    bit_offset: 15
-    bit_size: 2
+    bit_offset: 16
+    bit_size: 1
     enum: PLLSRC
   - name: PLLXTPRE
-    description: HSE divider for PLL entry. Same bit as PREDIC[0] from CFGR2 register. Refer to it for its meaning
+    description: HSE divider for PLL entry. Same bit as PREDIV[0] from CFGR2 register. Refer to it for its meaning
     bit_offset: 17
     bit_size: 1
     enum: PLLXTPRE
@@ -561,10 +561,6 @@ fieldset/CIR:
     description: HSI14 ready interrupt flag
     bit_offset: 5
     bit_size: 1
-  - name: HSI48RDYF
-    description: HSI48 ready interrupt flag
-    bit_offset: 6
-    bit_size: 1
   - name: CSSF
     description: Clock Security System Interrupt flag
     bit_offset: 7
@@ -593,10 +589,6 @@ fieldset/CIR:
     description: HSI14 ready interrupt enable
     bit_offset: 13
     bit_size: 1
-  - name: HSI48RDYIE
-    description: HSI48 ready interrupt enable
-    bit_offset: 14
-    bit_size: 1
   - name: LSIRDYC
     description: LSI Ready Interrupt Clear
     bit_offset: 16
@@ -620,10 +612,6 @@ fieldset/CIR:
   - name: HSI14RDYC
     description: HSI 14 MHz Ready Interrupt Clear
     bit_offset: 21
-    bit_size: 1
-  - name: HSI48RDYC
-    description: HSI48 Ready Interrupt Clear
-    bit_offset: 22
     bit_size: 1
   - name: CSSC
     description: Clock security system interrupt clear
@@ -694,18 +682,6 @@ fieldset/CR2:
   - name: HSI14CAL
     description: HSI14 clock calibration
     bit_offset: 8
-    bit_size: 8
-  - name: HSI48ON
-    description: HSI48 clock enable
-    bit_offset: 16
-    bit_size: 1
-  - name: HSI48RDY
-    description: HSI48 clock ready flag
-    bit_offset: 17
-    bit_size: 1
-  - name: HSI48CAL
-    description: HSI48 factory clock calibration
-    bit_offset: 24
     bit_size: 8
 fieldset/CSR:
   description: Control/status register (RCC_CSR)
@@ -847,7 +823,7 @@ enum/MCOPRE:
 enum/MCOSEL:
   bit_size: 4
   variants:
-  - name: NoMCO
+  - name: DISABLE
     description: MCO output disabled, no clock on MCO
     value: 0
   - name: HSI14
@@ -871,9 +847,6 @@ enum/MCOSEL:
   - name: PLL
     description: PLL clock selected (divided by 1 or 2, depending en PLLMCODIV)
     value: 7
-  - name: HSI48
-    description: Internal RC 48 MHz (HSI48) oscillator clock selected
-    value: 8
 enum/PLLMCODIV:
   bit_size: 1
   variants:
@@ -932,20 +905,14 @@ enum/PLLMUL:
     description: PLL input clock x16
     value: 14
 enum/PLLSRC:
-  bit_size: 2
+  bit_size: 1
   variants:
   - name: HSI_Div2
     description: HSI divided by 2 selected as PLL input clock
     value: 0
-  - name: HSI_Div_PREDIV
-    description: NOT ALLOWED IN F0x0 - HSI divided by PREDIV selected as PLL input clock
-    value: 1
   - name: HSE_Div_PREDIV
     description: HSE divided by PREDIV selected as PLL input clock
-    value: 2
-  - name: HSI48_Div_PREDIV
-    description: NOT ALLOWED IN F0x0 - HSI48 divided by PREDIV selected as PLL input clock
-    value: 3
+    value: 1
 enum/PLLXTPRE:
   bit_size: 1
   variants:
@@ -1051,9 +1018,6 @@ enum/SW:
   - name: PLL1_P
     description: PLL used as system clock
     value: 2
-  - name: HSI48
-    description: HSI48 used as system clock (when avaiable)
-    value: 3
 enum/USARTSW:
   bit_size: 2
   variants:
@@ -1072,9 +1036,6 @@ enum/USARTSW:
 enum/USBSW:
   bit_size: 1
   variants:
-  - name: HSI48
-    description: NOT ALLOWED IN F0x0 - HSI48 selected as USB clock source
-    value: 0
   - name: PLL1_P
     description: PLL clock selected as USB clock source
     value: 1
