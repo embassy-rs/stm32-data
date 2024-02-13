@@ -66,7 +66,7 @@ pub mod ir {
         pub name: &'static str,
         pub description: Option<&'static str>,
 
-        pub bit_offset: u32,
+        pub bit_offset: BitOffset,
         pub bit_size: u32,
         pub array: Option<Array>,
         pub enumm: Option<&'static str>,
@@ -87,6 +87,22 @@ pub mod ir {
     #[derive(Debug, Eq, PartialEq, Clone)]
     pub struct CursedArray {
         pub offsets: &'static [u32],
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone)]
+    pub enum BitOffset {
+        Regular(RegularBitOffset),
+        Cursed(CursedBitOffset),
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone)]
+    pub struct RegularBitOffset {
+        pub offset: u32,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone)]
+    pub struct CursedBitOffset {
+        pub ranges: &'static [core::ops::RangeInclusive<u32>],
     }
 
     #[derive(Debug, Eq, PartialEq, Clone)]

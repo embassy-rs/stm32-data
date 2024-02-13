@@ -77,7 +77,14 @@ pub mod ir {
                         .map(|field| Field {
                             name: field.name.clone(),
                             description: field.description.clone(),
-                            bit_offset: field.bit_offset,
+                            bit_offset: match &field.bit_offset {
+                                chiptool::ir::BitOffset::Regular(offset) => {
+                                    BitOffset::Regular(RegularBitOffset { offset: *offset })
+                                }
+                                chiptool::ir::BitOffset::Cursed(ranges) => {
+                                    BitOffset::Cursed(CursedBitOffset { ranges: ranges.clone() })
+                                }
+                            },
                             bit_size: field.bit_size,
                             array: field.array.as_ref().map(|array| match &array {
                                 chiptool::ir::Array::Regular(regular_array) => Array::Regular(RegularArray {
@@ -202,7 +209,7 @@ pub mod ir {
         pub name: String,
         pub description: Option<String>,
 
-        pub bit_offset: u32,
+        pub bit_offset: BitOffset,
         pub bit_size: u32,
         pub array: Option<Array>,
         pub enumm: Option<String>,
@@ -223,6 +230,22 @@ pub mod ir {
     #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
     pub struct CursedArray {
         pub offsets: Vec<u32>,
+    }
+
+    #[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize)]
+    pub enum BitOffset {
+        Regular(RegularBitOffset),
+        Cursed(CursedBitOffset),
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct RegularBitOffset {
+        pub offset: u32,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    pub struct CursedBitOffset {
+        pub ranges: Vec<core::ops::RangeInclusive<u32>>,
     }
 
     #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
