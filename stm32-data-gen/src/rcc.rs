@@ -174,10 +174,10 @@ impl ParsedRccs {
 
                     let val = MuxInfo {
                         mux: Mux {
-                            register: reg.to_ascii_lowercase(),
-                            field: field.name.to_ascii_lowercase(),
+                            register: reg.clone(),
+                            field: field.name.clone(),
                         },
-                        variants: enumm.variants.iter().map(|v| v.name.to_ascii_lowercase()).collect(),
+                        variants: enumm.variants.iter().map(|v| v.name.clone()).collect(),
                     };
 
                     if mux.insert(peri.to_string(), val).is_some() {
@@ -206,8 +206,8 @@ impl ParsedRccs {
                         if let Some(rstr) = ir.fieldsets.get(&reg.replace("ENR", "RSTR")) {
                             if let Some(_field) = rstr.fields.iter().find(|field| field.name == format!("{peri}RST")) {
                                 reset = Some(stm32_data_serde::chip::core::peripheral::rcc::Reset {
-                                    register: reg.replace("ENR", "RSTR").to_ascii_lowercase(),
-                                    field: format!("{peri}RST").to_ascii_lowercase(),
+                                    register: reg.replace("ENR", "RSTR"),
+                                    field: format!("{peri}RST"),
                                 });
                             }
                         }
@@ -220,25 +220,20 @@ impl ParsedRccs {
                             StopMode::Stop1
                         };
 
-                        // Timers are a bit special, they may have a x2 freq
-                        let peri_clock = if regex!(r"^(HR)?TIM\d+$").is_match(peri) {
-                            format!("{clock}_TIM")
-                        } else {
-                            clock.to_string()
-                        };
+                        let mut clock = clock.replace("AHB", "HCLK").replace("APB", "PCLK");
 
-                        let peri_clock = peri_clock
-                            .to_ascii_lowercase()
-                            .replace("ahb", "hclk")
-                            .replace("apb", "pclk");
+                        // Timers are a bit special, they may have a x2 freq
+                        if regex!(r"^(HR)?TIM\d+$").is_match(peri) {
+                            clock.push_str("_TIM");
+                        }
 
                         let val = EnRst {
                             enable: peripheral::rcc::Enable {
-                                register: reg.to_ascii_lowercase(),
-                                field: field.name.to_ascii_lowercase(),
+                                register: reg.clone(),
+                                field: field.name.clone(),
                             },
                             reset,
-                            clock: peri_clock,
+                            clock,
                             stop_mode,
                         };
 
@@ -301,7 +296,7 @@ impl ParsedRccs {
         let en_rst = get_with_fallback(peri_name, &rcc.en_rst, FALLBACKS)?;
         let mux = get_with_fallback(peri_name, &rcc.mux, FALLBACKS);
 
-        let phclk = regex!("^[ph]clk");
+        let phclk = regex!("^[PH]CLK");
         if let Some(mux) = mux {
             if phclk.is_match(&en_rst.clock) {
                 for v in &mux.variants {
