@@ -186,9 +186,9 @@ impl Gen {
         write!(
             &mut data,
             "
-                pub(crate) static PERIPHERALS: &'static [Peripheral] = {};
-                pub(crate) static INTERRUPTS: &'static [Interrupt] = {};
-                pub(crate) static DMA_CHANNELS: &'static [DmaChannel] = {};
+                pub(crate) static PERIPHERALS: &[Peripheral] = {};
+                pub(crate) static INTERRUPTS: &[Interrupt] = {};
+                pub(crate) static DMA_CHANNELS: &[DmaChannel] = {};
             ",
             stringify(&core.peripherals),
             stringify(&core.interrupts),
@@ -329,6 +329,16 @@ impl Gen {
                     .join(format!("{}_{}.rs", module, version)),
             )
             .unwrap();
+
+            // Allow a few warning
+            file.write_all(
+                b"#![allow(clippy::missing_safety_doc)]
+                #![allow(clippy::identity_op)]
+                #![allow(clippy::unnecessary_cast)]
+                #![allow(clippy::erasing_op)]",
+            )
+            .unwrap();
+
             let data = items.to_string().replace("] ", "]\n");
 
             // Remove inner attributes like #![no_std]
