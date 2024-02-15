@@ -802,7 +802,7 @@ fieldset/CCIPR1:
     description: "USART1 kernel clock source selection\r Set and reset by software.\r others: reserved, the kernel clock is disabled"
     bit_offset: 0
     bit_size: 3
-    enum: USARTSEL
+    enum: USART1SEL
   - name: USART2SEL
     description: "USART2 kernel clock source selection\r Set and reset by software.\r others: reserved, the kernel clock is disabled"
     bit_offset: 3
@@ -825,12 +825,12 @@ fieldset/CCIPR2:
     description: "LPTIM1 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 8
     bit_size: 3
-    enum: LPTIMSEL
+    enum: LPTIM1SEL
   - name: LPTIM2SEL
     description: "LPTIM2 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 12
     bit_size: 3
-    enum: LPTIMSEL
+    enum: LPTIM2SEL
 fieldset/CCIPR3:
   description: RCC kernel clock configuration register
   fields:
@@ -886,7 +886,7 @@ fieldset/CCIPR4:
     description: I3C2 kernel clock source selection
     bit_offset: 26
     bit_size: 2
-    enum: I2CSEL
+    enum: I3C2SEL
 fieldset/CCIPR5:
   description: RCC kernel clock configuration register
   fields:
@@ -1455,11 +1455,44 @@ enum/I2CSEL:
   - name: CSI
     description: csi_ker selected as peripheral clock
     value: 3
-enum/LPTIMSEL:
+enum/I3C2SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK3
+    description: rcc_pclk3 selected as peripheral clock
+    value: 0
+  - name: PLL3_R
+    description: pll3_r selected as peripheral clock
+    value: 1
+  - name: HSI
+    description: hsi_ker selected as peripheral clock
+    value: 2
+  - name: CSI
+    description: csi_ker selected as peripheral clock
+    value: 3
+enum/LPTIM1SEL:
   bit_size: 3
   variants:
   - name: PCLK3
     description: rcc_pclk3 selected as peripheral clock
+    value: 0
+  - name: PLL2_P
+    description: pll2_p selected as peripheral clock
+    value: 1
+  - name: LSE
+    description: LSE selected as peripheral clock
+    value: 3
+  - name: LSI
+    description: LSI selected as peripheral clock
+    value: 4
+  - name: PER
+    description: PER selected as peripheral clock
+    value: 5
+enum/LPTIM2SEL:
+  bit_size: 3
+  variants:
+  - name: PCLK1
+    description: rcc_pclk1 selected as peripheral clock
     value: 0
   - name: PLL2_P
     description: pll2_p selected as peripheral clock
@@ -3180,10 +3213,28 @@ enum/TIMPRE:
   - name: DefaultX4
     description: The timers kernel clock is equal to 2 x Frcc_pclk1 or 2 x Frcc_pclk2 if PPRE1 or PPRE2 corresponds to a division by 1, 2 or 4, else it is equal to 4 x Frcc_pclk1 or 4 x Frcc_pclk2
     value: 1
-enum/USARTSEL:
+enum/USART1SEL:
   bit_size: 3
   variants:
   - name: PCLK2
+    description: rcc_pclk2 selected as peripheral clock
+    value: 0
+  - name: PLL2_Q
+    description: pll2_q selected as peripheral clock
+    value: 1
+  - name: HSI
+    description: hsi_ker selected as peripheral clock
+    value: 3
+  - name: CSI
+    description: csi_ker selected as peripheral clock
+    value: 4
+  - name: LSE
+    description: LSE selected as peripheral clock
+    value: 5
+enum/USARTSEL:
+  bit_size: 3
+  variants:
+  - name: PCLK1
     description: rcc_pclk2 selected as peripheral clock
     value: 0
   - name: PLL2_Q

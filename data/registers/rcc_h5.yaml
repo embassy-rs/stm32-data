@@ -1403,7 +1403,7 @@ fieldset/CCIPR1:
     description: "USART1 kernel clock source selection\r Set and reset by software.\r others: reserved, the kernel clock is disabled"
     bit_offset: 0
     bit_size: 3
-    enum: USARTSEL
+    enum: USART1SEL
   - name: USART2SEL
     description: "USART2 kernel clock source selection\r Set and reset by software.\r others: reserved, the kernel clock is disabled"
     bit_offset: 3
@@ -1418,12 +1418,12 @@ fieldset/CCIPR1:
     description: "UART4 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 9
     bit_size: 3
-    enum: UARTSEL
+    enum: USARTSEL
   - name: UART5SEL
     description: "UART5 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 12
     bit_size: 3
-    enum: UARTSEL
+    enum: USARTSEL
   - name: USART6SEL
     description: "USART6 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 15
@@ -1433,17 +1433,17 @@ fieldset/CCIPR1:
     description: "UART7 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 18
     bit_size: 3
-    enum: UARTSEL
+    enum: USARTSEL
   - name: UART8SEL
     description: "UART8 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 21
     bit_size: 3
-    enum: UARTSEL
+    enum: USARTSEL
   - name: UART9SEL
     description: "UART9 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 24
     bit_size: 3
-    enum: UARTSEL
+    enum: USARTSEL
   - name: USART10SEL
     description: "USART10 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 27
@@ -1476,7 +1476,7 @@ fieldset/CCIPR2:
     description: "LPTIM2 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 12
     bit_size: 3
-    enum: LPTIMSEL
+    enum: LPTIM2SEL
   - name: LPTIM3SEL
     description: "LPTIM3 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 16
@@ -1534,7 +1534,7 @@ fieldset/CCIPR3:
     description: "LPUART1 kernel clock source selection\r others: reserved, the kernel clock is disabled"
     bit_offset: 24
     bit_size: 3
-    enum: LPUARTSEL
+    enum: LPUSARTSEL
 fieldset/CCIPR4:
   description: RCC kernel clock configuration register
   fields:
@@ -1577,12 +1577,12 @@ fieldset/CCIPR4:
     description: I2C3 kernel clock source selection
     bit_offset: 20
     bit_size: 2
-    enum: I2CSEL
+    enum: I2C34SEL
   - name: I2C4SEL
     description: I2C4 kernel clock source selection
     bit_offset: 22
     bit_size: 2
-    enum: I2CSEL
+    enum: I2C34SEL
   - name: I3C1SEL
     description: I3C1 kernel clock source selection
     bit_offset: 24
@@ -2231,6 +2231,21 @@ enum/HSIDIV:
   - name: Div8
     description: Division by 8
     value: 3
+enum/I2C34SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK3
+    description: rcc_pclk3 selected as peripheral clock
+    value: 0
+  - name: PLL3_R
+    description: pll3_r selected as peripheral clock
+    value: 1
+  - name: HSI
+    description: hsi_ker selected as peripheral clock
+    value: 2
+  - name: CSI
+    description: csi_ker selected as peripheral clock
+    value: 3
 enum/I2CSEL:
   bit_size: 2
   variants:
@@ -2246,6 +2261,24 @@ enum/I2CSEL:
   - name: CSI
     description: csi_ker selected as peripheral clock
     value: 3
+enum/LPTIM2SEL:
+  bit_size: 3
+  variants:
+  - name: PCLK1
+    description: rcc_pclk1 selected as peripheral clock
+    value: 0
+  - name: PLL2_P
+    description: pll2_p selected as peripheral clock
+    value: 1
+  - name: LSE
+    description: LSE selected as peripheral clock
+    value: 3
+  - name: LSI
+    description: LSI selected as peripheral clock
+    value: 4
+  - name: PER
+    description: PER selected as peripheral clock
+    value: 5
 enum/LPTIMSEL:
   bit_size: 3
   variants:
@@ -2267,7 +2300,7 @@ enum/LPTIMSEL:
   - name: PER
     description: PER selected as peripheral clock
     value: 5
-enum/LPUARTSEL:
+enum/LPUSARTSEL:
   bit_size: 3
   variants:
   - name: PCLK3
@@ -2420,7 +2453,7 @@ enum/NSPRIV:
 enum/OCTOSPISEL:
   bit_size: 2
   variants:
-  - name: HCLK1
+  - name: HCLK4
     description: rcc_hclk selected as kernel clock (default after reset)
     value: 0
   - name: PLL1_Q
@@ -4139,11 +4172,11 @@ enum/TIMPRE:
   - name: DefaultX4
     description: The timers kernel clock is equal to 2 x Frcc_pclk1 or 2 x Frcc_pclk2 if PPRE1 or PPRE2 corresponds to a division by 1, 2 or 4, else it is equal to 4 x Frcc_pclk1 or 4 x Frcc_pclk2
     value: 1
-enum/UARTSEL:
+enum/USART1SEL:
   bit_size: 3
   variants:
-  - name: PCLK1
-    description: rcc_pclk1 selected as peripheral clock
+  - name: PCLK2
+    description: rcc_pclk2 selected as peripheral clock
     value: 0
   - name: PLL2_Q
     description: pll2_q selected as peripheral clock
@@ -4163,8 +4196,8 @@ enum/UARTSEL:
 enum/USARTSEL:
   bit_size: 3
   variants:
-  - name: PCLK2
-    description: rcc_pclk2 selected as peripheral clock
+  - name: PCLK1
+    description: rcc_pclk1 selected as peripheral clock
     value: 0
   - name: PLL2_Q
     description: pll2_q selected as peripheral clock

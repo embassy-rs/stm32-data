@@ -765,7 +765,7 @@ fieldset/CCIPR1:
     description: "USART1 kernel clock source selection\r This bits are used to select the USART1 kernel clock source.\r Access can be secured by GTZC_TZSC USART1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: The USART1 is functional in Stop 0 and Stop 1 mode only when the kernel clock is HSI or LSE."
     bit_offset: 0
     bit_size: 2
-    enum: USARTSEL
+    enum: USART1SEL
   - name: USART2SEL
     description: "USART2 kernel clock source selection\r This bits are used to select the USART2 kernel clock source.\r Access can be secured by GTZC_TZSC USART2SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: The USART2 is functional in Stop 0 and Stop 1 mode only when the kernel clock is HSI or LSE."
     bit_offset: 2
@@ -775,17 +775,17 @@ fieldset/CCIPR1:
     description: "I2C1 kernel clock source selection\r These bits are used to select the I2C1 kernel clock source.\r Access can be secured by GTZC_TZSC I2C1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: The I2C1 is functional in Stop 0 and Stop 1 mode only when the kernel clock is HSI."
     bit_offset: 10
     bit_size: 2
-    enum: I2CSEL
+    enum: I2C1SEL
   - name: LPTIM2SEL
     description: "Low-power timer 2 kernel clock source selection\r These bits are used to select the LPTIM2 kernel clock source.\r Access can be secured by GTZC_TZSC LPTIM2SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: The LPTIM2 is functional in Stop 0 and Stop 1 mode only when the kernel clock is LSI, LSE or HSI if HSIKERON = 1."
     bit_offset: 18
     bit_size: 2
-    enum: LPTIMSEL
+    enum: LPTIM2SEL
   - name: SPI1SEL
     description: "SPI1 kernel clock source selection\r These bits are used to select the SPI1 kernel clock source.\r Access can be secured by GTZC_TZSC SPI1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: The SPI1 is functional in Stop 0 and Stop 1 mode only when the kernel clock is HSI."
     bit_offset: 20
     bit_size: 2
-    enum: SPISEL
+    enum: SPI1SEL
   - name: SYSTICKSEL
     description: "SysTick clock source selection\r These bits are used to select the SysTick clock source.\r Access can be secured by RCC SYSCLKSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: When LSE or LSI is selected, the AHB frequency must be at least four times higher than the LSI or LSE frequency. In addition, a jitter up to one hclk1 cycle is introduced, due to the LSE or LSI sampling with hclk1 in the SysTick circuitry."
     bit_offset: 22
@@ -816,17 +816,17 @@ fieldset/CCIPR3:
     description: "SPI3 kernel clock source selection\r These bits are used to select the SPI3 kernel clock source.\r Access can be secured by GTZC_TZSC SPI3SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: The SPI3 is functional in Stop modes only when the kernel clock is HSI."
     bit_offset: 3
     bit_size: 2
-    enum: SPISEL
+    enum: SPI3SEL
   - name: I2C3SEL
     description: "I2C3 kernel clock source selection\r These bits are used to select the I2C3 kernel clock source.\r Access can be secured by GTZC_TZSC I2C3SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: The I2C3 is functional in Stop modes only when the kernel clock is HSI"
     bit_offset: 6
     bit_size: 2
-    enum: I2CSEL
+    enum: I2C3SEL
   - name: LPTIM1SEL
     description: "LPTIM1 kernel clock source selection\r These bits are used to select the LPTIM1 kernel clock source.\r Access can be secured by GTZC_TZSC LPTIM1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r Note: The LPTIM1 is functional in Stop modes only when the kernel clock is LSI, LSE, HSI with HSIKERON = 1."
     bit_offset: 10
     bit_size: 2
-    enum: LPTIMSEL
+    enum: LPTIM1SEL
   - name: ADCSEL
     description: "ADC4 kernel clock source selection\r These bits are used to select the ADC4 kernel clock source.\r Access can be secured by GTZC_TZSC ADC4SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV.\r others: reserved\r Note: The ADC4 is functional in Stop modes only when the kernel clock is HSI."
     bit_offset: 12
@@ -1201,8 +1201,8 @@ fieldset/SECCFGR:
 enum/ADCSEL:
   bit_size: 3
   variants:
-  - name: HCLK1
-    description: hclk1 clock selected
+  - name: HCLK4
+    description: hclk4 clock selected
     value: 0
   - name: SYS
     description: SYSCLK selected
@@ -1270,7 +1270,7 @@ enum/HSEPRE:
   - name: Div2
     description: HSE divided, SYSCLK = HSE/2
     value: 1
-enum/I2CSEL:
+enum/I2C1SEL:
   bit_size: 2
   variants:
   - name: PCLK1
@@ -1282,10 +1282,37 @@ enum/I2CSEL:
   - name: HSI
     description: HSI selected
     value: 2
-enum/LPTIMSEL:
+enum/I2C3SEL:
   bit_size: 2
   variants:
   - name: PCLK7
+    description: pclk7 selected
+    value: 0
+  - name: SYS
+    description: SYSCLK selected
+    value: 1
+  - name: HSI
+    description: HSI selected
+    value: 2
+enum/LPTIM1SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK7
+    description: pclk7 selected.
+    value: 0
+  - name: LSI
+    description: LSI selected
+    value: 1
+  - name: HSI
+    description: HSI selected
+    value: 2
+  - name: LSE
+    description: LSE selected
+    value: 3
+enum/LPTIM2SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
     description: pclk7 selected.
     value: 0
   - name: LSI
@@ -1510,10 +1537,22 @@ enum/RTCSEL:
   - name: HSE
     description: HSE oscillator clock divided by 32 selected, and enabled
     value: 3
-enum/SPISEL:
+enum/SPI1SEL:
   bit_size: 2
   variants:
   - name: PCLK2
+    description: pclk2 selected
+    value: 0
+  - name: SYS
+    description: SYSCLK selected
+    value: 1
+  - name: HSI
+    description: HSI selected
+    value: 2
+enum/SPI3SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK7
     description: pclk2 selected
     value: 0
   - name: SYS
@@ -1555,6 +1594,21 @@ enum/TIMICSEL:
   - name: HSI_DIV_256
     description: HSI/256 generated and can be selected by TIM16, TIM17 and LPTIM2 as internal input capture
     value: 1
+enum/USART1SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK2
+    description: pclk2 selected
+    value: 0
+  - name: SYS
+    description: SYSCLK selected
+    value: 1
+  - name: HSI
+    description: HSI selected
+    value: 2
+  - name: LSE
+    description: LSE selected
+    value: 3
 enum/USARTSEL:
   bit_size: 2
   variants:
