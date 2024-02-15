@@ -868,8 +868,12 @@ fieldset/CCMR3_ADV:
       stride: 8
   - name: OCM
     description: Output compare x (x=5,6) mode
-    bit_offset: 4
-    bit_size: 3
+    bit_offset:
+      - start: 4
+        end: 6
+      - start: 16
+        end: 16
+    bit_size: 4
     array:
       len: 2
       stride: 8
@@ -961,8 +965,12 @@ fieldset/CCMR_Output_1CH:
       stride: 8
   - name: OCM
     description: Output compare y mode
-    bit_offset: 4
-    bit_size: 3
+    bit_offset:
+      - start: 4
+        end: 6
+      - start: 16
+        end: 16
+    bit_size: 4
     array:
       len: 1
       stride: 8
@@ -995,8 +1003,12 @@ fieldset/CCMR_Output_2CH:
       stride: 8
   - name: OCM
     description: Output compare y mode
-    bit_offset: 4
-    bit_size: 3
+    bit_offset:
+      - start: 4
+        end: 6
+      - start: 16
+        end: 16
+    bit_size: 4
     array:
       len: 2
       stride: 8
@@ -1196,8 +1208,12 @@ fieldset/CR2_2CH:
   fields:
   - name: MMS
     description: Master mode selection
-    bit_offset: 4
-    bit_size: 3
+    bit_offset:
+      - start: 4
+        end: 6
+      - start: 25
+        end: 25
+    bit_size: 4
     enum: MMS
   - name: TI1S
     description: TI1 selection
@@ -1210,8 +1226,12 @@ fieldset/CR2_2CH_CMP:
   fields:
   - name: MMS
     description: Master mode selection
-    bit_offset: 4
-    bit_size: 3
+    bit_offset:
+      - start: 4
+        end: 6
+      - start: 25
+        end: 25
+    bit_size: 4
     enum: MMS
   - name: TI1S
     description: TI1 selection
@@ -1253,8 +1273,12 @@ fieldset/CR2_BASIC:
   fields:
   - name: MMS
     description: Master mode selection
-    bit_offset: 4
-    bit_size: 3
+    bit_offset:
+      - start: 4
+        end: 6
+      - start: 25
+        end: 25
+    bit_size: 4
     enum: MMS
 fieldset/CR2_GP16:
   extends: CR2_BASIC
@@ -1621,13 +1645,21 @@ fieldset/SMCR_2CH:
   fields:
   - name: SMS
     description: Slave mode selection
-    bit_offset: 0
-    bit_size: 3
+    bit_offset:
+      - start: 0
+        end: 2
+      - start: 16
+        end: 16
+    bit_size: 4
     enum: SMS
   - name: TS
     description: Trigger selection
-    bit_offset: 4
-    bit_size: 3
+    bit_offset:
+      - start: 4
+        end: 6
+      - start: 20
+        end: 21
+    bit_size: 5
     enum: TS
   - name: MSM
     description: Master/Slave mode
@@ -2178,7 +2210,7 @@ enum/LOCK:
     description: LOCK Level 2 + CC Control bits (OCxM and OCxPE bits in TIMx_CCMRx registers, as long as the related channel is configured in output through the CCxS bits) can no longer be written.
     value: 3
 enum/MMS:
-  bit_size: 3
+  bit_size: 4
   variants:
   - name: Reset
     description: The UG bit from the TIMx_EGR register is used as trigger output
@@ -2204,6 +2236,9 @@ enum/MMS:
   - name: CompareOC4
     description: OC4REF signal is used as trigger output
     value: 7
+  - name: EncoderClockOutput
+    description: The encoder clock signal is used as trigger output
+    value: 8
 enum/MMS2:
   bit_size: 4
   variants:
@@ -2274,7 +2309,7 @@ enum/OCCS:
     description: tim_ocref_clr_int is connected to tim_etrf
     value: 1
 enum/OCM:
-  bit_size: 3
+  bit_size: 4
   variants:
   - name: Frozen
     description: The comparison between the output compare register TIMx_CCRy and the counter TIMx_CNT has no effect on the outputs
@@ -2300,6 +2335,52 @@ enum/OCM:
   - name: PwmMode2
     description: Inversely to PwmMode1
     value: 7
+  - name: Retrigerrable_OPM_Mode_1
+    description: |
+      In up-counting mode, the channel is active until a trigger
+      event is detected (on tim_trgi signal). Then, a comparison is performed as in PWM
+      mode 1 and the channels becomes active again at the next update. In down-counting
+      mode, the channel is inactive until a trigger event is detected (on tim_trgi signal).
+      Then, a comparison is performed as in PWM mode 1 and the channels becomes
+      inactive again at the next update.
+    value: 8
+  - name: Retrigerrable_OPM_Mode_2
+    description: |
+      In up-counting mode, the channel is inactive until a
+      trigger event is detected (on tim_trgi signal). Then, a comparison is performed as in
+      PWM mode 2 and the channels becomes inactive again at the next update. In down-
+      counting mode, the channel is active until a trigger event is detected (on tim_trgi
+      signal). Then, a comparison is performed as in PWM mode 1 and the channels
+      becomes active again at the next update.
+    value: 9
+  - name: _reserved1
+    description: _reserved1
+    value: 10
+  - name: _reserved2
+    description: _reserved2
+    value: 11
+  - name: Combined_PWM_Mode_1
+    description: |
+      tim_oc1ref has the same behavior as in PWM mode 1.
+      tim_oc1refc is the logical OR between tim_oc1ref and tim_oc2ref.
+    value: 12
+  - name: Combined_PWM_Mode_2
+    description: |
+      tim_oc1ref has the same behavior as in PWM mode 2.
+      tim_oc1refc is the logical AND between tim_oc1ref and tim_oc2ref.
+    value: 13
+  - name: Asymmetric_PWM_Mode_1
+    description: |
+      tim_oc1ref has the same behavior as in PWM mode 1.
+      tim_oc1refc outputs tim_oc1ref when the counter is counting up, tim_oc2ref when it is
+      counting down.
+    value: 14
+  - name: Asymmetric_PWM_Mode_2
+    description: |
+      tim_oc1ref has the same behavior as in PWM mode 2.
+      tim_oc1refc outputs tim_oc1ref when the counter is counting up, tim_oc2ref when it is
+      counting down.
+    value: 15
 enum/OSSI:
   bit_size: 1
   variants:
@@ -2319,10 +2400,10 @@ enum/OSSR:
     description: When inactive, OC/OCN outputs are enabled with their inactive level
     value: 1
 enum/SMS:
-  bit_size: 3
+  bit_size: 4
   variants:
   - name: Disabled
-    description: Slave mode disabled - if CEN = ‘1 then the prescaler is clocked directly by the internal clock.
+    description: Slave mode disabled - if CEN = '1' then the prescaler is clocked directly by the internal clock.
     value: 0
   - name: Encoder_Mode_1
     description: Encoder mode 1 - Counter counts up/down on TI2FP1 edge depending on TI1FP2 level.
@@ -2345,6 +2426,30 @@ enum/SMS:
   - name: Ext_Clock_Mode
     description: External Clock Mode 1 - Rising edges of the selected trigger (TRGI) clock the counter.
     value: 7
+  - name: Combined_Reset_Trigger
+    description: Rising edge of the selected trigger input (tim_trgi) reinitializes the counter, generates an update of the registers and starts the counter.
+    value: 8
+  - name: Combined_Gated_Trigger
+    description: The counter clock is enabled when the trigger input (tim_trgi) is high. The counter stops and is reset) as soon as the trigger becomes low. Both start and stop of the counter are controlled.
+    value: 9
+  - name: Encoder_Up_X2
+    description: Encoder mode, Clock plus direction, x2 mode.
+    value: 10
+  - name: Encoder_Up_X1
+    description: Encoder mode, Clock plus direction, x1 mode, tim_ti2fp2 edge sensitivity is set by CC2P
+    value: 11
+  - name: Encoder_Dir_X2
+    description: Encoder mode, Directional Clock, x2 mode.
+    value: 12
+  - name: Encoder_Dir_X1
+    description: Encoder mode, Directional Clock, x1 mode, tim_ti1fp1 and tim_ti2fp2 edge sensitivity is set by CC1P and CC2P.
+    value: 13
+  - name: Quadrature_Encoder_Mode_X1_TI1PF1
+    description: Quadrature encoder mode, x1 mode, counting on tim_ti1fp1 edges only, edge sensitivity is set by CC1P.
+    value: 14
+  - name: Quadrature_Encoder_Mode_X1_TI2PF2
+    description: Quadrature encoder mode, x1 mode, counting on tim_ti2fp2 edges only, edge sensitivity is set by CC2P.
+    value: 15
 enum/SMSPS:
   bit_size: 1
   variants:
@@ -2364,32 +2469,68 @@ enum/TI1S:
     description: The TIMx_CH1, CH2, CH3 pins are connected to TI1 input
     value: 1
 enum/TS:
-  bit_size: 3
+  bit_size: 5
   variants:
   - name: ITR0
-    description: Internal Trigger 0 (ITR0)
+    description: Internal Trigger 0
     value: 0
   - name: ITR1
-    description: Internal Trigger 1 (ITR1)
+    description: Internal Trigger 1
     value: 1
   - name: ITR2
-    description: Internal Trigger 2 (ITR2)
+    description: Internal Trigger 2
     value: 2
   - name: ITR3
-    description: Internal Trigger 3 (ITR3)
+    description: Internal Trigger 3
     value: 3
   - name: TI1F_ED
-    description: TI1 Edge Detector (TI1F_ED)
+    description: TI1 Edge Detector
     value: 4
   - name: TI1FP1
-    description: Filtered Timer Input 1 (TI1FP1)
+    description: Filtered Timer Input 1
     value: 5
   - name: TI2FP2
-    description: Filtered Timer Input 2 (TI2FP2)
+    description: Filtered Timer Input 2
     value: 6
   - name: ETRF
-    description: External Trigger input (ETRF)
+    description: External Trigger input
     value: 7
+  - name: ITR4
+    description: Internal Trigger 4
+    value: 8
+  - name: ITR5
+    description: Internal Trigger 5
+    value: 9
+  - name: ITR6
+    description: Internal Trigger 6
+    value: 10
+  - name: ITR7
+    description: Internal Trigger 7
+    value: 11
+  - name: ITR8
+    description: Internal Trigger 8
+    value: 12
+  - name: ITR9
+    description: Internal Trigger 9
+    value: 13
+  - name: ITR10
+    description: Internal Trigger 10
+    value: 14
+  - name: ITR11
+    description: Internal Trigger 11
+    value: 15
+  - name: ITR12
+    description: Internal Trigger 12
+    value: 16
+  - name: ITR13
+    description: Internal Trigger 13
+    value: 17
+  - name: ITR14
+    description: Internal Trigger 14
+    value: 18
+  - name: ITR15
+    description: Internal Trigger 15
+    value: 19
 enum/URS:
   bit_size: 1
   variants:
