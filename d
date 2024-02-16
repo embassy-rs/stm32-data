@@ -42,6 +42,10 @@ case "$CMD" in
             fi
         done
     ;;
+    gen)
+        rm -rf build/data
+        cargo run --release --bin stm32-data-gen
+    ;;
     ci)
         [ -d sources ] || ./d download-all
         cd ./sources/
@@ -54,6 +58,8 @@ case "$CMD" in
         cd build/stm32-metapac
         find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2021
         cargo check --features stm32h755zi-cm7,pac,metadata
+        cargo check --features stm32f777zi,pac
+        cargo check --features stm32u585zi,metadata
     ;;
     *)
         echo "unknown command"
