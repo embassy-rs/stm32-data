@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, bail, Ok};
 use chiptool::ir::IR;
-use stm32_data_serde::chip::core::peripheral::rcc::{Mux, StopMode};
+use stm32_data_serde::chip::core::peripheral::rcc::{Field, StopMode};
 use stm32_data_serde::chip::core::peripheral::{self, rcc};
 
 use crate::regex;
@@ -24,15 +24,15 @@ struct ParsedRcc {
 
 #[derive(Debug)]
 struct MuxInfo {
-    mux: Mux,
+    mux: Field,
     variants: Vec<String>,
 }
 
 #[derive(Debug)]
 struct EnRst {
-    enable: rcc::Enable,
-    reset: Option<rcc::Reset>,
-    clock: String,
+    enable: rcc::Field,
+    reset: Option<rcc::Field>,
+    bus_clock: String,
     stop_mode: StopMode,
 }
 
@@ -173,7 +173,7 @@ impl ParsedRccs {
                     }
 
                     let val = MuxInfo {
-                        mux: Mux {
+                        mux: Field {
                             register: reg.clone(),
                             field: field.name.clone(),
                         },
@@ -205,7 +205,7 @@ impl ParsedRccs {
                         let mut reset = None;
                         if let Some(rstr) = ir.fieldsets.get(&reg.replace("ENR", "RSTR")) {
                             if let Some(_field) = rstr.fields.iter().find(|field| field.name == format!("{peri}RST")) {
-                                reset = Some(stm32_data_serde::chip::core::peripheral::rcc::Reset {
+                                reset = Some(rcc::Field {
                                     register: reg.replace("ENR", "RSTR"),
                                     field: format!("{peri}RST"),
                                 });
@@ -220,20 +220,15 @@ impl ParsedRccs {
                             StopMode::Stop1
                         };
 
-                        let mut clock = clock.replace("AHB", "HCLK").replace("APB", "PCLK");
-
-                        // Timers are a bit special, they may have a x2 freq
-                        if regex!(r"^(HR)?TIM\d+$").is_match(peri) {
-                            clock.push_str("_TIM");
-                        }
+                        let clock = clock.replace("AHB", "HCLK").replace("APB", "PCLK");
 
                         let val = EnRst {
-                            enable: peripheral::rcc::Enable {
+                            enable: rcc::Field {
                                 register: reg.clone(),
                                 field: field.name.clone(),
                             },
                             reset,
-                            clock,
+                            bus_clock: clock,
                             stop_mode,
                         };
 
@@ -297,26 +292,37 @@ impl ParsedRccs {
         let mux = get_with_fallback(peri_name, &rcc.mux, FALLBACKS);
 
         let phclk = regex!("^[PH]CLK");
-        if let Some(mux) = mux {
-            if phclk.is_match(&en_rst.clock) {
-                for v in &mux.variants {
-                    if phclk.is_match(v) && v != &en_rst.clock {
-                        panic!(
-                            "rcc_{}: peripheral {} is on bus {} but mux {}.{} refers to {}",
-                            rcc_version, peri_name, en_rst.clock, mux.mux.register, mux.mux.field, v
-                        )
-                    }
-                }
-            }
+
+        let mut maybe_kernel_clock = en_rst.bus_clock.clone();
+        // Timers are a bit special, they may have a x2 freq
+        if regex!(r"^(HR)?TIM\d+$").is_match(peri_name) {
+            maybe_kernel_clock.push_str("_TIM");
         }
 
+        let kernel_clock = match mux {
+            Some(mux) => {
+                // check for mismatch between mux and bus clock.
+                if phclk.is_match(&en_rst.bus_clock) {
+                    for v in &mux.variants {
+                        if phclk.is_match(v) && v != &maybe_kernel_clock {
+                            panic!(
+                                "rcc_{}: peripheral {} is on bus {} but mux {}.{} refers to {}",
+                                rcc_version, peri_name, maybe_kernel_clock, mux.mux.register, mux.mux.field, v
+                            )
+                        }
+                    }
+                }
+                rcc::KernelClock::Mux(mux.mux.clone())
+            }
+            None => rcc::KernelClock::Clock(maybe_kernel_clock),
+        };
+
         Some(peripheral::Rcc {
-            clock: en_rst.clock.clone(),
+            bus_clock: en_rst.bus_clock.clone(),
+            kernel_clock,
             enable: en_rst.enable.clone(),
             reset: en_rst.reset.clone(),
             stop_mode: en_rst.stop_mode.clone(),
-
-            mux: mux.map(|m| m.mux.clone()),
         })
     }
 }

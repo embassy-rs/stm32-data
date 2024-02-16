@@ -220,6 +220,7 @@ impl Gen {
 
         let data = format!(
             "include!(\"../{}\");
+            use crate::metadata::PeripheralRccKernelClock::{{Clock, Mux}};
             pub static METADATA: Metadata = Metadata {{
                 name: {:?},
                 family: {:?},

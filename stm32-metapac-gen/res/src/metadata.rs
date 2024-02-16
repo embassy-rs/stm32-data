@@ -194,10 +194,10 @@ pub struct PeripheralInterrupt {
 
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct PeripheralRcc {
-    pub clock: &'static str,
+    pub bus_clock: &'static str,
+    pub kernel_clock: PeripheralRccKernelClock,
     pub enable: Option<PeripheralRccRegister>,
     pub reset: Option<PeripheralRccRegister>,
-    pub mux: Option<PeripheralRccRegister>,
     pub stop_mode: StopMode,
 }
 
@@ -205,6 +205,12 @@ pub struct PeripheralRcc {
 pub struct PeripheralRccRegister {
     pub register: &'static str,
     pub field: &'static str,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum PeripheralRccKernelClock {
+    Clock(&'static str),
+    Mux(PeripheralRccRegister),
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Default)]

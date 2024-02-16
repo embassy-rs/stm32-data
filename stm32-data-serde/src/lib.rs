@@ -114,12 +114,11 @@ pub mod chip {
 
             #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
             pub struct Rcc {
-                pub clock: String,
-                pub enable: rcc::Enable,
+                pub bus_clock: String,
+                pub kernel_clock: rcc::KernelClock,
+                pub enable: rcc::Field,
                 #[serde(skip_serializing_if = "Option::is_none")]
-                pub reset: Option<rcc::Reset>,
-                #[serde(skip_serializing_if = "Option::is_none")]
-                pub mux: Option<rcc::Mux>,
+                pub reset: Option<rcc::Field>,
                 #[serde(default, skip_serializing_if = "crate::is_default")]
                 pub stop_mode: rcc::StopMode,
             }
@@ -128,21 +127,16 @@ pub mod chip {
                 use serde::{Deserialize, Serialize};
 
                 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
-                pub struct Enable {
+                pub struct Field {
                     pub register: String,
                     pub field: String,
                 }
 
                 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
-                pub struct Reset {
-                    pub register: String,
-                    pub field: String,
-                }
-
-                #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
-                pub struct Mux {
-                    pub register: String,
-                    pub field: String,
+                #[serde(untagged)]
+                pub enum KernelClock {
+                    Clock(String),
+                    Mux(Field),
                 }
 
                 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize, Default)]

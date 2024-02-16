@@ -344,15 +344,21 @@ pub struct PeripheralInterrupt {
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
 pub struct PeripheralRcc {
-    pub clock: String,
+    pub bus_clock: String,
+    pub kernel_clock: PeripheralRccKernelClock,
     #[serde(default)]
     pub enable: Option<PeripheralRccRegister>,
     #[serde(default)]
     pub reset: Option<PeripheralRccRegister>,
     #[serde(default)]
-    pub mux: Option<PeripheralRccRegister>,
-    #[serde(default)]
     pub stop_mode: StopMode,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+#[serde(untagged)]
+pub enum PeripheralRccKernelClock {
+    Clock(String),
+    Mux(PeripheralRccRegister),
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
