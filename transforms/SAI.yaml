@@ -1,3 +1,41 @@
 transforms:
+  - !MergeEnums
+    from: ^[AB](.*)
+    to: $1
+  - !Rename
+    from: ^(.+?)_(.+)
+    to: $2
+
   - !DeleteEnums
-    from: ^(C?AFSDET(IE)?|CCNRDY|CNRDYIE|COVRUDR|CWCKCFG|DMAEN|FFLUSH|FREQ(IE)?|C?LFSDET(IE)?|MUTE|C?MUTEDET(IE)?|OVRUDR(IE)?|SAIEN|WCKCFGIE)$
+    from: ^(C?A?FSDET(IE)?|CCNRDY(IE)?|CNRDYIE|C?OVRUDR|CWCKCFG(IE)?|WCKCFGIE|DMAEN|FFLUSH|FREQ(IE)?|C?LFSDET(IE)?|MUTE|C?MUTEDET(IE)?|OVRUDR(IE)?|SAIEN)$
+    bit_size: 1
+
+  - !MergeFieldsets
+    from: ^[AB](.*)
+    to: $1
+
+  - !MakeFieldArray
+    fieldsets: PDMCR
+    from: CKEN\d
+    to: CKEN
+
+  - !MakeFieldArray
+    fieldsets: PDMDLY
+    from: DLYM\d(L|R)
+    to: DLYM$1
+
+  - !MakeBlock
+    blocks: SAI\d
+    from: ^(A|B)(.+)
+    to_outer: $1
+    to_inner: $2
+    to_block: CH
+
+  - !MakeRegisterArray
+    blocks: SAI\d
+    from: ^(A|B)$
+    to: CH
+
+  - !Rename
+    from: ^SAI\d$
+    to: SAI
