@@ -2,18 +2,44 @@ use std::env;
 #[cfg(any(feature = "rt", feature = "memory-x"))]
 use std::path::PathBuf;
 
+enum GetOneError {
+    None,
+    Multiple,
+}
+
+trait IteratorExt: Iterator {
+    fn get_one(self) -> Result<Self::Item, GetOneError>;
+}
+
+impl<T: Iterator> IteratorExt for T {
+    fn get_one(mut self) -> Result<Self::Item, GetOneError> {
+        match self.next() {
+            None => Err(GetOneError::None),
+            Some(res) => match self.next() {
+                Some(_) => Err(GetOneError::Multiple),
+                None => Ok(res),
+            },
+        }
+    }
+}
+
 fn main() {
     #[cfg(any(feature = "rt", feature = "memory-x"))]
     let crate_dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
 
-    let chip_core_name = env::vars_os()
-        .map(|(a, _)| a.to_string_lossy().to_string())
-        .find(|x| x.starts_with("CARGO_FEATURE_STM32"))
-        .expect("No stm32xx Cargo feature enabled")
-        .strip_prefix("CARGO_FEATURE_")
-        .unwrap()
-        .to_ascii_lowercase()
-        .replace('_', "-");
+    let chip_core_name = match env::vars()
+        .map(|(a, _)| a)
+        .filter(|x| x.starts_with("CARGO_FEATURE_STM32"))
+        .get_one()
+    {
+        Ok(x) => x,
+        Err(GetOneError::None) => panic!("No stm32xx Cargo feature enabled"),
+        Err(GetOneError::Multiple) => panic!("Multiple stm32xx Cargo features enabled"),
+    }
+    .strip_prefix("CARGO_FEATURE_")
+    .unwrap()
+    .to_ascii_lowercase()
+    .replace('_', "-");
 
     #[cfg(feature = "rt")]
     println!(
