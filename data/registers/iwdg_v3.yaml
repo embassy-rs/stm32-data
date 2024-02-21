@@ -1,0 +1,93 @@
+block/IWDG:
+  description: Independent watchdog.
+  items:
+  - name: KR
+    description: IWDG key register.
+    byte_offset: 0
+    fieldset: KR
+  - name: PR
+    description: IWDG prescaler register.
+    byte_offset: 4
+    fieldset: PR
+  - name: RLR
+    description: IWDG reload register.
+    byte_offset: 8
+    fieldset: RLR
+  - name: SR
+    description: IWDG status register.
+    byte_offset: 12
+    fieldset: SR
+  - name: WINR
+    description: IWDG window register.
+    byte_offset: 16
+    fieldset: WINR
+  - name: EWCR
+    description: IWDG early wakeup interrupt register.
+    byte_offset: 20
+    fieldset: EWCR
+fieldset/EWCR:
+  description: IWDG early wakeup interrupt register.
+  fields:
+  - name: EWIT
+    description: 'Watchdog counter window value These bits are write access protected (see ). They are written by software to define at which position of the IWDCNT down-counter the early wakeup interrupt must be generated. The early interrupt is generated when the IWDCNT is lower or equal to EWIT[11:0] - 1. EWIT[11:0] must be bigger than 1. An interrupt is generated only if EWIE = 1. The EWU bit in the must be reset to be able to change the reload value. Note: Reading this register returns the Early wakeup comparator value and the Interrupt enable bit from the VDD voltage domain. This value may not be up to date/valid if a write operation to this register is ongoing, hence the value read from this register is valid only when the EWU bit in the is reset.'
+    bit_offset: 0
+    bit_size: 12
+  - name: EWIC
+    description: Watchdog early interrupt acknowledge The software must write a 1 into this bit in order to acknowledge the early wakeup interrupt and to clear the EWIF flag. Writing 0 has not effect, reading this flag returns a 0.
+    bit_offset: 14
+    bit_size: 1
+  - name: EWIE
+    description: Watchdog early interrupt enable Set and reset by software. The EWU bit in the must be reset to be able to change the value of this bit.
+    bit_offset: 15
+    bit_size: 1
+fieldset/KR:
+  description: IWDG key register.
+  fields:
+  - name: KEY
+    description: Key value (write only, read 0x0000) These bits must be written by software at regular intervals with the key value 0xAAAA, otherwise the watchdog generates a reset when the counter reaches 0. Writing the key value 0x5555 to enable access to the IWDG_PR, IWDG_RLR and IWDG_WINR registers (see ) Writing the key value 0xCCCC starts the watchdog (except if the hardware watchdog option is selected).
+    bit_offset: 0
+    bit_size: 16
+fieldset/PR:
+  description: IWDG prescaler register.
+  fields:
+  - name: PR
+    description: 'Prescaler divider These bits are write access protected see . They are written by software to select the prescaler divider feeding the counter clock. PVU bit of the must be reset in order to be able to change the prescaler divider. Others: divider / 1024 Note: Reading this register returns the prescaler value from the VDD voltage domain. This value may not be up to date/valid if a write operation to this register is ongoing. For this reason the value read from this register is valid only when the PVU bit in the status register (IWDG_SR) is reset.'
+    bit_offset: 0
+    bit_size: 4
+fieldset/RLR:
+  description: IWDG reload register.
+  fields:
+  - name: RL
+    description: 'Watchdog counter reload value These bits are write access protected see . They are written by software to define the value to be loaded in the watchdog counter each time the value 0xAAAA is written in the . The watchdog counter counts down from this value. The timeout period is a function of this value and the prescaler.clock. It is not recommended to set RL[11:0] to a value lower than 2. The RVU bit in the must be reset to be able to change the reload value. Note: Reading this register returns the reload value from the VDD voltage domain. This value may not be up to date/valid if a write operation to this register is ongoing on it. For this reason the value read from this register is valid only when the RVU bit in the status register (IWDG_SR) is reset.'
+    bit_offset: 0
+    bit_size: 12
+fieldset/SR:
+  description: IWDG status register.
+  fields:
+  - name: PVU
+    description: Watchdog prescaler value update This bit is set by hardware to indicate that an update of the prescaler value is ongoing. It is reset by hardware when the prescaler update operation is completed in the VDD voltage domain (takes up to three periods of the IWDG kernel clock iwdg_ker_ck). The prescaler value can be updated only when PVU bit is reset.
+    bit_offset: 0
+    bit_size: 1
+  - name: RVU
+    description: Watchdog counter reload value update This bit is set by hardware to indicate that an update of the reload value is ongoing. It is reset by hardware when the reload value update operation is completed in the VDD voltage domain (takes up to three periods of the IWDG kernel clock iwdg_ker_ck). The reload value can be updated only when RVU bit is reset.
+    bit_offset: 1
+    bit_size: 1
+  - name: WVU
+    description: Watchdog counter window value update This bit is set by hardware to indicate that an update of the window value is ongoing. It is reset by hardware when the reload value update operation is completed in the VDD voltage domain (takes up to three periods of the IWDG kernel clock iwdg_ker_ck). The window value can be updated only when WVU bit is reset. This bit is generated only if generic “window” = 1.
+    bit_offset: 2
+    bit_size: 1
+  - name: EWU
+    description: Watchdog interrupt comparator value update This bit is set by hardware to indicate that an update of the interrupt comparator value (EWIT[11:0]) or an update of the EWIE is ongoing. It is reset by hardware when the update operation is completed in the VDD voltage domain (takes up to three periods of the IWDG kernel clock iwdg_ker_ck). The EWIT[11:0] and EWIE fields can be updated only when EWU bit is reset.
+    bit_offset: 3
+    bit_size: 1
+  - name: EWIF
+    description: Watchdog early interrupt flag This bit is set to ‘1’ by hardware in order to indicate that an early interrupt is pending. This bit must be cleared by the software by writing the bit EWIC of IWDG_EWCR register to ‘1’.
+    bit_offset: 14
+    bit_size: 1
+fieldset/WINR:
+  description: IWDG window register.
+  fields:
+  - name: WIN
+    description: 'Watchdog counter window value These bits are write access protected, see , they contain the high limit of the window value to be compared with the downcounter. To prevent a reset, the IWDCNT downcounter must be reloaded when its value is lower than WIN[11:0]+1 and greater than 1. The WVU bit in the must be reset to be able to change the reload value. Note: Reading this register returns the reload value from the VDD voltage domain. This value may not be valid if a write operation to this register is ongoing. For this reason the value read from this register is valid only when the WVU bit in the (IWDG_SR) is reset.'
+    bit_offset: 0
+    bit_size: 12
