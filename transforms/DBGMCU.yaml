@@ -1,0 +1,24 @@
+transforms:
+  - !Rename
+    from: ^DBG_(.+)
+    to: $1
+  - !RenameFields
+    fieldset: .+
+    from: ^DBG_(.+)
+    to: $1
+  - !RenameRegisters
+    block: .+
+    from: ^DBG_(.+)
+    to: $1
+  - !RenameEnumVariants
+    enum: .+
+    from: ^DBG_(.+)
+    to: $1
+
+  - !MakeFieldArray
+    fieldsets: AHB1FZR
+    from: GPDMA(\d)_(\d{1,2})_STOP
+    to: GPDMA${1}_STOP
+
+  - !DeleteFieldsets
+    from: AUTH_(DEVICE|HOST)

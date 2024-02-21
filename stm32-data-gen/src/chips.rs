@@ -501,6 +501,7 @@ impl PeriMatcher {
             ("STM32C0.*:DBGMCU:.*", ("dbgmcu", "c0", "DBGMCU")),
             ("STM32G0.*:DBGMCU:.*", ("dbgmcu", "g0", "DBGMCU")),
             ("STM32G4.*:DBGMCU:.*", ("dbgmcu", "g4", "DBGMCU")),
+            ("STM32H5.*:DBGMCU:.*", ("dbgmcu", "h5", "DBGMCU")),
             ("STM32H7.*:DBGMCU:.*", ("dbgmcu", "h7", "DBGMCU")),
             ("STM32L0.*:DBGMCU:.*", ("dbgmcu", "l0", "DBGMCU")),
             ("STM32L1.*:DBGMCU:.*", ("dbgmcu", "l1", "DBGMCU")),
