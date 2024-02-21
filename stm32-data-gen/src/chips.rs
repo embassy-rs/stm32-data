@@ -548,6 +548,7 @@ impl PeriMatcher {
             (".*:UCPD:.*", ("ucpd", "v1", "UCPD")),
             ("STM32G0.*:TAMP:.*", ("tamp", "g0", "TAMP")),
             ("STM32G4.*:TAMP:.*", ("tamp", "g4", "TAMP")),
+            ("STM32H5.*:TAMP:.*", ("tamp", "h5", "TAMP")),
             ("STM32L5.*:TAMP:.*", ("tamp", "l5", "TAMP")),
             ("STM32U5.*:TAMP:.*", ("tamp", "u5", "TAMP")),
             ("STM32WL.*:TAMP:.*", ("tamp", "wl", "TAMP")),
