@@ -68,11 +68,11 @@ block/TAMP:
     byte_offset: 80
     fieldset: OR
   - name: RPCFGR
-    description: TAMP erase configuration register.
+    description: TAMP resources protection configuration register.
     byte_offset: 84
     fieldset: RPCFGR
   - name: BKPR
-    description: TAMP backup 0 register.
+    description: TAMP backup x register. (x=0-31)
     array:
       len: 32
       stride: 4
@@ -81,14 +81,14 @@ fieldset/ATCR1:
   description: TAMP active tamper control register 1.
   fields:
   - name: TAMPAM
-    description: Tamper 1 active mode.
+    description: Tamper x active mode. (x=1-8)
     bit_offset: 0
     bit_size: 1
     array:
       len: 8
       stride: 1
   - name: ATOSEL
-    description: Active tamper shared output 1 selection The selected output must be available in the package pinout.
+    description: Active tamper shared output x selection The selected output must be available in the package pinout. (x=1-4)
     bit_offset: 8
     bit_size: 2
     array:
@@ -114,7 +114,7 @@ fieldset/ATCR2:
   description: TAMP active tamper control register 2.
   fields:
   - name: ATOSEL
-    description: Active tamper shared output 1 selection The selected output must be available in the package pinout. Bits 9:8 are the mirror of ATOSEL1[1:0] in the TAMP_ATCR1, and so can also be read or written through TAMP_ATCR1.
+    description: Active tamper shared output x selection The selected output must be available in the package pinout. Bits 9:8 are the mirror of ATOSELx[1:0] in the TAMP_ATCR1, and so can also be read or written through TAMP_ATCR1. (x=1-8)
     bit_offset: 8
     bit_size: 3
     array:
@@ -139,7 +139,7 @@ fieldset/CR1:
   description: TAMP control register 1.
   fields:
   - name: TAMPE
-    description: Tamper detection on TAMP_IN1 enable.
+    description: Tamper detection on TAMP_INx enable. (x=1-8)
     bit_offset: 0
     bit_size: 1
     array:
@@ -201,14 +201,14 @@ fieldset/CR2:
   description: TAMP control register 2.
   fields:
   - name: TAMPPOM
-    description: Tamper 1 no erase.
+    description: Tamper x potential mode. (x=1-8)
     bit_offset: 0
     bit_size: 1
     array:
       len: 8
       stride: 1
   - name: TAMPMSK
-    description: Tamper 1 mask The tamper 1 interrupt must not be enabled when TAMP1MSK is set.
+    description: Tamper x mask. The tamper x interrupt must not be enabled when TAMPxMSK is set. (x=1-3)
     bit_offset: 16
     bit_size: 1
     array:
@@ -223,7 +223,7 @@ fieldset/CR2:
     bit_offset: 23
     bit_size: 1
   - name: TAMPTRG
-    description: Active level for tamper 1 input If TAMPFLT = 00 Tamper 1 input rising edge triggers a tamper detection event. If TAMPFLT = 00 Tamper 1 input falling edge triggers a tamper detection event.
+    description: Active level for tamper x input If TAMPFLT = 00 Tamper x input rising edge triggers a tamper detection event. If TAMPFLT = 00 Tamper x input falling edge triggers a tamper detection event. (x=1-8)
     bit_offset: 24
     bit_size: 1
     array:
@@ -233,55 +233,55 @@ fieldset/CR3:
   description: TAMP control register 3.
   fields:
   - name: ITAMP1POM
-    description: Internal Tamper 1 no erase.
+    description: Internal tamper 1 potential mode.
     bit_offset: 0
     bit_size: 1
   - name: ITAMP2POM
-    description: Internal Tamper 2 no erase.
+    description: Internal tamper 2 potential mode.
     bit_offset: 1
     bit_size: 1
   - name: ITAMP3POM
-    description: Internal Tamper 3 no erase.
+    description: Internal tamper 3 potential mode.
     bit_offset: 2
     bit_size: 1
   - name: ITAMP4POM
-    description: Internal Tamper 4 no erase.
+    description: Internal tamper 4 potential mode.
     bit_offset: 3
     bit_size: 1
   - name: ITAMP5POM
-    description: Internal Tamper 5 no erase.
+    description: Internal tamper 5 potential mode.
     bit_offset: 4
     bit_size: 1
   - name: ITAMP6POM
-    description: Internal Tamper 6 no erase.
+    description: Internal tamper 6 potential mode.
     bit_offset: 5
     bit_size: 1
   - name: ITAMP7POM
-    description: Internal Tamper 7 no erase.
+    description: Internal tamper 7 potential mode.
     bit_offset: 6
     bit_size: 1
   - name: ITAMP8POM
-    description: Internal Tamper 8 no erase.
+    description: Internal tamper 8 potential mode.
     bit_offset: 7
     bit_size: 1
   - name: ITAMP9POM
-    description: Internal Tamper 9 no erase.
+    description: Internal tamper 9 potential mode.
     bit_offset: 8
     bit_size: 1
   - name: ITAMP11POM
-    description: Internal Tamper 11 no erase.
+    description: Internal tamper 11 potential mode.
     bit_offset: 10
     bit_size: 1
   - name: ITAMP12POM
-    description: Internal Tamper 12 no erase.
+    description: Internal tamper 12 potential mode.
     bit_offset: 11
     bit_size: 1
   - name: ITAMP13POM
-    description: Internal Tamper 13 no erase.
+    description: Internal tamper 13 potential mode.
     bit_offset: 12
     bit_size: 1
   - name: ITAMP15POM
-    description: Internal Tamper 15 no erase.
+    description: Internal tamper 15 potential mode.
     bit_offset: 14
     bit_size: 1
 fieldset/FLTCR:
@@ -307,7 +307,7 @@ fieldset/IER:
   description: TAMP interrupt enable register.
   fields:
   - name: TAMPIE
-    description: Tamper 1 interrupt enable.
+    description: Tamper x interrupt enable. (x=1-8)
     bit_offset: 0
     bit_size: 1
     array:
@@ -473,14 +473,14 @@ fieldset/RPCFGR:
   description: TAMP erase configuration register.
   fields:
   - name: RPCFG0
-    description: Configurable device secrets configuration.
+    description: Configurable resource 0 protection.
     bit_offset: 0
     bit_size: 1
 fieldset/SCR:
   description: TAMP status clear register.
   fields:
   - name: CTAMPF
-    description: Clear TAMP1 detection flag Writing 1 in this bit clears the TAMP1F bit in the TAMP_SR register.
+    description: Clear TAMPx detection flag. Writing 1 in this bit clears the TAMPxF bit in the TAMP_SR register. (x=1-8)
     bit_offset: 0
     bit_size: 1
     array:
@@ -565,7 +565,7 @@ fieldset/SMISR:
   description: TAMP secure masked interrupt status register.
   fields:
   - name: TAMPMF
-    description: TAMP1 secure interrupt masked flag This flag is set by hardware when the tamper 1 secure interrupt is raised.
+    description: TAMPx secure interrupt masked flag. This flag is set by hardware when the tamper x secure interrupt is raised. (x=1-8)
     bit_offset: 0
     bit_size: 1
     array:
@@ -627,7 +627,7 @@ fieldset/SR:
   description: TAMP status register.
   fields:
   - name: TAMPF
-    description: TAMP1 detection flag This flag is set by hardware when a tamper detection event is detected on the TAMP1 input.
+    description: TAMPx detection flag. This flag is set by hardware when a tamper detection event is detected on the TAMPx input. (x=1-8)
     bit_offset: 0
     bit_size: 1
     array:
