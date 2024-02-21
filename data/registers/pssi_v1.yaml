@@ -56,7 +56,6 @@ fieldset/CR:
     description: 'PSSI enable The contents of the FIFO are flushed when ENABLE is cleared to 0. Note: When ENABLE=1, the content of PSSI_CR must not be changed, except for the ENABLE bit itself. All configuration bits can change as soon as ENABLE changes from 0 to 1. The DMA controller and all PSSI configuration registers must be programmed correctly before setting the ENABLE bit to 1. The ENABLE bit and the DCMI ENABLE bit (bit 15 of DCMI_CR) must not be set to 1 at the same time.'
     bit_offset: 14
     bit_size: 1
-    enum: ENABLE
   - name: DERDYCFG
     description: Data enable and ready configuration When the PSSI_RDY function is mapped to the PSSI_DE pin (settings 101 or 111), it is still the RDYPOL bit which determines its polarity. Similarly, when the PSSI_DE function is mapped to the PSSI_RDY pin (settings 110 or 111), it is still the DEPOL bit which determines its polarity.
     bit_offset: 18
@@ -66,7 +65,6 @@ fieldset/CR:
     description: DMA enable bit.
     bit_offset: 30
     bit_size: 1
-    enum: DMAEN
   - name: OUTEN
     description: Data direction selection bit.
     bit_offset: 31
@@ -75,22 +73,13 @@ fieldset/CR:
 fieldset/DR:
   description: PSSI data register.
   fields:
-  - name: BYTE0
+  - name: BYTE
     description: Data byte 0.
     bit_offset: 0
     bit_size: 8
-  - name: BYTE1
-    description: Data byte 1.
-    bit_offset: 8
-    bit_size: 8
-  - name: BYTE2
-    description: Data byte 2.
-    bit_offset: 16
-    bit_size: 8
-  - name: BYTE3
-    description: Data byte 3.
-    bit_offset: 24
-    bit_size: 8
+    array:
+      len: 4
+      stride: 8
 fieldset/ICR:
   description: PSSI interrupt clear register.
   fields:
@@ -98,7 +87,6 @@ fieldset/ICR:
     description: Data buffer overrun/underrun interrupt status clear Writing this bit to 1 clears the OVR_RIS bit in PSSI_RIS.
     bit_offset: 1
     bit_size: 1
-    enum: OVR_ISC
 fieldset/IER:
   description: PSSI interrupt enable register.
   fields:
@@ -106,7 +94,6 @@ fieldset/IER:
     description: Data buffer overrun/underrun interrupt enable.
     bit_offset: 1
     bit_size: 1
-    enum: OVR_IE
 fieldset/MIS:
   description: PSSI masked interrupt status register.
   fields:
@@ -114,7 +101,6 @@ fieldset/MIS:
     description: Data buffer overrun/underrun masked interrupt status This bit is set to 1 only when PSSI_IER/OVR_IE and PSSI_RIS/OVR_RIS are both set to 1.
     bit_offset: 1
     bit_size: 1
-    enum: OVR_MIS
 fieldset/RIS:
   description: PSSI raw interrupt status register.
   fields:
@@ -122,7 +108,6 @@ fieldset/RIS:
     description: Data buffer overrun/underrun raw interrupt status This bit is cleared by writing a 1 to the OVR_ISC bit in PSSI_ICR.
     bit_offset: 1
     bit_size: 1
-    enum: OVR_RIS
 fieldset/SR:
   description: PSSI status register.
   fields:
@@ -130,12 +115,10 @@ fieldset/SR:
     description: FIFO is ready to transfer four bytes.
     bit_offset: 2
     bit_size: 1
-    enum: RTT4B
   - name: RTT1B
     description: FIFO is ready to transfer one byte.
     bit_offset: 3
     bit_size: 1
-    enum: RTT1B
 enum/CKPOL:
   bit_size: 1
   variants:
@@ -181,15 +164,6 @@ enum/DERDYCFG:
   - name: RdyDeBidi
     description: Both PSSI_RDY and PSSI_DE features enabled - bidirectional on PSSI_DE pin.
     value: 7
-enum/DMAEN:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: DMA transfers are disabled. The user application can directly access the PSSI_DR register when DMA transfers are disabled.
-    value: 0
-  - name: Enabled
-    description: DMA transfers are enabled (default configuration). A DMA channel in the general-purpose DMA controller must be configured to perform transfers from/to PSSI_DR.
-    value: 1
 enum/EDM:
   bit_size: 2
   variants:
@@ -199,15 +173,6 @@ enum/EDM:
   - name: BitWidth16
     description: The interface captures 16-bit data on every parallel data clock.
     value: 3
-enum/ENABLE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: PSSI disabled.
-    value: 0
-  - name: Enabled
-    description: PSSI enabled.
-    value: 1
 enum/OUTEN:
   bit_size: 1
   variants:
@@ -217,39 +182,6 @@ enum/OUTEN:
   - name: TransmitMode
     description: Data is output synchronously with PSSI_PDCK.
     value: 1
-enum/OVR_IE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt generation.
-    value: 0
-  - name: Enabled
-    description: An interrupt is generated if either an overrun or an underrun error occurred.
-    value: 1
-enum/OVR_ISC:
-  bit_size: 1
-  variants:
-  - name: Clear
-    description: Writing this bit to 1 clears the OVR_RIS bit in PSSI_RIS.
-    value: 1
-enum/OVR_MIS:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: No interrupt is generated when an overrun/underrun error occurs.
-    value: 0
-  - name: Enabled
-    description: An interrupt is generated if there is either an overrun or an underrun error and the OVR_IE bit is set in PSSI_IER.
-    value: 1
-enum/OVR_RIS:
-  bit_size: 1
-  variants:
-  - name: Cleared
-    description: No overrun/underrun occurred.
-    value: 0
-  - name: Occurred
-    description: 'An overrun/underrun occurred: overrun in receive mode, underrun in transmit mode. This bit is cleared by writing a 1 to the OVR_ISC bit in PSSI_ICR.'
-    value: 1
 enum/RDYPOL:
   bit_size: 1
   variants:
@@ -258,22 +190,4 @@ enum/RDYPOL:
     value: 0
   - name: ActiveHigh
     description: PSSI_RDY active high (1 indicates that the receiver is ready to receive).
-    value: 1
-enum/RTT1B:
-  bit_size: 1
-  variants:
-  - name: NotReady
-    description: FIFO is not ready for a 1-byte transfer.
-    value: 0
-  - name: Ready
-    description: FIFO is ready for a one byte (32-bit) transfer. In receive mode, this means that at least one valid data byte is in the FIFO. In transmit mode, this means that there is at least one byte free in the FIFO.
-    value: 1
-enum/RTT4B:
-  bit_size: 1
-  variants:
-  - name: NotReady
-    description: FIFO is not ready for a four-byte transfer.
-    value: 0
-  - name: Ready
-    description: FIFO is ready for a four-byte (32-bit) transfer. In receive mode, this means that at least four valid data bytes are in the FIFO. In transmit mode, this means that there are at least four bytes free in the FIFO.
     value: 1
