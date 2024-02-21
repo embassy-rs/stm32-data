@@ -1,3 +1,88 @@
 transforms:
   - !DeleteEnums
     from: ^(BHKLOCK|ERCFG|PRIV|SEC)$
+
+  - !DeleteFieldsets
+    from: ^(BKP\d+R|COUNT\dR)$
+
+  - !MakeRegisterArray
+    blocks: ^TAMP$
+    from: ^BKP\d+R$
+    to: BKPR
+
+  - !MakeFieldArray
+    fieldsets: ATCR1
+    from: TAMP\dAM
+    to: TAMPAM
+
+  - !MakeFieldArray
+    fieldsets: ATCR\d
+    from: ATOSEL\d
+    to: ATOSEL
+
+  - !MakeFieldArray
+    fieldsets: CR1
+    from: ^TAMP\d(E|NOER|MSK|TRG)$
+    to: TAMP${1}
+
+  - !RenameFields
+    fieldset: CR2
+    from: TAMP(\d)NOER
+    to: TAMP${1}POM
+
+  - !MakeFieldArray
+    fieldsets: CR2
+    from: ^TAMP\d(POM|MSK|TRG)$
+    to: TAMP${1}
+
+  - !RenameFields
+    fieldset: CR3
+    from: ITAMP(\d+)NOER
+    to: ITAMP${1}POM
+
+  - !RenameRegisters
+    block: TAMP
+    from: ERCFGR
+    to: RPCFGR
+
+  - !Rename
+    from: ERCFGR
+    to: RPCFGR
+
+  - !RenameFields
+    fieldset: RPCFGR
+    from: ERCFG(\d)
+    to: RPCFG${1}
+
+  - !MakeFieldArray
+    fieldsets: IER
+    from: TAMP\dIE
+    to: TAMPIE
+
+  - !MakeFieldArray
+    fieldsets: CR2
+    from: ^TAMP\d(POM|MSK|TRG)$
+    to: TAMP${1}
+
+  - !MakeFieldArray
+    fieldsets: MISR
+    from: ^TAMP\dMF$
+    to: TAMPMF
+
+  - !MakeFieldArray
+    fieldsets: SCR
+    from: ^CTAMP\dF$
+    to: CTAMPF
+
+  - !MakeFieldArray
+    fieldsets: SMISR
+    from: ^TAMP\dMF$
+    to: TAMPMF
+
+  - !MakeFieldArray
+    fieldsets: SR
+    from: ^TAMP\dF$
+    to: TAMPF
+
+  - !DeleteFieldsets
+    from: ATSEEDR
