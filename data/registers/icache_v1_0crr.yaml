@@ -1,0 +1,144 @@
+block/ICACHE:
+  description: Instruction Cache Control Registers.
+  items:
+  - name: CR
+    description: ICACHE control register.
+    byte_offset: 0
+    fieldset: CR
+  - name: SR
+    description: ICACHE status register.
+    byte_offset: 4
+    access: Read
+    fieldset: SR
+  - name: IER
+    description: ICACHE interrupt enable register.
+    byte_offset: 8
+    fieldset: IER
+  - name: FCR
+    description: ICACHE flag clear register.
+    byte_offset: 12
+    access: Write
+    fieldset: FCR
+  - name: HMONR
+    description: ICACHE hit monitor register.
+    byte_offset: 16
+    access: Read
+    fieldset: HMONR
+  - name: MMONR
+    description: ICACHE miss monitor register.
+    byte_offset: 20
+    access: Read
+    fieldset: MMONR
+fieldset/CR:
+  description: ICACHE control register.
+  fields:
+  - name: EN
+    description: EN.
+    bit_offset: 0
+    bit_size: 1
+  - name: CACHEINV
+    description: Set by software and cleared by hardware when the BUSYF flag is set (during cache maintenance operation). Writing 0 has no effect.
+    bit_offset: 1
+    bit_size: 1
+    enum: CACHEINV
+  - name: WAYSEL
+    description: This bit allows user to choose ICACHE set-associativity. It can be written by software only when cache is disabled (EN = 0).
+    bit_offset: 2
+    bit_size: 1
+    enum: WAYSEL
+  - name: HITMEN
+    description: Hit monitor enable.
+    bit_offset: 16
+    bit_size: 1
+  - name: MISSMEN
+    description: Miss monitor enable.
+    bit_offset: 17
+    bit_size: 1
+  - name: HITMRST
+    description: Hit monitor reset.
+    bit_offset: 18
+    bit_size: 1
+    enum: HITMRST
+  - name: MISSMRST
+    description: Miss monitor reset.
+    bit_offset: 19
+    bit_size: 1
+    enum: MISSMRST
+fieldset/FCR:
+  description: ICACHE flag clear register.
+  fields:
+  - name: CBSYENDF
+    description: Clear busy end flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: CERRF
+    description: Clear ERRF flag in SR.
+    bit_offset: 2
+    bit_size: 1
+fieldset/HMONR:
+  description: ICACHE hit monitor register.
+  fields:
+  - name: HITMON
+    description: Hit monitor register.
+    bit_offset: 0
+    bit_size: 32
+fieldset/IER:
+  description: ICACHE interrupt enable register.
+  fields:
+  - name: BSYENDIE
+    description: Interrupt enable on busy end.
+    bit_offset: 1
+    bit_size: 1
+  - name: ERRIE
+    description: Error interrupt on cache error.
+    bit_offset: 2
+    bit_size: 1
+fieldset/MMONR:
+  description: ICACHE miss monitor register.
+  fields:
+  - name: MISSMON
+    description: Miss monitor register.
+    bit_offset: 0
+    bit_size: 16
+fieldset/SR:
+  description: ICACHE status register.
+  fields:
+  - name: BUSYF
+    description: cache busy executing a full invalidate CACHEINV operation.
+    bit_offset: 0
+    bit_size: 1
+  - name: BSYENDF
+    description: full invalidate CACHEINV operation finished.
+    bit_offset: 1
+    bit_size: 1
+  - name: ERRF
+    description: an error occurred during the operation.
+    bit_offset: 2
+    bit_size: 1
+enum/CACHEINV:
+  bit_size: 1
+  variants:
+  - name: Invalidate
+    description: Invalidate entire cache
+    value: 1
+enum/HITMRST:
+  bit_size: 1
+  variants:
+  - name: Reset
+    description: Reset cache hit monitor
+    value: 1
+enum/MISSMRST:
+  bit_size: 1
+  variants:
+  - name: Reset
+    description: Reset cache miss monitor
+    value: 1
+enum/WAYSEL:
+  bit_size: 1
+  variants:
+  - name: DirectMapped
+    description: direct mapped cache (1-way cache)
+    value: 0
+  - name: NWaySetAssociative
+    description: n-way set associative cache (reset value)
+    value: 1
