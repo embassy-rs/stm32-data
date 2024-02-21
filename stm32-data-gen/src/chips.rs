@@ -601,6 +601,7 @@ impl PeriMatcher {
             ("STM32G0.1.*:.*:COMP:.*", ("comp", "v1", "COMP")),
             ("STM32G4.*:.*:COMP:.*", ("comp", "v2", "COMP")),
             ("STM32WL.*:.*:COMP:.*", ("comp", "v3", "COMP")),
+            (r".*:.*:DCACHE:.*", ("dcache", "v1", "DCACHE")),
         ];
 
         Self {
