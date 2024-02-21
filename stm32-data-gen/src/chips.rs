@@ -244,6 +244,7 @@ impl PeriMatcher {
             ("STM32H5.*:SBS:.*", ("syscfg", "h5", "SYSCFG")),
             (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
             (".*:IWDG:iwdg1_v2_0", ("iwdg", "v2", "IWDG")),
+            (".*:IWDG:iwdg1_v3_0", ("iwdg", "v3", "IWDG")),
             (".*:WWDG:wwdg1_v1_0", ("wwdg", "v1", "WWDG")),
             (".*:WWDG:wwdg1_v2_0", ("wwdg", "v2", "WWDG")),
             (".*:JPEG:jpeg1_v1_0", ("jpeg", "v1", "JPEG")),
