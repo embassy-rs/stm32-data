@@ -1,0 +1,279 @@
+block/PSSI:
+  description: Parallel synchronous slave interface.
+  items:
+  - name: CR
+    description: PSSI control register.
+    byte_offset: 0
+    fieldset: CR
+  - name: SR
+    description: PSSI status register.
+    byte_offset: 4
+    fieldset: SR
+  - name: RIS
+    description: PSSI raw interrupt status register.
+    byte_offset: 8
+    fieldset: RIS
+  - name: IER
+    description: PSSI interrupt enable register.
+    byte_offset: 12
+    fieldset: IER
+  - name: MIS
+    description: PSSI masked interrupt status register.
+    byte_offset: 16
+    fieldset: MIS
+  - name: ICR
+    description: PSSI interrupt clear register.
+    byte_offset: 20
+    fieldset: ICR
+  - name: DR
+    description: PSSI data register.
+    byte_offset: 40
+    fieldset: DR
+fieldset/CR:
+  description: PSSI control register.
+  fields:
+  - name: CKPOL
+    description: Parallel data clock polarity This bit configures the capture edge of the parallel clock or the edge used for driving outputs, depending on OUTEN.
+    bit_offset: 5
+    bit_size: 1
+    enum: CKPOL
+  - name: DEPOL
+    description: Data enable (PSSI_DE) polarity This bit indicates the level on the PSSI_DE pin when the data are not valid on the parallel interface.
+    bit_offset: 6
+    bit_size: 1
+    enum: DEPOL
+  - name: RDYPOL
+    description: Ready (PSSI_RDY) polarity This bit indicates the level on the PSSI_RDY pin when the data are not valid on the parallel interface.
+    bit_offset: 8
+    bit_size: 1
+    enum: RDYPOL
+  - name: EDM
+    description: Extended data mode.
+    bit_offset: 10
+    bit_size: 2
+    enum: EDM
+  - name: ENABLE
+    description: 'PSSI enable The contents of the FIFO are flushed when ENABLE is cleared to 0. Note: When ENABLE=1, the content of PSSI_CR must not be changed, except for the ENABLE bit itself. All configuration bits can change as soon as ENABLE changes from 0 to 1. The DMA controller and all PSSI configuration registers must be programmed correctly before setting the ENABLE bit to 1. The ENABLE bit and the DCMI ENABLE bit (bit 15 of DCMI_CR) must not be set to 1 at the same time.'
+    bit_offset: 14
+    bit_size: 1
+    enum: ENABLE
+  - name: DERDYCFG
+    description: Data enable and ready configuration When the PSSI_RDY function is mapped to the PSSI_DE pin (settings 101 or 111), it is still the RDYPOL bit which determines its polarity. Similarly, when the PSSI_DE function is mapped to the PSSI_RDY pin (settings 110 or 111), it is still the DEPOL bit which determines its polarity.
+    bit_offset: 18
+    bit_size: 3
+    enum: DERDYCFG
+  - name: DMAEN
+    description: DMA enable bit.
+    bit_offset: 30
+    bit_size: 1
+    enum: DMAEN
+  - name: OUTEN
+    description: Data direction selection bit.
+    bit_offset: 31
+    bit_size: 1
+    enum: OUTEN
+fieldset/DR:
+  description: PSSI data register.
+  fields:
+  - name: BYTE0
+    description: Data byte 0.
+    bit_offset: 0
+    bit_size: 8
+  - name: BYTE1
+    description: Data byte 1.
+    bit_offset: 8
+    bit_size: 8
+  - name: BYTE2
+    description: Data byte 2.
+    bit_offset: 16
+    bit_size: 8
+  - name: BYTE3
+    description: Data byte 3.
+    bit_offset: 24
+    bit_size: 8
+fieldset/ICR:
+  description: PSSI interrupt clear register.
+  fields:
+  - name: OVR_ISC
+    description: Data buffer overrun/underrun interrupt status clear Writing this bit to 1 clears the OVR_RIS bit in PSSI_RIS.
+    bit_offset: 1
+    bit_size: 1
+    enum: OVR_ISC
+fieldset/IER:
+  description: PSSI interrupt enable register.
+  fields:
+  - name: OVR_IE
+    description: Data buffer overrun/underrun interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+    enum: OVR_IE
+fieldset/MIS:
+  description: PSSI masked interrupt status register.
+  fields:
+  - name: OVR_MIS
+    description: Data buffer overrun/underrun masked interrupt status This bit is set to 1 only when PSSI_IER/OVR_IE and PSSI_RIS/OVR_RIS are both set to 1.
+    bit_offset: 1
+    bit_size: 1
+    enum: OVR_MIS
+fieldset/RIS:
+  description: PSSI raw interrupt status register.
+  fields:
+  - name: OVR_RIS
+    description: Data buffer overrun/underrun raw interrupt status This bit is cleared by writing a 1 to the OVR_ISC bit in PSSI_ICR.
+    bit_offset: 1
+    bit_size: 1
+    enum: OVR_RIS
+fieldset/SR:
+  description: PSSI status register.
+  fields:
+  - name: RTT4B
+    description: FIFO is ready to transfer four bytes.
+    bit_offset: 2
+    bit_size: 1
+    enum: RTT4B
+  - name: RTT1B
+    description: FIFO is ready to transfer one byte.
+    bit_offset: 3
+    bit_size: 1
+    enum: RTT1B
+enum/CKPOL:
+  bit_size: 1
+  variants:
+  - name: FallingEdge
+    description: Falling edge active for inputs or rising edge active for outputs.
+    value: 0
+  - name: RisingEdge
+    description: Rising edge active for inputs or falling edge active for outputs.
+    value: 1
+enum/DEPOL:
+  bit_size: 1
+  variants:
+  - name: ActiveLow
+    description: PSSI_DE active low (0 indicates that data is valid).
+    value: 0
+  - name: ActiveHigh
+    description: PSSI_DE active high (1 indicates that data is valid).
+    value: 1
+enum/DERDYCFG:
+  bit_size: 3
+  variants:
+  - name: Disabled
+    description: PSSI_DE and PSSI_RDY both disabled.
+    value: 0
+  - name: Rdy
+    description: Only PSSI_RDY enabled.
+    value: 1
+  - name: De
+    description: Only PSSI_DE enabled.
+    value: 2
+  - name: RdyDeAlt
+    description: Both PSSI_RDY and PSSI_DE alternate functions enabled.
+    value: 3
+  - name: RdyDe
+    description: Both PSSI_RDY and PSSI_DE features enabled - bidirectional on PSSI_RDY pin.
+    value: 4
+  - name: RdyRemapped
+    description: Only PSSI_RDY function enabled, but mapped to PSSI_DE pin.
+    value: 5
+  - name: DeRemapped
+    description: Only PSSI_DE function enabled, but mapped to PSSI_RDY pin.
+    value: 6
+  - name: RdyDeBidi
+    description: Both PSSI_RDY and PSSI_DE features enabled - bidirectional on PSSI_DE pin.
+    value: 7
+enum/DMAEN:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: DMA transfers are disabled. The user application can directly access the PSSI_DR register when DMA transfers are disabled.
+    value: 0
+  - name: Enabled
+    description: DMA transfers are enabled (default configuration). A DMA channel in the general-purpose DMA controller must be configured to perform transfers from/to PSSI_DR.
+    value: 1
+enum/EDM:
+  bit_size: 2
+  variants:
+  - name: BitWidth8
+    description: Interface captures 8-bit data on every parallel data clock.
+    value: 0
+  - name: BitWidth16
+    description: The interface captures 16-bit data on every parallel data clock.
+    value: 3
+enum/ENABLE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: PSSI disabled.
+    value: 0
+  - name: Enabled
+    description: PSSI enabled.
+    value: 1
+enum/OUTEN:
+  bit_size: 1
+  variants:
+  - name: ReceiveMode
+    description: Data is input synchronously with PSSI_PDCK.
+    value: 0
+  - name: TransmitMode
+    description: Data is output synchronously with PSSI_PDCK.
+    value: 1
+enum/OVR_IE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: No interrupt generation.
+    value: 0
+  - name: Enabled
+    description: An interrupt is generated if either an overrun or an underrun error occurred.
+    value: 1
+enum/OVR_ISC:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: Writing this bit to 1 clears the OVR_RIS bit in PSSI_RIS.
+    value: 1
+enum/OVR_MIS:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: No interrupt is generated when an overrun/underrun error occurs.
+    value: 0
+  - name: Enabled
+    description: An interrupt is generated if there is either an overrun or an underrun error and the OVR_IE bit is set in PSSI_IER.
+    value: 1
+enum/OVR_RIS:
+  bit_size: 1
+  variants:
+  - name: Cleared
+    description: No overrun/underrun occurred.
+    value: 0
+  - name: Occurred
+    description: 'An overrun/underrun occurred: overrun in receive mode, underrun in transmit mode. This bit is cleared by writing a 1 to the OVR_ISC bit in PSSI_ICR.'
+    value: 1
+enum/RDYPOL:
+  bit_size: 1
+  variants:
+  - name: ActiveLow
+    description: PSSI_RDY active low (0 indicates that the receiver is ready to receive).
+    value: 0
+  - name: ActiveHigh
+    description: PSSI_RDY active high (1 indicates that the receiver is ready to receive).
+    value: 1
+enum/RTT1B:
+  bit_size: 1
+  variants:
+  - name: NotReady
+    description: FIFO is not ready for a 1-byte transfer.
+    value: 0
+  - name: Ready
+    description: FIFO is ready for a one byte (32-bit) transfer. In receive mode, this means that at least one valid data byte is in the FIFO. In transmit mode, this means that there is at least one byte free in the FIFO.
+    value: 1
+enum/RTT4B:
+  bit_size: 1
+  variants:
+  - name: NotReady
+    description: FIFO is not ready for a four-byte transfer.
+    value: 0
+  - name: Ready
+    description: FIFO is ready for a four-byte (32-bit) transfer. In receive mode, this means that at least four valid data bytes are in the FIFO. In transmit mode, this means that there are at least four bytes free in the FIFO.
+    value: 1
