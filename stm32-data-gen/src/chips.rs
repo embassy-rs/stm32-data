@@ -605,6 +605,7 @@ impl PeriMatcher {
             ("STM32WL.*:.*:COMP:.*", ("comp", "v3", "COMP")),
             (r".*:.*:DCACHE:.*", ("dcache", "v1", "DCACHE")),
             (".*:.*:PSSI:.*", ("pssi", "v1", "PSSI")),
+            (".*:.*:DTS:.*", ("dts", "v1", "DTS")),
         ];
 
         Self {
