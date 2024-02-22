@@ -607,6 +607,10 @@ impl PeriMatcher {
             (r".*:.*:DCACHE:.*", ("dcache", "v1", "DCACHE")),
             (".*:.*:PSSI:.*", ("pssi", "v1", "PSSI")),
             (".*:.*:DTS:.*", ("dts", "v1", "DTS")),
+            ("STM32(L5|L4|G0|WB|WL).*:VREFBUF:.*", ("vrefbuf", "v1", "VREFBUF")),
+            ("STM32(H7|U5).*:VREFBUF:.*", ("vrefbuf", "v2a1", "VREFBUF")),
+            ("STM32H5.*:VREFBUF:.*", ("vrefbuf", "v2a2", "VREFBUF")),
+            ("STM32G4.*:VREFBUF:.*", ("vrefbuf", "v2b", "VREFBUF")),
         ];
 
         Self {

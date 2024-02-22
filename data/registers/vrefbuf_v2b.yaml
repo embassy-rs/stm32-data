@@ -1,0 +1,60 @@
+block/VREFBUF:
+  description: Voltage reference buffer.
+  items:
+  - name: CSR
+    description: VREF_BUF Control and Status Register.
+    byte_offset: 0
+    fieldset: CSR
+  - name: CCR
+    description: VREF_BUF Calibration Control Register.
+    byte_offset: 4
+    fieldset: CCR
+fieldset/CCR:
+  description: VREF_BUF Calibration Control Register.
+  fields:
+  - name: TRIM
+    description: Trimming code.
+    bit_offset: 0
+    bit_size: 6
+fieldset/CSR:
+  description: VREF_BUF Control and Status Register.
+  fields:
+  - name: ENVR
+    description: Enable Voltage Reference.
+    bit_offset: 0
+    bit_size: 1
+  - name: HIZ
+    description: High impedence mode for the VREF_BUF.
+    bit_offset: 1
+    bit_size: 1
+    enum: HIZ
+  - name: VRR
+    description: Voltage reference buffer ready.
+    bit_offset: 3
+    bit_size: 1
+  - name: VRS
+    description: Voltage reference scale.
+    bit_offset: 4
+    bit_size: 2
+    enum: VRS
+enum/HIZ:
+  bit_size: 1
+  variants:
+  - name: Connected
+    description: VREF+ pin is internally connected to the voltage reference buffer output.
+    value: 0
+  - name: HighZ
+    description: VREF+ pin is high impedance.
+    value: 1
+enum/VRS:
+  bit_size: 2
+  variants:
+  - name: Vref0
+    description: Voltage reference set to VREF_OUT1 (around 2.048 V).
+    value: 0
+  - name: Vref1
+    description: Voltage reference set to VREF_OUT2 (around 2.5 V).
+    value: 1
+  - name: Vref2
+    description: Voltage reference set to VREF_OUT2 (around 2.5 V).
+    value: 2
