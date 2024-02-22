@@ -611,6 +611,10 @@ impl PeriMatcher {
             (".*:HDMI_CEC:hdmi_cec_v1_1", ("cec", "v1", "CEC")),
             // HDMI_CEC for others
             (".*:HDMI_CEC:hdmi_cec_v2_0", ("cec", "v2", "CEC")),
+            ("STM32(L5|L4|G0|WB|WL).*:VREFBUF:.*", ("vrefbuf", "v1", "VREFBUF")),
+            ("STM32(H7|U5).*:VREFBUF:.*", ("vrefbuf", "v2a1", "VREFBUF")),
+            ("STM32H5.*:VREFBUF:.*", ("vrefbuf", "v2a2", "VREFBUF")),
+            ("STM32G4.*:VREFBUF:.*", ("vrefbuf", "v2b", "VREFBUF")),
         ];
 
         Self {
