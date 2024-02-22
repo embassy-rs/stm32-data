@@ -607,6 +607,10 @@ impl PeriMatcher {
             (r".*:.*:DCACHE:.*", ("dcache", "v1", "DCACHE")),
             (".*:.*:PSSI:.*", ("pssi", "v1", "PSSI")),
             (".*:.*:DTS:.*", ("dts", "v1", "DTS")),
+            // HDMI_CEC for F1
+            (".*:HDMI_CEC:hdmi_cec_v1_1", ("cec", "v1", "CEC")),
+            // HDMI_CEC for others
+            (".*:HDMI_CEC:hdmi_cec_v2_0", ("cec", "v2", "CEC")),
         ];
 
         Self {
