@@ -1,0 +1,646 @@
+block/ADC:
+  description: Analog to digital converter
+  items:
+  - name: ISR
+    description: interrupt and status register
+    byte_offset: 0
+    fieldset: ISR
+  - name: IER
+    description: interrupt enable register
+    byte_offset: 4
+    fieldset: IER
+  - name: CR
+    description: control register
+    byte_offset: 8
+    fieldset: CR
+  - name: CFGR
+    description: configuration register
+    byte_offset: 12
+    fieldset: CFGR
+  - name: CFGR2
+    description: configuration register 2
+    byte_offset: 16
+    fieldset: CFGR2
+  - name: SMPR1
+    description: sample time register 1
+    byte_offset: 20
+    fieldset: SMPR1
+  - name: SMPR2
+    description: sample time register 2
+    byte_offset: 24
+    fieldset: SMPR2
+  - name: TR1
+    description: watchdog threshold register 1
+    byte_offset: 32
+    fieldset: TR1
+  - name: TR2
+    description: watchdog threshold register 2
+    byte_offset: 36
+    fieldset: TR2
+  - name: TR3
+    description: watchdog threshold register 3
+    byte_offset: 40
+    fieldset: TR3
+  - name: SQR1
+    description: regular sequence register 1
+    byte_offset: 48
+    fieldset: SQR1
+  - name: SQR2
+    description: regular sequence register 2
+    byte_offset: 52
+    fieldset: SQR2
+  - name: SQR3
+    description: regular sequence register 3
+    byte_offset: 56
+    fieldset: SQR3
+  - name: SQR4
+    description: regular sequence register 4
+    byte_offset: 60
+    fieldset: SQR4
+  - name: DR
+    description: regular data register
+    byte_offset: 64
+    fieldset: DR
+  - name: JSQR
+    description: injected sequence register
+    byte_offset: 76
+    fieldset: JSQR
+  - name: OFR
+    description: offset 1-4 register
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 96
+    fieldset: OFR
+  - name: JDR
+    description: injected channel 1-4 register
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 128
+    # access: Read
+    fieldset: JDR
+  - name: AWD2CR
+    description: Analog Watchdog 2 Configuration Register
+    byte_offset: 160
+    fieldset: AWD2CR
+  - name: AWD3CR
+    description: Analog Watchdog 3 Configuration Register
+    byte_offset: 164
+    fieldset: AWD3CR
+  - name: DIFSEL
+    description: Differential mode Selection Register
+    byte_offset: 176
+    fieldset: DIFSEL
+  - name: CALFACT
+    description: Calibration Factors
+    byte_offset: 180
+    fieldset: CALFACT
+  - name: OR
+    description: option register
+    byte_offset: 200
+    fieldset: OR
+fieldset/AWD2CR:
+  description: Analog Watchdog 2 Configuration Register
+  fields:
+  - name: AWD2CH
+    description: 'Analog watchdog 2 channel selection These bits are set and cleared by software. They enable and select the input channels to be guarded by the analog watchdog 2. AWD2CH[i] = 0: analog input channel i is not monitored by AWD2 AWD2CH[i] = 1: analog input channel i is monitored by AWD2 When AWD2CH[19:0] = 000..0, the analog Watchdog 2 is disabled Note: The channels selected by AWD2CH must be also selected into the SQRi or JSQRi registers. The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing). Some channels are not connected physically and must not be selected for the analog watchdog.'
+    bit_offset: 0
+    bit_size: 20
+fieldset/AWD3CR:
+  description: Analog Watchdog 3 Configuration Register
+  fields:
+  - name: AWD3CH
+    description: 'Analog watchdog 3 channel selection These bits are set and cleared by software. They enable and select the input channels to be guarded by the analog watchdog 3. AWD3CH[i] = 0: analog input channel i is not monitored by AWD3 AWD3CH[i] = 1: analog input channel i is monitored by AWD3 When AWD3CH[19:0] = 000..0, the analog Watchdog 3 is disabled Note: The channels selected by AWD3CH must be also selected into the SQRi or JSQRi registers. The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing). Some channels are not connected physically and must not be selected for the analog watchdog.'
+    bit_offset: 0
+    bit_size: 20
+fieldset/CALFACT:
+  description: Calibration Factors
+  fields:
+  - name: CALFACT_S
+    description: 'Calibration Factors In Single-ended mode These bits are written by hardware or by software. Once a single-ended inputs calibration is complete, they are updated by hardware with the calibration factors. Software can write these bits with a new calibration factor. If the new calibration factor is different from the current one stored into the analog ADC, it is then applied once a new single-ended calibration is launched. Note: The software is allowed to write these bits only when ADEN = 1, ADSTART = 0 and JADSTART = 0 (ADC is enabled and no calibration is ongoing and no conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 7
+  - name: CALFACT_D
+    description: 'Calibration Factors in differential mode These bits are written by hardware or by software. Once a differential inputs calibration is complete, they are updated by hardware with the calibration factors. Software can write these bits with a new calibration factor. If the new calibration factor is different from the current one stored into the analog ADC, it is then applied once a new differential calibration is launched. Note: The software is allowed to write these bits only when ADEN = 1, ADSTART = 0 and JADSTART = 0 (ADC is enabled and no calibration is ongoing and no conversion is ongoing).'
+    bit_offset: 16
+    bit_size: 7
+fieldset/CFGR:
+  description: configuration register
+  fields:
+  - name: DMAEN
+    description: 'Direct memory access enable This bit is set and cleared by software to enable the generation of DMA requests. This allows to use the DMA to manage automatically the converted data. For more details, refer to conversions using the DMA. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 1
+  - name: DMACFG
+    description: 'Direct memory access configuration This bit is set and cleared by software to select between two DMA modes of operation and is effective only when DMAEN = 1. For more details, refer to Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 1
+    bit_size: 1
+  - name: RES
+    description: 'Data resolution These bits are written by software to select the resolution of the conversion. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 3
+    bit_size: 2
+    enum: RES
+  - name: EXTSEL
+    description: 'External trigger selection for regular group These bits select the external event used to trigger the start of conversion of a regular group: ... Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 5
+    bit_size: 1
+    array:
+      len: 5
+      stride: 1
+  - name: EXTEN
+    description: 'External trigger enable and polarity selection for regular channels These bits are set and cleared by software to select the external trigger polarity and enable the trigger of a regular group. Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 10
+    bit_size: 2
+    enum: EXTEN
+  - name: OVRMOD
+    description: 'Overrun mode This bit is set and cleared by software and configure the way data overrun is managed. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 12
+    bit_size: 1
+  - name: CONT
+    description: 'Single / Continuous conversion mode for regular conversions This bit is set and cleared by software. If it is set, regular conversion takes place continuously until it is cleared. Note: It is not possible to have both Discontinuous mode and Continuous mode enabled: it is forbidden to set both DISCEN = 1 and CONT = 1. The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 13
+    bit_size: 1
+  - name: AUTDLY
+    description: 'Delayed conversion mode This bit is set and cleared by software to enable/disable the Auto Delayed Conversion mode.. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 14
+    bit_size: 1
+  - name: ALIGN
+    description: 'Data alignment This bit is set and cleared by software to select right or left alignment. Refer to register, data alignment and offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN). Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 15
+    bit_size: 1
+  - name: DISCEN
+    description: 'Discontinuous mode for regular channels This bit is set and cleared by software to enable/disable Discontinuous mode for regular channels. Note: It is not possible to have both Discontinuous mode and Continuous mode enabled: it is forbidden to set both DISCEN = 1 and CONT = 1. It is not possible to use both auto-injected mode and Discontinuous mode simultaneously: the bits DISCEN and JDISCEN must be kept cleared by software when JAUTO is set. The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 16
+    bit_size: 1
+  - name: DISCNUM
+    description: 'Discontinuous mode channel count These bits are written by software to define the number of regular channels to be converted in Discontinuous mode, after receiving an external trigger. ... Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 17
+    bit_size: 3
+  - name: JDISCEN
+    description: 'Discontinuous mode on injected channels This bit is set and cleared by software to enable/disable Discontinuous mode on the injected channels of a group. Note: The software is allowed to write this bit only when JADSTART = 0 (which ensures that no injected conversion is ongoing). It is not possible to use both auto-injected mode and Discontinuous mode simultaneously: the bits DISCEN and JDISCEN must be kept cleared by software when JAUTO is set.'
+    bit_offset: 20
+    bit_size: 1
+  - name: JQM
+    description: 'JSQR queue mode This bit is set and cleared by software. It defines how an empty Queue is managed. Refer to for more information. Note: The software is allowed to write this bit only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
+    bit_offset: 21
+    bit_size: 1
+  - name: AWD1SGL
+    description: 'Enable the watchdog 1 on a single channel or on all channels This bit is set and cleared by software to enable the analog watchdog on the channel identified by the AWD1CH[4:0] bits or on all the channels Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 22
+    bit_size: 1
+  - name: AWD1EN
+    description: 'Analog watchdog 1 enable on regular channels This bit is set and cleared by software Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 23
+    bit_size: 1
+  - name: JAWD1EN
+    description: 'Analog watchdog 1 enable on injected channels This bit is set and cleared by software Note: The software is allowed to write this bit only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
+    bit_offset: 24
+    bit_size: 1
+  - name: JAUTO
+    description: 'Automatic injected group conversion This bit is set and cleared by software to enable/disable automatic injected group conversion after regular group conversion. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no regular nor injected conversion is ongoing).'
+    bit_offset: 25
+    bit_size: 1
+  - name: AWD1CH
+    description: 'Analog watchdog 1 channel selection These bits are set and cleared by software. They select the input channel to be guarded by the analog watchdog. ..... others: reserved, must not be used Note: Some channels are not connected physically. Keep the corresponding AWD1CH[4:0] setting to the reset value. The channel selected by AWD1CH must be also selected into the SQRi or JSQRi registers. The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 26
+    bit_size: 5
+  - name: JQDIS
+    description: 'Injected Queue disable These bits are set and cleared by software to disable the Injected Queue mechanism : Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no regular nor injected conversion is ongoing). A set or reset of JQDIS bit causes the injected queue to be flushed and the JSQR register is cleared.'
+    bit_offset: 31
+    bit_size: 1
+fieldset/CFGR2:
+  description: configuration register 2
+  fields:
+  - name: ROVSE
+    description: 'Regular Oversampling Enable This bit is set and cleared by software to enable regular oversampling. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 1
+  - name: JOVSE
+    description: 'Injected Oversampling Enable This bit is set and cleared by software to enable injected oversampling. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 1
+    bit_size: 1
+  - name: OVSR
+    description: 'Oversampling ratio This bitfield is set and cleared by software to define the oversampling ratio. Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 2
+    bit_size: 3
+    enum: OVSR
+  - name: OVSS
+    description: 'Oversampling shift This bitfield is set and cleared by software to define the right shifting applied to the raw oversampling result. Other codes reserved Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 5
+    bit_size: 4
+  - name: TROVS
+    description: 'Triggered Regular Oversampling This bit is set and cleared by software to enable triggered oversampling Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 9
+    bit_size: 1
+  - name: ROVSM
+    description: 'Regular Oversampling mode This bit is set and cleared by software to select the regular oversampling mode. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 10
+    bit_size: 1
+  - name: SWTRIG
+    description: 'Software trigger bit for sampling time control trigger mode This bit is set and cleared by software to enable the bulb sampling mode. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 25
+    bit_size: 1
+  - name: BULB
+    description: 'Bulb sampling mode This bit is set and cleared by software to enable the bulb sampling mode. SAMPTRIG bit must not be set when the BULB bit is set. The very first ADC conversion is performed with the sampling time specified in SMPx bits. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 26
+    bit_size: 1
+  - name: SMPTRIG
+    description: 'Sampling time control trigger mode This bit is set and cleared by software to enable the sampling time control trigger mode. The sampling time starts on the trigger rising edge, and the conversion on the trigger falling edge. EXTEN bit should be set to 01. BULB bit must not be set when the SMPTRIG bit is set. When EXTEN bit is set to 00, set SWTRIG to start the sampling and clear SWTRIG bit to start the conversion. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 27
+    bit_size: 1
+fieldset/CR:
+  description: control register
+  fields:
+  - name: ADEN
+    description: 'ADC enable control This bit is set by software to enable the ADC. The ADC is effectively ready to operate once the flag ADRDY has been set. It is cleared by hardware when the ADC is disabled, after the execution of the ADDIS command. Note: The software is allowed to set ADEN only when all bits of ADC_CR registers are 0 (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0) except for bit ADVREGEN which must be 1 (and the software must have wait for the startup time of the voltage regulator).'
+    bit_offset: 0
+    bit_size: 1
+  - name: ADDIS
+    description: 'ADC disable command This bit is set by software to disable the ADC (ADDIS command) and put it into power-down state (OFF state). It is cleared by hardware once the ADC is effectively disabled (ADEN is also cleared by hardware at this time). Note: The software is allowed to set ADDIS only when ADEN = 1 and both ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 1
+    bit_size: 1
+  - name: ADSTART
+    description: 'ADC start of regular conversion This bit is set by software to start ADC conversion of regular channels. Depending on the configuration bits EXTEN, a conversion immediately starts (software trigger configuration) or once a regular hardware trigger event occurs (hardware trigger configuration). It is cleared by hardware: in Single conversion mode when software trigger is selected (EXTSEL = 0x0): at the assertion of the End of Regular Conversion Sequence (EOS) flag. in all cases: after the execution of the ADSTP command, at the same time that ADSTP is cleared by hardware. Note: The software is allowed to set ADSTART only when ADEN = 1 and ADDIS = 0 (ADC is enabled and there is no pending request to disable the ADC) In auto-injection mode (JAUTO = 1), regular and auto-injected conversions are started by setting bit ADSTART (JADSTART must be kept cleared).'
+    bit_offset: 2
+    bit_size: 1
+  - name: JADSTART
+    description: 'ADC start of injected conversion This bit is set by software to start ADC conversion of injected channels. Depending on the configuration bits JEXTEN, a conversion immediately starts (software trigger configuration) or once an injected hardware trigger event occurs (hardware trigger configuration). It is cleared by hardware: in Single conversion mode when software trigger is selected (JEXTSEL = 0x0): at the assertion of the End of Injected Conversion Sequence (JEOS) flag. in all cases: after the execution of the JADSTP command, at the same time that JADSTP is cleared by hardware. Note: The software is allowed to set JADSTART only when ADEN = 1 and ADDIS = 0 (ADC is enabled and there is no pending request to disable the ADC). In auto-injection mode (JAUTO = 1), regular and auto-injected conversions are started by setting bit ADSTART (JADSTART must be kept cleared).'
+    bit_offset: 3
+    bit_size: 1
+  - name: ADSTP
+    description: 'ADC stop of regular conversion command This bit is set by software to stop and discard an ongoing regular conversion (ADSTP Command). It is cleared by hardware when the conversion is effectively discarded and the ADC regular sequence and triggers can be re-configured. The ADC is then ready to accept a new start of regular conversions (ADSTART command). Note: The software is allowed to set ADSTP only when ADSTART = 1 and ADDIS = 0 (ADC is enabled and eventually converting a regular conversion and there is no pending request to disable the ADC). In auto-injection mode (JAUTO = 1), setting ADSTP bit aborts both regular and injected conversions (do not use JADSTP).'
+    bit_offset: 4
+    bit_size: 1
+  - name: JADSTP
+    description: 'ADC stop of injected conversion command This bit is set by software to stop and discard an ongoing injected conversion (JADSTP Command). It is cleared by hardware when the conversion is effectively discarded and the ADC injected sequence and triggers can be re-configured. The ADC is then ready to accept a new start of injected conversions (JADSTART command). Note: The software is allowed to set JADSTP only when JADSTART = 1 and ADDIS = 0 (ADC is enabled and eventually converting an injected conversion and there is no pending request to disable the ADC) In Auto-injection mode (JAUTO = 1), setting ADSTP bit aborts both regular and injected conversions (do not use JADSTP).'
+    bit_offset: 5
+    bit_size: 1
+  - name: ADVREGEN
+    description: voltage regulator enable This bits is set by software to enable the ADC voltage regulator. Before performing any operation such as launching a calibration or enabling the ADC, the ADC voltage regulator must first be enabled and the software must wait for the regulator start-up time. For more details about the ADC voltage regulator enable and disable sequences, refer to (ADVREGEN). The software can program this bit field only when the ADC is disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0)
+    bit_offset: 28
+    bit_size: 1
+  - name: DEEPPWD
+    description: 'Deep-power-down enable This bit is set and cleared by software to put the ADC in Deep-power-down mode. Note: The software is allowed to write this bit only when the ADC is disabled (ADCAL = 0, JADSTART = 0, JADSTP = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 29
+    bit_size: 1
+  - name: ADCALDIF
+    description: 'Differential mode for calibration This bit is set and cleared by software to configure the Single-ended or Differential inputs mode for the calibration. Note: The software is allowed to write this bit only when the ADC is disabled and is not calibrating (ADCAL = 0, JADSTART = 0, JADSTP = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 30
+    bit_size: 1
+  - name: ADCAL
+    description: 'ADC calibration This bit is set by software to start the calibration of the ADC. Program first the bit ADCALDIF to determine if this calibration applies for Single-ended or Differential inputs mode. It is cleared by hardware after calibration is complete. Note: The software is allowed to launch a calibration by setting ADCAL only when ADEN = 0. The software is allowed to update the calibration factor by writing ADC_CALFACT only when ADEN = 1 and ADSTART = 0 and JADSTART = 0 (ADC enabled and no conversion is ongoing).'
+    bit_offset: 31
+    bit_size: 1
+fieldset/DIFSEL:
+  description: Differential mode Selection Register
+  fields:
+  - name: DIFSEL
+    description: 'Differential mode for channels 19 to 0. These bits are set and cleared by software. They allow to select if a channel is configured as Single-ended or Differential mode. DIFSEL[i] = 0: analog input channel is configured in Single-ended mode DIFSEL[i] = 1: analog input channel i is configured in Differential mode Note: The DIFSEL bits corresponding to channels that are either connected to a single-ended I/O port or to an internal channel must be kept their reset value (Single-ended input mode). The software is allowed to write these bits only when the ADC is disabled (ADCAL = 0, JADSTART = 0, JADSTP = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 0
+    bit_size: 20
+fieldset/DR:
+  description: regular data register
+  fields:
+  - name: RDATA
+    description: Regular data converted These bits are read-only. They contain the conversion result from the last converted regular channel. The data are left- or right-aligned as described in
+    bit_offset: 0
+    bit_size: 16
+fieldset/IER:
+  description: interrupt enable register
+  fields:
+  - name: ADRDYIE
+    description: 'ADC ready interrupt enable This bit is set and cleared by software to enable/disable the ADC Ready interrupt. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 1
+  - name: EOSMPIE
+    description: 'End of sampling flag interrupt enable for regular conversions This bit is set and cleared by software to enable/disable the end of the sampling phase interrupt for regular conversions. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 1
+    bit_size: 1
+  - name: EOCIE
+    description: 'End of regular conversion interrupt enable This bit is set and cleared by software to enable/disable the end of a regular conversion interrupt. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 2
+    bit_size: 1
+  - name: EOSIE
+    description: 'End of regular sequence of conversions interrupt enable This bit is set and cleared by software to enable/disable the end of regular sequence of conversions interrupt. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 3
+    bit_size: 1
+  - name: OVRIE
+    description: 'Overrun interrupt enable This bit is set and cleared by software to enable/disable the Overrun interrupt of a regular conversion. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 4
+    bit_size: 1
+  - name: JEOCIE
+    description: 'End of injected conversion interrupt enable This bit is set and cleared by software to enable/disable the end of an injected conversion interrupt. Note: The software is allowed to write this bit only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
+    bit_offset: 5
+    bit_size: 1
+  - name: JEOSIE
+    description: 'End of injected sequence of conversions interrupt enable This bit is set and cleared by software to enable/disable the end of injected sequence of conversions interrupt. Note: The software is allowed to write this bit only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
+    bit_offset: 6
+    bit_size: 1
+  - name: AWDIE
+    description: 'Analog watchdog 1-3 interrupt enable. This bit is set and cleared by software to enable/disable the analog watchdog 1-3 interrupts. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
+  - name: JQOVFIE
+    description: 'Injected context queue overflow interrupt enable This bit is set and cleared by software to enable/disable the Injected Context Queue Overflow interrupt. Note: The software is allowed to write this bit only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
+    bit_offset: 10
+    bit_size: 1
+fieldset/ISR:
+  description: interrupt and status register
+  fields:
+  - name: ADRDY
+    description: ready This bit is set by hardware after the ADC has been enabled (ADEN = 1) and when the ADC reaches a state where it is ready to accept conversion requests. It is cleared by software writing 1 to it
+    bit_offset: 0
+    bit_size: 1
+  - name: EOSMP
+    description: End of sampling flag This bit is set by hardware during the conversion of any channel (only for regular channels), at the end of the sampling phase
+    bit_offset: 1
+    bit_size: 1
+  - name: EOC
+    description: End of conversion flag This bit is set by hardware at the end of each regular conversion of a channel when a new data is available in the ADC_DR register. It is cleared by software writing 1 to it or by reading the ADC_DR register
+    bit_offset: 2
+    bit_size: 1
+  - name: EOS
+    description: End of regular sequence flag This bit is set by hardware at the end of the conversions of a regular sequence of channels. It is cleared by software writing 1 to it
+    bit_offset: 3
+    bit_size: 1
+  - name: OVR
+    description: overrun This bit is set by hardware when an overrun occurs on a regular channel, meaning that a new conversion has completed while the EOC flag was already set. It is cleared by software writing 1 to it
+    bit_offset: 4
+    bit_size: 1
+  - name: JEOC
+    description: Injected channel end of conversion flag This bit is set by hardware at the end of each injected conversion of a channel when a new data is available in the corresponding ADC_JDRy register. It is cleared by software writing 1 to it or by reading the corresponding ADC_JDRy register
+    bit_offset: 5
+    bit_size: 1
+  - name: JEOS
+    description: Injected channel end of sequence flag This bit is set by hardware at the end of the conversions of all injected channels in the group. It is cleared by software writing 1 to it
+    bit_offset: 6
+    bit_size: 1
+  - name: AWD
+    description: Analog watchdog 1-3 flags. Set by hardware when the converted voltage crosses the values programmed in the corresponding fields LT and HT fields of the relevant TR register. It is cleared by software.
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
+  - name: JQOVF
+    description: Injected context queue overflow This bit is set by hardware when an Overflow of the Injected Queue of Context occurs. It is cleared by software writing 1 to it. Refer to for more information
+    bit_offset: 10
+    bit_size: 1
+fieldset/JDR:
+  description: injected channel 1-4 data register
+  fields:
+  - name: JDATA
+    description: Injected data These bits are read-only. They contain the conversion result from injected channel y. The data are left -or right-aligned as described in
+    bit_offset: 0
+    bit_size: 16
+fieldset/JSQR:
+  description: injected sequence register
+  fields:
+  - name: JL
+    description: 'Injected channel sequence length These bits are written by software to define the total number of conversions in the injected channel conversion sequence. Note: The software is allowed to write these bits only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 2
+  - name: JEXTSEL
+    description: 'External Trigger Selection for injected group These bits select the external event used to trigger the start of conversion of an injected group: ... Note: The software is allowed to write these bits only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
+    bit_offset: 2
+    bit_size: 5
+  - name: JEXTEN
+    description: 'External trigger enable and polarity selection for injected channels These bits are set and cleared by software to select the external trigger polarity and enable the trigger of an injected group. Note: The software is allowed to write these bits only when JADSTART = 0 (which ensures that no injected conversion is ongoing). If JQM = 1 and if the Queue of Context becomes empty, the software and hardware triggers of the injected sequence are both internally disabled (refer to Queue of context for injected conversions).'
+    bit_offset: 7
+    bit_size: 2
+  - name: JSQ
+    description: '1st-4th conversions in the injected sequence These bits are written by software with the channel number (0 to 19) assigned as the 1st-4th in the injected conversion sequence. Note: The software is allowed to write these bits only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
+    bit_offset: 9
+    bit_size: 5
+    array:
+      len: 4
+      stride: 6
+fieldset/OFR:
+  description: offset 1-4 register
+  fields:
+  - name: OFFSET
+    description: 'Data offset y for the channel programmed into bits OFFSET_CH[4:0] These bits are written by software to define the offset to be subtracted from the raw converted data when converting a channel (can be regular or injected). The channel to which applies the data offset must be programmed in the bits OFFSET_CH[4:0]. The conversion result can be read from in the ADC_DR (regular conversion) or from in the ADC_JDRyi registers (injected conversion). Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing). If several offset (OFFSET) point to the same channel, only the offset with the lowest x value is considered for the subtraction. Ex: if OFFSET1_CH[4:0] = 4 and OFFSET2_CH[4:0] = 4, this is OFFSET1[11:0] which is subtracted when converting channel 4.'
+    bit_offset: 0
+    bit_size: 12
+  - name: OFFSETPOS
+    description: 'Positive offset This bit is set and cleared by software to enable the positive offset. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 24
+    bit_size: 1
+  - name: SATEN
+    description: 'Saturation enable This bit is set and cleared by software to enable the saturation at 0x000 and 0xFFF for the offset function. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 25
+    bit_size: 1
+  - name: OFFSET_CH
+    description: 'Channel selection for the data offset y These bits are written by software to define the channel to which the offset programmed into bits OFFSET[11:0] applies. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing). Some channels are not connected physically and must not be selected for the data offset y. If OFFSET_EN is set, it is not allowed to select the same channel for different ADC_OFRy registers.'
+    bit_offset: 26
+    bit_size: 5
+  - name: OFFSET_EN
+    description: 'Offset y enable This bit is written by software to enable or disable the offset programmed into bits OFFSET[11:0]. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 31
+    bit_size: 1
+fieldset/OR:
+  description: option register
+  fields:
+  - name: OP0
+    description: Option bit 0
+    bit_offset: 0
+    bit_size: 1
+  - name: OP1
+    description: Option bit 1. Note - not documented for H562/H563/H573
+    bit_offset: 1
+    bit_size: 1
+fieldset/SMPR1:
+  description: sample time register 1
+  fields:
+  - name: SMP
+    description: 'Channel 0-9 sampling time selection These bits are written by software to select the sampling time individually for each channel. During sample cycles, the channel selection bits must remain unchanged. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing). Some channels are not connected physically. Keep the corresponding SMPx[2:0] setting to the reset value.'
+    bit_offset: 0
+    bit_size: 3
+    enum: SAMPLE_TIME
+    array:
+      len: 10
+      stride: 3
+  - name: SMPPLUS
+    description: Addition of one clock cycle to the sampling time. To make sure no conversion is ongoing, the software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0
+    bit_offset: 31
+    bit_size: 1
+fieldset/SMPR2:
+  description: sample time register 2
+  fields:
+  - name: SMP
+    description: 'Channel 10-19 sampling time selection These bits are written by software to select the sampling time individually for each channel. During sample cycles, the channel selection bits must remain unchanged. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing). Some channels are not connected physically. Keep the corresponding SMPx[2:0] setting to the reset value.'
+    bit_offset: 0
+    bit_size: 3
+    enum: SAMPLE_TIME
+    array:
+      len: 10
+      stride: 3
+fieldset/SQR1:
+  description: regular sequence register 1
+  fields:
+  - name: L
+    description: 'Regular channel sequence length These bits are written by software to define the total number of conversions in the regular channel conversion sequence. ... Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 4
+  - name: SQ
+    description: '1st-4th conversions in regular sequence These bits are written by software with the channel number (0 to 19) assigned as the 1st-4th in the regular conversion sequence. Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 6
+    bit_size: 5
+    array:
+      len: 4
+      stride: 6
+fieldset/SQR2:
+  description: regular sequence register 2
+  fields:
+  - name: SQ
+    description: '5th-9th conversions in regular sequence These bits are written by software with the channel number (0 to 19) assigned as the 5th-9th in the regular conversion sequence. Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 5
+    array:
+      len: 5
+      stride: 6
+fieldset/SQR3:
+  description: regular sequence register 3
+  fields:
+  - name: SQ
+    description: '10th-14th conversions in regular sequence These bits are written by software with the channel number (0 to 19) assigned as the 10th-14th in the regular conversion sequence. Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 5
+    array:
+      len: 5
+      stride: 6
+fieldset/SQR4:
+  description: regular sequence register 4
+  fields:
+  - name: SQ
+    description: '15th-16th conversions in regular sequence These bits are written by software with the channel number (0 to 19) assigned as the 15th-16th in the regular conversion sequence. Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 5
+    array:
+      len: 2
+      stride: 6
+fieldset/TR1:
+  description: watchdog threshold register 1
+  fields:
+  - name: LT1
+    description: 'Analog watchdog 1 lower threshold These bits are written by software to define the lower threshold for the analog watchdog 1. Refer to AWD2CH, AWD3CH, AWD_HTx, AWD_LTx, AWDx) Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 12
+  - name: AWDFILT
+    description: 'Analog watchdog filtering parameter This bit is set and cleared by software. ... Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 12
+    bit_size: 3
+  - name: HT1
+    description: 'Analog watchdog 1 higher threshold These bits are written by software to define the higher threshold for the analog watchdog 1. Refer to AWD2CH, AWD3CH, AWD_HTx, AWD_LTx, AWDx) Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 16
+    bit_size: 12
+fieldset/TR2:
+  description: watchdog threshold register 2
+  fields:
+  - name: LT2
+    description: 'Analog watchdog 2 lower threshold These bits are written by software to define the lower threshold for the analog watchdog 2. Refer to AWD2CH, AWD3CH, AWD_HTx, AWD_LTx, AWDx) Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 8
+  - name: HT2
+    description: 'Analog watchdog 2 higher threshold These bits are written by software to define the higher threshold for the analog watchdog 2. Refer to AWD2CH, AWD3CH, AWD_HTx, AWD_LTx, AWDx) Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 16
+    bit_size: 8
+fieldset/TR3:
+  description: watchdog threshold register 3
+  fields:
+  - name: LT3
+    description: 'Analog watchdog 3 lower threshold These bits are written by software to define the lower threshold for the analog watchdog 3. This watchdog compares the 8-bit of LT3 with the 8 MSB of the converted data. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 0
+    bit_size: 8
+  - name: HT3
+    description: 'Analog watchdog 3 higher threshold These bits are written by software to define the higher threshold for the analog watchdog 3. Refer to AWD2CH, AWD3CH, AWD_HTx, AWD_LTx, AWDx) Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
+    bit_offset: 16
+    bit_size: 8
+enum/RES:
+  bit_size: 2
+  variants:
+  - name: TwelveBit
+    description: 12-bit resolution
+    value: 0
+  - name: TenBit
+    description: 10-bit resolution
+    value: 1
+  - name: EightBit
+    description: 8-bit resolution
+    value: 2
+  - name: SixBit
+    description: 6-bit resolution
+    value: 3
+enum/EXTEN:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: Hardware trigger detection disabled (conversions can be launched by software)
+    value: 0
+  - name: RisingEdge
+    description: Hardware trigger detection on the rising edge
+    value: 1
+  - name: FallingEdge
+    description: Hardware trigger detection on the falling edge
+    value: 2
+  - name: BothEdges
+    description: Hardware trigger detection on both the rising and falling edge
+    value: 3
+enum/OVSR:
+  bit_size: 3
+  variants:
+  - name: x2
+    description: x2
+    value: 0
+  - name: x4
+    description: x4
+    value: 1
+  - name: x8
+    description: x8
+    value: 2
+  - name: x16
+    description: x16
+    value: 3
+  - name: x32
+    description: x32
+    value: 4
+  - name: x64
+    description: x64
+    value: 5
+  - name: x128
+    description: x128
+    value: 6
+  - name: x256
+    description: x256
+    value: 7
+enum/SAMPLE_TIME:
+  bit_size: 3
+  variants:
+  - name: Cycles2_5
+    description: 2.5 ADC cycles
+    value: 0
+  - name: Cycles6_5
+    description: 6.5 ADC cycles
+    value: 1
+  - name: Cycles12_5
+    description: 12.5 ADC cycles
+    value: 2
+  - name: Cycles24_5
+    description: 24.5 ADC cycles
+    value: 3
+  - name: Cycles47_5
+    description: 47.5 ADC cycles
+    value: 4
+  - name: Cycles92_5
+    description: 92.5 ADC cycles
+    value: 5
+  - name: Cycles247_5
+    description: 247.5 ADC cycles
+    value: 6
+  - name: Cycles640_5
+    description: 640.5 ADC cycles
+    value: 7
