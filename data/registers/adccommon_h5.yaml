@@ -24,11 +24,64 @@ block/ADC_COMMON:
   - name: IPDR
     description: identification register
     byte_offset: 248
-    fieldset: IPDR
   - name: SIDR
     description: size identification register
     byte_offset: 252
-    fieldset: SIDR
+fieldset/CCR:
+  description: common control register
+  fields:
+  - name: DUAL
+    description: 'Dual ADC mode selection These bits are written by software to select the operating mode. 0 value means Independent Mode. Values 00001 to 01001 means Dual mode, master and slave ADCs are working together. All other combinations are reserved and must not be programmed Note: The software is allowed to write these bits only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 0
+    bit_size: 5
+    enum: DUAL
+  - name: DELAY
+    description: 'Delay between 2 sampling phases These bits are set and cleared by software. These bits are used in dual interleaved modes. Refer to for the value of ADC resolution versus DELAY bits values. Note: The software is allowed to write these bits only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 8
+    bit_size: 4
+  - name: DMACFG
+    description: 'DMA configuration (for dual ADC mode) This bit is set and cleared by software to select between two DMA modes of operation and is effective only when DMAEN = 1. For more details, refer to Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 13
+    bit_size: 1
+    enum: DMACFG
+  - name: MDMA
+    description: 'Direct memory access mode for dual ADC mode This bitfield is set and cleared by software. Refer to the DMA controller section for more details. Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 14
+    bit_size: 2
+    enum: MDMA
+  - name: CKMODE
+    description: 'ADC clock mode These bits are set and cleared by software to define the ADC clock scheme (which is common to both master and slave ADCs): In all synchronous clock modes, there is no jitter in the delay from a timer trigger to the start of a conversion. Note: The software is allowed to write these bits only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 16
+    bit_size: 2
+    enum: CKMODE
+  - name: PRESC
+    description: 'ADC prescaler These bits are set and cleared by software to select the frequency of the clock to the ADC. The clock is common for all the ADCs. other: reserved Note: The software is allowed to write these bits only when the ADC is disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0). The ADC prescaler value is applied only when CKMODE[1:0] = 0b00.'
+    bit_offset: 18
+    bit_size: 4
+    enum: PRESC
+  - name: VREFEN
+    description: VREFINT enable This bit is set and cleared by software to enable/disable the VREFINT channel
+    bit_offset: 22
+    bit_size: 1
+  - name: TSEN
+    description: VSENSE enable This bit is set and cleared by software to control VSENSE
+    bit_offset: 23
+    bit_size: 1
+  - name: VBATEN
+    description: VBAT enable This bit is set and cleared by software to control
+    bit_offset: 24
+    bit_size: 1
+fieldset/CDR:
+  description: common regular data register for dual mode
+  fields:
+  - name: RDATA_MST
+    description: Regular data of the master ADC. In dual mode, these bits contain the regular data of the master ADC. Refer to . The data alignment is applied as described in offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN)) In MDMA = 0b11 mode, bits 15:8 contains SLV_ADC_DR[7:0], bits 7:0 contains MST_ADC_DR[7:0].
+    bit_offset: 0
+    bit_size: 16
+  - name: RDATA_SLV
+    description: Regular data of the slave ADC In dual mode, these bits contain the regular data of the slave ADC. Refer to Dual ADC modes. The data alignment is applied as described in offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN)).
+    bit_offset: 16
+    bit_size: 16
 fieldset/CSR:
   description: common status register
   fields:
@@ -60,18 +113,13 @@ fieldset/CSR:
     description: End of injected sequence flag of the master ADC This bit is a copy of the JEOS bit in the corresponding ADC_ISR register.
     bit_offset: 6
     bit_size: 1
-  - name: AWD1_MST
+  - name: AWD_MST
     description: Analog watchdog 1 flag of the master ADC This bit is a copy of the AWD1 bit in the corresponding ADC_ISR register.
     bit_offset: 7
     bit_size: 1
-  - name: AWD2_MST
-    description: Analog watchdog 2 flag of the master ADC This bit is a copy of the AWD2 bit in the corresponding ADC_ISR register.
-    bit_offset: 8
-    bit_size: 1
-  - name: AWD3_MST
-    description: Analog watchdog 3 flag of the master ADC This bit is a copy of the AWD3 bit in the corresponding ADC_ISR register.
-    bit_offset: 9
-    bit_size: 1
+    array:
+      len: 3
+      stride: 1
   - name: JQOVF_MST
     description: Injected Context Queue Overflow flag of the master ADC This bit is a copy of the JQOVF bit in the corresponding ADC_ISR register.
     bit_offset: 10
@@ -104,56 +152,17 @@ fieldset/CSR:
     description: End of injected sequence flag of the slave ADC This bit is a copy of the JEOS bit in the corresponding ADC_ISR register.
     bit_offset: 22
     bit_size: 1
-  - name: AWD1_SLV
+  - name: AWD_SLV
     description: Analog watchdog 1 flag of the slave ADC This bit is a copy of the AWD1 bit in the corresponding ADC_ISR register.
     bit_offset: 23
     bit_size: 1
-  - name: AWD2_SLV
-    description: Analog watchdog 2 flag of the slave ADC This bit is a copy of the AWD2 bit in the corresponding ADC_ISR register.
-    bit_offset: 24
-    bit_size: 1
-  - name: AWD3_SLV
-    description: Analog watchdog 3 flag of the slave ADC This bit is a copy of the AWD3 bit in the corresponding ADC_ISR register.
-    bit_offset: 25
-    bit_size: 1
+    array:
+      len: 3
+      stride: 1
   - name: JQOVF_SLV
     description: Injected Context Queue Overflow flag of the slave ADC This bit is a copy of the JQOVF bit in the corresponding ADC_ISR register.
     bit_offset: 26
     bit_size: 1
-fieldset/CCR:
-  description: common control register
-  fields:
-  - name: CKMODE
-    description: 'ADC clock mode These bits are set and cleared by software to define the ADC clock scheme (which is common to both master and slave ADCs): In all synchronous clock modes, there is no jitter in the delay from a timer trigger to the start of a conversion. Note: The software is allowed to write these bits only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
-    bit_offset: 16
-    bit_size: 2
-  - name: PRESC
-    description: 'ADC prescaler These bits are set and cleared by software to select the frequency of the clock to the ADC. The clock is common for all the ADCs. other: reserved Note: The software is allowed to write these bits only when the ADC is disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0). The ADC prescaler value is applied only when CKMODE[1:0] = 0b00.'
-    bit_offset: 18
-    bit_size: 4
-  - name: VREFEN
-    description: VREFINT enable This bit is set and cleared by software to enable/disable the VREFINT channel
-    bit_offset: 22
-    bit_size: 1
-  - name: TSEN
-    description: VSENSE enable This bit is set and cleared by software to control VSENSE
-    bit_offset: 23
-    bit_size: 1
-  - name: VBATEN
-    description: VBAT enable This bit is set and cleared by software to control
-    bit_offset: 24
-    bit_size: 1
-fieldset/CDR:
-  description: common regular data register for dual mode
-  fields:
-  - name: RDATA_MST
-    description: Regular data of the master ADC. In dual mode, these bits contain the regular data of the master ADC. Refer to . The data alignment is applied as described in offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN)) In MDMA = 0b11 mode, bits 15:8 contains SLV_ADC_DR[7:0], bits 7:0 contains MST_ADC_DR[7:0].
-    bit_offset: 0
-    bit_size: 16
-  - name: RDATA_SLV
-    description: Regular data of the slave ADC In dual mode, these bits contain the regular data of the slave ADC. Refer to Dual ADC modes. The data alignment is applied as described in offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN)).
-    bit_offset: 16
-    bit_size: 16
 fieldset/HWCFGR0:
   description: hardware configuration register
   fields:
@@ -173,6 +182,7 @@ fieldset/HWCFGR0:
     description: Idle value for non-selected channels
     bit_offset: 12
     bit_size: 4
+    enum: IDLEVALUE
 fieldset/VERR:
   description: version register
   fields:
@@ -184,17 +194,114 @@ fieldset/VERR:
     description: Major revision These bits returns the ADC IP major revision
     bit_offset: 4
     bit_size: 4
-fieldset/IPDR:
-  description: identification register
-  fields:
-  - name: ID
-    description: 'Peripheral identifier These bits returns the ADC identifier. ID[31:0] = 0x0011 0006: c7amba_aditf5_90_v1.'
-    bit_offset: 0
-    bit_size: 32
-fieldset/SIDR:
-  description: size identification register
-  fields:
-  - name: SID
-    description: 'Size Identification SID[31:8]: fixed code that characterizes the ADC_SIDR register. This field is always read at 0xA3C5DD. SID[7:0]: read-only numeric field that returns the address offset (in Kbytes) of the identification registers from the IP base address:.'
-    bit_offset: 0
-    bit_size: 32
+enum/CKMODE:
+  bit_size: 2
+  variants:
+  - name: Asynchronous
+    description: Use Kernel Clock adc_ker_ck_input divided by PRESC. Asynchronous to AHB clock
+    value: 0
+  - name: SyncDiv1
+    description: Use AHB clock rcc_hclk3. In this case rcc_hclk must equal sys_d1cpre_ck
+    value: 1
+  - name: SyncDiv2
+    description: Use AHB clock rcc_hclk3 divided by 2
+    value: 2
+  - name: SyncDiv4
+    description: Use AHB clock rcc_hclk3 divided by 4
+    value: 3
+enum/DMACFG:
+  bit_size: 1
+  variants:
+  - name: OneShot
+    description: DMA One Shot mode selected
+    value: 0
+  - name: Circular
+    description: DMA Circular mode selected
+    value: 1
+enum/DUAL:
+  bit_size: 5
+  variants:
+  - name: Independent
+    description: Independent mode
+    value: 0
+  - name: DualRJ
+    description: Dual, combined regular simultaneous + injected simultaneous mode
+    value: 1
+  - name: DualRA
+    description: Dual, combined regular simultaneous + alternate trigger mode
+    value: 2
+  - name: DualIJ
+    description: Dual, combined interleaved mode + injected simultaneous mode
+    value: 3
+  - name: DualJ
+    description: Dual, injected simultaneous mode only
+    value: 5
+  - name: DualR
+    description: Dual, regular simultaneous mode only
+    value: 6
+  - name: DualI
+    description: Dual, interleaved mode only
+    value: 7
+  - name: DualA
+    description: Dual, alternate trigger mode only
+    value: 9
+enum/IDLEVALUE:
+  bit_size: 4
+  variants:
+  - name: H13
+    description: Dummy channel selection is 0x13
+    value: 0
+  - name: H1F
+    description: Dummy channel selection is 0x1F
+    value: 1
+enum/MDMA:
+  bit_size: 2
+  variants:
+  - name: NoPack
+    description: Without data packing, CDR/CDR2 not used
+    value: 0
+  - name: Format32to10
+    description: CDR formatted for 32-bit down to 10-bit resolution
+    value: 2
+  - name: Format8
+    description: CDR formatted for 8-bit resolution
+    value: 3
+enum/PRESC:
+  bit_size: 4
+  variants:
+  - name: Div1
+    description: adc_ker_ck_input not divided
+    value: 0
+  - name: Div2
+    description: adc_ker_ck_input divided by 2
+    value: 1
+  - name: Div4
+    description: adc_ker_ck_input divided by 4
+    value: 2
+  - name: Div6
+    description: adc_ker_ck_input divided by 6
+    value: 3
+  - name: Div8
+    description: adc_ker_ck_input divided by 8
+    value: 4
+  - name: Div10
+    description: adc_ker_ck_input divided by 10
+    value: 5
+  - name: Div12
+    description: adc_ker_ck_input divided by 12
+    value: 6
+  - name: Div16
+    description: adc_ker_ck_input divided by 16
+    value: 7
+  - name: Div32
+    description: adc_ker_ck_input divided by 32
+    value: 8
+  - name: Div64
+    description: adc_ker_ck_input divided by 64
+    value: 9
+  - name: Div128
+    description: adc_ker_ck_input divided by 128
+    value: 10
+  - name: Div256
+    description: adc_ker_ck_input divided by 256
+    value: 11

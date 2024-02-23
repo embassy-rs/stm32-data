@@ -1,0 +1,13 @@
+transforms:
+  - !ModifyByteOffset
+    blocks: ADC_COMMON
+    exclude_items: ^CDR$
+    add_offset: -768 # 0x300
+
+  - !MakeFieldArray
+    fieldsets: CSR
+    from: AWD\d_(MST|SLV)
+    to: AWD_$1
+
+  - !DeleteFieldsets
+    from: ^(IPDR|SIDR)$

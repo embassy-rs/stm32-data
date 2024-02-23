@@ -1,13 +1,50 @@
 transforms:
+  - !Rename
+    from: ^ADC1$
+    to: ADC
+
   - !DeleteEnums
     from: ^(AWD1?|J?EOC|JEOS|J?STRT|OVR|ADRDY|EOS(MP)?|JQOVF|ENDED)(_MST)?$
 
   - !MakeFieldArray
-    fieldsets: CSR
-    from: AWD[1-3]_MST
-    to: AWD_MST
+    fieldsets: ^(IER|ISR)$
+    from: AWD\d(IE)?
+    to: AWD$1
 
   - !MakeFieldArray
-    fieldsets: CSR
-    from: AWD[1-3]_SLV
-    to: AWD_SLV
+    fieldsets: ^(CFGR)$
+    from: EXTSEL\d
+    to: EXTSEL
+
+  - !MakeFieldArray
+    fieldsets: SMPR\d
+    from: SMP\d+
+    to: SMP
+
+  - !MakeFieldArray
+    fieldsets: JSQR
+    from: JSQ\d
+    to: JSQ
+
+  - !MergeFieldsets
+    from: OFR\d
+    to: OFR
+
+  - !MakeRegisterArray
+    blocks: ADC
+    from: OFR\d
+    to: OFR
+
+  - !MergeFieldsets
+    from: JDR\d
+    to: JDR
+
+  - !MakeRegisterArray
+    blocks: ADC
+    from: JDR\d
+    to: JDR
+
+  - !MakeFieldArray
+    fieldsets: ^SQR\d$
+    from: SQ\d+
+    to: SQ
