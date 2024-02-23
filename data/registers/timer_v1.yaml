@@ -418,10 +418,6 @@ block/TIM_GP16:
     description: DMA address for full transfer
     byte_offset: 76
     fieldset: DMAR_GP16
-  - name: ECR
-    description: encoder control register
-    byte_offset: 88
-    fieldset: ECR_GP16
   - name: AF1
     description: alternate function register 1
     byte_offset: 96
@@ -1281,40 +1277,6 @@ fieldset/DMAR_GP16:
     description: DMA register for burst accesses
     bit_offset: 0
     bit_size: 16
-fieldset/ECR_GP16:
-  description: encoder control register
-  fields:
-  - name: IE
-    description: Index enable
-    bit_offset: 0
-    bit_size: 1
-  - name: IDIR
-    description: Index direction
-    bit_offset: 1
-    bit_size: 2
-    enum: IDIR
-  - name: IBLK
-    description: Index blanking
-    bit_offset: 3
-    bit_size: 2
-    enum: IBLK
-  - name: FIDX
-    description: First index
-    bit_offset: 5
-    bit_size: 1
-    enum: FIDX
-  - name: IPOS
-    description: Index positioning
-    bit_offset: 6
-    bit_size: 2
-  - name: PW
-    description: Pulse width
-    bit_offset: 16
-    bit_size: 8
-  - name: PWPRSC
-    description: Pulse width prescaler
-    bit_offset: 24
-    bit_size: 2
 fieldset/EGR_1CH:
   extends: EGR_CORE
   description: event generation register
@@ -1807,15 +1769,6 @@ enum/ETPS:
   - name: Div8
     description: ETRP frequency divided by 8
     value: 3
-enum/FIDX:
-  bit_size: 1
-  variants:
-  - name: AlwaysActive
-    description: Index is always active
-    value: 0
-  - name: FirstOnly
-    description: the first Index only resets the counter
-    value: 1
 enum/FilterValue:
   bit_size: 4
   variants:
@@ -1876,30 +1829,6 @@ enum/GC5C:
   - name: LogicalAND
     description: TIM_OCxREFC is the logical AND of TIM_OCxREF and TIM_OC5REF
     value: 1
-enum/IBLK:
-  bit_size: 2
-  variants:
-  - name: AlwaysActive
-    description: Index always active
-    value: 0
-  - name: CC3P
-    description: Index disabled when tim_ti3 input is active, as per CC3P bitfield
-    value: 1
-  - name: CC4P
-    description: Index disabled when tim_ti4 input is active, as per CC4P bitfield
-    value: 2
-enum/IDIR:
-  bit_size: 2
-  variants:
-  - name: Both
-    description: Index resets the counter whatever the direction
-    value: 0
-  - name: Up
-    description: Index resets the counter when up-counting only
-    value: 1
-  - name: Down
-    description: Index resets the counter when down-counting only
-    value: 2
 enum/LOCK:
   bit_size: 2
   variants:
