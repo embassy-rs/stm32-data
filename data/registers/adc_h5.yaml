@@ -78,7 +78,6 @@ block/ADC:
       len: 4
       stride: 4
     byte_offset: 128
-    # access: Read
     fieldset: JDR
   - name: AWD2CR
     description: Analog Watchdog 2 Configuration Register
@@ -460,10 +459,10 @@ fieldset/SMPR1:
     description: 'Channel 0-9 sampling time selection These bits are written by software to select the sampling time individually for each channel. During sample cycles, the channel selection bits must remain unchanged. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing). Some channels are not connected physically. Keep the corresponding SMPx[2:0] setting to the reset value.'
     bit_offset: 0
     bit_size: 3
-    enum: SAMPLE_TIME
     array:
       len: 10
       stride: 3
+    enum: SAMPLE_TIME
   - name: SMPPLUS
     description: Addition of one clock cycle to the sampling time. To make sure no conversion is ongoing, the software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0
     bit_offset: 31
@@ -475,10 +474,10 @@ fieldset/SMPR2:
     description: 'Channel 10-19 sampling time selection These bits are written by software to select the sampling time individually for each channel. During sample cycles, the channel selection bits must remain unchanged. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing). Some channels are not connected physically. Keep the corresponding SMPx[2:0] setting to the reset value.'
     bit_offset: 0
     bit_size: 3
-    enum: SAMPLE_TIME
     array:
       len: 10
       stride: 3
+    enum: SAMPLE_TIME
 fieldset/SQR1:
   description: regular sequence register 1
   fields:
@@ -560,21 +559,6 @@ fieldset/TR3:
     description: 'Analog watchdog 3 higher threshold These bits are written by software to define the higher threshold for the analog watchdog 3. Refer to AWD2CH, AWD3CH, AWD_HTx, AWD_LTx, AWDx) Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 16
     bit_size: 8
-enum/RES:
-  bit_size: 2
-  variants:
-  - name: TwelveBit
-    description: 12-bit resolution
-    value: 0
-  - name: TenBit
-    description: 10-bit resolution
-    value: 1
-  - name: EightBit
-    description: 8-bit resolution
-    value: 2
-  - name: SixBit
-    description: 6-bit resolution
-    value: 3
 enum/EXTEN:
   bit_size: 2
   variants:
@@ -617,6 +601,21 @@ enum/OVSR:
   - name: x256
     description: x256
     value: 7
+enum/RES:
+  bit_size: 2
+  variants:
+  - name: TwelveBit
+    description: 12-bit resolution
+    value: 0
+  - name: TenBit
+    description: 10-bit resolution
+    value: 1
+  - name: EightBit
+    description: 8-bit resolution
+    value: 2
+  - name: SixBit
+    description: 6-bit resolution
+    value: 3
 enum/SAMPLE_TIME:
   bit_size: 3
   variants:

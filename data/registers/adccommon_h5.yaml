@@ -29,6 +29,40 @@ block/ADC_COMMON:
     description: size identification register
     byte_offset: 252
     fieldset: SIDR
+fieldset/CCR:
+  description: common control register
+  fields:
+  - name: CKMODE
+    description: 'ADC clock mode These bits are set and cleared by software to define the ADC clock scheme (which is common to both master and slave ADCs): In all synchronous clock modes, there is no jitter in the delay from a timer trigger to the start of a conversion. Note: The software is allowed to write these bits only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 16
+    bit_size: 2
+  - name: PRESC
+    description: 'ADC prescaler These bits are set and cleared by software to select the frequency of the clock to the ADC. The clock is common for all the ADCs. other: reserved Note: The software is allowed to write these bits only when the ADC is disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0). The ADC prescaler value is applied only when CKMODE[1:0] = 0b00.'
+    bit_offset: 18
+    bit_size: 4
+  - name: VREFEN
+    description: VREFINT enable This bit is set and cleared by software to enable/disable the VREFINT channel
+    bit_offset: 22
+    bit_size: 1
+  - name: TSEN
+    description: VSENSE enable This bit is set and cleared by software to control VSENSE
+    bit_offset: 23
+    bit_size: 1
+  - name: VBATEN
+    description: VBAT enable This bit is set and cleared by software to control
+    bit_offset: 24
+    bit_size: 1
+fieldset/CDR:
+  description: common regular data register for dual mode
+  fields:
+  - name: RDATA_MST
+    description: Regular data of the master ADC. In dual mode, these bits contain the regular data of the master ADC. Refer to . The data alignment is applied as described in offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN)) In MDMA = 0b11 mode, bits 15:8 contains SLV_ADC_DR[7:0], bits 7:0 contains MST_ADC_DR[7:0].
+    bit_offset: 0
+    bit_size: 16
+  - name: RDATA_SLV
+    description: Regular data of the slave ADC In dual mode, these bits contain the regular data of the slave ADC. Refer to Dual ADC modes. The data alignment is applied as described in offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN)).
+    bit_offset: 16
+    bit_size: 16
 fieldset/CSR:
   description: common status register
   fields:
@@ -120,40 +154,6 @@ fieldset/CSR:
     description: Injected Context Queue Overflow flag of the slave ADC This bit is a copy of the JQOVF bit in the corresponding ADC_ISR register.
     bit_offset: 26
     bit_size: 1
-fieldset/CCR:
-  description: common control register
-  fields:
-  - name: CKMODE
-    description: 'ADC clock mode These bits are set and cleared by software to define the ADC clock scheme (which is common to both master and slave ADCs): In all synchronous clock modes, there is no jitter in the delay from a timer trigger to the start of a conversion. Note: The software is allowed to write these bits only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
-    bit_offset: 16
-    bit_size: 2
-  - name: PRESC
-    description: 'ADC prescaler These bits are set and cleared by software to select the frequency of the clock to the ADC. The clock is common for all the ADCs. other: reserved Note: The software is allowed to write these bits only when the ADC is disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0). The ADC prescaler value is applied only when CKMODE[1:0] = 0b00.'
-    bit_offset: 18
-    bit_size: 4
-  - name: VREFEN
-    description: VREFINT enable This bit is set and cleared by software to enable/disable the VREFINT channel
-    bit_offset: 22
-    bit_size: 1
-  - name: TSEN
-    description: VSENSE enable This bit is set and cleared by software to control VSENSE
-    bit_offset: 23
-    bit_size: 1
-  - name: VBATEN
-    description: VBAT enable This bit is set and cleared by software to control
-    bit_offset: 24
-    bit_size: 1
-fieldset/CDR:
-  description: common regular data register for dual mode
-  fields:
-  - name: RDATA_MST
-    description: Regular data of the master ADC. In dual mode, these bits contain the regular data of the master ADC. Refer to . The data alignment is applied as described in offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN)) In MDMA = 0b11 mode, bits 15:8 contains SLV_ADC_DR[7:0], bits 7:0 contains MST_ADC_DR[7:0].
-    bit_offset: 0
-    bit_size: 16
-  - name: RDATA_SLV
-    description: Regular data of the slave ADC In dual mode, these bits contain the regular data of the slave ADC. Refer to Dual ADC modes. The data alignment is applied as described in offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN)).
-    bit_offset: 16
-    bit_size: 16
 fieldset/HWCFGR0:
   description: hardware configuration register
   fields:
@@ -173,17 +173,6 @@ fieldset/HWCFGR0:
     description: Idle value for non-selected channels
     bit_offset: 12
     bit_size: 4
-fieldset/VERR:
-  description: version register
-  fields:
-  - name: MINREV
-    description: 'Minor revision These bits returns the ADC IP minor revision 0002: Major revision = X.2.'
-    bit_offset: 0
-    bit_size: 4
-  - name: MAJREV
-    description: Major revision These bits returns the ADC IP major revision
-    bit_offset: 4
-    bit_size: 4
 fieldset/IPDR:
   description: identification register
   fields:
@@ -198,3 +187,14 @@ fieldset/SIDR:
     description: 'Size Identification SID[31:8]: fixed code that characterizes the ADC_SIDR register. This field is always read at 0xA3C5DD. SID[7:0]: read-only numeric field that returns the address offset (in Kbytes) of the identification registers from the IP base address:.'
     bit_offset: 0
     bit_size: 32
+fieldset/VERR:
+  description: version register
+  fields:
+  - name: MINREV
+    description: 'Minor revision These bits returns the ADC IP minor revision 0002: Major revision = X.2.'
+    bit_offset: 0
+    bit_size: 4
+  - name: MAJREV
+    description: Major revision These bits returns the ADC IP major revision
+    bit_offset: 4
+    bit_size: 4
