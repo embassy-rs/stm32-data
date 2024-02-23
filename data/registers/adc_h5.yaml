@@ -135,6 +135,7 @@ fieldset/CFGR:
     description: 'Direct memory access configuration This bit is set and cleared by software to select between two DMA modes of operation and is effective only when DMAEN = 1. For more details, refer to Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 1
     bit_size: 1
+    enum: DMACFG
   - name: RES
     description: 'Data resolution These bits are written by software to select the resolution of the conversion. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 3
@@ -156,10 +157,12 @@ fieldset/CFGR:
     description: 'Overrun mode This bit is set and cleared by software and configure the way data overrun is managed. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
     bit_offset: 12
     bit_size: 1
+    enum: OVRMOD
   - name: CONT
     description: 'Single / Continuous conversion mode for regular conversions This bit is set and cleared by software. If it is set, regular conversion takes place continuously until it is cleared. Note: It is not possible to have both Discontinuous mode and Continuous mode enabled: it is forbidden to set both DISCEN = 1 and CONT = 1. The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
     bit_offset: 13
     bit_size: 1
+    enum: CONT
   - name: AUTDLY
     description: 'Delayed conversion mode This bit is set and cleared by software to enable/disable the Auto Delayed Conversion mode.. Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 14
@@ -168,6 +171,7 @@ fieldset/CFGR:
     description: 'Data alignment This bit is set and cleared by software to select right or left alignment. Refer to register, data alignment and offset (ADC_DR, OFFSET, OFFSET_CH, ALIGN). Note: The software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 15
     bit_size: 1
+    enum: ALIGN
   - name: DISCEN
     description: 'Discontinuous mode for regular channels This bit is set and cleared by software to enable/disable Discontinuous mode for regular channels. Note: It is not possible to have both Discontinuous mode and Continuous mode enabled: it is forbidden to set both DISCEN = 1 and CONT = 1. It is not possible to use both auto-injected mode and Discontinuous mode simultaneously: the bits DISCEN and JDISCEN must be kept cleared by software when JAUTO is set. The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
     bit_offset: 16
@@ -184,10 +188,12 @@ fieldset/CFGR:
     description: 'JSQR queue mode This bit is set and cleared by software. It defines how an empty Queue is managed. Refer to for more information. Note: The software is allowed to write this bit only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
     bit_offset: 21
     bit_size: 1
+    enum: JQM
   - name: AWD1SGL
     description: 'Enable the watchdog 1 on a single channel or on all channels This bit is set and cleared by software to enable the analog watchdog on the channel identified by the AWD1CH[4:0] bits or on all the channels Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 22
     bit_size: 1
+    enum: AWD1SGL
   - name: AWD1EN
     description: 'Analog watchdog 1 enable on regular channels This bit is set and cleared by software Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
     bit_offset: 23
@@ -232,14 +238,17 @@ fieldset/CFGR2:
     description: 'Triggered Regular Oversampling This bit is set and cleared by software to enable triggered oversampling Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 9
     bit_size: 1
+    enum: TROVS
   - name: ROVSM
     description: 'Regular Oversampling mode This bit is set and cleared by software to select the regular oversampling mode. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 10
     bit_size: 1
+    enum: ROVSM
   - name: SWTRIG
     description: 'Software trigger bit for sampling time control trigger mode This bit is set and cleared by software to enable the bulb sampling mode. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 25
     bit_size: 1
+    enum: SWTRIG
   - name: BULB
     description: 'Bulb sampling mode This bit is set and cleared by software to enable the bulb sampling mode. SAMPTRIG bit must not be set when the BULB bit is set. The very first ADC conversion is performed with the sampling time specified in SMPx bits. Note: The software is allowed to write this bit only when ADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 26
@@ -287,6 +296,7 @@ fieldset/CR:
     description: 'Differential mode for calibration This bit is set and cleared by software to configure the Single-ended or Differential inputs mode for the calibration. Note: The software is allowed to write this bit only when the ADC is disabled and is not calibrating (ADCAL = 0, JADSTART = 0, JADSTP = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
     bit_offset: 30
     bit_size: 1
+    enum: ADCALDIF
   - name: ADCAL
     description: 'ADC calibration This bit is set by software to start the calibration of the ADC. Program first the bit ADCALDIF to determine if this calibration applies for Single-ended or Differential inputs mode. It is cleared by hardware after calibration is complete. Note: The software is allowed to launch a calibration by setting ADCAL only when ADEN = 0. The software is allowed to update the calibration factor by writing ADC_CALFACT only when ADEN = 1 and ADSTART = 0 and JADSTART = 0 (ADC enabled and no conversion is ongoing).'
     bit_offset: 31
@@ -411,6 +421,7 @@ fieldset/JSQR:
     description: 'External trigger enable and polarity selection for injected channels These bits are set and cleared by software to select the external trigger polarity and enable the trigger of an injected group. Note: The software is allowed to write these bits only when JADSTART = 0 (which ensures that no injected conversion is ongoing). If JQM = 1 and if the Queue of Context becomes empty, the software and hardware triggers of the injected sequence are both internally disabled (refer to Queue of context for injected conversions).'
     bit_offset: 7
     bit_size: 2
+    enum: EXTEN
   - name: JSQ
     description: '1st-4th conversions in the injected sequence These bits are written by software with the channel number (0 to 19) assigned as the 1st-4th in the injected conversion sequence. Note: The software is allowed to write these bits only when JADSTART = 0 (which ensures that no injected conversion is ongoing).'
     bit_offset: 9
@@ -429,6 +440,7 @@ fieldset/OFR:
     description: 'Positive offset This bit is set and cleared by software to enable the positive offset. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 24
     bit_size: 1
+    enum: OFFSETPOS
   - name: SATEN
     description: 'Saturation enable This bit is set and cleared by software to enable the saturation at 0x000 and 0xFFF for the offset function. Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 25
@@ -467,6 +479,7 @@ fieldset/SMPR1:
     description: Addition of one clock cycle to the sampling time. To make sure no conversion is ongoing, the software is allowed to write this bit only when ADSTART = 0 and JADSTART = 0
     bit_offset: 31
     bit_size: 1
+    enum: SMPPLUS
 fieldset/SMPR2:
   description: sample time register 2
   fields:
@@ -559,6 +572,51 @@ fieldset/TR3:
     description: 'Analog watchdog 3 higher threshold These bits are written by software to define the higher threshold for the analog watchdog 3. Refer to AWD2CH, AWD3CH, AWD_HTx, AWD_LTx, AWDx) Note: The software is allowed to write these bits only when ADSTART = 0 and JADSTART = 0 (which ensures that no conversion is ongoing).'
     bit_offset: 16
     bit_size: 8
+enum/ADCALDIF:
+  bit_size: 1
+  variants:
+  - name: SingleEnded
+    description: Calibration for single-ended mode
+    value: 0
+  - name: Differential
+    description: Calibration for differential mode
+    value: 1
+enum/ALIGN:
+  bit_size: 1
+  variants:
+  - name: Right
+    description: Right alignment
+    value: 0
+  - name: Left
+    description: Left alignment
+    value: 1
+enum/AWD1SGL:
+  bit_size: 1
+  variants:
+  - name: All
+    description: Analog watchdog 1 enabled on all channels
+    value: 0
+  - name: Single
+    description: Analog watchdog 1 enabled on single channel selected in AWD1CH
+    value: 1
+enum/CONT:
+  bit_size: 1
+  variants:
+  - name: Single
+    description: Single conversion mode
+    value: 0
+  - name: Continuous
+    description: Continuous conversion mode
+    value: 1
+enum/DMACFG:
+  bit_size: 1
+  variants:
+  - name: OneShot
+    description: DMA One Shot mode selected
+    value: 0
+  - name: Circular
+    description: DMA Circular mode selected
+    value: 1
 enum/EXTEN:
   bit_size: 2
   variants:
@@ -574,72 +632,127 @@ enum/EXTEN:
   - name: BothEdges
     description: Hardware trigger detection on both the rising and falling edge
     value: 3
+enum/JQM:
+  bit_size: 1
+  variants:
+  - name: Mode0
+    description: 'JSQR Mode 0: Queue maintains the last written configuration into JSQR'
+    value: 0
+  - name: Mode1
+    description: 'JSQR Mode 1: An empty queue disables software and hardware triggers of the injected sequence'
+    value: 1
+enum/OFFSETPOS:
+  bit_size: 1
+  variants:
+  - name: Negative
+    description: Negative offset
+    value: 0
+  - name: Positive
+    description: Positive offset
+    value: 1
+enum/OVRMOD:
+  bit_size: 1
+  variants:
+  - name: Preserve
+    description: Preserve DR register when an overrun is detected
+    value: 0
+  - name: Overwrite
+    description: Overwrite DR register when an overrun is detected
+    value: 1
 enum/OVSR:
   bit_size: 3
   variants:
   - name: x2
-    description: x2
     value: 0
   - name: x4
-    description: x4
     value: 1
   - name: x8
-    description: x8
     value: 2
   - name: x16
-    description: x16
     value: 3
   - name: x32
-    description: x32
     value: 4
   - name: x64
-    description: x64
     value: 5
   - name: x128
-    description: x128
     value: 6
   - name: x256
-    description: x256
     value: 7
 enum/RES:
   bit_size: 2
   variants:
-  - name: TwelveBit
+  - name: Bits12
     description: 12-bit resolution
     value: 0
-  - name: TenBit
+  - name: Bits10
     description: 10-bit resolution
     value: 1
-  - name: EightBit
+  - name: Bits8
     description: 8-bit resolution
     value: 2
-  - name: SixBit
+  - name: Bits6
     description: 6-bit resolution
     value: 3
+enum/ROVSM:
+  bit_size: 1
+  variants:
+  - name: Continued
+    description: Oversampling is temporary stopped and continued after injection sequence
+    value: 0
+  - name: Resumed
+    description: Oversampling is aborted and resumed from start after injection sequence
+    value: 1
 enum/SAMPLE_TIME:
   bit_size: 3
   variants:
   - name: Cycles2_5
-    description: 2.5 ADC cycles
+    description: 2.5 ADC clock cycles
     value: 0
   - name: Cycles6_5
-    description: 6.5 ADC cycles
+    description: 6.5 ADC clock cycles
     value: 1
   - name: Cycles12_5
-    description: 12.5 ADC cycles
+    description: 12.5 ADC clock cycles
     value: 2
   - name: Cycles24_5
-    description: 24.5 ADC cycles
+    description: 24.5 ADC clock cycles
     value: 3
   - name: Cycles47_5
-    description: 47.5 ADC cycles
+    description: 47.5 ADC clock cycles
     value: 4
   - name: Cycles92_5
-    description: 92.5 ADC cycles
+    description: 92.5 ADC clock cycles
     value: 5
   - name: Cycles247_5
-    description: 247.5 ADC cycles
+    description: 247.5 ADC clock cycles
     value: 6
   - name: Cycles640_5
-    description: 640.5 ADC cycles
+    description: 640.5 ADC clock cycles
     value: 7
+enum/SMPPLUS:
+  bit_size: 1
+  variants:
+  - name: Cycles2_5
+    description: The sampling time remains set to 2.5 ADC clock cycles remains
+    value: 0
+  - name: Cycles3_5
+    description: 2.5 ADC clock cycle sampling time becomes 3.5 ADC clock cycles for the ADC_SMPR1 and ADC_SMPR2 registers.
+    value: 1
+enum/SWTRIG:
+  bit_size: 1
+  variants:
+  - name: Conversion
+    description: Software trigger starts the conversion for sampling time control trigger mode
+    value: 0
+  - name: Sampling
+    description: Software trigger starts the sampling for sampling time control trigger mode
+    value: 1
+enum/TROVS:
+  bit_size: 1
+  variants:
+  - name: Automatic
+    description: All oversampled conversions for a channel are run following a trigger
+    value: 0
+  - name: Triggered
+    description: Each oversampled conversion for a channel needs a new trigger
+    value: 1
