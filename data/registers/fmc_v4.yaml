@@ -151,64 +151,9 @@ fieldset/BCR:
     bit_offset: 31
     bit_size: 1
 fieldset/BCR1:
+  extends: BCR
   description: SRAM/NOR-Flash chip-select control register for bank 1.
   fields:
-  - name: MBKEN
-    description: Memory bank enable bit Enables the memory bank. After reset Bank1 is enabled, all others are disabled. Accessing a disabled bank causes an ERROR on AHB bus.
-    bit_offset: 0
-    bit_size: 1
-  - name: MUXEN
-    description: Address/data multiplexing enable bit When this bit is set, the address and data values are multiplexed on the data bus, valid only with NOR and PSRAM memories:.
-    bit_offset: 1
-    bit_size: 1
-  - name: MTYP
-    description: Memory type Defines the type of external memory attached to the corresponding memory bank.
-    bit_offset: 2
-    bit_size: 2
-  - name: MWID
-    description: Memory data bus width Defines the external memory device width, valid for all type of memories.
-    bit_offset: 4
-    bit_size: 2
-  - name: FACCEN
-    description: Flash access enable Enables NOR Flash memory access operations.
-    bit_offset: 6
-    bit_size: 1
-  - name: BURSTEN
-    description: Burst enable bit This bit enables/disables synchronous accesses during read operations. It is valid only for synchronous memories operating in Burst mode.
-    bit_offset: 8
-    bit_size: 1
-  - name: WAITPOL
-    description: Wait signal polarity bit Defines the polarity of the wait signal from memory used for either in Synchronous or Asynchronous mode.
-    bit_offset: 9
-    bit_size: 1
-  - name: WAITCFG
-    description: Wait timing configuration The NWAIT signal indicates whether the data from the memory are valid or if a wait state must be inserted when accessing the memory in Synchronous mode. This configuration bit determines if NWAIT is asserted by the memory one clock cycle before the wait state or during the wait state:.
-    bit_offset: 11
-    bit_size: 1
-  - name: WREN
-    description: Write enable bit This bit indicates whether write operations are enabled/disabled in the bank by the FMC.
-    bit_offset: 12
-    bit_size: 1
-  - name: WAITEN
-    description: Wait enable bit This bit enables/disables wait-state insertion via the NWAIT signal when accessing the memory in Synchronous mode.
-    bit_offset: 13
-    bit_size: 1
-  - name: EXTMOD
-    description: 'Extended mode enable This bit enables the FMC to program the write timings for non multiplexed asynchronous accesses inside the FMC_BWTR register, thus resulting in different timings for read and write operations. Note: When the Extended mode is disabled, the FMC can operate in mode 1 or mode 2 as follows: Mode 1 is the default mode when the SRAM/PSRAM memory type is selected (MTYP = 0x0 or 0x01) Mode 2 is the default mode when the NOR memory type is selected (MTYP = 0x10).'
-    bit_offset: 14
-    bit_size: 1
-  - name: ASYNCWAIT
-    description: Wait signal during asynchronous transfers This bit enables/disables the FMC to use the wait signal even during an asynchronous protocol.
-    bit_offset: 15
-    bit_size: 1
-  - name: CPSIZE
-    description: 'CRAM page size These are used for CellularRAM™ 1.5 which does not allow burst access to cross the address boundaries between pages. When these bits are configured, the FMC controller splits automatically the burst access when the memory page size is reached (refer to memory datasheet for page size). Others: reserved.'
-    bit_offset: 16
-    bit_size: 3
-  - name: CBURSTRW
-    description: Write burst enable For PSRAM (CRAM) operating in Burst mode, the bit enables synchronous accesses during write operations. The enable bit for synchronous read accesses is the BURSTEN bit in the FMC_BCRx register.
-    bit_offset: 19
-    bit_size: 1
   - name: CCLKEN
     description: 'Continuous clock enable This bit enables the FMC_CLK clock output to external memory devices. Note: The CCLKEN bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register. Bank 1 must be configured in Synchronous mode to generate the FMC_CLK continuous clock. Note: If CCLKEN bit is set, the FMC_CLK clock ratio is specified by CLKDIV value in the FMC_BTR1 register. CLKDIV in FMC_BWTR1 is don’t care. Note: If the Synchronous mode is used and CCLKEN bit is set, the synchronous memories connected to other banks than Bank 1 are clocked by the same clock (the CLKDIV value in the FMC_BTR2..4 and FMC_BWTR2..4 registers for other banks has no effect.).'
     bit_offset: 20
@@ -217,33 +162,10 @@ fieldset/BCR1:
     description: 'Write FIFO disable This bit disables the Write FIFO used by the FMC controller. Note: The WFDIS bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register.'
     bit_offset: 21
     bit_size: 1
-  - name: NBLSET
-    description: Byte lane (NBL) setup These bits configure the NBL setup timing from NBLx low to chip select NEx low.
-    bit_offset: 22
-    bit_size: 2
-  - name: FMCEN
-    description: 'FMC controller enable This bit enables or disables the FMC controller. Note: The FMCEN bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register.'
-    bit_offset: 31
-    bit_size: 1
 fieldset/BTR:
+  extends: BWTR
   description: SRAM/NOR-Flash chip-select timing register for bank 1.
   fields:
-  - name: ADDSET
-    description: 'Address setup phase duration These bits are written by software to define the duration of the address setup phase (refer to Figure 21 to Figure 33), used in SRAMs, ROMs, asynchronous NOR Flash and PSRAM: ... For each access mode address setup phase duration, refer to the respective figure (Figure 21 to Figure 33). Note: In synchronous accesses, this value is don’t care. Note: In Muxed mode or mode D, the minimum value for ADDSET is 1. Note: In mode 1 and PSRAM memory, the minimum value for ADDSET is 1.'
-    bit_offset: 0
-    bit_size: 4
-  - name: ADDHLD
-    description: 'Address-hold phase duration These bits are written by software to define the duration of the address hold phase (refer to Figure 21 to Figure 33), used in mode D or multiplexed accesses: ... For each access mode address-hold phase duration, refer to the respective figure (Figure 21 to Figure 33). Note: In synchronous accesses, this value is not used, the address hold phase is always 1 memory clock period duration.'
-    bit_offset: 4
-    bit_size: 4
-  - name: DATAST
-    description: 'Data-phase duration These bits are written by software to define the duration of the data phase (refer to Figure 21 to Figure 33), used in asynchronous accesses: ... For each memory type and access mode data-phase duration, refer to the respective figure (Figure 21 to Figure 33). Example: Mode 1, write access, DATAST=1: Data-phase duration= DATAST+1 = 2 HCLK clock cycles. Note: In synchronous accesses, this value is don’t care.'
-    bit_offset: 8
-    bit_size: 8
-  - name: BUSTURN
-    description: Bus turnaround phase duration These bits are written by software to add a delay at the end of current read or write transaction to next transaction on the same bank. This delay allows to match the minimum time between consecutive transactions (t<sub>EHEL</sub> from NEx high to NEx low) and the maximum time needed by the memory to free the data bus after a read access (t<sub>EHQZ</sub>, chip enable high to output Hi-Z). This delay is recommended for mode D and muxed mode. For non-muxed memory, the bus turnaround delay can be set to minimum value. (BUSTURN + 1)HCLK period ≥ max(t<sub>EHEL</sub> min, t<sub>EHQZ</sub> max) For FRAM memories, the bus turnaround delay should be configured to match the minimum tPC (precharge time) timings. The bus turnaround delay is inserted between any consecutive transactions on the same bank (read/read, write/write, read/write and write/read) to match the tPC memory timing. The chip select is toggling between any consecutive accesses. (BUSTURN + 1)HCLK period ≥ t<sub>PC</sub> min ...
-    bit_offset: 16
-    bit_size: 4
   - name: CLKDIV
     description: 'Clock divide ratio (for FMC_CLK signal) Defines the period of FMC_CLK clock output signal, expressed in number of HCLK cycles: In asynchronous NOR Flash, SRAM or PSRAM accesses, this value is don’t care. Note: Refer to Section 5.6.5: Synchronous transactions for FMC_CLK divider ratio formula).'
     bit_offset: 20
