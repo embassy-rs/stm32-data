@@ -320,14 +320,14 @@ fieldset/SDCMR:
     description: 'Command mode These bits define the command issued to the SDRAM device. Note: When a command is issued, at least one Command Target Bank bit ( CTB1 or CTB2) must be set otherwise the command will be ignored. Note: If two SDRAM banks are used, the Auto-refresh and PALL command must be issued simultaneously to the two devices with CTB1 and CTB2 bits set otherwise the command will be ignored. Note: If only one SDRAM bank is used and a command is issued with it’s associated CTB bit set, the other CTB bit of the the unused bank must be kept to 0.'
     bit_offset: 0
     bit_size: 3
-  - name: CTB2
+    enum: MODE
+  - name: CTB
     description: Command Target Bank 2 This bit indicates whether the command will be issued to SDRAM Bank 2 or not.
     bit_offset: 3
     bit_size: 1
-  - name: CTB1
-    description: Command Target Bank 1 This bit indicates whether the command will be issued to SDRAM Bank 1 or not.
-    bit_offset: 4
-    bit_size: 1
+    array:
+      len: 2
+      stride: 1
   - name: NRFS
     description: Number of Auto-refresh These bits define the number of consecutive Auto-refresh commands issued when MODE = ‘011’. ....
     bit_offset: 5
@@ -343,22 +343,27 @@ fieldset/SDCR:
     description: Number of column address bits These bits define the number of bits of a column address.
     bit_offset: 0
     bit_size: 2
+    enum: NC
   - name: NR
     description: Number of row address bits These bits define the number of bits of a row address.
     bit_offset: 2
     bit_size: 2
+    enum: NR
   - name: MWID
     description: Memory data bus width. These bits define the memory device width.
     bit_offset: 4
     bit_size: 2
+    enum: MWID
   - name: NB
     description: Number of internal banks This bit sets the number of internal banks.
     bit_offset: 6
     bit_size: 1
+    enum: NB
   - name: CAS
     description: CAS Latency This bits sets the SDRAM CAS latency in number of memory clock cycles.
     bit_offset: 7
     bit_size: 2
+    enum: CAS
   - name: WP
     description: Write protection This bit enables write mode access to the SDRAM bank.
     bit_offset: 9
@@ -367,6 +372,7 @@ fieldset/SDCR:
     description: 'SDRAM clock configuration These bits define the SDRAM clock period for both SDRAM banks and allow disabling the clock before changing the frequency. In this case the SDRAM must be re-initialized. Note: The corresponding bits in the FMC_SDCR2 register are don’t care.'
     bit_offset: 10
     bit_size: 2
+    enum: SDCLK
   - name: RBURST
     description: 'Burst read This bit enables Burst read mode. The SDRAM controller anticipates the next read commands during the CAS latency and stores data in the Read FIFO. Note: The corresponding bit in the FMC_SDCR2 register is don’t care.'
     bit_offset: 12
@@ -398,14 +404,14 @@ fieldset/SDSR:
     description: Refresh error flag An interrupt is generated if REIE = 1 and RE = 1.
     bit_offset: 0
     bit_size: 1
-  - name: MODES1
+  - name: MODES
     description: Status Mode for Bank 1 This bit defines the Status Mode of SDRAM Bank 1.
     bit_offset: 1
     bit_size: 2
-  - name: MODES2
-    description: Status Mode for Bank 2 This bit defines the Status Mode of SDRAM Bank 2.
-    bit_offset: 3
-    bit_size: 2
+    array:
+      len: 2
+      stride: 2
+    enum: MODES
   - name: BUSY
     description: Busy status This bit defines the status of the SDRAM controller after a Command Mode request 1; SDRAM Controller is not ready to accept a new request.
     bit_offset: 5
