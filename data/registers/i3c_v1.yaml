@@ -1,3 +1,13 @@
+block/DataRegs:
+  items:
+  - name: DR
+    description: I3C transmit data byte register.
+    byte_offset: 0
+    fieldset: DR
+  - name: DWR
+    description: I3C transmit data word register.
+    byte_offset: 4
+    fieldset: DWR
 block/I3C:
   description: Improved inter-integrated circuit.
   items:
@@ -13,22 +23,12 @@ block/I3C:
     description: I3C configuration register.
     byte_offset: 4
     fieldset: CFGR
-  - name: RDR
-    description: I3C receive data byte register.
+  - name: RxDataRegs
     byte_offset: 16
-    fieldset: RDR
-  - name: RDWR
-    description: I3C receive data word register.
-    byte_offset: 20
-    fieldset: RDWR
-  - name: TDR
-    description: I3C transmit data byte register.
+    block: DataRegs
+  - name: TxDataRegs
     byte_offset: 24
-    fieldset: TDR
-  - name: TDWR
-    description: I3C transmit data word register.
-    byte_offset: 28
-    fieldset: TDWR
+    block: DataRegs
   - name: IBIDR
     description: I3C IBI payload data register.
     byte_offset: 32
@@ -505,6 +505,23 @@ fieldset/DEVR4:
     description: DA[6:0] write disabled (when the I3C is acting as controller) When the I3C is acting as controller, once that software set IBIACK=1 or CRACK=1, this read bit is set by hardware (i.e. DIS=1) to lock the configured DA[6:0] and IBIDEN values. Then, to be able to next modify DA[6:0] or IBIDEN, the software must wait for this field DIS to be de-asserted by hardware (i.e. polling on DIS=0) before modifying these two assigned values to the target x. Indeed, the target may be requesting an IBI or a controller-role meanwhile the controller intends to modify DA[6:0] or IBIDEN.
     bit_offset: 31
     bit_size: 1
+fieldset/DR:
+  description: I3C transmit data byte register.
+  fields:
+  - name: DB
+    description: 8-bit data to transmit on I3C bus.
+    bit_offset: 0
+    bit_size: 8
+fieldset/DWR:
+  description: I3C receive data word register.
+  fields:
+  - name: DB
+    description: 8-bit received data (earliest byte on I3C bus).
+    bit_offset: 0
+    bit_size: 8
+    array:
+      len: 4
+      stride: 8
 fieldset/EPIDR:
   description: I3C extended provisioned ID register.
   fields:
@@ -789,32 +806,6 @@ fieldset/MAXWLR:
     description: maximum data write length (when I3C is acting as target) This field is initially written by software when I3C_CFGR.EN=0 and updated by hardware on the reception of SETMWL command. Software is notified of a MWL update by the I3C_EVR.MWLUPF and the corresponding interrupt if enabled. This field is used by hardware to return the value on the I3C bus when the target receives a GETMWL CCC.
     bit_offset: 0
     bit_size: 16
-fieldset/RDR:
-  description: I3C receive data byte register.
-  fields:
-  - name: RDB0
-    description: 8-bit received data on I3C bus.
-    bit_offset: 0
-    bit_size: 8
-fieldset/RDWR:
-  description: I3C receive data word register.
-  fields:
-  - name: RDB0
-    description: 8-bit received data (earliest byte on I3C bus).
-    bit_offset: 0
-    bit_size: 8
-  - name: RDB1
-    description: 8-bit received data (next byte after RDB0 on I3C bus).
-    bit_offset: 8
-    bit_size: 8
-  - name: RDB2
-    description: 8-bit received data (next byte after RDB1 on I3C bus).
-    bit_offset: 16
-    bit_size: 8
-  - name: RDB3
-    description: 8-bit received data (latest byte on I3C bus).
-    bit_offset: 24
-    bit_size: 8
 fieldset/RMR:
   description: I3C received message register.
   fields:
@@ -882,32 +873,6 @@ fieldset/SR:
     bit_size: 1
   - name: MID
     description: message identifier/counter of a given frame (when the I3C is acting as controller) When the I3C is acting as controller, this field identifies the control word message (i.e. I3C_CR) to which the I3C_SR status register refers. First message of a frame is identified with MID[7:0]=0. This field is incremented (by hardware) on the completion of a new message control word (i.e. I3C_CR) over I3C bus. This field is reset for every new frame start.
-    bit_offset: 24
-    bit_size: 8
-fieldset/TDR:
-  description: I3C transmit data byte register.
-  fields:
-  - name: TDB0
-    description: 8-bit data to transmit on I3C bus.
-    bit_offset: 0
-    bit_size: 8
-fieldset/TDWR:
-  description: I3C transmit data word register.
-  fields:
-  - name: TDB0
-    description: 8-bit transmit data (earliest byte on I3C bus).
-    bit_offset: 0
-    bit_size: 8
-  - name: TDB1
-    description: 8-bit transmit data (next byte after TDB0[7:0] on I3C bus).
-    bit_offset: 8
-    bit_size: 8
-  - name: TDB2
-    description: 8-bit transmit data (next byte after TDB1[7:0] on I3C bus).
-    bit_offset: 16
-    bit_size: 8
-  - name: TDB3
-    description: 8-bit transmit data (latest byte on I3C bus).
     bit_offset: 24
     bit_size: 8
 fieldset/TGTTDR:
