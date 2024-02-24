@@ -221,6 +221,7 @@ fieldset/CFGR:
     description: initial controller/target role This bit can be modified only when I3C_CFGR.EN = 0. Once enabled by setting I3C_CFGR.EN = 1, I3C peripheral initially acts as an I3C target. I3C does not drive SCL line and does not enable SDA pull-up, until it eventually acquires the controller role. Once enabled by setting I3C_CFGR.EN = 1, I3C peripheral initially acts as a controller. It has the I3C controller role, so drives SCL line and enables SDA pull-up, until it eventually offers the controller role to an I3C secondary controller.
     bit_offset: 1
     bit_size: 1
+    enum: CRINIT
   - name: NOARBH
     description: no arbitrable header after a START (when I3C is acting as a controller) This bit can be modified only when there is no on-going frame. - The target address is emitted directly after a START in case of a legacy I2C message or an I3C SDR private read/write message. - This is a more performing option (when is useless the emission of the 0x7E arbitrable header), but this is to be used only when the controller is sure that the addressed target device can not emit concurrently an IBI or a controller-role request (to insure no misinterpretation and no potential conflict between the address emitted by the controller in open-drain mode and the same address a target device can emit after a START, for IBI or MR).
     bit_offset: 2
@@ -253,6 +254,7 @@ fieldset/CFGR:
     description: RX-FIFO threshold (whatever I3C is acting as controller/target) This threshold defines, compared to the RX-FIFO level, when the I3C_EVR.RXFNEF flag is set (and consequently if RXDMAEN=1 when is asserted a DMA RX request). RXFNEF is set when 1 byte is to be read in RX-FIFO (i.e. in I3C_RDR). RXFNEF is set when 4 bytes are to be read in RX-FIFO (i.e. in I3C_RDWR).
     bit_offset: 10
     bit_size: 1
+    enum: THRES
   - name: TXDMAEN
     description: TX-FIFO DMA request enable (whatever I3C is acting as controller/target) - Software writes and pushes a data byte/word into TX-FIFO i.e. writes I3C_TDR or I3C_TDWR register, to be transmitted over the I3C bus. - A next data byte/word is to be written by the software either via polling on the flag I3C_EVR.TXFNFF=1 or via interrupt notification (enabled by I3C_IER.TXFNFIE=1). - DMA writes and pushes data byte(s)/word(s) into TX-FIFO i.e. writes I3C_TDR or I3C_TDWR register. - A next data byte/word transfer is automatically pushed by the programmed hardware (i.e. via the asserted TX-FIFO DMA request from the I3C and the programmed DMA channel).
     bit_offset: 12
@@ -265,6 +267,7 @@ fieldset/CFGR:
     description: TX-FIFO threshold (whatever I3C is acting as controller/target) This threshold defines, compared to the TX-FIFO level, when the I3C_EVR.TXFNFF flag is set (and consequently if TXDMAEN=1 when is asserted a DMA TX request). TXFNFF is set when 1 byte is to be written in TX-FIFO (i.e. in I3C_TDR). TXFNFF is set when 4 bytes are to be written in TX-FIFO (i.e. in I3C_TDWR).
     bit_offset: 14
     bit_size: 1
+    enum: THRES
   - name: SDMAEN
     description: 'S-FIFO DMA request enable (when I3C is acting as controller) Condition: When RMODE=1 (FIFO is enabled for the status): - Software reads and pops a status word from S-FIFO i.e. reads I3C_SR register after a completed frame (I3C_EVR.FCF=1) or an error (I3C_EVR.ERRF=1). - A status word can be read by the software either via polling on these register flags or via interrupt notification (enabled by I3C_IER.FCIE=1 and I3C_IER.ERRIE=1). - DMA reads and pops status word(s) from S-FIFO i.e. reads I3C_SR register. - Status word(s) are automatically read by the programmed hardware (i.e. via the asserted S-FIFO DMA request from the I3C and the programmed DMA channel).'
     bit_offset: 16
@@ -304,6 +307,7 @@ fieldset/CR:
     description: read / non-write message (when I3C is acting as controller) When I3C is acting as controller, this field is used if MTYPE[3:0]=0010 (private message) or MTYPE[3:0]=0011 (direct message) or MTYPE[3:0]=0100 (legacy I2C message), in order to emit the RnW bit on the I3C bus.
     bit_offset: 16
     bit_size: 1
+    enum: RNW
   - name: ADD
     description: 7-bit I3C dynamic / I2C static target address (when I3C is acting as controller) When I3C is acting as controller, this field is used if MTYPE[3:0]=0010 (private message) or MTYPE[3:0]=0011 (direct message) or MTYPE[3:0]=0100 (legacy I2C message).
     bit_offset: 17
@@ -316,6 +320,7 @@ fieldset/CR:
     description: message end type (when the I3C is acting as controller).
     bit_offset: 31
     bit_size: 1
+    enum: MEND
 fieldset/CRCAPR:
   description: I3C controller-role capability register.
   fields:
@@ -346,6 +351,7 @@ fieldset/CR_ALTERNATE:
     description: message end type (when I3C is acting as controller).
     bit_offset: 31
     bit_size: 1
+    enum: MEND
 fieldset/DCR:
   description: I3C device characteristics register.
   fields:
@@ -364,10 +370,12 @@ fieldset/DEVR:
     description: 'IBI request acknowledge (when the I3C is acting as controller) When the I3C is acting as controller, this bit is written by software to define the acknowledge policy to be applied on the I3C bus on the reception of a IBI request from target x: - After the NACK, the message continues as initially programmed (the target is aware of the NACK and can emit another IBI request later on) - The field DIS is asserted by hardware to protect DA[6:0] from being modified by software meanwhile the hardware can store internally the current DA[6:0] into the kernel clock domain. - After the ACK, the controller logs the IBI payload data, if any, depending on I3C_DEVRx.IBIDEN. - The software is notified by the IBI flag (i.e. I3C_EVR.IBIF=1) and/or the corresponding interrupt if enabled; - Independently from IBIACK configuration for this or other devices, further IBI request(s) are NACKed until IBI request flag (i.e. I3C_EVR.IBIF) and controller-role request flag (i.e. I3C_EVR.CRF) are both cleared.'
     bit_offset: 16
     bit_size: 1
+    enum: ACK
   - name: CRACK
     description: 'controller-role request acknowledge (when the I3C is acting as controller) When the I3C is acting as controller, this bit is written by software to define the acknowledge policy to be applied on the I3C bus on the reception of a controller-role request from target x: After the NACK, the message continues as initially programmed (the target is aware of the NACK and can emit another controller-role request later on) - The field DIS is asserted by hardware to protect DA[6:0] from being modified by software meanwhile the hardware can store internally the current DA[6:0] into the kernel clock domain. - After the ACK, the message continues as initially programmed. The software is notified by the controller-role request flag (i.e. I3C_EVR.CRF=1) and/or the corresponding interrupt if enabled; For effectively granting the controller-role to the requesting secondary controller, software should issue a GETACCCR (formerly known as GETACCMST), followed by a STOP. - Independently of CRACK configuration for this or other devices, further controller-role request(s) are NACKed until controller-role request flag (i.e. I3C_EVR.CRF) and IBI flag (i.e. I3C_EVR.IBIF) are both cleared.'
     bit_offset: 17
     bit_size: 1
+    enum: ACK
   - name: IBIDEN
     description: IBI data enable (when the I3C is acting as controller) When the I3C is acting as controller, this bit should be written by software to store the BCR[2] bit as received from the target x during broadcast ENTDAA or direct GETBCR CCC via the received I3C_RDR. Writing to this field has no impact when the read field I3C_DEVRx.DIS=1.
     bit_offset: 18
@@ -380,6 +388,7 @@ fieldset/DEVR:
     description: DA[6:0] write disabled (when the I3C is acting as controller) When the I3C is acting as controller, once that software set IBIACK=1 or CRACK=1, this read bit is set by hardware (i.e. DIS=1) to lock the configured DA[6:0] and IBIDEN values. Then, to be able to next modify DA[6:0] or IBIDEN, the software must wait for this field DIS to be de-asserted by hardware (i.e. polling on DIS=0) before modifying these two assigned values to the target x. Indeed, the target may be requesting an IBI or a controller-role meanwhile the controller intends to modify DA[6:0] or IBIDEN.
     bit_offset: 31
     bit_size: 1
+    enum: DIS
 fieldset/DEVR0:
   description: I3C own device characteristics register.
   fields:
@@ -411,6 +420,7 @@ fieldset/DEVR0:
     description: 'reset action/level on received reset pattern (when the I3C is acting as target) This read field is used by hardware on the reception of a direct read RSTACT CCC in order to return the corresponding data byte on the I3C bus. This read field is updated by hardware on the reception of a broadcast or direct write RSTACT CCC (target reset action). Only the defining bytes 0x00, 0x01 and 0x02 are mapped, and RSTACT[1:0] = Defining Byte[1:0]. a) partially reset the I3C peripheral, by a write and clear of the enable bit of the i3C configuration register (i.e. write I3C_CFGR.EN=0). This reset the I3C bus interface and the I3C kernel sub-parts, without modifying the content of the I3C APB registers (excepted the I3C_CFGR.EN bit). b) reset fully the I3C peripheral including all its registers via a write and set to the I3C reset control bit of the RCC (Reset and Clock Controller) register. a system reset. This has the same impact as a pin reset (i.e. NRST=0) (refer to RCC functional description - Reset part): – the software writes and set the AICR.SYSRESETREQ register control bit, when the device is controlled by a CortexTM-M. – the software writes and set the RCC_GRSTCSETR.SYSRST=1, when the device is controlled by a CortexTM-A.'
     bit_offset: 22
     bit_size: 2
+    enum: RSTACT
   - name: RSTVAL
     description: 'reset action is valid (when the I3C is acting as target) This read bit is asserted by hardware to indicate that the RTSACT[1:0] field has been updated on the reception of a broadcast or direct write RSTACT CCC (target reset action) and is valid. This field is cleared by hardware when the target receives a frame start. If RSTVAL=1: when the RSTF is asserted (and/or the corresponding interrupt if enabled), I3C_DEVR0.RSTACT[1:0] dictates the reset action to be performed by the software if any. If RSTVAL=0: when the RSTF is asserted (and/or the corresponding interrupt if enabled), the software should issue an I3C reset after a first detected reset pattern, and a system reset on the second one.'
     bit_offset: 24
@@ -690,12 +700,9 @@ fieldset/IER:
     bit_offset: 31
     bit_size: 1
 fieldset/MAXRLR:
+  extends: MAXWLR
   description: I3C maximum read length register.
   fields:
-  - name: ML
-    description: maximum data read length (when I3C is acting as target) This field is initially written by software when I3C_CFGR.EN=0 and updated by hardware on the reception of SETMRL command (with potentially also updated IBIP[2:0]). Software is notified of a MRL update by the I3C_EVR.MRLUPF and the corresponding interrupt if enabled. This field is used by hardware to return the value on the I3C bus when the target receives a GETMRL CCC.
-    bit_offset: 0
-    bit_size: 16
   - name: IBIP
     description: 'IBI payload data size, in bytes (when I3C is acting as target) This field is initially written by software when I3C_CFGR.EN=0 to set the number of data bytes to be sent to the controller after an IBI request has been acknowledged.This field may be updated by hardware on the reception of SETMRL command (which potentially also updated IBIP[2:0]). Software is notified of a MRL update by the I3C_EVR.MRLUPF and the corresponding interrupt if enabled. others: same as 100.'
     bit_offset: 16
@@ -729,6 +736,7 @@ fieldset/SER:
     description: 'protocol error code/type controller detected an illegally formatted CCC controller detected that transmitted data on the bus is different from expected controller detected a not acknowledged broadcast address (7’hE) controller detected the new controller did not drive bus after controller-role hand-off target detected an invalid broadcast address 7’hE+W target detected a parity error on a CCC code via a parity check (vs T bit) target detected a parity error on a write data via a parity check (vs T bit) target detected a parity error on the assigned address during dynamic address arbitration via a parity check (vs PAR bit) target detected a 7’hE+R missing after Sr during dynamic address arbitration target detected an illegally formatted CCC target detected that transmitted data on the bus is different from expected others: reserved.'
     bit_offset: 0
     bit_size: 4
+    enum: CODERR
   - name: PERR
     description: protocol error.
     bit_offset: 4
@@ -772,6 +780,7 @@ fieldset/SR:
     description: 'message direction Whatever the I3C is acting as controller or target, this bit indicates the direction of the related message on the I3C bus Note: ENTDAA CCC is considered as a write command.'
     bit_offset: 18
     bit_size: 1
+    enum: DIR
   - name: MID
     description: message identifier/counter of a given frame (when the I3C is acting as controller) When the I3C is acting as controller, this field identifies the control word message (i.e. I3C_CR) to which the I3C_SR status register refers. First message of a frame is identified with MID[7:0]=0. This field is incremented (by hardware) on the completion of a new message control word (i.e. I3C_CR) over I3C bus. This field is reset for every new frame start.
     bit_offset: 24
@@ -848,3 +857,131 @@ fieldset/TIMINGR2:
     description: controller clock stall time, in number of kernel clock cycles tSCLL_STALL = STALL x tI3CCLK.
     bit_offset: 8
     bit_size: 8
+enum/ACK:
+  bit_size: 1
+  variants:
+  - name: Must_NACKed
+    value: 0
+  - name: Must_ACKed
+    value: 1
+enum/CODERR:
+  bit_size: 4
+  variants:
+  - name: CE0
+    description: Transaction after sending CCC. Controller detected an illegally formatted CCC
+    value: 0
+  - name: CE1
+    description: Monitoring error. Controller detected that transmitted data on the bus is different from expected
+    value: 1
+  - name: CE2
+    description: No response to broadcast address. Controller detected a not acknowledged broadcast address (0b111_1110)
+    value: 2
+  - name: CE3
+    description: Failed controller-role hand-off. Controller detected the new controller did not drive bus after controller-role hand-off
+    value: 3
+  - name: TE0
+    description: Invalid broadcast address 0b111_1110 + W. Target detected an invalid broadcast address 0b111_1110 + W
+    value: 8
+  - name: TE1
+    description: CCC code. Target detected a parity error on a CCC code via a parity check (vs. T bit)
+    value: 9
+  - name: TE2
+    description: Write data. Target detected a parity error on a write data via a parity check (vs. T bit)
+    value: 10
+  - name: TE3
+    description: Assigned address during dynamic address arbitration. Target detected a parity error on the assigned address during dynamic address arbitration via a parity check (vs. PAR bit)
+    value: 11
+  - name: TE4
+    description: 0b111_1110 + R missing after Sr during dynamic address arbitration. Target detected a 0b111_1110 + R missing after Sr during dynamic address arbitration
+    value: 12
+  - name: TE5
+    description: Transaction after detecting CCC. Target detected an illegally formatted CCC
+    value: 13
+  - name: TE6
+    description: Monitoring error. Target detected that transmitted data on the bus is different from expected
+    value: 14
+enum/CRINIT:
+  bit_size: 1
+  variants:
+  - name: Target
+    description: Once enabled by setting EN = 1, the peripheral initially acts as a target. I3C does not drive SCL line and does not enable SDA pull-up, until it eventually acquires the controller role.
+    value: 0
+  - name: Controller
+    description: |-
+      Once enabled by setting EN = 1, the peripheral initially acts as a controller. It has the I3C
+      controller role, so drives SCL line and enables SDA pull-up, until it eventually offers the
+      controller role to an I3C secondary controller.
+    value: 1
+enum/DIR:
+  bit_size: 1
+  variants:
+  - name: Write
+    value: 0
+  - name: Read
+    value: 1
+enum/DIS:
+  bit_size: 1
+  variants:
+  - name: Allowed
+    description: write to DA[7:0] and to IBIDEN in the I3C_DEVRx register is allowed
+    value: 0
+  - name: Locked
+    description: write to DA[7:0] and to IBIDEN is disabled/locked
+    value: 1
+enum/MEND:
+  bit_size: 1
+  variants:
+  - name: RepeatedStart
+    description: this message from controller is followed by a repeated start (Sr), before another message must be emitted
+    value: 0
+  - name: Stop
+    description: this message from controller ends with a stop (P), being the last message of a frame
+    value: 1
+enum/RNW:
+  bit_size: 1
+  variants:
+  - name: Write
+    description: write message
+    value: 0
+  - name: Read
+    description: read message
+    value: 1
+enum/RSTACT:
+  bit_size: 2
+  variants:
+  - name: NoReset
+    value: 0
+  - name: FirstLevel
+    description: |-
+      first level of reset: the application software must either:
+      a) partially reset the peripheral, by a write and clear of the enable bit of the I3C
+      configuration register (write EN = 0). This resets the I3C bus interface and the I3C kernel
+      sub-parts, without modifying the content of the I3C APB registers (except the EN bit).
+      b) fully reset the peripheral, including all its registers, via a write and set of the I3C reset
+      control bit of the RCC (reset and clock controller) register.
+    value: 1
+  - name: SecondLevel
+    description: |-
+      second level of reset: the application software must issue a warm reset, also known as a
+      system reset. This (see Section 11: Reset and clock control (RCC)) has the same impact as a
+      pin reset (NRST = 0):
+        – the software writes and sets the SYSRESETREQ control bit of the AITR register, when
+        the device is controlled by a Cortex®-M.
+        – the software writes and sets SYSRST = 1 in the RCC_GRSTCSETR register, when the
+        device is controlled by a Cortex®-A.
+    value: 2
+  - name: NoResetEither
+    value: 3
+enum/THRES:
+  bit_size: 1
+  variants:
+  - name: Byte
+    description: TXFNFF is set when 1 byte must be written in TX-FIFO (in I3C_TDR).
+    value: 0
+  - name: Word
+    description: |-
+      TXFNFF is set when 1 word / 4 bytes must be written in TX-FIFO (in the I3C_TDWR
+      register). If the a number of the last transmitted data is not a multiple of 4 bytes
+      (XDCNT[1:0] = 00 in the I3C_SR register), only the relevant 1, 2, or 3 valid LSB bytes of
+      the last word are taken into account by the hardware, and sent on the I3C bus.
+    value: 1
