@@ -35,3 +35,22 @@ transforms:
     to: ${1}x${2}
 
   ### End of making DataRegs block ###
+
+  - !MakeFieldArray
+    fieldsets: IBIDR
+    from: ^(IBIDB)\d$
+    to: $1
+
+  - !MergeFieldsets
+    from: ^(DEVR)[1-4]$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: I3C
+    from: ^(DEVR)[1-4]$
+    to: $1
+
+  - !RenameFields
+    fieldset: ^MAX[RW]LR$
+    from: ^M[RW]L$
+    to: ML
