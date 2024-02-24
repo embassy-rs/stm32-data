@@ -1,6 +1,38 @@
 block/FMC:
   description: Flexible memory controller.
   items:
+  - name: NOR_PSRAM
+    byte_offset: 0
+    block: NOR_PSRAM
+  - name: NAND
+    byte_offset: 128
+    block: NAND
+  - name: SDRAM
+    byte_offset: 320
+    block: SDRAM
+block/NAND:
+  items:
+  - name: PCR
+    description: NAND Flash control registers.
+    byte_offset: 0
+    fieldset: PCR
+  - name: SR
+    description: FIFO status and interrupt register.
+    byte_offset: 4
+    fieldset: SR
+  - name: PMEM
+    description: Common memory space timing register.
+    byte_offset: 8
+    fieldset: PMEM
+  - name: PATT
+    description: Attribute memory space timing register.
+    byte_offset: 12
+    fieldset: PATT
+  - name: ECCR
+    description: ECC result registers.
+    byte_offset: 20
+block/NOR_PSRAM:
+  items:
   - name: BCR1
     description: SRAM/NOR-Flash chip-select control register for bank 1.
     byte_offset: 0
@@ -23,25 +55,6 @@ block/FMC:
     description: PSRAM chip select counter register.
     byte_offset: 32
     fieldset: PCSCNTR
-  - name: PCR
-    description: NAND Flash control registers.
-    byte_offset: 128
-    fieldset: PCR
-  - name: SR
-    description: FIFO status and interrupt register.
-    byte_offset: 132
-    fieldset: SR
-  - name: PMEM
-    description: Common memory space timing register.
-    byte_offset: 136
-    fieldset: PMEM
-  - name: PATT
-    description: Attribute memory space timing register.
-    byte_offset: 140
-    fieldset: PATT
-  - name: ECCR
-    description: ECC result registers.
-    byte_offset: 148
   - name: BWTR
     description: SRAM/NOR-Flash write timing registers 1.
     array:
@@ -49,31 +62,33 @@ block/FMC:
       stride: 8
     byte_offset: 260
     fieldset: BWTR
+block/SDRAM:
+  items:
   - name: SDCR
     description: SDRAM control registers 1.
     array:
       len: 2
       stride: 4
-    byte_offset: 320
+    byte_offset: 0
     fieldset: SDCR
   - name: SDTR
     description: SDRAM timing registers 1.
     array:
       len: 2
       stride: 4
-    byte_offset: 328
+    byte_offset: 8
     fieldset: SDTR
   - name: SDCMR
     description: SDRAM Command Mode register.
-    byte_offset: 336
+    byte_offset: 16
     fieldset: SDCMR
   - name: SDRTR
     description: SDRAM refresh timer register.
-    byte_offset: 340
+    byte_offset: 20
     fieldset: SDRTR
   - name: SDSR
     description: SDRAM status register.
-    byte_offset: 344
+    byte_offset: 24
     fieldset: SDSR
 fieldset/BCR:
   description: SRAM/NOR-Flash chip-select control register for bank 4.
