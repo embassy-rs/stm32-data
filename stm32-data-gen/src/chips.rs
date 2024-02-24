@@ -621,6 +621,7 @@ impl PeriMatcher {
             ("STM32(H7|U5).*:VREFBUF:.*", ("vrefbuf", "v2a1", "VREFBUF")),
             ("STM32H5.*:VREFBUF:.*", ("vrefbuf", "v2a2", "VREFBUF")),
             ("STM32G4.*:VREFBUF:.*", ("vrefbuf", "v2b", "VREFBUF")),
+            ("STM32H5.*:I3C:.*", ("i3c", "v1", "I3C")),
         ];
 
         Self {
