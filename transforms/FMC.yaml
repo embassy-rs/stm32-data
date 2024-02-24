@@ -1,0 +1,21 @@
+transforms:
+  - !DeleteFieldsets
+    from: ^ECCR$
+
+  - !MergeFieldsets
+    from: ^(BCR)[2-4]$
+    to: $1
+
+  - !MergeFieldsets
+    from: ^(BTR|BWTR|SDCR|SDTR)\d+$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: FMC
+    from: ^(BCR)[2-4]$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: FMC
+    from: ^(BTR|BWTR|SDCR|SDTR)\d+$
+    to: $1
