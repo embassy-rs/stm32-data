@@ -105,10 +105,12 @@ fieldset/BCR:
     description: Memory type Defines the type of external memory attached to the corresponding memory bank.
     bit_offset: 2
     bit_size: 2
+    enum: MTYP
   - name: MWID
     description: Memory data bus width Defines the external memory device width, valid for all type of memories.
     bit_offset: 4
     bit_size: 2
+    enum: MWID
   - name: FACCEN
     description: Flash access enable Enables NOR Flash memory access operations.
     bit_offset: 6
@@ -121,10 +123,12 @@ fieldset/BCR:
     description: Wait signal polarity bit Defines the polarity of the wait signal from memory used for either in Synchronous or Asynchronous mode.
     bit_offset: 9
     bit_size: 1
+    enum: WAITPOL
   - name: WAITCFG
     description: Wait timing configuration The NWAIT signal indicates whether the data from the memory are valid or if a wait state must be inserted when accessing the memory in Synchronous mode. This configuration bit determines if NWAIT is asserted by the memory one clock cycle before the wait state or during the wait state:.
     bit_offset: 11
     bit_size: 1
+    enum: WAITCFG
   - name: WREN
     description: Write enable bit This bit indicates whether write operations are enabled/disabled in the bank by the FMC.
     bit_offset: 12
@@ -145,10 +149,12 @@ fieldset/BCR:
     description: 'CRAM page size These are used for CellularRAM™ 1.5 which does not allow burst access to cross the address boundaries between pages. When these bits are configured, the FMC controller splits automatically the burst access when the memory page size is reached (refer to memory datasheet for page size). Others: reserved.'
     bit_offset: 16
     bit_size: 3
+    enum: CPSIZE
   - name: CBURSTRW
     description: Write burst enable For PSRAM (CRAM) operating in Burst mode, the bit enables synchronous accesses during write operations. The enable bit for synchronous read accesses is the BURSTEN bit in the FMC_BCRx register.
     bit_offset: 19
     bit_size: 1
+    enum: CBURSTRW
   - name: CCLKEN
     description: 'Continuous clock enable This bit enables the FMC_CLK clock output to external memory devices. Note: The CCLKEN bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register. Bank 1 must be configured in Synchronous mode to generate the FMC_CLK continuous clock. Note: If CCLKEN bit is set, the FMC_CLK clock ratio is specified by CLKDIV value in the FMC_BTR1 register. CLKDIV in FMC_BWTR1 is don’t care. Note: If the Synchronous mode is used and CCLKEN bit is set, the synchronous memories connected to other banks than Bank 1 are clocked by the same clock (the CLKDIV value in the FMC_BTR2..4 and FMC_BWTR2..4 registers for other banks has no effect.).'
     bit_offset: 20
@@ -189,14 +195,6 @@ fieldset/BTR:
     description: '(see note below bit descriptions): Data latency for synchronous memory For synchronous access with read/write Burst mode enabled (BURSTEN / CBURSTRW bits set), defines the number of memory clock cycles (+2) to issue to the memory before reading/writing the first data: This timing parameter is not expressed in HCLK periods, but in FMC_CLK periods. For asynchronous access, this value is don''t care.'
     bit_offset: 24
     bit_size: 4
-  - name: ACCMOD
-    description: Access mode Specifies the asynchronous access modes as shown in the timing diagrams. These bits are taken into account only when the EXTMOD bit in the FMC_BCRx register is 1.
-    bit_offset: 28
-    bit_size: 2
-  - name: DATAHLD
-    description: 'Data hold phase duration These bits are written by software to define the duration of the data hold phase in HCLK cycles (refer to Figure 21 to Figure 33), used in asynchronous accesses: For read accesses For write accesses.'
-    bit_offset: 30
-    bit_size: 2
 fieldset/BWTR:
   description: SRAM/NOR-Flash write timing registers 1.
   fields:
@@ -220,6 +218,7 @@ fieldset/BWTR:
     description: Access mode. Specifies the asynchronous access modes as shown in the next timing diagrams.These bits are taken into account only when the EXTMOD bit in the FMC_BCRx register is 1.
     bit_offset: 28
     bit_size: 2
+    enum: ACCMOD
   - name: DATAHLD
     description: Data hold phase duration These bits are written by software to define the duration of the data hold phase in HCLK cycles (refer to Figure 21 to Figure 33), used in asynchronous write accesses:.
     bit_offset: 30
@@ -289,22 +288,13 @@ fieldset/PCSCNTR:
     description: Chip select counter. These bits are written by software to define the maximum chip select low pulse duration. It is expressed in FMC_CLK cycles for synchronous accesses and in HCLK cycles for asynchronous accesses. The counter is disabled if the programmed value is 0.
     bit_offset: 0
     bit_size: 16
-  - name: CNTB1EN
+  - name: CNTBEN
     description: Counter Bank 1 enable This bit enables the chip select counter for PSRAM/NOR Bank 1.
     bit_offset: 16
     bit_size: 1
-  - name: CNTB2EN
-    description: Counter Bank 2 enable This bit enables the chip select counter for PSRAM/NOR Bank 2.
-    bit_offset: 17
-    bit_size: 1
-  - name: CNTB3EN
-    description: Counter Bank 3 enable This bit enables the chip select counter for PSRAM/NOR Bank 3.
-    bit_offset: 18
-    bit_size: 1
-  - name: CNTB4EN
-    description: Counter Bank 4 enable This bit enables the chip select counter for PSRAM/NOR Bank 4.
-    bit_offset: 19
-    bit_size: 1
+    array:
+      len: 4
+      stride: 1
 fieldset/PMEM:
   description: Common memory space timing register.
   fields:
@@ -386,6 +376,7 @@ fieldset/SDCR:
     description: 'Read pipe These bits define the delay, in clock cycles, for reading data after CAS latency. Note: The corresponding bits in the FMC_SDCR2 register is read only.'
     bit_offset: 13
     bit_size: 2
+    enum: RPIPE
 fieldset/SDRTR:
   description: SDRAM refresh timer register.
   fields:
@@ -482,3 +473,225 @@ fieldset/SR:
     description: FIFO empty Read-only bit that provides the status of the FIFO.
     bit_offset: 6
     bit_size: 1
+enum/ACCMOD:
+  bit_size: 2
+  variants:
+  - name: A
+    description: Access mode A
+    value: 0
+  - name: B
+    description: Access mode B
+    value: 1
+  - name: C
+    description: Access mode C
+    value: 2
+  - name: D
+    description: Access mode D
+    value: 3
+enum/CAS:
+  bit_size: 2
+  variants:
+  - name: Clocks1
+    description: 1 cycle
+    value: 1
+  - name: Clocks2
+    description: 2 cycles
+    value: 2
+  - name: Clocks3
+    description: 3 cycles
+    value: 3
+enum/CBURSTRW:
+  bit_size: 1
+  variants:
+  - name: Asynchronous
+    description: Write operations are always performed in Asynchronous mode.
+    value: 0
+  - name: Synchronous
+    description: Write operations are performed in Synchronous mode.
+    value: 1
+enum/CPSIZE:
+  bit_size: 3
+  variants:
+  - name: NoBurstSplit
+    description: No burst split when crossing page boundary
+    value: 0
+  - name: Bytes128
+    description: 128 bytes CRAM page size
+    value: 1
+  - name: Bytes256
+    description: 256 bytes CRAM page size
+    value: 2
+  - name: Bytes512
+    description: 512 bytes CRAM page size
+    value: 3
+  - name: Bytes1024
+    description: 1024 bytes CRAM page size
+    value: 4
+enum/ECCPS:
+  bit_size: 3
+  variants:
+  - name: Bytes256
+    description: ECC page size 256 bytes
+    value: 0
+  - name: Bytes512
+    description: ECC page size 512 bytes
+    value: 1
+  - name: Bytes1024
+    description: ECC page size 1024 bytes
+    value: 2
+  - name: Bytes2048
+    description: ECC page size 2048 bytes
+    value: 3
+  - name: Bytes4096
+    description: ECC page size 4096 bytes
+    value: 4
+  - name: Bytes8192
+    description: ECC page size 8192 bytes
+    value: 5
+enum/MODE:
+  bit_size: 3
+  variants:
+  - name: Normal
+    description: Normal Mode
+    value: 0
+  - name: ClockConfigurationEnable
+    description: Clock Configuration Enable
+    value: 1
+  - name: PALL
+    description: PALL (All Bank Precharge) command
+    value: 2
+  - name: AutoRefreshCommand
+    description: Auto-refresh command
+    value: 3
+  - name: LoadModeRegister
+    description: Load Mode Resgier
+    value: 4
+  - name: SelfRefreshCommand
+    description: Self-refresh command
+    value: 5
+  - name: PowerDownCommand
+    description: Power-down command
+    value: 6
+enum/MODES:
+  bit_size: 2
+  variants:
+  - name: Normal
+    description: Normal Mode
+    value: 0
+  - name: SelfRefresh
+    description: Self-refresh mode
+    value: 1
+  - name: PowerDown
+    description: Power-down mode
+    value: 2
+enum/MTYP:
+  bit_size: 2
+  variants:
+  - name: SRAM
+    description: SRAM memory type
+    value: 0
+  - name: PSRAM
+    description: PSRAM (CRAM) memory type
+    value: 1
+  - name: Flash
+    description: NOR Flash/OneNAND Flash
+    value: 2
+enum/MWID:
+  bit_size: 2
+  variants:
+  - name: Bits8
+    description: Memory data bus width 8 bits
+    value: 0
+  - name: Bits16
+    description: Memory data bus width 16 bits
+    value: 1
+  - name: Bits32
+    description: Memory data bus width 32 bits
+    value: 2
+enum/NB:
+  bit_size: 1
+  variants:
+  - name: NB2
+    description: Two internal Banks
+    value: 0
+  - name: NB4
+    description: Four internal Banks
+    value: 1
+enum/NC:
+  bit_size: 2
+  variants:
+  - name: Bits8
+    description: 8 bits
+    value: 0
+  - name: Bits9
+    description: 9 bits
+    value: 1
+  - name: Bits10
+    description: 10 bits
+    value: 2
+  - name: Bits11
+    description: 11 bits
+    value: 3
+enum/NR:
+  bit_size: 2
+  variants:
+  - name: Bits11
+    description: 11 bits
+    value: 0
+  - name: Bits12
+    description: 12 bits
+    value: 1
+  - name: Bits13
+    description: 13 bits
+    value: 2
+enum/PWID:
+  bit_size: 2
+  variants:
+  - name: Bits8
+    description: External memory device width 8 bits
+    value: 0
+  - name: Bits16
+    description: External memory device width 16 bits
+    value: 1
+enum/RPIPE:
+  bit_size: 2
+  variants:
+  - name: NoDelay
+    description: No clock cycle delay
+    value: 0
+  - name: Clocks1
+    description: One clock cycle delay
+    value: 1
+  - name: Clocks2
+    description: Two clock cycles delay
+    value: 2
+enum/SDCLK:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: SDCLK clock disabled
+    value: 0
+  - name: Div2
+    description: SDCLK period = 2 x HCLK period
+    value: 2
+  - name: Div3
+    description: SDCLK period = 3 x HCLK period
+    value: 3
+enum/WAITCFG:
+  bit_size: 1
+  variants:
+  - name: BeforeWaitState
+    description: NWAIT signal is active one data cycle before wait state
+    value: 0
+  - name: DuringWaitState
+    description: NWAIT signal is active during wait state
+    value: 1
+enum/WAITPOL:
+  bit_size: 1
+  variants:
+  - name: ActiveLow
+    description: NWAIT active low
+    value: 0
+  - name: ActiveHigh
+    description: NWAIT active high
+    value: 1
