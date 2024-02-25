@@ -152,9 +152,12 @@ impl PeriMatcher {
             ("STM32L1.*:AES:.*", ("aes", "v1", "AES")),
             ("STM32L4.*:AES:.*", ("aes", "v1", "AES")),
             ("STM32L5.*:AES:.*", ("aes", "v2", "AES")),
-            ("STM32U5.*:AES:.*", ("aes", "u5", "AES")),
             ("STM32WL5.*:AES:.*", ("aes", "v2", "AES")),
             ("STM32WLE.*:AES:.*", ("aes", "v2", "AES")),
+            ("STM32U5.*:AES:.*", ("aes", "v3a", "AES")),
+            ("STM32(H5|WBA).*:AES:.*", ("aes", "v3b", "AES")),
+            ("STM32(H5|WBA).*:SAES:.*", ("saes", "v1a", "SAES")),
+            ("STM32U5.*:SAES:.*", ("saes", "v1b", "SAES")),
             (".*:SPI:spi2_v1_4", ("spi", "f1", "SPI")),
             (".*:SPI:spi2s1_v2_1", ("spi", "v1", "SPI")),
             (".*:SPI:spi2s1_v2_2", ("spi", "v1", "SPI")),
@@ -622,6 +625,9 @@ impl PeriMatcher {
             ("STM32H5.*:VREFBUF:.*", ("vrefbuf", "v2a2", "VREFBUF")),
             ("STM32G4.*:VREFBUF:.*", ("vrefbuf", "v2b", "VREFBUF")),
             ("STM32H5.*:I3C:.*", ("i3c", "v1", "I3C")),
+            ("STM32(H5|WBA).*:PKA:.*", ("pka", "v1a", "PKA")),
+            ("STM32U5.*:PKA:.*", ("pka", "v1b", "PKA")),
+            ("STM32(L5|WL|WB).*:PKA:.*", ("pka", "v1c", "PKA")),
         ];
 
         Self {

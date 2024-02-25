@@ -158,7 +158,10 @@ pub mod ir {
         pub items: Vec<BlockItem>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+    // Notice:
+    // BlockItem has custom Debug implement,
+    // when modify the struct, make sure Debug impl reflect the change.
+    #[derive(Eq, PartialEq, Clone, Deserialize)]
     pub struct BlockItem {
         pub name: String,
         pub description: Option<String>,
@@ -167,6 +170,20 @@ pub mod ir {
         pub byte_offset: u32,
 
         pub inner: BlockItemInner,
+    }
+
+    // Notice:
+    // Debug implement AFFECT OUTPUT METAPAC, modify with caution
+    impl std::fmt::Debug for BlockItem {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.debug_struct("BlockItem")
+                .field("name", &self.name)
+                .field("description", &self.description)
+                .field("array", &self.array)
+                .field("byte_offset", &format_args!("{:#x}", self.byte_offset))
+                .field("inner", &self.inner)
+                .finish()
+        }
     }
 
     #[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize)]
@@ -274,13 +291,30 @@ pub struct Chip {
     pub packages: Vec<Package>,
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+// Notice:
+// MemoryRegion has custom Debug implement,
+// when modify the struct, make sure Debug impl reflect the change.
+#[derive(Eq, PartialEq, Clone, Deserialize)]
 pub struct MemoryRegion {
     pub name: String,
     pub kind: MemoryRegionKind,
     pub address: u32,
     pub size: u32,
     pub settings: Option<FlashSettings>,
+}
+
+// Notice:
+// Debug implement AFFECT OUTPUT METAPAC, modify with caution
+impl std::fmt::Debug for MemoryRegion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MemoryRegion")
+            .field("name", &self.name)
+            .field("kind", &self.kind)
+            .field("address", &format_args!("{:#x}", self.address))
+            .field("size", &self.size)
+            .field("settings", &self.settings)
+            .finish()
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
@@ -320,7 +354,10 @@ pub struct Package {
     pub package: String,
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+// Notice:
+// Peripheral has custom Debug implement,
+// when modify struct, make sure Debug impl reflect the change.
+#[derive(Eq, PartialEq, Clone, Deserialize)]
 pub struct Peripheral {
     pub name: String,
     pub address: u64,
@@ -334,6 +371,22 @@ pub struct Peripheral {
     pub dma_channels: Vec<PeripheralDmaChannel>,
     #[serde(default)]
     pub interrupts: Vec<PeripheralInterrupt>,
+}
+
+// Notice:
+// Debug implement AFFECT OUTPUT METAPAC, modify with caution
+impl std::fmt::Debug for Peripheral {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Peripheral")
+            .field("name", &self.name)
+            .field("address", &format_args!("{:#x}", self.address))
+            .field("registers", &self.registers)
+            .field("rcc", &self.rcc)
+            .field("pins", &self.pins)
+            .field("dma_channels", &self.dma_channels)
+            .field("interrupts", &self.interrupts)
+            .finish()
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
