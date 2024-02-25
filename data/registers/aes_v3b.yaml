@@ -1,0 +1,277 @@
+block/AES:
+  description: Advanced encryption standard hardware accelerator
+  items:
+  - name: CR
+    description: Control register
+    byte_offset: 0
+    fieldset: CR
+  - name: SR
+    description: Status register
+    byte_offset: 4
+    fieldset: SR
+  - name: DINR
+    description: Data input register
+    byte_offset: 8
+    fieldset: DINR
+  - name: DOUTR
+    description: Data output register
+    byte_offset: 12
+    fieldset: DOUTR
+  - name: KEYR
+    description: Key register
+    array:
+      offsets:
+      - 0
+      - 4
+      - 8
+      - 12
+      - 32
+      - 36
+      - 40
+      - 44
+    byte_offset: 16
+    fieldset: KEYR
+  - name: IVR
+    description: Initialization vector register
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 32
+    fieldset: IVR
+  - name: SUSPR
+    description: Suspend register
+    array:
+      len: 8
+      stride: 4
+    byte_offset: 64
+    fieldset: SUSPR
+  - name: IER
+    description: interrupt enable register
+    byte_offset: 768
+    fieldset: IER
+  - name: ISR
+    description: interrupt status register
+    byte_offset: 772
+    fieldset: ISR
+  - name: ICR
+    description: interrupt clear register
+    byte_offset: 776
+    fieldset: ICR
+fieldset/CR:
+  description: Control register
+  fields:
+  - name: EN
+    description: AES enable
+    bit_offset: 0
+    bit_size: 1
+  - name: DATATYPE
+    description: Data type selection
+    bit_offset: 1
+    bit_size: 2
+    enum: DATATYPE
+  - name: MODE
+    description: Operating mode
+    bit_offset: 3
+    bit_size: 2
+    enum: MODE
+  - name: CHMOD
+    description: Chaining mode selection
+    bit_offset:
+    - start: 5
+      end: 6
+    - start: 16
+      end: 16
+    bit_size: 3
+    enum: CHMOD
+  - name: DMAINEN
+    description: Enable DMA management of data input phase
+    bit_offset: 11
+    bit_size: 1
+  - name: DMAOUTEN
+    description: Enable DMA management of data output phase
+    bit_offset: 12
+    bit_size: 1
+  - name: GCMPH
+    description: GCM or CCM phase selection
+    bit_offset: 13
+    bit_size: 2
+    enum: GCMPH
+  - name: KEYSIZE
+    description: Key size selection
+    bit_offset: 18
+    bit_size: 1
+  - name: NPBLB
+    description: Number of padding bytes in last block of payload
+    bit_offset: 20
+    bit_size: 4
+  - name: KMOD
+    description: Key mode selection
+    bit_offset: 24
+    bit_size: 2
+  - name: IPRST
+    description: AES peripheral software reset
+    bit_offset: 31
+    bit_size: 1
+fieldset/DINR:
+  description: Data input register
+  fields:
+  - name: DIN
+    description: Input data word
+    bit_offset: 0
+    bit_size: 32
+fieldset/DOUTR:
+  description: Data output register
+  fields:
+  - name: DOUT
+    description: Output data word
+    bit_offset: 0
+    bit_size: 32
+fieldset/ICR:
+  description: Interrupt clear register
+  fields:
+  - name: CCF
+    description: Computation complete flag clear
+    bit_offset: 0
+    bit_size: 1
+  - name: RWEIF
+    description: Read or write error interrupt flag clear
+    bit_offset: 1
+    bit_size: 1
+  - name: KEIF
+    description: Key error interrupt flag clear
+    bit_offset: 2
+    bit_size: 1
+fieldset/IER:
+  description: Interrupt enable register
+  fields:
+  - name: CCFIE
+    description: Computation complete flag interrupt enable
+    bit_offset: 0
+    bit_size: 1
+  - name: RWEIE
+    description: Read or write error interrupt enable
+    bit_offset: 1
+    bit_size: 1
+  - name: KEIE
+    description: Key error interrupt enable
+    bit_offset: 2
+    bit_size: 1
+fieldset/ISR:
+  description: Interrupt status register
+  fields:
+  - name: CCF
+    description: Computation complete flag
+    bit_offset: 0
+    bit_size: 1
+  - name: RWEIF
+    description: Read or write error interrupt flag
+    bit_offset: 1
+    bit_size: 1
+  - name: KEIF
+    description: Key error interrupt flag
+    bit_offset: 2
+    bit_size: 1
+fieldset/IVR:
+  description: Initialization vector register
+  fields:
+  - name: IVI
+    description: Initialization vector input
+    bit_offset: 0
+    bit_size: 32
+fieldset/KEYR:
+  description: Key register
+  fields:
+  - name: KEY
+    description: Cryptographic key
+    bit_offset: 0
+    bit_size: 32
+fieldset/SR:
+  description: Status register
+  fields:
+  - name: CCF
+    description: Computation complete flag
+    bit_offset: 0
+    bit_size: 1
+  - name: RDERR
+    description: Read error flag
+    bit_offset: 1
+    bit_size: 1
+  - name: WRERR
+    description: Write error flag
+    bit_offset: 2
+    bit_size: 1
+  - name: BUSY
+    description: Busy flag
+    bit_offset: 3
+    bit_size: 1
+  - name: KEYVALID
+    description: Key valid flag
+    bit_offset: 7
+    bit_size: 1
+fieldset/SUSPR:
+  description: Suspend register
+  fields:
+  - name: SUSP
+    description: AES suspend
+    bit_offset: 0
+    bit_size: 32
+enum/DATATYPE:
+  bit_size: 2
+  variants:
+  - name: None
+    description: Word
+    value: 0
+  - name: HalfWord
+    description: Half-word (16-bit)
+    value: 1
+  - name: Byte
+    description: Byte (8-bit)
+    value: 2
+  - name: Bit
+    description: Bit
+    value: 3
+enum/GCMPH:
+  bit_size: 2
+  variants:
+  - name: Init phase
+    description: Init phase
+    value: 0
+  - name: Header phase
+    description: Header phase
+    value: 1
+  - name: Payload phase
+    description: Payload phase
+    value: 2
+  - name: Final phase
+    description: Final phase
+    value: 3
+enum/MODE:
+  bit_size: 2
+  variants:
+  - name: Mode1
+    description: Encryption
+    value: 0
+  - name: Mode2
+    description: Key derivation (or key preparation for ECB/CBC decryption)
+    value: 1
+  - name: Mode3
+    description: Decryption
+    value: 2
+enum/CHMOD:
+  bit_size: 3
+  variants:
+  - name: ECB
+    description: Electronic codebook
+    value: 0
+  - name: CBC
+    description: Cipher-block chaining
+    value: 1
+  - name: CTR
+    description: Counter mode
+    value: 2
+  - name: GCM_GMAC
+    description: Galois counter mode and Galois message authentication code
+    value: 3
+  - name: CCM
+    description: Counter with CBC-MAC
+    value: 4
