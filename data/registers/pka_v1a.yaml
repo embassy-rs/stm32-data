@@ -74,6 +74,7 @@ fieldset/SR:
     description: Limited mode flag This bit is updated when EN bit in PKA_CR is set.
     bit_offset: 1
     bit_size: 1
+    enum: LMF
   - name: BUSY
     description: PKA operation is in progress This bit is set to 1 whenever START bit in the PKA_CR is set. It is automatically cleared when the computation is complete, meaning that PKA RAM can be safely accessed and a new operation can be started. If PKA is started with a wrong opcode, it is busy for a couple of cycles, then it aborts automatically the operation and go back to ready (BUSY bit is set to 0).
     bit_offset: 16
@@ -94,3 +95,12 @@ fieldset/SR:
     description: Operation error flag This bit is cleared using OPERRFC bit in PKA_CLRFR.
     bit_offset: 21
     bit_size: 1
+enum/LMF:
+  bit_size: 1
+  variants:
+  - name: All
+    description: All values documented in MODE bitfield can be used.
+    value: 0
+  - name: Limited
+    description: Only ECDSA verification (MODE = 0x26) is supported by the PKA.
+    value: 1
