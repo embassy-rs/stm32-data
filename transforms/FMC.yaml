@@ -1,0 +1,57 @@
+transforms:
+  - !DeleteFieldsets
+    from: ^ECCR$
+
+  - !MergeFieldsets
+    from: ^(BCR)[2-4]$
+    to: $1
+
+  - !MergeFieldsets
+    from: ^(BTR|BWTR|SDCR|SDTR)\d+$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: FMC
+    from: ^(BCR)[2-4]$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: FMC
+    from: ^(BTR|BWTR|SDCR|SDTR)\d+$
+    to: $1
+
+  - !MakeBlock
+    blocks: FMC
+    from: ^(BCR\d*|BW?TR\d*|PCSCNTR)$
+    to_outer: NOR_PSRAM
+    to_block: NOR_PSRAM
+    to_inner: $1
+
+  - !MakeBlock
+    blocks: FMC
+    from: ^(PCR|SR|PMEM|PATT|ECCR)$
+    to_outer: NAND
+    to_block: NAND
+    to_inner: $1
+
+  - !MakeBlock
+    blocks: FMC
+    from: ^(SDCR\d*|SDTR\d*|SDCMR|SDRTR|SDSR)$
+    to_outer: SDRAM
+    to_block: SDRAM
+    to_inner: $1
+
+  - !MakeFieldArray
+    fieldsets: ^PCSCNTR$
+    from: CNTB\dEN
+    to: CNTBEN
+
+  - !MakeFieldArray
+    fieldsets: ^SDCMR$
+    from: CTB\d
+    to: CTB
+
+  - !MakeFieldArray
+    fieldsets: ^SDSR$
+    from: MODES\d
+    to: MODES
