@@ -1,0 +1,56 @@
+transforms:
+  ### Start of making DataRegs block ###
+
+  # Make a DataRegs block that contain DR and DWR register,
+  # then let Tx and Rx use that block
+
+  # Eliminate Field name difference between Tx and Rx
+  - !RenameFields
+    fieldset: ^[RT]DR$
+    from: (R|T)(DB)\d
+    to: $2
+  - !MakeFieldArray
+    fieldsets: ^[RT]DWR$
+    from: (R|T)(DB)\d
+    to: $2
+
+  # Make Tx and Rx register use same DR and DWR fieldsets
+  # We can't tell whether Tx or Rx registers left after previous transforms, so we match both T and R for safe.
+  - !MergeFieldsets
+    from: ^[TR](DW?R)$
+    to: $1
+
+  # Extract DR and DWR into DataRegs, left T and R as prefix
+  - !MakeBlock
+    blocks: ^I3C$
+    from: ^(R|T)(DW?R)$
+    to_outer: ${1}DataRegs
+    to_block: DataRegs
+    to_inner: ${2}
+
+  # Expand single letter T and R to Tx and Rx, make it more readable
+  - !RenameRegisters
+    block: I3C
+    from: (T|R)(DataRegs)
+    to: ${1}x${2}
+
+  ### End of making DataRegs block ###
+
+  - !MakeFieldArray
+    fieldsets: IBIDR
+    from: ^(IBIDB)\d$
+    to: $1
+
+  - !MergeFieldsets
+    from: ^(DEVR)[1-4]$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: I3C
+    from: ^(DEVR)[1-4]$
+    to: $1
+
+  - !RenameFields
+    fieldset: ^MAX[RW]LR$
+    from: ^M[RW]L$
+    to: ML
