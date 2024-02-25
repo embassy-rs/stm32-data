@@ -155,6 +155,7 @@ impl PeriMatcher {
             ("STM32WL5.*:AES:.*", ("aes", "v2", "AES")),
             ("STM32WLE.*:AES:.*", ("aes", "v2", "AES")),
             ("STM32U5.*:AES:.*", ("aes", "v3a", "AES")),
+            ("STM32(H5|WBA).*:AES:.*", ("aes", "v3b", "AES")),
             (".*:SPI:spi2_v1_4", ("spi", "f1", "SPI")),
             (".*:SPI:spi2s1_v2_1", ("spi", "v1", "SPI")),
             (".*:SPI:spi2s1_v2_2", ("spi", "v1", "SPI")),
