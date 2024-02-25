@@ -1,0 +1,19 @@
+transforms:
+  - !DeleteFieldsets
+    from: ^(DINR|DOUTR|IVR\d|KEYR\d|SUSP\dR)$
+
+  - !MakeRegisterArray
+    blocks: SAES
+    from: ^(IVR)\d$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: SAES
+    allow_cursed: true
+    from: ^(KEYR)\d$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: SAES
+    from: ^(SUSP)\d(R)$
+    to: $1$2
