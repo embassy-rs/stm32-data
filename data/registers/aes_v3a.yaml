@@ -74,10 +74,15 @@ fieldset/CR:
     bit_offset: 3
     bit_size: 2
     enum: MODE
-  - name: CHMOD10
-    description: Chaining mode bit1 bit0
-    bit_offset: 5
-    bit_size: 2
+  - name: CHMOD
+    description: Chaining mode selection
+    bit_offset:
+    - start: 5
+      end: 6
+    - start: 16
+      end: 16
+    bit_size: 3
+    enum: CHMOD
   - name: DMAINEN
     description: Enable DMA management of data input phase
     bit_offset: 11
@@ -91,10 +96,6 @@ fieldset/CR:
     bit_offset: 13
     bit_size: 2
     enum: GCMPH
-  - name: CHMOD2
-    description: Chaining mode bit2
-    bit_offset: 16
-    bit_size: 1
   - name: KEYSIZE
     description: Key size selection
     bit_offset: 18
@@ -256,3 +257,21 @@ enum/MODE:
   - name: Mode3
     description: Decryption
     value: 2
+enum/CHMOD:
+  bit_size: 3
+  variants:
+  - name: ECB
+    description: Electronic codebook
+    value: 0
+  - name: CBC
+    description: Cipher-block chaining
+    value: 1
+  - name: CTR
+    description: Counter mode
+    value: 2
+  - name: GCM_GMAC
+    description: Galois counter mode and Galois message authentication code
+    value: 3
+  - name: CCM
+    description: Counter with CBC-MAC
+    value: 4
