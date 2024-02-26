@@ -58,6 +58,7 @@ fieldset/CR:
     description: 'Encryption mode bit When this bit is set, OTFDEC is used in encryption mode, during which application can write clear text data then read back encrypted data. When this bit is cleared (default), OTFDEC is used in decryption mode, during which application only read back decrypted data. For both modes, cryptographic context (keys, nonces, firmware versions) must be properly initialized. When this bit is set, only data accesses are allowed (zeros are returned otherwise, and XONEIF is set). When MODE = 11, enhanced encryption mode is automatically selected. Note: When ENC bit is set, no access to OCTOSPI must be done (registers and Memory‑mapped region).'
     bit_offset: 0
     bit_size: 1
+    enum: ENC
 fieldset/ICR:
   description: OTFDEC interrupt clear register.
   fields:
@@ -129,6 +130,7 @@ fieldset/RegionCFGR:
     description: 'operating mode This bitfield selects the OTFDEC operating mode for this region: Others: Reserved When MODE ≠ 11, the standard AES encryption mode is activated. When either of the MODE bits are changed, the region key and associated CRC are zeroed.'
     bit_offset: 4
     bit_size: 2
+    enum: MODE
   - name: KEYCRC
     description: 'region key 8-bit CRC When KEYLOCK = 0, KEYCRC bitfield is automatically computed by hardware while loading the key of this region in this exact sequence: KEYR0 then KEYR1 then KEYR2 then finally KEYR3 (all written once). A new computation starts as soon as a new valid sequence is initiated, and KEYCRC is read as zero until a valid sequence is completed. When KEYLOCK = 1, KEYCRC remains unchanged until the next reset. CRC computation is an 8-bit checksum using the standard CRC-8-CCITT algorithm X8 + X2 + X + 1 (according the convention). Source code is available in . This field is read only. Note: CRC information is updated only after the last bit of the key has been written.'
     bit_offset: 8
@@ -137,3 +139,21 @@ fieldset/RegionCFGR:
     description: region firmware version This 16-bit bitfield must be correctly initialized before the region corresponding REG_EN bit is set in OTFDEC_RxCFGR.
     bit_offset: 16
     bit_size: 16
+enum/ENC:
+  bit_size: 1
+  variants:
+  - name: Decryption
+    description: OTFDEC working in decryption mode
+    value: 0
+  - name: Encryption
+    description: OTFDEC working in encryption mode
+    value: 1
+enum/MODE:
+  bit_size: 2
+  variants:
+  - name: Standard
+    description: All read accesses are decrypted (instruction or data).
+    value: 2
+  - name: Enhanced
+    description: Enhanced encryption mode is activated, and only instruction accesses are decrypted
+    value: 3
