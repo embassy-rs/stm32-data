@@ -631,6 +631,7 @@ impl PeriMatcher {
             ("STM32(H5|WBA).*:PKA:.*", ("pka", "v1a", "PKA")),
             ("STM32U5.*:PKA:.*", ("pka", "v1b", "PKA")),
             ("STM32(L5|WL|WB).*:PKA:.*", ("pka", "v1c", "PKA")),
+            (".*:OTFDEC:.*", ("otfdec", "v1", "OTFDEC")),
         ];
 
         Self {
