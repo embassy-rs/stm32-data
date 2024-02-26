@@ -82,6 +82,7 @@ impl ParsedRccs {
             "PLLSAI2_Q",
             "PLLSAI2_R",
             "PLL1_P",
+            "PLL1_P_MUL_2",
             "PLL1_Q",
             "PLL1_R",
             "PLL1_VCO", // used for L0 USB
