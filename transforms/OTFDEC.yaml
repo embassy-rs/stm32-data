@@ -1,0 +1,33 @@
+transforms:
+  - !Rename
+    from: ^(OTFDEC)\d$
+    to: $1
+
+  - !DeleteFieldsets
+    from: ^R\d(STARTADDR|ENDADDR|NONCER0|NONCER1|KEYR0|KEYR1|KEYR2|KEYR3)$
+
+  - !MergeFieldsets
+    from: ^(R)\d(CFGR)$
+    to: ${1}egion$2
+
+  - !MakeBlock
+    blocks: ^OTFDEC$
+    from: ^R(\d)(.+)$
+    to_outer: Region${1}
+    to_block: Region
+    to_inner: ${2}
+
+  - !MakeRegisterArray
+    blocks: ^Region$
+    from: ^(NONCER|KEYR)\d$
+    to: $1
+
+  - !MakeRegisterArray
+    blocks: ^OTFDEC$
+    from: ^(Region)\d$
+    to: $1
+
+  - !RenameFields
+    fieldset: ^RegionCFGR$
+    from: (REG)x(_VERSION)
+    to: $1$2
