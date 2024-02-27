@@ -58,6 +58,7 @@ fieldset/CSR:
     description: User trimming enable.
     bit_offset: 18
     bit_size: 1
+    enum: USERTRIM
   - name: TSTREF
     description: OPAMP calibration reference voltage output control (reserved for test).
     bit_offset: 29
@@ -122,6 +123,15 @@ enum/CALSEL:
   - name: Percent90
     description: VREFOPAMP=90% VDDA.
     value: 3
+enum/FORCE_VP:
+  bit_size: 1
+  variants:
+  - name: NormalOperating
+    description: Normal operating mode. Non-inverting input connected to inputs.
+    value: 0
+  - name: CalibrationVerification
+    description: Calibration verification mode. Non-inverting input connected to calibration reference voltage.
+    value: 1
 enum/OPAHSM:
   bit_size: 1
   variants:
@@ -130,6 +140,15 @@ enum/OPAHSM:
     value: 0
   - name: HighSpeed
     description: operational amplifier in high-speed mode
+    value: 1
+enum/USERTRIM:
+  bit_size: 1
+  variants:
+  - name: Factory
+    description: \'factory\' trim code used
+    value: 0
+  - name: User
+    description: \'user\' trim code used
     value: 1
 enum/VM_SEL:
   bit_size: 2
@@ -154,13 +173,4 @@ enum/VP_SEL:
     value: 0
   - name: DacOut
     description: dac_outx connected to OPAMPx_VINP
-    value: 1
-enum/FORCE_VP:
-  bit_size: 1
-  variants:
-  - name: NormalOperating
-    description: Normal operating mode. Non-inverting input connected to inputs.
-    value: 0
-  - name: CalibrationVerification
-    description: Calibration verification mode. Non-inverting input connected to calibration reference voltage.
     value: 1
