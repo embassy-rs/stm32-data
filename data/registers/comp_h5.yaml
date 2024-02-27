@@ -44,14 +44,17 @@ fieldset/CFGR1:
     description: COMP channel1 hysteresis selection These bits are set and cleared by software (only if LOCK not set). They select the hysteresis voltage of the COMP channel1.
     bit_offset: 8
     bit_size: 2
+    enum: HYST
   - name: PWRMODE
     description: Power mode of the COMP channel1 These bits are set and cleared by software (only if LOCK not set). They control the power/speed of the COMP channel1.
     bit_offset: 12
     bit_size: 2
+    enum: PWRMODE
   - name: INMSEL
     description: 'COMP channel1 inverting input selection These bits are set and cleared by software (only if LOCK not set). They select which input is connected to the input minus of the COMP channel. Note: See Table�146: COMP1 inverting input assignment for more details.'
     bit_offset: 16
     bit_size: 4
+    enum: INMSEL
   - name: INPSEL1
     description: 'COMP noninverting input selection This bit is set and cleared by software (only if LOCK not set). They select which input is connected to the positive input of COMP channel. Note: See Table�145: COMP1 noninverting input assignment for more details.'
     bit_offset: 20
@@ -64,6 +67,7 @@ fieldset/CFGR1:
     description: 'COMP Channel1 blanking source selection Bits of this field are set and cleared by software (only if LOCK not set). The field selects the input source for COMP Channel1 output blanking: All other values: reserved.'
     bit_offset: 24
     bit_size: 4
+    enum: BLANKING
   - name: LOCK
     description: Lock This bit is set by software and cleared by a hardware system reset. It locks the whole content of the COMP Channel1 configuration register COMP_CFGR1[31:0].
     bit_offset: 31
@@ -106,3 +110,69 @@ fieldset/SR:
     array:
       len: 1
       stride: 0
+enum/BLANKING:
+  bit_size: 4
+  variants:
+  - name: NoBlanking
+    value: 0
+  - name: Tim1Oc5
+    value: 1
+  - name: Tim2Oc3
+    value: 2
+  - name: Tim3Oc3
+    value: 3
+  - name: Tim3Oc4
+    value: 4
+  - name: Lptim1Ch2
+    value: 5
+  - name: Lptim2Ch2
+    value: 6
+enum/HYST:
+  bit_size: 2
+  variants:
+  - name: None
+    value: 0
+  - name: Low
+    value: 1
+  - name: Medium
+    value: 2
+  - name: High
+    value: 3
+enum/INMSEL:
+  bit_size: 4
+  variants:
+  - name: VRef_1over4
+    value: 0
+  - name: VRef_1over2
+    value: 1
+  - name: VRef_3over4
+    value: 2
+  - name: VRef
+    value: 3
+  - name: Dac1Out1
+    value: 4
+  - name: Inm1
+    value: 5
+  - name: Inm2
+    value: 6
+  - name: Inm3
+    value: 7
+  - name: VSense
+    value: 8
+  - name: VBat_1over4
+    value: 9
+enum/PWRMODE:
+  bit_size: 2
+  variants:
+  - name: High
+    description: High speed / full power
+    value: 0
+  - name: Medium
+    description: Medium speed / medium power
+    value: 1
+  - name: MediumEither
+    description: Medium speed / medium power
+    value: 2
+  - name: Low
+    description: Ultra low power / ultra-low-power
+    value: 3
