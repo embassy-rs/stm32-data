@@ -1,0 +1,188 @@
+block/COMP1:
+  description: COMP1.
+  items:
+  - name: SR
+    description: Comparator status register.
+    byte_offset: 0
+    access: Read
+    fieldset: SR
+  - name: ICFR
+    description: Comparator interrupt clear flag register.
+    byte_offset: 4
+    access: Write
+    fieldset: ICFR
+  - name: OR
+    description: Comparator option register.
+    byte_offset: 8
+    fieldset: OR
+  - name: CFGR1
+    description: Comparator configuration register 1.
+    byte_offset: 12
+    fieldset: CFGR1
+  - name: CFGR2
+    description: Comparator configuration register 2.
+    byte_offset: 16
+    fieldset: CFGR2
+fieldset/CFGR1:
+  description: Comparator configuration register 1.
+  fields:
+  - name: EN
+    description: COMP channel 1 enable bit.
+    bit_offset: 0
+    bit_size: 1
+  - name: BRGEN
+    description: Scaler bridge enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: SCALEN
+    description: Voltage scaler enable bit.
+    bit_offset: 2
+    bit_size: 1
+  - name: POLARITY
+    description: COMP channel 1 polarity selection bit.
+    bit_offset: 3
+    bit_size: 1
+  - name: ITEN
+    description: COMP channel 1 interrupt enable.
+    bit_offset: 6
+    bit_size: 1
+  - name: HYST
+    description: COMP channel 1 hysteresis selection bits.
+    bit_offset: 8
+    bit_size: 2
+    enum: HYST
+  - name: PWRMODE
+    description: Power Mode of the COMP channel 1.
+    bit_offset: 12
+    bit_size: 2
+    enum: PWRMODE
+  - name: INMSEL
+    description: COMP channel 1 inverting input selection field.
+    bit_offset: 16
+    bit_size: 4
+    enum: INMSEL
+  - name: INPSEL
+    description: COMP channel 1 non-inverting input selection bit.
+    bit_offset: 20
+    bit_size: 1
+    enum: INPSEL
+  - name: BLANKING
+    description: COMP channel 1 blanking source selection bits.
+    bit_offset: 24
+    bit_size: 4
+    enum: BLANKING
+  - name: LOCK
+    description: Lock bit.
+    bit_offset: 31
+    bit_size: 1
+fieldset/CFGR2:
+  extends: CFGR1
+  description: Comparator configuration register 2.
+  fields:
+  - name: WINMODE
+    description: Window comparator mode selection bit.
+    bit_offset: 4
+    bit_size: 1
+fieldset/ICFR:
+  description: Comparator interrupt clear flag register.
+  fields:
+  - name: CCIF
+    description: Clear COMP channel 1 Interrupt Flag.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+fieldset/OR:
+  description: Comparator option register.
+  fields:
+  - name: AFOP
+    description: Selection of source for alternate function of output ports.
+    bit_offset: 0
+    bit_size: 11
+fieldset/SR:
+  description: Comparator status register.
+  fields:
+  - name: CVAL
+    description: COMP channel 1 output status bit.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: CIF
+    description: COMP channel 1 Interrupt Flag.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+enum/BLANKING:
+  bit_size: 4
+  variants:
+  - name: NoBlanking
+    value: 0
+  - name: Tim1Oc5
+    value: 1
+  - name: Tim2Oc3
+    value: 2
+  - name: Tim3Oc3
+    value: 3
+  - name: Tim3Oc4
+    value: 4
+  - name: Tim8Oc5
+    value: 5
+  - name: Tim15Oc1
+    value: 6
+enum/HYST:
+  bit_size: 2
+  variants:
+  - name: None
+    value: 0
+  - name: Low
+    value: 1
+  - name: Medium
+    value: 2
+  - name: High
+    value: 3
+enum/INMSEL:
+  bit_size: 3
+  variants:
+  - name: VRef_1over4
+    value: 0
+  - name: VRef_1over2
+    value: 1
+  - name: VRef_3over4
+    value: 2
+  - name: VRef
+    value: 3
+  - name: Inm1
+    value: 4
+  - name: Inm2
+    value: 5
+  - name: COMPx_Inm1
+    value: 6
+  - name: COMPx_Inm2
+    value: 7
+enum/INPSEL:
+  bit_size: 1
+  variants:
+  - name: INP1
+    value: 0
+  - name: INP2
+    value: 1
+enum/PWRMODE:
+  bit_size: 2
+  variants:
+  - name: High
+    description: High speed / full power
+    value: 0
+  - name: Medium
+    description: Medium speed / medium power
+    value: 1
+  - name: MediumEither
+    description: Medium speed / medium power
+    value: 2
+  - name: Low
+    description: Ultra low power / ultra-low-power
+    value: 3
