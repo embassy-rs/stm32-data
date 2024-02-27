@@ -1,0 +1,176 @@
+block/OPAMP:
+  description: Operational amplifiers.
+  items:
+  - name: CSR
+    description: OPAMP1 control/status register.
+    byte_offset: 0
+    fieldset: CSR
+  - name: OTR
+    description: OPAMP1 offset trimming register in normal mode.
+    byte_offset: 4
+    fieldset: OTR
+  - name: HSOTR
+    description: OPAMP1 offset trimming register in low-power mode.
+    byte_offset: 8
+    fieldset: HSOTR
+fieldset/CSR:
+  description: OPAMP1 control/status register.
+  fields:
+  - name: OPAEN
+    description: Operational amplifier Enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: FORCE_VP
+    description: Force internal reference on VP (reserved for test.
+    bit_offset: 1
+    bit_size: 1
+    enum: FORCE_VP
+  - name: VP_SEL
+    description: Operational amplifier PGA mode.
+    bit_offset: 2
+    bit_size: 2
+    enum: VP_SEL
+  - name: VM_SEL
+    description: Inverting input selection.
+    bit_offset: 5
+    bit_size: 2
+    enum: VM_SEL
+  - name: OPAHSM
+    description: Operational amplifier high-speed mode.
+    bit_offset: 8
+    bit_size: 1
+    enum: OPAHSM
+  - name: CALON
+    description: Calibration mode enabled.
+    bit_offset: 11
+    bit_size: 1
+    enum: CALON
+  - name: CALSEL
+    description: Calibration selection.
+    bit_offset: 12
+    bit_size: 2
+    enum: CALSEL
+  - name: PGA_GAIN
+    description: allows to switch from AOP offset trimmed values to AOP offset.
+    bit_offset: 14
+    bit_size: 4
+  - name: USERTRIM
+    description: User trimming enable.
+    bit_offset: 18
+    bit_size: 1
+    enum: USERTRIM
+  - name: TSTREF
+    description: OPAMP calibration reference voltage output control (reserved for test).
+    bit_offset: 29
+    bit_size: 1
+  - name: CALOUT
+    description: Operational amplifier calibration output.
+    bit_offset: 30
+    bit_size: 1
+    enum: CALOUT
+fieldset/HSOTR:
+  description: OPAMP1 offset trimming register in low-power mode.
+  fields:
+  - name: TRIMLPOFFSETN
+    description: Trim for NMOS differential pairs.
+    bit_offset: 0
+    bit_size: 5
+  - name: TRIMLPOFFSETP
+    description: Trim for PMOS differential pairs.
+    bit_offset: 8
+    bit_size: 5
+fieldset/OTR:
+  description: OPAMP1 offset trimming register in normal mode.
+  fields:
+  - name: TRIMOFFSETN
+    description: Trim for NMOS differential pairs.
+    bit_offset: 0
+    bit_size: 5
+  - name: TRIMOFFSETP
+    description: Trim for PMOS differential pairs.
+    bit_offset: 8
+    bit_size: 5
+enum/CALON:
+  bit_size: 1
+  variants:
+  - name: Normal
+    description: Normal mode
+    value: 0
+  - name: Calibration
+    description: Calibration mode (all switches opened by HW)
+    value: 1
+enum/CALOUT:
+  bit_size: 1
+  variants:
+  - name: Less
+    description: Non-inverting < inverting
+    value: 0
+  - name: Greater
+    description: Non-inverting > inverting
+    value: 1
+enum/CALSEL:
+  bit_size: 2
+  variants:
+  - name: Percent3_3
+    description: VREFOPAMP=3.3% VDDA.
+    value: 0
+  - name: Percent10
+    description: VREFOPAMP=10% VDDA.
+    value: 1
+  - name: Percent50
+    description: VREFOPAMP=50% VDDA.
+    value: 2
+  - name: Percent90
+    description: VREFOPAMP=90% VDDA.
+    value: 3
+enum/FORCE_VP:
+  bit_size: 1
+  variants:
+  - name: NormalOperating
+    description: Normal operating mode. Non-inverting input connected to inputs.
+    value: 0
+  - name: CalibrationVerification
+    description: Calibration verification mode. Non-inverting input connected to calibration reference voltage.
+    value: 1
+enum/OPAHSM:
+  bit_size: 1
+  variants:
+  - name: Normal
+    description: operational amplifier in normal mode
+    value: 0
+  - name: HighSpeed
+    description: operational amplifier in high-speed mode
+    value: 1
+enum/USERTRIM:
+  bit_size: 1
+  variants:
+  - name: Factory
+    description: \'factory\' trim code used
+    value: 0
+  - name: User
+    description: \'user\' trim code used
+    value: 1
+enum/VM_SEL:
+  bit_size: 2
+  variants:
+  - name: Inm0
+    description: INM0 connected to OPAMP_VINM input
+    value: 0
+  - name: Inm1
+    description: INM1 connected to OPAMP_VINM input
+    value: 1
+  - name: Pga
+    description: Feedback resistor is connected to the OPAMP_VINM input (PGA mode), Inverting input selection depends on the PGA_GAIN setting
+    value: 2
+  - name: Follower
+    description: opamp_out connected to OPAMP_VINM input (Follower mode)
+    value: 3
+enum/VP_SEL:
+  bit_size: 2
+  variants:
+  - name: Gpio
+    description: GPIO connected to OPAMPx_VINP
+    value: 0
+  - name: DacOut
+    description: dac_outx connected to OPAMPx_VINP
+    value: 1
