@@ -112,7 +112,6 @@ block/TIM_1CH_CMP:
   - name: DMAR
     description: DMA address for full transfer
     byte_offset: 992
-    fieldset: DMAR_1CH_CMP
 block/TIM_2CH:
   extends: TIM_1CH
   description: 2-channel timers
@@ -462,7 +461,6 @@ block/TIM_GP16:
   - name: DMAR
     description: DMA address for full transfer
     byte_offset: 992
-    fieldset: DMAR_1CH_CMP
 block/TIM_GP32:
   extends: TIM_GP16
   description: General purpose 32-bit timers
@@ -470,7 +468,6 @@ block/TIM_GP32:
   - name: CNT
     description: counter (Dither mode disabled)
     byte_offset: 36
-    fieldset: CNT_GP32
   - name: CNT_DITHER
     description: counter (Dither mode enbled)
     byte_offset: 36
@@ -478,7 +475,6 @@ block/TIM_GP32:
   - name: ARR
     description: auto-reload register (Dither mode disabled)
     byte_offset: 44
-    fieldset: ARR_GP32
   - name: ARR_DITHER
     description: auto-reload register (Dither mode enabled)
     byte_offset: 44
@@ -489,7 +485,6 @@ block/TIM_GP32:
       len: 4
       stride: 4
     byte_offset: 52
-    fieldset: CCR_GP32
   - name: CCR_DITHER
     description: capture/compare register x (x=1-4) (Dither mode enabled)
     array:
@@ -603,13 +598,6 @@ fieldset/ARR_DITHER_GP32:
     description: Auto-reload value
     bit_offset: 4
     bit_size: 28
-fieldset/ARR_GP32:
-  description: auto-reload register (Dither mode disabled)
-  fields:
-  - name: ARR
-    description: Auto-reload value
-    bit_offset: 0
-    bit_size: 32
 fieldset/BDTR_1CH_CMP:
   description: break and dead-time register
   fields:
@@ -1077,13 +1065,6 @@ fieldset/CCR_DITHER_GP32:
     description: capture/compare x (x=1-4,6) value
     bit_offset: 4
     bit_size: 28
-fieldset/CCR_GP32:
-  description: capture/compare register x (x=1-4,6) (Dither mode disabled)
-  fields:
-  - name: CCR
-    description: capture/compare x (x=1-4,6) value
-    bit_offset: 0
-    bit_size: 32
 fieldset/CNT_CORE:
   description: counter
   fields:
@@ -1106,13 +1087,6 @@ fieldset/CNT_DITHER_GP32:
     description: UIF copy
     bit_offset: 31
     bit_size: 1
-fieldset/CNT_GP32:
-  description: counter (Dither mode disabled)
-  fields:
-  - name: CNT
-    description: counter value
-    bit_offset: 0
-    bit_size: 32
 fieldset/CR1_1CH:
   extends: CR1_CORE
   description: control register 1
@@ -1382,6 +1356,10 @@ fieldset/DIER_ADV:
     array:
       len: 4
       stride: 1
+  - name: BIE
+    description: Break interrupt enable
+    bit_offset: 7
+    bit_size: 1
   - name: CCDE
     description: Capture/Compare x (x=1) DMA request enable
     bit_offset: 9
@@ -1435,10 +1413,6 @@ fieldset/DIER_GP16:
     description: Trigger interrupt enable
     bit_offset: 6
     bit_size: 1
-  - name: BIE
-    description: Break interrupt enable
-    bit_offset: 7
-    bit_size: 1
   - name: CCDE
     description: Capture/Compare x (x=1-4) DMA request enable
     bit_offset: 9
@@ -1466,13 +1440,6 @@ fieldset/DIER_GP16:
     description: Transition error interrupt enable
     bit_offset: 23
     bit_size: 1
-fieldset/DMAR_1CH_CMP:
-  description: DMA address for full transfer
-  fields:
-  - name: DMAB
-    description: DMA register for burst accesses
-    bit_offset: 0
-    bit_size: 32
 fieldset/DTR2_1CH_CMP:
   description: deadtime register 2
   fields:

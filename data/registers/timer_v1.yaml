@@ -283,7 +283,6 @@ block/TIM_ADV:
   - name: DMAR
     description: DMA address for full transfer
     byte_offset: 76
-    fieldset: DMAR_ADV
   - name: CCMR3
     description: capture/compare mode register 3
     byte_offset: 84
@@ -433,18 +432,15 @@ block/TIM_GP32:
   - name: CNT
     description: counter
     byte_offset: 36
-    fieldset: CNT_GP32
   - name: ARR
     description: auto-reload register
     byte_offset: 44
-    fieldset: ARR_GP32
   - name: CCR
     description: capture/compare register x (x=1-4)
     array:
       len: 4
       stride: 4
     byte_offset: 52
-    fieldset: CCR_GP32
   - name: DCR
     description: DMA control register
     byte_offset: 72
@@ -533,13 +529,6 @@ fieldset/ARR_CORE:
     description: Auto-reload value
     bit_offset: 0
     bit_size: 16
-fieldset/ARR_GP32:
-  description: auto-reload register
-  fields:
-  - name: ARR
-    description: Auto-reload value
-    bit_offset: 0
-    bit_size: 32
 fieldset/BDTR_1CH_CMP:
   description: break and dead-time register
   fields:
@@ -929,13 +918,6 @@ fieldset/CCR_1CH:
     description: capture/compare x (x=1-4,6) value
     bit_offset: 0
     bit_size: 16
-fieldset/CCR_GP32:
-  description: capture/compare register x (x=1-4,6)
-  fields:
-  - name: CCR
-    description: capture/compare x (x=1-4,6) value
-    bit_offset: 0
-    bit_size: 32
 fieldset/CNT_CORE:
   description: counter
   fields:
@@ -947,13 +929,6 @@ fieldset/CNT_CORE:
     description: UIF copy
     bit_offset: 31
     bit_size: 1
-fieldset/CNT_GP32:
-  description: counter
-  fields:
-  - name: CNT
-    description: counter value
-    bit_offset: 0
-    bit_size: 32
 fieldset/CR1_1CH:
   extends: CR1_CORE
   description: control register 1
@@ -1211,6 +1186,10 @@ fieldset/DIER_ADV:
     array:
       len: 4
       stride: 1
+  - name: BIE
+    description: Break interrupt enable
+    bit_offset: 7
+    bit_size: 1
   - name: CCDE
     description: Capture/Compare x (x=1-4) DMA request enable
     bit_offset: 9
@@ -1248,10 +1227,6 @@ fieldset/DIER_GP16:
     description: Trigger interrupt enable
     bit_offset: 6
     bit_size: 1
-  - name: BIE
-    description: Break interrupt enable
-    bit_offset: 7
-    bit_size: 1
   - name: CCDE
     description: Capture/Compare x (x=1-4) DMA request enable
     bit_offset: 9
@@ -1263,13 +1238,6 @@ fieldset/DIER_GP16:
     description: Trigger DMA request enable
     bit_offset: 14
     bit_size: 1
-fieldset/DMAR_ADV:
-  description: DMA address for full transfer
-  fields:
-  - name: DMAB
-    description: DMA register for burst accesses
-    bit_offset: 0
-    bit_size: 32
 fieldset/DMAR_GP16:
   description: DMA address for full transfer
   fields:
