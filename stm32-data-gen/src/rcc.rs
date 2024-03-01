@@ -285,6 +285,9 @@ impl ParsedRccs {
             ("I2C2", &["I2C1235"]),
             ("I2C3", &["I2C1235"]),
             ("I2C5", &["I2C1235"]),
+            ("USB", &["USB", "CLK48", "ICLK"]),
+            ("USB_OTG_FS", &["USB", "CLK48", "ICLK"]),
+            ("USB_OTG_HS", &["USB", "CLK48", "ICLK"]),
         ];
 
         let rcc = self.rccs.get(rcc_version)?;
@@ -315,7 +318,20 @@ impl ParsedRccs {
                 }
                 rcc::KernelClock::Mux(mux.mux.clone())
             }
-            None => rcc::KernelClock::Clock(maybe_kernel_clock),
+            None => {
+                if peri_name.starts_with("USB") {
+                    if rcc_version.starts_with("f1") || rcc_version.starts_with("f3") {
+                        maybe_kernel_clock = "USB".to_string();
+                    } else if rcc_version.starts_with("f2") {
+                        maybe_kernel_clock = "PLL1_Q".to_string();
+                    } else if rcc_version.starts_with("l1") {
+                        maybe_kernel_clock = "PLL1_VCO_DIV_2".to_string();
+                    } else {
+                        panic!("rcc_{}: peripheral {} missing mux", rcc_version, peri_name)
+                    }
+                }
+                rcc::KernelClock::Clock(maybe_kernel_clock)
+            }
         };
 
         Some(peripheral::Rcc {
