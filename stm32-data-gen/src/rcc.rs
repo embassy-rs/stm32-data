@@ -255,15 +255,15 @@ impl ParsedRccs {
             ("PSSI", &["DCMI_PSSI"]),
             ("FDCAN1", &["FDCAN12"]),
             ("FDCAN2", &["FDCAN12"]),
-            ("ADC", &["ADC1"]),
-            ("ADC1", &["ADC12"]),
-            ("ADC2", &["ADC12"]),
-            ("ADC3", &["ADC34", "ADC345"]),
-            ("ADC4", &["ADC34", "ADC345"]),
-            ("ADC5", &["ADC345"]),
-            ("DAC", &["DAC1"]),
-            ("DAC1", &["DAC12"]),
-            ("DAC2", &["DAC12"]),
+            ("ADC", &["ADC1", "ADCDAC"]),
+            ("ADC1", &["ADC12", "ADCDAC"]),
+            ("ADC2", &["ADC12", "ADCDAC"]),
+            ("ADC3", &["ADC34", "ADC345", "ADCDAC"]),
+            ("ADC4", &["ADC34", "ADC345", "ADCDAC"]),
+            ("ADC5", &["ADC345", "ADCDAC"]),
+            ("DAC", &["DAC1", "ADCDAC"]),
+            ("DAC1", &["DAC12", "ADCDAC"]),
+            ("DAC2", &["DAC12", "ADCDAC"]),
             ("ETH", &["ETHMAC", "ETH1MAC"]),
             ("SPI1", &["SPI12", "SPI123"]),
             ("SPI2", &["SPI12", "SPI123"]),
@@ -307,7 +307,10 @@ impl ParsedRccs {
         let kernel_clock = match mux {
             Some(mux) => {
                 // check for mismatch between mux and bus clock.
-                if phclk.is_match(&en_rst.bus_clock) {
+                //
+                // U5 has one ADCDACSEL for multiple ADCs which may be on
+                // different HCLKs, so we skip the check in that case
+                if !(rcc_version == "u5" && peri_name.starts_with("ADC")) && phclk.is_match(&en_rst.bus_clock) {
                     for v in &mux.variants {
                         if phclk.is_match(v) && v != &maybe_kernel_clock {
                             panic!(
