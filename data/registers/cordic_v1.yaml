@@ -25,9 +25,13 @@ fieldset/CSR:
     bit_size: 4
     enum: PRECISION
   - name: SCALE
-    description: Scaling factor (2^-n for arguments, 2^n for results).
+    description: |-
+      Scaling factor.
+      Input value has been multiplied by 2^(-n) before for argument.
+      Output value will need to be multiplied by 2^n later for results.
     bit_offset: 8
     bit_size: 3
+    enum: Scale
   - name: IEN
     description: Enable interrupt.
     bit_offset: 16
@@ -154,6 +158,33 @@ enum/PRECISION:
   - name: Iters60
     description: 60 iterations.
     value: 15
+enum/Scale:
+  bit_size: 3
+  variants:
+  - name: A1_R1
+    description: Argument multiplied by 1, result multiplied by 1
+    value: 0
+  - name: A1o2_R2
+    description: Argument multiplied by 1/2, result multiplied by 2
+    value: 1
+  - name: A1o4_R4
+    description: Argument multiplied by 1/4, result multiplied by 4
+    value: 2
+  - name: A1o8_R8
+    description: Argument multiplied by 1/8, result multiplied by 8
+    value: 3
+  - name: A1o16_R16
+    description: Argument multiplied by 1/16, result multiplied by 16
+    value: 4
+  - name: A1o32_R32
+    description: Argument multiplied by 1/32, result multiplied by 32
+    value: 5
+  - name: A1o64_R64
+    description: Argument multiplied by 1/64, result multiplied by 64
+    value: 6
+  - name: A1o128_R128
+    description: Argument multiplied by 1/128, result multiplied by 128
+    value: 7
 enum/Size:
   bit_size: 1
   variants:
