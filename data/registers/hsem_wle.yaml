@@ -1,0 +1,211 @@
+---
+block/HSEM:
+  description: Hardware semaphore
+  items:
+    - name: R
+      description: HSEM register HSEM_R%s HSEM_R31
+      array:
+        len: 16
+        stride: 4
+      byte_offset: 0
+      fieldset: R
+    - name: RLR
+      description: HSEM Read lock register
+      array:
+        len: 16
+        stride: 4
+      byte_offset: 128
+      access: Read
+      fieldset: RLR
+    - name: IER
+      description: HSEM Interrupt enable register
+      byte_offset: 256
+      fieldset: IER
+    - name: ICR
+      description: HSEM Interrupt clear register
+      byte_offset: 260
+      fieldset: ICR
+    - name: ISR
+      description: HSEM Interrupt status register
+      byte_offset: 264
+      access: Read
+      fieldset: ISR
+    - name: MISR
+      description: HSEM Masked interrupt status register
+      byte_offset: 268
+      access: Read
+      fieldset: MISR
+    - name: CR
+      description: HSEM Clear register
+      byte_offset: 320
+      access: Write
+      fieldset: CR
+    - name: KEYR
+      description: HSEM Interrupt clear register
+      byte_offset: 324
+      fieldset: KEYR
+fieldset/ICR:
+  description: HSEM Interrupt clear register
+  fields:
+    - name: ISC
+      description: Interrupt(N) semaphore n clear bit
+      bit_offset: 0
+      bit_size: 1
+      enum_read: ISC0R
+      enum_write: ISC0W
+      array:
+        len: 16
+        stride: 1
+fieldset/IER:
+  description: HSEM Interrupt enable register
+  fields:
+    - name: ISE
+      description: Interrupt semaphore n enable bit
+      bit_offset: 0
+      bit_size: 1
+      enum: ISE0
+      array:
+        len: 16
+        stride: 1
+fieldset/ISR:
+  description: HSEM Interrupt status register
+  fields:
+    - name: ISF
+      description: Interrupt(N) semaphore n status bit before enable (mask)
+      bit_offset: 0
+      bit_size: 1
+      enum_read: ISF0
+      array:
+        len: 16
+        stride: 1
+fieldset/MISR:
+  description: HSEM Masked interrupt status register
+  fields:
+    - name: MISF
+      description: masked interrupt(N) semaphore n status bit after enable (mask)
+      bit_offset: 0
+      bit_size: 1
+      enum_read: MISF0
+      array:
+        len: 16
+        stride: 1
+fieldset/CR:
+  description: HSEM Clear register
+  fields:
+    - name: COREID
+      description: MASTERID
+      bit_offset: 8
+      bit_size: 4
+    - name: KEY
+      description: Semaphore clear Key
+      bit_offset: 16
+      bit_size: 16
+fieldset/KEYR:
+  description: HSEM Interrupt clear register
+  fields:
+    - name: KEY
+      description: Semaphore Clear Key
+      bit_offset: 16
+      bit_size: 16
+fieldset/R:
+  description: HSEM register HSEM_R%s HSEM_R31
+  fields:
+    - name: PROCID
+      description: Semaphore ProcessID
+      bit_offset: 0
+      bit_size: 8
+    - name: COREID
+      description: Semaphore MASTERID
+      bit_offset: 8
+      bit_size: 4
+    - name: LOCK
+      description: Lock indication
+      bit_offset: 31
+      bit_size: 1
+      enum_read: R_LOCKR
+      enum_write: LOCKW
+fieldset/RLR:
+  description: HSEM Read lock register
+  fields:
+    - name: PROCID
+      description: Semaphore ProcessID
+      bit_offset: 0
+      bit_size: 8
+    - name: COREID
+      description: Semaphore MASTERID
+      bit_offset: 8
+      bit_size: 4
+    - name: LOCK
+      description: Lock indication
+      bit_offset: 31
+      bit_size: 1
+      enum_read: RLR_LOCKR
+enum/ISC0R:
+  bit_size: 1
+  variants:
+    - name: NoEffect
+      description: Always reads 0
+      value: 0
+enum/ISC0W:
+  bit_size: 1
+  variants:
+    - name: NoEffect
+      description: Interrupt semaphore x status ISFx and masked status MISFx not affected
+      value: 0
+    - name: Clear
+      description: Interrupt semaphore x status ISFx and masked status MISFx cleared
+      value: 1
+enum/ISE0:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Interrupt generation disabled
+      value: 0
+    - name: Enabled
+      description: Interrupt generation enabled
+      value: 1
+enum/ISF0:
+  bit_size: 1
+  variants:
+    - name: NotPending
+      description: No interrupt pending
+      value: 0
+    - name: Pending
+      description: Interrupt pending
+      value: 1
+enum/LOCKW:
+  bit_size: 1
+  variants:
+    - name: Free
+      description: Free semaphore
+      value: 0
+    - name: TryLock
+      description: Try to lock semaphore
+      value: 1
+enum/MISF0:
+  bit_size: 1
+  variants:
+    - name: NotPending
+      description: No interrupt pending after masking
+      value: 0
+    - name: Pending
+      description: Interrupt pending after masking
+      value: 1
+enum/RLR_LOCKR:
+  bit_size: 1
+  variants:
+    - name: Free
+      description: Semaphore is free
+      value: 0
+    - name: Locked
+      description: Semaphore is locked
+      value: 1
+enum/R_LOCKR:
+  bit_size: 1
+  variants:
+    - name: Free
+      description: Semaphore is free
+      value: 0
+    - name: Locked
+      description: Semaphore is locked
+      value: 1
