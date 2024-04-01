@@ -1,3 +1,18 @@
 transforms:
   - !DeleteEnums
     from: ^(PRIV|RRSB|SEC|RADIORSB|REGPARDYVDDRFPA)$
+
+  - !MakeFieldArray
+    fieldsets: WUSC?R
+    from: (C?WUF)\d
+    to: $1
+
+  - !MakeFieldArray
+    fieldsets: WUCR
+    from: (WUPEN|WUPP(UPD)?)\d
+    to: $1
+
+  - !MakeFieldArray
+    fieldsets: SECCFGR
+    from: (WUP)\d(SEC)
+    to: $1$2
