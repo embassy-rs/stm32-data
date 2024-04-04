@@ -1,30 +1,26 @@
-block/LPTIM1:
+block/Input:
+  items:
+  - name: ISR
+    description: LPTIM interrupt and status register.
+    byte_offset: 0
+    fieldset: ISR_input
+  - name: ICR
+    description: LPTIM interrupt clear register.
+    byte_offset: 4
+    fieldset: ICR_input
+  - name: DIER
+    description: LPTIM interrupt enable register.
+    byte_offset: 8
+    fieldset: DIER_input
+block/LPTIM_Adv:
   description: Low power timer.
   items:
-  - name: ISR_intput
-    description: LPTIM interrupt and status register.
+  - name: Input
     byte_offset: 0
-    fieldset: ISR_intput
-  - name: ISR_output
-    description: LPTIM interrupt and status register.
+    block: Input
+  - name: Output
     byte_offset: 0
-    fieldset: ISR_output
-  - name: ICR_intput
-    description: LPTIM interrupt clear register.
-    byte_offset: 4
-    fieldset: ICR_intput
-  - name: ICR_output
-    description: LPTIM interrupt clear register.
-    byte_offset: 4
-    fieldset: ICR_output
-  - name: DIER_intput
-    description: LPTIM interrupt enable register.
-    byte_offset: 8
-    fieldset: DIER_intput
-  - name: DIER_output
-    description: LPTIM interrupt enable register.
-    byte_offset: 8
-    fieldset: DIER_output
+    block: Output
   - name: CFGR
     description: LPTIM configuration register.
     byte_offset: 12
@@ -33,10 +29,13 @@ block/LPTIM1:
     description: LPTIM control register.
     byte_offset: 16
     fieldset: CR
-  - name: CCR1
+  - name: CCR
     description: LPTIM compare register 1.
+    array:
+      len: 2
+      stride: 32
     byte_offset: 20
-    fieldset: CCR1
+    fieldset: CCR
   - name: ARR
     description: LPTIM autoreload register.
     byte_offset: 24
@@ -57,10 +56,20 @@ block/LPTIM1:
     description: LPTIM capture/compare mode register 1.
     byte_offset: 44
     fieldset: CCMR1
-  - name: CCR2
-    description: LPTIM compare register 2.
-    byte_offset: 52
-    fieldset: CCR2
+block/Output:
+  items:
+  - name: ISR
+    description: LPTIM interrupt and status register.
+    byte_offset: 0
+    fieldset: ISR_output
+  - name: ICR
+    description: LPTIM interrupt clear register.
+    byte_offset: 4
+    fieldset: ICR_output
+  - name: DIER
+    description: LPTIM interrupt enable register.
+    byte_offset: 8
+    fieldset: DIER_output
 fieldset/ARR:
   description: LPTIM autoreload register.
   fields:
@@ -71,58 +80,46 @@ fieldset/ARR:
 fieldset/CCMR1:
   description: LPTIM capture/compare mode register 1.
   fields:
-  - name: CC1SEL
+  - name: CCSEL
     description: Capture/compare 1 selection This bitfield defines the direction of the channel input (capture) or output mode.
     bit_offset: 0
     bit_size: 1
-  - name: CC1E
+    array:
+      len: 2
+      stride: 16
+  - name: CCE
     description: Capture/compare 1 output enable. This bit determines if a capture of the counter value can actually be done into the input capture/compare register 1 (LPTIM_CCR1) or not.
     bit_offset: 1
     bit_size: 1
-  - name: CC1P
+    array:
+      len: 2
+      stride: 16
+  - name: CCP
     description: Capture/compare 1 output polarity. Only bit2 is used to set polarity when output mode is enabled, bit3 is don't care. This field is used to select the IC1 polarity for capture operations.
     bit_offset: 2
     bit_size: 2
-  - name: IC1PSC
+    array:
+      len: 2
+      stride: 16
+  - name: ICPSC
     description: Input capture 1 prescaler This bitfield defines the ratio of the prescaler acting on the CC1 input (IC1).
     bit_offset: 8
     bit_size: 2
-  - name: IC1F
+    array:
+      len: 2
+      stride: 16
+  - name: ICF
     description: Input capture 1 filter This bitfield defines the number of consecutive equal samples that should be detected when a level change occurs on an external input capture signal before it is considered as a valid level transition. An internal clock source must be present to use this feature.
     bit_offset: 12
     bit_size: 2
-  - name: CC2SEL
-    description: Capture/compare 2 selection This bitfield defines the direction of the channel, input (capture) or output mode.
-    bit_offset: 16
-    bit_size: 1
-  - name: CC2E
-    description: Capture/compare 2 output enable. This bit determines if a capture of the counter value can actually be done into the input capture/compare register 2 (LPTIM_CCR2) or not.
-    bit_offset: 17
-    bit_size: 1
-  - name: CC2P
-    description: Capture/compare 2 output polarity. Only bit2 is used to set polarity when output mode is enabled, bit3 is don't care. This field is used to select the IC2 polarity for capture operations.
-    bit_offset: 18
-    bit_size: 2
-  - name: IC2PSC
-    description: Input capture 2 prescaler This bitfield defines the ratio of the prescaler acting on the CC2 input (IC2).
-    bit_offset: 24
-    bit_size: 2
-  - name: IC2F
-    description: Input capture 2 filter This bitfield defines the number of consecutive equal samples that should be detected when a level change occurs on an external input capture signal before it is considered as a valid level transition. An internal clock source must be present to use this feature.
-    bit_offset: 28
-    bit_size: 2
-fieldset/CCR1:
+    array:
+      len: 2
+      stride: 16
+fieldset/CCR:
   description: LPTIM compare register 1.
   fields:
-  - name: CCR1
+  - name: CCR
     description: 'Capture/compare 1 value If channel CC1 is configured as output: CCR1 is the value to be loaded in the capture/compare 1 register. Depending on the PRELOAD option, the CCR1 register is immediately updated if the PRELOAD bit is reset and updated at next LPTIM update event if PREOAD bit is reset. The capture/compare register 1 contains the value to be compared to the counter LPTIM_CNT and signaled on OC1 output. If channel CC1 is configured as input: CCR1 contains the counter value transferred by the last input capture 1 event. The LPTIM_CCR1 register is read-only and cannot be programmed. If LPTIM does not implement any channel: The compare register 1 contains the value to be compared to the counter LPTIM_CNT and signaled on LPTIM output.'
-    bit_offset: 0
-    bit_size: 16
-fieldset/CCR2:
-  description: LPTIM compare register 2.
-  fields:
-  - name: CCR2
-    description: 'Capture/compare 2 value If channel CC2 is configured as output: CCR2 is the value to be loaded in the capture/compare 2 register. Depending on the PRELOAD option, the CCR2 register is immediately updated if the PRELOAD bit is reset and updated at next LPTIM update event if PREOAD bit is reset. The capture/compare register 2 contains the value to be compared to the counter LPTIM_CNT and signaled on OC2 output. If channel CC2 is configured as input: CCR2 contains the counter value transferred by the last input capture 2 event. The LPTIM_CCR2 register is read-only and cannot be programmed.'
     bit_offset: 0
     bit_size: 16
 fieldset/CFGR:
@@ -183,22 +180,20 @@ fieldset/CFGR:
 fieldset/CFGR2:
   description: LPTIM configuration register 2.
   fields:
-  - name: IN1SEL
+  - name: INSEL
     description: LPTIM input 1 selection The IN1SEL bits control the LPTIM input 1 multiplexer, which connects LPTIM input 1 to one of the available inputs. For connection details refer to.
     bit_offset: 0
     bit_size: 2
-  - name: IN2SEL
-    description: LPTIM input 2 selection The IN2SEL bits control the LPTIM input 2 multiplexer, which connects LPTIM input 2 to one of the available inputs. For connection details refer to.
-    bit_offset: 4
-    bit_size: 2
-  - name: IC1SEL
+    array:
+      len: 2
+      stride: 4
+  - name: ICSEL
     description: LPTIM input capture 1 selection The IC1SEL bits control the LPTIM Input capture 1 multiplexer, which connects LPTIM Input capture 1 to one of the available inputs. For connection details refer to.
     bit_offset: 16
     bit_size: 2
-  - name: IC2SEL
-    description: LPTIM input capture 2 selection The IC2SEL bits control the LPTIM Input capture 2 multiplexer, which connects LPTIM Input capture 2 to one of the available inputs. For connection details refer to.
-    bit_offset: 20
-    bit_size: 2
+    array:
+      len: 2
+      stride: 4
 fieldset/CNT:
   description: LPTIM counter register.
   fields:
@@ -229,13 +224,16 @@ fieldset/CR:
     description: Reset after read enable This bit is set and cleared by software. When RSTARE is set to '1', any read access to LPTIM_CNT register asynchronously resets LPTIM_CNT register content. This bit can be set only when the LPTIM is enabled.
     bit_offset: 4
     bit_size: 1
-fieldset/DIER_intput:
+fieldset/DIER_input:
   description: LPTIM interrupt enable register.
   fields:
-  - name: CC1IE
+  - name: CCIE
     description: Capture/compare 1 interrupt enable.
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 2
+      stride: 9
   - name: ARRMIE
     description: Autoreload match Interrupt Enable.
     bit_offset: 1
@@ -264,37 +262,34 @@ fieldset/DIER_intput:
     description: Repetition register update OK interrupt Enable.
     bit_offset: 8
     bit_size: 1
-  - name: CC2IE
-    description: 'Capture/compare 2 interrupt enable Note: If LPTIM does not implement at least 2 channels this bit is reserved. Please refer to.'
-    bit_offset: 9
-    bit_size: 1
-  - name: CC1OIE
+  - name: CCOIE
     description: 'Capture/compare 1 over-capture interrupt enable Note: If LPTIM does not implement at least 1 channel this bit is reserved. Please refer to.'
     bit_offset: 12
     bit_size: 1
-  - name: CC2OIE
-    description: 'Capture/compare 2 over-capture interrupt enable Note: If LPTIM does not implement at least 2 channels this bit is reserved. Please refer to.'
-    bit_offset: 13
-    bit_size: 1
-  - name: CC1DE
+    array:
+      len: 2
+      stride: 1
+  - name: CCDE
     description: 'Capture/compare 1 DMA request enable Note: If LPTIM does not implement at least 1 channel this bit is reserved. Please refer to.'
     bit_offset: 16
     bit_size: 1
+    array:
+      len: 2
+      stride: 9
   - name: UEDE
     description: 'Update event DMA request enable Note: If LPTIM does not implement at least 1 channel this bit is reserved. Please refer to.'
     bit_offset: 23
     bit_size: 1
-  - name: CC2DE
-    description: 'Capture/compare 2 DMA request enable Note: If LPTIM does not implement at least 2 channels this bit is reserved. Please refer to.'
-    bit_offset: 25
-    bit_size: 1
 fieldset/DIER_output:
   description: LPTIM interrupt enable register.
   fields:
-  - name: CC1IE
+  - name: CCIE
     description: Capture/compare 1 interrupt enable.
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 1
+      stride: 0
   - name: ARRMIE
     description: Autoreload match Interrupt Enable.
     bit_offset: 1
@@ -303,10 +298,13 @@ fieldset/DIER_output:
     description: External trigger valid edge Interrupt Enable.
     bit_offset: 2
     bit_size: 1
-  - name: CMP1OKIE
+  - name: CMPOKIE
     description: Compare register 1 update OK interrupt enable.
     bit_offset: 3
     bit_size: 1
+    array:
+      len: 1
+      stride: 0
   - name: ARROKIE
     description: Autoreload register update OK Interrupt Enable.
     bit_offset: 4
@@ -327,13 +325,16 @@ fieldset/DIER_output:
     description: Repetition register update OK interrupt Enable.
     bit_offset: 8
     bit_size: 1
-fieldset/ICR_intput:
+fieldset/ICR_input:
   description: LPTIM interrupt clear register.
   fields:
-  - name: CC1CF
+  - name: CCCF
     description: Capture/compare 1 clear flag Writing 1 to this bit clears the CC1IF flag in the LPTIM_ISR register.
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 2
+      stride: 9
   - name: ARRMCF
     description: Autoreload match clear flag Writing 1 to this bit clears the ARRM flag in the LPTIM_ISR register.
     bit_offset: 1
@@ -362,18 +363,13 @@ fieldset/ICR_intput:
     description: Repetition register update OK clear flag Writing 1 to this bit clears the REPOK flag in the LPTIM_ISR register.
     bit_offset: 8
     bit_size: 1
-  - name: CC2CF
-    description: 'Capture/compare 2 clear flag Writing 1 to this bit clears the CC2IF flag in the LPTIM_ISR register. Note: If LPTIM does not implement at least 2 channels this bit is reserved. Please refer to.'
-    bit_offset: 9
-    bit_size: 1
-  - name: CC1OCF
+  - name: CCOCF
     description: 'Capture/compare 1 over-capture clear flag Writing 1 to this bit clears the CC1OF flag in the LPTIM_ISR register. Note: If LPTIM does not implement at least 1 channel this bit is reserved. Please refer to.'
     bit_offset: 12
     bit_size: 1
-  - name: CC2OCF
-    description: 'Capture/compare 2 over-capture clear flag Writing 1 to this bit clears the CC2OF flag in the LPTIM_ISR register. Note: If LPTIM does not implement at least 2 channels this bit is reserved. Please refer to.'
-    bit_offset: 13
-    bit_size: 1
+    array:
+      len: 2
+      stride: 1
   - name: DIEROKCF
     description: Interrupt enable register update OK clear flag Writing 1 to this bit clears the DIEROK flag in the LPTIM_ISR register.
     bit_offset: 24
@@ -381,10 +377,13 @@ fieldset/ICR_intput:
 fieldset/ICR_output:
   description: LPTIM interrupt clear register.
   fields:
-  - name: CC1CF
+  - name: CCCF
     description: Capture/compare 1 clear flag Writing 1 to this bit clears the CC1IF flag in the LPTIM_ISR register.
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 1
+      stride: 0
   - name: ARRMCF
     description: Autoreload match clear flag Writing 1 to this bit clears the ARRM flag in the LPTIM_ISR register.
     bit_offset: 1
@@ -393,10 +392,13 @@ fieldset/ICR_output:
     description: External trigger valid edge clear flag Writing 1 to this bit clears the EXTTRIG flag in the LPTIM_ISR register.
     bit_offset: 2
     bit_size: 1
-  - name: CMP1OKCF
+  - name: CMPOKCF
     description: Compare register 1 update OK clear flag Writing 1 to this bit clears the CMP1OK flag in the LPTIM_ISR register.
     bit_offset: 3
     bit_size: 1
+    array:
+      len: 1
+      stride: 0
   - name: ARROKCF
     description: Autoreload register update OK clear flag Writing 1 to this bit clears the ARROK flag in the LPTIM_ISR register.
     bit_offset: 4
@@ -421,13 +423,16 @@ fieldset/ICR_output:
     description: Interrupt enable register update OK clear flag Writing 1 to this bit clears the DIEROK flag in the LPTIM_ISR register.
     bit_offset: 24
     bit_size: 1
-fieldset/ISR_intput:
+fieldset/ISR_input:
   description: LPTIM interrupt and status register.
   fields:
-  - name: CC1IF
+  - name: CCIF
     description: 'capture 1 interrupt flag If channel CC1 is configured as input: CC1IF is set by hardware to inform application that the current value of the counter is captured in LPTIM_CCR1 register. The corresponding interrupt or DMA request is generated if enabled. The CC1OF flag is set if the CC1IF flag was already high.'
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 2
+      stride: 9
   - name: ARRM
     description: Autoreload match ARRM is set by hardware to inform application that LPTIM_CNT register’s value reached the LPTIM_ARR register’s value. ARRM flag can be cleared by writing 1 to the ARRMCF bit in the LPTIM_ICR register.
     bit_offset: 1
@@ -456,18 +461,13 @@ fieldset/ISR_intput:
     description: Repetition register update OK REPOK is set by hardware to inform application that the APB bus write operation to the LPTIM_RCR register has been successfully completed. REPOK flag can be cleared by writing 1 to the REPOKCF bit in the LPTIM_ICR register.
     bit_offset: 8
     bit_size: 1
-  - name: CC2IF
-    description: 'Capture 2 interrupt flag If channel CC2 is configured as input: CC2IF is set by hardware to inform application that the current value of the counter is captured in LPTIM_CCR2 register. The corresponding interrupt or DMA request is generated if enabled. The CC2OF flag is set if the CC2IF flag was already high. Note: If LPTIM does not implement at least 2 channels this bit is reserved. Please refer to.'
-    bit_offset: 9
-    bit_size: 1
-  - name: CC1OF
+  - name: CCOF
     description: 'Capture 1 over-capture flag This flag is set by hardware only when the corresponding channel is configured in input capture mode. It is cleared by software by writing 1 to the CC1OCF bit in the LPTIM_ICR register. Note: If LPTIM does not implement at least 1 channel this bit is reserved. Please refer to.'
     bit_offset: 12
     bit_size: 1
-  - name: CC2OF
-    description: 'Capture 2 over-capture flag This flag is set by hardware only when the corresponding channel is configured in input capture mode. It is cleared by software by writing 1 to the CC2OCF bit in the LPTIM_ICR register. Note: If LPTIM does not implement at least 2 channels this bit is reserved. Please refer to.'
-    bit_offset: 13
-    bit_size: 1
+    array:
+      len: 2
+      stride: 1
   - name: DIEROK
     description: Interrupt enable register update OK DIEROK is set by hardware to inform application that the APB bus write operation to the LPTIM_DIER register has been successfully completed. DIEROK flag can be cleared by writing 1 to the DIEROKCF bit in the LPTIM_ICR register.
     bit_offset: 24
@@ -475,10 +475,13 @@ fieldset/ISR_intput:
 fieldset/ISR_output:
   description: LPTIM interrupt and status register.
   fields:
-  - name: CC1IF
+  - name: CCIF
     description: Compare 1 interrupt flag The CC1IF flag is set by hardware to inform application that LPTIM_CNT register value matches the compare register's value. The CC1IF flag can be cleared by writing 1 to the CC1CF bit in the LPTIM_ICR register.
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 1
+      stride: 0
   - name: ARRM
     description: Autoreload match ARRM is set by hardware to inform application that LPTIM_CNT register’s value reached the LPTIM_ARR register’s value. ARRM flag can be cleared by writing 1 to the ARRMCF bit in the LPTIM_ICR register.
     bit_offset: 1
@@ -487,10 +490,13 @@ fieldset/ISR_output:
     description: External trigger edge event EXTTRIG is set by hardware to inform application that a valid edge on the selected external trigger input has occurred. If the trigger is ignored because the timer has already started, then this flag is not set. EXTTRIG flag can be cleared by writing 1 to the EXTTRIGCF bit in the LPTIM_ICR register.
     bit_offset: 2
     bit_size: 1
-  - name: CMP1OK
+  - name: CMPOK
     description: Compare register 1 update OK CMP1OK is set by hardware to inform application that the APB bus write operation to the LPTIM_CCR1 register has been successfully completed. CMP1OK flag can be cleared by writing 1 to the CMP1OKCF bit in the LPTIM_ICR register.
     bit_offset: 3
     bit_size: 1
+    array:
+      len: 1
+      stride: 0
   - name: ARROK
     description: Autoreload register update OK ARROK is set by hardware to inform application that the APB bus write operation to the LPTIM_ARR register has been successfully completed. ARROK flag can be cleared by writing 1 to the ARROKCF bit in the LPTIM_ICR register.
     bit_offset: 4
