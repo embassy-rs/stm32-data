@@ -504,8 +504,8 @@ impl PeriMatcher {
             ("STM32(C|G0|H7|WB|WL).*:TIM15:.*", ("timer", "v1", "TIM_2CH_CMP")),
             ("STM32(C|G0|H7|WB|WL).*:TIM(16|17):.*", ("timer", "v1", "TIM_1CH_CMP")),
             // LPTIM for STM32Gx/Hx/Ux/Wx (and Cx) serials
-            ("STM32H5.*:LPTIM[12356]:.*", ("lptim", "v2h5", "LPTIM_ADV")),
-            ("STM32H5.*:LPTIM4:.*", ("lptim", "v2h5", "LPTIM_BASIC")),
+            ("STM32(H5|U5|WBA).*:LPTIM[12356]:.*", ("lptim", "v2b", "LPTIM_ADV")),
+            ("STM32(H5|U5).*:LPTIM4:.*", ("lptim", "v2b", "LPTIM_BASIC")),
             ("STM32(C|G|H7|U|W).*:LPTIM[1-6]:.*", ("lptim", "v1", "LPTIM")),
             // HRTIM for STM32Gx/Hx/Ux/Wx (and Cx) serials
             ("STM32[CGHUW].*:HRTIM1?:.*", ("hrtim", "v1", "HRTIM")),
