@@ -1,6 +1,7 @@
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 
+use log::info;
 use stm32_data_serde::chip::core::peripheral::Pin;
 
 use super::*;
@@ -535,17 +536,8 @@ impl PeriMatcher {
             ("STM32F1.*:GPIO.*", ("gpio", "v1", "GPIO")),
             (".*:GPIO.*", ("gpio", "v2", "GPIO")),
             (".*:IPCC:v1_0", ("ipcc", "v1", "IPCC")),
-            ("STM32H747.*:HSEM:*", ("hsem", "v1", "HSEM")),
-            ("STM32H7b3.*:HSEM:*", ("hsem", "v3", "HSEM")),
-            ("STM32H753.*:HSEM:*", ("hsem", "v3", "HSEM")),
-            ("STM32H753v.*:HSEM:*", ("hsem", "v3", "HSEM")),
-            ("STM32H743.*:HSEM:*", ("hsem", "v3", "HSEM")),
-            ("STM32H743v.*:HSEM:*", ("hsem", "v3", "HSEM")),
-            ("STM32MP157.*:HSEM:*", ("hsem", "v4", "HSEM")),
-            ("STM32MP153.*:HSEM:*", ("hsem", "v4", "HSEM")),
-            ("STM32WA55.*:HSEM:*", ("hsem", "v6", "HSEM")),
-            ("STM32WL5.*:HSEM:*", ("hsem", "v7", "HSEM")),
-            ("STM32WLE.*:HSEM:*", ("hsem", "v8", "HSEM")),
+            ("STM32H7(4|5)(5|7).*:HSEM:.*", ("hsem", "v1", "HSEM")),
+            ("STM32WLE.*:HSEM:.*", ("hsem", "v8", "HSEM")),
             (".*:DMAMUX.*", ("dmamux", "v1", "DMAMUX")),
             (r".*:GPDMA\d?:.*", ("gpdma", "v1", "GPDMA")),
             (r".*:BDMA\d?:.*", ("bdma", "v1", "DMA")),
@@ -923,6 +915,24 @@ fn process_group(
     let chip_af = &group.ips.values().find(|x| x.name == "GPIO").unwrap().version;
     let chip_af = chip_af.strip_suffix("_gpio_v1_0").unwrap();
     let chip_af = af.0.get(chip_af);
+
+    // HSEM is missing in the Cube XML files for these chips - we need to add it manually
+    if chip_name.starts_with("STM32H745")
+        || chip_name.starts_with("STM32H747")
+        || chip_name.starts_with("STM32H755")
+        || chip_name.starts_with("STM32H757")
+    {
+        info!("Patching HSEM in IPS for {}", chip_name);
+        group.ips.insert(
+            "HSEM".to_string(),
+            xml::Ip {
+                name: "HSEM".to_string(),
+                version: "hsem1_v1_0_Cube".to_string(),
+                instance_name: "HSEM".to_string(),
+            },
+        );
+    }
+
     let cores: Vec<_> = group
         .xml
         .cores
@@ -1016,6 +1026,9 @@ fn process_core(
             if let Entry::Vacant(entry) = peri_kinds.entry("ADC3_COMMON".to_string()) {
                 entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
+        }
+        if pname.starts_with("HSEM") && chip_name.starts_with("STM327") {
+            info!("******* HSEM *******")
         }
         peri_kinds.insert(pname, pkind.to_string());
     }
