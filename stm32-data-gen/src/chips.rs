@@ -1027,9 +1027,6 @@ fn process_core(
                 entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
         }
-        if pname.starts_with("HSEM") && chip_name.starts_with("STM327") {
-            info!("******* HSEM *******")
-        }
         peri_kinds.insert(pname, pkind.to_string());
     }
     const GHOST_PERIS: &[&str] = &[
