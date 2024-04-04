@@ -1,26 +1,40 @@
-block/Input:
+block/IC:
   items:
   - name: ISR
     description: LPTIM interrupt and status register.
     byte_offset: 0
-    fieldset: ISR_input
+    fieldset: ISR_IC
   - name: ICR
     description: LPTIM interrupt clear register.
     byte_offset: 4
-    fieldset: ICR_input
+    fieldset: ICR_IC
   - name: DIER
     description: LPTIM interrupt enable register.
     byte_offset: 8
-    fieldset: DIER_input
+    fieldset: DIER_IC
 block/LPTIM_Adv:
-  description: Low power timer.
+  extends: LPTIM_Basic
+  description: Low power timer with Output Compare
   items:
-  - name: Input
+  - name: InputCapture
     byte_offset: 0
-    block: Input
-  - name: Output
+    block: IC
+  - name: OutputCompare
     byte_offset: 0
-    block: Output
+    block: OC_Adv
+  - name: CCR
+    description: LPTIM compare register 1.
+    array:
+      len: 2
+      stride: 32
+    byte_offset: 20
+    fieldset: CCR
+block/LPTIM_Basic:
+  description: Low power timer with Output Compare
+  items:
+  - name: OutputCompare
+    byte_offset: 0
+    block: OC_Basic
   - name: CFGR
     description: LPTIM configuration register.
     byte_offset: 12
@@ -32,7 +46,7 @@ block/LPTIM_Adv:
   - name: CCR
     description: LPTIM compare register 1.
     array:
-      len: 2
+      len: 1
       stride: 32
     byte_offset: 20
     fieldset: CCR
@@ -52,24 +66,38 @@ block/LPTIM_Adv:
     description: LPTIM repetition register.
     byte_offset: 40
     fieldset: RCR
-  - name: CCMR1
-    description: LPTIM capture/compare mode register 1.
-    byte_offset: 44
-    fieldset: CCMR1
-block/Output:
+block/OC_Adv:
   items:
   - name: ISR
     description: LPTIM interrupt and status register.
     byte_offset: 0
-    fieldset: ISR_output
+    fieldset: ISR_OC_Adv
   - name: ICR
     description: LPTIM interrupt clear register.
     byte_offset: 4
-    fieldset: ICR_output
+    fieldset: ICR_OC_Adv
   - name: DIER
     description: LPTIM interrupt enable register.
     byte_offset: 8
-    fieldset: DIER_output
+    fieldset: DIER_OC_Adv
+  - name: CCMR1
+    description: LPTIM capture/compare mode register 1.
+    byte_offset: 44
+    fieldset: CCMR1
+block/OC_Basic:
+  items:
+  - name: ISR
+    description: LPTIM interrupt and status register.
+    byte_offset: 0
+    fieldset: ISR_OC_Basic
+  - name: ICR
+    description: LPTIM interrupt clear register.
+    byte_offset: 4
+    fieldset: ICR_OC_Basic
+  - name: DIER
+    description: LPTIM interrupt enable register.
+    byte_offset: 8
+    fieldset: DIER_OC_Basic
 fieldset/ARR:
   description: LPTIM autoreload register.
   fields:
@@ -224,7 +252,7 @@ fieldset/CR:
     description: Reset after read enable This bit is set and cleared by software. When RSTARE is set to '1', any read access to LPTIM_CNT register asynchronously resets LPTIM_CNT register content. This bit can be set only when the LPTIM is enabled.
     bit_offset: 4
     bit_size: 1
-fieldset/DIER_input:
+fieldset/DIER_IC:
   description: LPTIM interrupt enable register.
   fields:
   - name: CCIE
@@ -280,7 +308,25 @@ fieldset/DIER_input:
     description: 'Update event DMA request enable Note: If LPTIM does not implement at least 1 channel this bit is reserved. Please refer to.'
     bit_offset: 23
     bit_size: 1
-fieldset/DIER_output:
+fieldset/DIER_OC_Adv:
+  extends: DIER_OC_Basic
+  description: LPTIM interrupt enable register.
+  fields:
+  - name: CCIE
+    description: Capture/compare 1 interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 9
+  - name: CMPOKIE
+    description: Compare register 1 update OK interrupt enable.
+    bit_offset: 3
+    bit_size: 1
+    array:
+      len: 2
+      stride: 16
+fieldset/DIER_OC_Basic:
   description: LPTIM interrupt enable register.
   fields:
   - name: CCIE
@@ -289,7 +335,7 @@ fieldset/DIER_output:
     bit_size: 1
     array:
       len: 1
-      stride: 0
+      stride: 9
   - name: ARRMIE
     description: Autoreload match Interrupt Enable.
     bit_offset: 1
@@ -304,7 +350,7 @@ fieldset/DIER_output:
     bit_size: 1
     array:
       len: 1
-      stride: 0
+      stride: 16
   - name: ARROKIE
     description: Autoreload register update OK Interrupt Enable.
     bit_offset: 4
@@ -325,7 +371,7 @@ fieldset/DIER_output:
     description: Repetition register update OK interrupt Enable.
     bit_offset: 8
     bit_size: 1
-fieldset/ICR_input:
+fieldset/ICR_IC:
   description: LPTIM interrupt clear register.
   fields:
   - name: CCCF
@@ -374,7 +420,25 @@ fieldset/ICR_input:
     description: Interrupt enable register update OK clear flag Writing 1 to this bit clears the DIEROK flag in the LPTIM_ISR register.
     bit_offset: 24
     bit_size: 1
-fieldset/ICR_output:
+fieldset/ICR_OC_Adv:
+  extends: ICR_OC_Basic
+  description: LPTIM interrupt clear register.
+  fields:
+  - name: CCCF
+    description: Capture/compare 1 clear flag Writing 1 to this bit clears the CC1IF flag in the LPTIM_ISR register.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 9
+  - name: CMPOKCF
+    description: Compare register 1 update OK clear flag Writing 1 to this bit clears the CMP1OK flag in the LPTIM_ISR register.
+    bit_offset: 3
+    bit_size: 1
+    array:
+      len: 2
+      stride: 16
+fieldset/ICR_OC_Basic:
   description: LPTIM interrupt clear register.
   fields:
   - name: CCCF
@@ -383,7 +447,7 @@ fieldset/ICR_output:
     bit_size: 1
     array:
       len: 1
-      stride: 0
+      stride: 9
   - name: ARRMCF
     description: Autoreload match clear flag Writing 1 to this bit clears the ARRM flag in the LPTIM_ISR register.
     bit_offset: 1
@@ -398,7 +462,7 @@ fieldset/ICR_output:
     bit_size: 1
     array:
       len: 1
-      stride: 0
+      stride: 16
   - name: ARROKCF
     description: Autoreload register update OK clear flag Writing 1 to this bit clears the ARROK flag in the LPTIM_ISR register.
     bit_offset: 4
@@ -423,7 +487,7 @@ fieldset/ICR_output:
     description: Interrupt enable register update OK clear flag Writing 1 to this bit clears the DIEROK flag in the LPTIM_ISR register.
     bit_offset: 24
     bit_size: 1
-fieldset/ISR_input:
+fieldset/ISR_IC:
   description: LPTIM interrupt and status register.
   fields:
   - name: CCIF
@@ -472,7 +536,25 @@ fieldset/ISR_input:
     description: Interrupt enable register update OK DIEROK is set by hardware to inform application that the APB bus write operation to the LPTIM_DIER register has been successfully completed. DIEROK flag can be cleared by writing 1 to the DIEROKCF bit in the LPTIM_ICR register.
     bit_offset: 24
     bit_size: 1
-fieldset/ISR_output:
+fieldset/ISR_OC_Adv:
+  extends: ISR_OC_Basic
+  description: LPTIM interrupt and status register.
+  fields:
+  - name: CCIF
+    description: Compare 1 interrupt flag The CC1IF flag is set by hardware to inform application that LPTIM_CNT register value matches the compare register's value. The CC1IF flag can be cleared by writing 1 to the CC1CF bit in the LPTIM_ICR register.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 9
+  - name: CMPOK
+    description: Compare register 1 update OK CMP1OK is set by hardware to inform application that the APB bus write operation to the LPTIM_CCR1 register has been successfully completed. CMP1OK flag can be cleared by writing 1 to the CMP1OKCF bit in the LPTIM_ICR register.
+    bit_offset: 3
+    bit_size: 1
+    array:
+      len: 2
+      stride: 16
+fieldset/ISR_OC_Basic:
   description: LPTIM interrupt and status register.
   fields:
   - name: CCIF
@@ -481,7 +563,7 @@ fieldset/ISR_output:
     bit_size: 1
     array:
       len: 1
-      stride: 0
+      stride: 9
   - name: ARRM
     description: Autoreload match ARRM is set by hardware to inform application that LPTIM_CNT register’s value reached the LPTIM_ARR register’s value. ARRM flag can be cleared by writing 1 to the ARRMCF bit in the LPTIM_ICR register.
     bit_offset: 1
@@ -496,7 +578,7 @@ fieldset/ISR_output:
     bit_size: 1
     array:
       len: 1
-      stride: 0
+      stride: 16
   - name: ARROK
     description: Autoreload register update OK ARROK is set by hardware to inform application that the APB bus write operation to the LPTIM_ARR register has been successfully completed. ARROK flag can be cleared by writing 1 to the ARROKCF bit in the LPTIM_ICR register.
     bit_offset: 4
