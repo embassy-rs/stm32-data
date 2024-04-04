@@ -209,7 +209,7 @@ impl PeriMatcher {
             ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
-            ("STM32G4.*:ADC:.*", ("adc", "v4", "ADC")),
+            ("STM32G4.*:ADC:.*", ("adc", "g4", "ADC")),
             ("STM32G4.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf2_v1_1", ("adccommon", "v2", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf5_v2_0", ("adccommon", "v3", "ADC_COMMON")),
