@@ -58,22 +58,27 @@ fieldset/CFGR:
     description: Clock selector.
     bit_offset: 0
     bit_size: 1
+    enum: CKSEL
   - name: CKPOL
     description: Clock Polarity.
     bit_offset: 1
     bit_size: 2
+    enum: CKPOL
   - name: CKFLT
     description: Configurable digital filter for external clock.
     bit_offset: 3
     bit_size: 2
+    enum: Filter
   - name: TRGFLT
     description: Configurable digital filter for trigger.
     bit_offset: 6
     bit_size: 2
+    enum: Filter
   - name: PRESC
     description: Clock prescaler.
     bit_offset: 9
     bit_size: 3
+    enum: PRESC
   - name: TRIGSEL
     description: Trigger selector.
     bit_offset: 13
@@ -278,3 +283,54 @@ fieldset/RCR:
     description: Repetition register value.
     bit_offset: 0
     bit_size: 8
+enum/CKPOL:
+  bit_size: 2
+  variants:
+  - name: Rising
+    description: the rising edge is the active edge used for counting. If the LPTIM is configured in Encoder mode (ENC bit is set), the encoder sub-mode 1 is active.
+    value: 0
+  - name: Falling
+    description: the falling edge is the active edge used for counting. If the LPTIM is configured in Encoder mode (ENC bit is set), the encoder sub-mode 2 is active.
+    value: 1
+  - name: Both
+    description: both edges are active edges. When both external clock signal edges are considered active ones, the LPTIM must also be clocked by an internal clock source with a frequency equal to at least four times the external clock frequency. If the LPTIM is configured in Encoder mode (ENC bit is set), the encoder sub-mode 3 is active.
+    value: 2
+enum/CKSEL:
+  bit_size: 1
+  variants:
+  - name: Internal
+    description: LPTIM is clocked by internal clock source (APB clock or any of the embedded oscillators)
+    value: 0
+  - name: External
+    description: LPTIM is clocked by an external clock source through the LPTIM external Input1
+    value: 1
+enum/Filter:
+  bit_size: 2
+  variants:
+  - name: Count1
+    value: 0
+  - name: Count2
+    value: 1
+  - name: Count4
+    value: 2
+  - name: Count8
+    value: 3
+enum/PRESC:
+  bit_size: 3
+  variants:
+  - name: Div1
+    value: 0
+  - name: Div2
+    value: 1
+  - name: Div4
+    value: 2
+  - name: Div8
+    value: 3
+  - name: Div16
+    value: 4
+  - name: Div32
+    value: 5
+  - name: Div64
+    value: 6
+  - name: Div128
+    value: 7
