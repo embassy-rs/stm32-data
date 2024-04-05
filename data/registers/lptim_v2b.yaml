@@ -21,14 +21,10 @@ block/LPTIM_ADV:
       stride: 32
     byte_offset: 20
     fieldset: CCR
-  - name: CCMR_IC
+  - name: CCMR
     description: LPTIM capture/compare mode register 1.
     byte_offset: 44
-    fieldset: CCMR_IC
-  - name: CCMR_OC
-    description: LPTIM capture/compare mode register 1.
-    byte_offset: 44
-    fieldset: CCMR_OC
+    fieldset: CCMR
 block/LPTIM_BASIC:
   description: Low power timer with Output Compare
   items:
@@ -82,32 +78,8 @@ fieldset/ARR:
     description: Auto reload value ARR is the autoreload value for the LPTIM. This value must be strictly greater than the CCRx[15:0] value.
     bit_offset: 0
     bit_size: 16
-fieldset/CCMR_IC:
-  extends: CCMR_partial
-  description: LPTIM input capture mode register 1.
-  fields:
-  - name: CCP
-    description: Capture/compare 1 output polarity. Only bit2 is used to set polarity when output mode is enabled, bit3 is don't care. This field is used to select the IC1 polarity for capture operations.
-    bit_offset: 2
-    bit_size: 2
-    array:
-      len: 2
-      stride: 16
-    enum: CCP_IC
-fieldset/CCMR_OC:
-  extends: CCMR_partial
-  description: LPTIM output compare mode register 1.
-  fields:
-  - name: CCP
-    description: Capture/compare 1 output polarity. Only bit2 is used to set polarity when output mode is enabled, bit3 is don't care. This field is used to select the IC1 polarity for capture operations.
-    bit_offset: 2
-    bit_size: 2
-    array:
-      len: 2
-      stride: 16
-    enum: CCP_OC
-fieldset/CCMR_partial:
-  description: internal use only - common fields between CCMR input mode and output mode
+fieldset/CCMR:
+  description: LPTIM capture/compare mode register 1.
   fields:
   - name: CCSEL
     description: Capture/compare 1 selection This bitfield defines the direction of the channel input (capture) or output mode.
@@ -124,6 +96,22 @@ fieldset/CCMR_partial:
     array:
       len: 2
       stride: 16
+  - name: CCP_Input
+    description: Capture/compare 1 output polarity. Only bit2 is used to set polarity when output mode is enabled, bit3 is don't care. This field is used to select the IC1 polarity for capture operations.
+    bit_offset: 2
+    bit_size: 2
+    array:
+      len: 2
+      stride: 16
+    enum: CCP_Input
+  - name: CCP_Output
+    description: Capture/compare 1 output polarity. Only bit2 is used to set polarity when output mode is enabled, bit3 is don't care. This field is used to select the IC1 polarity for capture operations.
+    bit_offset: 2
+    bit_size: 2
+    array:
+      len: 2
+      stride: 16
+    enum: CCP_Output
   - name: ICPSC
     description: Input capture 1 prescaler This bitfield defines the ratio of the prescaler acting on the CC1 input (IC1).
     bit_offset: 8
@@ -487,7 +475,7 @@ fieldset/RCR:
     description: Repetition register value REP is the repetition value for the LPTIM.
     bit_offset: 0
     bit_size: 8
-enum/CCP_IC:
+enum/CCP_Input:
   bit_size: 2
   variants:
   - name: Rising
@@ -496,7 +484,7 @@ enum/CCP_IC:
     value: 1
   - name: Both
     value: 3
-enum/CCP_OC:
+enum/CCP_Output:
   bit_size: 2
   variants:
   - name: ActiveHigh
