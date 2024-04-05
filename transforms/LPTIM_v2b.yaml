@@ -1,0 +1,57 @@
+transforms:
+
+  - !Rename
+    from: ^LPTIM1$
+    to: LPTIM_Adv
+
+  - !RenameRegisters
+    block: LPTIM_Adv
+    from: (.*)intput
+    to: ${1}input
+
+  - !Rename
+    from: (.*)intput
+    to: ${1}input
+
+  - !MakeBlock
+    blocks: ^LPTIM_Adv$
+    from: ^(.+)_output$
+    to_outer: Output
+    to_block: Output
+    to_inner: ${1}
+
+  - !MakeBlock
+    blocks: ^LPTIM_Adv$
+    from: ^(.+)_input$
+    to_outer: Input
+    to_block: Input
+    to_inner: ${1}
+
+  - !RenameFields
+    fieldset: CCR\d
+    from: CCR\d
+    to: CCR
+
+  - !MergeFieldsets
+    from: CCR\d
+    to: CCR
+
+  - !MakeRegisterArray
+    blocks: LPTIM_Adv
+    from: CCR\d
+    to: CCR
+
+  - !MakeFieldArray
+    fieldsets: CFGR2
+    from: (I[CN])\d(SEL)
+    to: $1$2
+
+  - !MakeFieldArray
+    fieldsets: CCMR\d
+    from: (.*)\d(.*)
+    to: $1$2
+
+  - !MakeFieldArray
+    fieldsets: (ISR|ICR|DIER).*
+    from: (.*)\d(.*)
+    to: $1$2

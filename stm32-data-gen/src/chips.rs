@@ -481,6 +481,7 @@ impl PeriMatcher {
             ("STM32L.*:TIM(9|21|22):.*", ("timer", "v1", "TIM_2CH")),
             ("STM32L.*:TIM15:.*", ("timer", "v1", "TIM_2CH_CMP")),
             ("STM32L.*:TIM(16|17):.*", ("timer", "v1", "TIM_1CH_CMP")),
+            ("STM32L5.*:LPTIM.*:.*", ("lptim", "v2a", "LPTIM")),
             ("STM32L.*:LPTIM(1|2|3):.*", ("lptim", "v1", "LPTIM")),
             // AN4013 Table 4: STM32Gx/Hx/Ux/Wx (and Cx) serials
             // timer_v2 for STM32Gx/Hx/Ux/Wx (and Cx) serials
@@ -493,6 +494,9 @@ impl PeriMatcher {
             ("STM32(G4|H5|U5|WBA).*:TIM12:.*", ("timer", "v2", "TIM_2CH")),
             ("STM32(G4|H5|U5|WBA).*:TIM15:.*", ("timer", "v2", "TIM_2CH_CMP")),
             ("STM32(G4|H5|U5|WBA).*:TIM(16|17):.*", ("timer", "v2", "TIM_1CH_CMP")),
+            ("STM32WL.*:LPTIM.*:.*", ("lptim", "v2a", "LPTIM")),
+            ("STM32(H5|U5|WBA).*:LPTIM[12356]:.*", ("lptim", "v2b", "LPTIM_ADV")),
+            ("STM32(H5|U5).*:LPTIM4:.*", ("lptim", "v2b", "LPTIM_BASIC")),
             ("STM32G4.*:HRTIM1:.*", ("hrtim", "v2", "HRTIM")),
             // timer_v1 for STM32Gx/Hx/Ux/Wx (and Cx) serials
             ("STM32(C|G0|H7|WB|WL).*:TIM(1|8|20):.*", ("timer", "v1", "TIM_ADV")),
@@ -503,7 +507,7 @@ impl PeriMatcher {
             ("STM32(C|G0|H7|WB|WL).*:TIM12:.*", ("timer", "v1", "TIM_2CH")),
             ("STM32(C|G0|H7|WB|WL).*:TIM15:.*", ("timer", "v1", "TIM_2CH_CMP")),
             ("STM32(C|G0|H7|WB|WL).*:TIM(16|17):.*", ("timer", "v1", "TIM_1CH_CMP")),
-            ("STM32[CGHUW].*:LPTIM[1-6]:.*", ("lptim", "v1", "LPTIM")),
+            ("STM32(C|G|H7|U|W).*:LPTIM[1-6]:.*", ("lptim", "v1", "LPTIM")),
             ("STM32[CGHUW].*:HRTIM1?:.*", ("hrtim", "v1", "HRTIM")),
             //
             //// TIM mapping ends here ////
