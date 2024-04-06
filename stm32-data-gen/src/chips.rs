@@ -473,6 +473,8 @@ impl PeriMatcher {
             ("STM32F.*:TIM15:.*", ("timer", "v1", "TIM_2CH_CMP")),
             ("STM32F.*:TIM(16|17):.*", ("timer", "v1", "TIM_1CH_CMP")),
             ("STM32F.*:HRTIM:.*", ("hrtim", "v1", "HRTIM")),
+            // LPTIM for STM32Fx serials
+            ("STM32(F4|F7).*:LPTIM.*:.*", ("lptim", "v1a", "LPTIM")),
             // AN4013 Table 3: STM32Lx serials
             // Override for STM32L0 serial
             ("STM32L0.*:TIM(2|3):.*", ("timer", "l0", "TIM_GP16")),
@@ -492,6 +494,7 @@ impl PeriMatcher {
             // LPTIM for STM32Lx
             ("STM32L5.*:LPTIM.*:.*", ("lptim", "v1c", "LPTIM")),
             ("STM32L4[PQRS].*:LPTIM.*:.*", ("lptim", "v1b", "LPTIM")),
+            ("STM32L4[^PQRS].*:LPTIM.*:.*", ("lptim", "v1a", "LPTIM")),
             // AN4013 Table 4: STM32Gx/Hx/Ux/Wx (and Cx) serials
             // timer_v2 for STM32Gx/Hx/Ux/Wx (and Cx) serials
             ("STM32U5.*:TIM(3|4):.*", ("timer", "v2", "TIM_GP32")),
