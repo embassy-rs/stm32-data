@@ -142,7 +142,7 @@ fieldset/CFGR:
     description: Clock selector The CKSEL bit selects which clock source the LPTIM uses:.
     bit_offset: 0
     bit_size: 1
-    enum: CKSEL
+    enum: ClockSource
   - name: CKPOL
     description: 'Clock Polarity When the LPTIM is clocked by an external clock source, CKPOL bits is used to configure the active edge or edges used by the counter: If the LPTIM is configured in Encoder mode (ENC bit is set), the encoder sub-mode 1 is active. If the LPTIM is configured in Encoder mode (ENC bit is set), the encoder sub-mode 2 is active. Refer to for more details about Encoder mode sub-modes.'
     bit_offset: 1
@@ -184,6 +184,7 @@ fieldset/CFGR:
     description: 'Waveform shape polarity The WAVEPOL bit controls the output polarity Note: If the LPTIM implements at least one capture/compare channel, this bit is reserved. Please refer to.'
     bit_offset: 21
     bit_size: 1
+    enum: WAVPOL
   - name: PRELOAD
     description: Registers update mode The PRELOAD bit controls the LPTIM_ARR, LPTIM_RCR and the LPTIM_CCRx registers update modality.
     bit_offset: 22
@@ -192,6 +193,7 @@ fieldset/CFGR:
     description: counter mode enabled The COUNTMODE bit selects which clock source is used by the LPTIM to clock the counter:.
     bit_offset: 23
     bit_size: 1
+    enum: ClockSource
   - name: ENC
     description: 'Encoder mode enable The ENC bit controls the Encoder mode Note: If the LPTIM does not support encoder mode feature, this bit is reserved. Please refer to.'
     bit_offset: 24
@@ -512,14 +514,14 @@ enum/CKPOL:
   - name: Both
     description: both edges are active edges. When both external clock signal edges are considered active ones, the LPTIM must also be clocked by an internal clock source with a frequency equal to at least four times the external clock frequency. If the LPTIM is configured in Encoder mode (ENC bit is set), the encoder sub-mode 3 is active.
     value: 2
-enum/CKSEL:
+enum/ClockSource:
   bit_size: 1
   variants:
   - name: Internal
-    description: LPTIM is clocked by internal clock source (APB clock or any of the embedded oscillators)
+    description: clocked by internal clock source (APB clock or any of the embedded oscillators)
     value: 0
   - name: External
-    description: LPTIM is clocked by an external clock source through the LPTIM external Input1
+    description: clocked by an external clock source through the LPTIM external Input1
     value: 1
 enum/Filter:
   bit_size: 2
@@ -566,3 +568,12 @@ enum/TRIGEN:
   - name: BothEdge
     description: both edges are active edges
     value: 3
+enum/WAVPOL:
+  bit_size: 1
+  variants:
+  - name: Positive
+    description: The LPTIM output reflects the compare results between LPTIM_ARR and LPTIM_CMP registers.
+    value: 0
+  - name: Negative
+    description: The LPTIM output reflects the inverse of the compare results between LPTIM_ARR and LPTIM_CMP registers.
+    value: 1
