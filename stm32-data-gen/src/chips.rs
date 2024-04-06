@@ -495,6 +495,7 @@ impl PeriMatcher {
             ("STM32L5.*:LPTIM.*:.*", ("lptim", "v1c", "LPTIM")),
             ("STM32L4[PQRS].*:LPTIM.*:.*", ("lptim", "v1b", "LPTIM")),
             ("STM32L4[^PQRS].*:LPTIM.*:.*", ("lptim", "v1a", "LPTIM")),
+            ("STM32L0.*:LPTIM.*:.*", ("lptim", "v1", "LPTIM")),
             // AN4013 Table 4: STM32Gx/Hx/Ux/Wx (and Cx) serials
             // timer_v2 for STM32Gx/Hx/Ux/Wx (and Cx) serials
             ("STM32U5.*:TIM(3|4):.*", ("timer", "v2", "TIM_GP32")),
