@@ -956,7 +956,6 @@ fn process_core(
     let defines = h.get_defines(&core_name);
 
     let mut peri_kinds = HashMap::new();
-    peri_kinds.insert("UID".to_string(), "UID".to_string());
     for ip in group.ips.values() {
         let pname = ip.instance_name.clone();
         let pkind = format!("{}:{}", ip.name, ip.version);
@@ -1047,6 +1046,7 @@ fn process_core(
         "BKP",
         "USBRAM",
         "VREFINTCAL",
+        "UID",
     ];
     for pname in GHOST_PERIS {
         if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
