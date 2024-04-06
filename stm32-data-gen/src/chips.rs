@@ -521,6 +521,7 @@ impl PeriMatcher {
             ("STM32(H5|U5).*:LPTIM4:.*", ("lptim", "v2", "LPTIM_BASIC")),
             ("STM32WL.*:LPTIM.*:.*", ("lptim", "v1c", "LPTIM")),
             ("STM32H7.*:LPTIM.*:.*", ("lptim", "v1b_h7", "LPTIM")),
+            ("STM32G4.*:LPTIM.*:.*", ("lptim", "v1b_g4", "LPTIM")),
             //
             //// TIM mapping ends here ////
             ("STM32F0.*:DBGMCU:.*", ("dbgmcu", "f0", "DBGMCU")),
