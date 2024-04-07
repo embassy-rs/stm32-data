@@ -264,6 +264,7 @@ impl ParsedRccs {
             ("DAC", &["DAC1", "ADCDAC"]),
             ("DAC1", &["DAC12", "ADCDAC"]),
             ("DAC2", &["DAC12", "ADCDAC"]),
+            ("DSIHOST", &["DSI"]),
             ("ETH", &["ETHMAC", "ETH1MAC"]),
             ("SPI1", &["SPI12", "SPI123"]),
             ("SPI2", &["SPI12", "SPI123"]),
