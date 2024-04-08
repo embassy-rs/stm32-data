@@ -535,6 +535,14 @@ impl PeriMatcher {
             ("STM32F1.*:GPIO.*", ("gpio", "v1", "GPIO")),
             (".*:GPIO.*", ("gpio", "v2", "GPIO")),
             (".*:IPCC:v1_0", ("ipcc", "v1", "IPCC")),
+            ("STM32H7(4|5)(5|7).*:HSEM:.*", ("hsem", "v1", "HSEM")),
+            ("STM32WB55.*:HSEM:.*", ("hsem", "v1", "HSEM")),
+            ("STM32H735.*:HSEM:.*", ("hsem", "v2", "HSEM")),
+            ("STM32H7B3.*:HSEM:.*", ("hsem", "v2", "HSEM")),
+            ("STM32H753.*:HSEM:.*", ("hsem", "v2", "HSEM")),
+            ("STM32H743.*:HSEM:.*", ("hsem", "v2", "HSEM")),
+            ("STM32WL5.*:HSEM:.*", ("hsem", "v3", "HSEM")),
+            ("STM32WLE.*:HSEM:.*", ("hsem", "v4", "HSEM")),
             (".*:DMAMUX.*", ("dmamux", "v1", "DMAMUX")),
             (r".*:GPDMA\d?:.*", ("gpdma", "v1", "GPDMA")),
             (r".*:BDMA\d?:.*", ("bdma", "v1", "DMA")),
@@ -912,6 +920,7 @@ fn process_group(
     let chip_af = &group.ips.values().find(|x| x.name == "GPIO").unwrap().version;
     let chip_af = chip_af.strip_suffix("_gpio_v1_0").unwrap();
     let chip_af = af.0.get(chip_af);
+
     let cores: Vec<_> = group
         .xml
         .cores
@@ -1047,6 +1056,7 @@ fn process_core(
         "USBRAM",
         "VREFINTCAL",
         "UID",
+        "HSEM",
     ];
     for pname in GHOST_PERIS {
         if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
