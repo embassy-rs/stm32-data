@@ -1056,6 +1056,7 @@ fn process_core(
         "USBRAM",
         "VREFINTCAL",
         "UID",
+        "HSEM",
     ];
     for pname in GHOST_PERIS {
         if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
