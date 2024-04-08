@@ -266,6 +266,7 @@ impl PeriMatcher {
             (".*:DSIHOST:dsihost1_v1_0", ("dsihost", "v1", "DSIHOST")),
             (".*:DSIHOST:dsihost1_v1_0_SHARK", ("dsihost", "v1", "DSIHOST")),
             (".*:DSIHOST:dsihost1_v2_0", ("dsihost", "v2", "DSIHOST")),
+            (".*:DSIHOST:dsihost_U5", ("dsihost", "u5", "DSIHOST")),
             (".*:MDIOS:mdios1_v1_0", ("mdios", "v1", "MDIOS")),
             (".*:QUADSPI:.*", ("quadspi", "v1", "QUADSPI")),
             ("STM32F1.*:BKP.*", ("bkp", "v1", "BKP")),
