@@ -1480,6 +1480,8 @@ fn process_chip(
             })
         }
     }
+    memory_regions.sort_by_key(|m| (m.address, m.name.clone()));
+
     let docs = docs.documents_for(chip_name);
     let chip = stm32_data_serde::Chip {
         name: chip_name.to_string(),
