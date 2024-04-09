@@ -1,288 +1,330 @@
-use std::cmp::Ordering;
-use std::collections::HashMap;
-use std::fs;
+use regex::Regex;
+use stm32_data_serde::chip::memory::{self, Settings};
+use stm32_data_serde::chip::Memory;
 
-#[derive(Debug, PartialEq)]
-pub struct Memory {
-    pub device_id: u16,
-    pub ram: Ram,
-    pub flash_size: u32,
-    pub flash_regions: Vec<FlashRegion>,
+struct Mem {
+    name: &'static str,
+    address: u32,
+    size: u32,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Ram {
-    pub address: u32,
-    pub bytes: u32,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct FlashRegion {
-    pub bank: FlashBank,
-    pub address: u32,
-    pub bytes: u32,
-    pub settings: stm32_data_serde::chip::memory::Settings,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum FlashBank {
-    Bank1,
-    Bank2,
-    Otp,
-}
-
-mod xml {
-    use serde::Deserialize;
-
-    pub fn from_hex<'de, T, D>(deserializer: D) -> Result<T, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-        T: num::Num,
-        T::FromStrRadixErr: std::fmt::Display,
-    {
-        use serde::de::Error;
-        let s: &str = Deserialize::deserialize(deserializer)?;
-        let s = s.trim();
-        let (prefix, num) = s.split_at(2);
-        if prefix != "0x" && prefix != "0X" {
-            panic!("no hex prefix");
-        }
-        T::from_str_radix(num, 16).map_err(D::Error::custom)
-    }
-
-    pub fn opt_from_hex<'de, T, D>(deserializer: D) -> Result<Option<T>, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-        T: num::Num,
-        T::FromStrRadixErr: std::fmt::Display,
-    {
-        Ok(Some(from_hex(deserializer)?))
-    }
-
-    #[derive(Debug, Deserialize, PartialEq)]
-    pub struct Root {
-        #[serde(rename = "Device")]
-        pub device: root::Device,
-    }
-
-    mod root {
-        use serde::Deserialize;
-
-        use super::from_hex;
-
-        #[derive(Debug, Deserialize, PartialEq)]
-        pub struct Device {
-            #[serde(rename = "DeviceID", deserialize_with = "from_hex")]
-            pub device_id: u16,
-            #[serde(rename = "Name")]
-            pub name: String,
-            #[serde(rename = "Peripherals")]
-            pub peripherals: device::Peripherals,
-        }
-
-        mod device {
-            use serde::Deserialize;
-
-            #[derive(Debug, Deserialize, PartialEq)]
-            pub struct Peripherals {
-                #[serde(rename = "Peripheral")]
-                pub peripharal: Vec<peripherals::Peripheral>,
-            }
-
-            mod peripherals {
-                use serde::Deserialize;
-
-                use super::super::super::opt_from_hex;
-
-                #[derive(Debug, Deserialize, PartialEq)]
-                pub struct Peripheral {
-                    #[serde(rename = "Name")]
-                    // pub name: peripheral::Name,
-                    pub name: String,
-                    #[serde(rename = "ErasedValue", deserialize_with = "opt_from_hex", default)]
-                    pub erased_value: Option<u8>,
-                    #[serde(rename = "Configuration", default)]
-                    pub configuration: Vec<peripheral::Configuration>,
-                }
-
-                mod peripheral {
-                    use serde::Deserialize;
-
-                    use super::super::super::super::opt_from_hex;
-
-                    #[derive(Debug, Deserialize, PartialEq)]
-                    pub struct Configuration {
-                        #[serde(rename = "Parameters", default)]
-                        pub parameters: Option<configuration::Parameters>,
-                        #[serde(rename = "Organization", default)]
-                        pub organization: Option<String>,
-                        #[serde(rename = "Allignement", deserialize_with = "opt_from_hex", default)]
-                        pub allignement: Option<u32>,
-                        #[serde(rename = "Bank")]
-                        pub bank: Vec<configuration::Bank>,
-                    }
-
-                    mod configuration {
-                        use serde::Deserialize;
-
-                        use super::super::super::super::super::{from_hex, opt_from_hex};
-
-                        #[derive(Debug, Deserialize, PartialEq)]
-                        pub struct Parameters {
-                            #[serde(deserialize_with = "from_hex")]
-                            pub address: u32,
-                            #[serde(deserialize_with = "from_hex")]
-                            pub size: u32,
-                            #[serde(deserialize_with = "opt_from_hex", default)]
-                            pub occurence: Option<u32>,
-                        }
-
-                        #[derive(Debug, Deserialize, PartialEq)]
-                        pub struct Bank {
-                            #[serde(default)]
-                            pub name: Option<String>,
-                            #[serde(rename = "Field", default)]
-                            pub field: Vec<bank::Field>,
-                        }
-
-                        mod bank {
-                            use serde::Deserialize;
-
-                            #[derive(Debug, Deserialize, PartialEq)]
-                            pub struct Field {
-                                #[serde(rename = "Parameters")]
-                                pub parameters: super::Parameters,
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-pub struct Memories(HashMap<u16, Memory>);
-
-impl Memories {
-    pub fn parse() -> anyhow::Result<Self> {
-        let mut paths: Vec<_> = glob::glob("sources/cubeprogdb/db/*.xml")
-            .unwrap()
-            .map(Result::unwrap)
-            .collect();
-        paths.sort();
-
-        let mut memories = HashMap::new();
-
-        for f in paths {
-            // println!("Parsing {f:?}");
-            let file = fs::read_to_string(f)?;
-            let parsed: xml::Root = quick_xml::de::from_str(&file)?;
-            // dbg!(&parsed);
-
-            let device_id = parsed.device.device_id;
-
-            let mut ram = None;
-            let mut flash_size = None;
-            let mut flash_regions = vec![];
-
-            for mut peripheral in parsed.device.peripherals.peripharal {
-                if peripheral.name == "Embedded SRAM" && ram.is_none() {
-                    let config = peripheral.configuration.first().unwrap();
-                    let parameters = config.parameters.as_ref().unwrap();
-                    ram = Some(Ram {
-                        address: parameters.address,
-                        bytes: parameters.size,
-                    });
-                }
-
-                enum BlockKind {
-                    Main,
-                    Otp,
-                }
-                let kind = match peripheral.name.as_str() {
-                    "Embedded Flash" => Some(BlockKind::Main),
-                    "OTP" => Some(BlockKind::Otp),
-                    _ => None,
-                };
-
-                if let Some(kind) = kind {
-                    peripheral.configuration.sort_by(|a, b| {
-                        // Prefer largest size
-                        let ordering = b
-                            .parameters
-                            .as_ref()
-                            .unwrap()
-                            .size
-                            .partial_cmp(&a.parameters.as_ref().unwrap().size)
-                            .unwrap();
-
-                        // ... then prefer single ordering over dual
-                        if ordering == Ordering::Equal {
-                            // Possible values are Single and Dual
-                            b.organization.partial_cmp(&a.organization).unwrap()
-                        } else {
-                            ordering
-                        }
-                    });
-                    let config = peripheral.configuration.first().unwrap();
-
-                    if flash_size.is_none() {
-                        let parameters = config.parameters.as_ref().unwrap();
-
-                        flash_size = Some(parameters.size);
-                    }
-
-                    for bank in config.bank.iter() {
-                        let flash_bank = match kind {
-                            BlockKind::Main => match bank.name.as_deref() {
-                                Some("Bank 1") => Some(FlashBank::Bank1),
-                                Some("Bank 2") => Some(FlashBank::Bank2),
-                                Some("EEPROM1") => None,
-                                Some("EEPROM2") => None,
-                                None => {
-                                    assert_eq!(1, config.bank.len());
-                                    Some(FlashBank::Bank1)
-                                }
-                                Some(other) => unimplemented!("Unsupported flash bank {}", other),
-                            },
-                            BlockKind::Otp => Some(FlashBank::Otp),
-                        };
-
-                        if let Some(flash_bank) = flash_bank {
-                            let erase_value = peripheral.erased_value.unwrap();
-                            let write_size = config.allignement.unwrap();
-                            flash_regions.extend(bank.field.iter().map(|field| FlashRegion {
-                                bank: flash_bank,
-                                address: field.parameters.address,
-                                bytes: field.parameters.occurence.unwrap() * field.parameters.size,
-                                settings: stm32_data_serde::chip::memory::Settings {
-                                    erase_value,
-                                    write_size,
-                                    erase_size: field.parameters.size,
-                                },
-                            }));
-                        }
-                    }
-                }
-            }
-
-            memories.insert(
-                device_id,
-                Memory {
-                    device_id,
-                    ram: ram.unwrap(),
-                    flash_size: flash_size.unwrap_or_default(),
-                    flash_regions,
+macro_rules! mem {
+    ($($name:ident $addr:literal $size:literal),*) => {
+        &[
+            $(
+                Mem {
+                    name: stringify!($name),
+                    address: $addr,
+                    size: $size*1024,
                 },
-            );
+            )*
+        ]
+    };
+}
+
+#[rustfmt::skip]
+static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
+    ("STM32C01..4",                  mem!(BANK_1 0x08000000 16, SRAM 0x20000000 6)),
+    ("STM32C01..6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 6)),
+    ("STM32C03..4",                  mem!(BANK_1 0x08000000 16, SRAM 0x20000000 12)),
+    ("STM32C03..6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 12)),
+    ("STM32F0...C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 32)),
+    ("STM32F0[35]..8",               mem!(BANK_1 0x08000000 64, SRAM 0x20000000 8)),
+    ("STM32F0[47]..6",               mem!(BANK_1 0x08000000 32, SRAM 0x20000000 6)),
+    ("STM32F03..4",                  mem!(BANK_1 0x08000000 16, SRAM 0x20000000 4)),
+    ("STM32F03..6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 4)),
+    ("STM32F04..4",                  mem!(BANK_1 0x08000000 16, SRAM 0x20000000 6)),
+    ("STM32F05..4",                  mem!(BANK_1 0x08000000 16, SRAM 0x20000000 8)),
+    ("STM32F05..6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 8)),
+    ("STM32F07..8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 16)),
+    ("STM32F07..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 16)),
+    ("STM32F09..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 32)),
+    ("STM32F1.[12].6",               mem!(BANK_1 0x08000000 32, SRAM 0x20000000 6)),
+    ("STM32F1.[12].8",               mem!(BANK_1 0x08000000 64, SRAM 0x20000000 10)),
+    ("STM32F1.[12].B",               mem!(BANK_1 0x08000000 128, SRAM 0x20000000 16)),
+    ("STM32F1.[57].B",               mem!(BANK_1 0x08000000 128, SRAM 0x20000000 64)),
+    ("STM32F1.[57].C",               mem!(BANK_1 0x08000000 256, SRAM 0x20000000 64)),
+    ("STM32F1.0.6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 4)),
+    ("STM32F1.0.8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 8)),
+    ("STM32F1.0.B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 8)),
+    ("STM32F1.0.C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 24)),
+    ("STM32F1.0.D",                  mem!(BANK_1 0x08000000 384, SRAM 0x20000000 32)),
+    ("STM32F1.0.E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 32)),
+    ("STM32F1.1.C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 32)),
+    ("STM32F1.1.D",                  mem!(BANK_1 0x08000000 384, SRAM 0x20000000 48)),
+    ("STM32F1.1.E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 48)),
+    ("STM32F1.1.F",                  mem!(BANK_1 0x08000000 512, BANK_2 0x08080000 256, SRAM 0x20000000 80)),
+    ("STM32F1.1.G",                  mem!(BANK_1 0x08000000 512, BANK_2 0x08080000 512, SRAM 0x20000000 80)),
+    ("STM32F1.3.6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 10)),
+    ("STM32F1.3.8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 20)),
+    ("STM32F1.3.B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 20)),
+    ("STM32F1.3.C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 48)),
+    ("STM32F1.3.D",                  mem!(BANK_1 0x08000000 384, SRAM 0x20000000 64)),
+    ("STM32F1.3.E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 64)),
+    ("STM32F1.3.F",                  mem!(BANK_1 0x08000000 512, BANK_2 0x08080000 256, SRAM 0x20000000 96)),
+    ("STM32F1.3.G",                  mem!(BANK_1 0x08000000 512, BANK_2 0x08080000 512, SRAM 0x20000000 96)),
+    ("STM32F1.5.8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 64)),
+    ("STM32F10[012].4",              mem!(BANK_1 0x08000000 16, SRAM 0x20000000 4)),
+    ("STM32F103.4",                  mem!(BANK_1 0x08000000 16, SRAM 0x20000000 6)),
+    ("STM32F2...B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 64, SRAM2 0x2001c000 0)),
+    ("STM32F2...E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 128, SRAM2 0x2001c000 0)),
+    ("STM32F2...F",                  mem!(BANK_1 0x08000000 768, SRAM 0x20000000 128, SRAM2 0x2001c000 0)),
+    ("STM32F2...G",                  mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 128, SRAM2 0x2001c000 0)),
+    ("STM32F2.5.C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 96, SRAM2 0x2001c000 0)),
+    ("STM32F2.7.C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 128, SRAM2 0x2001c000 0)),
+    ("STM32F3...4",                  mem!(BANK_1 0x08000000 16, SRAM 0x20000000 12)),
+    ("STM32F3...D",                  mem!(BANK_1 0x08000000 384, SRAM 0x20000000 64)),
+    ("STM32F3...E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 64)),
+    ("STM32F3.[12].6",               mem!(BANK_1 0x08000000 32, SRAM 0x20000000 16)),
+    ("STM32F3.[34].6",               mem!(BANK_1 0x08000000 32, SRAM 0x20000000 12)),
+    ("STM32F3([17]..8|0[12].8)",     mem!(BANK_1 0x08000000 64, SRAM 0x20000000 16)),
+    ("STM32F3([23]..8|03.8)",        mem!(BANK_1 0x08000000 64, SRAM 0x20000000 12)),
+    ("STM32F3[05]..C",               mem!(BANK_1 0x08000000 256, SRAM 0x20000000 40)),
+    ("STM32F30..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 32)),
+    ("STM32F37..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 24)),
+    ("STM32F37..C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 32)),
+    ("STM32F4...8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 32)),
+    ("STM32F4...D",                  mem!(BANK_1 0x08000000 384, SRAM 0x20000000 64)),
+    ("STM32F4...H",                  mem!(BANK_1 0x08000000 1536, SRAM 0x20000000 320, SRAM2 0x20040000 0)),
+    ("STM32F4.[567].E",              mem!(BANK_1 0x08000000 512, SRAM 0x20000000 128, SRAM2 0x2001c000 0)),
+    ("STM32F4.1.C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 64)),
+    ("STM32F4.1.E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 64)),
+    ("STM32F4.2.E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 256)),
+    ("STM32F4.6.C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 128, SRAM2 0x2001c000 0)),
+    ("STM32F4(1[57].G|0..G)",        mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 128, SRAM2 0x2001c000 0)),
+    ("STM32F4[23]..G",               mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 192, SRAM2 0x2001c000 0)),
+    ("STM32F4[23]..I",               mem!(BANK_1 0x08000000 1024, BANK_2 0x08100000 1024, SRAM 0x20000000 192, SRAM2 0x2001c000 0)),
+    ("STM32F4[67]..G",               mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 320, SRAM2 0x20028000 0)),
+    ("STM32F4[67]..I",               mem!(BANK_1 0x08000000 1024, BANK_2 0x08100000 1024, SRAM 0x20000000 320, SRAM2 0x20028000 0)),
+    ("STM32F40..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 64)),
+    ("STM32F41..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 32)),
+    ("STM32F412.G",                  mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 256)),
+    ("STM32F413.G",                  mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 320, SRAM2 0x20040000 0)),
+    ("STM32F429.E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 192, SRAM2 0x2001c000 0)),
+    ("STM32F469.E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 320, SRAM2 0x20028000 0)),
+    ("STM32F7...C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20010000 192, SRAM2 0x2003c000 0)),
+    ("STM32F7...I",                  mem!(BANK_1 0x08000000 2048, SRAM 0x20020000 384, SRAM2 0x2007c000 0)),
+    ("STM32F7[23]..E",               mem!(BANK_1 0x08000000 512, SRAM 0x20010000 192, SRAM2 0x2003c000 0)),
+    ("STM32F7[45]..G",               mem!(BANK_1 0x08000000 1024, SRAM 0x20010000 320, SRAM2 0x2004c000 0)),
+    ("STM32F73..8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20010000 192, SRAM2 0x2003c000 0)),
+    ("STM32F74..E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20010000 320, SRAM2 0x2004c000 0)),
+    ("STM32F75..8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20010000 320, SRAM2 0x2004c000 0)),
+    ("STM32F76..G",                  mem!(BANK_1 0x08000000 1024, SRAM 0x20020000 384, SRAM2 0x2007c000 0)),
+    ("STM32G0...4",                  mem!(BANK_1 0x08000000 16, SRAM 0x20000000 8)),
+    ("STM32G0...C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 128)),
+    ("STM32G0...E",                  mem!(BANK_1 0x08000000 256, BANK_2 0x08040000 256, SRAM 0x20000000 128)),
+    ("STM32G0[34]..[68]",            mem!(BANK_1 0x08000000 32, SRAM 0x20000000 8)),
+    ("STM32G0[56]..6",               mem!(BANK_1 0x08000000 32, SRAM 0x20000000 16)),
+    ("STM32G0[56]..8",               mem!(BANK_1 0x08000000 64, SRAM 0x20000000 16)),
+    ("STM32G0[78]..B",               mem!(BANK_1 0x08000000 128, SRAM 0x20000000 32)),
+    ("STM32G07..6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 32)),
+    ("STM32G07..8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 32)),
+    ("STM32G0B..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 128)),
+    ("STM32G4...6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 20, SRAM2 0x20004000 0)),
+    ("STM32G4...8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 20, SRAM2 0x20004000 0)),
+    ("STM32G4[34]..B",               mem!(BANK_1 0x08000000 128, SRAM 0x20000000 20, SRAM2 0x20004000 0)),
+    ("STM32G4[78]..E",               mem!(BANK_1 0x08000000 512, SRAM 0x20000000 96, SRAM2 0x20014000 0)),
+    ("STM32G4[9A]..E",               mem!(BANK_1 0x08000000 512, SRAM 0x20000000 32, SRAM2 0x20014000 0)),
+    ("STM32G47..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 96, SRAM2 0x20014000 0)),
+    ("STM32G47..C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 96, SRAM2 0x20014000 0)),
+    ("STM32G49..C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 32, SRAM2 0x20014000 0)),
+    ("STM32H5...B",                  mem!(BANK_1 0x08000000 64, BANK_2 0x08010000 64, SRAM 0x20000000 32, SRAM2 0x20004000 0)),
+    ("STM32H5...G",                  mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 256, SRAM2 0x20040000 0)),
+    ("STM32H5...I",                  mem!(BANK_1 0x08000000 1024, BANK_2 0x08100000 1024, SRAM 0x20000000 256, SRAM2 0x20040000 0)),
+    ("STM32H7...E",                  mem!(D1_ITCMRAM 0x00000000 0, D1_AXIFLASH 0x08000000 0, BANK_1 0x08000000 512, D1_AXIICP 0x1ff00000 0, D1_DTCMRAM 0x20000000 0, SRAM 0x24000000 128, D3_SRAM 0x38000000 0, D3_BKPSRAM 0x38800000 0)),
+    ("STM32H7[23]..G",               mem!(D1_ITCMRAM 0x00000000 0, D1_AXIFLASH 0x08000000 0, BANK_1 0x08000000 1024, D1_AXIICP 0x1ff00000 0, D1_DTCMRAM 0x20000000 0, SRAM 0x24000000 128, D3_SRAM 0x38000000 0, D3_BKPSRAM 0x38800000 0)),
+    ("STM32H7[45]..I",               mem!(D1_ITCMRAM 0x00000000 0, D1_AXIFLASH 0x08000000 0, BANK_1 0x08000000 1024, BANK_2 0x08100000 1024, D2_AXISRAM 0x10000000 0, D1_AXIICP 0x1ff00000 0, D1_DTCMRAM 0x20000000 0, SRAM 0x24000000 512, D3_SRAM 0x38000000 0, D3_BKPSRAM 0x38800000 0)),
+    ("STM32H7[AB]..I",               mem!(BANK_1 0x08000000 1024, BANK_2 0x08100000 1024, SRAM 0x24000000 1024)),
+    ("STM32H73..B",                  mem!(D1_ITCMRAM 0x00000000 0, D1_AXIFLASH 0x08000000 0, BANK_1 0x08000000 128, D1_AXIICP 0x1ff00000 0, D1_DTCMRAM 0x20000000 0, SRAM 0x24000000 128, D3_SRAM 0x38000000 0, D3_BKPSRAM 0x38800000 0)),
+    ("STM32H74..G",                  mem!(D1_ITCMRAM 0x00000000 0, D1_AXIFLASH 0x08000000 0, BANK_1 0x08000000 1024, D2_AXISRAM 0x10000000 0, D1_AXIICP 0x1ff00000 0, D1_DTCMRAM 0x20000000 0, SRAM 0x24000000 512, D3_SRAM 0x38000000 0, D3_BKPSRAM 0x38800000 0)),
+    ("STM32H75..B",                  mem!(D1_ITCMRAM 0x00000000 0, D1_AXIFLASH 0x08000000 0, BANK_1 0x08000000 128, D2_AXISRAM 0x10000000 0, D1_AXIICP 0x1ff00000 0, D1_DTCMRAM 0x20000000 0, SRAM 0x24000000 512, D3_SRAM 0x38000000 0, D3_BKPSRAM 0x38800000 0)),
+    ("STM32H7A..G",                  mem!(BANK_1 0x08000000 1024, SRAM 0x24000000 1024)),
+    ("STM32H7B..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x24000000 1024)),
+    ("STM32L0...3",                  mem!(BANK_1 0x08000000 8, SRAM 0x20000000 2)),
+    ("STM32L0...6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 8)),
+    ("STM32L0...B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 20)),
+    ("STM32L0...Z",                  mem!(BANK_1 0x08000000 192, SRAM 0x20000000 20)),
+    ("STM32L0[12]..4",               mem!(BANK_1 0x08000000 16, SRAM 0x20000000 2)),
+    ("STM32L0[156]..8",              mem!(BANK_1 0x08000000 64, SRAM 0x20000000 8)),
+    ("STM32L0[34]..4",               mem!(BANK_1 0x08000000 16, SRAM 0x20000000 8)),
+    ("STM32L0[78]..8",               mem!(BANK_1 0x08000000 64, SRAM 0x20000000 20)),
+    ("STM32L1...B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 10)),
+    ("STM32L1...C..",                mem!(BANK_1 0x08000000 192, BANK_2 0x08030000 64, SRAM 0x20000000 32)),
+    ("STM32L1...D..",                mem!(BANK_1 0x08000000 128, BANK_2 0x08040000 256, SRAM 0x20000000 80)),
+    ("STM32L1...D",                  mem!(BANK_1 0x08000000 192, BANK_2 0x08030000 192, SRAM 0x20000000 48)),
+    ("STM32L1...E",                  mem!(BANK_1 0x08000000 256, BANK_2 0x08040000 256, SRAM 0x20000000 80)),
+    ("STM32L1(6.[RV]C|5.[CRUV]C)",   mem!(BANK_1 0x08000000 256, SRAM 0x20000000 32)),
+    ("STM32L1[56].[QZ]C",            mem!(BANK_1 0x08000000 192, BANK_2 0x08030000 64, SRAM 0x20000000 32)),
+    ("STM32L10..6..",                mem!(BANK_1 0x08000000 32, SRAM 0x20000000 10)),
+    ("STM32L10..6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 4)),
+    ("STM32L10..8..",                mem!(BANK_1 0x08000000 64, SRAM 0x20000000 10)),
+    ("STM32L10..8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 8)),
+    ("STM32L10..B..",                mem!(BANK_1 0x08000000 128, SRAM 0x20000000 10)),
+    ("STM32L10..C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 16)),
+    ("STM32L15..6..",                mem!(BANK_1 0x08000000 32, SRAM 0x20000000 16)),
+    ("STM32L15..6",                  mem!(BANK_1 0x08000000 32, SRAM 0x20000000 10)),
+    ("STM32L15..8..",                mem!(BANK_1 0x08000000 64, SRAM 0x20000000 16)),
+    ("STM32L15..8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 10)),
+    ("STM32L15..B..",                mem!(BANK_1 0x08000000 128, SRAM 0x20000000 16)),
+    ("STM32L4...8",                  mem!(BANK_1 0x08000000 64, SRAM2 0x10000000 0, SRAM 0x20000000 40)),
+    ("STM32L4...I",                  mem!(BANK_1 0x08000000 2048, SRAM2 0x10000000 0, SRAM 0x20000000 192)),
+    ("STM32L4[12]..B",               mem!(BANK_1 0x08000000 128, SRAM2 0x10000000 0, SRAM 0x20000000 40)),
+    ("STM32L4[34]..C",               mem!(BANK_1 0x08000000 256, SRAM2 0x10000000 0, SRAM 0x20000000 48)),
+    ("STM32L4[56]..E",               mem!(BANK_1 0x08000000 512, SRAM2 0x10000000 0, SRAM 0x20000000 128)),
+    ("STM32L4[78]..G",               mem!(BANK_1 0x08000000 512, BANK_2 0x08080000 512, SRAM2 0x10000000 0, SRAM 0x20000000 96)),
+    ("STM32L4[9A]..G",               mem!(BANK_1 0x08000000 512, BANK_2 0x08080000 512, SRAM2 0x10000000 0, SRAM 0x20000000 256)),
+    ("STM32L4[PQR]..G",              mem!(BANK_1 0x08000000 1024, SRAM2 0x10000000 0, SRAM 0x20000000 192)),
+    ("STM32L43..B",                  mem!(BANK_1 0x08000000 128, SRAM2 0x10000000 0, SRAM 0x20000000 48)),
+    ("STM32L45..C",                  mem!(BANK_1 0x08000000 256, SRAM2 0x10000000 0, SRAM 0x20000000 128)),
+    ("STM32L47..C",                  mem!(BANK_1 0x08000000 256, SRAM2 0x10000000 0, SRAM 0x20000000 96)),
+    ("STM32L47..E",                  mem!(BANK_1 0x08000000 512, SRAM2 0x10000000 0, SRAM 0x20000000 96)),
+    ("STM32L49..E",                  mem!(BANK_1 0x08000000 512, SRAM2 0x10000000 0, SRAM 0x20000000 256)),
+    ("STM32L4P..E",                  mem!(BANK_1 0x08000000 512, SRAM2 0x10000000 0, SRAM 0x20000000 192)),
+    ("STM32L5...C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 256, SRAM2 0x20030000 0)),
+    ("STM32L5...E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 256, SRAM2 0x20030000 0)),
+    ("STM32U5...B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 64, SRAM2 0x20030000 0)),
+    ("STM32U5...C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 64, SRAM2 0x20030000 0)),
+    ("STM32U5...E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 64, SRAM2 0x20030000 0)),
+    ("STM32U5...G",                  mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 768, SRAM2 0x20030000 0)),
+    ("STM32U5...J",                  mem!(BANK_1 0x08000000 4096, SRAM 0x20000000 32, SRAM2 0x200c0000 0)),
+    ("STM32U5[78]..I",               mem!(BANK_1 0x08000000 2048, SRAM 0x20000000 768, SRAM2 0x20030000 0)),
+    ("STM32U59..I",                  mem!(BANK_1 0x08000000 2048, SRAM 0x20000000 32, SRAM2 0x200c0000 0)),
+    ("STM32WB...Y",                  mem!(BANK_1 0x08000000 640, SRAM 0x20000000 192)),
+    ("STM32WB.(0C|5V)G",             mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 128)),
+    ("STM32WB.(5C|5R)G",             mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 192)),
+    ("STM32WB1..C",                  mem!(BANK_1 0x08000000 320, SRAM 0x20000000 12)),
+    ("STM32WB3..C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 96)),
+    ("STM32WB3..E",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 96)),
+    ("STM32WB5..C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 128)),
+    ("STM32WB5.[CR]E",               mem!(BANK_1 0x08000000 512, SRAM 0x20000000 192)),
+    ("STM32WB5.VE",                  mem!(BANK_1 0x08000000 512, SRAM 0x20000000 128)),
+    ("STM32WBA...E",                 mem!(BANK_1 0x08000000 512, SRAM 0x20000000 96, SRAM2 0x20010000 0)),
+    ("STM32WBA...G",                 mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 128, SRAM2 0x20010000 0)),
+    ("STM32WL...8",                  mem!(BANK_1 0x08000000 64, SRAM 0x20000000 12, SRAM2 0x20008000 0)),
+    ("STM32WL...B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 12, SRAM2 0x20008000 0)),
+    ("STM32WL...C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 12, SRAM2 0x20008000 0)),
+]);
+
+struct FlashInfo {
+    write_size: u32,
+    erase_size: &'static [(u32, u32)],
+    erase_value: u8,
+}
+
+#[rustfmt::skip]
+static FLASH_INFO: RegexMap<FlashInfo> = RegexMap::new(&[
+    ("STM32C0.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+    ("STM32F030.C",             FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  2*1024, 0)] }),
+    ("STM32F070.6",             FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  1*1024, 0)] }),
+    ("STM32F0[79].*",           FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  2*1024, 0)] }),
+    ("STM32F0.*",               FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  1*1024, 0)] }),
+    ("STM32F10[0123].[468B]",   FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  1*1024, 0)] }),
+    ("STM32F1.*",               FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  2*1024, 0)] }),
+    ("STM32F2.*",               FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }),
+    ("STM32F3.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+    ("STM32F4.*",               FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }),
+    ("STM32F7[4567].*",         FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 32*1024, 4), (128*1024, 1), ( 256*1024, 0)] }),
+    ("STM32F7.*",               FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }),
+    ("STM32G0.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+    ("STM32G4[78].*",           FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }),
+    ("STM32G4.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+    ("STM32H5.*",               FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
+    ("STM32H7[AB].*",           FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(  8*1024, 0)] }),
+    ("STM32H7.*",               FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(128*1024, 0)] }),
+    ("STM32L4[PQRS].*",         FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  8*1024, 0)] }),
+    ("STM32L4.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+    ("STM32L0.*",               FlashInfo{ erase_value: 0x00, write_size:  4, erase_size: &[(     128, 0)] }),
+    ("STM32L1.*",               FlashInfo{ erase_value: 0x00, write_size:  4, erase_size: &[(     256, 0)] }),
+    ("STM32L5.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }),
+    ("STM32U5[78].*",           FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
+    ("STM32U5.*",               FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 16*1024, 0)] }),
+    ("STM32WBA.*",              FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
+    ("STM32WB1.*",              FlashInfo{ erase_value: 0x00, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+    ("STM32WB.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }),
+    ("STM32WL.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+    ("STM32.*",                 FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+]);
+
+struct RegexMap<T: 'static> {
+    map: &'static [(&'static str, T)],
+}
+
+impl<T: 'static> RegexMap<T> {
+    const fn new(map: &'static [(&'static str, T)]) -> Self {
+        Self { map }
+    }
+
+    fn get(&self, key: &str) -> Option<&T> {
+        for (k, v) in self.map {
+            if Regex::new(&format!("^{k}$")).unwrap().is_match(key) {
+                return Some(v);
+            }
         }
+        None
+    }
+}
 
-        Ok(Self(memories))
+pub fn get(chip: &str) -> Vec<Memory> {
+    let mems = *MEMS.get(chip).unwrap();
+    let flash = FLASH_INFO.get(chip).unwrap();
+
+    let mut res = Vec::new();
+
+    for mem in mems {
+        if mem.name.starts_with("BANK") {
+            if flash.erase_size.len() == 1 || mem.size <= flash.erase_size[0].0 * flash.erase_size[0].1 {
+                res.push(Memory {
+                    name: mem.name.to_string(),
+                    address: mem.address,
+                    size: mem.size,
+                    kind: memory::Kind::Flash,
+                    settings: Some(Settings {
+                        write_size: flash.write_size,
+                        erase_size: flash.erase_size[0].0,
+                        erase_value: flash.erase_value,
+                    }),
+                });
+            } else {
+                let mut offs = 0;
+                for (i, &(erase_size, count)) in flash.erase_size.iter().enumerate() {
+                    if offs >= mem.size {
+                        break;
+                    }
+                    let left = mem.size - offs;
+                    let mut size = left;
+                    if i != flash.erase_size.len() - 1 {
+                        size = size.min(erase_size * count);
+                    }
+                    res.push(Memory {
+                        name: format!("{}_REGION_{}", mem.name, i + 1),
+                        address: mem.address + offs,
+                        size: size,
+                        kind: memory::Kind::Flash,
+                        settings: Some(Settings {
+                            write_size: flash.write_size,
+                            erase_size: erase_size,
+                            erase_value: flash.erase_value,
+                        }),
+                    });
+                    offs += size;
+                }
+            }
+        } else {
+            let mut kind = memory::Kind::Ram;
+            if mem.name.contains("FLASH") || mem.name.contains("AXIICP") {
+                kind = memory::Kind::Flash;
+            }
+            res.push(Memory {
+                name: mem.name.to_string(),
+                address: mem.address,
+                size: mem.size,
+                kind,
+                settings: None,
+            });
+        }
     }
 
-    pub fn get(&self, die: &str) -> &Memory {
-        assert!(die.starts_with("DIE"));
-        let device_id = u16::from_str_radix(&die[3..], 16).unwrap();
+    res.sort_by_key(|m| (m.address, m.name.clone()));
 
-        self.0.get(&device_id).unwrap()
-    }
+    res
 }

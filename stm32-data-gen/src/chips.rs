@@ -58,7 +58,9 @@ mod xml {
 }
 
 pub struct Chip {
+    #[allow(dead_code)]
     flash: u32,
+    #[allow(dead_code)]
     ram: u32,
     group_idx: usize,
     packages: Vec<stm32_data_serde::chip::Package>,
@@ -903,7 +905,6 @@ fn process_group(
     peripheral_to_clock: &rcc::ParsedRccs,
     dma_channels: &dma::DmaChannels,
     chips: &HashMap<String, Chip>,
-    memories: &memory::Memories,
     docs: &docs::Docs,
 ) -> Result<(), anyhow::Error> {
     let chip_name = group.chip_names[0].clone();
@@ -942,7 +943,7 @@ fn process_group(
         .collect();
 
     for chip_name in &group.chip_names {
-        process_chip(chips, chip_name, h, memories, docs, &group, &cores)?;
+        process_chip(chips, chip_name, h, docs, &group, &cores)?;
     }
 
     Ok(())
@@ -1338,160 +1339,21 @@ fn process_core(
 fn process_chip(
     chips: &HashMap<String, Chip>,
     chip_name: &str,
-    h: &header::ParsedHeader,
-    memories: &memory::Memories,
+    _h: &header::ParsedHeader,
     docs: &docs::Docs,
     group: &ChipGroup,
     cores: &[stm32_data_serde::chip::Core],
 ) -> Result<(), anyhow::Error> {
     let chip = chips.get(chip_name).unwrap();
-    let flash_size = chip.flash * 1024;
-    let ram_total = chip.ram * 1024;
-    let memory = memories.get(group.die.as_ref().unwrap());
-    let mut flash_remaining = flash_size;
-    let mut memory_regions = Vec::new();
-    let mut found = HashSet::<&str>::new();
-    for each in [
-        // We test FLASH_BANKx _before_ FLASH as we prefer their definition over the legacy one
-        "FLASH_BANK1",
-        "FLASH_BANK2",
-        "FLASH",
-        "FLASH_OTP",
-        "D1_AXIFLASH",
-        "D1_AXIICP",
-    ] {
-        if let Some(address) = h.defines.get("all").unwrap().0.get(&format!("{each}_BASE")) {
-            let (key, banks) = match each {
-                "FLASH" => (
-                    "BANK_1",
-                    Some([memory::FlashBank::Bank1, memory::FlashBank::Bank2].as_ref()),
-                ),
-                "FLASH_BANK1" => ("BANK_1", Some([memory::FlashBank::Bank1].as_ref())),
-                "FLASH_BANK2" => ("BANK_2", Some([memory::FlashBank::Bank2].as_ref())),
-                "FLASH_OTP" => ("OTP", Some([memory::FlashBank::Otp].as_ref())),
-                each => (each, None),
-            };
-
-            if found.contains(key) {
-                continue;
-            }
-            found.insert(key);
-
-            if let Some(banks) = banks {
-                for bank in banks {
-                    let bank_name = match bank {
-                        memory::FlashBank::Bank1 => "BANK_1",
-                        memory::FlashBank::Bank2 => "BANK_2",
-                        memory::FlashBank::Otp => "OTP",
-                    };
-                    let regions: Vec<_> = memory
-                        .flash_regions
-                        .iter()
-                        .filter(|region| region.bank == *bank)
-                        .enumerate()
-                        .map_while(|(index, region)| {
-                            let size = if *bank == memory::FlashBank::Bank1 || *bank == memory::FlashBank::Bank2 {
-                                // Truncate region to the total amount of remaining chip flash
-                                let size = std::cmp::min(region.bytes, flash_remaining);
-                                flash_remaining -= size;
-                                if size == 0 {
-                                    // No more regions are present on this chip
-                                    return None;
-                                }
-                                size
-                            } else {
-                                region.bytes
-                            };
-
-                            Some((index, region.address, size, region.settings.clone()))
-                        })
-                        .collect();
-                    let has_multiple_regions = regions.len() > 1;
-                    for (index, address, size, settings) in regions {
-                        let name = if has_multiple_regions {
-                            format!("{}_REGION_{}", bank_name, index + 1)
-                        } else {
-                            bank_name.to_string()
-                        };
-
-                        memory_regions.push(stm32_data_serde::chip::Memory {
-                            name,
-                            kind: stm32_data_serde::chip::memory::Kind::Flash,
-                            address,
-                            size,
-                            settings: Some(settings.clone()),
-                        });
-                    }
-                }
-            } else {
-                memory_regions.push(stm32_data_serde::chip::Memory {
-                    name: key.to_string(),
-                    kind: stm32_data_serde::chip::memory::Kind::Flash,
-                    address: u32::try_from(*address).unwrap(),
-                    size: 0,
-                    settings: None,
-                })
-            }
-        }
-    }
-    let mut found = HashSet::new();
-    for each in [
-        "SRAM",
-        "SRAM1",
-        "SRAM2",
-        "D1_AXISRAM",
-        "D1_ITCMRAM",
-        "D1_DTCMRAM",
-        "D1_AHBSRAM",
-        "D2_AXISRAM",
-        "D3_BKPSRAM",
-        "D3_SRAM",
-    ] {
-        if let Some(address) = h.defines.get("all").unwrap().0.get(&format!("{each}_BASE")) {
-            let key = match each {
-                "D1_AXISRAM" => "SRAM",
-                "SRAM1" => "SRAM",
-                each => each,
-            };
-
-            if found.contains(key) {
-                continue;
-            }
-            found.insert(key);
-
-            let size = if key == "SRAM" {
-                // if memory.ram.bytes != ram_total {
-                //     println!(
-                //         "SRAM mismatch for chip {} with die {}: Expected {} was {}",
-                //         chip_name,
-                //         group.die.as_ref().unwrap(),
-                //         ram_total,
-                //         memory.ram.bytes,
-                //     );
-                // }
-                std::cmp::min(memory.ram.bytes, ram_total)
-            } else {
-                0
-            };
-
-            memory_regions.push(stm32_data_serde::chip::Memory {
-                name: key.to_string(),
-                kind: stm32_data_serde::chip::memory::Kind::Ram,
-                address: u32::try_from(*address).unwrap(),
-                size,
-                settings: None,
-            })
-        }
-    }
     let docs = docs.documents_for(chip_name);
     let chip = stm32_data_serde::Chip {
         name: chip_name.to_string(),
         family: group.family.clone().unwrap(),
         line: group.line.clone().unwrap(),
         die: group.die.clone().unwrap(),
-        device_id: memory.device_id,
+        device_id: u16::from_str_radix(&group.die.as_ref().unwrap()[3..], 16).unwrap(),
         packages: chip.packages.clone(),
-        memory: memory_regions,
+        memory: memory::get(chip_name),
         docs,
         cores: cores.to_vec(),
     };
@@ -1532,7 +1394,6 @@ pub fn dump_all_chips(
     peripheral_to_clock: rcc::ParsedRccs,
     dma_channels: dma::DmaChannels,
     chips: std::collections::HashMap<String, Chip>,
-    memories: memory::Memories,
     docs: docs::Docs,
 ) -> Result<(), anyhow::Error> {
     std::fs::create_dir_all("build/data/chips")?;
@@ -1553,7 +1414,6 @@ pub fn dump_all_chips(
                     &peripheral_to_clock,
                     &dma_channels,
                     &chips,
-                    &memories,
                     &docs,
                 )
             })

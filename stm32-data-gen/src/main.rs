@@ -69,9 +69,6 @@ fn main() -> anyhow::Result<()> {
     let registers = registers::Registers::parse()?;
     registers.write()?;
 
-    // stopwatch.section("Parsing memories");
-    let memories = memory::Memories::parse()?;
-
     // stopwatch.section("Parsing interrupts");
     let chip_interrupts = interrupts::ChipInterrupts::parse()?;
 
@@ -99,7 +96,6 @@ fn main() -> anyhow::Result<()> {
         peripheral_to_clock,
         dma_channels,
         chips,
-        memories,
         docs,
     )?;
 
