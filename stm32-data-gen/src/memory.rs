@@ -28,7 +28,6 @@ pub struct FlashRegion {
 pub enum FlashBank {
     Bank1,
     Bank2,
-    Otp,
 }
 
 mod xml {
@@ -196,11 +195,10 @@ impl Memories {
 
                 enum BlockKind {
                     Main,
-                    Otp,
                 }
                 let kind = match peripheral.name.as_str() {
                     "Embedded Flash" => Some(BlockKind::Main),
-                    "OTP" => Some(BlockKind::Otp),
+                    "OTP" => None,
                     _ => None,
                 };
 
@@ -244,7 +242,6 @@ impl Memories {
                                 }
                                 Some(other) => unimplemented!("Unsupported flash bank {}", other),
                             },
-                            BlockKind::Otp => Some(FlashBank::Otp),
                         };
 
                         if let Some(flash_bank) = flash_bank {

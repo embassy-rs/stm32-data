@@ -1356,7 +1356,6 @@ fn process_chip(
         "FLASH_BANK1",
         "FLASH_BANK2",
         "FLASH",
-        "FLASH_OTP",
         "D1_AXIFLASH",
         "D1_AXIICP",
     ] {
@@ -1368,7 +1367,6 @@ fn process_chip(
                 ),
                 "FLASH_BANK1" => ("BANK_1", Some([memory::FlashBank::Bank1].as_ref())),
                 "FLASH_BANK2" => ("BANK_2", Some([memory::FlashBank::Bank2].as_ref())),
-                "FLASH_OTP" => ("OTP", Some([memory::FlashBank::Otp].as_ref())),
                 each => (each, None),
             };
 
@@ -1382,7 +1380,6 @@ fn process_chip(
                     let bank_name = match bank {
                         memory::FlashBank::Bank1 => "BANK_1",
                         memory::FlashBank::Bank2 => "BANK_2",
-                        memory::FlashBank::Otp => "OTP",
                     };
                     let regions: Vec<_> = memory
                         .flash_regions
