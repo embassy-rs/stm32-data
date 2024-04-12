@@ -46,6 +46,7 @@ block/FLASH:
   - name: OPTSR_CUR
     description: FLASH option status register
     byte_offset: 80
+    access: Read
     fieldset: OPTSR
   - name: OPTSR_PRG
     description: FLASH option status register
@@ -54,6 +55,7 @@ block/FLASH:
   - name: OPTSR2_CUR
     description: FLASH option status register 2
     byte_offset: 112
+    access: Read
     fieldset: OPTSR2
   - name: OPTSR2_PRG
     description: FLASH option status register 2
@@ -62,6 +64,7 @@ block/FLASH:
   - name: NSBOOTR_CUR
     description: FLASH non-secure unique boot entry register
     byte_offset: 128
+    access: Read
     fieldset: NSBOOTR
   - name: NSBOOTR_PRG
     description: FLASH non-secure unique boot entry address
@@ -70,6 +73,7 @@ block/FLASH:
   - name: OTPBLR_CUR
     description: FLASH non-secure OTP block lock
     byte_offset: 144
+    access: Read
     fieldset: OTPBLR
   - name: OTPBLR_PRG
     description: FLASH non-secure OTP block lock
@@ -82,6 +86,7 @@ block/FLASH:
   - name: WRPSGN1R_CUR
     description: FLASH write sector protection for Bank1
     byte_offset: 232
+    access: Read
     fieldset: WRP
   - name: WRPSGN1R_PRG
     description: FLASH write sector protection for Bank1
@@ -90,6 +95,7 @@ block/FLASH:
   - name: HDP1R_CUR
     description: FLASH HDP Bank1 register
     byte_offset: 248
+    access: Read
     fieldset: HDP1R
   - name: HDP1R_PRG
     description: FLASH HDP Bank1 register
@@ -110,6 +116,7 @@ block/FLASH:
   - name: WRPSGN2R_CUR
     description: FLASH write sector protection for Bank2
     byte_offset: 488
+    access: Read
     fieldset: WRP
   - name: WRPSGN2R_PRG
     description: FLASH write sector protection for Bank2
@@ -118,6 +125,7 @@ block/FLASH:
   - name: HDP2R_CUR
     description: FLASH HDP Bank2 register
     byte_offset: 504
+    access: Read
     fieldset: HDP2R
   - name: HDP2R_PRG
     description: FLASH HDP Bank2 register
@@ -413,7 +421,6 @@ fieldset/OPTCR:
     description: "Bank swapping option configuration bit\r SWAP_BANK controls whether Bank1 and Bank2 are swapped or not. This bit is loaded with the SWAP_BANK bit of FLASH_OPTSR_CUR register only after reset or POR."
     bit_offset: 31
     bit_size: 1
-    enum: OPTCR_SWAP_BANK
 fieldset/OPTSR:
   description: FLASH option status register
   fields:
@@ -452,9 +459,10 @@ fieldset/OPTSR:
     bit_size: 1
     enum: OPTSR_NRST_STDBY
   - name: PRODUCT_STATE
-    description: Life state code (based on Hamming 8,4). More information in .
+    description: Life state code (based on Hamming 8,4).
     bit_offset: 8
     bit_size: 8
+    enum: PRODUCT_STATE
   - name: IO_VDD_HSLV
     description: High-speed IO at low VDD voltage status bit. This bit can be set only with VDD below 2.5 V.
     bit_offset: 16
@@ -479,7 +487,6 @@ fieldset/OPTSR:
     description: "Bank swapping option status bit\r SWAP_BANK reflects whether Bank1 and Bank2 are swapped or not.\r SWAP_BANK is loaded to SWAP_BANK of FLASH_OPTCR after a reset."
     bit_offset: 31
     bit_size: 1
-    enum: OPTSR_SWAP_BANK
 fieldset/OPTSR2:
   description: FLASH option status register 2
   fields:
@@ -574,11 +581,11 @@ fieldset/WRP:
 enum/BKSEL:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: BANK1
     description: Bank1 is selected for Bank erase / sector erase / interrupt enable
     value: 0
-  - name: B_0x1
-    description: Bank2 is selected for BER / SER
+  - name: BANK2
+    description: Bank1 is selected for Bank erase / sector erase / interrupt enable
     value: 1
 enum/CODE_OP:
   bit_size: 3
@@ -618,15 +625,6 @@ enum/NSPRIV:
     value: 0
   - name: B_0x1
     description: access to non secure registers is denied in case of non privileged access.
-    value: 1
-enum/OPTCR_SWAP_BANK:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Bank1 and Bank2 not swapped
-    value: 0
-  - name: B_0x1
-    description: Bank1 and Bank2 swapped
     value: 1
 enum/OPTSR_BKPRAM_ECC:
   bit_size: 1
@@ -715,6 +713,27 @@ enum/OPTSR_NRST_STDBY:
   - name: B_0x1
     description: no reset generated when entering Standby mode on core domain.
     value: 1
+enum/PRODUCT_STATE:
+  bit_size: 8
+  variants:
+  - name: OPEN
+    description: Open
+    value: 0xED
+  - name: PROVISIONING
+    description: Provisioning
+    value: 0x17
+  - name: IROT_PROVISIONED
+    description: iROT-Provisioned
+    value: 0x2E
+  - name: CLOSED
+    description: Closed
+    value: 0x72
+  - name: LOCKED
+    description: Locked
+    value: 0x5C
+  - name: REGRESSION
+    description: Regression
+    value: 0x9A
 enum/OPTSR_NRST_STOP:
   bit_size: 1
   variants:
@@ -732,15 +751,6 @@ enum/OPTSR_SRAM_ECC:
     value: 0
   - name: B_0x1
     description: SRAM2 ECC check disabled
-    value: 1
-enum/OPTSR_SWAP_BANK:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Bank1 and Bank2 not swapped
-    value: 0
-  - name: B_0x1
-    description: Bank1 and Bank2 swapped
     value: 1
 enum/OPTSR_WWDG_SW:
   bit_size: 1
