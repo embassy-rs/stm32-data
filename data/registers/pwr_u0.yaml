@@ -1,0 +1,978 @@
+block/PWR:
+  description: PWR register block
+  items:
+  - name: CR1
+    description: Power control register 1
+    byte_offset: 0
+    fieldset: CR1
+  - name: CR2
+    description: Power control register 2
+    byte_offset: 4
+    fieldset: CR2
+  - name: CR3
+    description: Power control register 3
+    byte_offset: 8
+    fieldset: CR3
+  - name: CR4
+    description: Power control register 4
+    byte_offset: 12
+    fieldset: CR4
+  - name: SR1
+    description: Power status register 1
+    byte_offset: 16
+    fieldset: SR1
+  - name: SR2
+    description: Power status register 2
+    byte_offset: 20
+    fieldset: SR2
+  - name: SCR
+    description: Power status clear register
+    byte_offset: 24
+    fieldset: SCR
+  - name: PUCRA
+    description: Power Port A pull-up control register
+    byte_offset: 32
+    fieldset: PUCRA
+  - name: PDCRA
+    description: Power Port A pull-down control register
+    byte_offset: 36
+    fieldset: PDCRA
+  - name: PUCRB
+    description: Power Port B pull-up control register
+    byte_offset: 40
+    fieldset: PUCRB
+  - name: PDCRB
+    description: Power Port B pull-down control register
+    byte_offset: 44
+    fieldset: PDCRB
+  - name: PUCRC
+    description: Power Port C pull-up control register
+    byte_offset: 48
+    fieldset: PUCRC
+  - name: PDCRC
+    description: Power Port C pull-down control register
+    byte_offset: 52
+    fieldset: PDCRC
+  - name: PUCRD
+    description: Power Port D pull-up control register
+    byte_offset: 56
+    fieldset: PUCRD
+  - name: PDCRD
+    description: Power Port D pull-down control register
+    byte_offset: 60
+    fieldset: PDCRD
+  - name: PUCRE
+    description: Power Port E pull-up control register
+    byte_offset: 64
+    fieldset: PUCRE
+  - name: PDCRE
+    description: Power Port E pull-down control register
+    byte_offset: 68
+    fieldset: PDCRE
+  - name: PUCRF
+    description: Power Port F pull-up control register
+    byte_offset: 72
+    fieldset: PUCRF
+  - name: PDCRF
+    description: Power Port F pull-down control register
+    byte_offset: 76
+    fieldset: PDCRF
+fieldset/CR1:
+  description: Power control register 1
+  fields:
+  - name: LPMS
+    description: 'Low-power mode selection These bits select the low-power mode entered when CPU enters the deepsleep mode. 1xx: Shutdown mode Note: If LPR bit is set, Stop 2 mode cannot be selected and Stop 1 mode shall be entered instead of Stop 2. Note: In Standby mode, SRAM2 can be preserved or not, depending on RRS bit configuration in PWR_CR3.'
+    bit_offset: 0
+    bit_size: 3
+    enum: LPMS
+  - name: FPD_STOP
+    description: Flash memory powered down during Stop mode. This bit determines whether the flash memory is put in power-down mode or remains in idle mode when the device enters Stop mode.
+    bit_offset: 3
+    bit_size: 1
+  - name: FPD_LPRUN
+    description: Flash memory powered down during Low-power run mode. This bit determines whether the flash memory is put in power-down mode or remains in idle mode when the device enters Low-power sleep mode.
+    bit_offset: 4
+    bit_size: 1
+  - name: FPD_LPSLP
+    description: Flash memory powered down during Low-power sleep mode. This bit determines whether the flash memory is put in power-down mode or remains in idle mode when the device enters Low-power sleep mode.
+    bit_offset: 5
+    bit_size: 1
+  - name: DBP
+    description: Disable backup domain write protection In reset state, the RTC and backup registers are protected against parasitic write access. This bit must be set to enable write access to these registers.
+    bit_offset: 8
+    bit_size: 1
+  - name: VOS
+    description: Voltage scaling range selection
+    bit_offset: 9
+    bit_size: 2
+    enum: VOS
+  - name: LPR
+    description: 'Low-power run When this bit is set, the regulator is switched from main mode (MR) to low-power mode (LPR). Note: Stop 2 mode cannot be entered when LPR bit is set. Stop 1 is entered instead.'
+    bit_offset: 14
+    bit_size: 1
+fieldset/CR2:
+  description: Power control register 2
+  fields:
+  - name: PVDE
+    description: 'Programmable voltage detector enable Note: This bit is write-protected when the bit PVDL (PVD Lock) is set in the SYSCFG_CBR register. Note: This bit is reset only by a system reset.'
+    bit_offset: 0
+    bit_size: 1
+  - name: PLS
+    description: 'Programmable voltage detector level selection. These bits select the voltage threshold detected by the programmable voltage detector: Note: These bits are write-protected when the bit PVDL (PVD Lock) is set in the SYSCFG_CBR register. Note: These bits are reset only by a system reset.'
+    bit_offset: 1
+    bit_size: 3
+    enum: PLS
+  - name: PVME1
+    description: 'Peripheral voltage monitoring 1 enable: V<sub>DDUSB</sub> vs. 1.21V'
+    bit_offset: 4
+    bit_size: 1
+  - name: PVME3
+    description: 'Peripheral voltage monitoring 3 enable: V<sub>DDA</sub> vs. 1.621V'
+    bit_offset: 5
+    bit_size: 1
+  - name: PVME4
+    description: 'Peripheral voltage monitoring 4 enable: V<sub>DDA</sub> vs. 1.861V'
+    bit_offset: 6
+    bit_size: 1
+  - name: USV
+    description: V<sub>DDUSB</sub> USB supply valid This bit is used to validate the V<sub>DDUSB</sub> supply for electrical and logical isolation purpose. Setting this bit is mandatory to use the USB FS peripheral. If V<sub>DDUSB</sub> is not always present in the application, the PVM can be used to determine whether this supply is ready or not.
+    bit_offset: 10
+    bit_size: 1
+fieldset/CR3:
+  description: Power control register 3
+  fields:
+  - name: EWUP1
+    description: Enable Wake-up pin WKUP1 When this bit is set, the external wake-up pin WKUP1 is enabled and triggers a wake-up from Standby or Shutdown event when a rising or a falling edge occurs. The active edge is configured via the WP1 bit in the PWR_CR4 register.
+    bit_offset: 0
+    bit_size: 1
+  - name: EWUP2
+    description: Enable Wake-up pin WKUP2 When this bit is set, the external wake-up pin WKUP2 is enabled and triggers a wake-up from Standby or Shutdown event when a rising or a falling edge occurs. The active edge is configured via the WP2 bit in the PWR_CR4 register.
+    bit_offset: 1
+    bit_size: 1
+  - name: EWUP3
+    description: Enable Wake-up pin WKUP3 When this bit is set, the external wake-up pin WKUP3 is enabled and triggers a wake-up from Standby or Shutdown event when a rising or a falling edge occurs. The active edge is configured via the WP3 bit in the PWR_CR4 register.
+    bit_offset: 2
+    bit_size: 1
+  - name: EWUP4
+    description: Enable Wake-up pin WKUP4 When this bit is set, the external wake-up pin WKUP4 is enabled and triggers a wake-up from Standby or Shutdown event when a rising or a falling edge occurs. The active edge is configured via the WP4 bit in the PWR_CR4 register.
+    bit_offset: 3
+    bit_size: 1
+  - name: EWUP5
+    description: Enable Wake-up pin WKUP5 When this bit is set, the external wake-up pin WKUP5 is enabled and triggers a wake-up from Standby or Shutdown event when a rising or a falling edge occurs.The active edge is configured via the WP5 bit in the PWR_CR4 register.
+    bit_offset: 4
+    bit_size: 1
+  - name: EWUP7
+    description: Enable Wake-up pin WKUP7. When this bit is set, the external wake-up pin WKUP7 is enabled and triggers a wake-up from Standby or Shutdown event when a rising or a falling edge occurs.The active edge is configured via the WP7 bit in the PWR_CR4 register.
+    bit_offset: 6
+    bit_size: 1
+  - name: RRS
+    description: SRAM2 retention in Standby mode
+    bit_offset: 8
+    bit_size: 1
+  - name: ENULP
+    description: Enable ULP sampling When this bit is set, the BORL, BORH and PVD are periodically sampled instead continuous monitoring to reduce power consumption. Fast supply drop between two sample/compare phases is not detected in this mode. This bit has impact only on STOP2, Standby and shutdown low power modes.
+    bit_offset: 9
+    bit_size: 1
+  - name: APC
+    description: Apply pull-up and pull-down configuration When this bit is set, the I/O pull-up and pull-down configurations defined in the PWR_PUCRx and PWR_PDCRx registers are applied. When this bit is cleared, the PWR_PUCRx and PWR_PDCRx registers are not applied to the I/Os, instead the I/Os are in floating mode during Standby or configured according GPIO controller GPIOx_PUPDR register during RUN mode.
+    bit_offset: 10
+    bit_size: 1
+  - name: EIWUL
+    description: Enable internal wake-up line
+    bit_offset: 15
+    bit_size: 1
+fieldset/CR4:
+  description: Power control register 4
+  fields:
+  - name: WP1
+    description: Wake-up pin WKUP1 polarity This bit defines the polarity used for an event detection on external wake-up pin, WKUP1
+    bit_offset: 0
+    bit_size: 1
+  - name: WP2
+    description: Wake-up pin WKUP2 polarity This bit defines the polarity used for an event detection on external wake-up pin, WKUP2
+    bit_offset: 1
+    bit_size: 1
+  - name: WP3
+    description: Wake-up pin WKUP3 polarity This bit defines the polarity used for an event detection on external wake-up pin, WKUP3
+    bit_offset: 2
+    bit_size: 1
+  - name: WP4
+    description: Wake-up pin WKUP4 polarity This bit defines the polarity used for an event detection on external wake-up pin, WKUP4
+    bit_offset: 3
+    bit_size: 1
+  - name: WP5
+    description: Wake-up pin WKUP5 polarity This bit defines the polarity used for an event detection on external wake-up pin, WKUP5
+    bit_offset: 4
+    bit_size: 1
+  - name: WP7
+    description: Wake-up pin WKUP7 polarity This bit defines the polarity used for an event detection on external wake-up pin, WKUP7
+    bit_offset: 6
+    bit_size: 1
+  - name: VBE
+    description: V<sub>BAT</sub> battery charging enable
+    bit_offset: 8
+    bit_size: 1
+  - name: VBRS
+    description: V<sub>BAT</sub> battery charging resistor selection
+    bit_offset: 9
+    bit_size: 1
+fieldset/PDCRA:
+  description: Power Port A pull-down control register
+  fields:
+  - name: PD0
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 0
+    bit_size: 1
+  - name: PD1
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 1
+    bit_size: 1
+  - name: PD2
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 2
+    bit_size: 1
+  - name: PD3
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 3
+    bit_size: 1
+  - name: PD4
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 4
+    bit_size: 1
+  - name: PD5
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 5
+    bit_size: 1
+  - name: PD6
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 6
+    bit_size: 1
+  - name: PD7
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 7
+    bit_size: 1
+  - name: PD8
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 8
+    bit_size: 1
+  - name: PD9
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 9
+    bit_size: 1
+  - name: PD10
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 10
+    bit_size: 1
+  - name: PD11
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 11
+    bit_size: 1
+  - name: PD12
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 12
+    bit_size: 1
+  - name: PD13
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 13
+    bit_size: 1
+  - name: PD14
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 14
+    bit_size: 1
+  - name: PD15
+    description: Port A pull-down bit y When set, this bit activates the pull-down on PA[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 15
+    bit_size: 1
+fieldset/PDCRB:
+  description: Power Port B pull-down control register
+  fields:
+  - name: PD0
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 0
+    bit_size: 1
+  - name: PD1
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 1
+    bit_size: 1
+  - name: PD2
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 2
+    bit_size: 1
+  - name: PD3
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 3
+    bit_size: 1
+  - name: PD4
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 4
+    bit_size: 1
+  - name: PD5
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 5
+    bit_size: 1
+  - name: PD6
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 6
+    bit_size: 1
+  - name: PD7
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 7
+    bit_size: 1
+  - name: PD8
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 8
+    bit_size: 1
+  - name: PD9
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 9
+    bit_size: 1
+  - name: PD10
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 10
+    bit_size: 1
+  - name: PD11
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 11
+    bit_size: 1
+  - name: PD12
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 12
+    bit_size: 1
+  - name: PD13
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 13
+    bit_size: 1
+  - name: PD14
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 14
+    bit_size: 1
+  - name: PD15
+    description: Port B pull-down bit y When set, this bit activates the pull-down on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 15
+    bit_size: 1
+fieldset/PDCRC:
+  description: Power Port C pull-down control register
+  fields:
+  - name: PD0
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 0
+    bit_size: 1
+  - name: PD1
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 1
+    bit_size: 1
+  - name: PD2
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 2
+    bit_size: 1
+  - name: PD3
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 3
+    bit_size: 1
+  - name: PD4
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 4
+    bit_size: 1
+  - name: PD5
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 5
+    bit_size: 1
+  - name: PD6
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 6
+    bit_size: 1
+  - name: PD7
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 7
+    bit_size: 1
+  - name: PD8
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 8
+    bit_size: 1
+  - name: PD9
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 9
+    bit_size: 1
+  - name: PD10
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 10
+    bit_size: 1
+  - name: PD11
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 11
+    bit_size: 1
+  - name: PD12
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 12
+    bit_size: 1
+  - name: PD13
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 13
+    bit_size: 1
+  - name: PD14
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 14
+    bit_size: 1
+  - name: PD15
+    description: Port C pull-down bit y When set, this bit activates the pull-down on PC[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 15
+    bit_size: 1
+fieldset/PDCRD:
+  description: Power Port D pull-down control register
+  fields:
+  - name: PD0
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 0
+    bit_size: 1
+  - name: PD1
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 1
+    bit_size: 1
+  - name: PD2
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 2
+    bit_size: 1
+  - name: PD3
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 3
+    bit_size: 1
+  - name: PD4
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 4
+    bit_size: 1
+  - name: PD5
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 5
+    bit_size: 1
+  - name: PD6
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 6
+    bit_size: 1
+  - name: PD8
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 8
+    bit_size: 1
+  - name: PD9
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 9
+    bit_size: 1
+  - name: PD10
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 10
+    bit_size: 1
+  - name: PD11
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 11
+    bit_size: 1
+  - name: PD12
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 12
+    bit_size: 1
+  - name: PD13
+    description: Port D pull-down bit y When set, this bit activates the pull-down on PD[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 13
+    bit_size: 1
+fieldset/PDCRE:
+  description: Power Port E pull-down control register
+  fields:
+  - name: PD3
+    description: Port E pull-down bit 3 When set, this bit activates the pull-down on PE[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 3
+    bit_size: 1
+  - name: PD7
+    description: Port E pull-down bit y When set, this bit activates the pull-down on PE[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 7
+    bit_size: 1
+  - name: PD8
+    description: Port E pull-down bit y When set, this bit activates the pull-down on PE[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 8
+    bit_size: 1
+  - name: PD9
+    description: Port E pull-down bit y When set, this bit activates the pull-down on PE[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 9
+    bit_size: 1
+fieldset/PDCRF:
+  description: Power Port F pull-down control register
+  fields:
+  - name: PD0
+    description: Port F pull-down bit y When set, this bit activates the pull-down on PH[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 0
+    bit_size: 1
+  - name: PD1
+    description: Port F pull-down bit y When set, this bit activates the pull-down on PH[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 1
+    bit_size: 1
+  - name: PD2
+    description: Port F pull-down bit y When set, this bit activates the pull-down on PH[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 2
+    bit_size: 1
+  - name: PD3
+    description: Port F pull-down bit y When set, this bit activates the pull-down on PH[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 3
+    bit_size: 1
+fieldset/PUCRA:
+  description: Power Port A pull-up control register
+  fields:
+  - name: PU0
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 0
+    bit_size: 1
+  - name: PU1
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 1
+    bit_size: 1
+  - name: PU2
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 2
+    bit_size: 1
+  - name: PU3
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 3
+    bit_size: 1
+  - name: PU4
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 4
+    bit_size: 1
+  - name: PU5
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 5
+    bit_size: 1
+  - name: PU6
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 6
+    bit_size: 1
+  - name: PU7
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 7
+    bit_size: 1
+  - name: PU8
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 8
+    bit_size: 1
+  - name: PU9
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 9
+    bit_size: 1
+  - name: PU10
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 10
+    bit_size: 1
+  - name: PU11
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 11
+    bit_size: 1
+  - name: PU12
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 12
+    bit_size: 1
+  - name: PU13
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 13
+    bit_size: 1
+  - name: PU14
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 14
+    bit_size: 1
+  - name: PU15
+    description: Port A pull-up bit y (y1=115 to 0) When set, this bit activates the pull-up on PA[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 15
+    bit_size: 1
+fieldset/PUCRB:
+  description: Power Port B pull-up control register
+  fields:
+  - name: PU0
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 0
+    bit_size: 1
+  - name: PU1
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 1
+    bit_size: 1
+  - name: PU2
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 2
+    bit_size: 1
+  - name: PU3
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 3
+    bit_size: 1
+  - name: PU4
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 4
+    bit_size: 1
+  - name: PU5
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 5
+    bit_size: 1
+  - name: PU6
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 6
+    bit_size: 1
+  - name: PU7
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 7
+    bit_size: 1
+  - name: PU8
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 8
+    bit_size: 1
+  - name: PU9
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 9
+    bit_size: 1
+  - name: PU10
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 10
+    bit_size: 1
+  - name: PU11
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 11
+    bit_size: 1
+  - name: PU12
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 12
+    bit_size: 1
+  - name: PU13
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 13
+    bit_size: 1
+  - name: PU14
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 14
+    bit_size: 1
+  - name: PU15
+    description: Port B pull-up bit y When set, this bit activates the pull-up on PB[y] when APC bit is set in PWR_CR3 register.
+    bit_offset: 15
+    bit_size: 1
+fieldset/PUCRC:
+  description: Power Port C pull-up control register
+  fields:
+  - name: PU0
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 0
+    bit_size: 1
+  - name: PU1
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 1
+    bit_size: 1
+  - name: PU2
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 2
+    bit_size: 1
+  - name: PU3
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 3
+    bit_size: 1
+  - name: PU4
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 4
+    bit_size: 1
+  - name: PU5
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 5
+    bit_size: 1
+  - name: PU6
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 6
+    bit_size: 1
+  - name: PU7
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 7
+    bit_size: 1
+  - name: PU8
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 8
+    bit_size: 1
+  - name: PU9
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 9
+    bit_size: 1
+  - name: PU10
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 10
+    bit_size: 1
+  - name: PU11
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 11
+    bit_size: 1
+  - name: PU12
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 12
+    bit_size: 1
+  - name: PU13
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 13
+    bit_size: 1
+  - name: PU14
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 14
+    bit_size: 1
+  - name: PU15
+    description: Port C pull-up bit y When set, this bit activates the pull-up on PC[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 15
+    bit_size: 1
+fieldset/PUCRD:
+  description: Power Port D pull-up control register
+  fields:
+  - name: PU0
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 0
+    bit_size: 1
+  - name: PU1
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 1
+    bit_size: 1
+  - name: PU2
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 2
+    bit_size: 1
+  - name: PU3
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 3
+    bit_size: 1
+  - name: PU4
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 4
+    bit_size: 1
+  - name: PU5
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 5
+    bit_size: 1
+  - name: PU6
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 6
+    bit_size: 1
+  - name: PU8
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 8
+    bit_size: 1
+  - name: PU9
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 9
+    bit_size: 1
+  - name: PU10
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 10
+    bit_size: 1
+  - name: PU11
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 11
+    bit_size: 1
+  - name: PU12
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 12
+    bit_size: 1
+  - name: PU13
+    description: Port D pull-up bit y When set, this bit activates the pull-up on PD[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 13
+    bit_size: 1
+fieldset/PUCRE:
+  description: Power Port E pull-up control register
+  fields:
+  - name: PU3
+    description: Port E pull-up bit 3 When set, this bit activates the pull-up on PE[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 3
+    bit_size: 1
+  - name: PU7
+    description: Port E pull-up bit y When set, this bit activates the pull-up on PE[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 7
+    bit_size: 1
+  - name: PU8
+    description: Port E pull-up bit y When set, this bit activates the pull-up on PE[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 8
+    bit_size: 1
+  - name: PU9
+    description: Port E pull-up bit y When set, this bit activates the pull-up on PE[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 9
+    bit_size: 1
+fieldset/PUCRF:
+  description: Power Port F pull-up control register
+  fields:
+  - name: PU0
+    description: Port F pull-up bit y When set, this bit activates the pull-up on PH[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 0
+    bit_size: 1
+  - name: PU1
+    description: Port F pull-up bit y When set, this bit activates the pull-up on PH[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 1
+    bit_size: 1
+  - name: PU2
+    description: Port F pull-up bit y When set, this bit activates the pull-up on PH[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 2
+    bit_size: 1
+  - name: PU3
+    description: Port F pull-up bit y When set, this bit activates the pull-up on PH[y] when APC bit is set in PWR_CR3 register. If the corresponding PDy bit is also set, the pull-up is not activated and the pull-down is activated instead with highest priority.
+    bit_offset: 3
+    bit_size: 1
+fieldset/SCR:
+  description: Power status clear register
+  fields:
+  - name: CWUF1
+    description: Clear wake-up flag 1 Setting this bit clears the WUF1 flag in the PWR_SR1 register.
+    bit_offset: 0
+    bit_size: 1
+  - name: CWUF2
+    description: Clear wake-up flag 2 Setting this bit clears the WUF2 flag in the PWR_SR1 register.
+    bit_offset: 1
+    bit_size: 1
+  - name: CWUF3
+    description: Clear wake-up flag 3 Setting this bit clears the WUF3 flag in the PWR_SR1 register.
+    bit_offset: 2
+    bit_size: 1
+  - name: CWUF4
+    description: Clear wake-up flag 4 Setting this bit clears the WUF4 flag in the PWR_SR1 register.
+    bit_offset: 3
+    bit_size: 1
+  - name: CWUF5
+    description: Clear wake-up flag 5 Setting this bit clears the WUF5 flag in the PWR_SR1 register.
+    bit_offset: 4
+    bit_size: 1
+  - name: CWUF7
+    description: Clear wake-up flag 7 Setting this bit clears the WUF7 flag in the PWR_SR1 register.
+    bit_offset: 6
+    bit_size: 1
+  - name: CSBF
+    description: Clear standby flag Setting this bit clears the SBF flag in the PWR_SR1 register.
+    bit_offset: 8
+    bit_size: 1
+fieldset/SR1:
+  description: Power status register 1
+  fields:
+  - name: WUF1
+    description: Wake-up flag 1 This bit is set when a wake-up event is detected on wake-up pin, WKUP1. It is cleared by writing 1 in the CWUF1 bit of the PWR_SCR register.
+    bit_offset: 0
+    bit_size: 1
+  - name: WUF2
+    description: Wake-up flag 2 This bit is set when a wake-up event is detected on wake-up pin, WKUP2. It is cleared by writing 1 in the CWUF2 bit of the PWR_SCR register.
+    bit_offset: 1
+    bit_size: 1
+  - name: WUF3
+    description: Wake-up flag 3 This bit is set when a wake-up event is detected on wake-up pin, WKUP3. It is cleared by writing 1 in the CWUF3 bit of the PWR_SCR register.
+    bit_offset: 2
+    bit_size: 1
+  - name: WUF4
+    description: Wake-up flag 4 This bit is set when a wake-up event is detected on wake-up pin,WKUP4. It is cleared by writing 1 in the CWUF4 bit of the PWR_SCR register.
+    bit_offset: 3
+    bit_size: 1
+  - name: WUF5
+    description: Wake-up flag 5 This bit is set when a wake-up event is detected on wake-up pin, WKUP5. It is cleared by writing 1 in the CWUF5 bit of the PWR_SCR register.
+    bit_offset: 4
+    bit_size: 1
+  - name: WUF7
+    description: Wake-up flag 7 This bit is set when a wake-up event is detected on wake-up pin, WKUP7. It is cleared by writing 1 in the CWUF7 bit of the PWR_SCR register.
+    bit_offset: 6
+    bit_size: 1
+  - name: SBF
+    description: Standby flag This bit is set by hardware when the device enters the Standby mode and is cleared by setting the CSBF bit in the PWR_SCR register, or by a power-on reset. It is not cleared by the system reset.
+    bit_offset: 8
+    bit_size: 1
+  - name: STOPF
+    description: Stop Flags These bits are set by hardware when the device enters any stop mode and are cleared by setting the CSBF bit in the PWR_SCR register, or by a power-on reset. It is not cleared by the system reset.
+    bit_offset: 9
+    bit_size: 3
+    enum: STOPF
+  - name: WUFI
+    description: Wake-up flag internal This bit is set when a wake-up is detected on the internal wake-up line. It is cleared when all internal wake-up sources are cleared.
+    bit_offset: 15
+    bit_size: 1
+fieldset/SR2:
+  description: Power status register 2
+  fields:
+  - name: FLASH_RDY
+    description: 'Flash ready flag This bit is set by hardware to indicate when the flash memory is readey to be accessed after wake-up from power-down. To place the flash memory in power-down, set either FPD_LPRUN, FPD_LPSLP or FPD_STP bits. Note : If the system boots from SRAM, the user application must wait until the FLASH_RDY bit is set, prior to jumping to flash memory.'
+    bit_offset: 7
+    bit_size: 1
+  - name: REGLPS
+    description: Low-power regulator started This bit provides the information whether the low-power regulator is ready after a power-on reset or a Standby/Shutdown. If the Standby mode is entered while REGLPS bit is still cleared, the wake-up from Standby mode time may be increased.
+    bit_offset: 8
+    bit_size: 1
+  - name: REGLPF
+    description: Low-power regulator flag This bit is set by hardware when the MCU is in Low-power run mode. When the MCU exits from the Low-power run mode, this bit remains at 1 until the regulator is ready in main mode. A polling on this bit must be done before increasing the product frequency. This bit is cleared by hardware when the regulator is ready.
+    bit_offset: 9
+    bit_size: 1
+  - name: VOSF
+    description: Voltage scaling flag A delay is required for the internal regulator to be ready after the voltage scaling has been changed. VOSF indicates that the regulator reached the voltage level defined with VOS bits of the PWR_CR1 register.
+    bit_offset: 10
+    bit_size: 1
+  - name: PVDO
+    description: Programmable voltage detector output
+    bit_offset: 11
+    bit_size: 1
+  - name: PVMO1
+    description: 'Peripheral voltage monitoring output: V<sub>DDUSB</sub> vs. 1.2 V Note: PVMO1 is cleared when PVM1 is disabled (PVME1 = 0). After enabling PVM1, the PVM1 output is valid after the PVM1 wake-up time.'
+    bit_offset: 12
+    bit_size: 1
+  - name: PVMO3
+    description: 'Peripheral voltage monitoring output: V<sub>DDA</sub> vs. 1.621V Note: PVMO3 is cleared when PVM3 is disabled (PVME3 = 0). After enabling PVM3, the PVM3 output is valid after the PVM3 wake-up time.'
+    bit_offset: 14
+    bit_size: 1
+  - name: PVMO4
+    description: 'Peripheral voltage monitoring output: V<sub>DDA</sub> vs. 2.21V Note: PVMO4 is cleared when PVM4 is disabled (PVME4 = 0). After enabling PVM4, the PVM4 output is valid after the PVM4 wake-up time.'
+    bit_offset: 15
+    bit_size: 1
+enum/LPMS:
+  bit_size: 3
+  variants:
+  - name: Stop0
+    description: Stop 0 mode
+    value: 0
+  - name: Stop1
+    description: Stop 1 mode
+    value: 1
+  - name: Stop2
+    description: Stop 2 mode
+    value: 2
+  - name: Standby
+    description: Standby mode
+    value: 3
+enum/PLS:
+  bit_size: 3
+  variants:
+  - name: B_0x0
+    description: V<sub>PVD0</sub> around 2.01V
+    value: 0
+  - name: B_0x1
+    description: V<sub>PVD1</sub> around 2.21V
+    value: 1
+  - name: B_0x2
+    description: V<sub>PVD2</sub> around 2.41V
+    value: 2
+  - name: B_0x3
+    description: V<sub>PVD3</sub> around 2.51V
+    value: 3
+  - name: B_0x4
+    description: V<sub>PVD4</sub> around 2.61V
+    value: 4
+  - name: B_0x5
+    description: V<sub>PVD5</sub> around 2.81V
+    value: 5
+  - name: B_0x6
+    description: V<sub>PVD6</sub> around 2.91V
+    value: 6
+  - name: B_0x7
+    description: External input analog voltage PVD_IN (compared internally to VREFINT)
+    value: 7
+enum/STOPF:
+  bit_size: 3
+  variants:
+  - name: None
+    description: The device did not enter any Stop mode.
+    value: 0
+  - name: Stop0
+    description: The device entered in Stop 0 mode.
+    value: 4
+  - name: Stop1
+    description: The device entered in Stop 1 mode.
+    value: 5
+  - name: Stop2
+    description: The device entered in Stop 2 mode.
+    value: 6
+enum/VOS:
+  bit_size: 2
+  variants:
+  - name: Range1
+    description: Range 1
+    value: 1
+  - name: Range2
+    description: Range 2
+    value: 2
