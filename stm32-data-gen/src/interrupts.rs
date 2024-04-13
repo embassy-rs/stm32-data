@@ -245,6 +245,14 @@ impl ChipInterrupts {
                 interrupt_signals.insert(("RCC".to_string(), "CRS".to_string()));
             } else if name == "RCC" {
                 interrupt_signals.insert(("RCC".to_string(), "GLOBAL".to_string()));
+            } else if name == "RNG_CRYP" {
+                interrupt_signals.insert(("RNG".to_string(), "GLOBAL".to_string()));
+                interrupt_signals.insert(("CRYP".to_string(), "GLOBAL".to_string()));
+            } else if name == "WWDG_IWDG" {
+                interrupt_signals.insert(("WWDG".to_string(), "GLOBAL".to_string()));
+                interrupt_signals.insert(("IWDG".to_string(), "GLOBAL".to_string()));
+            } else if name == "RCC_AUDIOSYNC" {
+                // ignore
             } else {
                 if parts[2].is_empty() {
                     trace!("    skipping because parts[2].is_empty()");
