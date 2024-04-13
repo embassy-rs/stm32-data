@@ -203,7 +203,6 @@ impl PeriMatcher {
             (".*:ADC:aditf3_v1_1", ("adc", "f3_v1_1", "ADC")),
             (".*:ADC:aditf4_v1_1", ("adc", "v1", "ADC")),
             (".*:ADC:aditf4_v2_0", ("adc", "l0", "ADC")),
-            // (".*:ADC:aditf4_v3_U0", ("adc", "v3", "ADC")), // TODO: What? Seems to be unique (or at least unique temp channel and more)
             (".*:ADC:aditf2_v1_1", ("adc", "v2", "ADC")),
             (".*:ADC:aditf5_v2_0", ("adc", "v3", "ADC")),
             (".*:ADC:aditf5_v2_2", ("adc", "v3", "ADC")),
@@ -214,6 +213,8 @@ impl PeriMatcher {
             ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
+            ("STM32U0.*:ADC:.*", ("adc", "u0", "ADC")),
+            ("STM32U0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32G4.*:ADC:.*", ("adc", "g4", "ADC")),
             ("STM32G4.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf2_v1_1", ("adccommon", "v2", "ADC_COMMON")),
