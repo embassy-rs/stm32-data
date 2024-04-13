@@ -4,7 +4,7 @@ set -e
 cd $(dirname $0)
 
 CMD=$1
-REV=421b5868c2175762ee4c870bb0511ae271abefc9
+REV=74b97817d4c4ed0db9d19a8eac46720b3c5b0d57
 shift
 
 case "$CMD" in
@@ -56,7 +56,7 @@ case "$CMD" in
         cargo run --release --bin stm32-data-gen
         cargo run --release --bin stm32-metapac-gen
         cd build/stm32-metapac
-        find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2021
+        #find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2021
         cargo check --features stm32h755zi-cm7,pac,metadata
         cargo check --features stm32f777zi,pac
         cargo check --features stm32u585zi,metadata
@@ -65,4 +65,3 @@ case "$CMD" in
         echo "unknown command"
     ;;
 esac
-
