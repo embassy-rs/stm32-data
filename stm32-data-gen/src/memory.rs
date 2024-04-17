@@ -240,6 +240,7 @@ struct FlashInfo {
 }
 
 #[rustfmt::skip]
+#[allow(clippy::identity_op)]
 static FLASH_INFO: RegexMap<FlashInfo> = RegexMap::new(&[
     ("STM32C0.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
     ("STM32F030.C",             FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  2*1024, 0)] }),
@@ -324,6 +325,7 @@ pub fn get(chip: &str) -> Vec<Memory> {
                     if i != flash.erase_size.len() - 1 {
                         size = size.min(erase_size * count);
                     }
+                    #[allow(clippy::redundant_field_names)]
                     res.push(Memory {
                         name: format!("{}_REGION_{}", mem.name, i + 1),
                         address: mem.address + offs,
