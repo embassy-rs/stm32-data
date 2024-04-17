@@ -213,24 +213,21 @@ impl PeriMatcher {
             ("STM32WL5.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC:.*", ("adc", "g0", "ADC")),
-            ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32U0.*:ADC:.*", ("adc", "u0", "ADC")),
-            ("STM32U0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32G4.*:ADC:.*", ("adc", "g4", "ADC")),
+            ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
+            ("STM32U0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32G4.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf2_v1_1", ("adccommon", "v2", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v2_0", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v2_2", ("adccommon", "v3", "ADC_COMMON")),
+            (".*:ADC_COMMON:aditf5_(v2_0|v2_2)", ("adccommon", "v3", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf4_v3_0_WL", ("adccommon", "v3", "ADC_COMMON")),
             (".*:ADC_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
-            (".*:ADC3_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
             (
                 "STM32H50.*:ADC_COMMON:aditf5_v3_0_H5",
                 ("adccommon", "h50", "ADC_COMMON"),
             ),
             ("STM32H5.*:ADC_COMMON:aditf5_v3_0_H5", ("adccommon", "h5", "ADC_COMMON")),
             ("STM32H7.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-            ("STM32H7.*:ADC3_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             ("STM32G4.*:OPAMP:G4_tsmc90_fastOpamp", ("opamp", "g4", "OPAMP")),
             ("STM32F3.*:OPAMP:tsmc018_ull_opamp_v1_0", ("opamp", "f3", "OPAMP")),
             ("STM32H7.*:OPAMP:.*", ("opamp", "h_v1", "OPAMP")),
@@ -1047,13 +1044,30 @@ fn process_core(
         };
 
         if pname.starts_with("ADC") {
-            if let Entry::Vacant(entry) = peri_kinds.entry("ADC_COMMON".to_string()) {
+            let is_adc3 = pname.starts_with("ADC3");
+            let adc_common_name = if chip_name.starts_with("STM32H7") {
+                if is_adc3 {
+                    "ADC3_COMMON"
+                } else {
+                    "ADC_COMMON"
+                }
+            } else if chip_name.starts_with("STM32F3") {
+                if is_adc3 {
+                    "ADC3_COMMON"
+                } else {
+                    "ADC_COMMON"
+                }
+            } else if chip_name.starts_with("STM32G4") {
+                if is_adc3 {
+                    "ADC345_COMMON"
+                } else {
+                    "ADC12_COMMON"
+                }
+            } else {
+                "ADC_COMMON"
+            };
+            if let Entry::Vacant(entry) = peri_kinds.entry(adc_common_name.to_string()) {
                 entry.insert(format!("ADC_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
-            }
-        }
-        if pname.starts_with("ADC3") && (chip_name.starts_with("STM32H7") || chip_name.starts_with("STM32F3")) {
-            if let Entry::Vacant(entry) = peri_kinds.entry("ADC3_COMMON".to_string()) {
-                entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
         }
         peri_kinds.insert(pname, pkind.to_string());

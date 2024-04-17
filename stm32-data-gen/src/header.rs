@@ -179,7 +179,10 @@ impl Defines {
                 "ADC_COMMON",
                 &["ADC_COMMON", "ADC1_COMMON", "ADC12_COMMON", "ADC123_COMMON"],
             ),
-            ("ADC3_COMMON", &["ADC3_COMMON", "ADC4_COMMON", "ADC34_COMMON"]),
+            (
+                "ADC3_COMMON",
+                &["ADC3_COMMON", "ADC4_COMMON", "ADC34_COMMON", "ADC345_COMMON"],
+            ),
             ("CAN", &["CAN_BASE", "CAN1_BASE"]),
             ("FMC", &["FMC_BASE", "FMC_R_BASE"]),
             ("FSMC", &["FSMC_R_BASE"]),
