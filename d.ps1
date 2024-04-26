@@ -6,13 +6,15 @@ param (
     [string]$peri
 )
 
+$REV="74b97817d4c4ed0db9d19a8eac46720b3c5b0d57"
+
 Switch ($CMD)
 {
     "download-all" {
         rm -r -Force ./sources/ -ErrorAction SilentlyContinue
         git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
         cd ./sources/
-        git checkout a2062c088cf299bd3dc5128eeaa96e07fff2087c
+        git checkout $REV
         cd ..
     }
     "install-chiptool" {
