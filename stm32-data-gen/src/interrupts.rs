@@ -516,7 +516,7 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32WL5.*:cm4", "NVIC1"),
     ("STM32WL5.*:cm0p", "NVIC2"),
     // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-    ("STM32(L5|U5|H5[2367]|WBA).*", "NVIC2"),
+    ("STM32(L5|U5|H5[2367]|WBA5[245]).*", "NVIC2"),
     // catch-all: Most chips have a single NVIC, named "NVIC"
     (".*", "NVIC"),
 ]);

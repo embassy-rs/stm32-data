@@ -809,9 +809,6 @@ static NOPELIST: &[&str] = &[
     // not supported yet, planned. Pull requests welcome!
     "STM32H7R",
     "STM32H7S",
-    "STM32WBA50",
-    "STM32WBA54",
-    "STM32WBA55",
     // Does not exist in ST website. No datasheet, no RM.
     "STM32GBK",
     "STM32L485",
