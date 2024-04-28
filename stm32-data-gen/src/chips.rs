@@ -807,8 +807,6 @@ static NOPELIST: &[&str] = &[
     // Not supported, not planned unless someone wants to do it.
     "STM32MP",
     // not supported yet, planned. Pull requests welcome!
-    "STM32H52",
-    "STM32H53",
     "STM32H7R",
     "STM32H7S",
     "STM32U5F",

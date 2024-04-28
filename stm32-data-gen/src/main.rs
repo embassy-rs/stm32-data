@@ -8,6 +8,7 @@ mod memory;
 mod normalize_peris;
 mod rcc;
 mod registers;
+mod util;
 
 #[macro_export]
 macro_rules! regex {

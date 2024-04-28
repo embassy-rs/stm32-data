@@ -5,6 +5,7 @@ use log::*;
 use crate::chips::ChipGroup;
 use crate::normalize_peris::normalize_peri_name;
 use crate::regex;
+use crate::util::RegexMap;
 
 mod xml {
     use serde::Deserialize;
@@ -104,12 +105,17 @@ impl ChipInterrupts {
         core.interrupts.sort_unstable_by_key(|x| x.number);
 
         // =================== Populate peripheral interrupts
-        let want_nvic_name = pick_nvic(chip_name, &core.name);
+        let core_name = &core.name;
+        let want_nvic_name = pick_nvic(chip_name, core_name);
         let chip_nvic = group
             .ips
             .values()
             .find(|x| x.name == want_nvic_name)
-            .ok_or_else(|| format!("couldn't find nvic. chip_name={chip_name} want_nvic_name={want_nvic_name}"))
+            .ok_or_else(|| {
+                format!(
+                    "couldn't find nvic. chip_name={chip_name} core_name={core_name} want_nvic_name={want_nvic_name}"
+                )
+            })
             .unwrap();
         let nvic_strings = self
             .irqs
@@ -503,33 +509,18 @@ fn valid_signals(peri: &str) -> Vec<String> {
     vec!["GLOBAL".to_string()]
 }
 
-fn pick_nvic(chip_name: &str, core_name: &str) -> String {
-    // Most chips have a single NVIC, named "NVIC"
-    let mut res = "NVIC";
-
+static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     // Exception 1: Multicore: NVIC1 is the first core, NVIC2 is the second. We have to pick the right one.
-    if ["H745", "H747", "H755", "H757", "WL54", "WL55"].contains(&&chip_name[5..9]) {
-        if core_name == "cm7" {
-            res = "NVIC1";
-        } else {
-            res = "NVIC2"
-        }
-    }
-    if &chip_name[5..8] == "WL5" {
-        if core_name == "cm4" {
-            res = "NVIC1";
-        } else {
-            res = "NVIC2"
-        }
-    }
-
+    ("STM32H7(45|47|55|57).*:cm7", "NVIC1"),
+    ("STM32H7(45|47|55|57).*:cm4", "NVIC2"),
+    ("STM32WL5.*:cm4", "NVIC1"),
+    ("STM32WL5.*:cm0p", "NVIC2"),
     // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-    if ["L5", "U5"].contains(&&chip_name[5..7]) {
-        res = "NVIC2"
-    }
-    if ["H56", "H57", "WBA"].contains(&&chip_name[5..8]) {
-        res = "NVIC2"
-    }
+    ("STM32(L5|U5|H5[2367]|WBA).*", "NVIC2"),
+    // catch-all: Most chips have a single NVIC, named "NVIC"
+    (".*", "NVIC"),
+]);
 
-    res.to_string()
+fn pick_nvic(chip_name: &str, core_name: &str) -> String {
+    PICK_NVIC.must_get(&format!("{chip_name}:{core_name}")).to_string()
 }

@@ -1,6 +1,7 @@
-use regex::Regex;
 use stm32_data_serde::chip::memory::{self, Settings};
 use stm32_data_serde::chip::Memory;
+
+use crate::util::RegexMap;
 
 struct Mem {
     name: &'static str,
@@ -139,10 +140,12 @@ static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
     ("STM32G47..B",                  mem!(BANK_1 0x08000000 128, SRAM 0x20000000 96, SRAM2 0x20014000 0)),
     ("STM32G47..C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 96, SRAM2 0x20014000 0)),
     ("STM32G49..C",                  mem!(BANK_1 0x08000000 256, SRAM 0x20000000 32, SRAM2 0x20014000 0)),
-    // H5. TODO: check
-    ("STM32H5...B",                  mem!(BANK_1 0x08000000 64, BANK_2 0x08010000 64, SRAM 0x20000000 32, SRAM2 0x20004000 0)),
-    ("STM32H5...G",                  mem!(BANK_1 0x08000000 1024, SRAM 0x20000000 256, SRAM2 0x20040000 0)),
-    ("STM32H5...I",                  mem!(BANK_1 0x08000000 1024, BANK_2 0x08100000 1024, SRAM 0x20000000 256, SRAM2 0x20040000 0)),
+    // H5.
+    ("STM32H5...B",                  mem!(BANK_1 0x08000000 64, BANK_2 0x08010000 64, SRAM1 0x20000000 16, SRAM2 0x20004000 16)),
+    ("STM32H5...C",                  mem!(BANK_1 0x08000000 128, BANK_2 0x08020000 128, SRAM1 0x20000000 128, SRAM2 0x20020000 80, SRAM3 0x20034000 64)),
+    ("STM32H5...E",                  mem!(BANK_1 0x08000000 256, BANK_2 0x08040000 256, SRAM1 0x20000000 128, SRAM2 0x20020000 80, SRAM3 0x20034000 64)),
+    ("STM32H5...G",                  mem!(BANK_1 0x08000000 512, BANK_2 0x08080000 512, SRAM1 0x20000000 256, SRAM2 0x20040000 64, SRAM3 0x20050000 320)),
+    ("STM32H5...I",                  mem!(BANK_1 0x08000000 1024, BANK_2 0x08100000 1024, SRAM1 0x20000000 256, SRAM2 0x20040000 64, SRAM3 0x20050000 320)),
     // H7. TODO: check
     ("STM32H7...E",                  mem!(BANK_1 0x08000000 512, SRAM 0x24000000 128)),
     ("STM32H7[23]..G",               mem!(BANK_1 0x08000000 1024, SRAM 0x24000000 128)),
@@ -277,28 +280,9 @@ static FLASH_INFO: RegexMap<FlashInfo> = RegexMap::new(&[
     ("STM32.*",                 FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
 ]);
 
-struct RegexMap<T: 'static> {
-    map: &'static [(&'static str, T)],
-}
-
-impl<T: 'static> RegexMap<T> {
-    const fn new(map: &'static [(&'static str, T)]) -> Self {
-        Self { map }
-    }
-
-    fn get(&self, key: &str) -> Option<&T> {
-        for (k, v) in self.map {
-            if Regex::new(&format!("^{k}$")).unwrap().is_match(key) {
-                return Some(v);
-            }
-        }
-        None
-    }
-}
-
 pub fn get(chip: &str) -> Vec<Memory> {
-    let mems = *MEMS.get(chip).unwrap();
-    let flash = FLASH_INFO.get(chip).unwrap();
+    let mems = *MEMS.must_get(chip);
+    let flash = FLASH_INFO.must_get(chip);
 
     let mut res = Vec::new();
 
