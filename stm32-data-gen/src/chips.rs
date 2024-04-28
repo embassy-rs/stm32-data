@@ -258,8 +258,8 @@ impl PeriMatcher {
             ("STM32WB.*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
             ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
             ("STM32WLE.*:SYSCFG:.*", ("syscfg", "wle", "SYSCFG")),
-            ("STM32H50.*:SBS:.*", ("syscfg", "h50", "SYSCFG")),
-            ("STM32H5.*:SBS:.*", ("syscfg", "h5", "SYSCFG")),
+            ("STM32H50.*:SYSCFG:.*", ("syscfg", "h50", "SYSCFG")),
+            ("STM32H5.*:SYSCFG:.*", ("syscfg", "h5", "SYSCFG")),
             (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
             (".*:IWDG:iwdg1_v2_0", ("iwdg", "v2", "IWDG")),
             (".*:IWDG:iwdg1_v3_0", ("iwdg", "v3", "IWDG")),
@@ -1182,11 +1182,7 @@ fn process_core(
         let Some(addr) = addr else { continue };
 
         let mut p = stm32_data_serde::chip::core::Peripheral {
-            name: if pname == "SBS" {
-                "SYSCFG".to_string()
-            } else {
-                pname.clone()
-            },
+            name: pname.clone(),
             address: addr,
             registers: None,
             rcc: None,

@@ -5,6 +5,7 @@ static NORMALIZE: &[(&str, &str)] = &[
     ("HDMI_CEC", "CEC"),
     ("SUBGHZ", "SUBGHZSPI"),
     ("USB_DRD_FS", "USB"),
+    ("SBS", "SYSCFG"),
 ];
 
 pub fn normalize_peri_name(name: &str) -> &str {

@@ -192,6 +192,7 @@ impl Defines {
             ("FDCANRAM", &["SRAMCAN_BASE", "SRAMCAN_BASE_NS"]),
             ("VREFINTCAL", &["VREFINT_CAL_ADDR_CMSIS"]),
             ("DSIHOST", &["DSI_BASE"]),
+            ("SYSCFG", &["SYSCFG_BASE", "SBS_BASE"]),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 
