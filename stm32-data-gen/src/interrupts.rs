@@ -3,6 +3,7 @@ use std::collections::{HashMap, HashSet};
 use log::*;
 
 use crate::chips::ChipGroup;
+use crate::normalize_peris::normalize_peri_name;
 use crate::regex;
 
 mod xml {
@@ -342,6 +343,7 @@ impl ChipInterrupts {
             }
 
             for (p, s) in interrupt_signals {
+                let p = normalize_peri_name(&p).to_string();
                 let signals = chip_signals.entry(p).or_default();
                 let irqs = signals.entry(s).or_default();
                 irqs.insert(header_name.clone());

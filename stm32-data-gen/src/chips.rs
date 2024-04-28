@@ -4,6 +4,8 @@ use std::collections::{HashMap, HashSet};
 use stm32_data_serde::chip::core::peripheral::Pin;
 
 use super::*;
+use crate::gpio_af::parse_signal_name;
+use crate::normalize_peris::normalize_peri_name;
 
 mod xml {
     use serde::Deserialize;
@@ -213,24 +215,20 @@ impl PeriMatcher {
             ("STM32WL5.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC:.*", ("adc", "g0", "ADC")),
-            ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32U0.*:ADC:.*", ("adc", "u0", "ADC")),
-            ("STM32U0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32G4.*:ADC:.*", ("adc", "g4", "ADC")),
-            ("STM32G4.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf2_v1_1", ("adccommon", "v2", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v2_0", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v2_2", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf4_v3_0_WL", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
-            (".*:ADC3_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
+            ("STM32G0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
+            ("STM32U0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
+            ("STM32G4.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (
-                "STM32H50.*:ADC_COMMON:aditf5_v3_0_H5",
-                ("adccommon", "h50", "ADC_COMMON"),
+                "STM32(L[45]|W[BL]).*:ADC\\d*_COMMON:.*",
+                ("adccommon", "v3", "ADC_COMMON"),
             ),
-            ("STM32H5.*:ADC_COMMON:aditf5_v3_0_H5", ("adccommon", "h5", "ADC_COMMON")),
-            ("STM32H7.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-            ("STM32H7.*:ADC3_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
+            ("STM32F3.*:ADC\\d*_COMMON:.*", ("adccommon", "f3", "ADC_COMMON")),
+            ("STM32F[247].*:ADC\\d*_COMMON:.*", ("adccommon", "v2", "ADC_COMMON")),
+            ("STM32H50.*:ADC\\d*_COMMON:.*", ("adccommon", "h50", "ADC_COMMON")),
+            ("STM32H5.*:ADC\\d*_COMMON:.*", ("adccommon", "h5", "ADC_COMMON")),
+            ("STM32H7.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             ("STM32G4.*:OPAMP:G4_tsmc90_fastOpamp", ("opamp", "g4", "OPAMP")),
             ("STM32F3.*:OPAMP:tsmc018_ull_opamp_v1_0", ("opamp", "f3", "OPAMP")),
             ("STM32H7.*:OPAMP:.*", ("opamp", "h_v1", "OPAMP")),
@@ -1007,7 +1005,7 @@ fn process_core(
 
     let mut peri_kinds = HashMap::new();
     for ip in group.ips.values() {
-        let pname = ip.instance_name.clone();
+        let pname = normalize_peri_name(&ip.instance_name);
         let pkind = format!("{}:{}", ip.name, ip.version);
         let pkind = pkind.strip_suffix("_Cube").unwrap_or(&pkind);
 
@@ -1020,6 +1018,14 @@ fn process_core(
             "IRTIM",
             // We add this as ghost peri
             "SYS",
+            "ADC_COMMON",
+            "ADC1_COMMON",
+            "ADC12_COMMON",
+            "ADC123_COMMON",
+            "ADC3_COMMON",
+            "ADC4_COMMON",
+            "ADC34_COMMON",
+            "ADC345_COMMON",
             // These are software libraries
             "FREERTOS",
             "PDM2PCM",
@@ -1034,29 +1040,11 @@ fn process_core(
             "TOUCHSENSING",
         ];
 
-        if FAKE_PERIPHERALS.contains(&pname.as_str()) {
+        if FAKE_PERIPHERALS.contains(&pname) {
             continue;
         }
 
-        let pname = match pname.as_str() {
-            "HDMI_CEC" => "CEC".to_string(),
-            "SUBGHZ" => "SUBGHZSPI".to_string(),
-            // remove when https://github.com/stm32-rs/stm32-rs/pull/789 merges
-            "USB_DRD_FS" => "USB".to_string(),
-            _ => pname,
-        };
-
-        if pname.starts_with("ADC") {
-            if let Entry::Vacant(entry) = peri_kinds.entry("ADC_COMMON".to_string()) {
-                entry.insert(format!("ADC_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
-            }
-        }
-        if pname.starts_with("ADC3") && (chip_name.starts_with("STM32H7") || chip_name.starts_with("STM32F3")) {
-            if let Entry::Vacant(entry) = peri_kinds.entry("ADC3_COMMON".to_string()) {
-                entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
-            }
-        }
-        peri_kinds.insert(pname, pkind.to_string());
+        peri_kinds.insert(pname.to_string(), pkind.to_string());
     }
     const GHOST_PERIS: &[&str] = &[
         "GPIOA",
@@ -1098,9 +1086,17 @@ fn process_core(
         "VREFINTCAL",
         "UID",
         "HSEM",
+        "ADC1_COMMON",
+        "ADC12_COMMON",
+        "ADC123_COMMON",
+        "ADC3_COMMON",
+        "ADC4_COMMON",
+        "ADC34_COMMON",
+        "ADC345_COMMON",
     ];
     for pname in GHOST_PERIS {
-        if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
+        let normalized_pname = normalize_peri_name(pname);
+        if let Entry::Vacant(entry) = peri_kinds.entry(normalized_pname.to_string()) {
             if defines.get_peri_addr(pname).is_some() {
                 entry.insert("unknown".to_string());
             }
@@ -1140,27 +1136,21 @@ fn process_core(
     let mut periph_pins = HashMap::<_, Vec<_>>::new();
     for (pin_name, pin) in &group.pins {
         for signal in &pin.signals {
-            let mut signal = signal.name.clone();
-            if signal.starts_with("DEBUG_SUBGHZSPI-") {
-                signal = format!("SUBGHZSPI_{}", &signal[16..(signal.len() - 3)]);
-            }
+            let signal = &signal.name;
             // TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
-            if !["GPIO", "CEC", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) && !signal.contains("EXTI") {
-                // both peripherals and signals can have underscores in their names so there is no easy way to split
-                // check if signal name starts with one of the peripheral names
-                for periph in peri_kinds.keys() {
-                    if let Some(signal) = signal.strip_prefix(&format!("{periph}_")) {
-                        periph_pins.entry(periph.to_string()).or_default().push(
-                            stm32_data_serde::chip::core::peripheral::Pin {
-                                pin: pin_name.clone(),
-                                signal: signal.to_string(),
-                                af: None,
-                            },
-                        );
-                        break;
-                    }
-                }
+            if ["GPIO", "CEC", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) || signal.contains("EXTI") {
+                continue;
             }
+            let Some((signal_peri, signal_name)) = parse_signal_name(signal) else {
+                continue;
+            };
+            periph_pins.entry(signal_peri.to_string()).or_default().push(
+                stm32_data_serde::chip::core::peripheral::Pin {
+                    pin: pin_name.clone(),
+                    signal: signal_name.to_string(),
+                    af: None,
+                },
+            );
         }
     }
     for pins in periph_pins.values_mut() {
@@ -1174,15 +1164,7 @@ fn process_core(
             continue;
         }
 
-        let addr = if (chip_name.starts_with("STM32F0")
-            || chip_name.starts_with("STM32L1")
-            || chip_name.starts_with("STM32L0"))
-            && pname == "ADC"
-        {
-            defines.get_peri_addr("ADC1")
-        } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
-            defines.get_peri_addr("HRTIM1")
-        } else if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(&pname) {
+        let addr = if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(&pname) {
             defines.get_peri_addr("FDCANRAM").map(|addr| {
                 if chip_name.starts_with("STM32H7") {
                     addr
@@ -1197,10 +1179,7 @@ fn process_core(
             defines.get_peri_addr(&pname)
         };
 
-        let addr = match addr {
-            Some(addr) => addr,
-            None => continue,
-        };
+        let Some(addr) = addr else { continue };
 
         let mut p = stm32_data_serde::chip::core::Peripheral {
             name: if pname == "SBS" {
