@@ -175,6 +175,7 @@ impl Defines {
                 &["OCTOSPI2_R_BASE", "OCTOSPI2_R_BASE_NS", "OCTOSPI2_REG_BASE"],
             ),
             ("FLASH", &["FLASH_R_BASE", "FLASH_REG_BASE"]),
+            ("ADC", &["ADC1_BASE", "ADC_BASE"]),
             (
                 "ADC_COMMON",
                 &["ADC_COMMON", "ADC1_COMMON", "ADC12_COMMON", "ADC123_COMMON"],

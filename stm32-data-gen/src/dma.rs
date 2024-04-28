@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use anyhow::Context;
 
+use crate::normalize_peris::normalize_peri_name;
+
 mod xml {
     use serde::Deserialize;
 
@@ -150,7 +152,7 @@ impl DmaChannels {
                                 };
                                 chip_dma
                                     .peripherals
-                                    .entry(target_peri_name.to_string())
+                                    .entry(normalize_peri_name(target_peri_name).to_string())
                                     .or_default()
                                     .push(stm32_data_serde::chip::core::peripheral::DmaChannel {
                                         signal: request.to_string(),
@@ -270,7 +272,7 @@ impl DmaChannels {
                                     };
                                     chip_dma
                                         .peripherals
-                                        .entry(target_peri_name.to_string())
+                                        .entry(normalize_peri_name(target_peri_name).to_string())
                                         .or_default()
                                         .push(entry);
                                 }
@@ -320,7 +322,7 @@ impl DmaChannels {
                 };
                 chip_dma
                     .peripherals
-                    .entry(target_peri_name.to_string())
+                    .entry(normalize_peri_name(target_peri_name).to_string())
                     .or_default()
                     .push(stm32_data_serde::chip::core::peripheral::DmaChannel {
                         signal: request.to_string(),

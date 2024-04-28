@@ -5,6 +5,7 @@ use stm32_data_serde::chip::core::peripheral::Pin;
 
 use super::*;
 use crate::gpio_af::parse_signal_name;
+use crate::normalize_peris::normalize_peri_name;
 
 mod xml {
     use serde::Deserialize;
@@ -1008,7 +1009,7 @@ fn process_core(
 
     let mut peri_kinds = HashMap::new();
     for ip in group.ips.values() {
-        let pname = ip.instance_name.clone();
+        let pname = normalize_peri_name(&ip.instance_name);
         let pkind = format!("{}:{}", ip.name, ip.version);
         let pkind = pkind.strip_suffix("_Cube").unwrap_or(&pkind);
 
@@ -1035,17 +1036,9 @@ fn process_core(
             "TOUCHSENSING",
         ];
 
-        if FAKE_PERIPHERALS.contains(&pname.as_str()) {
+        if FAKE_PERIPHERALS.contains(&pname) {
             continue;
         }
-
-        let pname = match pname.as_str() {
-            "HDMI_CEC" => "CEC".to_string(),
-            "SUBGHZ" => "SUBGHZSPI".to_string(),
-            // remove when https://github.com/stm32-rs/stm32-rs/pull/789 merges
-            "USB_DRD_FS" => "USB".to_string(),
-            _ => pname,
-        };
 
         if pname.starts_with("ADC") {
             if let Entry::Vacant(entry) = peri_kinds.entry("ADC_COMMON".to_string()) {
@@ -1057,7 +1050,7 @@ fn process_core(
                 entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
             }
         }
-        peri_kinds.insert(pname, pkind.to_string());
+        peri_kinds.insert(pname.to_string(), pkind.to_string());
     }
     const GHOST_PERIS: &[&str] = &[
         "GPIOA",
@@ -1150,12 +1143,12 @@ fn process_core(
                 continue;
             };
             periph_pins.entry(signal_peri.to_string()).or_default().push(
-                            stm32_data_serde::chip::core::peripheral::Pin {
-                                pin: pin_name.clone(),
+                stm32_data_serde::chip::core::peripheral::Pin {
+                    pin: pin_name.clone(),
                     signal: signal_name.to_string(),
-                                af: None,
-                            },
-                        );
+                    af: None,
+                },
+            );
         }
     }
     for pins in periph_pins.values_mut() {
@@ -1169,15 +1162,7 @@ fn process_core(
             continue;
         }
 
-        let addr = if (chip_name.starts_with("STM32F0")
-            || chip_name.starts_with("STM32L1")
-            || chip_name.starts_with("STM32L0"))
-            && pname == "ADC"
-        {
-            defines.get_peri_addr("ADC1")
-        } else if chip_name.starts_with("STM32H7") && pname == "HRTIM" {
-            defines.get_peri_addr("HRTIM1")
-        } else if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(&pname) {
+        let addr = if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(&pname) {
             defines.get_peri_addr("FDCANRAM").map(|addr| {
                 if chip_name.starts_with("STM32H7") {
                     addr
@@ -1192,10 +1177,7 @@ fn process_core(
             defines.get_peri_addr(&pname)
         };
 
-        let addr = match addr {
-            Some(addr) => addr,
-            None => continue,
-        };
+        let Some(addr) = addr else { continue };
 
         let mut p = stm32_data_serde::chip::core::Peripheral {
             name: if pname == "SBS" {
