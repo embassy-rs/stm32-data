@@ -215,24 +215,20 @@ impl PeriMatcher {
             ("STM32WL5.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
             ("STM32G0.*:ADC:.*", ("adc", "g0", "ADC")),
-            ("STM32G0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32U0.*:ADC:.*", ("adc", "u0", "ADC")),
-            ("STM32U0.*:ADC_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32G4.*:ADC:.*", ("adc", "g4", "ADC")),
-            ("STM32G4.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf2_v1_1", ("adccommon", "v2", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v2_0", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v2_2", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf4_v3_0_WL", ("adccommon", "v3", "ADC_COMMON")),
-            (".*:ADC_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
-            (".*:ADC3_COMMON:aditf5_v1_1", ("adccommon", "f3", "ADC_COMMON")),
+            ("STM32G0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
+            ("STM32U0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
+            ("STM32G4.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             (
-                "STM32H50.*:ADC_COMMON:aditf5_v3_0_H5",
-                ("adccommon", "h50", "ADC_COMMON"),
+                "STM32(L[45]|W[BL]).*:ADC\\d*_COMMON:.*",
+                ("adccommon", "v3", "ADC_COMMON"),
             ),
-            ("STM32H5.*:ADC_COMMON:aditf5_v3_0_H5", ("adccommon", "h5", "ADC_COMMON")),
-            ("STM32H7.*:ADC_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-            ("STM32H7.*:ADC3_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
+            ("STM32F3.*:ADC\\d*_COMMON:.*", ("adccommon", "f3", "ADC_COMMON")),
+            ("STM32F[247].*:ADC\\d*_COMMON:.*", ("adccommon", "v2", "ADC_COMMON")),
+            ("STM32H50.*:ADC\\d*_COMMON:.*", ("adccommon", "h50", "ADC_COMMON")),
+            ("STM32H5.*:ADC\\d*_COMMON:.*", ("adccommon", "h5", "ADC_COMMON")),
+            ("STM32H7.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
             ("STM32G4.*:OPAMP:G4_tsmc90_fastOpamp", ("opamp", "g4", "OPAMP")),
             ("STM32F3.*:OPAMP:tsmc018_ull_opamp_v1_0", ("opamp", "f3", "OPAMP")),
             ("STM32H7.*:OPAMP:.*", ("opamp", "h_v1", "OPAMP")),
@@ -1022,6 +1018,14 @@ fn process_core(
             "IRTIM",
             // We add this as ghost peri
             "SYS",
+            "ADC_COMMON",
+            "ADC1_COMMON",
+            "ADC12_COMMON",
+            "ADC123_COMMON",
+            "ADC3_COMMON",
+            "ADC4_COMMON",
+            "ADC34_COMMON",
+            "ADC345_COMMON",
             // These are software libraries
             "FREERTOS",
             "PDM2PCM",
@@ -1040,16 +1044,6 @@ fn process_core(
             continue;
         }
 
-        if pname.starts_with("ADC") {
-            if let Entry::Vacant(entry) = peri_kinds.entry("ADC_COMMON".to_string()) {
-                entry.insert(format!("ADC_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
-            }
-        }
-        if pname.starts_with("ADC3") && (chip_name.starts_with("STM32H7") || chip_name.starts_with("STM32F3")) {
-            if let Entry::Vacant(entry) = peri_kinds.entry("ADC3_COMMON".to_string()) {
-                entry.insert(format!("ADC3_COMMON:{}", ip.version.strip_suffix("_Cube").unwrap()));
-            }
-        }
         peri_kinds.insert(pname.to_string(), pkind.to_string());
     }
     const GHOST_PERIS: &[&str] = &[
@@ -1092,9 +1086,17 @@ fn process_core(
         "VREFINTCAL",
         "UID",
         "HSEM",
+        "ADC1_COMMON",
+        "ADC12_COMMON",
+        "ADC123_COMMON",
+        "ADC3_COMMON",
+        "ADC4_COMMON",
+        "ADC34_COMMON",
+        "ADC345_COMMON",
     ];
     for pname in GHOST_PERIS {
-        if let Entry::Vacant(entry) = peri_kinds.entry(pname.to_string()) {
+        let normalized_pname = normalize_peri_name(pname);
+        if let Entry::Vacant(entry) = peri_kinds.entry(normalized_pname.to_string()) {
             if defines.get_peri_addr(pname).is_some() {
                 entry.insert("unknown".to_string());
             }
