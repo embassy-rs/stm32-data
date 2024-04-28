@@ -102,7 +102,7 @@ impl Af {
     }
 }
 
-fn parse_signal_name(signal_name: &str) -> Option<(&str, &str)> {
+pub fn parse_signal_name(signal_name: &str) -> Option<(&str, &str)> {
     let (peri_name, signal_name) = {
         if let Some(signal_name) = signal_name.strip_prefix("USB_OTG_FS_") {
             ("USB_OTG_FS", signal_name)

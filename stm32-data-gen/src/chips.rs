@@ -4,6 +4,7 @@ use std::collections::{HashMap, HashSet};
 use stm32_data_serde::chip::core::peripheral::Pin;
 
 use super::*;
+use crate::gpio_af::parse_signal_name;
 
 mod xml {
     use serde::Deserialize;
@@ -1140,27 +1141,21 @@ fn process_core(
     let mut periph_pins = HashMap::<_, Vec<_>>::new();
     for (pin_name, pin) in &group.pins {
         for signal in &pin.signals {
-            let mut signal = signal.name.clone();
-            if signal.starts_with("DEBUG_SUBGHZSPI-") {
-                signal = format!("SUBGHZSPI_{}", &signal[16..(signal.len() - 3)]);
-            }
+            let signal = &signal.name;
             // TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
-            if !["GPIO", "CEC", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) && !signal.contains("EXTI") {
-                // both peripherals and signals can have underscores in their names so there is no easy way to split
-                // check if signal name starts with one of the peripheral names
-                for periph in peri_kinds.keys() {
-                    if let Some(signal) = signal.strip_prefix(&format!("{periph}_")) {
-                        periph_pins.entry(periph.to_string()).or_default().push(
+            if ["GPIO", "CEC", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) || signal.contains("EXTI") {
+                continue;
+            }
+            let Some((signal_peri, signal_name)) = parse_signal_name(signal) else {
+                continue;
+            };
+            periph_pins.entry(signal_peri.to_string()).or_default().push(
                             stm32_data_serde::chip::core::peripheral::Pin {
                                 pin: pin_name.clone(),
-                                signal: signal.to_string(),
+                    signal: signal_name.to_string(),
                                 af: None,
                             },
                         );
-                        break;
-                    }
-                }
-            }
         }
     }
     for pins in periph_pins.values_mut() {
