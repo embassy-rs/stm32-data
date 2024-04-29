@@ -296,7 +296,7 @@ impl DmaChannels {
 
         // GPDMA
 
-        for (file, gpdmax, instance, count, count_2d) in [
+        for (file, instance, version, count, count_2d) in [
             ("H5_GPDMA.yaml", "GPDMA1", "STM32H5_dma3_Cube", 8, 2),
             ("H5_GPDMA.yaml", "GPDMA2", "Instance2_STM32H5_dma3_Cube", 8, 2),
             ("U5_GPDMA1.yaml", "GPDMA1", "STM32U5_dma3_Cube", 16, 4),
@@ -326,7 +326,7 @@ impl DmaChannels {
                     .or_default()
                     .push(stm32_data_serde::chip::core::peripheral::DmaChannel {
                         signal: request.to_string(),
-                        dma: Some(gpdmax.to_string()),
+                        dma: Some(instance.to_string()),
                         channel: None,
                         dmamux: None,
                         request: Some(request_num),
@@ -335,8 +335,8 @@ impl DmaChannels {
 
             for i in 0..count {
                 chip_dma.channels.push(stm32_data_serde::chip::core::DmaChannels {
-                    name: format!("{gpdmax}_CH{i}"),
-                    dma: gpdmax.to_string(),
+                    name: format!("{instance}_CH{i}"),
+                    dma: instance.to_string(),
                     channel: i,
                     dmamux: None,
                     dmamux_channel: None,
@@ -344,7 +344,7 @@ impl DmaChannels {
                 });
             }
 
-            dma_channels.insert(instance.to_string(), chip_dma);
+            dma_channels.insert(format!("{version}:{instance}"), chip_dma);
         }
 
         Ok(Self(dma_channels))

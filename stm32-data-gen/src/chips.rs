@@ -1267,61 +1267,65 @@ fn process_core(
     let mut peripherals: Vec<_> = peripherals.into_values().collect();
     peripherals.sort_by_key(|x| x.name.clone());
     // Collect DMA versions in the chip
-    let mut chip_dmas: Vec<_> = group
+    let mut dmas: Vec<_> = group
         .ips
         .values()
         .filter_map(|ip| {
             let version = &ip.version;
-            let sort = match ip.name.as_str() {
-                "DMA" => 1,
-                "BDMA" => 2,
-                "BDMA1" => 3,
-                "BDMA2" => 4,
-                "GPDMA" => 5,
-                _ => 0,
-            };
-            if sort > 0 && dma_channels.0.contains_key(version) {
-                Some((sort, version.clone()))
+            let instance = &ip.instance_name;
+            if let Some(dma) = dma_channels
+                .0
+                .get(version)
+                .or_else(|| dma_channels.0.get(&format!("{version}:{instance}")))
+            {
+                Some((ip.name.clone(), instance.clone(), dma))
             } else {
                 None
             }
         })
         .collect();
-    chip_dmas.sort();
-    chip_dmas.dedup();
-    let chip_dmas: Vec<_> = chip_dmas.into_iter().map(|(_sort, version)| version).collect();
-    // Process DMA channels
-    let chs = chip_dmas
-        .iter()
-        .flat_map(|dma| dma_channels.0.get(dma).unwrap().channels.clone());
+    dmas.sort_by_key(|(name, instance, _)| {
+        (
+            match name.as_str() {
+                "DMA" => 1,
+                "BDMA" => 2,
+                "BDMA1" => 3,
+                "BDMA2" => 4,
+                "GPDMA" => 5,
+                "HPDMA" => 6,
+                _ => 0,
+            },
+            instance.clone(),
+        )
+    });
+
     // The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
     // so we have to filter it.
-    let chs: Vec<_> = chs.filter(|ch| have_peris.contains(&ch.dma)).collect();
-    let core_dma_channels = chs.clone();
-    let have_chs: HashSet<_> = chs.into_iter().collect();
+    let dma_channels = dmas
+        .iter()
+        .flat_map(|(_, _, dma)| dma.channels.clone())
+        .filter(|ch| have_peris.contains(&ch.dma))
+        .collect::<Vec<_>>();
+    let have_chs: HashSet<_> = dma_channels.iter().map(|ch| ch.name.clone()).collect();
+
     // Process peripheral - DMA channel associations
     for p in &mut peripherals {
         let mut chs = Vec::new();
-        for dma in &chip_dmas {
-            if let Some(peri_chs) = dma_channels.0.get(dma).unwrap().peripherals.get(&p.name) {
+        for (_, _, dma) in &dmas {
+            if let Some(peri_chs) = dma.peripherals.get(&p.name) {
                 chs.extend(
                     peri_chs
                         .iter()
-                        .filter(|ch| {
-                            if let Some(ch_channel) = &ch.channel {
-                                have_chs.iter().any(|x| &x.name == ch_channel)
-                            } else {
-                                true
-                            }
+                        .filter(|ch| match &ch.channel {
+                            None => true,
+                            Some(channel) => have_chs.contains(channel),
                         })
                         .cloned(),
                 );
             }
         }
-        if !chs.is_empty() {
             chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
             p.dma_channels = chs;
-        }
     }
 
     let mut core = stm32_data_serde::chip::Core {
@@ -1329,7 +1333,7 @@ fn process_core(
         peripherals,
         nvic_priority_bits: None,
         interrupts: vec![],
-        dma_channels: core_dma_channels,
+        dma_channels,
     };
 
     chip_interrupts.process(&mut core, chip_name, h, group);
