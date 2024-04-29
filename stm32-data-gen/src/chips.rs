@@ -574,6 +574,7 @@ impl PeriMatcher {
             ("STM32WLE.*:HSEM:.*", ("hsem", "v4", "HSEM")),
             (".*:DMAMUX.*", ("dmamux", "v1", "DMAMUX")),
             (r".*:GPDMA\d?:.*", ("gpdma", "v1", "GPDMA")),
+            (r".*:LPDMA\d?:.*", ("lpdma", "v1", "LPDMA")),
             (r".*:BDMA\d?:.*", ("bdma", "v1", "DMA")),
             ("STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0", ("dma2d", "v2", "DMA2D")),
             (".*:DMA2D:dma2d1_v1_0", ("dma2d", "v1", "DMA2D")),
