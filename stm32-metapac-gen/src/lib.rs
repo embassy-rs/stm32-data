@@ -415,48 +415,55 @@ fn gen_opts() -> generate::Options {
 fn gen_memory_x(out_dir: &Path, chip: &Chip) {
     let mut memory_x = String::new();
 
-    let flash = chip
-        .memory
-        .iter()
-        .filter(|r| r.kind == MemoryRegionKind::Flash && r.name.starts_with("BANK_"));
-    let (flash_address, flash_size) = flash
-        .clone()
-        .map(|r| (r.address, r.size))
-        .reduce(|acc, el| (u32::min(acc.0, el.0), acc.1 + el.1))
-        .unwrap();
-    let ram = chip.memory.iter().find(|r| r.kind == MemoryRegionKind::Ram).unwrap();
-    let otp = chip
-        .memory
-        .iter()
-        .find(|r| r.kind == MemoryRegionKind::Flash && r.name == "OTP");
+    let flash = get_memory_range(chip, MemoryRegionKind::Flash);
+    let ram = get_memory_range(chip, MemoryRegionKind::Ram);
 
     write!(memory_x, "MEMORY\n{{\n").unwrap();
     writeln!(
         memory_x,
         "    FLASH : ORIGIN = 0x{:08x}, LENGTH = {:>4}K /* {} */",
-        flash_address,
-        flash_size / 1024,
-        flash.map(|x| x.name.as_ref()).collect::<Vec<&str>>().join(" + ")
+        flash.0,
+        flash.1 / 1024,
+        flash.2
     )
     .unwrap();
     writeln!(
         memory_x,
-        "    RAM   : ORIGIN = 0x{:08x}, LENGTH = {:>4}K",
-        ram.address,
-        ram.size / 1024,
+        "    RAM   : ORIGIN = 0x{:08x}, LENGTH = {:>4}K /* {} */",
+        ram.0,
+        ram.1 / 1024,
+        ram.2
     )
     .unwrap();
-    if let Some(otp) = otp {
-        writeln!(
-            memory_x,
-            "    OTP   : ORIGIN = 0x{:08x}, LENGTH = {:>4}",
-            otp.address, otp.size,
-        )
-        .unwrap();
-    }
     write!(memory_x, "}}").unwrap();
 
     fs::create_dir_all(out_dir.join("memory_x")).unwrap();
     let mut file = File::create(out_dir.join("memory_x").join("memory.x")).unwrap();
     file.write_all(memory_x.as_bytes()).unwrap();
+}
+
+fn get_memory_range(chip: &Chip, kind: MemoryRegionKind) -> (u32, u32, String) {
+    let mut mems: Vec<_> = chip.memory.iter().filter(|m| m.kind == kind && m.size != 0).collect();
+    mems.sort_by_key(|m| m.address);
+
+    let mut start = u32::MAX;
+    let mut end = u32::MAX;
+    let mut names = Vec::new();
+    let mut best: Option<(u32, u32, String)> = None;
+    for m in mems {
+        if m.address != end {
+            names = Vec::new();
+            start = m.address;
+            end = m.address;
+        }
+
+        end += m.size;
+        names.push(m.name.to_string());
+
+        if best.is_none() || end - start > best.as_ref().unwrap().1 {
+            best = Some((start, end - start, names.join(" + ")));
+        }
+    }
+
+    best.unwrap()
 }
