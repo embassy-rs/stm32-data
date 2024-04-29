@@ -1303,14 +1303,7 @@ fn process_core(
     for p in &mut peripherals {
         let mut chs = Vec::new();
         for dma in &chip_dmas {
-            let mut peri_chs = dma_channels.0.get(dma).unwrap().peripherals.get(&p.name);
-
-            // DAC1 is sometimes interchanged with DAC
-            if peri_chs.is_none() && p.name == "DAC1" {
-                peri_chs = dma_channels.0.get(dma).unwrap().peripherals.get("DAC");
-            }
-
-            if let Some(peri_chs) = peri_chs {
+            if let Some(peri_chs) = dma_channels.0.get(dma).unwrap().peripherals.get(&p.name) {
                 chs.extend(
                     peri_chs
                         .iter()

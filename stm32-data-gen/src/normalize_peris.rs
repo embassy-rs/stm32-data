@@ -1,6 +1,7 @@
 #[rustfmt::skip]
 static NORMALIZE: &[(&str, &str)] = &[
     ("ADC", "ADC1"),
+    ("DAC", "DAC1"),
     ("HRTIM", "HRTIM1"),
     ("HDMI_CEC", "CEC"),
     ("SUBGHZ", "SUBGHZSPI"),
