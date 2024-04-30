@@ -129,16 +129,16 @@ fieldset/CALFACT:
 fieldset/CFGR:
   description: configuration register 1
   fields:
-  - name: DMAEN
-    description: Direct memory access enable
-    bit_offset: 0
-    bit_size: 1
-    enum: DMAEN
   - name: DMACFG
     description: direct memory access configuration
     bit_offset: 0
     bit_size: 1
     enum: DMACFG
+  - name: DMAEN
+    description: Direct memory access enable
+    bit_offset: 0
+    bit_size: 1
+    enum: DMAEN
   - name: RES
     description: data resolution
     bit_offset: 3
@@ -154,12 +154,12 @@ fieldset/CFGR:
     bit_size: 2
     enum: EXTEN
   - name: OVRMOD
-    description: overrun mode 
+    description: overrun mode
     bit_offset: 12
     bit_size: 1
     enum: OVRMOD
   - name: CONT
-    description:  single / continuous conversion mode for regular conversions
+    description: single / continuous conversion mode for regular conversions
     bit_offset: 13
     bit_size: 1
   - name: AUTDLY
@@ -171,7 +171,7 @@ fieldset/CFGR:
     bit_offset: 15
     bit_size: 1
   - name: DISCEN
-    description:  discontinuous mode for regular channels
+    description: discontinuous mode for regular channels
     bit_offset: 16
     bit_size: 1
   - name: DISCNUM
@@ -188,7 +188,7 @@ fieldset/CFGR:
     bit_size: 1
     enum: JQM
   - name: AWD1SGL
-    description:  enable the watchdog 1 on a single channel or on all channels
+    description: enable the watchdog 1 on a single channel or on all channels
     bit_offset: 22
     bit_size: 1
     enum: AWD1SGL
@@ -321,6 +321,13 @@ fieldset/DR:
     description: group regular conversion data
     bit_offset: 0
     bit_size: 16
+fieldset/GCOMP:
+  description: Gain compensation coefficient
+  fields:
+  - name: GCOMPCOEFF
+    description: Gain compensation coefficient
+    bit_offset: 0
+    bit_size: 14
 fieldset/IER:
   description: interrupt enable register
   fields:
@@ -445,43 +452,6 @@ fieldset/JSQR:
     array:
       len: 4
       stride: 6
-fieldset/TR1:
-  description: analog watchdog threshold register 1
-  fields:
-  - name: LT1
-    description: analog watchdog 1 lower threshold
-    bit_offset: 0
-    bit_size: 12
-  - name: AWDFILT
-    description: analog watchdog filtering parameter
-    bit_offset: 12
-    bit_size: 3
-  - name: HT1
-    description: analog watchdog 1 higher threshold
-    bit_offset: 16
-    bit_size: 12
-fieldset/TR2:
-  description: analog watchdog threshold register 2
-  fields:
-  - name: LT2
-    description: analog watchdog 2 lower threshold
-    bit_offset: 0
-    bit_size: 8
-  - name: HT2
-    description: analog watchdog 2 higher threshold
-    bit_offset: 16
-    bit_size: 8
-fieldset/TR3:
-  description: analog watchdog threshold register 3
-  fields:
-  - name: LT3
-    description: analog watchdog 3 lower threshold
-    bit_offset: 0
-    bit_size: 8
-  - name: HT3
-    description: analog watchdog 3 higher threshold
-    bit_offset: 16
-    bit_size: 8
 fieldset/OFR:
   description: offset number x register
   fields:
@@ -498,7 +468,7 @@ fieldset/OFR:
     bit_offset: 25
     bit_size: 1
   - name: OFFSET1_CH
-    description: Channel selection for the data offset 
+    description: Channel selection for the data offset
     bit_offset: 26
     bit_size: 5
   - name: OFFSET_EN
@@ -575,13 +545,43 @@ fieldset/SQR4:
     array:
       len: 2
       stride: 6
-fieldset/GCOMP:
-  description: Gain compensation coefficient
+fieldset/TR1:
+  description: analog watchdog threshold register 1
   fields:
-  - name: GCOMPCOEFF
-    description:  Gain compensation coefficient
+  - name: LT1
+    description: analog watchdog 1 lower threshold
     bit_offset: 0
-    bit_size: 14
+    bit_size: 12
+  - name: AWDFILT
+    description: analog watchdog filtering parameter
+    bit_offset: 12
+    bit_size: 3
+  - name: HT1
+    description: analog watchdog 1 higher threshold
+    bit_offset: 16
+    bit_size: 12
+fieldset/TR2:
+  description: analog watchdog threshold register 2
+  fields:
+  - name: LT2
+    description: analog watchdog 2 lower threshold
+    bit_offset: 0
+    bit_size: 8
+  - name: HT2
+    description: analog watchdog 2 higher threshold
+    bit_offset: 16
+    bit_size: 8
+fieldset/TR3:
+  description: analog watchdog threshold register 3
+  fields:
+  - name: LT3
+    description: analog watchdog 3 lower threshold
+    bit_offset: 0
+    bit_size: 8
+  - name: HT3
+    description: analog watchdog 3 higher threshold
+    bit_offset: 16
+    bit_size: 8
 enum/ADCALDIF:
   bit_size: 1
   variants:
@@ -615,15 +615,6 @@ enum/DIFSEL:
   - name: Differential
     description: Input channel is configured in differential mode
     value: 1
-enum/DMAEN:
-  bit_size: 1
-  variants:
-  - name: Disable
-    description: DMA disable
-    value: 0
-  - name: Enable
-    description: DMA enable 
-    value: 1
 enum/DMACFG:
   bit_size: 1
   variants:
@@ -632,6 +623,15 @@ enum/DMACFG:
     value: 0
   - name: CircularMode
     description: DMA Circular mode selected
+    value: 1
+enum/DMAEN:
+  bit_size: 1
+  variants:
+  - name: Disable
+    description: DMA disable
+    value: 0
+  - name: Enable
+    description: DMA enable
     value: 1
 enum/EXTEN:
   bit_size: 2

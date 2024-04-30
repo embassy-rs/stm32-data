@@ -18,34 +18,34 @@ block/HSEM:
     fieldset: RLR
   - name: IER
     description: HSEM Interrupt enable register.
+    array:
+      len: 1
+      stride: 16
     byte_offset: 256
     fieldset: IER
-    array:
-      len: 1
-      stride: 16
   - name: ICR
     description: HSEM Interrupt clear register.
-    byte_offset: 260
-    fieldset: ICR
     array:
       len: 1
       stride: 16
+    byte_offset: 260
+    fieldset: ICR
   - name: ISR
     description: HSEM Interrupt status register.
+    array:
+      len: 1
+      stride: 16
     byte_offset: 264
     access: Read
     fieldset: ISR
+  - name: MISR
+    description: HSEM Masked interrupt status register.
     array:
       len: 1
       stride: 16
-  - name: MISR
-    description: HSEM Masked interrupt status register.
     byte_offset: 268
     access: Read
     fieldset: MISR
-    array:
-      len: 1
-      stride: 16
   - name: CR
     description: HSEM Clear register.
     byte_offset: 320
@@ -55,6 +55,17 @@ block/HSEM:
     description: HSEM Interrupt clear register.
     byte_offset: 324
     fieldset: KEYR
+fieldset/CR:
+  description: HSEM Clear register.
+  fields:
+  - name: COREID
+    description: COREID.
+    bit_offset: 8
+    bit_size: 4
+  - name: KEY
+    description: Semaphore clear Key.
+    bit_offset: 16
+    bit_size: 16
 fieldset/ICR:
   description: HSEM Interrupt clear register.
   fields:
@@ -85,6 +96,13 @@ fieldset/ISR:
     array:
       len: 16
       stride: 1
+fieldset/KEYR:
+  description: HSEM Interrupt clear register.
+  fields:
+  - name: KEY
+    description: Semaphore Clear Key.
+    bit_offset: 16
+    bit_size: 16
 fieldset/MISR:
   description: HSEM Masked interrupt status register.
   fields:
@@ -95,24 +113,6 @@ fieldset/MISR:
     array:
       len: 16
       stride: 1
-fieldset/CR:
-  description: HSEM Clear register.
-  fields:
-  - name: COREID
-    description: COREID.
-    bit_offset: 8
-    bit_size: 4
-  - name: KEY
-    description: Semaphore clear Key.
-    bit_offset: 16
-    bit_size: 16
-fieldset/KEYR:
-  description: HSEM Interrupt clear register.
-  fields:
-  - name: KEY
-    description: Semaphore Clear Key.
-    bit_offset: 16
-    bit_size: 16
 fieldset/R:
   description: HSEM register HSEM_R%s HSEM_R31.
   fields:

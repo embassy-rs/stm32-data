@@ -18,34 +18,34 @@ block/HSEM:
     fieldset: RLR
   - name: IER
     description: HSEM Interrupt enable register.
+    array:
+      len: 2
+      stride: 16
     byte_offset: 256
     fieldset: IER
-    array:
-      len: 2
-      stride: 16
   - name: ICR
     description: HSEM Interrupt clear register.
-    byte_offset: 260
-    fieldset: ICR
     array:
       len: 2
       stride: 16
+    byte_offset: 260
+    fieldset: ICR
   - name: ISR
     description: HSEM Interrupt status register.
+    array:
+      len: 2
+      stride: 16
     byte_offset: 264
     access: Read
     fieldset: ISR
+  - name: MISR
+    description: HSEM Masked interrupt status register.
     array:
       len: 2
       stride: 16
-  - name: MISR
-    description: HSEM Masked interrupt status register.
     byte_offset: 268
     access: Read
     fieldset: MISR
-    array:
-      len: 2
-      stride: 16
   - name: CR
     description: HSEM Clear register.
     byte_offset: 320
@@ -66,6 +66,36 @@ fieldset/CR:
     description: Semaphore clear Key.
     bit_offset: 16
     bit_size: 16
+fieldset/ICR:
+  description: HSEM Interrupt clear register.
+  fields:
+  - name: ISC
+    description: Interrupt semaphore x clear bit.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/IER:
+  description: HSEM Interrupt enable register.
+  fields:
+  - name: ISE
+    description: Interrupt semaphore x enable bit.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/ISR:
+  description: HSEM Interrupt status register.
+  fields:
+  - name: ISF
+    description: Interrupt semaphore x status bit before enable (mask).
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
 fieldset/KEYR:
   description: HSEM Interrupt clear register.
   fields:
@@ -73,6 +103,16 @@ fieldset/KEYR:
     description: Semaphore Clear Key.
     bit_offset: 16
     bit_size: 16
+fieldset/MISR:
+  description: HSEM Masked interrupt status register.
+  fields:
+  - name: MISF
+    description: masked interrupt semaphore x status bit after enable (mask).
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
 fieldset/R:
   description: HSEM register HSEM_R%s HSEM_R31.
   fields:
@@ -103,43 +143,3 @@ fieldset/RLR:
     description: Lock indication.
     bit_offset: 31
     bit_size: 1
-fieldset/IER:
-  description: HSEM Interrupt enable register.
-  fields:
-  - name: ISE
-    description: Interrupt semaphore x enable bit.
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 16
-      stride: 1
-fieldset/ICR:
-  description: HSEM Interrupt clear register.
-  fields:
-  - name: ISC
-    description: Interrupt semaphore x clear bit.
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 16
-      stride: 1
-fieldset/ISR:
-  description: HSEM Interrupt status register.
-  fields:
-  - name: ISF
-    description: Interrupt semaphore x status bit before enable (mask).
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 16
-      stride: 1
-fieldset/MISR:
-  description: HSEM Masked interrupt status register.
-  fields:
-  - name: MISF
-    description: masked interrupt semaphore x status bit after enable (mask).
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 16
-      stride: 1

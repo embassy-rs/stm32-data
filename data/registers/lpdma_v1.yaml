@@ -408,6 +408,15 @@ fieldset/SECCFGR:
     array:
       len: 16
       stride: 1
+enum/BREQ:
+  bit_size: 1
+  variants:
+  - name: Burst
+    description: the selected hardware request is driven by a peripheral with a hardware request/acknowledge protocol at a burst level.
+    value: 0
+  - name: Block
+    description: the selected hardware request is driven by a peripheral with a hardware request/acknowledge protocol at a block level (see ).
+    value: 1
 enum/DEC:
   bit_size: 1
   variants:
@@ -417,30 +426,15 @@ enum/DEC:
   - name: Subtract
     description: The address is decremented by the programmed offset.
     value: 1
-enum/LSM:
+enum/DREQ:
   bit_size: 1
   variants:
-  - name: RunToCompletion
-    description: channel executed for the full linked-list and completed at the end of the last LLI (CH[x].LLR = 0). The 16 low-significant bits of the link address are null (LA[15:0] = 0) and all the update bits are null (UT1 =UB1 = UT2 = USA = UDA = ULL = 0 and UT3 = UB2 = 0 if present). Then CH[x].BR1.BNDT[15:0] = 0 and CH[x].BR1.BRC[10:0] = 0 if present.
+  - name: SourcePeripheral
+    description: selected hardware request driven by a source peripheral (request signal taken into account by the LPDMA transfer scheduler over the source/read port)
     value: 0
-  - name: LinkStep
-    description: channel executed once for the current LLI
+  - name: DestinationPeripheral
+    description: selected hardware request driven by a destination peripheral (request signal taken into account by the LPDMA transfer scheduler over the destination/write port)
     value: 1
-enum/PRIO:
-  bit_size: 2
-  variants:
-  - name: LowWithLowhWeight
-    description: low priority, low weight
-    value: 0
-  - name: LowWithMidWeight
-    description: low priority, mid weight
-    value: 1
-  - name: LowWithHighWeight
-    description: low priority, high weight
-    value: 2
-  - name: High
-    description: high priority
-    value: 3
 enum/DW:
   bit_size: 2
   variants:
@@ -453,6 +447,15 @@ enum/DW:
   - name: Word
     description: word (4 bytes)
     value: 2
+enum/LSM:
+  bit_size: 1
+  variants:
+  - name: RunToCompletion
+    description: channel executed for the full linked-list and completed at the end of the last LLI (CH[x].LLR = 0). The 16 low-significant bits of the link address are null (LA[15:0] = 0) and all the update bits are null (UT1 =UB1 = UT2 = USA = UDA = ULL = 0 and UT3 = UB2 = 0 if present). Then CH[x].BR1.BNDT[15:0] = 0 and CH[x].BR1.BRC[10:0] = 0 if present.
+    value: 0
+  - name: LinkStep
+    description: channel executed once for the current LLI
+    value: 1
 enum/PAM:
   bit_size: 2
   variants:
@@ -469,24 +472,21 @@ enum/PAM:
   - name: Pack
     description: source data is FIFO queued and packed/unpacked at the destination data width, to be transferred in a left (LSB) to right (MSB) order (named little endian) to the destination
     value: 2
-enum/BREQ:
-  bit_size: 1
+enum/PRIO:
+  bit_size: 2
   variants:
-  - name: Burst
-    description: the selected hardware request is driven by a peripheral with a hardware request/acknowledge protocol at a burst level.
+  - name: LowWithLowhWeight
+    description: low priority, low weight
     value: 0
-  - name: Block
-    description: the selected hardware request is driven by a peripheral with a hardware request/acknowledge protocol at a block level (see ).
+  - name: LowWithMidWeight
+    description: low priority, mid weight
     value: 1
-enum/DREQ:
-  bit_size: 1
-  variants:
-  - name: SourcePeripheral
-    description: selected hardware request driven by a source peripheral (request signal taken into account by the LPDMA transfer scheduler over the source/read port)
-    value: 0
-  - name: DestinationPeripheral
-    description: selected hardware request driven by a destination peripheral (request signal taken into account by the LPDMA transfer scheduler over the destination/write port)
-    value: 1
+  - name: LowWithHighWeight
+    description: low priority, high weight
+    value: 2
+  - name: High
+    description: high priority
+    value: 3
 enum/SWREQ:
   bit_size: 1
   variants:
