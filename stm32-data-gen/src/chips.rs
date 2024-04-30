@@ -114,6 +114,7 @@ struct PeriMatcher {
 
 impl PeriMatcher {
     fn new() -> Self {
+        #[rustfmt::skip]
         const PERIMAP: &[(&str, (&str, &str, &str))] = &[
             (".*:USART:sci2_v1_1", ("usart", "v1", "USART")),
             (".*:USART:sci2_v1_2_F1", ("usart", "v1", "USART")),
@@ -220,10 +221,7 @@ impl PeriMatcher {
             ("STM32G0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32U0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32G4.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-            (
-                "STM32(L[45]|W[BL]).*:ADC\\d*_COMMON:.*",
-                ("adccommon", "v3", "ADC_COMMON"),
-            ),
+            ("STM32(L[45]|W[BL]).*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32F3.*:ADC\\d*_COMMON:.*", ("adccommon", "f3", "ADC_COMMON")),
             ("STM32F[247].*:ADC\\d*_COMMON:.*", ("adccommon", "v2", "ADC_COMMON")),
             ("STM32H50.*:ADC\\d*_COMMON:.*", ("adccommon", "h50", "ADC_COMMON")),
@@ -247,10 +245,7 @@ impl PeriMatcher {
             ("STM32L5.*:SYSCFG:.*", ("syscfg", "l5", "SYSCFG")),
             ("STM32G0.*:SYSCFG:.*", ("syscfg", "g0", "SYSCFG")),
             ("STM32G4.*:SYSCFG:.*", ("syscfg", "g4", "SYSCFG")),
-            (
-                "STM32H7(45|47|55|57|42|43|53|50).*:SYSCFG:.*",
-                ("syscfg", "h7od", "SYSCFG"),
-            ),
+            ("STM32H7(45|47|55|57|42|43|53|50).*:SYSCFG:.*", ("syscfg", "h7od", "SYSCFG")),
             ("STM32H7.*:SYSCFG:.*", ("syscfg", "h7", "SYSCFG")),
             ("STM32U0.*:SYSCFG:.*", ("syscfg", "u0", "SYSCFG")),
             ("STM32U5.*:SYSCFG:.*", ("syscfg", "u5", "SYSCFG")),
@@ -511,10 +506,7 @@ impl PeriMatcher {
             // timer_v2 for STM32Gx/Hx/Ux/Wx (and Cx) serials
             ("STM32U5.*:TIM(3|4):.*", ("timer", "v2", "TIM_GP32")),
             ("STM32(G4|H5|U0|U5|WBA).*:TIM(1|8|20):.*", ("timer", "v2", "TIM_ADV")),
-            (
-                "STM32(G4|H5|U0|U5|WBA).*:TIM(2|5|23|24):.*",
-                ("timer", "v2", "TIM_GP32"),
-            ),
+            ("STM32(G4|H5|U0|U5|WBA).*:TIM(2|5|23|24):.*", ("timer", "v2", "TIM_GP32")),
             ("STM32(G4|H5|U0|U5|WBA).*:TIM(3|4):.*", ("timer", "v2", "TIM_GP16")),
             ("STM32(G4|H5|U0|U5|WBA).*:TIM(6|7):.*", ("timer", "v2", "TIM_BASIC")),
             ("STM32(G4|H5|U0|U5|WBA).*:TIM(13|14):.*", ("timer", "v2", "TIM_1CH")),
@@ -614,30 +606,12 @@ impl PeriMatcher {
             ("STM32WL.*:TAMP:.*", ("tamp", "wl", "TAMP")),
             (".*:OCTOSPIM:OCTOSPIM:.*", ("octospim", "v1", "OCTOSPIM")),
             // it's actually STM32L4+, not STM32L4
-            (
-                "STM32L4.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0.*",
-                ("octospi", "v1", "OCTOSPI"),
-            ),
-            (
-                "STM32H7.*:OCTOSPI[12]:OCTOSPI:octospi_v2_1H7AB.*",
-                ("octospi", "v1", "OCTOSPI"),
-            ),
-            (
-                "STM32U5[34].*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*",
-                ("octospi", "v1", "OCTOSPI"),
-            ),
-            (
-                "STM32U5[AFG789].*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*",
-                ("octospi", "v1", "OCTOSPI"),
-            ),
-            (
-                "STM32L5.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*",
-                ("octospi", "v2", "OCTOSPI"),
-            ),
-            (
-                "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
-                ("octospi", "v2", "OCTOSPI"),
-            ),
+            ("STM32L4.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0.*", ("octospi", "v1", "OCTOSPI")),
+            ("STM32H7.*:OCTOSPI[12]:OCTOSPI:octospi_v2_1H7AB.*", ("octospi", "v1", "OCTOSPI")),
+            ("STM32U5[34].*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*", ("octospi", "v1", "OCTOSPI")),
+            ("STM32U5[AFG789].*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*", ("octospi", "v1", "OCTOSPI")),
+            ( "STM32L5.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*", ("octospi", "v2", "OCTOSPI")),
+            ("STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*", ("octospi", "v2", "OCTOSPI")),
             ("STM32L4.*:GFXMMU:.*", ("gfxmmu", "v1", "GFXMMU")),
             ("STM32U5.*:GFXMMU:.*", ("gfxmmu", "v2", "GFXMMU")),
             ("STM32U5.*:ICACHE:.*", ("icache", "v1_3crr", "ICACHE")),
@@ -1274,15 +1248,11 @@ fn process_core(
         .filter_map(|ip| {
             let version = &ip.version;
             let instance = &ip.instance_name;
-            if let Some(dma) = dma_channels
+            dma_channels
                 .0
                 .get(version)
                 .or_else(|| dma_channels.0.get(&format!("{version}:{instance}")))
-            {
-                Some((ip.name.clone(), instance.clone(), dma))
-            } else {
-                None
-            }
+                .map(|dma| (ip.name.clone(), instance.clone(), dma))
         })
         .collect();
     dmas.sort_by_key(|(name, instance, _)| {
@@ -1325,8 +1295,8 @@ fn process_core(
                 );
             }
         }
-            chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
-            p.dma_channels = chs;
+        chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
+        p.dma_channels = chs;
     }
 
     let mut core = stm32_data_serde::chip::Core {
