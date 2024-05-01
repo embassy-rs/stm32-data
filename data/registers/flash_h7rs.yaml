@@ -1,0 +1,882 @@
+block/FLASH:
+  description: Embedded Flash memory.
+  items:
+  - name: ACR
+    description: Access control register.
+    byte_offset: 0
+    fieldset: ACR
+  - name: KEYR
+    description: FLASH control key register.
+    byte_offset: 4
+    fieldset: KEYR
+  - name: CR
+    description: FLASH control register.
+    byte_offset: 16
+    fieldset: CR
+  - name: SR
+    description: FLASH status register.
+    byte_offset: 20
+    fieldset: SR
+  - name: FCR
+    description: FLASH status register.
+    byte_offset: 24
+    fieldset: FCR
+  - name: IER
+    description: FLASH interrupt enable register.
+    byte_offset: 32
+    fieldset: IER
+  - name: ISR
+    description: FLASH interrupt status register.
+    byte_offset: 36
+    fieldset: ISR
+  - name: ICR
+    description: FLASH interrupt clear register.
+    byte_offset: 40
+    fieldset: ICR
+  - name: CRCCR
+    description: FLASH CRC control register.
+    byte_offset: 48
+    fieldset: CRCCR
+  - name: CRCSADDR
+    description: FLASH CRC start address register.
+    byte_offset: 52
+    fieldset: CRCSADDR
+  - name: CRCEADDR
+    description: FLASH CRC end address register.
+    byte_offset: 56
+    fieldset: CRCEADDR
+  - name: CRCDATAR
+    description: FLASH CRC data register.
+    byte_offset: 60
+    fieldset: CRCDATAR
+  - name: ECCSFADDR
+    description: FLASH ECC single error fail address.
+    byte_offset: 64
+    fieldset: ECCSFADDR
+  - name: ECCDFADDR
+    description: FLASH ECC double error fail address.
+    byte_offset: 68
+    fieldset: ECCDFADDR
+  - name: OPTKEYR
+    description: FLASH options key register.
+    byte_offset: 256
+    fieldset: OPTKEYR
+  - name: OPTCR
+    description: FLASH options control register.
+    byte_offset: 260
+    fieldset: OPTCR
+  - name: OPTISR
+    description: FLASH options interrupt status register.
+    byte_offset: 264
+    fieldset: OPTISR
+  - name: OPTICR
+    description: FLASH options interrupt clear register.
+    byte_offset: 268
+    fieldset: OPTICR
+  - name: OBKCR
+    description: FLASH option byte key control register.
+    byte_offset: 272
+    fieldset: OBKCR
+  - name: OBKDR
+    description: FLASH option bytes key data register 0.
+    array:
+      len: 8
+      stride: 4
+    byte_offset: 280
+  - name: NVSR
+    description: FLASH non-volatile status register.
+    byte_offset: 512
+    fieldset: NVSR
+  - name: NVSRP
+    description: FLASH security status register programming.
+    byte_offset: 516
+    fieldset: NVSRP
+  - name: ROTSR
+    description: FLASH RoT status register.
+    byte_offset: 520
+    fieldset: ROTSR
+  - name: ROTSRP
+    description: FLASH RoT status register programming.
+    byte_offset: 524
+    fieldset: ROTSRP
+  - name: OTPLSR
+    description: FLASH OTP lock status register.
+    byte_offset: 528
+    fieldset: OTPLSR
+  - name: OTPLSRP
+    description: FLASH OTP lock status register programming.
+    byte_offset: 532
+    fieldset: OTPLSRP
+  - name: WRPSR
+    description: FLASH write protection status register.
+    byte_offset: 536
+    fieldset: WRPSR
+  - name: WRPSRP
+    description: FLASH write protection status register programming.
+    byte_offset: 540
+    fieldset: WRPSRP
+  - name: HDPSR
+    description: FLASH hide protection status register.
+    byte_offset: 560
+    fieldset: HDPSR
+  - name: HDPSRP
+    description: FLASH hide protection status register programming.
+    byte_offset: 564
+    fieldset: HDPSRP
+  - name: EPOCHSR
+    description: FLASH epoch status register.
+    byte_offset: 592
+    fieldset: EPOCHSR
+  - name: EPOCHSRP
+    description: FLASH RoT status register programming.
+    byte_offset: 596
+    fieldset: EPOCHSRP
+  - name: OBW1SR
+    description: FLASH option byte word 1 status register.
+    byte_offset: 608
+    fieldset: OBW1SR
+  - name: OBW1SRP
+    description: FLASH option byte word 1 status register programming.
+    byte_offset: 612
+    fieldset: OBW1SRP
+  - name: OBW2SR
+    description: FLASH option byte word 2 status register.
+    byte_offset: 616
+    fieldset: OBW2SR
+  - name: OBW2SRP
+    description: FLASH option byte word 2 status register programming.
+    byte_offset: 620
+    fieldset: OBW2SRP
+fieldset/ACR:
+  description: Access control register.
+  fields:
+  - name: LATENCY
+    description: 'Read latency These bits are used to control the number of wait states used during read operations on both non-volatile memory banks. The application software has to program them to the correct value depending on the embedded Flash memory interface frequency and voltage conditions. Please refer to Table 27 for details. ... Note: Embedded Flash does not verify that the configuration is correct.'
+    bit_offset: 0
+    bit_size: 4
+  - name: WRHIGHFREQ
+    description: 'Flash signal delay These bits are used to control the delay between non-volatile memory signals during programming operations. Application software has to program them to the correct value depending on the embedded Flash memory interface frequency. Please refer to Table 27 for details. Note: Embedded Flash does not verify that the configuration is correct.'
+    bit_offset: 4
+    bit_size: 2
+fieldset/CR:
+  description: FLASH control register.
+  fields:
+  - name: LOCK
+    description: Configuration lock bit When this bit is set write to all other bits in this register, and to FLASH_IER register, are ignored. Clearing this bit requires the correct write sequence to FLASH_KEYR register (see this register for details). If a wrong sequence is executed, or if the unlock sequence is performed twice, this bit remains locked until the next system reset. During the write access to set LOCK bit from 0 to 1, it is possible to change the other bits of this register.
+    bit_offset: 0
+    bit_size: 1
+  - name: PG
+    description: Internal buffer control bit Setting this bit enables internal buffer for write operations. This allows preparing program operations even if a sector or bank erase is ongoing. When PG is cleared, the internal buffer is disabled for write operations, and all the data stored in the buffer but not sent to the operation queue are lost.
+    bit_offset: 1
+    bit_size: 1
+  - name: SER
+    description: 'Sector erase request Setting this bit requests a sector erase. Write protection error is triggered when a sector erase is required on at least one protected sector. BER has a higher priority than SER: if both bits are set, the embedded Flash memory executes a bank erase.'
+    bit_offset: 2
+    bit_size: 1
+  - name: BER
+    description: 'Bank erase request Setting this bit requests a bank erase operation (user Flash memory only). Write protection error is triggered when a bank erase is required and some sectors are protected. BER has a higher priority than SER: if both are set, the embedded Flash memory executes a bank erase.'
+    bit_offset: 3
+    bit_size: 1
+  - name: FW
+    description: 'Force write This bit forces a write operation even if the write buffer is not full. In this case all bits not written are set by hardware. The embedded Flash memory resets FW when the corresponding operation has been acknowledged. Note: Using a force-write operation prevents the application from updating later the missing bits with something else than 1, because it is likely that it will lead to permanent ECC error. Write forcing is effective only if the write buffer is not empty (in particular, FW does not start several write operations when the force-write operations are performed consecutively).'
+    bit_offset: 4
+    bit_size: 1
+  - name: START
+    description: Erase start control bit This bit is used to start a sector erase or a bank erase operation. The embedded Flash memory resets START when the corresponding operation has been acknowledged. The user application cannot access any embedded Flash memory register until the operation is acknowledged.
+    bit_offset: 5
+    bit_size: 1
+  - name: SSN
+    description: Sector erase selection number These bits are used to select the target sector for an erase operation (they are unused otherwise). ...
+    bit_offset: 6
+    bit_size: 2
+  - name: PG_OTP
+    description: Program Enable for OTP Area Set this bit to enable write operations to OTP area.
+    bit_offset: 16
+    bit_size: 1
+  - name: CRC_EN
+    description: CRC enable Setting this bit enables the CRC calculation. CRC_EN does not start CRC calculation but enables CRC configuration through FLASH_CRCCR register. When CRC calculation is performed it can be disabled by clearing CRC_EN bit. Doing so sets CRCDATA to 0x0, clears CRC configuration and resets the content of FLASH_CRCDATAR register.
+    bit_offset: 17
+    bit_size: 1
+  - name: ALL_BANKS
+    description: All banks select bit When this bit is set the erase is done on all Flash Memory sectors. ALL_BANKS is used only if a bank erase is required (BER=1). In all others operations, this control bit is ignored.
+    bit_offset: 24
+    bit_size: 1
+fieldset/CRCCR:
+  description: FLASH CRC control register.
+  fields:
+  - name: CRC_SECT
+    description: CRC sector number CRC_SECT is used to select one user Flash sectors to be added to the list of sectors on which the CRC is calculated. The CRC can be computed either between two addresses (using registers FLASH_CRCSADDR and FLASH_CRCEADDR) or on a list of sectors using this register. If this latter option is selected, it is possible to add a sector to the list of sectors by programming the sector number in CRC_SECT and then setting ADD_SECT bit. The list of sectors can be erased either by setting CLEAN_SECT bit or by disabling the CRC computation. ...
+    bit_offset: 0
+    bit_size: 2
+  - name: CRC_BY_SECT
+    description: CRC sector mode select bit When this bit is set the CRC calculation is performed at sector level, on the sectors present in the list of sectors. To add a sector to this list, use ADD_SECT and CRC_SECT bits. To clean the list, use CLEAN_SECT bit. When CRC_BY_SECT is cleared the CRC calculation is performed on all addresses defined between start and end addresses defined in FLASH_CRCSADDR and FLASH_CRCEADDR registers.
+    bit_offset: 9
+    bit_size: 1
+  - name: ADD_SECT
+    description: CRC sector select bit When this bit is set the sector whose number is written in CRC_SECT is added to the list of sectors on which the CRC is calculated.
+    bit_offset: 10
+    bit_size: 1
+  - name: CLEAN_SECT
+    description: CRC sector list clear bit When this bit is set the list of sectors on which the CRC is calculated is cleared.
+    bit_offset: 11
+    bit_size: 1
+  - name: START_CRC
+    description: CRC start bit START_CRC bit triggers a CRC calculation using the current configuration. No CRC calculation can launched when an option byte change operation is ongoing because all read accesses to embedded Flash memory registers are put on hold until the option byte change operation has completed. This bit is cleared when CRC computation starts.
+    bit_offset: 16
+    bit_size: 1
+  - name: CLEAN_CRC
+    description: CRC clear bit Setting CLEAN_CRC to 1 clears the current CRC result stored in the FLASH_CRCDATAR register.
+    bit_offset: 17
+    bit_size: 1
+  - name: CRC_BURST
+    description: CRC burst size CRC_BURST bits set the size of the bursts that are generated by the CRC calculation unit. A Flash word is 128-bit.
+    bit_offset: 20
+    bit_size: 2
+    enum: CRC_BURST
+  - name: ALL_SECT
+    description: All sectors selection When this bit is set all the sectors in user Flash are added to list of sectors on which the CRC shall be calculated. This bit is cleared when CRC computation starts.
+    bit_offset: 24
+    bit_size: 1
+fieldset/CRCDATAR:
+  description: FLASH CRC data register.
+  fields:
+  - name: CRC_DATA
+    description: CRC result This bitfield contains the result of the last CRC calculation. The value is valid only when CRC calculation completed (CRCENDF is set in FLASH_ISR register). CRC_DATA is cleared when CRC_EN is cleared in FLASH_CR register (CRC disabled), or when CLEAN_CRC bit is set in FLASH_CRCCR register.
+    bit_offset: 0
+    bit_size: 32
+fieldset/CRCEADDR:
+  description: FLASH CRC end address register.
+  fields:
+  - name: CRC_END_ADDR
+    description: CRC end address This register is used when CRC_BY_SECT is cleared. It must be programmed to the address of the Flash word starting the last burst of the CRC calculation. The burst size is defined in CRC_BURST of FLASH_CRCCR register. The least significant bits [5:0] of the address are set by hardware to 0 (minimum burst size= 64 bytes). The address is relative to the Flash bank.
+    bit_offset: 6
+    bit_size: 11
+fieldset/CRCSADDR:
+  description: FLASH CRC start address register.
+  fields:
+  - name: CRC_START_ADDR
+    description: CRC start address This register is used when CRC_BY_SECT is cleared. It must be programmed to the address of the first Flash word to use for the CRC calculation, done burst by burst. CRC computation starts at an address aligned to the burst size defined in CRC_BURST of FLASH_CRCCR register. Hence least significant bits [5:0] of the address are set by hardware to 0 (minimum burst size= 64 bytes). The address is relative to the Flash bank.
+    bit_offset: 6
+    bit_size: 11
+fieldset/ECCDFADDR:
+  description: FLASH ECC double error fail address.
+  fields:
+  - name: DED_FADD
+    description: ECC double error detection fail address When a double ECC detection occurs during a read operation, the DED_FADD bitfield contains the system bus address that generated the error. This register is automatically cleared when the DBECCERRF flag that generated the error is cleared. Note that only the first address that generated an ECC double error detection error is saved in this register.
+    bit_offset: 0
+    bit_size: 32
+fieldset/ECCSFADDR:
+  description: FLASH ECC single error fail address.
+  fields:
+  - name: SEC_FADD
+    description: ECC single error correction fail address When a single ECC error correction occurs during a read operation, the SEC_FADD bitfield contains the system bus address that generated the error. This register is automatically cleared when SNECCERRF flag that generated the error is cleared. Note that only the first address that generated an ECC single error correction error is saved in this register.
+    bit_offset: 0
+    bit_size: 32
+fieldset/EPOCHSR:
+  description: FLASH epoch status register.
+  fields:
+  - name: EPOCH
+    description: Epoch This value is distributed by hardware to the SAES peripheral.
+    bit_offset: 0
+    bit_size: 24
+fieldset/EPOCHSRP:
+  description: FLASH RoT status register programming.
+  fields:
+  - name: EPOCH
+    description: Epoch programming Write to change corresponding bits in FLASH_EPOCHSR register.
+    bit_offset: 0
+    bit_size: 24
+fieldset/FCR:
+  description: FLASH status register.
+  fields:
+  - name: RCHECKF
+    description: Root code check flag clear Set this bit to clear RCHECKF bit in FLASH_SR.
+    bit_offset: 25
+    bit_size: 1
+fieldset/HDPSR:
+  description: FLASH hide protection status register.
+  fields:
+  - name: HDP_AREA_START
+    description: Hide protection user Flash area start This option sets the start address that contains the first 256-byte block of the hide protection (HDP) area in user Flash area. If HDP_AREA_END=HDP_AREA_START all the sectors are protected. If HDP_AREA_END<HDP_AREA_START no sectors are protected.
+    bit_offset: 0
+    bit_size: 9
+  - name: HDP_AREA_END
+    description: Hide protection user Flash area end This option sets the end address that contains the last 256-byte block of the hide protection (HDP) area in user Flash area. If HDP_AREA_END=HDP_AREA_START all the sectors are protected. If HDP_AREA_END<HDP_AREA_START no sectors are protected.
+    bit_offset: 16
+    bit_size: 9
+fieldset/HDPSRP:
+  description: FLASH hide protection status register programming.
+  fields:
+  - name: HDP_AREA_START
+    description: Hide protection user Flash area start programming Write to change corresponding option byte bits in FLASH_HDPSR. If HDP_AREA_END=HDP_AREA_START all the sectors are protected. If HDP_AREA_END<HDP_AREA_START no sectors are protected.
+    bit_offset: 0
+    bit_size: 9
+  - name: HDP_AREA_END
+    description: Hide protection user Flash area end programming Write to change corresponding option byte bits in FLASH_HDPSR. If HDP_AREA_END=HDP_AREA_START all the sectors are protected. If HDP_AREA_END<HDP_AREA_START no sectors are protected.
+    bit_offset: 16
+    bit_size: 9
+fieldset/ICR:
+  description: FLASH interrupt clear register.
+  fields:
+  - name: EOPF
+    description: End-of-program flag clear Setting this bit clears EOPF flag in FLASH_ISR register.
+    bit_offset: 16
+    bit_size: 1
+  - name: WRPERRF
+    description: Write protection error flag clear Setting this bit clears WRPERRF flag in FLASH_ISR register.
+    bit_offset: 17
+    bit_size: 1
+  - name: PGSERRF
+    description: Programming sequence error flag clear Setting this bit clears PGSERRF flag in FLASH_ISR register.
+    bit_offset: 18
+    bit_size: 1
+  - name: STRBERRF
+    description: Strobe error flag clear Setting this bit clears STRBERRF flag in FLASH_ISR register.
+    bit_offset: 19
+    bit_size: 1
+  - name: OBLERRF
+    description: Option byte loading error flag clear Setting this bit clears OBLERRF flag in FLASH_ISR register.
+    bit_offset: 20
+    bit_size: 1
+  - name: INCERRF
+    description: Inconsistency error flag clear Setting this bit clears INCERRF flag in FLASH_ISR register.
+    bit_offset: 21
+    bit_size: 1
+  - name: RDSERRF
+    description: Read security error flag clear Setting this bit clears RDSERRF flag in FLASH_ISR register.
+    bit_offset: 24
+    bit_size: 1
+  - name: SNECCERRF
+    description: ECC single error flag clear Setting this bit clears SNECCERRF flag in FLASH_ISR register. If the DBECCERRF flag of FLASH_ISR register is also cleared, FLASH_ECCFAR register is reset to zero as well.
+    bit_offset: 25
+    bit_size: 1
+  - name: DBECCERRF
+    description: ECC double error flag clear Setting this bit clears DBECCERRF flag in FLASH_ISR register. If the SNECCERRF flag of FLASH_ISR register is also cleared, FLASH_ECCFAR register is reset to zero as well.
+    bit_offset: 26
+    bit_size: 1
+  - name: CRCENDF
+    description: CRC end flag clear Setting this bit clears CRCENDF flag in FLASH_ISR register.
+    bit_offset: 27
+    bit_size: 1
+  - name: CRCRDERRF
+    description: CRC error flag clear Setting this bit clears CRCRDERRF flag in FLASH_ISR register.
+    bit_offset: 28
+    bit_size: 1
+fieldset/IER:
+  description: FLASH interrupt enable register.
+  fields:
+  - name: EOPIE
+    description: End-of-program interrupt control bit.
+    bit_offset: 16
+    bit_size: 1
+  - name: WRPERRIE
+    description: Write protection error interrupt enable bit.
+    bit_offset: 17
+    bit_size: 1
+  - name: PGSERRIE
+    description: Programming sequence error interrupt enable bit.
+    bit_offset: 18
+    bit_size: 1
+  - name: STRBERRIE
+    description: Strobe error interrupt enable bit.
+    bit_offset: 19
+    bit_size: 1
+  - name: OBLERRIE
+    description: Option byte loading error interrupt enable bit.
+    bit_offset: 20
+    bit_size: 1
+  - name: INCERRIE
+    description: Inconsistency error interrupt enable bit.
+    bit_offset: 21
+    bit_size: 1
+  - name: RDSERRIE
+    description: Read security error interrupt enable bit.
+    bit_offset: 24
+    bit_size: 1
+  - name: SNECCERRIE
+    description: ECC single correction error interrupt enable bit.
+    bit_offset: 25
+    bit_size: 1
+  - name: DBECCERRIE
+    description: ECC double detection error interrupt enable bit.
+    bit_offset: 26
+    bit_size: 1
+  - name: CRCENDIE
+    description: CRC end of calculation interrupt enable bit.
+    bit_offset: 27
+    bit_size: 1
+  - name: CRCRDERRIE
+    description: CRC read error interrupt enable bit.
+    bit_offset: 28
+    bit_size: 1
+fieldset/ISR:
+  description: FLASH interrupt status register.
+  fields:
+  - name: EOPF
+    description: End-of-program flag This bit is set when a programming operation completes. An interrupt is generated if the EOPIE is set. It is not necessary to reset EOPF before starting a new operation. Setting EOPF bit in FLASH_ICR register clears this bit.
+    bit_offset: 16
+    bit_size: 1
+  - name: WRPERRF
+    description: Write protection error flag This bit is set when a protection error occurs during a program operation. An interrupt is also generated if the WRPERRIE is set. Setting WRPERRF bit in FLASH_ICR register clears this bit.
+    bit_offset: 17
+    bit_size: 1
+  - name: PGSERRF
+    description: Programming sequence error flag This bit is set when a sequence error occurs. An interrupt is generated if the PGSERRIE bit is set. Setting PGSERRF bit in FLASH_ICR register clears this bit.
+    bit_offset: 18
+    bit_size: 1
+  - name: STRBERRF
+    description: Strobe error flag This bit is set when a strobe error occurs (when the master attempts to write several times the same byte in the write buffer). An interrupt is generated if the STRBERRIE bit is set. Setting STRBERRF bit in FLASH_ICR register clears this bit.
+    bit_offset: 19
+    bit_size: 1
+  - name: OBLERRF
+    description: Option byte loading error flag This bit is set when an error is found during the option byte loading sequence. An interrupt is generated if OBLERRIE is set. Setting OBLERRF bit in the FLASH_ICR register clears this bit.
+    bit_offset: 20
+    bit_size: 1
+  - name: INCERRF
+    description: Inconsistency error flag This bit is set when a inconsistency error occurs. An interrupt is generated if INCERRIE is set. Setting INCERRF bit in the FLASH_ICR register clears this bit.
+    bit_offset: 21
+    bit_size: 1
+  - name: RDSERRF
+    description: Read security error flag This bit is set when a read security error occurs (read access to hide protected area with incorrect hide protection level). An interrupt is generated if RDSERRIE is set. Setting RDSERRF bit in FLASH_ICR register clears this bit.
+    bit_offset: 24
+    bit_size: 1
+  - name: SNECCERRF
+    description: ECC single error flag This bit is set when an ECC single correction error occurs during a read operation. An interrupt is generated if SNECCERRIE is set. Setting SNECCERRF bit in FLASH_ICR register clears this bit.
+    bit_offset: 25
+    bit_size: 1
+  - name: DBECCERRF
+    description: ECC double error flag This bit is set when an ECC double detection error occurs during a read operation. An interrupt is generated if DBECCERRIE is set. Setting DBECCERRF bit in FLASH_ICR register clears this bit.
+    bit_offset: 26
+    bit_size: 1
+  - name: CRCENDF
+    description: CRC end flag This bit is set when the CRC computation has completed. An interrupt is generated if CRCENDIE is set. It is not necessary to reset CRCEND before restarting CRC computation. Setting CRCENDF bit in FLASH_ICR register clears this bit.
+    bit_offset: 27
+    bit_size: 1
+  - name: CRCRDERRF
+    description: CRC read error flag This bit is set when a word is found read protected during a CRC operation. An interrupt is generated if CRCRDIE is set. Setting CRCRDERRF bit in FLASH_ICR register clears this bit. This flag is valid only when CRCEND bit is set.
+    bit_offset: 28
+    bit_size: 1
+fieldset/KEYR:
+  description: FLASH control key register.
+  fields:
+  - name: CUKEY
+    description: 'Control unlock key Following values must be written to FLASH_KEYR consecutively to unlock FLASH_CR register: 1st key = 0x4567 0123 2nd key = 0xCDEF 89AB Reads to this register returns zero. If above sequence is wrong or performed twice, the FLASH_CR register is locked until the next system reset, and access to it generates a bus error.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/NVSR:
+  description: FLASH non-volatile status register.
+  fields:
+  - name: NVSTATE
+    description: 'Non-volatile state others: invalid configuration.'
+    bit_offset: 0
+    bit_size: 8
+    enum: NVSR_NVSTATE
+fieldset/NVSRP:
+  description: FLASH security status register programming.
+  fields:
+  - name: NVSTATE
+    description: 'Non-volatile state programming Write to change corresponding bits in FLASH_NVSR register: Actual option byte change from close to open is triggered only after memory clear hardware process is confirmed. When NVSTATE=0xB4 (resp. 0x51) writing any other value than 0x51 (resp. 0xB4) triggers an option byte change error (OPTERRF).'
+    bit_offset: 0
+    bit_size: 8
+    enum: NVSRP_NVSTATE
+fieldset/OBKCR:
+  description: FLASH option byte key control register.
+  fields:
+  - name: OBKINDEX
+    description: Option byte key index This bitfield represents the index of the option byte key in a given hide protection level. Reading keys with index lower that 8, the value is not be available in OBKDRx registers. It is instead sent directly to SAES peripheral. All others keys can be read using OBKDRx registers. Up to 32 keys can be provisioned per hide protection level (0, 1 or 2), provided there is enough space left in the Flash to store them.
+    bit_offset: 0
+    bit_size: 5
+  - name: NEXTKL
+    description: 'Next key level 10 or 11: reserved.'
+    bit_offset: 8
+    bit_size: 2
+    enum: NEXTKL
+  - name: OBKSIZE
+    description: Option byte key size Application must use this bitfield to specify how many bits must be used for the new key. Embedded Flash ignores OBKSIZE during read of option keys because size is stored with the key.
+    bit_offset: 10
+    bit_size: 2
+    enum: OBKSIZE
+  - name: KEYPROG
+    description: Key program This bit must be set to write option byte keys (keys are read otherwise).
+    bit_offset: 14
+    bit_size: 1
+  - name: KEYSTART
+    description: Key option start This bit is used to start the option byte key operation defined by the PROG bit. The embedded Flash memory resets START when the corresponding operation has been acknowledged.
+    bit_offset: 15
+    bit_size: 1
+fieldset/OBW1SR:
+  description: FLASH option byte word 1 status register.
+  fields:
+  - name: BOR_LEV
+    description: Brownout level These bits reflects the power level that generates a system reset.
+    bit_offset: 2
+    bit_size: 2
+    enum: BOR_LEV
+  - name: IWDG_HW
+    description: Independent watchdog HW Control.
+    bit_offset: 4
+    bit_size: 1
+  - name: NRST_STOP
+    description: Reset on stop mode.
+    bit_offset: 6
+    bit_size: 1
+  - name: NRST_STBY
+    description: Reset on standby mode.
+    bit_offset: 7
+    bit_size: 1
+  - name: OCTO1_HSLV
+    description: XSPIM_P1 High-Speed at Low-Voltage.
+    bit_offset: 8
+    bit_size: 1
+  - name: OCTO2_HSLV
+    description: XSPIM_P2 High-Speed at Low-Voltage.
+    bit_offset: 9
+    bit_size: 1
+  - name: IWDG_FZ_STOP
+    description: IWDG stop mode freeze When set the independent watchdog IWDG is frozen in system Stop mode.
+    bit_offset: 17
+    bit_size: 1
+  - name: IWDG_FZ_SDBY
+    description: IWDG standby mode freeze When set the independent watchdog IWDG is frozen in system Standby mode.
+    bit_offset: 18
+    bit_size: 1
+  - name: PERSO_OK
+    description: Personalization OK This bit is set on STMicroelectronics production line.
+    bit_offset: 28
+    bit_size: 1
+  - name: VDDIO_HSLV
+    description: I/O High-Speed at Low-Voltage This bit indicates that the product operates below 2.5 V.
+    bit_offset: 29
+    bit_size: 1
+fieldset/OBW1SRP:
+  description: FLASH option byte word 1 status register programming.
+  fields:
+  - name: BOR_LEV
+    description: Brownout level Write to change corresponding bits in FLASH_OBW1SR register.
+    bit_offset: 2
+    bit_size: 2
+  - name: IWDG_HW
+    description: Independent watchdog HW Control Write to change corresponding bit in FLASH_OBW1SR register.
+    bit_offset: 4
+    bit_size: 1
+  - name: NRST_STOP
+    description: Reset on stop mode programming Write to change corresponding bit in FLASH_OBW1SR register.
+    bit_offset: 6
+    bit_size: 1
+  - name: NRST_STBY
+    description: Reset on standby mode programming Write to change corresponding bit in FLASH_OBW1SR register.
+    bit_offset: 7
+    bit_size: 1
+  - name: OCTO1_HSLV
+    description: XSPIM_P1 High-Speed at Low-Voltage Write to change corresponding bit in FLASH_OBW1SR register.
+    bit_offset: 8
+    bit_size: 1
+  - name: OCTO2_HSLV
+    description: XSPIM_P2 High-Speed at Low-Voltage programming Write to change corresponding bit in FLASH_OBW1SR register.
+    bit_offset: 9
+    bit_size: 1
+  - name: IWDG_FZ_STOP
+    description: IWDG stop mode freeze Write to change corresponding bit in FLASH_OBW1SR register.
+    bit_offset: 17
+    bit_size: 1
+  - name: IWDG_FZ_SDBY
+    description: IWDG standby mode freeze programming Write to change corresponding bit in FLASH_OBW1SR register.
+    bit_offset: 18
+    bit_size: 1
+  - name: VDDIO_HSLV
+    description: I/O High-Speed at Low-Voltage programming Write to change corresponding bit in FLASH_OBW1SR register.
+    bit_offset: 29
+    bit_size: 1
+fieldset/OBW2SR:
+  description: FLASH option byte word 2 status register.
+  fields:
+  - name: ITCM_AXI_SHARE
+    description: ITCM SRAM configuration.
+    bit_offset: 0
+    bit_size: 3
+  - name: DTCM_AXI_SHARE
+    description: DTCM SRAM configuration.
+    bit_offset: 4
+    bit_size: 3
+  - name: ECC_ON_SRAM
+    description: ECC on SRAM.
+    bit_offset: 8
+    bit_size: 1
+  - name: I2C_NI3C
+    description: I2C Not I3C.
+    bit_offset: 9
+    bit_size: 1
+fieldset/OBW2SRP:
+  description: FLASH option byte word 2 status register programming.
+  fields:
+  - name: ITCM_AXI_SHARE
+    description: 'ITCM AXI share programming Write to change corresponding bits in FLASH_OBW2SR register. Bit 2 should be kept to 0: ITCM_AXI_SHARE: = 000 or 011: ITCM 64 Kbytes ITCM_AXI_SHARE = 001: ITCM 128 Kbytes ITCM_AXI_SHARE = 010: ITCM 192 Kbytes.'
+    bit_offset: 0
+    bit_size: 3
+  - name: DTCM_AXI_SHARE
+    description: 'DTCM AXI share programming Write to change corresponding bits in the FLASH_OBW2SR register. Bit 2 should be kept to 0: DTCM_AXI_SHARE = 000 or 011: DTCM 64 Kbytes DTCM_AXI_SHARE = 001: DTCM 128 Kbytes DTCM_AXI_SHARE = 010: DTCM 192 Kbytes.'
+    bit_offset: 4
+    bit_size: 3
+  - name: ECC_ON_SRAM
+    description: ECC on SRAM programming Write to change corresponding bit in FLASH_OBW2SR register.
+    bit_offset: 8
+    bit_size: 1
+  - name: I2C_NI3C
+    description: I2C Not I3C Write to change corresponding bit in FLASH_OBW2SR register.
+    bit_offset: 9
+    bit_size: 1
+fieldset/OPTCR:
+  description: FLASH options control register.
+  fields:
+  - name: OPTLOCK
+    description: Options lock When this bit is set write to all other bits in this register, and write to OTP words, option bytes and option bytes keys control registers, are ignored. Clearing this bit requires the correct write sequence to FLASH_OPTKEYR register (see this register for details). If a wrong sequence is executed, or the unlock sequence is performed twice, this bit remains locked until next system reset. During the write access to set LOCK bit from 0 to 1, it is possible to change the other bits of this register.
+    bit_offset: 0
+    bit_size: 1
+  - name: PG_OPT
+    description: Program options.
+    bit_offset: 1
+    bit_size: 1
+  - name: KVEIE
+    description: Key valid error interrupt enable bit This bit controls if an interrupt has to be generated when KVEF is set in FLASH_OPTISR.
+    bit_offset: 27
+    bit_size: 1
+  - name: KTEIE
+    description: Key transfer error interrupt enable bit This bit controls if an interrupt has to be generated when KTEF is set in FLASH_OPTISR.
+    bit_offset: 28
+    bit_size: 1
+  - name: OPTERRIE
+    description: Option byte change error interrupt enable bit This bit controls if an interrupt has to be generated when an error occurs during an option byte change.
+    bit_offset: 30
+    bit_size: 1
+fieldset/OPTICR:
+  description: FLASH options interrupt clear register.
+  fields:
+  - name: KVEF
+    description: key valid error flag Set this bit to clear KVEF flag in FLASH_OPTISR register.
+    bit_offset: 27
+    bit_size: 1
+  - name: KTEF
+    description: key transfer error flag Set this bit to clear KTEF flag in FLASH_OPTISR register.
+    bit_offset: 28
+    bit_size: 1
+  - name: OPTERRF
+    description: Option byte change error flag Set this bit to clear OPTERRF flag in FLASH_OPTISR register.
+    bit_offset: 30
+    bit_size: 1
+fieldset/OPTISR:
+  description: FLASH options interrupt status register.
+  fields:
+  - name: KVEF
+    description: 'Key valid error flag This bit is set when loading an unknown or corrupted option byte key. More specifically: Embedded Flash did not find an option byte key that corresponds to the given OBKINDEX[4:0] and the requested HDPL (optionally modified by NEXTKL[1:0]). It can happen for example when requested key has not being provisioned. A double error detection was found when loading the requested option byte key. In this case, if this key is provisioned again the error should disappear. When KVEF is set write to START bit in FLASH_OBKCR is ignored. An interrupt is generated when this flag is raised if the KVEIE bit of FLASH_OPTCR register is set. Setting KVEF bit of register FLASH_OPTICR clears this bit.'
+    bit_offset: 27
+    bit_size: 1
+  - name: KTEF
+    description: Key transfer error flag This bit is set when embedded Flash signals an error to the SAES peripheral. It happens when the key size (128-bit or 256-bit) is not matching between embedded Flash OBKSIZE[1:0] and KEYSIZE bit in SAES_CR register. It also happen when an ECC dual error detection occurred while embedded Flash loaded an option byte key for the SAES peripheral. When KTEF is set write to START bit in FLASH_OBKCR is ignored. An interrupt is generated when this flag is raised if the KTEIE bit of FLASH_OPTCR register is set. Setting KTEF bit of register FLASH_OPTICR clears this bit.
+    bit_offset: 28
+    bit_size: 1
+  - name: OPTERRF
+    description: Option byte change error flag When OPTERRF is set, the option byte change operation did not successfully complete. An interrupt is generated when this flag is raised if the OPTERRIE bit of FLASH_OPTCR register is set. Setting OPTERRF of register FLASH_OPTICR clears this bit.
+    bit_offset: 30
+    bit_size: 1
+fieldset/OPTKEYR:
+  description: FLASH options key register.
+  fields:
+  - name: OCUKEY
+    description: 'Options configuration unlock key Following values must be written to FLASH_OPTKEYR consecutively to unlock FLASH_OPTCR register: 1st key = 0x0819 2A3B 2nd key = 0x4C5D 6E7F Reads to this register returns zero. If above sequence is performed twice locks up the corresponding register/bit until the next system reset, and generates a bus error.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/OTPLSR:
+  description: FLASH OTP lock status register.
+  fields:
+  - name: OTPL
+    description: OTP lock n Block n corresponds to OTP 16-bit word 32 x n to 32 x n + 31. OTPL[n] = 1 indicates that all OTP 16-bit words in OTP Block n are locked and can no longer be programmed. OTPL[n] = 0 indicates that all OTP 16-bit words in OTP Block n are not locked and can still be modified.
+    bit_offset: 0
+    bit_size: 16
+fieldset/OTPLSRP:
+  description: FLASH OTP lock status register programming.
+  fields:
+  - name: OTPL
+    description: OTP lock n programming Write to change corresponding option byte bit in FLASH_OTPLSR. OTPL bits can be only be set, not cleared.
+    bit_offset: 0
+    bit_size: 16
+fieldset/ROTSR:
+  description: FLASH RoT status register.
+  fields:
+  - name: OEM_PROVD
+    description: 'OEM provisioned device Any other value: device is not provisioned by the OEM.'
+    bit_offset: 0
+    bit_size: 8
+    enum: OEM_PROVD
+  - name: DBG_AUTH
+    description: 'Debug authentication method Any other value: no authentication method selected (NotSet).'
+    bit_offset: 8
+    bit_size: 8
+    enum: DBG_AUTH
+  - name: IROT_SELECT
+    description: 'iRoT selection This option is ignored for STM32H7R devices (OEM iRoT is always selected). Any other value: OEM iRoT is selected at boot.'
+    bit_offset: 24
+    bit_size: 8
+    enum: IROT_SELECT
+fieldset/ROTSRP:
+  description: FLASH RoT status register programming.
+  fields:
+  - name: OEM_PROVD
+    description: OEM provisioned device Write to change corresponding bits in FLASH_ROTSR register. Write are ignored if HDPL is greater than 1.
+    bit_offset: 0
+    bit_size: 8
+  - name: DBG_AUTH
+    description: Debug authentication method programming Write to change corresponding bits in FLASH_ROTSR register. Write are ignored if HDPL is greater than 0.
+    bit_offset: 8
+    bit_size: 8
+  - name: IROT_SELECT
+    description: iRoT selection This option is ignored for STM32H7R devices. Write to change corresponding bits in FLASH_ROTSR register. Write are ignored if HDPL is greater than 1 and if NVSTATE is not 0xB4 (OPEN).
+    bit_offset: 24
+    bit_size: 8
+fieldset/SR:
+  description: FLASH status register.
+  fields:
+  - name: BUSY
+    description: Busy flag This bit is set when an effective write, erase or option byte change operation is ongoing. It is possible to know what type of operation is being executed reading the flags IS_PROGRAM, IS_ERASE and IS_OPTCHANGE. BUSY cannot be cleared by application. It is automatically reset by hardware every time a step in a write, erase or option byte change operation completes. It is not recommended to do software polling on BUSY to know when one operation completed because, depending of operation, more pulses are possible for one only operation. For software polling it is therefore better to use QW flag or to check the EOPF flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: WBNE
+    description: 'Write buffer not empty flag This bit is set when the embedded Flash memory is waiting for new data to complete the write buffer. In this state, the write buffer is not empty. WBNE is reset by hardware each time the write buffer is complete or the write buffer is emptied following one of the event below: the application software forces the write operation using FW bit in FLASH_CR the embedded Flash memory detects an error that involves data loss the application software has disabled write operations This bit cannot be forced to 0. To reset it, clear the write buffer by performing any of the above listed actions, or send the missing data.'
+    bit_offset: 1
+    bit_size: 1
+  - name: QW
+    description: Wait queue flag This bit is set when a write, erase or option byte change operation is pending in the command queue buffer. It is not possible to know what type of programming operation is present in the queue. This flag is reset by hardware when all write, erase or option byte change operations have been executed and thus removed from the waiting queue(s). This bit cannot be forced to 0. It is reset after a deterministic time if no other operations are requested.
+    bit_offset: 2
+    bit_size: 1
+  - name: CRC_BUSY
+    description: CRC busy flag This bit is set when a CRC calculation is ongoing. This bit cannot be forced to 0. The user must wait until the CRC calculation has completed or disable CRC computation using CRC_EN bit in FLASH_CR register.
+    bit_offset: 3
+    bit_size: 1
+  - name: IS_PROGRAM
+    description: Is a program This bit is set together with BUSY when a program operation is ongoing. It is cleared when BUSY is cleared. This flag can also raise with IS_OPTCHANGE, because an program operation can happen during an option change.
+    bit_offset: 4
+    bit_size: 1
+  - name: IS_ERASE
+    description: Is an erase This bit is set together with BUSY when an erase operation is ongoing. It is cleared when BUSY is cleared. This flag can also raise with IS_OPTCHANGE, because an erase operation can happen during an option change.
+    bit_offset: 5
+    bit_size: 1
+  - name: IS_OPTCHANGE
+    description: Is an option change This bit is set together with BUSY when an option change operation is ongoing. It is cleared when BUSY is cleared. This flag can also raise with IS_PROGRAM or IS_ERASE, because a program or erase step is ongoing during option change.
+    bit_offset: 6
+    bit_size: 1
+  - name: RCHECKF
+    description: Root code check flag This bit returns the status of the root code check performed following the first access to the Flash. This bit is cleared with RCHECKF bit in FLASH_FCR (optional).
+    bit_offset: 25
+    bit_size: 1
+fieldset/WRPSR:
+  description: FLASH write protection status register.
+  fields:
+  - name: WRPS
+    description: Write protection for sector n This bit reflects the write protection status of user Flash sector n.
+    bit_offset: 0
+    bit_size: 8
+fieldset/WRPSRP:
+  description: FLASH write protection status register programming.
+  fields:
+  - name: WRPS
+    description: Write protection for sector n programming Write to change corresponding bit in FLASH_WRPSR.
+    bit_offset: 0
+    bit_size: 8
+enum/BOR_LEV:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: BOR OFF, POR/PDR reset threshold level is applied.
+    value: 0
+  - name: Level1
+    description: BOR Level 1, the threshold level is low (around 2.1 V).
+    value: 1
+  - name: Level2
+    description: BOR Level 2, the threshold level is medium (around 2.4 V).
+    value: 2
+  - name: Level3
+    description: BOR Level 3, the threshold level is high (around 2.7 V).
+    value: 3
+enum/CRC_BURST:
+  bit_size: 2
+  variants:
+  - name: Word4
+    description: every burst has a size of 4 Flash words (64 Bytes).
+    value: 0
+  - name: Word16
+    description: every burst has a size of 16 Flash words (256 Bytes).
+    value: 1
+  - name: Word64
+    description: every burst has a size of 64 Flash words (1 Kbytes).
+    value: 2
+  - name: Word256
+    description: every burst has a size of 256 Flash words (4 Kbytes).
+    value: 3
+enum/DBG_AUTH:
+  bit_size: 8
+  variants:
+  - name: ECDSA
+    description: Authentication method using ECDSA signature (NIST P256).
+    value: 81
+  - name: Delegated
+    description: Delegated debug (to OEM iRoT code in user Flash).
+    value: 111
+  - name: Password
+    description: Authentication method using password.
+    value: 138
+  - name: Locked
+    description: Locked device (no debug allowed).
+    value: 180
+enum/IROT_SELECT:
+  bit_size: 8
+  variants:
+  - name: Selected
+    description: ST iRoT is selected at boot.
+    value: 180
+enum/NEXTKL:
+  bit_size: 2
+  variants:
+  - name: Plus0
+    description: OBKINDEX represents the index of the option byte key stored for the hide protection level indicated in SBS_HDPLSR.
+    value: 0
+  - name: Plus1
+    description: OBKINDEX represents the index of the option byte key stored for the hide protection level indicated in SBS_HDPLSR plus one (e.g. if HDPL=1 in SBS_HDPLR the key of level 2 is selected).
+    value: 1
+enum/NVSRP_NVSTATE:
+  bit_size: 8
+  variants:
+  - name: Close
+    description: CLOSE.
+    value: 81
+  - name: Open
+    description: OPEN.
+    value: 180
+enum/NVSR_NVSTATE:
+  bit_size: 8
+  variants:
+  - name: Closed
+    description: CLOSED device.
+    value: 81
+  - name: Open
+    description: OPEN device.
+    value: 180
+enum/OBKSIZE:
+  bit_size: 2
+  variants:
+  - name: Bits32
+    description: Key size is 32 bits.
+    value: 0
+  - name: Bits64
+    description: Key size is 64 bits.
+    value: 1
+  - name: Bits128
+    description: Key size is 128 bits.
+    value: 2
+  - name: Bits256
+    description: Key size is 256 bits.
+    value: 3
+enum/OEM_PROVD:
+  bit_size: 8
+  variants:
+  - name: Provisioned
+    description: Device has been provisioned by the OEM.
+    value: 180

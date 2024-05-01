@@ -88,7 +88,7 @@ fn chip_name_from_package_name(x: &str) -> String {
         (regex!("^(STM32G0....).xN$"), "$1"),
         (regex!("^(STM32L5....).x[PQ]$"), "$1"),
         (regex!("^(STM32L0....).xS$"), "$1"),
-        (regex!("^(STM32H7....).xQ$"), "$1"),
+        (regex!("^(STM32H7....).x[QH]$"), "$1"),
         (regex!("^(STM32U5....).xQ$"), "$1"),
         (regex!("^(STM32H5....).xQ$"), "$1"),
         (regex!("^(STM32WBA....).x$"), "$1"),
@@ -247,6 +247,7 @@ impl PeriMatcher {
             ("STM32L5.*:SYSCFG:.*", ("syscfg", "l5", "SYSCFG")),
             ("STM32G0.*:SYSCFG:.*", ("syscfg", "g0", "SYSCFG")),
             ("STM32G4.*:SYSCFG:.*", ("syscfg", "g4", "SYSCFG")),
+            ("STM32H7[RS].*:SYSCFG:.*", ("syscfg", "h7rs", "SYSCFG")),
             (
                 "STM32H7(45|47|55|57|42|43|53|50).*:SYSCFG:.*",
                 ("syscfg", "h7od", "SYSCFG"),
@@ -345,6 +346,7 @@ impl PeriMatcher {
             ("STM32F7.*:RCC:.*", ("rcc", "f7", "RCC")),
             ("STM32G0.*:RCC:.*", ("rcc", "g0", "RCC")),
             ("STM32G4.*:RCC:.*", ("rcc", "g4", "RCC")),
+            ("STM32H7[RS].*:RCC:.*", ("rcc", "h7rs", "RCC")),
             ("STM32H7[AB].*:RCC:.*", ("rcc", "h7ab", "RCC")),
             ("STM32H7(42|43|53|50).*:RCC:.*", ("rcc", "h7rm0433", "RCC")),
             ("STM32H7.*:RCC:.*", ("rcc", "h7", "RCC")),
@@ -394,6 +396,7 @@ impl PeriMatcher {
             ("STM32C0.*:PWR:.*", ("pwr", "c0", "PWR")),
             ("STM32G0.*:PWR:.*", ("pwr", "g0", "PWR")),
             ("STM32G4.*:PWR:.*", ("pwr", "g4", "PWR")),
+            ("STM32H7[RS].*:PWR:.*", ("pwr", "h7rs", "PWR")),
             ("STM32H7(45|47|55|57).*:PWR:.*", ("pwr", "h7rm0399", "PWR")),
             ("STM32H7(42|43|53|50).*:PWR:.*", ("pwr", "h7rm0433", "PWR")),
             ("STM32H7(23|25|33|35|30).*:PWR:.*", ("pwr", "h7rm0468", "PWR")),
@@ -417,6 +420,7 @@ impl PeriMatcher {
             ("STM32WB.*:PWR:.*", ("pwr", "wb", "PWR")),
             ("STM32H50.*:PWR:.*", ("pwr", "h50", "PWR")),
             ("STM32H5.*:PWR:.*", ("pwr", "h5", "PWR")),
+            ("STM32H7[RS].*:FLASH:.*", ("flash", "h7rs", "FLASH")),
             ("STM32H7(A3|B3|B0).*:FLASH:.*", ("flash", "h7ab", "FLASH")),
             ("STM32H7.*:FLASH:.*", ("flash", "h7", "FLASH")),
             ("STM32F0.*:FLASH:.*", ("flash", "f0", "FLASH")),
@@ -573,7 +577,8 @@ impl PeriMatcher {
             ("STM32WL5.*:HSEM:.*", ("hsem", "v3", "HSEM")),
             ("STM32WLE.*:HSEM:.*", ("hsem", "v4", "HSEM")),
             (".*:DMAMUX.*", ("dmamux", "v1", "DMAMUX")),
-            (r".*:GPDMA\d?:.*", ("gpdma", "v1", "GPDMA")),
+            (r".*:GPDMA\d?:.*", ("gpdma", "v1", "GPDMA")), // TODO there's multiple versions for with+without trustzone.
+            (r".*:HPDMA\d?:.*", ("gpdma", "v1", "GPDMA")), // TODO it has a few more bits like DWX
             (r".*:LPDMA\d?:.*", ("lpdma", "v1", "LPDMA")),
             (r".*:BDMA\d?:.*", ("bdma", "v1", "DMA")),
             ("STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0", ("dma2d", "v2", "DMA2D")),
@@ -661,6 +666,7 @@ impl PeriMatcher {
             (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
             (".*:CRYP:cryp1_v1_0.*", ("cryp", "v1", "CRYP")),
             (".*:CRYP:cryp1_v2_0_H7.*", ("cryp", "v3", "CRYP")),
+            (".*:CRYP:cryp1-v2_5", ("cryp", "v4", "CRYP")),
             (".*:CRYP:cryp1_v2_0.*", ("cryp", "v2", "CRYP")),
             ("STM32F41.*:CRYP:cryp1_v2_2.*", ("cryp", "v1", "CRYP")),
             (".*:CRYP:cryp1_v2_2.*", ("cryp", "v2", "CRYP")),
@@ -807,9 +813,6 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
 static NOPELIST: &[&str] = &[
     // Not supported, not planned unless someone wants to do it.
     "STM32MP",
-    // not supported yet, planned. Pull requests welcome!
-    "STM32H7R",
-    "STM32H7S",
     // Does not exist in ST website. No datasheet, no RM.
     "STM32GBK",
     "STM32L485",
@@ -1325,8 +1328,8 @@ fn process_core(
                 );
             }
         }
-            chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
-            p.dma_channels = chs;
+        chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
+        p.dma_channels = chs;
     }
 
     let mut core = stm32_data_serde::chip::Core {

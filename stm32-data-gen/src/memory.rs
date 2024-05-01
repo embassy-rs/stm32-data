@@ -146,6 +146,8 @@ static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
     ("STM32H5...E",                  mem!(BANK_1 0x08000000 256, BANK_2 0x08040000 256, SRAM1 0x20000000 128, SRAM2 0x20020000 80, SRAM3 0x20034000 64)),
     ("STM32H5...G",                  mem!(BANK_1 0x08000000 512, BANK_2 0x08080000 512, SRAM1 0x20000000 256, SRAM2 0x20040000 64, SRAM3 0x20050000 320)),
     ("STM32H5...I",                  mem!(BANK_1 0x08000000 1024, BANK_2 0x08100000 1024, SRAM1 0x20000000 256, SRAM2 0x20040000 64, SRAM3 0x20050000 320)),
+    // H7RS
+    ("STM32H7[RS].*",                mem!(BANK_1 0x08000000 64, ITCM 0x00000000 192, DTCM 0x20000000 192, SRAM1 0x24000000 128, SRAM2 0x24020000 128, SRAM3 0x24040000 128, SRAM4 0x24060000 72, AHB_SRAM1 0x30000000 16, AHB_SRAM2 0x30004000 16)),
     // H7. TODO: check
     ("STM32H7...E",                  mem!(BANK_1 0x08000000 512, SRAM 0x24000000 128)),
     ("STM32H7[23]..G",               mem!(BANK_1 0x08000000 1024, SRAM 0x24000000 128)),
@@ -264,6 +266,7 @@ static FLASH_INFO: RegexMap<FlashInfo> = RegexMap::new(&[
     ("STM32G4[78].*",           FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }),
     ("STM32G4.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
     ("STM32H5.*",               FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
+    ("STM32H7[RS].*",           FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
     ("STM32H7[AB].*",           FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(  8*1024, 0)] }),
     ("STM32H7.*",               FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(128*1024, 0)] }),
     ("STM32L4[PQRS].*",         FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  8*1024, 0)] }),

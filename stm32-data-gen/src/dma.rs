@@ -302,6 +302,8 @@ impl DmaChannels {
             ("U5_GPDMA1.yaml", "GPDMA1", "STM32U5_dma3_Cube", 16, 4),
             ("U5_LPDMA.yaml", "LPDMA1", "STM32U5_dma3_Cube", 4, 0),
             ("WBA_GPDMA1.yaml", "GPDMA1", "STM32WBA_dma3_Cube", 8, 0),
+            ("H7RS_GPDMA.yaml", "GPDMA1", "STM32H7RS_dma3_Cube", 16, 4),
+            ("H7RS_HPDMA.yaml", "HPDMA1", "STM32H7RS_dma3_Cube", 16, 4),
         ] {
             let mut chip_dma = ChipDma {
                 peripherals: HashMap::new(),

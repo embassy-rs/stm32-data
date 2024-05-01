@@ -1,0 +1,643 @@
+block/PWR:
+  description: Power control.
+  items:
+  - name: CR1
+    description: PWR control register 1.
+    byte_offset: 0
+    fieldset: CR1
+  - name: SR1
+    description: PWR control status register 1.
+    byte_offset: 4
+    fieldset: SR1
+  - name: CSR1
+    description: PWR control status register 1.
+    byte_offset: 8
+    fieldset: CSR1
+  - name: CSR2
+    description: PWR control register 2.
+    byte_offset: 12
+    fieldset: CSR2
+  - name: CSR3
+    description: PWR CPU control register 3.
+    byte_offset: 16
+    fieldset: CSR3
+  - name: CSR4
+    description: PWR control status register 4.
+    byte_offset: 20
+    fieldset: CSR4
+  - name: WKUPCR
+    description: PWR wakeup clear register.
+    byte_offset: 32
+    fieldset: WKUPCR
+  - name: WKUPFR
+    description: PWR wakeup flag register.
+    byte_offset: 36
+    fieldset: WKUPFR
+  - name: WKUPEPR
+    description: PWR wakeup enable and polarity register.
+    byte_offset: 40
+    fieldset: WKUPEPR
+  - name: UCPDR
+    description: PWR USB Type-C and Power Delivery register.
+    byte_offset: 44
+    fieldset: UCPDR
+  - name: APCR
+    description: PWR apply pull configuration register.
+    byte_offset: 48
+    fieldset: APCR
+  - name: PUCRN
+    description: PWR port N pull-up control register.
+    byte_offset: 52
+    fieldset: PUCRN
+  - name: PDCRN
+    description: PWR port N pull-down control register.
+    byte_offset: 56
+    fieldset: PDCRN
+  - name: PUCRO
+    description: PWR port O pull-up control register.
+    byte_offset: 60
+    fieldset: PUCRO
+  - name: PDCRO
+    description: PWR port O pull-down control register.
+    byte_offset: 64
+    fieldset: PDCRO
+  - name: PDCRP
+    description: PWR port P pull-down control register.
+    byte_offset: 68
+    fieldset: PDCRP
+  - name: PDR1
+    description: PWR debug register 1.
+    byte_offset: 80
+    fieldset: PDR1
+fieldset/APCR:
+  description: PWR apply pull configuration register.
+  fields:
+  - name: APC
+    description: Apply pull-up and pull-down configuration When this bit is set, the I/O pull-up and pull-down configurations defined in PO5_PUPD, PN7_PUPD bits and PUCRx, PDCRx registers are applied in Standby mode even after wakeup until APC bit is reset to 0. When this bit is cleared, the I/O pull-up or pull-down configurations defined in PO5_PUPD, PN7_PUPD bits and PUCRx and PDCRx registers are not applied in Standby mode and IO becomes Hi-Z.
+    bit_offset: 0
+    bit_size: 1
+  - name: PN7_PUPD
+    description: Port N bit 7 pull-up/down configuration When this bit is set, a weak pull-up or pull-down resistor is applied on PN7 following inverse logic applied on PN6. If the PUN6 bit in PWR_PUCRN register is set and APC bit is set the week pull-down is applied on PN7. If the PDN6 bit in PWR_PDCRN register is set and APC bit is set the week pull-up is applied on PN7.
+    bit_offset: 16
+    bit_size: 1
+  - name: PO5_PUPD
+    description: Port O bit 5 pull-up/down configuration When this bit is set, a weak pull-up or pull down resistor is applied on PO5 following inverse logic applied on PO4. If the PUO4 bit in PWR_PUCRO register is set and APC bit is set the week pull-down is applied on PO5. If the PDO4 bit in PWR_PDCRO register is set and APC bit is set the week pull-up is applied on PO5..
+    bit_offset: 17
+    bit_size: 1
+  - name: I3CPB6_PU
+    description: Port PB6 I3C pull-up bit When I3C is used on PB6, when set, this bit activates the pull-up on I3C1_SCL (PB6) in standby mode.
+    bit_offset: 28
+    bit_size: 1
+  - name: I3CPB7_PU
+    description: Port PB7 I3C pull-up bit When I3C is used on PB7, when set, this bit activates the pull-up on I3C1_SDA (PB7) in standby mode.
+    bit_offset: 29
+    bit_size: 1
+  - name: I3CPB8_PU
+    description: Port PB8 I3C pull-up bit When I3C is used on PB8, when set, this bit activates the pull-up on I3C1_SCL (PB8) in standby mode.
+    bit_offset: 30
+    bit_size: 1
+  - name: I3CPB9_PU
+    description: Port PB9 I3C pull-up bit When I3C is used on PB9, when set, this bit activates the pull-up on I3C1_SDA (PB9) in standby mode.
+    bit_offset: 31
+    bit_size: 1
+fieldset/CR1:
+  description: PWR control register 1.
+  fields:
+  - name: SVOS
+    description: System Stop mode voltage scaling selection.
+    bit_offset: 0
+    bit_size: 1
+    enum: SVOS
+  - name: PVDE
+    description: Programmable voltage detector enable.
+    bit_offset: 4
+    bit_size: 1
+  - name: PLS
+    description: 'Programmable voltage detector level selection These bits select the voltage threshold detected by the PVD. Note: Refer to Section Electrical characteristics of the product datasheet for more details.'
+    bit_offset: 5
+    bit_size: 3
+    enum: PLS
+  - name: DBP
+    description: Disable backup domain write protection In reset state, the RCC_BDCR register, the RTC registers (including the backup registers), BREN and MOEN bits in the PWR_CSR1 register, are protected against parasitic write access. This bit must be set to enable write access to these registers.
+    bit_offset: 8
+    bit_size: 1
+  - name: FLPS
+    description: Flash low-power mode in Stop mode This bit allows to obtain the best trade-off between low-power consumption and restart time when exiting from Stop mode. When it is set, the Flash memory enters low-power mode when device is in Stop mode. consumption).
+    bit_offset: 9
+    bit_size: 1
+  - name: RLPSN
+    description: RAM low power mode disable in STOP. When set the RAMs will not enter to low power mode when the system enters to STOP.
+    bit_offset: 10
+    bit_size: 1
+    enum: RLPSN
+  - name: BOOSTE
+    description: analog switch VBoost control This bit enables the booster to guarantee the analog switch AC performance when the VDD supply voltage is below 2.7 V (reduction of the total harmonic distortion to have the same switch performance over the full supply voltage range) The VDD supply voltage can be monitored through the PVD and the PLS bits.
+    bit_offset: 11
+    bit_size: 1
+  - name: AVDREADY
+    description: analog voltage ready This bit is only used when the analog switch boost needs to be enabled (see BOOSTE bit). It must be set by software when the expected VDDA analog supply level is available. The correct analog supply level is indicated by the AVDO bit (PWR_CSR1 register) after setting the AVDEN bit and selecting the supply level to be monitored (ALS bits).
+    bit_offset: 12
+    bit_size: 1
+  - name: AVDEN
+    description: Peripheral voltage monitor on VDDA enable.
+    bit_offset: 13
+    bit_size: 1
+  - name: ALS
+    description: 'Analog voltage detector level selection These bits select the voltage threshold detected by the AVD. Note: Refer to Section Electrical characteristics of the product datasheet for more details.'
+    bit_offset: 14
+    bit_size: 2
+    enum: ALS
+fieldset/CSR1:
+  description: PWR control status register 1.
+  fields:
+  - name: BREN
+    description: Backup regulator enable When set, the backup regulator (used to maintain the backup RAM content in Standby and V<sub>BAT</sub> modes) is enabled. If BREN is reset, the backup regulator is switched off. The backup RAM can still be used in Run and Stop modes. However, its content will be lost in Standby and V<sub>BAT</sub> modes. If BREN is set, the application must wait till the backup regulator ready flag (BRRDY) is set to indicate that the data written into the SRAM will be maintained in Standby and V<sub>BAT</sub> modes.
+    bit_offset: 0
+    bit_size: 1
+  - name: MONEN
+    description: 'V<sub>BAT</sub> and temperature monitoring enable When set, the V<sub>BAT</sub> supply and temperature monitoring is enabled. Note: V<sub>BAT</sub> and temperature monitoring are only available when the backup regulator is enabled (BREN bit set to 1).'
+    bit_offset: 4
+    bit_size: 1
+  - name: BRRDY
+    description: Backup regulator ready This bit is set by hardware to indicate that the backup regulator is ready.
+    bit_offset: 16
+    bit_size: 1
+  - name: VBATL
+    description: V<sub>BAT</sub> level monitoring versus low threshold.
+    bit_offset: 20
+    bit_size: 1
+  - name: VBATH
+    description: V<sub>BAT</sub> level monitoring versus high threshold.
+    bit_offset: 21
+    bit_size: 1
+  - name: TEMPL
+    description: Temperature level monitoring versus low threshold.
+    bit_offset: 22
+    bit_size: 1
+  - name: TEMPH
+    description: Temperature level monitoring versus high threshold.
+    bit_offset: 23
+    bit_size: 1
+fieldset/CSR2:
+  description: PWR control register 2.
+  fields:
+  - name: BYPASS
+    description: 'Power management unit bypass Note: Illegal combinations of SDHILEVEL, SMPSEXTHP, SDEN, LDOEN and BYPASS are described in Table 41.'
+    bit_offset: 0
+    bit_size: 1
+  - name: LDOEN
+    description: 'Low drop-out regulator enable Note: Illegal combinations of SDHILEVEL, SMPSEXTHP, SDEN, LDOEN and BYPASS are described in Table 41.'
+    bit_offset: 1
+    bit_size: 1
+  - name: SDEN
+    description: 'SMPS step-down converter enable Note: Illegal combinations of SDHILEVEL, SMPSEXTHP, SDEN, LDOEN and BYPASS are described in Table 41.'
+    bit_offset: 2
+    bit_size: 1
+  - name: SDEXTHP
+    description: 'SMPS external power delivery selection Note: Illegal combinations of SDHILEVEL, SMPSEXTHP, SDEN, LDOEN and BYPASS are described in Table 41.'
+    bit_offset: 3
+    bit_size: 1
+  - name: SDLEVEL
+    description: SMPS step-down converter voltage output for LDO or external supply This bit is used when both the LDO and SMPS step-down converter are enabled with SDEN and LDOEN enabled or when SMPSEXTHP is enabled. In this case SDHILEVEL has to be set to 1 to confirm the regulator settings.
+    bit_offset: 4
+    bit_size: 1
+    enum: SDLEVEL
+  - name: VBE
+    description: VBAT charging enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: VBRS
+    description: VBAT charging resistor selection.
+    bit_offset: 9
+    bit_size: 1
+    enum: VBRS
+  - name: XSPICAP1
+    description: XSPI port 1 capacitor control bits see the product datasheet for more details.
+    bit_offset: 10
+    bit_size: 2
+    enum: XSPICAP
+  - name: XSPICAP2
+    description: XSPI port 2 capacitor control bits see the product datasheet for more details.
+    bit_offset: 12
+    bit_size: 2
+    enum: XSPICAP
+  - name: EN_XSPIM1
+    description: 'EN_XSPIM1: this bit allow the SW to enable the XSPI interface. The XSPIM_P1 supply must be stable prior to setting this bit.'
+    bit_offset: 14
+    bit_size: 1
+  - name: EN_XSPIM2
+    description: 'EN_XSPIM2: this bit allows the SW to enable the XSPI interface, when available. The XSPIM_P2 supply must be stable prior to setting this bit. It should also be set when FMC is used.'
+    bit_offset: 15
+    bit_size: 1
+  - name: SDEXTRDY
+    description: SMPS step-down converter external supply ready This bit is set by hardware to indicate that the external supply from the SMPS step-down converter is ready.
+    bit_offset: 16
+    bit_size: 1
+  - name: USB33DEN
+    description: VDD33_USB voltage level detector enable.
+    bit_offset: 24
+    bit_size: 1
+  - name: USBREGEN
+    description: USB regulator enable.
+    bit_offset: 25
+    bit_size: 1
+  - name: USB33RDY
+    description: USB supply ready.
+    bit_offset: 26
+    bit_size: 1
+  - name: USBHSREGEN
+    description: USB HS regulator enable.
+    bit_offset: 27
+    bit_size: 1
+enum/SDLEVEL:
+  bit_size: 1
+  variants:
+  - name: Reset
+    value: 0
+  - name: V1_8
+    value: 1
+fieldset/CSR3:
+  description: PWR CPU control register 3.
+  fields:
+  - name: PDDS
+    description: Power Down Deepsleep. This bit allows CPU to define the Deepsleep mode.
+    bit_offset: 0
+    bit_size: 1
+    enum: PDDS
+  - name: CSSF
+    description: Clear Standby and Stop flags (always read as 0) This bit is cleared to 0 by hardware.
+    bit_offset: 1
+    bit_size: 1
+  - name: STOPF
+    description: STOP flag This bit is set by hardware and cleared only by any reset or by setting the CPU CSSF bit.
+    bit_offset: 8
+    bit_size: 1
+  - name: SBF
+    description: System Standby flag This bit is set by hardware and cleared only by a POR (Power-on Reset) or by setting the CPU CSSF bit.
+    bit_offset: 9
+    bit_size: 1
+fieldset/CSR4:
+  description: PWR control status register 4.
+  fields:
+  - name: VOS
+    description: 'Voltage scaling selection according to performance These bits control the V<sub>CORE</sub> voltage level and allow to obtains the best trade-off between power consumption and performance: When increasing the performance, the voltage scaling must be changed before increasing the system frequency. When decreasing performance, the system frequency must first be decreased before changing the voltage scaling. Note: Refer to Section Electrical characteristics of the product datasheet for more details.'
+    bit_offset: 0
+    bit_size: 1
+    enum: VOS
+  - name: VOSRDY
+    description: VOS Ready bit.
+    bit_offset: 1
+    bit_size: 1
+fieldset/PDCRN:
+  description: PWR port N pull-down control register.
+  fields:
+  - name: PDN0
+    description: Port N pull-down bit 0 When set activates the pull-down on PN0 when the APC bit is set in PWR_APCR.
+    bit_offset: 0
+    bit_size: 1
+  - name: PDN1
+    description: Port N pull-down bit 1 When set activates the pull-down on PN1 when the APC bit is set in PWR_APCR.
+    bit_offset: 1
+    bit_size: 1
+  - name: PDN2N5
+    description: Port N PN2 to PN5 pull-down activation When set, four pull-down resistors are activated on PN2 to PN5 when the APC bit is set in PWR_APCR.
+    bit_offset: 2
+    bit_size: 1
+  - name: PDN6
+    description: Port N pull-down bit 6 When set activates the pull-down on PN6 when the APC bit is set in PWR_APCR.
+    bit_offset: 6
+    bit_size: 1
+  - name: PDN8N11
+    description: Port N - PN8 to PN11 pull-down activation When set, four pull-down resistors are activated on PN8 to PN11 when the APC bit is set in PWR_APCR.
+    bit_offset: 8
+    bit_size: 1
+  - name: PDN12
+    description: Port N pull-down bit 12 When set activates the pull-down on PN12 when the APC bit is set in PWR_APCR.
+    bit_offset: 12
+    bit_size: 1
+fieldset/PDCRO:
+  description: PWR port O pull-down control register.
+  fields:
+  - name: PDO0
+    description: Port O pull-down bit y When set, each bit activates the pull-down on POy when the APC bit is set in PWR_APCR.
+    bit_offset: 0
+    bit_size: 1
+  - name: PDO1
+    description: Port O pull-down bit y When set, each bit activates the pull-down on POy when the APC bit is set in PWR_APCR.
+    bit_offset: 1
+    bit_size: 1
+  - name: PDO2
+    description: Port O pull-down bit y When set, each bit activates the pull-down on POy when the APC bit is set in PWR_APCR.
+    bit_offset: 2
+    bit_size: 1
+  - name: PDO3
+    description: Port O pull-down bit y When set, each bit activates the pull-down on POy when the APC bit is set in PWR_APCR.
+    bit_offset: 3
+    bit_size: 1
+  - name: PDO4
+    description: Port O pull-down bit y When set, each bit activates the pull-down on POy when the APC bit is set in PWR_APCR.
+    bit_offset: 4
+    bit_size: 1
+fieldset/PDCRP:
+  description: PWR port P pull-down control register.
+  fields:
+  - name: PDP0P3
+    description: Port P0-P3 pull-down activation When set, four pull-down resistors are activated on P0 to P3 when the APC bit is set in PWR_APCR.
+    bit_offset: 0
+    bit_size: 1
+  - name: PDP4P7
+    description: Port P4-P7 pull-down activation When set, four pull-down resitors are activated on P4 to P7 when the APC bit is set in PWR_APCR.
+    bit_offset: 4
+    bit_size: 1
+  - name: PDP8P11
+    description: Port P8-P11 pull-down activation When set, four pull-down resistors are activated on P8 to P11 when the APC bit is set in PWR_APCR.
+    bit_offset: 8
+    bit_size: 1
+  - name: PDP12P15
+    description: Port P12-P15 pull-down activation When set, four pull-down resistors are activated on P8 to P11 when the APC bit is set in PWR_APCR.
+    bit_offset: 12
+    bit_size: 1
+fieldset/PDR1:
+  description: PWR debug register 1.
+  fields:
+  - name: UNLOCKED
+    description: Debug Register Unlocked.
+    bit_offset: 0
+    bit_size: 1
+    enum: UNLOCKED
+  - name: SDFPWMEN
+    description: Step down converter force PWM mode.
+    bit_offset: 3
+    bit_size: 1
+  - name: SYNC_ADC
+    description: (Non-User bit).
+    bit_offset: 16
+    bit_size: 1
+    enum: SYNC_ADC
+fieldset/PUCRN:
+  description: PWR port N pull-up control register.
+  fields:
+  - name: PUN1
+    description: Port N pull-up bit 1 When set, each bit activates the pull-up on PN1 when the APC bit is set in PWR_APCR. The pull-up is not activated if the corresponding PD1 bit is also set.
+    bit_offset: 1
+    bit_size: 1
+  - name: PUN6
+    description: Port N pull-up bit 6 When set activates the pull-up on PN6 when the APC bit is set in PWR_APCR. The pull-up is not activated if the corresponding PDN6 bit is also set.
+    bit_offset: 6
+    bit_size: 1
+  - name: PUN12
+    description: Port N pull-up bit 12 When set, each bit activates the pull-up on PN12 when the APC bit is set in PWR_APCR. The pull-up is not activated if the corresponding PD12 bit is also set.
+    bit_offset: 12
+    bit_size: 1
+fieldset/PUCRO:
+  description: PWR port O pull-up control register.
+  fields:
+  - name: PUO0
+    description: (n = 1 to 0) Port O pull-up bits When set, each bit activates the pull-up on POy when the APC bit is set in PWR_APCR. The pull-up is not activated if the corresponding bits in PWR_PDCRO is also set.
+    bit_offset: 0
+    bit_size: 1
+  - name: PUO1
+    description: (n = 1 to 0) Port O pull-up bits When set, each bit activates the pull-up on POy when the APC bit is set in PWR_APCR. The pull-up is not activated if the corresponding bits in PWR_PDCRO is also set.
+    bit_offset: 1
+    bit_size: 1
+  - name: PUO4
+    description: Port O pull-up bit 4 When set activates the pull-up on PO4 when the APC bit is set in PWR_APCR. The pull-up is not activated if the corresponding bits PDO4 in PWR_PDCRO is also set.
+    bit_offset: 4
+    bit_size: 1
+fieldset/SR1:
+  description: PWR control status register 1.
+  fields:
+  - name: ACTVOS
+    description: VOS currently applied for V<sub>CORE</sub> voltage scaling selection. These bit reflect the last VOS value applied to the PMU.
+    bit_offset: 0
+    bit_size: 1
+  - name: ACTVOSRDY
+    description: Voltage levels ready bit for currently used ACTVOS and SDHILEVEL This bit is set to 1 by hardware when the voltage regulator and the SMPS step-down converter are both disabled and Bypass mode is selected in PWR control register 2 (PWR_CSR2).
+    bit_offset: 1
+    bit_size: 1
+  - name: PVDO
+    description: 'Programmable voltage detect output This bit is set and cleared by hardware. It is valid only if the PVD has been enabled by the PVDE bit. PLS[2:0] bits. bits. Note: Since the PVD is disabled in Standby mode, this bit is equal to 0 after Standby or reset until the PVDE bit is set.'
+    bit_offset: 4
+    bit_size: 1
+    enum: PVDO
+  - name: AVDO
+    description: 'Analog voltage detector output on VDDA This bit is set and cleared by hardware. It is valid only if AVD on VDDA is enabled by the AVDEN bit. Note: Since the AVD is disabled in Standby mode, this bit is equal to 0 after Standby or reset until the AVDEN bit is set.'
+    bit_offset: 13
+    bit_size: 1
+    enum: AVDO
+fieldset/UCPDR:
+  description: PWR USB Type-C and Power Delivery register.
+  fields:
+  - name: UCPD_DBDIS
+    description: UCPD dead battery disable.
+    bit_offset: 0
+    bit_size: 1
+  - name: UCPD_STBY
+    description: UCPD Standby mode When set, this bit is used to memorize the UCPD configuration in Standby mode. This bit must be written to 1 just before entering Standby mode when using UCPD. It must be written to 0 after exiting the Standby mode and before writing any UCPD registers.
+    bit_offset: 1
+    bit_size: 1
+fieldset/WKUPCR:
+  description: PWR wakeup clear register.
+  fields:
+  - name: WKUPC
+    description: Clear Wakeup pin flag for WKUP1 These bits are always read as 0.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+fieldset/WKUPEPR:
+  description: PWR wakeup enable and polarity register.
+  fields:
+  - name: WKUPEN
+    description: 'Enable Wakeup Pin WKUPn, (n = 4, 3, 2, 1) Each bit is set and cleared by software. Note: An additional wakeup event is detected if WKUPn+1 pin is enabled (by setting the WKUPENn bit) when WKUPn pin level is already high when WKUPPn+1 selects rising edge, or low when WKUPPn selects falling edge.'
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+  - name: WKUPP
+    description: Wakeup pin polarity bit for WKUPn, (n = 4, 3, 2, 1) These bits define the polarity used for event detection on WKUPn external wakeup pin.
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+    enum: WKUPP
+  - name: WKUPPUPD
+    description: Wakeup pin pull configuration
+    bit_offset: 16
+    bit_size: 2
+    array:
+      len: 4
+      stride: 2
+    enum: WKUPPUPD
+fieldset/WKUPFR:
+  description: PWR wakeup flag register.
+  fields:
+  - name: WKUPF
+    description: Wakeup pin WKUP flag. This bit is set by hardware and cleared only by a Reset pin or by setting the WKUPC1 bit in the PWR wakeup clear register (PWR_WKUPCR).
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+enum/ALS:
+  bit_size: 2
+  variants:
+  - name: Level1
+    description: AVD level 1.
+    value: 0
+  - name: Level2
+    description: AVD level 2.
+    value: 1
+  - name: Level3
+    description: AVD level 3.
+    value: 2
+  - name: Level4
+    description: AVD level 4.
+    value: 3
+enum/AVDO:
+  bit_size: 1
+  variants:
+  - name: AboveOrEqual
+    description: VDDA is equal or higher than the AVD threshold selected with the ALS[1:0] bits.
+    value: 0
+  - name: Below
+    description: VDDA is lower than the AVD threshold selected with the ALS[1:0] bits.
+    value: 1
+enum/PDDS:
+  bit_size: 1
+  variants:
+  - name: Stop
+    description: Stop mode when device enters Deepsleep.
+    value: 0
+  - name: Standby
+    description: Standby mode when device enters Deepsleep.
+    value: 1
+enum/PLS:
+  bit_size: 3
+  variants:
+  - name: Level1
+    description: PVD level 1.
+    value: 0
+  - name: Level2
+    description: PVD level 2.
+    value: 1
+  - name: Level3
+    description: PVD level 3.
+    value: 2
+  - name: Level4
+    description: PVD level 4.
+    value: 3
+  - name: Level5
+    description: PVD level 5.
+    value: 4
+  - name: Level6
+    description: PVD level 6.
+    value: 5
+  - name: Level7
+    description: PVD level 7.
+    value: 6
+  - name: External
+    description: External voltage level on PVD_IN pin, compared to internal VREFINT level.
+    value: 7
+enum/PVDO:
+  bit_size: 1
+  variants:
+  - name: AboveOrEqual
+    description: VDD or PVD_IN voltage is equal or higher than the PVD threshold selected through the.
+    value: 0
+  - name: Below
+    description: VDD or PVD_IN voltage is lower than the PVD threshold selected through the PLS[2:0].
+    value: 1
+enum/RLPSN:
+  bit_size: 1
+  variants:
+  - name: LowPower
+    description: RAM enters to low power mode when system enters to STOP.
+    value: 0
+  - name: Normal
+    description: RAM remains in normal mode when system enters to STOP.
+    value: 1
+enum/SVOS:
+  bit_size: 1
+  variants:
+  - name: Low
+    description: SVOS Low.
+    value: 0
+  - name: High
+    description: SVOS High (default).
+    value: 1
+enum/SYNC_ADC:
+  bit_size: 1
+  variants:
+  - name: FreeRunning
+    description: SD_Converter clock free running.
+    value: 0
+  - name: Synchronized
+    description: SD_Converter clock synchronised to ADC.
+    value: 1
+enum/UNLOCKED:
+  bit_size: 1
+  variants:
+  - name: Locked
+    description: 'accessed locked: key was not written and after each register write access.'
+    value: 0
+  - name: Unlocked
+    description: after key 0xCAFECAFE was written in this register.
+    value: 1
+enum/VBRS:
+  bit_size: 1
+  variants:
+  - name: Ohm5k
+    description: Charge VBAT through a 5 k resistor.
+    value: 0
+  - name: Ohm1_5k
+    description: Charge VBAT through a 1.5 k resistor.
+    value: 1
+enum/VOS:
+  bit_size: 1
+  variants:
+  - name: Low
+    description: VOS Low level (default).
+    value: 0
+  - name: High
+    description: VOS High level.
+    value: 1
+enum/WKUPP:
+  bit_size: 1
+  variants:
+  - name: High
+    description: Detection on high level (rising edge).
+    value: 0
+  - name: Low
+    description: Detection on low level (falling edge).
+    value: 1
+enum/WKUPPUPD:
+  bit_size: 2
+  variants:
+  - name: NoPull
+    description: No pull-up.
+    value: 0
+  - name: PullUp
+    description: Pull-up.
+    value: 1
+  - name: PullDown
+    description: Pull-down.
+    value: 2
+enum/XSPICAP:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: 'XSPI Capacitor OFF (default) note: to confirm with analog design.'
+    value: 0
+  - name: OneThird
+    description: XSPI Capacitor set to 1/3.
+    value: 1
+  - name: TwoThirds
+    description: XSPI Capacitor set to 2/3.
+    value: 2
+  - name: Full
+    description: XSPI Capacitor set to full capacitance.
+    value: 3

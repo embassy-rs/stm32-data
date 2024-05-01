@@ -85,13 +85,19 @@ impl ParsedRccs {
             "PLL1_P_MUL_2",
             "PLL1_Q",
             "PLL1_R",
+            "PLL1_S",
+            "PLL1_T",
             "PLL1_VCO", // used for L0 USB
             "PLL2_P",
             "PLL2_Q",
             "PLL2_R",
+            "PLL2_S",
+            "PLL2_T",
             "PLL3_P",
             "PLL3_Q",
             "PLL3_R",
+            "PLL3_S",
+            "PLL3_T",
             "HSI",
             "SHSI",
             "HSI48",
@@ -130,6 +136,10 @@ impl ParsedRccs {
             "HSI256_MSIS1024_MSIK4",
             "HSI256_MSIK1024_MSIS4",
             "HSI256_MSIK1024_MSIK4",
+            "SPDIFRX_SYMB",
+            "ETH_RMII_REF",
+            "ETH",
+            "CLK48MOHCI",
         ]);
 
         let mux_regexes = &[
@@ -137,13 +147,19 @@ impl ParsedRccs {
             regex!(r"^CCIPR\d?/(.+)SEL$"),
             regex!(r"^D\dCCIP\d?R/(.+)SEL$"),
             regex!(r"^CFGR\d/(.+)SW$"),
+            regex!(r"^.+PERCKSELR/(.+)SEL$"),
         ];
+        let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$")];
 
         let mut mux = HashMap::new();
         for (reg, body) in &ir.fieldsets {
             for field in &body.fields {
                 let key = format!("{}/{}", reg, field.name);
                 if let Some(capture) = mux_regexes.iter().find_map(|r| r.captures(&key)) {
+                    if mux_nopelist.iter().any(|r| r.is_match(&key)) {
+                        continue;
+                    }
+
                     let peri = capture.get(1).unwrap().as_str();
 
                     // TODO: these bits are duplicated on F4, we need to split the F4 RCCs more.
@@ -331,6 +347,8 @@ impl ParsedRccs {
                         maybe_kernel_clock = "PLL1_Q".to_string();
                     } else if rcc_version.starts_with("l1") {
                         maybe_kernel_clock = "PLL1_VCO_DIV_2".to_string();
+                    } else if rcc_version.starts_with("h7rs") {
+                        maybe_kernel_clock = "USB".to_string();
                     } else {
                         panic!("rcc_{}: peripheral {} missing mux", rcc_version, peri_name)
                     }
