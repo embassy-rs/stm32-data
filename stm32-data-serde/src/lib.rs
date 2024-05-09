@@ -34,6 +34,13 @@ pub mod chip {
     pub struct Package {
         pub name: String,
         pub package: String,
+        pub pins: Vec<PackagePin>,
+    }
+
+    #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    pub struct PackagePin {
+        pub position: String,
+        pub signals: Vec<String>,
     }
 
     #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]

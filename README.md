@@ -12,7 +12,7 @@ families, including:
 - :x: GPIO mappings for F1
 - :construction: Register blocks for all peripherals
 - :heavy_check_mark: DMA stream mappings
-- :x: Per-package pinouts
+- :heavy_check_mark: Per-package pinouts
 - :heavy_check_mark: Links to applicable reference manuals, datasheets, appnotes PDFs.
 
 :heavy_check_mark: = done, :construction: = work in progress, :x: = to do

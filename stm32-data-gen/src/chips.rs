@@ -38,6 +38,8 @@ mod xml {
     pub struct Pin {
         #[serde(rename = "Name")]
         pub name: String,
+        #[serde(rename = "Position")]
+        pub position: String,
         #[serde(rename = "Signal", default)]
         pub signals: Vec<PinSignal>,
     }
@@ -885,6 +887,25 @@ fn parse_group(
         group_idx
     });
 
+    let mut package_pins: HashMap<String, Vec<String>> = HashMap::new();
+    for pin in &parsed.pins {
+        package_pins
+            .entry(pin.position.clone())
+            .or_default()
+            .push(gpio_af::clean_pin(&pin.name).unwrap_or_else(|| pin.name.clone()));
+    }
+    let mut package_pins: Vec<stm32_data_serde::chip::PackagePin> = package_pins
+        .into_iter()
+        .map(|(position, mut signals)| {
+            signals.sort();
+            stm32_data_serde::chip::PackagePin { position, signals }
+        })
+        .collect();
+    package_pins.sort_by_key(|p| match p.position.parse::<u32>() {
+        Ok(n) => (Some(n), None),
+        Err(_) => (None, Some(p.position.clone())),
+    });
+
     for (package_i, package_name) in package_names.iter().enumerate() {
         let chip_name = chip_name_from_package_name(package_name);
         if !chips.contains_key(&chip_name) {
@@ -905,6 +926,7 @@ fn parse_group(
             .push(stm32_data_serde::chip::Package {
                 name: package_name.clone(),
                 package: parsed.package.clone(),
+                pins: package_pins.clone(),
             });
     }
 
