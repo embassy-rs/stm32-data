@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fmt::{Debug, Write as _};
 use std::fs;
 use std::fs::File;
@@ -377,6 +377,18 @@ impl Gen {
         }
         fs::write(self.opts.out_dir.join("Cargo.toml"), contents).unwrap();
 
+        // Generate src/all_chips.rs
+        {
+            let contents = gen_all_chips(&self.opts.chips);
+            fs::write(self.opts.out_dir.join("src/all_chips.rs"), contents).unwrap();
+        }
+
+        // Generate src/all_peripheral_versions.rs
+        {
+            let contents = gen_all_peripheral_versions(&self.all_peripheral_versions);
+            fs::write(self.opts.out_dir.join("src/all_peripheral_versions.rs"), contents).unwrap();
+        }
+
         // copy misc files
         fs::write(self.opts.out_dir.join("build.rs"), include_bytes!("../res/build.rs")).unwrap();
         fs::write(
@@ -466,4 +478,37 @@ fn get_memory_range(chip: &Chip, kind: MemoryRegionKind) -> (u32, u32, String) {
     }
 
     best.unwrap()
+}
+
+fn gen_all_chips(chips: &[String]) -> String {
+    let mut contents = String::new();
+    writeln!(&mut contents, "pub static ALL_CHIPS: &[&str] = &[").unwrap();
+    for chip in chips.iter() {
+        writeln!(&mut contents, "    {:?},", chip).unwrap();
+    }
+    writeln!(&mut contents, "];").unwrap();
+    contents
+}
+
+fn gen_all_peripheral_versions(all_versions: &HashSet<(String, String)>) -> String {
+    let mut version_map = BTreeMap::<_, BTreeSet<_>>::new();
+    for (kind, version) in all_versions.iter() {
+        version_map.entry(kind).or_default().insert(version);
+    }
+
+    let mut contents = String::new();
+    writeln!(
+        &mut contents,
+        "pub static ALL_PERIPHERAL_VERSIONS: &[(&str, &[&str])] = &["
+    )
+    .unwrap();
+    for (kind, versions) in version_map.iter() {
+        write!(&mut contents, "    ({:?}, &[", kind).unwrap();
+        for version in versions.iter() {
+            write!(&mut contents, "{:?}, ", version).unwrap();
+        }
+        writeln!(&mut contents, "]),").unwrap();
+    }
+    writeln!(&mut contents, "];").unwrap();
+    contents
 }

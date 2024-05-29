@@ -13,4 +13,6 @@ include!(env!("STM32_METAPAC_PAC_PATH"));
 pub mod metadata {
     include!("metadata.rs");
     include!(env!("STM32_METAPAC_METADATA_PATH"));
+    include!("all_chips.rs");
+    include!("all_peripheral_versions.rs");
 }
