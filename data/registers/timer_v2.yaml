@@ -229,6 +229,13 @@ block/TIM_2CH_CMP:
       stride: 4
     byte_offset: 52
     fieldset: CCR_1CH
+  - name: CCR_DITHER
+    description: capture/compare register x (x=1-2) (Dither mode enabled)
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 52
+    fieldset: CCR_DITHER_1CH
   - name: BDTR
     description: break and dead-time register
     byte_offset: 68
@@ -298,6 +305,10 @@ block/TIM_ADV:
       stride: 4
     byte_offset: 52
     fieldset: CCR_1CH
+  - name: ECR
+    description: encoder control register
+    byte_offset: 88
+    fieldset: ECR_GP16
   - name: BDTR
     description: break and dead-time register
     byte_offset: 68
@@ -322,10 +333,6 @@ block/TIM_ADV:
     description: capture/compare mode register 3
     byte_offset: 80
     fieldset: CCMR3_ADV
-  - name: TISEL
-    description: input selection register
-    byte_offset: 92
-    fieldset: TISEL_GP16
   - name: AF1
     description: alternate function register 1
     byte_offset: 96
@@ -334,6 +341,10 @@ block/TIM_ADV:
     description: alternate function register 2
     byte_offset: 100
     fieldset: AF2_ADV
+  - name: TISEL
+    description: input selection register
+    byte_offset: 92
+    fieldset: TISEL_GP16
 block/TIM_BASIC:
   extends: TIM_BASIC_NO_CR2
   description: Basic timers
@@ -455,10 +466,13 @@ block/TIM_GP16:
     description: encoder control register
     byte_offset: 88
     fieldset: ECR_GP16
-  - name: TISEL
-    description: input selection register
-    byte_offset: 92
-    fieldset: TISEL_GP16
+  - name: DCR
+    description: DMA control register
+    byte_offset: 988
+    fieldset: DCR_1CH_CMP
+  - name: DMAR
+    description: DMA address for full transfer
+    byte_offset: 992
   - name: AF1
     description: alternate function register 1
     byte_offset: 96
@@ -467,13 +481,10 @@ block/TIM_GP16:
     description: alternate function register 2
     byte_offset: 100
     fieldset: AF2_1CH_CMP
-  - name: DCR
-    description: DMA control register
-    byte_offset: 988
-    fieldset: DCR_1CH_CMP
-  - name: DMAR
-    description: DMA address for full transfer
-    byte_offset: 992
+  - name: TISEL
+    description: input selection register
+    byte_offset: 92
+    fieldset: TISEL_GP16
 block/TIM_GP32:
   extends: TIM_GP16
   description: General purpose 32-bit timers
