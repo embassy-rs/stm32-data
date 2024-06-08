@@ -1,24 +1,4 @@
-mod chips;
-mod dma;
-mod docs;
-mod gpio_af;
-mod header;
-mod interrupts;
-mod memory;
-mod normalize_peris;
-mod rcc;
-mod registers;
-mod util;
-
-#[macro_export]
-macro_rules! regex {
-    ($re:literal) => {{
-        ::ref_thread_local::ref_thread_local! {
-            static managed REGEX: ::regex::Regex = ::regex::Regex::new($re).unwrap();
-        }
-        <REGEX as ::ref_thread_local::RefThreadLocal<::regex::Regex>>::borrow(&REGEX)
-    }};
-}
+use stm32_data_gen::*;
 
 struct Stopwatch {
     start: std::time::Instant,
