@@ -1,0 +1,297 @@
+block/SDADC:
+  description: Sigma-delta analog-to-digital converter.
+  items:
+  - name: CR1
+    description: control register 1.
+    byte_offset: 0
+    fieldset: CR1
+  - name: CR2
+    description: control register 2.
+    byte_offset: 4
+    fieldset: CR2
+  - name: ISR
+    description: interrupt and status register.
+    byte_offset: 8
+    access: Read
+    fieldset: ISR
+  - name: CLRISR
+    description: interrupt and status clear register.
+    byte_offset: 12
+    fieldset: CLRISR
+  - name: JCHGR
+    description: injected channel group selection register.
+    byte_offset: 20
+    fieldset: JCHGR
+  - name: CONFCHR1
+    description: channel configuration register 1.
+    byte_offset: 64
+    fieldset: CONFCHR1
+  - name: CONFCHR2
+    description: channel configuration register 2.
+    byte_offset: 68
+    fieldset: CONFCHR2
+  - name: JDATAR
+    description: data register for injected group.
+    byte_offset: 96
+    access: Read
+    fieldset: JDATAR
+  - name: RDATAR
+    description: data register for the regular channel.
+    byte_offset: 100
+    access: Read
+    fieldset: RDATAR
+  - name: JDATA12R
+    description: SDADC1 and SDADC2 injected data register.
+    byte_offset: 112
+    access: Read
+  - name: RDATA12R
+    description: SDADC1 and SDADC2 regular data register.
+    byte_offset: 116
+    access: Read
+  - name: JDATA13R
+    description: SDADC1 and SDADC3 injected data register.
+    byte_offset: 120
+    access: Read
+  - name: RDATA13R
+    description: SDADC1 and SDADC3 regular data register.
+    byte_offset: 124
+    access: Read
+  - name: CONFR
+    description: configuration 0 register.
+    array:
+      len: 3
+      stride: 4
+    byte_offset: 32
+    fieldset: CONFR
+fieldset/CLRISR:
+  description: interrupt and status clear register.
+  fields:
+  - name: CLREOCALF
+    description: Clear the end of calibration flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: CLRJOVRF
+    description: Clear the injected conversion overrun flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: CLRROVRF
+    description: Clear the regular conversion overrun flag.
+    bit_offset: 4
+    bit_size: 1
+fieldset/CONFCHR1:
+  description: channel configuration register 1.
+  fields:
+  - name: CONFCH
+    description: CONFCH0.
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 8
+      stride: 4
+fieldset/CONFCHR2:
+  description: channel configuration register 2.
+  fields:
+  - name: CONFCH
+    description: Channel 8 configuration.
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 1
+      stride: 0
+fieldset/CONFR:
+  description: configuration 0 register.
+  fields:
+  - name: OFFSET
+    description: Twelve-bit calibration offset for configuration 0.
+    bit_offset: 0
+    bit_size: 12
+  - name: GAIN
+    description: Gain setting for configuration 0.
+    bit_offset: 20
+    bit_size: 3
+  - name: SE
+    description: Single-ended mode for configuration 0.
+    bit_offset: 26
+    bit_size: 2
+  - name: COMMON
+    description: Common mode for configuration 0.
+    bit_offset: 30
+    bit_size: 2
+fieldset/CR1:
+  description: control register 1.
+  fields:
+  - name: EOCALIE
+    description: End of calibration interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: JEOCIE
+    description: Injected end of conversion interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: JOVRIE
+    description: Injected data overrun interrupt enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: REOCIE
+    description: Regular end of conversion interrupt enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: ROVRIE
+    description: Regular data overrun interrupt enable.
+    bit_offset: 4
+    bit_size: 1
+  - name: REFV
+    description: Reference voltage selection.
+    bit_offset: 8
+    bit_size: 2
+  - name: SLOWCK
+    description: Slow clock mode enable.
+    bit_offset: 10
+    bit_size: 1
+  - name: SBI
+    description: Enter Standby mode when idle.
+    bit_offset: 11
+    bit_size: 1
+  - name: PDI
+    description: Enter power down mode when idle.
+    bit_offset: 12
+    bit_size: 1
+  - name: JSYNC
+    description: Launch a injected conversion synchronously with SDADC1.
+    bit_offset: 14
+    bit_size: 1
+  - name: RSYNC
+    description: Launch regular conversion synchronously with SDADC1.
+    bit_offset: 15
+    bit_size: 1
+  - name: JDMAEN
+    description: DMA channel enabled to read data for the injected channel group.
+    bit_offset: 16
+    bit_size: 1
+  - name: RDMAEN
+    description: DMA channel enabled to read data for the regular channel.
+    bit_offset: 17
+    bit_size: 1
+  - name: INIT
+    description: Initialization mode request.
+    bit_offset: 31
+    bit_size: 1
+fieldset/CR2:
+  description: control register 2.
+  fields:
+  - name: ADON
+    description: SDADC enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: CALIBCNT
+    description: Number of calibration sequences to be performed (number of valid configurations).
+    bit_offset: 1
+    bit_size: 2
+  - name: STARTCALIB
+    description: Start calibration.
+    bit_offset: 4
+    bit_size: 1
+  - name: JCONT
+    description: Continuous mode selection for injected conversions.
+    bit_offset: 5
+    bit_size: 1
+  - name: JDS
+    description: Delay start of injected conversions.
+    bit_offset: 6
+    bit_size: 1
+  - name: JEXTSEL
+    description: Trigger signal selection for launching injected conversions.
+    bit_offset: 8
+    bit_size: 4
+  - name: JEXTEN
+    description: Trigger enable and trigger edge selection for injected conversions.
+    bit_offset: 13
+    bit_size: 2
+  - name: JSWSTART
+    description: Start a conversion of the injected group of channels.
+    bit_offset: 15
+    bit_size: 1
+  - name: RCH
+    description: Regular channel selection.
+    bit_offset: 16
+    bit_size: 4
+  - name: RCONT
+    description: Continuous mode selection for regular conversions.
+    bit_offset: 22
+    bit_size: 1
+  - name: RSWSTART
+    description: Software start of a conversion on the regular channel.
+    bit_offset: 23
+    bit_size: 1
+  - name: FAST
+    description: Fast conversion mode selection.
+    bit_offset: 24
+    bit_size: 1
+fieldset/ISR:
+  description: interrupt and status register.
+  fields:
+  - name: EOCALF
+    description: End of calibration flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: JEOCF
+    description: End of injected conversion flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: JOVRF
+    description: Injected conversion overrun flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: REOCF
+    description: End of regular conversion flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: ROVRF
+    description: Regular conversion overrun flag.
+    bit_offset: 4
+    bit_size: 1
+  - name: CALIBIP
+    description: Calibration in progress status.
+    bit_offset: 12
+    bit_size: 1
+  - name: JCIP
+    description: Injected conversion in progress status.
+    bit_offset: 13
+    bit_size: 1
+  - name: RCIP
+    description: Regular conversion in progress status.
+    bit_offset: 14
+    bit_size: 1
+  - name: STABIP
+    description: Stabilization in progress status.
+    bit_offset: 15
+    bit_size: 1
+  - name: INITRDY
+    description: Initialization mode is ready.
+    bit_offset: 31
+    bit_size: 1
+fieldset/JCHGR:
+  description: injected channel group selection register.
+  fields:
+  - name: JCHG
+    description: Injected channel group selection.
+    bit_offset: 0
+    bit_size: 9
+fieldset/JDATAR:
+  description: data register for injected group.
+  fields:
+  - name: JDATA
+    description: Injected group conversion data.
+    bit_offset: 0
+    bit_size: 16
+  - name: JDATACH
+    description: Injected channel most recently converted.
+    bit_offset: 24
+    bit_size: 4
+fieldset/RDATAR:
+  description: data register for the regular channel.
+  fields:
+  - name: RDATA
+    description: Regular channel conversion data.
+    bit_offset: 0
+    bit_size: 16
