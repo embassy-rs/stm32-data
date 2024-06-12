@@ -463,6 +463,10 @@ fn get_memory_range(chip: &Chip, kind: MemoryRegionKind) -> (u32, u32, String) {
     let mut names = Vec::new();
     let mut best: Option<(u32, u32, String)> = None;
     for m in mems {
+        if !mem_filter(&chip.name, &m.name) {
+            continue;
+        }
+
         if m.address != end {
             names = Vec::new();
             start = m.address;
@@ -478,6 +482,19 @@ fn get_memory_range(chip: &Chip, kind: MemoryRegionKind) -> (u32, u32, String) {
     }
 
     best.unwrap()
+}
+
+fn mem_filter(chip: &str, region: &str) -> bool {
+    // in STM32WB, SRAM2a/SRAM2b are reserved for the radio core.
+    if chip.starts_with("STM32WB")
+        && !chip.starts_with("STM32WBA")
+        && !chip.starts_with("STM32WB0")
+        && region.starts_with("SRAM2")
+    {
+        return false;
+    }
+
+    true
 }
 
 fn gen_all_chips(chips: &[String]) -> String {
