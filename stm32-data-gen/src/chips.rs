@@ -612,6 +612,7 @@ impl PeriMatcher {
             (".*:LCD:lcdc1_v1.0.*", ("lcd", "v1", "LCD")),
             (".*:LCD:lcdc1_v1.2.*", ("lcd", "v2", "LCD")),
             (".*:LCD:lcdc1_v1.3.*", ("lcd", "v2", "LCD")),
+            (".*:LCD:lcdc1_v1.4.*", ("lcd", "v2", "LCD")),
             (".*:UID:.*", ("uid", "v1", "UID")),
             (".*:UCPD:.*", ("ucpd", "v1", "UCPD")),
             ("STM32G0.*:TAMP:.*", ("tamp", "g0", "TAMP")),
