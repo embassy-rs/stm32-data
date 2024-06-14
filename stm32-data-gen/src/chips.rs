@@ -653,7 +653,7 @@ impl PeriMatcher {
             ("STM32H50.*:ICACHE:.*", ("icache", "v1_0crr", "ICACHE")),
             ("STM32(L5|H5[67]|WBA).*:ICACHE:.*", ("icache", "v1_4crr", "ICACHE")),
             (".*:CORDIC:.*", ("cordic", "v1", "CORDIC")),
-            ("STM32F0x[128].*:TSC:.*", ("tsc", "v1", "TSC")),
+            ("STM32F0.[128].*:TSC:.*", ("tsc", "v1", "TSC")),
             ("STM32F3[07][123].*:TSC:.*", ("tsc", "v1", "TSC")),
             ("STM32WB55.*:TSC:.*", ("tsc", "v2", "TSC")),
             ("STM32WBA.*:TSC:.*", ("tsc", "v1", "TSC")),
