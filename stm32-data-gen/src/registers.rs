@@ -15,13 +15,10 @@ impl Registers {
 
         for f in glob::glob("data/registers/*")? {
             let f = f?;
-            let ff = f
-                .file_name()
-                .unwrap()
-                .to_string_lossy()
-                .strip_suffix(".yaml")
-                .unwrap()
-                .to_string();
+            let ff = f.file_name().unwrap().to_string_lossy();
+            let Some(ff) = ff.strip_suffix(".yaml") else { continue };
+            let ff = ff.to_string();
+
             let ir: IR = serde_yaml::from_str(&std::fs::read_to_string(&f)?)
                 .map_err(|e| anyhow!("failed to parse {f:?}: {e:?}"))?;
 
