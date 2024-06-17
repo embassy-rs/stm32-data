@@ -270,6 +270,7 @@ impl PeriMatcher {
             (".*:WWDG:wwdg1_v1_0", ("wwdg", "v1", "WWDG")),
             (".*:WWDG:wwdg1_v2_0", ("wwdg", "v2", "WWDG")),
             (".*:JPEG:jpeg1_v1_0", ("jpeg", "v1", "JPEG")),
+            (".*:LTDC:lcdtft1_v1_0", ("ltdc", "v1", "LTDC")),
             (".*:LTDC:lcdtft1_v1_1", ("ltdc", "v1", "LTDC")),
             (".*:DSIHOST:dsihost1_v1_0", ("dsihost", "v1", "DSIHOST")),
             (".*:DSIHOST:dsihost1_v1_0_SHARK", ("dsihost", "v1", "DSIHOST")),
