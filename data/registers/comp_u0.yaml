@@ -1,138 +1,101 @@
 block/COMP:
   description: Comparator.
   items:
-  - name: CSR
-    description: Comparator control and status register.
-    byte_offset: 0
-    fieldset: CSR
+    - name: CSR
+      description: Comparator control and status register.
+      byte_offset: 0
+      fieldset: CSR
 fieldset/CSR:
   description: control and status register.
   fields:
-  - name: EN
-    description: Enable
-    bit_offset: 0
-    bit_size: 1
-  - name: INMSEL
-    description: Input minus selection bits.
-    bit_offset: 4
-    bit_size: 4
-  - name: INPSEL
-    description: Input plus selection bit.
-    bit_offset: 8
-    bit_size: 3
-  - name: WINMODE
-    description: Comparator 1 noninverting input selector for window mode.
-    bit_offset: 14
-    bit_size: 1
-    enum: WINMODE
-  - name: WINOUT
-    description: Comparator 1 output selector.
-    bit_offset: 14
-    bit_size: 1
-    enum: WINOUT
-  - name: POLARITY
-    description: Polarity selection bit.
-    bit_offset: 15
-    bit_size: 1
-    enum: POLARITY
-  - name: HYST
-    description: Hysteresis selection bits.
-    bit_offset: 16
-    bit_size: 2
-    enum: HYST
-  - name: PWRMODE
-    description: Power Mode.
-    bit_offset: 18
-    bit_size: 2
-    enum: PWRMODE
-  - name: BLANKSEL
-    description: Blanking source selection bits.
-    bit_offset: 20
-    bit_size: 5
-    enum: BLANKING
-  - name: BRGEN
-    description: Scaler bridge enable.
-    bit_offset: 22
-    bit_size: 1
-  - name: VALUE
-    description: Output status bit.
-    bit_offset: 30
-    bit_size: 1
-  - name: LOCK
-    description: Register lock bit.
-    bit_offset: 31
-    bit_size: 1
+    - name: EN
+      description: Enable
+      bit_offset: 0
+      bit_size: 1
+    - name: INMSEL
+      description: Input minus selection bits.
+      bit_offset: 4
+      bit_size: 4
+    - name: INPSEL
+      description: Input plus selection bit.
+      bit_offset: 8
+      bit_size: 3
+    - name: WINMODE
+      description: Comparator 1 noninverting input selector for window mode.
+      bit_offset: 11
+      bit_size: 1
+    - name: WINOUT
+      description: Comparator 1 output selector.
+      bit_offset: 14
+      bit_size: 1
+    - name: POLARITY
+      description: Polarity selection bit.
+      bit_offset: 15
+      bit_size: 1
+    - name: HYST
+      description: Hysteresis selection bits.
+      bit_offset: 16
+      bit_size: 2
+      enum: HYST
+    - name: PWRMODE
+      description: Power Mode.
+      bit_offset: 18
+      bit_size: 2
+      enum: PWRMODE
+    - name: BLANKSEL
+      description: Blanking source selection bits.
+      bit_offset: 20
+      bit_size: 5
+      enum: BLANKING
+    - name: VALUE
+      description: Output status bit.
+      bit_offset: 30
+      bit_size: 1
+    - name: LOCK
+      description: Register lock bit.
+      bit_offset: 31
+      bit_size: 1
 enum/BLANKING:
   bit_size: 5
   variants:
-  - name: NoBlanking
-    description: No blanking.
-    value: 0
-  - name: TIM1OC4
-    description: TIM1 OC4 enabled as blanking source
-    value: 1
-  - name: TIM1OC5
-    description: TIM1 OC5 enabled as blanking source
-    value: 2
-  - name: TIM2OC3
-    description: TIM5 OC3 enabled as blanking source
-    value: 4
-  - name: TIM3OC3
-    description: TIM3 OC3 enabled as blanking source
-    value: 8
-  - name: TIM15OC2
-    description: TIM15 OC2 enabled as blanking source
-    value: 16
+    - name: NoBlanking
+      description: No blanking.
+      value: 0
+    - name: TIM1OC4
+      description: TIM1 OC4 enabled as blanking source
+      value: 1
+    - name: TIM1OC5
+      description: TIM1 OC5 enabled as blanking source
+      value: 2
+    - name: TIM2OC3
+      description: TIM5 OC3 enabled as blanking source
+      value: 4
+    - name: TIM3OC3
+      description: TIM3 OC3 enabled as blanking source
+      value: 8
+    - name: TIM15OC2
+      description: TIM15 OC2 enabled as blanking source
+      value: 16
 enum/HYST:
   bit_size: 2
   variants:
-  - name: None
-    value: 0
-  - name: Low
-    value: 1
-  - name: Medium
-    value: 2
-  - name: High
-    value: 3
-enum/POLARITY:
-  bit_size: 1
-  variants:
-  - name: NotInverted
-    description: Output is not inverted.
-    value: 0
-  - name: Inverted
-    description: Output is inverted.
-    value: 1
+    - name: None
+      value: 0
+    - name: Low
+      value: 1
+    - name: Medium
+      value: 2
+    - name: High
+      value: 3
 enum/PWRMODE:
   bit_size: 2
   variants:
-  - name: HighSpeed
-    description: High speed / full power.
-    value: 0
-  - name: MediumSpeed
-    description: Medium speed / medium power.
-    value: 1
-  - name: LowSpeed
-    description: Low speed / low power.
-    value: 2
-  - name: VeryLowSpeed
-    description: Very-low speed / ultra-low power.
-    value: 3
-enum/WINMODE:
-  bit_size: 1
-  variants:
-  - name: ThisInpsel
-    description: Signal selected with INPSEL[2:0] bitfield of this register.
-    value: 0
-  - name: OtherInpsel
-    description: Signal selected with INPSEL[2:0] bitfield of the other register (required for window mode).
-    value: 1
-enum/WINOUT:
-  bit_size: 1
-  variants:
-  - name: COMP1_VALUE
-    description: Comparator 1 value.
-    value: 0
-  - name: COMP1_VALUE XOR COMP2_VALUE
-    description: Comparator 1 value XOR comparator 2 value (required for window mode).
-    value: 1
+    - name: HighSpeed
+      description: High speed / full power.
+      value: 0
+    - name: MediumSpeed
+      description: Medium speed / medium power.
+      value: 1
+    - name: LowSpeed
+      description: Very-low speed / ultra-low power.
+      value: 3
