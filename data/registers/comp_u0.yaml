@@ -24,14 +24,17 @@ fieldset/CSR:
       description: Comparator 1 noninverting input selector for window mode.
       bit_offset: 11
       bit_size: 1
+      enum: WindowMode
     - name: WINOUT
       description: Comparator 1 output selector.
       bit_offset: 14
       bit_size: 1
+      enum: WindowOut
     - name: POLARITY
       description: Polarity selection bit.
       bit_offset: 15
       bit_size: 1
+      enum: Polarity
     - name: HYST
       description: Hysteresis selection bits.
       bit_offset: 16
@@ -87,6 +90,15 @@ enum/HYST:
       value: 2
     - name: High
       value: 3
+enum/Polarity:
+  bit_size: 1
+  variants:
+    - name: NotInverted
+      description: Output is not inverted.
+      value: 0
+    - name: Inverted
+      description: Output is inverted.
+      value: 1
 enum/PWRMODE:
   bit_size: 2
   variants:
@@ -99,3 +111,21 @@ enum/PWRMODE:
     - name: LowSpeed
       description: Very-low speed / ultra-low power.
       value: 3
+enum/WindowMode:
+  bit_size: 1
+  variants:
+    - name: ThisInpsel
+      description: Signal selected with INPSEL[2:0] bitfield of this register.
+      value: 0
+    - name: OtherInpsel
+      description: Signal selected with INPSEL[2:0] bitfield of the other register (required for window mode).
+      value: 1
+enum/WindowOut:
+  bit_size: 1
+  variants:
+    - name: COMP1_VALUE
+      description: Comparator 1 value.
+      value: 0
+    - name: COMP1_VALUE XOR COMP2_VALUE
+      description: Comparator 1 value XOR comparator 2 value (required for window mode).
+      value: 1
