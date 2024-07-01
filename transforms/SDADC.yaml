@@ -1,0 +1,32 @@
+transforms:
+  - !Rename
+    from: ^SDADC\d$
+    to: SDADC
+
+  - !Rename
+    from: ^CONF0R$
+    to: CONFR
+
+  - !MakeRegisterArray
+    blocks: SDADC
+    from: ^(CONF)\dR$
+    to: CONFR
+
+  - !DeleteFieldsets
+    from: ^CONF\dR$
+
+  - !DeleteFieldsets
+    from: ^.*12R$
+
+  - !DeleteFieldsets
+    from: ^.*13R$
+
+  - !MakeFieldArray
+    fieldsets: ^CONFCHR\d$
+    from: ^CONFCH\d$
+    to: CONFCH
+
+  - !RenameFields
+    fieldset: CONFR
+    from: ^(OFFSET|GAIN|SE|COMMON)0$
+    to: $1
