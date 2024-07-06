@@ -1,4 +1,4 @@
-use stm32_data_serde::chip::memory::{self, Settings};
+use stm32_data_serde::chip::memory::{self, Access, Settings};
 use stm32_data_serde::chip::Memory;
 
 use crate::util::RegexMap;
@@ -7,6 +7,7 @@ struct Mem {
     name: &'static str,
     address: u32,
     size: u32,
+    access: Option<Access>,
 }
 
 macro_rules! mem {
@@ -15,6 +16,7 @@ macro_rules! mem {
             name: stringify!($name),
             address: $addr,
             size: $size*1024,
+            access: None,
         }
     };
 
@@ -317,6 +319,7 @@ pub fn get(chip: &str) -> Vec<Memory> {
                         erase_size: flash.erase_size[0].0,
                         erase_value: flash.erase_value,
                     }),
+                    access: mem.access,
                 });
             } else {
                 let mut offs = 0;
@@ -340,6 +343,7 @@ pub fn get(chip: &str) -> Vec<Memory> {
                             erase_size: erase_size,
                             erase_value: flash.erase_value,
                         }),
+                        access: mem.access,
                     });
                     offs += size;
                 }
@@ -355,6 +359,7 @@ pub fn get(chip: &str) -> Vec<Memory> {
                 size: mem.size,
                 kind,
                 settings: None,
+                access: None,
             });
         }
     }
