@@ -140,7 +140,7 @@ static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
     ("STM32F4[23]..G",               mem!(
         BANK_1 { 0x08000000 1024 },
         SRAM { 0x20000000 192 },
-        CCMRAM { 0x10000000 64 }
+        CCMRAM { 0x10000000 64 rw }
     )),
     ("STM32F4[23]..I",               mem!(
         BANK_1 { 0x08000000 1024 },
@@ -151,7 +151,7 @@ static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
     ("STM32F4[67]..G",               mem!(
         BANK_1 { 0x08000000 1024 },
         SRAM { 0x20000000 320 },
-        CCMRAM { 0x10000000 64 }
+        CCMRAM { 0x10000000 64 rw }
     )),
     ("STM32F4[67]..I",               mem!(
         BANK_1 { 0x08000000 1024 },
@@ -169,13 +169,13 @@ static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
     )),
     ("STM32F401.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 96 })),
     ("STM32F41..B",                  mem!(BANK_1 { 0x08000000 128 },  SRAM { 0x20000000 32 })),
-    ("STM32F41[57].G",               mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 128 },    CCMRAM { 0x10000000 64 })),
+    ("STM32F41[57].G",               mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 128 },    CCMRAM { 0x10000000 64 rw })),
     ("STM32F412.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 256 })),
     ("STM32F412.G",                  mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 256 })),
     ("STM32F413.G",                  mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 320 })),
-    ("STM32F417.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 128 },    CCMRAM { 0x10000000 64 })),
-    ("STM32F429.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 192 },    CCMRAM { 0x10000000 64 })),
-    ("STM32F469.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 320 },    CCMRAM { 0x10000000 64 })),
+    ("STM32F417.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 128 },    CCMRAM { 0x10000000 64 rw })),
+    ("STM32F429.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 192 },    CCMRAM { 0x10000000 64 rw })),
+    ("STM32F469.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 320 },    CCMRAM { 0x10000000 64 rw })),
     // F7
     ("STM32F7...C",                  mem!(BANK_1 { 0x08000000 256 },  DTCM { 0x20000000 64 },  SRAM { 0x20010000 192 })),
     ("STM32F7...I",                  mem!(BANK_1 { 0x08000000 2048 }, DTCM { 0x20000000 128 }, SRAM { 0x20020000 384 })),
