@@ -415,7 +415,7 @@ pub fn get(chip: &str) -> Vec<Memory> {
                 size: mem.size,
                 kind,
                 settings: None,
-                access: None,
+                access: mem.access,
             });
         }
     }
