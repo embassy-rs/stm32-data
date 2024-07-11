@@ -223,6 +223,7 @@ impl PeriMatcher {
             ("STM32G0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32U0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
             ("STM32G4.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
+            ("STM32U5.*:ADC:.*", ("adc", "u5", "ADC")),
             (
                 "STM32(L[45]|W[BL]).*:ADC\\d*_COMMON:.*",
                 ("adccommon", "v3", "ADC_COMMON"),
