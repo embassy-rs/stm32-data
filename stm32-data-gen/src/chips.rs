@@ -687,6 +687,7 @@ impl PeriMatcher {
             ("STM32H5.*:COMP:.*", ("comp", "h5", "COMP")),
             ("STM32U5[34].*:COMP1:.*", ("comp", "u5", "COMP")),
             ("STM32U5[AFG789].*:COMP[12]:.*", ("comp", "u5", "COMP")),
+            ("STM32F373.*:COMP[12]:.*", ("comp", "f3_v1", "COMP")),
             (r".*:.*:DCACHE:.*", ("dcache", "v1", "DCACHE")),
             (".*:.*:PSSI:.*", ("pssi", "v1", "PSSI")),
             (".*:.*:DTS:.*", ("dts", "v1", "DTS")),
