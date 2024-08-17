@@ -1,3 +1,4 @@
+mod check;
 mod chips;
 mod dma;
 mod docs;
