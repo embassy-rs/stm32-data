@@ -87,7 +87,7 @@ are only interested in one. It's easier than it looks, and doing all families at
 - Cleanup the register yamls (see below).
 - Minimize the diff between each pair of versions. For example between `lpuart_v1.yaml` and `lpuart_v2.yaml`. If one is missing enums or descriptions, copy it from another.
 - Make sure the block
-- Add entries to [`perimap`](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/chips.rs#L109), see below.
+- Add entries to [`perimap`](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/perimap.rs), see below.
 - Regen, then: 
   - Check `data/chips/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
   - Ensure a successful build of the affected pac. e.g.
@@ -156,7 +156,7 @@ such mapping assignes the `rcc_g0/RCC` register block to the `RCC` peripheral in
 
 ## Peripheral mapping (perimap)
 
-The `stm32-data-gen` binary has a map to match peripherals to the right version in all chips, the [perimap](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/chips.rs#L109).
+The `stm32-data-gen` binary has a map to match peripherals to the right version in all chips, the [perimap](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/perimap.rs).
 
 When parsing a chip, for each peripheral a "key" string is constructed using this format: `CHIP:PERIPHERAL_NAME:IP_NAME:IP_VERSION`, where:
 
