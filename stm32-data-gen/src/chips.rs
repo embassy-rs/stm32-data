@@ -781,30 +781,8 @@ fn process_chip(
         docs,
         cores: cores.to_vec(),
     };
+
     let dump = serde_json::to_string_pretty(&chip)?;
-
-    // TODO: delete this.
-    // This makes the formating match the output of the original python script, to prevent unnecessary churn
-    let dump = {
-        let mut cleaned = String::new();
-        for line in dump.lines() {
-            let spaces = line.bytes().take_while(|b| *b == b' ').count();
-            for _ in 0..spaces {
-                // add an extra space for every existing space
-                // this converts two-space indents to four-space indents
-                cleaned.push(' ');
-            }
-            // escape non-ascii symbols
-            let line = line.replace('\u{00ae}', r"\u00ae");
-            let line = line.replace('\u{2122}', r"\u2122");
-            cleaned.push_str(&line);
-            cleaned.push('\n');
-        }
-        // remove trailing newline
-        cleaned.pop();
-        cleaned
-    };
-
     std::fs::write(format!("build/data/chips/{chip_name}.json"), dump)?;
     Ok(())
 }
