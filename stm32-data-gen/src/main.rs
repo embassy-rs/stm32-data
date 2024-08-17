@@ -6,6 +6,7 @@ mod header;
 mod interrupts;
 mod memory;
 mod normalize_peris;
+mod perimap;
 mod rcc;
 mod registers;
 mod util;
