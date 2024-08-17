@@ -3,6 +3,7 @@ use std::collections::{HashMap, HashSet};
 
 use perimap::PERIMAP;
 use stm32_data_serde::chip::core::peripheral::Pin;
+use util::RegexMap;
 
 use super::*;
 use crate::gpio_af::parse_signal_name;
@@ -682,7 +683,6 @@ fn process_core(
         }
     }
 
-    let have_peris: HashSet<_> = peripherals.keys().cloned().collect();
     let mut peripherals: Vec<_> = peripherals.into_values().collect();
     peripherals.sort_by_key(|x| x.name.clone());
     // Collect DMA versions in the chip
@@ -720,10 +720,21 @@ fn process_core(
 
     // The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
     // so we have to filter it.
+    static DMA_CHANNEL_COUNTS: RegexMap<usize> = RegexMap::new(&[
+        ("STM32F0[37]0.*:DMA1", 5),
+        ("STM32G4[34]1.*:DMA1", 6),
+        ("STM32G4[34]1.*:DMA2", 6),
+    ]);
+    let have_peris: HashSet<_> = peripherals.iter().map(|p| p.name.clone()).collect();
     let dma_channels = dmas
         .iter()
         .flat_map(|(_, _, dma)| dma.channels.clone())
         .filter(|ch| have_peris.contains(&ch.dma))
+        .filter(|ch| {
+            DMA_CHANNEL_COUNTS
+                .get(&format!("{}:{}", chip_name, ch.dma))
+                .map_or_else(|| true, |&v| usize::from(ch.channel) < v)
+        })
         .collect::<Vec<_>>();
     let have_chs: HashSet<_> = dma_channels.iter().map(|ch| ch.name.clone()).collect();
 
@@ -782,6 +793,8 @@ fn process_chip(
         cores: cores.to_vec(),
     };
 
+    crate::check::check(&chip);
+
     let dump = serde_json::to_string_pretty(&chip)?;
     std::fs::write(format!("build/data/chips/{chip_name}.json"), dump)?;
     Ok(())
@@ -819,12 +832,9 @@ pub fn dump_all_chips(
     }
     #[cfg(not(feature = "rayon"))]
     {
-        let mut peri_matcher = PeriMatcher::new();
-
         chip_groups.into_iter().try_for_each(|group| {
             process_group(
                 group,
-                &mut peri_matcher,
                 &headers,
                 &af,
                 &chip_interrupts,

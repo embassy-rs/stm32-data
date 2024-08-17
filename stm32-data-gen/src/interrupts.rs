@@ -159,6 +159,7 @@ impl ChipInterrupts {
                 ("USB_HP_CAN_TX", &["CAN_TX"]),
                 ("USB_LP_CAN_RX0", &["CAN_RX0"]),
                 ("TIM6_DAC", &["TIM6", "DAC"]),
+                ("DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX_OVR", &["DMA1_Ch4_7_DMAMUX_OVR"]),
             ];
             let mut header_name = name.clone();
             if !exists_irq.contains(&name) {
