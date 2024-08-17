@@ -395,7 +395,7 @@ impl ChipInterrupts {
                 all_irqs.sort_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
                 all_irqs.dedup_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
 
-                p.interrupts = Some(all_irqs);
+                p.interrupts = all_irqs;
             }
         }
     }

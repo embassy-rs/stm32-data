@@ -1214,7 +1214,7 @@ fn process_core(
             address: addr,
             registers: None,
             rcc: None,
-            interrupts: None,
+            interrupts: Vec::new(),
             dma_channels: Vec::new(),
             pins: Vec::new(),
         };

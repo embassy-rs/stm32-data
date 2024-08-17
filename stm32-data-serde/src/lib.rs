@@ -106,14 +106,14 @@ pub mod chip {
             pub name: String,
             #[serde(default)]
             pub address: u32,
-            #[serde(skip_serializing_if = "Option::is_none")]
+            #[serde(default, skip_serializing_if = "Option::is_none")]
             pub registers: Option<peripheral::Registers>,
-            #[serde(skip_serializing_if = "Option::is_none")]
+            #[serde(default, skip_serializing_if = "Option::is_none")]
             pub rcc: Option<peripheral::Rcc>,
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub pins: Vec<peripheral::Pin>,
-            #[serde(skip_serializing_if = "Option::is_none")]
-            pub interrupts: Option<Vec<peripheral::Interrupt>>, // TODO: This should just be a Vec
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub interrupts: Vec<peripheral::Interrupt>,
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub dma_channels: Vec<peripheral::DmaChannel>,
         }
