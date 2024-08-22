@@ -174,6 +174,7 @@ impl Defines {
                 "OCTOSPI2",
                 &["OCTOSPI2_R_BASE", "OCTOSPI2_R_BASE_NS", "OCTOSPI2_REG_BASE"],
             ),
+            ("SPDIFRX1", &["SPDIFRX_BASE"]),
             ("FLASH", &["FLASH_R_BASE", "FLASH_REG_BASE"]),
             ("DAC", &["DAC1_BASE", "DAC_BASE"]),
             ("DAC1", &["DAC1_BASE", "DAC_BASE"]),
