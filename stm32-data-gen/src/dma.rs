@@ -143,6 +143,12 @@ impl DmaChannels {
                             for (request_name, request_num) in y {
                                 let parts: Vec<_> = request_name.split('_').collect();
                                 let target_peri_name = parts[0];
+
+                                let target_peri_name = match target_peri_name {
+                                    "SPDIF" => "SPDIFRX1",
+                                    x => x,
+                                };
+
                                 let request = {
                                     if parts.len() < 2 {
                                         target_peri_name
@@ -259,6 +265,7 @@ impl DmaChannels {
                             if target_name != "MEMTOMEM" {
                                 let target_peri_name = match target_peri_name {
                                     "LPUART" => "LPUART1",
+                                    "SPDIF" => "SPDIFRX1",
                                     x => x,
                                 };
                                 for request in target_requests {
