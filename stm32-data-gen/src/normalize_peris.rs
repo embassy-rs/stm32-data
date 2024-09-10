@@ -7,6 +7,7 @@ static NORMALIZE: &[(&str, &str)] = &[
     ("SUBGHZ", "SUBGHZSPI"),
     ("USB_DRD_FS", "USB"),
     ("SBS", "SYSCFG"),
+    ("SPDIFRX", "SPDIFRX1")
 ];
 
 pub fn normalize_peri_name(name: &str) -> &str {

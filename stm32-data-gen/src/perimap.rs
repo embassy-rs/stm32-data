@@ -197,6 +197,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:SDIO:sdmmc_v1_2", ("sdmmc", "v1", "SDMMC")),
     (".*:SDMMC:sdmmc_v1_3", ("sdmmc", "v1", "SDMMC")),
     (".*:SPDIFRX:spdifrx1_v1_0", ("spdifrx", "v1", "SPDIFRX")),
+    (".*:SPDIFRX:spdifrx1_H7", ("spdifrx", "h7", "SPDIFRX")),
     // # USB
     ("STM32(F1|L1).*:USB:.*", ("usb", "v1", "USB")),
     ("STM32(F1|L1).*:USBRAM:.*", ("usbram", "16x1_512", "USBRAM")),
