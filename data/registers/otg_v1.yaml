@@ -68,6 +68,10 @@ block/OTG:
     description: General core configuration register, for core_id 0x0000_[23]xxx
     byte_offset: 56
     fieldset: GCCFG_V2
+  - name: GCCFG_V3
+    description: General core configuration register, for core_id 0x0000_5xxx
+    byte_offset: 56
+    fieldset: GCCFG_V3
   - name: CID
     description: Core ID register
     byte_offset: 60
@@ -751,6 +755,65 @@ fieldset/GCCFG_V2:
   - name: PHYHSEN
     description: Internal high-speed PHY enable.
     bit_offset: 23
+    bit_size: 1
+fieldset/GCCFG_V3:
+  description: OTG general core configuration register.
+  fields:
+  - name: CHGDET
+    description: Charger detection, result of the current mode (primary or secondary).
+    bit_offset: 0
+    bit_size: 1
+  - name: FSVPLUS
+    description: Single-Ended DP indicator This bit gives the voltage level on DP (also result of the comparison with V<sub>LGC</sub> threshold as defined in BC v1.2 standard).
+    bit_offset: 1
+    bit_size: 1
+  - name: FSVMINUS
+    description: Single-Ended DM indicator This bit gives the voltage level on DM (also result of the comparison with V<sub>LGC</sub> threshold as defined in BC v1.2 standard).
+    bit_offset: 2
+    bit_size: 1
+  - name: SESSVLD
+    description: VBUS session indicator Indicates if VBUS is above VBUS session threshold.
+    bit_offset: 3
+    bit_size: 1
+  - name: HCDPEN
+    description: Host CDP behavior enable.
+    bit_offset: 16
+    bit_size: 1
+  - name: HCDPDETEN
+    description: Host CDP port voltage detector enable on DP.
+    bit_offset: 17
+    bit_size: 1
+  - name: HVDMSRCEN
+    description: Host CDP port Voltage source enable on DM.
+    bit_offset: 18
+    bit_size: 1
+  - name: DCDEN
+    description: Data Contact Detection enable.
+    bit_offset: 19
+    bit_size: 1
+  - name: PDEN
+    description: Primary detection enable.
+    bit_offset: 20
+    bit_size: 1
+  - name: VBDEN
+    description: VBUS detection enable Enables VBUS Sensing Comparators in order to detect VBUS presence and/or perform OTG operation.
+    bit_offset: 21
+    bit_size: 1
+  - name: SDEN
+    description: Secondary detection enable.
+    bit_offset: 22
+    bit_size: 1
+  - name: VBVALOVAL
+    description: Software override value of the VBUS B-session detection.
+    bit_offset: 23
+    bit_size: 1
+  - name: VBVALOVEN
+    description: Enables a software override of the VBUS B-session detection.
+    bit_offset: 24
+    bit_size: 1
+  - name: FORCEHOSTPD
+    description: Force host mode pull-downs If the ID pin functions are enabled, the host mode pull-downs on DP and DM activate automatically. However, whenever that is not the case, yet host mode is required, this bit must be used to force the pull-downs active.
+    bit_offset: 25
     bit_size: 1
 fieldset/GI2CCTL:
   description: I2C access register
