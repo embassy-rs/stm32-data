@@ -1,0 +1,162 @@
+block/ADC12_Common:
+  description: Analog-to-Digital Converter.
+  items:
+  - name: ADC12_CSR
+    description: ADC common status register.
+    byte_offset: 0
+    access: Read
+    fieldset: ADC12_CSR
+  - name: ADC12_CCR
+    description: ADC_CCR system control register.
+    byte_offset: 8
+    fieldset: ADC12_CCR
+  - name: ADC12_CDR
+    description: ADC common regular data register for dual mode.
+    byte_offset: 12
+    access: Read
+    fieldset: ADC12_CDR
+  - name: ADC12_CDR2
+    description: ADC common regular data register for 32-bit dual mode.
+    byte_offset: 16
+    access: Read
+    fieldset: ADC12_CDR2
+fieldset/ADC12_CCR:
+  description: ADC_CCR system control register.
+  fields:
+  - name: DUAL
+    description: 'Dual ADC mode selection These bits are written by software to select the operating mode. All the ADCs are independent: The configurations 00001 to 01001 correspond to the following operating modes: Dual mode, master and slave ADCs working together: All other combinations are reserved and must not be programmed Note: The software is allowed to write these bits only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 0
+    bit_size: 5
+  - name: DELAY
+    description: 'Delay between the end of the master ADC sampling phase and the beginning of the slave ADC sampling phase. These bits are set and cleared by software. These bits are used in dual interleaved modes. Refer to for the value of ADC resolution versus DELAY bits values. Note: The software is allowed to write these bits only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 8
+    bit_size: 4
+  - name: DAMDF
+    description: 'Dual ADC Mode Data Format This bit-field is set and cleared by software. It specifies the data format in the common data register ADC12_CDR. Note: The software is allowed to write these bits only when ADSTART = 0 (which ensures that no regular conversion is ongoing).'
+    bit_offset: 14
+    bit_size: 2
+  - name: PRESC
+    description: 'ADC prescaler These bits are set and cleared by software to select the frequency of the ADC clock. The clock is common to all ADCs. Others: Reserved, must not be used Note: The software is allowed to write this bit only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 18
+    bit_size: 4
+  - name: VREFEN
+    description: 'VREFINT enable This bit is set and cleared by software to enable/disable the VREFINT buffer. Note: The software is allowed to write this bit only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 22
+    bit_size: 1
+  - name: VSENSESEL
+    description: 'Temperature sensor voltage selection This bit is set and cleared by software to control the temperature sensor channel. Note: The software is allowed to write this bit only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 23
+    bit_size: 1
+  - name: VBATEN
+    description: 'VBAT enable This bit is set and cleared by software to control the VBAT channel. Note: The software is allowed to write this bit only when the ADCs are disabled (ADCAL = 0, JADSTART = 0, ADSTART = 0, ADSTP = 0, ADDIS = 0 and ADEN = 0).'
+    bit_offset: 24
+    bit_size: 1
+fieldset/ADC12_CDR:
+  description: ADC common regular data register for dual mode.
+  fields:
+  - name: RDATA_MST
+    description: Regular data of the master ADC. In dual mode, these bits contain the regular data of the master ADC. Refer to . The data alignment is applied as described in offset (ADC_DR, ADC_JDRy, OFFSETy, OFFSETy_CH, OVSS, LSHIFT, USAT, SSAT)) In DAMDF[1:0] = 11 mode, bits 15:8 contains SLV_ADC_DR[7:0], bits 7:0 contains MST_ADC_DR[7:0].
+    bit_offset: 0
+    bit_size: 16
+  - name: RDATA_SLV
+    description: Regular data of the slave ADC In dual mode, these bits contain the regular data of the slave ADC. Refer to Dual ADC modes. The data alignment is applied as described in offset (ADC_DR, ADC_JDRy, OFFSETy, OFFSETy_CH, OVSS, LSHIFT, USAT, SSAT)).
+    bit_offset: 16
+    bit_size: 16
+fieldset/ADC12_CDR2:
+  description: ADC common regular data register for 32-bit dual mode.
+  fields:
+  - name: RDATA_ALT
+    description: Regular data of the master/slave alternated ADCs In dual mode, these bits alternatively contains the regular 32-bit data of the master and the slave ADC. Refer to . The data alignment is applied as described in (ADC_DR, ADC_JDRy, OFFSETy, OFFSETy_CH, OVSS, LSHIFT, USAT, SSAT).
+    bit_offset: 0
+    bit_size: 32
+fieldset/ADC12_CSR:
+  description: ADC common status register.
+  fields:
+  - name: ADRDY_MST
+    description: Master ADC ready This bit is a copy of the ADRDY bit in the corresponding ADC_ISR register.
+    bit_offset: 0
+    bit_size: 1
+  - name: EOSMP_MST
+    description: End of Sampling phase flag of the master ADC This bit is a copy of the EOSMP bit in the corresponding ADC_ISR register.
+    bit_offset: 1
+    bit_size: 1
+  - name: EOC_MST
+    description: End of regular conversion of the master ADC This bit is a copy of the EOC bit in the corresponding ADC_ISR register.
+    bit_offset: 2
+    bit_size: 1
+  - name: EOS_MST
+    description: End of regular sequence flag of the master ADC This bit is a copy of the EOS bit in the corresponding ADC_ISR register.
+    bit_offset: 3
+    bit_size: 1
+  - name: OVR_MST
+    description: Overrun flag of the master ADC This bit is a copy of the OVR bit in the corresponding ADC_ISR register.
+    bit_offset: 4
+    bit_size: 1
+  - name: JEOC_MST
+    description: End of injected conversion flag of the master ADC This bit is a copy of the JEOC bit in the corresponding ADC_ISR register.
+    bit_offset: 5
+    bit_size: 1
+  - name: JEOS_MST
+    description: End of injected sequence flag of the master ADC This bit is a copy of the JEOS bit in the corresponding ADC_ISR register.
+    bit_offset: 6
+    bit_size: 1
+  - name: AWD1_MST
+    description: Analog watchdog 1 flag of the master ADC This bit is a copy of the AWD1 bit in the corresponding ADC_ISR register.
+    bit_offset: 7
+    bit_size: 1
+  - name: AWD2_MST
+    description: Analog watchdog 2 flag of the master ADC This bit is a copy of the AWD2 bit in the corresponding ADC_ISR register.
+    bit_offset: 8
+    bit_size: 1
+  - name: AWD3_MST
+    description: Analog watchdog 3 flag of the master ADC This bit is a copy of the AWD3 bit in the corresponding ADC_ISR register.
+    bit_offset: 9
+    bit_size: 1
+  - name: LDORDY_MST
+    description: ADC voltage regulator ready flag of the master ADC This bit is a copy of the LDORDY bit of the corresponding ADC_ISR register.
+    bit_offset: 12
+    bit_size: 1
+  - name: ADRDY_SLV
+    description: Slave ADC ready This bit is a copy of the ADRDY bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 16
+    bit_size: 1
+  - name: EOSMP_SLV
+    description: End of Sampling phase flag of the slave ADC This bit is a copy of the EOSMP2 bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 17
+    bit_size: 1
+  - name: EOC_SLV
+    description: End of regular conversion of the slave ADC This bit is a copy of the EOC bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 18
+    bit_size: 1
+  - name: EOS_SLV
+    description: End of regular sequence flag of the slave ADC This bit is a copy of the EOS bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 19
+    bit_size: 1
+  - name: OVR_SLV
+    description: Overrun flag of the slave ADC This bit is a copy of the OVR bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 20
+    bit_size: 1
+  - name: JEOC_SLV
+    description: End of injected conversion flag of the slave ADC This bit is a copy of the JEOC bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 21
+    bit_size: 1
+  - name: JEOS_SLV
+    description: End of injected sequence flag of the slave ADC This bit is a copy of the JEOS bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 22
+    bit_size: 1
+  - name: AWD1_SLV
+    description: Analog watchdog 1 flag of the slave ADC This bit is a copy of the AWD1 bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 23
+    bit_size: 1
+  - name: AWD2_SLV
+    description: Analog watchdog 2 flag of the slave ADC This bit is a copy of the AWD2 bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 24
+    bit_size: 1
+  - name: AWD3_SLV
+    description: Analog watchdog 3 flag of the slave ADC This bit is a copy of the AWD3 bit in the corresponding ADCx+1_ISR register.
+    bit_offset: 25
+    bit_size: 1
+  - name: LDORDY_SLV
+    description: ADC voltage regulator ready flag of the slave ADC This bit is a copy of the LDORDY bit of the corresponding ADCx+1_ISR register.
+    bit_offset: 28
+    bit_size: 1
