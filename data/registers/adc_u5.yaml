@@ -120,20 +120,414 @@ block/ADC:
     description: ADC calibration factor register.
     byte_offset: 200
     fieldset: CALFACT2
+block/ADC4:
+  description: ADC4.
+  items:
+  - name: ISR
+    description: ADC interrupt and status register.
+    byte_offset: 0
+    fieldset: ADC4_ISR
+  - name: IER
+    description: ADC interrupt enable register.
+    byte_offset: 4
+    fieldset: ADC4_IER
+  - name: CR
+    description: ADC control register.
+    byte_offset: 8
+    fieldset: ADC4_CR
+  - name: CFGR1
+    description: ADC configuration register.
+    byte_offset: 12
+    fieldset: ADC4_CFGR1
+  - name: CFGR2
+    description: ADC configuration register 2.
+    byte_offset: 16
+    fieldset: ADC4_CFGR2
+  - name: SMPR
+    description: ADC sample time register.
+    byte_offset: 20
+    fieldset: ADC4_SMPR
+  - name: AWD1TR
+    description: ADC watchdog threshold register.
+    byte_offset: 32
+    fieldset: ADC4_AWDTR
+  - name: AWD2TR
+    description: ADC watchdog threshold register.
+    byte_offset: 36
+    fieldset: ADC4_AWDTR
+  - name: CHSELRMOD0
+    description: ADC channel selection register [alternate].
+    byte_offset: 40
+    fieldset: ADC4_CHSELRMOD0
+  - name: CHSELRMOD1
+    description: ADC channel selection register [alternate].
+    byte_offset: 40
+    fieldset: ADC4_CHSELRMOD1
+  - name: AWD3TR
+    description: ADC watchdog threshold register.
+    byte_offset: 44
+    fieldset: ADC4_AWDTR
+  - name: DR
+    description: ADC data register.
+    byte_offset: 64
+    access: Read
+    fieldset: ADC4_DR
+  - name: PWRR
+    description: ADC power register.
+    byte_offset: 68
+    fieldset: ADC4_PWRR
+  - name: AWD2CR
+    description: ADC Analog Watchdog 2 Configuration register.
+    byte_offset: 160
+    fieldset: ADC4_AWDCR
+  - name: AWD3CR
+    description: ADC Analog Watchdog 3 Configuration register.
+    byte_offset: 164
+    fieldset: ADC4_AWDCR
+  - name: CALFACT
+    description: ADC Calibration factor.
+    byte_offset: 196
+    fieldset: ADC4_CALFACT
+  - name: OR
+    description: ADC option register.
+    byte_offset: 208
+    fieldset: ADC4_OR
+  - name: CCR
+    description: ADC common configuration register.
+    byte_offset: 776
+    fieldset: ADC4_CCR
+fieldset/ADC4_AWDCR:
+  description: ADC Analog Watchdog Configuration register.
+  fields:
+  - name: AWDCH
+    description: AWDCH0.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 24
+      stride: 1
+fieldset/ADC4_AWDTR:
+  description: ADC watchdog threshold register.
+  fields:
+  - name: LT3
+    description: LT3.
+    bit_offset: 0
+    bit_size: 12
+  - name: HT3
+    description: HT3.
+    bit_offset: 16
+    bit_size: 12
+fieldset/ADC4_CALFACT:
+  description: ADC Calibration factor.
+  fields:
+  - name: CALFACT
+    description: CALFACT.
+    bit_offset: 0
+    bit_size: 7
+fieldset/ADC4_CCR:
+  description: ADC common configuration register.
+  fields:
+  - name: PRESC
+    description: PRESC.
+    bit_offset: 18
+    bit_size: 4
+    enum: ADC4_PRESC
+  - name: VREFEN
+    description: VREFEN.
+    bit_offset: 22
+    bit_size: 1
+  - name: VSENSESEL
+    description: VSENSESEL.
+    bit_offset: 23
+    bit_size: 1
+  - name: VBATEN
+    description: VBATEN.
+    bit_offset: 24
+    bit_size: 1
+fieldset/ADC4_CFGR1:
+  description: ADC configuration register.
+  fields:
+  - name: DMAEN
+    description: DMAEN.
+    bit_offset: 0
+    bit_size: 1
+  - name: DMACFG
+    description: DMACFG.
+    bit_offset: 1
+    bit_size: 1
+    enum: ADC4_DMACFG
+  - name: RES
+    description: RES.
+    bit_offset: 2
+    bit_size: 2
+    enum: ADC4_RES
+  - name: SCANDIR
+    description: SCANDIR.
+    bit_offset: 4
+    bit_size: 1
+  - name: ALIGN
+    description: ALIGN.
+    bit_offset: 5
+    bit_size: 1
+  - name: EXTSEL
+    description: EXTSEL.
+    bit_offset: 6
+    bit_size: 3
+  - name: EXTEN
+    description: EXTEN.
+    bit_offset: 10
+    bit_size: 2
+    enum: ADC4_EXTEN
+  - name: OVRMOD
+    description: OVRMOD.
+    bit_offset: 12
+    bit_size: 1
+  - name: CONT
+    description: CONT.
+    bit_offset: 13
+    bit_size: 1
+  - name: WAIT
+    description: WAIT.
+    bit_offset: 14
+    bit_size: 1
+  - name: DISCEN
+    description: DISCEN.
+    bit_offset: 16
+    bit_size: 1
+  - name: CHSELRMOD
+    description: CHSELRMOD.
+    bit_offset: 21
+    bit_size: 1
+  - name: AWD1SGL
+    description: AWD1SGL.
+    bit_offset: 22
+    bit_size: 1
+  - name: AWD1EN
+    description: AWD1EN.
+    bit_offset: 23
+    bit_size: 1
+  - name: AWD1CH
+    description: AWD1CH.
+    bit_offset: 26
+    bit_size: 5
+fieldset/ADC4_CFGR2:
+  description: ADC configuration register 2.
+  fields:
+  - name: OVSE
+    description: OVSE.
+    bit_offset: 0
+    bit_size: 1
+  - name: OVSR
+    description: OVSR.
+    bit_offset: 2
+    bit_size: 3
+    enum: ADC4_OVERSAMPLING_RATIO
+  - name: OVSS
+    description: OVSS.
+    bit_offset: 5
+    bit_size: 4
+  - name: TOVS
+    description: TOVS.
+    bit_offset: 9
+    bit_size: 1
+  - name: LFTRIG
+    description: LFTRIG.
+    bit_offset: 29
+    bit_size: 1
+fieldset/ADC4_CHSELRMOD0:
+  description: ADC channel selection register [alternate].
+  fields:
+  - name: CHSEL
+    description: CHSEL.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 24
+      stride: 1
+fieldset/ADC4_CHSELRMOD1:
+  description: ADC channel selection register [alternate].
+  fields:
+  - name: SQ
+    description: SQ
+    bit_offset: 0
+    bit_size: 4
+    array:
+      len: 8
+      stride: 4
+fieldset/ADC4_CR:
+  description: ADC control register.
+  fields:
+  - name: ADEN
+    description: ADEN.
+    bit_offset: 0
+    bit_size: 1
+  - name: ADDIS
+    description: ADDIS.
+    bit_offset: 1
+    bit_size: 1
+  - name: ADSTART
+    description: ADSTART.
+    bit_offset: 2
+    bit_size: 1
+  - name: ADSTP
+    description: ADSTP.
+    bit_offset: 4
+    bit_size: 1
+  - name: ADVREGEN
+    description: ADVREGEN.
+    bit_offset: 28
+    bit_size: 1
+  - name: ADCAL
+    description: ADCAL.
+    bit_offset: 31
+    bit_size: 1
+fieldset/ADC4_DR:
+  description: ADC data register.
+  fields:
+  - name: DATA
+    description: DATA.
+    bit_offset: 0
+    bit_size: 16
+fieldset/ADC4_IER:
+  description: ADC interrupt enable register.
+  fields:
+  - name: ADRDYIE
+    description: ADRDYIE.
+    bit_offset: 0
+    bit_size: 1
+  - name: EOSMPIE
+    description: EOSMPIE.
+    bit_offset: 1
+    bit_size: 1
+  - name: EOCIE
+    description: EOCIE.
+    bit_offset: 2
+    bit_size: 1
+  - name: EOSIE
+    description: EOSIE.
+    bit_offset: 3
+    bit_size: 1
+  - name: OVRIE
+    description: OVRIE.
+    bit_offset: 4
+    bit_size: 1
+  - name: AWDIE
+    description: AWD1IE.
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
+  - name: EOCALIE
+    description: EOCALIE.
+    bit_offset: 11
+    bit_size: 1
+  - name: LDORDYIE
+    description: LDORDYIE.
+    bit_offset: 12
+    bit_size: 1
+fieldset/ADC4_ISR:
+  description: ADC interrupt and status register.
+  fields:
+  - name: ADRDY
+    description: ADRDY.
+    bit_offset: 0
+    bit_size: 1
+  - name: EOSMP
+    description: EOSMP.
+    bit_offset: 1
+    bit_size: 1
+  - name: EOC
+    description: EOC.
+    bit_offset: 2
+    bit_size: 1
+  - name: EOS
+    description: EOS.
+    bit_offset: 3
+    bit_size: 1
+  - name: OVR
+    description: OVR.
+    bit_offset: 4
+    bit_size: 1
+  - name: AWD
+    description: AWD1.
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
+  - name: EOCAL
+    description: EOCAL.
+    bit_offset: 11
+    bit_size: 1
+  - name: LDORDY
+    description: LDORDY.
+    bit_offset: 12
+    bit_size: 1
+fieldset/ADC4_OR:
+  description: ADC option register.
+  fields:
+  - name: CHN21SEL
+    description: CHN21SEL.
+    bit_offset: 0
+    bit_size: 1
+fieldset/ADC4_PWRR:
+  description: ADC data register.
+  fields:
+  - name: AUTOFF
+    description: AUTOFF.
+    bit_offset: 0
+    bit_size: 1
+  - name: DPD
+    description: DPD.
+    bit_offset: 1
+    bit_size: 1
+  - name: VREFPROT
+    description: VREFPROT.
+    bit_offset: 2
+    bit_size: 1
+  - name: VREFSECSMP
+    description: VREFSECSMP.
+    bit_offset: 3
+    bit_size: 1
+fieldset/ADC4_SMPR:
+  description: ADC sample time register.
+  fields:
+  - name: SMP
+    description: SMP1.
+    bit_offset: 0
+    bit_size: 3
+    array:
+      len: 2
+      stride: 4
+    enum: ADC4_SAMPLE_TIME
+  - name: SMPSEL
+    description: SMPSEL0.
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 24
+      stride: 1
 fieldset/AWD2CR:
   description: ADC analog watchdog 2 configuration register.
   fields:
   - name: AWD2CH
     description: AWD2CH.
     bit_offset: 0
-    bit_size: 20
+    bit_size: 1
+    array:
+      len: 20
+      stride: 1
 fieldset/AWD3CR:
   description: ADC analog watchdog 3 configuration register.
   fields:
   - name: AWD3CH
     description: AWD3CH.
     bit_offset: 0
-    bit_size: 20
+    bit_size: 1
+    array:
+      len: 20
+      stride: 1
 fieldset/CALFACT:
   description: ADC user control register.
   fields:
@@ -171,6 +565,7 @@ fieldset/CFGR:
     description: DMNGT.
     bit_offset: 0
     bit_size: 2
+    enum: DMNGT
   - name: RES
     description: RES.
     bit_offset: 2
@@ -299,6 +694,7 @@ fieldset/CR:
     description: ADSTP.
     bit_offset: 4
     bit_size: 1
+    enum: ADSTP
   - name: JADSTP
     description: JADSTP.
     bit_offset: 5
@@ -596,6 +992,144 @@ fieldset/SQR4:
     array:
       len: 2
       stride: 6
+enum/ADC4_DMACFG:
+  bit_size: 1
+  variants:
+  - name: OneShot
+    description: DMA One Shot mode selected
+    value: 0
+  - name: Circular
+    description: DMA Circular mode selected
+    value: 1
+enum/ADC4_EXTEN:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: Trigger detection disabled
+    value: 0
+  - name: RisingEdge
+    description: Trigger detection on the rising edge
+    value: 1
+  - name: FallingEdge
+    description: Trigger detection on the falling edge
+    value: 2
+  - name: BothEdges
+    description: Trigger detection on both the rising and falling edges
+    value: 3
+enum/ADC4_OVERSAMPLING_RATIO:
+  bit_size: 3
+  variants:
+  - name: Oversample2x
+    description: Oversample 2 times
+    value: 0
+  - name: Oversample4x
+    description: Oversample 4 times
+    value: 1
+  - name: Oversample8x
+    description: Oversample 8 times
+    value: 2
+  - name: Oversample16x
+    description: Oversample 16 times
+    value: 3
+  - name: Oversample32x
+    description: Oversample 32 times
+    value: 4
+  - name: Oversample64x
+    description: Oversample 64 times
+    value: 5
+  - name: Oversample128x
+    description: Oversample 128 times
+    value: 6
+  - name: Oversample256x
+    description: Oversample 256 times
+    value: 7
+enum/ADC4_PRESC:
+  bit_size: 4
+  variants:
+  - name: Div1
+    description: adc_ker_ck_input not divided
+    value: 0
+  - name: Div2
+    description: adc_ker_ck_input divided by 2
+    value: 1
+  - name: Div4
+    description: adc_ker_ck_input divided by 4
+    value: 2
+  - name: Div6
+    description: adc_ker_ck_input divided by 6
+    value: 3
+  - name: Div8
+    description: adc_ker_ck_input divided by 8
+    value: 4
+  - name: Div10
+    description: adc_ker_ck_input divided by 10
+    value: 5
+  - name: Div12
+    description: adc_ker_ck_input divided by 12
+    value: 6
+  - name: Div16
+    description: adc_ker_ck_input divided by 16
+    value: 7
+  - name: Div32
+    description: adc_ker_ck_input divided by 32
+    value: 8
+  - name: Div64
+    description: adc_ker_ck_input divided by 64
+    value: 9
+  - name: Div128
+    description: adc_ker_ck_input divided by 128
+    value: 10
+  - name: Div256
+    description: adc_ker_ck_input divided by 256
+    value: 11
+enum/ADC4_RES:
+  bit_size: 2
+  variants:
+  - name: Bits12
+    description: 12-bit resolution
+    value: 0
+  - name: Bits10
+    description: 10-bit resolution
+    value: 1
+  - name: Bits8
+    description: 8-bit resolution
+    value: 2
+  - name: Bits6
+    description: 6-bit resolution
+    value: 3
+enum/ADC4_SAMPLE_TIME:
+  bit_size: 3
+  variants:
+  - name: Cycles1_5
+    description: 1.5 ADC cycles
+    value: 0
+  - name: Cycles3_5
+    description: 3.5 ADC cycles
+    value: 1
+  - name: Cycles7_5
+    description: 7.5 ADC cycles
+    value: 2
+  - name: Cycles12_5
+    description: 12.5 ADC cycles
+    value: 3
+  - name: Cycles19_5
+    description: 19.5 ADC cycles
+    value: 4
+  - name: Cycles39_5
+    description: 39.5 ADC cycles
+    value: 5
+  - name: Cycles79_5
+    description: 79.5 ADC cycles
+    value: 6
+  - name: Cycles814_5
+    description: 160.5 ADC cycles
+    value: 7
+enum/ADSTP:
+  bit_size: 1
+  variants:
+  - name: Stop
+    description: Stop conversion of channel
+    value: 1
 enum/DIFSEL:
   bit_size: 1
   variants:
@@ -605,6 +1139,21 @@ enum/DIFSEL:
   - name: Differential
     description: Input channel is configured in differential mode
     value: 1
+enum/DMNGT:
+  bit_size: 2
+  variants:
+  - name: DR
+    description: Store output data in DR only
+    value: 0
+  - name: DMA_OneShot
+    description: DMA One Shot Mode selected
+    value: 1
+  - name: MDF
+    description: MDF mode selected
+    value: 2
+  - name: DMA_Circular
+    description: DMA Circular Mode selected
+    value: 3
 enum/EXTEN:
   bit_size: 2
   variants:
