@@ -74,7 +74,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:I2C:i2c2_v1_1F7", ("i2c", "v2", "I2C")),
     (".*:I2C:i2c2_v1_1U5", ("i2c", "v2", "I2C")),
     (".*:I2C:i2c1_v1_0H7RS", ("i2c", "v3", "I2C")),
-	("STM32F4[14][0236].*:FMPI2C:i2c2_v1_1", ("i2c2", "v2", "FMPI2C")), //Only on F41[023] and the F446
+    ("STM32F4[14][0236].*:FMPI2C:i2c2_v1_1", ("i2c2", "v2", "FMPI2C")), //Only on F41[023] and the F446
     ("STM32F10[1357].*:DAC:dacif_v1_1F1", ("dac", "v1", "DAC")), // Original F1 are v1
     (".*:DAC:dacif_v1_1F1", ("dac", "v2", "DAC")),
     (".*:DAC:F0dacif_v1_1", ("dac", "v2", "DAC")),
