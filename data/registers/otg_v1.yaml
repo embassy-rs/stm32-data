@@ -1,5 +1,5 @@
 block/OTG:
-  description: USB on the go
+  description: USB OTG core by Synopsys (more docs at https://www.intel.com/content/www/us/en/programmable/hps/agilex5/index_frames.html)
   items:
   - name: GOTGCTL
     description: Control and status register
@@ -76,10 +76,35 @@ block/OTG:
     description: Core ID register
     byte_offset: 60
     fieldset: CID
+  - name: SNPSID
+    description: Synopsis ID Register
+    byte_offset: 64
+  - name: HWCFG1
+    description: User HW Config 1 Register
+    byte_offset: 68
+  - name: HWCFG2
+    description: User HW Config 2 Register
+    byte_offset: 72
+  - name: HWCFG3
+    description: User HW Config 3 Register
+    byte_offset: 76
+  - name: HWCFG4
+    description: User HW Config 4 Register
+    byte_offset: 80
   - name: GLPMCFG
     description: OTG core LPM configuration register
     byte_offset: 84
     fieldset: GLPMCFG
+  - name: GPWRDN
+    description: Global PowerDn Register
+    byte_offset: 88
+  - name: GDFIFOCFG
+    description: Global DFIFO SW Config Register
+    byte_offset: 92
+  - name: ADPCTL
+    description: ADP (Attach Detection Protocol) Control Register
+    byte_offset: 96
+    fieldset: ADPCTL
   - name: HPTXFSIZ
     description: Host periodic transmit FIFO size register
     byte_offset: 256
@@ -117,6 +142,9 @@ block/OTG:
     description: Host all channels interrupt mask register
     byte_offset: 1048
     fieldset: HAINTMSK
+  - name: HFLBADDR
+    description: Host Frame Scheduling List Register
+    byte_offset: 1052
   - name: HPRT
     description: Host port control and status register
     byte_offset: 1088
@@ -155,6 +183,19 @@ block/OTG:
       stride: 32
     byte_offset: 1296
     fieldset: HCTSIZ
+  - name: HCDMA
+    description: Host channel DMA address register (config for scatter/gather)
+    array:
+      len: 12
+      stride: 32
+    byte_offset: 1300
+    fieldset: HCDMA
+  - name: HCDMAB
+    description: Host channel DMA address register (address for current transfer; debug)
+    array:
+      len: 12
+      stride: 32
+    byte_offset: 1308
   - name: DCFG
     description: Device configuration register
     byte_offset: 2048
@@ -247,6 +288,12 @@ block/OTG:
       stride: 32
     byte_offset: 2832
     fieldset: DOEPTSIZ
+  - name: DOEPDMA
+    description: Device OUT/IN endpoint DMA address register
+    array:
+      len: 16
+      stride: 32
+    byte_offset: 2836
   - name: PCGCCTL
     description: Power and clock gating control register
     byte_offset: 3584
@@ -1048,6 +1095,10 @@ fieldset/GINTSTS:
     description: Data fetch suspended
     bit_offset: 22
     bit_size: 1
+  - name: RESETDET
+    description: Reset detected
+    bit_offset: 23
+    bit_size: 1
   - name: HPRTINT
     description: Host port interrupt
     bit_offset: 24
@@ -1138,6 +1189,65 @@ fieldset/GLPMCFG:
   - name: ENBESL
     description: Enable best effort service latency
     bit_offset: 28
+    bit_size: 1
+fieldset/ADPCTL:
+  description: ADP (Attach Detection Protocol) Control Register
+  fields:
+  - name: PRB_DSCHG
+    description: Probe Discharge time (times for TADP_DSCHG)
+    bit_offset: 0
+    bit_size: 2
+  - name: PRB_DELTA
+    description: Probe Delta (resolution for RTIM)
+    bit_offset: 2
+    bit_size: 2
+  - name: PRB_PER
+    description: Probe Period (TADP_PRD)
+    bit_offset: 4
+    bit_size: 2
+  - name: RTIM
+    description: Probe Period (TADP_PRD)
+    bit_offset: 6
+    bit_size: 11
+  - name: ENAPRB
+    description: Enable Probe
+    bit_offset: 17
+    bit_size: 1
+  - name: ENASNS
+    description: Enable Sense
+    bit_offset: 18
+    bit_size: 1
+  - name: ADPRES
+    description: ADP Reset
+    bit_offset: 19
+    bit_size: 1
+  - name: ADPEN
+    description: ADP Enable
+    bit_offset: 20
+    bit_size: 1
+  - name: ADP_PRB_INT
+    description: ADP Probe Interrupt Enable
+    bit_offset: 21
+    bit_size: 1
+  - name: ADP_SNS_INT
+    description: ADP Sense Interrupt Enable
+    bit_offset: 22
+    bit_size: 1
+  - name: ADP_TMOUT_INT
+    description: ADP Timeout Interrupt Enable
+    bit_offset: 23
+    bit_size: 1
+  - name: ADP_PRB_MSK
+    description: ADP Probe Interrupt Mask
+    bit_offset: 24
+    bit_size: 1
+  - name: ADP_TMOUT_MSK
+    description: ADP Timeout Interrupt Mask
+    bit_offset: 25
+    bit_size: 1
+  - name: AR
+    description: Access Request
+    bit_offset: 26
     bit_size: 1
 fieldset/GOTGCTL:
   description: Control and status register
@@ -1435,7 +1545,7 @@ fieldset/HCCHAR:
     bit_offset: 22
     bit_size: 7
   - name: ODDFRM
-    description: Odd frame
+    description: Odd frame (request iso/interrupt transaction to be performed on odd micro-frame)
     bit_offset: 29
     bit_size: 1
   - name: CHDIS
@@ -1456,6 +1566,19 @@ fieldset/HCFG:
   - name: FSLSS
     description: FS- and LS-only support
     bit_offset: 2
+    bit_size: 1
+  - name: DESCDMA
+    description: Descriptor DMA-mode enable (qtd)
+    bit_offset: 23
+    bit_size: 1
+  - name: FRLISTLEN
+    description: Frame list length
+    bit_offset: 24
+    bit_size: 2
+    enum: FRLISTLEN
+  - name: PERSCHEDENA
+    description: Period scheduling enable
+    bit_offset: 26
     bit_size: 1
 fieldset/HCINT:
   description: Host channel interrupt register
@@ -1543,7 +1666,7 @@ fieldset/HCTSIZ:
   description: Host channel transfer size register
   fields:
   - name: XFRSIZ
-    description: Transfer size
+    description: Transfer size for non-isochronuous/interrupt pipes
     bit_offset: 0
     bit_size: 19
   - name: PKTCNT
@@ -1554,6 +1677,29 @@ fieldset/HCTSIZ:
     description: Data PID
     bit_offset: 29
     bit_size: 2
+  - name: NTDL
+    description: NTD descriptor list length for isochronuous & interrupt pipes (xfrsiz[15:8], note val+1 is actual length)
+    bit_offset: 8
+    bit_size: 8
+  - name: SCHEDINFO
+    description: Schedule info for isochronuous & interrupt pipes (xfrsiz[7:0])
+    bit_offset: 0
+    bit_size: 8
+  - name: DOPING
+    description: Do Ping
+    bit_offset: 31
+    bit_size: 1
+fieldset/HCDMA:
+  description: Host channel DMA config register
+  fields:
+    - name: CQTD
+      description: Current QTD (transfer descriptor) index
+      bit_offset: 3
+      bit_size: 6
+    - name: QTDADDR
+      description: QTD list base address
+      bit_offset: 0
+      bit_size: 32
 fieldset/HFIR:
   description: Host frame interval register
   fields:
@@ -1561,6 +1707,10 @@ fieldset/HFIR:
     description: Frame interval
     bit_offset: 0
     bit_size: 16
+  - name: RLDCTRL
+    description: Dynamic Loading Control
+    bit_offset: 16
+    bit_size: 1
 fieldset/HFNUM:
   description: Host frame number/frame time remaining register
   fields:
@@ -1599,7 +1749,7 @@ fieldset/HPRT:
     bit_offset: 1
     bit_size: 1
   - name: PENA
-    description: Port enable
+    description: Port enable (W1C)
     bit_offset: 2
     bit_size: 1
   - name: PENCHNG
@@ -1721,6 +1871,21 @@ enum/PFIVL:
   - name: FRAME_INTERVAL_95
     description: 95% of the frame interval
     value: 3
+enum/FRLISTLEN:
+  bit_size: 2
+  variants:
+    - name: LEN8
+      description: Length = 8
+      value: 0
+    - name: LEN16
+      description: Length = 16
+      value: 1
+    - name: LEN32
+      description: Length = 32
+      value: 2
+    - name: LEN64
+      description: Length = 64
+      value: 3
 enum/PKTSTSD:
   bit_size: 4
   variants:
