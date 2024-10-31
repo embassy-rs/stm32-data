@@ -132,6 +132,18 @@ impl Gen {
         writeln!(&mut extra, "pub const FLASH_BASE: usize = {};", first_flash.address).unwrap();
         writeln!(&mut extra, "pub const FLASH_SIZE: usize = {};", total_flash_size).unwrap();
 
+        let erase_values: HashSet<_> = flash_regions
+            .iter()
+            .map(|r| r.settings.as_ref().unwrap().erase_value)
+            .collect();
+        assert_eq!(1, erase_values.len());
+        writeln!(
+            &mut extra,
+            "pub const FLASH_ERASE_VALUE: u8 = {};",
+            erase_values.iter().next().unwrap()
+        )
+        .unwrap();
+
         let write_sizes: HashSet<_> = flash_regions
             .iter()
             .map(|r| r.settings.as_ref().unwrap().write_size)
