@@ -29,6 +29,7 @@ set -e
 mv /ci/cache/sources ./sources || true
 
 ./d ci
+./d check
 
 # move the sources directory into the cache
 mv ./sources /ci/cache/sources
