@@ -228,6 +228,8 @@ pub mod chip {
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub dmamux: Option<String>,
                 #[serde(skip_serializing_if = "Option::is_none")]
+                pub syscfg_cfgr1_remap_bit: Option<bool>,
+                #[serde(skip_serializing_if = "Option::is_none")]
                 pub request: Option<u8>,
             }
         }
