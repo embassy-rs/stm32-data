@@ -195,8 +195,18 @@ pub mod chip {
                 pub channel: Option<String>,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub dmamux: Option<String>,
+                #[serde(skip_serializing_if = "Vec::is_empty")]
+                pub remap: Vec<DmaChannelRemap>,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub request: Option<u8>,
+            }
+
+            #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+            pub struct DmaChannelRemap {
+                pub peripheral: String,
+                pub register: String,
+                pub field: String,
+                pub value: String,
             }
         }
 

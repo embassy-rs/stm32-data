@@ -250,5 +250,14 @@ pub struct PeripheralDmaChannel {
     pub channel: Option<&'static str>,
     pub dmamux: Option<&'static str>,
     pub dma: Option<&'static str>,
+    pub remap: &'static [PeripheralDmaChannelRemap],
     pub request: Option<u32>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralDmaChannelRemap {
+    pub peripheral: &'static str,
+    pub register: &'static str,
+    pub field: &'static str,
+    pub value: &'static str,
 }
