@@ -185,7 +185,7 @@ impl Defines {
                 &["ADC1_COMMON_BASE", "ADC_COMMON_BASE", "ADC1_COMMON", "ADC_COMMON"],
             ),
             ("CAN", &["CAN_BASE", "CAN1_BASE"]),
-            ("FMC", &["FMC_BASE", "FMC_R_BASE"]),
+            ("FMC", &["FMC_R_BASE", "FMC_R_BASE_NS"]),
             ("FSMC", &["FSMC_R_BASE"]),
             ("USB", &["USB_BASE", "USB_DRD_BASE", "USB_BASE_NS", "USB_DRD_BASE_NS"]),
             (

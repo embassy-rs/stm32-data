@@ -62,6 +62,8 @@ static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
     ("STM32C01..6",                  mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 6 })),
     ("STM32C03..4",                  mem!(BANK_1 { 0x08000000 16 }, SRAM { 0x20000000 12 })),
     ("STM32C03..6",                  mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 12 })),
+    ("STM32C07..8",                  mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 24 })),
+    ("STM32C07..B",                  mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 24 })),
     // F0
     ("STM32F0...C",                  mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 32 })),
     ("STM32F0[35]..8",               mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 8 })),
@@ -347,8 +349,7 @@ static FLASH_INFO: RegexMap<FlashInfo> = RegexMap::new(&[
     ("STM32L1.*",               FlashInfo{ erase_value: 0x00, write_size:  4, erase_size: &[(     256, 0)] }),
     ("STM32L5.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }),
     ("STM32U0.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
-    ("STM32U5[78].*",           FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
-    ("STM32U5.*",               FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 16*1024, 0)] }),
+    ("STM32U5.*",               FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
     ("STM32WBA.*",              FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
     ("STM32WB1.*",              FlashInfo{ erase_value: 0x00, write_size:  8, erase_size: &[(  2*1024, 0)] }),
     ("STM32WB.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }),
