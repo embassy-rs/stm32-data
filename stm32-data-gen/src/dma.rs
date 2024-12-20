@@ -164,6 +164,7 @@ impl DmaChannels {
                                         signal: request.to_string(),
                                         channel: None,
                                         dmamux: Some(req_dmamux.to_string()),
+                                        syscfg_cfgr1_remap_bit: None,
                                         request: Some(request_num),
                                         dma: None,
                                     })
@@ -246,6 +247,16 @@ impl DmaChannels {
                             let parts: Vec<_> = original_target_name.split(':').collect();
                             let target_name = parts[0];
 
+                            let syscfg_cfgr1_remap_bit = if parts.len() > 1 && parts[1].contains("Remap") {
+                                match parts[1].chars().last().unwrap() {
+                                    '0' => Some(false),
+                                    '1' => Some(true),
+                                    _ => None,
+                                }
+                            } else {
+                                None
+                            };
+
                             //  Chips with single DAC refer to channels by DAC1/DAC2
                             let target_name = match target_name {
                                 "DAC1" => "DAC_CH1",
@@ -274,6 +285,7 @@ impl DmaChannels {
                                         signal: request.to_string(),
                                         channel: Some(format!("{dma_peri_name}_CH{channel_name}")),
                                         dmamux: None,
+                                        syscfg_cfgr1_remap_bit,
                                         request: requests.get(&original_target_name).copied(),
                                         dma: None,
                                     };
@@ -339,6 +351,7 @@ impl DmaChannels {
                         dma: Some(instance.to_string()),
                         channel: None,
                         dmamux: None,
+                        syscfg_cfgr1_remap_bit: None,
                         request: Some(request_num),
                     });
             }
