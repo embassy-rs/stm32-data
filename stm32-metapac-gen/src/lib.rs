@@ -4,26 +4,13 @@ use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::str::FromStr;
 
 use chiptool::generate::CommonModule;
 use chiptool::{generate, ir, transform};
-use proc_macro2::TokenStream;
 use regex::Regex;
 
 mod data;
 use data::*;
-
-#[derive(Debug, Eq, PartialEq, Clone)]
-struct Metadata<'a> {
-    name: &'a str,
-    family: &'a str,
-    line: &'a str,
-    memory: &'a [MemoryRegion],
-    peripherals: &'a [Peripheral],
-    interrupts: &'a [Interrupt],
-    dma_channels: &'a [DmaChannel],
-}
 
 pub struct Options {
     pub chips: Vec<String>,
@@ -67,7 +54,7 @@ impl Gen {
                 base_address: p.address,
                 block: None,
                 description: None,
-                interrupts: HashMap::new(),
+                interrupts: BTreeMap::new(),
             };
 
             if let Some(bi) = &p.registers {
@@ -146,7 +133,7 @@ impl Gen {
 
         // Cleanups!
         transform::sort::Sort {}.run(&mut ir).unwrap();
-        transform::Sanitize {}.run(&mut ir).unwrap();
+        transform::sanitize::Sanitize {}.run(&mut ir).unwrap();
 
         // ==============================
         // Setup chip dir
@@ -320,7 +307,7 @@ impl Gen {
             });
 
             transform::sort::Sort {}.run(&mut ir).unwrap();
-            transform::Sanitize {}.run(&mut ir).unwrap();
+            transform::sanitize::Sanitize {}.run(&mut ir).unwrap();
 
             let items = generate::render(&ir, &gen_opts()).unwrap();
             let mut file = File::create(
@@ -419,9 +406,7 @@ fn stringify<T: Debug>(metadata: T) -> String {
 }
 
 fn gen_opts() -> generate::Options {
-    generate::Options {
-        common_module: CommonModule::External(TokenStream::from_str("crate::common").unwrap()),
-    }
+    generate::Options::new().with_common_module(CommonModule::External("crate::common".parse().unwrap()))
 }
 
 fn gen_memory_x(out_dir: &Path, chip: &Chip) {
