@@ -506,6 +506,7 @@ fn process_core(
         "ADC4_COMMON",
         "ADC34_COMMON",
         "ADC345_COMMON",
+        "VREFBUF",
     ];
     for pname in GHOST_PERIS {
         let normalized_pname = normalize_peri_name(pname);
