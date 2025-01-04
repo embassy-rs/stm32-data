@@ -306,6 +306,7 @@ impl ParsedRccs {
             ("USB", &["USB", "CLK48", "ICLK"]),
             ("USB_OTG_FS", &["USB", "CLK48", "ICLK"]),
             ("USB_OTG_HS", &["USB", "USBPHYC", "OTGHS", "CLK48", "ICLK"]),
+            ("DTS", &["TMPSENS"]),
         ];
 
         let rcc = self.rccs.get(rcc_version)?;
