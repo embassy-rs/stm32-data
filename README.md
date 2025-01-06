@@ -93,7 +93,7 @@ are only interested in one. It's easier than it looks, and doing all families at
   - Ensure a successful build of the affected pac. e.g.
     ```
     cd build/stm32-metapac
-    cargo build --features stm32u5a9nj,memory-x --target thumbv8m.main-none-eabihf 
+    cargo build --features stm32u5a9nj --target thumbv8m.main-none-eabihf 
     ``` 
 
 Please separate manual changes and changes resulting from regen in separate commits. It helps tremendously with review and rebasing/merging.
