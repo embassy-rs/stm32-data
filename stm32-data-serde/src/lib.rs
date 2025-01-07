@@ -14,7 +14,7 @@ fn is_default<T: Default + PartialEq>(variant: &T) -> bool {
     *variant == T::default()
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct Chip {
     pub name: String,
     pub family: String,
@@ -88,7 +88,7 @@ pub mod chip {
         pub url: String,
     }
 
-    #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
     pub struct Core {
         pub name: String,
         pub peripherals: Vec<core::Peripheral>,
@@ -96,12 +96,13 @@ pub mod chip {
         pub nvic_priority_bits: Option<u8>,
         pub interrupts: Vec<core::Interrupt>,
         pub dma_channels: Vec<core::DmaChannels>,
+        pub pins: Vec<core::Pin>,
     }
 
     pub mod core {
         use serde::{Deserialize, Serialize};
 
-        #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+        #[derive(Clone, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
         pub struct Peripheral {
             pub name: String,
             #[serde(default)]
@@ -172,46 +173,6 @@ pub mod chip {
                 pub af: Option<u8>,
             }
 
-            fn extract_port_and_pin(pin: &str) -> (char, u8) {
-                let captures = regex!(r"^P([A-Z])(\d+)(?:_C)?")
-                    .captures(pin)
-                    .expect("Could not match regex on pin");
-                let port = captures
-                    .get(1)
-                    .expect("Could not extract port")
-                    .as_str()
-                    .chars()
-                    .next()
-                    .expect("Empty port");
-                let pin_number = captures
-                    .get(2)
-                    .expect("Could not extract pin number")
-                    .as_str()
-                    .parse::<u8>()
-                    .expect("Could not parse pin number to u8");
-                (port, pin_number)
-            }
-
-            impl Ord for Pin {
-                fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-                    let (port_a, pin_number_a) = extract_port_and_pin(&self.pin);
-                    let (port_b, pin_number_b) = extract_port_and_pin(&other.pin);
-
-                    if port_a != port_b {
-                        port_a.cmp(&port_b)
-                    } else if pin_number_a != pin_number_b {
-                        pin_number_a.cmp(&pin_number_b)
-                    } else {
-                        self.signal.cmp(&other.signal)
-                    }
-                }
-            }
-            impl PartialOrd for Pin {
-                fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-                    Some(self.cmp(other))
-                }
-            }
-
             #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
             pub struct Interrupt {
                 pub signal: String,
@@ -236,6 +197,11 @@ pub mod chip {
         pub struct Interrupt {
             pub name: String,
             pub number: u8,
+        }
+
+        #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+        pub struct Pin {
+            pub name: String,
         }
 
         #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]

@@ -1,6 +1,7 @@
 use std::collections::hash_map::Entry;
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 
+use gpio_af::pin_sort_key;
 use perimap::PERIMAP;
 use stm32_data_serde::chip::core::peripheral::Pin;
 use util::RegexMap;
@@ -568,7 +569,7 @@ fn process_core(
         }
     }
     for pins in periph_pins.values_mut() {
-        pins.sort();
+        pins.sort_by_key(|p| pin_sort_key(&p.pin));
         pins.dedup();
     }
     let mut peripherals = HashMap::new();
@@ -674,6 +675,9 @@ fn process_core(
 
         let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
         for mut p in extra.peripherals {
+            // filter out pins that may not exist in this package.
+            p.pins = p.pins.into_iter().filter(|p| group.pins.contains_key(&p.pin)).collect();
+
             if let Some(peripheral) = peripherals.get_mut(&p.name) {
                 // Modify the generated peripheral
                 peripheral.pins.append(&mut p.pins);
@@ -759,12 +763,24 @@ fn process_core(
         p.dma_channels = chs;
     }
 
+    let mut pins: Vec<_> = group
+        .pins
+        .keys()
+        .map(|x| x.replace("_C", ""))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .map(|name| stm32_data_serde::chip::core::Pin { name })
+        .collect();
+
+    pins.sort_by_key(|p| pin_sort_key(&p.name));
+
     let mut core = stm32_data_serde::chip::Core {
         name: core_name.clone(),
         peripherals,
         nvic_priority_bits: None,
         interrupts: vec![],
         dma_channels,
+        pins,
     };
 
     chip_interrupts.process(&mut core, chip_name, h, group);

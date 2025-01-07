@@ -131,6 +131,7 @@ pub struct Metadata {
     pub nvic_priority_bits: Option<u8>,
     pub interrupts: &'static [Interrupt],
     pub dma_channels: &'static [DmaChannel],
+    pub pins: &'static [Pin],
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -226,6 +227,11 @@ pub struct PeripheralPin {
     pub pin: &'static str,
     pub signal: &'static str,
     pub af: Option<u8>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct Pin {
+    pub name: &'static str,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]

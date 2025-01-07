@@ -136,10 +136,12 @@ impl Gen {
                 pub(crate) static PERIPHERALS: &[Peripheral] = {};
                 pub(crate) static INTERRUPTS: &[Interrupt] = {};
                 pub(crate) static DMA_CHANNELS: &[DmaChannel] = {};
+                pub(crate) static PINS: &[Pin] = {};
             ",
             stringify(&core.peripherals),
             stringify(&core.interrupts),
             stringify(&core.dma_channels),
+            stringify(&core.pins),
         )
         .unwrap();
 
@@ -177,6 +179,7 @@ impl Gen {
                 nvic_priority_bits: {:?},
                 interrupts: INTERRUPTS,
                 dma_channels: DMA_CHANNELS,
+                pins: PINS,
             }};",
             deduped_file,
             &chip.name,
