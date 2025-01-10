@@ -336,6 +336,7 @@ impl Gen {
         }
 
         // copy misc files
+        fs::write(self.opts.out_dir.join("README.md"), include_bytes!("../res/README.md")).unwrap();
         fs::write(self.opts.out_dir.join("build.rs"), include_bytes!("../res/build.rs")).unwrap();
         fs::write(
             self.opts.out_dir.join("src/lib.rs"),
