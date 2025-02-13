@@ -422,9 +422,22 @@ pub fn get(chip: &str) -> Vec<Memory> {
                     offs += size;
                 }
             }
+        } else if mem.name == "OTP" {
+            res.push(Memory {
+                name: mem.name.to_string(),
+                address: mem.address,
+                size: mem.size,
+                kind: memory::Kind::Flash,
+                settings: Some(Settings {
+                    write_size: flash.write_size,
+                    erase_size: 0,
+                    erase_value: flash.erase_value,
+                }),
+                access: mem.access,
+            });
         } else {
             let mut kind = memory::Kind::Ram;
-            if mem.name.contains("FLASH") || mem.name.contains("AXIICP") || mem.name == "OTP" {
+            if mem.name.contains("FLASH") || mem.name.contains("AXIICP") {
                 kind = memory::Kind::Flash;
             }
             res.push(Memory {
