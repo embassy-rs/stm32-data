@@ -131,6 +131,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F3.*:OPAMP:tsmc018_ull_opamp_v1_0", ("opamp", "f3", "OPAMP")),
     ("STM32H7.*:OPAMP:.*", ("opamp", "h_v1", "OPAMP")),
     ("STM32H5.*:OPAMP:.*", ("opamp", "h_v2", "OPAMP")),
+    ("STM32L4.*:OPAMP:.*", ("opamp", "l4", "OPAMP")),
     ("STM32U0.*:OPAMP:.*", ("opamp", "u0", "OPAMP")),
     (".*:DCMI:.*", ("dcmi", "v1", "DCMI")),
     ("STM32C0.*:SYSCFG:.*", ("syscfg", "c0", "SYSCFG")),
