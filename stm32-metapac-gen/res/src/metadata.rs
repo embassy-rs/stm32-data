@@ -249,5 +249,6 @@ pub struct PeripheralDmaChannel {
     pub channel: Option<&'static str>,
     pub dmamux: Option<&'static str>,
     pub dma: Option<&'static str>,
+    pub syscfg_cfgr1_remap_bit: Option<bool>,
     pub request: Option<u32>,
 }
