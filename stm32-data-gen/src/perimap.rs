@@ -486,6 +486,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (r".*:LPDMA\d?:.*", ("lpdma", "v1", "LPDMA")),
     (r".*:BDMA\d?:.*", ("bdma", "v1", "DMA")),
     ("STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0", ("dma2d", "v2", "DMA2D")),
+    ("STM32U5.*:DMA2D:DMA2D:dma2d1_v1_0", ("dma2d", "v2", "DMA2D")),
     (".*:DMA2D:dma2d1_v1_0", ("dma2d", "v1", "DMA2D")),
     ("STM32L4[PQRS].*:DMA.*", ("bdma", "v1", "DMA")), // L4+
     ("STM32L[04].*:DMA.*", ("bdma", "v2", "DMA")),    // L0, L4 non-plus (since plus is handled above)
