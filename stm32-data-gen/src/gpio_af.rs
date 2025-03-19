@@ -128,7 +128,7 @@ pub fn parse_signal_name(signal_name: &str) -> Option<(&str, &str)> {
                 signal_name.strip_prefix("RMII_").unwrap_or(signal_name)
             } else {
                 signal_name.strip_prefix("MII_").unwrap_or(signal_name)
-            }
+            },
         ))
     }
 }
