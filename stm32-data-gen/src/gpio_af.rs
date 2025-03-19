@@ -122,7 +122,14 @@ pub fn parse_signal_name(signal_name: &str) -> Option<(&str, &str)> {
 
         Some((peri_name, signal_name.strip_suffix("OUT").unwrap_or(signal_name)))
     } else {
-        Some((normalize_peri_name(peri_name), signal_name))
+        Some((
+            normalize_peri_name(peri_name),
+            if signal_name.starts_with("RMII_") {
+                signal_name.strip_prefix("RMII_").unwrap_or(signal_name)
+            } else {
+                signal_name.strip_prefix("MII_").unwrap_or(signal_name)
+            },
+        ))
     }
 }
 
