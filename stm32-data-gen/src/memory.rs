@@ -139,50 +139,16 @@ static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
     ("STM32F4...8",                  mem!(BANK_1 { 0x08000000 64 },   SRAM { 0x20000000 32 }, OTP { 0x1fff7800 528 bytes })),
     ("STM32F4...D",                  mem!(BANK_1 { 0x08000000 384 },  SRAM { 0x20000000 96 }, OTP { 0x1fff7800 528 bytes })),
     ("STM32F4...H",                  mem!(BANK_1 { 0x08000000 1536 }, SRAM { 0x20000000 320 }, OTP { 0x1fff7800 528 bytes })),
-    ("STM32F4(05|07).E",             mem!(
-        BANK_1 { 0x08000000 512 },
-        SRAM { 0x20000000 112 },
-        SRAM2 { 0x2001c000 16 },
-        CCMRAM { 0x10000000 64 rw },
-        OTP { 0x1fff7800 528 bytes }
-    )),
-    ("STM32F4(11|46).E",             mem!(BANK_1 { 0x08000000 512 }, SRAM { 0x20000000 128 }, OTP { 0x1fff7800 528 bytes })),
-    ("STM32F4[14]..C",               mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 128 }, OTP { 0x1fff7800 528 bytes })),
-    ("STM32F4[23]..G",               mem!(
-        BANK_1 { 0x08000000 1024 },
-        SRAM { 0x20000000 192 },
-        CCMRAM { 0x10000000 64 rw },
-        OTP { 0x1fff7800 528 bytes }
-    )),
-    ("STM32F4[23]..I",               mem!(
-        BANK_1 { 0x08000000 1024 },
-        BANK_2 { 0x08100000 1024 },
-        SRAM { 0x20000000 192 },
-        CCMRAM { 0x10000000 64 rw },
-        OTP { 0x1fff7800 528 bytes }
-    )),
-    ("STM32F4[67]..G",               mem!(
-        BANK_1 { 0x08000000 1024 },
-        SRAM { 0x20000000 320 },
-        CCMRAM { 0x10000000 64 rw },
-        OTP { 0x1fff7800 528 bytes }
-    )),
-    ("STM32F4[67]..I",               mem!(
-        BANK_1 { 0x08000000 1024 },
-        BANK_2 { 0x08100000 1024 },
-        SRAM { 0x20000000 320 },
-        CCMRAM { 0x10000000 64 rw },
-        OTP { 0x1fff7800 528 bytes }
-    )),
+    ("STM32F4(05|07).E",             mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 112 }, SRAM2 { 0x2001c000 16 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes } )),
+    ("STM32F4(11|46).E",             mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 128 }, OTP { 0x1fff7800 528 bytes })),
+    ("STM32F4[14]..C",               mem!(BANK_1 { 0x08000000 256 },  SRAM { 0x20000000 128 }, OTP { 0x1fff7800 528 bytes })),
+    ("STM32F4[23]..G",               mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })),
+    ("STM32F4[23]..I",               mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })),
+    ("STM32F4[67]..G",               mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })),
+    ("STM32F4[67]..I",               mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })),
     ("STM32F40..B",                  mem!(BANK_1 { 0x08000000 128 },  SRAM { 0x20000000 64 }, OTP { 0x1fff7800 528 bytes })),
     ("STM32F40..C",                  mem!(BANK_1 { 0x08000000 256 },  SRAM { 0x20000000 64 }, OTP { 0x1fff7800 528 bytes })),
-    ("STM32F40..G",                  mem!(
-        BANK_1 { 0x08000000 1024 },
-        SRAM { 0x20000000 112 },
-        SRAM2 { 0x2001c000 16 },
-        CCMRAM { 0x10000000 64 rw },
-        OTP { 0x1fff7800 528 bytes }
-    )),
+    ("STM32F40..G",                  mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 112 },SRAM2 { 0x2001c000 16 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })),
     ("STM32F401.E",                  mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 96 }, OTP { 0x1fff7800 528 bytes })),
     ("STM32F41..B",                  mem!(BANK_1 { 0x08000000 128 },  SRAM { 0x20000000 32 }, OTP { 0x1fff7800 528 bytes })),
     ("STM32F41[57].G",               mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 128 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })),
