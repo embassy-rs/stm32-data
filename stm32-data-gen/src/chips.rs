@@ -3,6 +3,7 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 
 use gpio_af::pin_sort_key;
 use perimap::PERIMAP;
+use regex::Regex;
 use stm32_data_serde::chip::core::peripheral::Pin;
 use util::RegexMap;
 
@@ -528,8 +529,12 @@ fn process_core(
                 .map(|cap| cap["idx"].to_string())
         })
         .collect::<Vec<_>>();
+
+    // The STM32H7S / STM32H7R use the FDCAN v1 peripheral instead of the one used in the rest of the H7 family.
+    let h7_non_rs_re = Regex::new(r"STM32H7[0-9AB].*").unwrap();
+
     if !fdcans.is_empty() {
-        if chip_name.starts_with("STM32H7") {
+        if h7_non_rs_re.is_match(chip_name) {
             // H7 has one message RAM shared between FDCANs
             peri_kinds
                 .entry("FDCANRAM".to_string())
@@ -581,7 +586,7 @@ fn process_core(
 
         let addr = if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(&pname) {
             defines.get_peri_addr("FDCANRAM").map(|addr| {
-                if chip_name.starts_with("STM32H7") {
+                if h7_non_rs_re.is_match(chip_name) {
                     addr
                 } else {
                     let idx = cap["idx"].parse::<u32>().unwrap();
