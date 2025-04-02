@@ -197,6 +197,8 @@ impl Defines {
             ("VREFINTCAL", &["VREFINT_CAL_ADDR_CMSIS"]),
             ("DSIHOST", &["DSI_BASE"]),
             ("SYSCFG", &["SYSCFG_BASE", "SBS_BASE"]),
+            ("XSPI1", &["XSPI1_R_BASE"]),
+            ("XSPI2", &["XSPI2_R_BASE"]),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 

@@ -1,0 +1,28 @@
+transforms:
+  - !Rename
+    from: ^XSPI1$
+    to: XSPI
+    type: Block
+
+  - !Rename
+    from: ^XSPI_(.+)
+    to: $1
+    type: All
+
+  - !RenameRegisters
+    block: XSPI
+    from: ^XSPI_(.+)$
+    to: $1
+
+  - !DeleteEnums
+    from: ^(WCCR|WPCCR|TCR|WPTCR|WPDCR|CCR)_(SSHIFT|DHQC|DQSE|(AB|AD|D|I)DTR)$
+
+  - !DeleteEnums
+    from: ^(TCIE|TCEN|SMIE|TEIE|FTIE|TOIE)?$
+
+  - !DeleteEnums
+    from: ^(DMM|DMAEN|EN|ABORT|FRCK)?$
+
+  # prescaler is 0..255, not an enum
+  - !DeleteEnums
+    from: ^(PRESCALER)?$
