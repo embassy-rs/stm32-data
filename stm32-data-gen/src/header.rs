@@ -117,21 +117,24 @@ pub struct Defines(pub HashMap<String, i64>);
 
 impl Defines {
     // warning: horrible abomination ahead
-    fn parse_value(&self, val: &str) -> i64 {
+    fn parse_value(&self, val: &str) -> anyhow::Result<i64> {
         let val = val.trim();
         if val.is_empty() {
-            0
+            Ok(0)
         } else if let Some(m) = regex!(r"^(0([1-9][0-9]*)(U))").captures(val) {
-            m.get(2).unwrap().as_str().parse().unwrap()
+            m.get(2)
+                .unwrap()
+                .as_str()
+                .parse()
+                .map_err(|e| anyhow::anyhow!("Failed to parse {val}: {e}"))
         } else if let Some(m) = regex!(r"^((0x[0-9a-fA-F]+|\d+))(|u|ul|U|UL)$").captures(val) {
             let x = m.get(1).unwrap().as_str();
             match x.strip_prefix("0x") {
-                Some(x) => i64::from_str_radix(x, 16),
-                None => x.parse(),
+                Some(x) => i64::from_str_radix(x, 16).map_err(|e| anyhow::anyhow!("Failed to parse {val}: {e}")),
+                None => x.parse().map_err(|e| anyhow::anyhow!("Failed to parse {val}: {e}")),
             }
-            .unwrap()
         } else if let Some(m) = regex!(r"^([0-9A-Za-z_]+)$").captures(val) {
-            self.0.get(m.get(1).unwrap().as_str()).copied().unwrap_or(0)
+            Ok(self.0.get(m.get(1).unwrap().as_str()).copied().unwrap_or(0))
         } else if let Some(x) = regex!(r"^\((.*)\)$")
             .captures(val)
             .map(|m| m.get(1).unwrap().as_str())
@@ -141,23 +144,26 @@ impl Defines {
         } else if let Some(m) = regex!(r"^\*?\([0-9A-Za-z_]+ *\*?\)(.*)$").captures(val) {
             self.parse_value(m.get(1).unwrap().as_str())
         } else if let Some(m) = regex!(r"^(.*)/(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) / self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? / self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)<<(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) << self.parse_value(m.get(2).unwrap().as_str()) & 0xFFFFFFFF
+            Ok(
+                self.parse_value(m.get(1).unwrap().as_str())? << self.parse_value(m.get(2).unwrap().as_str())?
+                    & 0xFFFFFFFF,
+            )
         } else if let Some(m) = regex!(r"^(.*)>>(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) >> self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? >> self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)\|(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) | self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? | self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)&(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) & self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? & self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^~(.*)$").captures(val) {
-            !self.parse_value(m.get(1).unwrap().as_str()) & 0xFFFFFFFF
+            Ok(!self.parse_value(m.get(1).unwrap().as_str())? & 0xFFFFFFFF)
         } else if let Some(m) = regex!(r"^(.*)\+(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) + self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? + self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)-(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) - self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? - self.parse_value(m.get(2).unwrap().as_str())?)
         } else {
-            panic!("can't parse: {val:?}")
+            Err(anyhow::anyhow!("Cant parse {val}"))
         }
     }
 
@@ -245,14 +251,14 @@ impl ParsedHeader {
         self.interrupts.get(core_name).unwrap()
     }
 
-    fn parse(f: impl AsRef<std::path::Path>) -> anyhow::Result<Self> {
+    fn parse(path: impl AsRef<std::path::Path>) -> anyhow::Result<Self> {
         let mut irqs = HashMap::<String, HashMap<String, u8>>::new();
         let mut defines = HashMap::<String, Defines>::new();
         let mut cores = Vec::<String>::new();
         let mut cur_core = "all".to_string();
 
         let mut accum = String::new();
-        let f = std::fs::read(f)?;
+        let f = std::fs::read(&path)?;
         for l in f.split(|b| b == &b'\n') {
             let l = String::from_utf8_lossy(l);
             let l = l.trim();
@@ -312,7 +318,9 @@ impl ParsedHeader {
                 }
                 let val = m.get(2).unwrap().as_str();
                 let val = val.split("/*").next().unwrap().trim();
-                let val = defines_entry.parse_value(val);
+                let val = defines_entry
+                    .parse_value(val)
+                    .with_context(|| format!("Failed to process {:?}", path.as_ref()))?;
 
                 defines_entry.0.insert(name.to_string(), val);
             }
