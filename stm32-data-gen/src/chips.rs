@@ -377,7 +377,7 @@ fn process_group(
     let chip_af = chip_af.strip_suffix("_gpio_v1_0").unwrap();
     let chip_af = af.0.get(chip_af);
 
-    let cores: Vec<_> = group
+    let cores: anyhow::Result<Vec<_>> = group
         .xml
         .cores
         .iter()
@@ -395,6 +395,7 @@ fn process_group(
             )
         })
         .collect();
+    let cores = cores?;
 
     for chip_name in &group.chip_names {
         process_chip(chips, chip_name, h, docs, &group, &cores)?;
@@ -414,7 +415,7 @@ fn process_core(
     rcc_block: (&str, &str, &str),
     chip_af: Option<&HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>>,
     dma_channels: &dma::DmaChannels,
-) -> stm32_data_serde::chip::Core {
+) -> anyhow::Result<stm32_data_serde::chip::Core> {
     let core_name = corename(core_xml);
     let defines = h.get_defines(&core_name);
 
@@ -788,9 +789,9 @@ fn process_core(
         pins,
     };
 
-    chip_interrupts.process(&mut core, chip_name, h, group);
+    chip_interrupts.process(&mut core, chip_name, h, group)?;
 
-    core
+    Ok(core)
 }
 
 fn process_chip(

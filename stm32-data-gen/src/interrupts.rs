@@ -80,7 +80,7 @@ impl ChipInterrupts {
         chip_name: &str,
         h: &crate::header::ParsedHeader,
         group: &ChipGroup,
-    ) {
+    ) -> anyhow::Result<()> {
         trace!("parsing interrupts for chip {} core {}", chip_name, core.name);
 
         // =================== Populate nvic_priority_bits
@@ -117,10 +117,10 @@ impl ChipInterrupts {
                 )
             })
             .unwrap();
-        let nvic_strings = self
-            .irqs
-            .get(&(chip_nvic.name.clone(), chip_nvic.version.clone()))
-            .unwrap();
+        let nvic_strings = match self.irqs.get(&(chip_nvic.name.clone(), chip_nvic.version.clone())) {
+            Some(strings) => strings,
+            None => return Err(anyhow::anyhow!("Failed to find NVIC strings for chip {chip_name}")),
+        };
 
         // peripheral -> signal -> interrupts
         let mut chip_signals = HashMap::<String, HashMap<String, HashSet<String>>>::new();
@@ -399,6 +399,7 @@ impl ChipInterrupts {
                 p.interrupts = all_irqs;
             }
         }
+        Ok(())
     }
 }
 
