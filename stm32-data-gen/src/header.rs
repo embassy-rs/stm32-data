@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use anyhow::Context;
+
 use crate::regex;
 
 pub struct Headers {
@@ -49,14 +51,16 @@ pub struct HeaderMap(pub HashMap<String, String>);
 impl HeaderMap {
     pub fn parse() -> anyhow::Result<Self> {
         let mut res = HashMap::new();
-        for (mut header, chips) in
-            serde_yaml::from_str::<HashMap<String, String>>(&std::fs::read_to_string("data/header_map.yaml")?)?
-        {
+        let path = "data/header_map.yaml";
+        let header = std::fs::read_to_string(path).with_context(|| format!("Failed to read {}", path))?;
+        let header = serde_yaml::from_str::<HashMap<String, String>>(&header)
+            .with_context(|| format!("Failed to parse {}", path))?;
+        for (mut header, chips) in header {
             header.make_ascii_lowercase();
             for chip in chips.split(',') {
                 let chip = chip.trim().to_ascii_lowercase();
                 if let Some(old) = res.insert(chip.clone(), header.clone()) {
-                    panic!("Duplicate {chip} found! Overwriting {old} with {header}");
+                    panic!("Duplicate {chip} found in {path}! Overwriting {old} with {header}");
                 }
             }
         }
