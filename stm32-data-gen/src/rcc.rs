@@ -52,6 +52,7 @@ impl ParsedRccs {
     fn parse_rcc(rcc_version: &str, ir: &IR) -> anyhow::Result<ParsedRcc> {
         let allowed_variants = HashSet::from([
             "DISABLE",
+            "Disable",
             "SYS",
             "PCLK1",
             "PCLK1_TIM",
@@ -140,11 +141,14 @@ impl ParsedRccs {
             "ETH_RMII_REF",
             "ETH",
             "CLK48MOHCI",
+            "HSE_Div32",
+            "HSE_DIV_RTCPRE",
         ]);
 
         let mux_regexes = &[
             regex!(r"^DCKCFGR\d?/(.+)SEL$"),
             regex!(r"^CCIPR\d?/(.+)SEL$"),
+            regex!(r"^BDCR\d?/(.+)SEL$"),
             regex!(r"^D\dCCIP\d?R/(.+)SEL$"),
             regex!(r"^CFGR\d/(.+)SW$"),
             regex!(r"^.+PERCKSELR/(.+)SEL$"),

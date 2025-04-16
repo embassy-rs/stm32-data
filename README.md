@@ -47,7 +47,7 @@ These are the data sources currently used.
   - peripheral addresses
 - stm32-rs SVDs: register blocks.
 
-For register blocks, YAMLs are intially extracted from SVDs, manually cleaned up and committed. From this point on, they're manually maintained.
+For register blocks, YAMLs are initially extracted from SVDs, manually cleaned up and committed. From this point on, they're manually maintained.
 We don't maintain "patches" for registers unlike the `stm32-rs` project. This has two advantages:
 
 - Fixing mistakes and typos in the SVDs is now much easier (and yes, there are A LOT of those). It doesn't require a complicated patching system, you just edit the YAML to fix the mistake instead of writing a patch that will fix it when applied.
@@ -115,7 +115,7 @@ SVDs have some widespread annoyances that should be fixed when adding register Y
 
 NOTE: At the time of writing all families are supported, so this is only useful in particular situations, for example if you want to regenerate an RCC register yaml from scratch.
 
-Adding support for a new familiy is mostly a matter of adding support for RCC.
+Adding support for a new family is mostly a matter of adding support for RCC.
 
 Now extract the RCC peripheral registers: `./d extract-all RCC --transform ./transform-RCC.yaml`
 
@@ -152,7 +152,7 @@ An example mapping can be seen in the following snippet
 ('STM32G0.*:RCC:.*', 'rcc_g0/RCC'),
 ```
 
-such mapping assignes the `rcc_g0/RCC` register block to the `RCC` peripheral in every device from the `STM32G0` family.
+such mapping assigns the `rcc_g0/RCC` register block to the `RCC` peripheral in every device from the `STM32G0` family.
 
 ## Peripheral mapping (perimap)
 
