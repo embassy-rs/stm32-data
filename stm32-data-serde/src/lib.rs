@@ -157,11 +157,16 @@ pub mod chip {
                 }
 
                 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize, Default)]
+                /// Specifies a limit for the stop mode of the peripheral.
+                /// E.g. if `StopMode::Stop1` is selected, the peripheral prevents the chip from entering Stop1 mode.
                 pub enum StopMode {
                     #[default]
-                    Stop1, // Peripheral prevents chip from entering Stop1
-                    Stop2,   // Peripheral prevents chip from entering Stop2
-                    Standby, // Peripheral does not prevent chip from entering Stop
+                    /// Peripheral prevents chip from entering Stop1
+                    Stop1,
+                    /// Peripheral prevents chip from entering Stop2
+                    Stop2,
+                    /// Peripheral does not prevent chip from entering Stop
+                    Standby,
                 }
             }
 

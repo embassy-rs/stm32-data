@@ -620,7 +620,11 @@ fn process_core(
             });
         }
 
-        if let Some(rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &pname) {
+        if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &pname) {
+            if let Some(stop_mode_info) = low_power::peripheral_stop_mode_info(chip_name, &pname) {
+                rcc_info.stop_mode = stop_mode_info;
+            }
+
             p.rcc = Some(rcc_info);
         }
         if let Some(pins) = periph_pins.get_mut(&pname) {

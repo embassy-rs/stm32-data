@@ -5,6 +5,7 @@ mod docs;
 mod gpio_af;
 mod header;
 mod interrupts;
+mod low_power;
 mod memory;
 mod normalize_peris;
 mod perimap;

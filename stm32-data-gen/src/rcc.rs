@@ -37,6 +37,7 @@ struct EnRst {
 }
 
 impl ParsedRccs {
+    /// Parse the RCC information from the `rcc_xx` yaml files in `data/registers`
     pub fn parse(registers: &Registers) -> anyhow::Result<Self> {
         let mut rccs = HashMap::new();
 
@@ -49,6 +50,8 @@ impl ParsedRccs {
         Ok(Self { rccs })
     }
 
+    /// Parse mcu specific RCC information from the IR object
+    /// - Clock source muxes of peripherals
     fn parse_rcc(rcc_version: &str, ir: &IR) -> anyhow::Result<ParsedRcc> {
         let allowed_variants = HashSet::from([
             "DISABLE",
@@ -233,14 +236,6 @@ impl ParsedRccs {
                             }
                         }
 
-                        let stop_mode = if peri == "RTC" {
-                            StopMode::Standby
-                        } else if peri.starts_with("LP") {
-                            StopMode::Stop2
-                        } else {
-                            StopMode::Stop1
-                        };
-
                         let clock = clock.replace("AHB", "HCLK").replace("APB", "PCLK");
 
                         let val = EnRst {
@@ -250,7 +245,8 @@ impl ParsedRccs {
                             },
                             reset,
                             bus_clock: clock,
-                            stop_mode,
+                            // The stop mode info is set in `low_power.rs`
+                            stop_mode: StopMode::default(),
                         };
 
                         if en_rst.insert(peri.to_string(), val).is_some() {
