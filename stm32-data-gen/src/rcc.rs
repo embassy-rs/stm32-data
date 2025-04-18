@@ -55,7 +55,6 @@ impl ParsedRccs {
     fn parse_rcc(rcc_version: &str, ir: &IR) -> anyhow::Result<ParsedRcc> {
         let allowed_variants = HashSet::from([
             "DISABLE",
-            "Disable",
             "SYS",
             "PCLK1",
             "PCLK1_TIM",
@@ -86,7 +85,6 @@ impl ParsedRccs {
             "PLLSAI2_Q",
             "PLLSAI2_R",
             "PLL1_P",
-            "PLL1_P_MUL_2",
             "PLL1_Q",
             "PLL1_R",
             "PLL1_S",
@@ -120,31 +118,21 @@ impl ParsedRccs {
             // TODO: variants to cleanup
             "AFIF",
             "HSI_HSE",
-            "HSI_Div488",
             "SAI1_EXTCLK",
             "SAI2_EXTCLK",
-            "B_0x0",
-            "B_0x1",
             "I2S_CKIN",
             "DAC_HOLD",
             "DAC_HOLD_2",
-            "RTCCLK",
-            "RTC_WKUP",
             "ICLK",
             "DCLK",
             "I2S1",
             "I2S2",
             "SAI1",
             "SAI2",
-            "HSI256_MSIS1024_MSIS4",
-            "HSI256_MSIS1024_MSIK4",
-            "HSI256_MSIK1024_MSIS4",
-            "HSI256_MSIK1024_MSIK4",
             "SPDIFRX_SYMB",
             "ETH_RMII_REF",
             "ETH",
             "CLK48MOHCI",
-            "HSE_Div32",
             "HSE_DIV_RTCPRE",
         ]);
 
@@ -156,7 +144,7 @@ impl ParsedRccs {
             regex!(r"^CFGR\d/(.+)SW$"),
             regex!(r"^.+PERCKSELR/(.+)SEL$"),
         ];
-        let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$")];
+        let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$"), regex!(r"^.+/TIMICSEL$")];
 
         let mut mux = HashMap::new();
         for (reg, body) in &ir.fieldsets {
@@ -183,6 +171,9 @@ impl ParsedRccs {
                     for v in &enumm.variants {
                         let mut vname = v.name.as_str();
                         if let Some(captures) = regex!(r"^([A-Z0-9_]+)_DIV_\d+?$").captures(v.name.as_str()) {
+                            vname = captures.get(1).unwrap().as_str();
+                        }
+                        if let Some(captures) = regex!(r"^([A-Z0-9_]+)_MUL_\d+?$").captures(v.name.as_str()) {
                             vname = captures.get(1).unwrap().as_str();
                         }
 
