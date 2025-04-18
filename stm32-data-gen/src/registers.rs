@@ -5,6 +5,7 @@ use chiptool::ir::IR;
 use chiptool::validate;
 
 pub struct Registers {
+    /// Maps the file name (without the .yaml extension) to the IR object which is parsed from the mcu .svd file
     pub registers: HashMap<String, IR>,
 }
 
