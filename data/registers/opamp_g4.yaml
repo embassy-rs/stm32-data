@@ -1,51 +1,47 @@
 block/OPAMP:
-  description: Operational Amplifier
+  description: Operational amplifier
   items:
   - name: CSR
-    description: OPAMP control/status register
+    description: Control/status register
     byte_offset: 0
     fieldset: CSR
   - name: TCMR
-    description: OPAMP control/status register
+    description: Control/status register
     byte_offset: 24
     fieldset: TCMR
 fieldset/CSR:
-  description: OPAMP control/status register
+  description: Control/status register
   fields:
   - name: OPAMPEN
-    description: OPAMP enable
+    description: Enable
     bit_offset: 0
     bit_size: 1
   - name: FORCE_VP
-    description: Forces a calibration reference voltage on non-inverting input and disables external connections.
+    description: Force internal reference on VP (reserved for test)
     bit_offset: 1
     bit_size: 1
-    enum: FORCE_VP
   - name: VP_SEL
-    description: VP_SEL
+    description: Non-inverting input selection
     bit_offset: 2
     bit_size: 2
     enum: VP_SEL
   - name: USERTRIM
-    description: USERTRIM
+    description: User trimming enable
     bit_offset: 4
     bit_size: 1
-    enum: USERTRIM
   - name: VM_SEL
-    description: OPAMP inverting input selection
+    description: Inverting input selection
     bit_offset: 5
     bit_size: 2
     enum: VM_SEL
   - name: OPAHSM
-    description: OPAHSM
+    description: High-speed mode enable
     bit_offset: 7
     bit_size: 1
-    enum: OPAHSM
   - name: OPAINTOEN
-    description: OPAINTOEN
+    description: Internal output enable
     bit_offset: 8
     bit_size: 1
-    enum: OPAINTOEN
   - name: CALON
     description: Calibration mode enable
     bit_offset: 11
@@ -68,11 +64,10 @@ fieldset/CSR:
     description: Offset trimming value (NMOS)
     bit_offset: 24
     bit_size: 5
-  - name: OUTCAL
+  - name: CALOUT
     description: OPAMP ouput status flag
     bit_offset: 30
     bit_size: 1
-    enum: OUTCAL
   - name: LOCK
     description: LOCK
     bit_offset: 31
@@ -81,81 +76,45 @@ fieldset/TCMR:
   description: OPAMP timer controlled mode register
   fields:
   - name: VMS_SEL
-    description: VMS_SEL
+    description: Inverting input secondary selection
     bit_offset: 0
     bit_size: 1
   - name: VPS_SEL
-    description: VPS_SEL
+    description: Non-inverting input secondary selection
     bit_offset: 1
     bit_size: 2
     enum: VPS_SEL
   - name: T1CM_EN
-    description: T1CM_EN
+    description: TIM1 controlled mux mode enable
     bit_offset: 3
     bit_size: 1
   - name: T8CM_EN
-    description: T8CM_EN
+    description: TIM8 controlled mux mode enable
     bit_offset: 4
     bit_size: 1
   - name: T20CM_EN
-    description: T20CM_EN
+    description: TIM20 controlled mux mode enable
     bit_offset: 5
     bit_size: 1
   - name: LOCK
-    description: TCMR LOCK
+    description: Configure this register as read-only
     bit_offset: 31
     bit_size: 1
 enum/CALSEL:
   bit_size: 2
   variants:
   - name: Percent3_3
-    description: VREFOPAMP=3.3% VDDA
+    description: VREFOPAMP = 3.3% VDDA
     value: 0
   - name: Percent10
-    description: VREFOPAMP=10% VDDA
+    description: VREFOPAMP = 10% VDDA
     value: 1
   - name: Percent50
-    description: VREFOPAMP=50% VDDA
+    description: VREFOPAMP = 50% VDDA
     value: 2
   - name: Percent90
-    description: VREFOPAMP=90% VDDA
+    description: VREFOPAMP = 90% VDDA
     value: 3
-enum/FORCE_VP:
-  bit_size: 1
-  variants:
-  - name: Normal
-    description: Normal operating mode
-    value: 0
-  - name: Calibration
-    description: Calibration mode. Non-inverting input connected to calibration reference
-    value: 1
-enum/OPAHSM:
-  bit_size: 1
-  variants:
-  - name: Normal
-    description: OpAmp in normal mode
-    value: 0
-  - name: HighSpeed
-    description: OpAmp in high speed mode
-    value: 1
-enum/OPAINTOEN:
-  bit_size: 1
-  variants:
-  - name: OutputPin
-    description: Output is connected to the output Pin
-    value: 0
-  - name: ADCChannel
-    description: Output is connected internally to ADC channel
-    value: 1
-enum/OUTCAL:
-  bit_size: 1
-  variants:
-  - name: Low
-    description: Non-inverting < inverting
-    value: 0
-  - name: High
-    description: Non-inverting > inverting
-    value: 1
 enum/PGA_GAIN:
   bit_size: 5
   variants:
@@ -231,15 +190,6 @@ enum/PGA_GAIN:
   - name: Gain64_InputVINM0FilteringVINM1
     description: Gain 64, input/bias connected to VINM0 with filtering on VINM1 or inverting gain
     value: 29
-enum/USERTRIM:
-  bit_size: 1
-  variants:
-  - name: Factory
-    description: Factory trim used
-    value: 0
-  - name: User
-    description: User trim used
-    value: 1
 enum/VM_SEL:
   bit_size: 2
   variants:

@@ -1,186 +1,156 @@
 block/OPAMP:
-  description: OPAMP address block description.
+  description: Operational amplifier
   items:
   - name: CSR
-    description: OPAMP control/status register.
+    description: Control/status register
     byte_offset: 0
     fieldset: CSR
   - name: OTR
-    description: OPAMP offset trimming register in normal mode.
+    description: Offset trimming register in normal mode
     byte_offset: 4
     fieldset: OTR
   - name: LPOTR
-    description: OPAMP offset trimming register in low-power mode.
+    description: Offset trimming register in low-power mode
     byte_offset: 8
     fieldset: LPOTR
 fieldset/CSR:
-  description: OPAMP control/status register.
+  description: Control/status register
   fields:
   - name: OPAMPEN
-    description: Operational amplifier Enable.
+    description: Enable
     bit_offset: 0
     bit_size: 1
   - name: OPALPM
-    description: Operational amplifier Low Power Mode. The operational amplifier must be disable to change this configuration.
+    description: Low-power mode enable. The operational amplifier must be disabled to change this configuration.
     bit_offset: 1
     bit_size: 1
-    enum: OPALPM
   - name: OPAMODE
-    description: Operational amplifier PGA mode.
+    description: PGA mode
     bit_offset: 2
     bit_size: 2
     enum: OPAMODE
   - name: PGA_GAIN
-    description: Operational amplifier Programmable amplifier gain value.
+    description: Gain in PGA mode
     bit_offset: 4
     bit_size: 2
     enum: PGA_GAIN
   - name: VM_SEL
-    description: 'Inverting input selection. These bits are used only when OPAMODE = 00, 01 or 10. 1x: Inverting input not externally connected. These configurations are valid only when OPAMODE = 10 (PGA mode).'
+    description: Inverting input selection
     bit_offset: 8
     bit_size: 2
     enum: VM_SEL
   - name: VP_SEL
-    description: Non inverted input selection.
+    description: Non inverted input selection
     bit_offset: 10
     bit_size: 1
     enum: VP_SEL
   - name: CALON
-    description: Calibration mode enabled.
+    description: Calibration mode enable
     bit_offset: 12
     bit_size: 1
-    enum: CALON
   - name: CALSEL
-    description: Calibration selection.
+    description: Calibration selection
     bit_offset: 13
     bit_size: 1
     enum: CALSEL
   - name: USERTRIM
-    description: allows to switch from factory AOP offset trimmed values to AOP offset user trimmed values This bit is active for both mode normal and low-power.
+    description: User trimming enable
     bit_offset: 14
     bit_size: 1
-    enum: USERTRIM
   - name: CALOUT
-    description: Operational amplifier calibration output During calibration mode offset is trimmed when this signal toggle.
+    description: Calibration output
     bit_offset: 15
     bit_size: 1
   - name: OPA_RANGE
-    description: Operational amplifier power supply range for stability All AOP must be in power down to allow AOP-RANGE bit write. It applies to all AOP embedded in the product.
+    description: Power supply range for stability
     bit_offset: 31
     bit_size: 1
     enum: OPA_RANGE
 fieldset/LPOTR:
-  description: OPAMP offset trimming register in low-power mode.
+  description: Offset trimming register in low-power mode
   fields:
   - name: TRIMLPOFFSETN
-    description: Low-power mode trim for NMOS differential pairs.
+    description: Offset trimming value (NMOS)
     bit_offset: 0
     bit_size: 5
   - name: TRIMLPOFFSETP
-    description: Low-power mode trim for PMOS differential pairs.
+    description: Offset trimming value (PMOS)
     bit_offset: 8
     bit_size: 5
 fieldset/OTR:
-  description: OPAMP offset trimming register in normal mode.
+  description: Offset trimming register in normal mode
   fields:
   - name: TRIMOFFSETN
-    description: Trim for NMOS differential pairs.
+    description: Offset trimming value (NMOS)
     bit_offset: 0
     bit_size: 5
   - name: TRIMOFFSETP
-    description: Trim for PMOS differential pairs.
+    description: Offset trimming value (PMOS)
     bit_offset: 8
     bit_size: 5
-enum/CALON:
-  bit_size: 1
-  variants:
-  - name: Normal
-    description: Normal mode.
-    value: 0
-  - name: Calibration
-    description: Calibration mode (all switches opened by HW).
-    value: 1
 enum/CALSEL:
   bit_size: 1
   variants:
   - name: NMOS
-    description: NMOS calibration (200mV applied on OPAMP inputs).
+    description: NMOS calibration, 0.2 V applied to OPAMP inputs during calibration
     value: 0
   - name: PMOS
-    description: PMOS calibration (VDDA-200mV applied on OPAMP inputs).
-    value: 1
-enum/OPALPM:
-  bit_size: 1
-  variants:
-  - name: Normal
-    description: operational amplifier in normal mode.
-    value: 0
-  - name: LowPower
-    description: operational amplifier in low-power mode.
+    description: PMOS calibration, VDDA - 0.2 V applied to OPAMP inputs during calibration
     value: 1
 enum/OPAMODE:
   bit_size: 2
   variants:
   - name: Disable
-    description: internal PGA disable.
+    description: Internal PGA disable
     value: 0
   - name: Disable2
-    description: internal PGA disable. (Duplicate)
+    description: Internal PGA disable (duplicate)
     value: 1
   - name: Enable
-    description: internal PGA enable, gain programmed in PGA_GAIN.
+    description: Internal PGA enable, gain programmed in PGA_GAIN
     value: 2
   - name: Follower
-    description: internal follower.
+    description: Internal follower
     value: 3
 enum/OPA_RANGE:
   bit_size: 1
   variants:
   - name: Low
-    description: Low range (VDDA < 2.4V).
+    description: Low range (VDDA < 2.4 V)
     value: 0
   - name: High
-    description: High range (VDDA > 2.4V).
+    description: High range (VDDA > 2.4 V)
     value: 1
 enum/PGA_GAIN:
   bit_size: 2
   variants:
   - name: Gain2
-    description: internal PGA Gain 2.
+    description: Gain 2
     value: 0
   - name: Gain4
-    description: internal PGA Gain 4.
+    description: Gain 4
     value: 1
   - name: Gain8
-    description: internal PGA Gain 8.
+    description: Gain 8
     value: 2
   - name: Gain16
-    description: internal PGA Gain 16.
+    description: Gain 16
     value: 3
-enum/USERTRIM:
-  bit_size: 1
-  variants:
-  - name: Factory
-    description: Factory trim code used.
-    value: 0
-  - name: User
-    description: User trim code used.
-    value: 1
 enum/VM_SEL:
   bit_size: 2
   variants:
-  - name: VINM
-    description: GPIO connected to VINM (valid also in PGA mode for filtering).
+  - name: GPIO
+    description: GPIO connected to VINM (valid also in PGA mode for filtering)
     value: 0
-  - name: NotConnected
-    description: Inverting input not externally connected. These configurations are valid only when OPAMODE = 10 (PGA mode)
+  - name: NOT_CONNECTED
+    description: VINM not externally connected, valid only in PGA mode
     value: 2
 enum/VP_SEL:
   bit_size: 1
   variants:
-  - name: VINP
-    description: GPIO connected to VINP.
+  - name: GPIO
+    description: GPIO connected to VINP
     value: 0
   - name: DAC
-    description: DAC connected to VINP.
+    description: DAC connected to VINP
     value: 1

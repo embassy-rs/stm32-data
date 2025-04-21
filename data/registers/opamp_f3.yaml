@@ -1,29 +1,28 @@
 block/OPAMP:
-  description: Operational Amplifier
+  description: Operational amplifier
   items:
   - name: CSR
-    description: OPAMP control/status register
+    description: Control/status register
     byte_offset: 0
     fieldset: CSR
 fieldset/CSR:
-  description: OPAMP control/status register
+  description: Control/status register
   fields:
   - name: OPAMPEN
-    description: OPAMP enable
+    description: Enable
     bit_offset: 0
     bit_size: 1
   - name: FORCE_VP
-    description: Forces a calibration reference voltage on non-inverting input and disables external connections.
+    description: Force internal reference on VP (reserved for test)
     bit_offset: 1
     bit_size: 1
-    enum: FORCE_VP
   - name: VP_SEL
-    description: OPAMP Non inverting input selection
+    description: Non-inverting input selection
     bit_offset: 2
     bit_size: 2
     enum: VP_SEL
   - name: VM_SEL
-    description: OPAMP inverting input selection
+    description: Inverting input selection
     bit_offset: 5
     bit_size: 2
     enum: VM_SEL
@@ -32,12 +31,12 @@ fieldset/CSR:
     bit_offset: 7
     bit_size: 1
   - name: VMS_SEL
-    description: OPAMP inverting input secondary selection
+    description: Inverting input secondary selection
     bit_offset: 8
     bit_size: 1
     enum: VMS_SEL
   - name: VPS_SEL
-    description: OPAMP Non inverting input secondary selection
+    description: Non-inverting input secondary selection
     bit_offset: 9
     bit_size: 2
     enum: VPS_SEL
@@ -55,7 +54,7 @@ fieldset/CSR:
     bit_offset: 14
     bit_size: 4
     enum: PGA_GAIN
-  - name: USER_TRIM
+  - name: USERTRIM
     description: User trimming enable
     bit_offset: 18
     bit_size: 1
@@ -71,11 +70,10 @@ fieldset/CSR:
     description: Output the internal reference voltage
     bit_offset: 29
     bit_size: 1
-  - name: OUTCAL
-    description: OPAMP ouput status flag
+  - name: CALOUT
+    description: Calibration output
     bit_offset: 30
     bit_size: 1
-    enum: OUTCAL
   - name: LOCK
     description: OPAMP lock
     bit_offset: 31
@@ -84,35 +82,17 @@ enum/CALSEL:
   bit_size: 2
   variants:
   - name: Percent3_3
-    description: VREFOPAMP=3.3% VDDA
+    description: VREFOPAMP = 3.3% VDDA
     value: 0
   - name: Percent10
-    description: VREFOPAMP=10% VDDA
+    description: VREFOPAMP = 10% VDDA
     value: 1
   - name: Percent50
-    description: VREFOPAMP=50% VDDA
+    description: VREFOPAMP = 50% VDDA
     value: 2
   - name: Percent90
-    description: VREFOPAMP=90% VDDA
+    description: VREFOPAMP = 90% VDDA
     value: 3
-enum/FORCE_VP:
-  bit_size: 1
-  variants:
-  - name: Normal
-    description: Normal operating mode
-    value: 0
-  - name: Calibration
-    description: Calibration mode. Non-inverting input connected to calibration reference
-    value: 1
-enum/OUTCAL:
-  bit_size: 1
-  variants:
-  - name: Low
-    description: Non-inverting < inverting
-    value: 0
-  - name: High
-    description: Non-inverting > inverting
-    value: 1
 enum/PGA_GAIN:
   bit_size: 4
   variants:
@@ -156,10 +136,10 @@ enum/VMS_SEL:
   bit_size: 1
   variants:
   - name: PC5
-    description: PC5 (VM0) used as OPAMP2 inverting input when TCM_EN=1
+    description: PC5 (VM0) used as OPAMP2 inverting input when TCM_EN = 1
     value: 0
   - name: PA5
-    description: PA5 (VM1) used as OPAMP2 inverting input when TCM_EN=1
+    description: PA5 (VM1) used as OPAMP2 inverting input when TCM_EN = 1
     value: 1
 enum/VM_SEL:
   bit_size: 2
