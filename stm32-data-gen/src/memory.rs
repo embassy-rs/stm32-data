@@ -185,6 +185,9 @@ static MEMS: RegexMap<&[Mem]> = RegexMap::new(&[
     ("STM32G4[34]..B",               mem!(BANK_1 { 0x08000000 128 }, CCMRAM_ICODE { 0x10000000 10 }, SRAM1 { 0x20000000 16 }, SRAM2 { 0x20004000 6 }, CCMRAM_DCODE { 0x20005800 10 })),
     ("STM32G49..C",                  mem!(BANK_1 { 0x08000000 256 }, CCMRAM_ICODE { 0x10000000 16 }, SRAM1 { 0x20000000 80 }, SRAM2 { 0x20014000 16 }, CCMRAM_DCODE { 0x20018000 16 })),
     ("STM32G4[9A]..E",               mem!(BANK_1 { 0x08000000 512 }, CCMRAM_ICODE { 0x10000000 16 }, SRAM1 { 0x20000000 80 }, SRAM2 { 0x20014000 16 }, CCMRAM_DCODE { 0x20018000 16 })),
+    ("dual-bank_STM32G47..B",        mem!(BANK_1 { 0x08000000 64 }, BANK_2 { 0x08040000 64 }, CCMRAM_ICODE { 0x10000000 32 }, SRAM1 { 0x20000000 80 }, SRAM2 { 0x20014000 16 }, CCMRAM_DCODE { 0x20018000 32 })),
+    ("dual-bank_STM32G47..C",        mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08040000 128 }, CCMRAM_ICODE { 0x10000000 32 }, SRAM1 { 0x20000000 80 }, SRAM2 { 0x20014000 16 }, CCMRAM_DCODE { 0x20018000 32 })),
+    ("dual-bank_STM32G4[78]..E",     mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, CCMRAM_ICODE { 0x10000000 32 }, SRAM1 { 0x20000000 80 }, SRAM2 { 0x20014000 16 }, CCMRAM_DCODE { 0x20018000 32 })),
     ("STM32G47..B",                  mem!(BANK_1 { 0x08000000 128 }, CCMRAM_ICODE { 0x10000000 32 }, SRAM1 { 0x20000000 80 }, SRAM2 { 0x20014000 16 }, CCMRAM_DCODE { 0x20018000 32 })),
     ("STM32G47..C",                  mem!(BANK_1 { 0x08000000 256 }, CCMRAM_ICODE { 0x10000000 32 }, SRAM1 { 0x20000000 80 }, SRAM2 { 0x20014000 16 }, CCMRAM_DCODE { 0x20018000 32 })),
     ("STM32G4[78]..E",               mem!(BANK_1 { 0x08000000 512 }, CCMRAM_ICODE { 0x10000000 32 }, SRAM1 { 0x20000000 80 }, SRAM2 { 0x20014000 16 }, CCMRAM_DCODE { 0x20018000 32 })),
@@ -322,6 +325,7 @@ static FLASH_INFO: RegexMap<FlashInfo> = RegexMap::new(&[
     ("STM32F7[4567].*",         FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 32*1024, 4), (128*1024, 1), ( 256*1024, 0)] }),
     ("STM32F7.*",               FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }),
     ("STM32G0.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
+    ("dual-bank_STM32G4[78].*", FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
     ("STM32G4[78].*",           FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }),
     ("STM32G4.*",               FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
     ("STM32H5.*",               FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }),
@@ -342,9 +346,9 @@ static FLASH_INFO: RegexMap<FlashInfo> = RegexMap::new(&[
     ("STM32.*",                 FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }),
 ]);
 
-pub fn get(chip: &str) -> Vec<Memory> {
-    let mems = *MEMS.must_get(chip);
-    let flash = FLASH_INFO.must_get(chip);
+pub fn get(chip: &str, dual_bank_variant: bool) -> Option<Vec<Memory>> {
+    let mems = *MEMS.get(&format!("{}{chip}", if dual_bank_variant { "dual-bank_" } else { "" }))?;
+    let flash = FLASH_INFO.get(&format!("{}{chip}", if dual_bank_variant { "dual-bank_" } else { "" }))?;
 
     let mut res = Vec::new();
 
@@ -421,5 +425,5 @@ pub fn get(chip: &str) -> Vec<Memory> {
 
     res.sort_by_key(|m| (m.address, m.name.clone()));
 
-    res
+    Some(res)
 }
