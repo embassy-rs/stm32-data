@@ -46,17 +46,20 @@ case "$CMD" in
         rm -rf build/data
         cargo run --release --bin stm32-data-gen
     ;;
+    gen-all)
+        rm -rf build/{data,stm32-metapac}
+        cargo run --release --bin stm32-data-gen
+        cargo run --release --bin stm32-metapac-gen
+        cd build/stm32-metapac
+        find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2021
+    ;;
     ci)
         [ -d sources ] || ./d download-all
         cd ./sources/
         git fetch origin $REV
         git checkout $REV
         cd ..
-        rm -rf build/{data,stm32-metapac}
-        cargo run --release --bin stm32-data-gen
-        cargo run --release --bin stm32-metapac-gen
-        cd build/stm32-metapac
-        find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2021
+        ./d gen-all
     ;;
     check)
         cargo batch \

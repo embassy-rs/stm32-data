@@ -1,7 +1,8 @@
 # stm32-data
 
-`stm32-data` is a project aiming to produce clean machine-readable data about the STM32 microcontroller
-families, including:
+`stm32-data` is a project that generates clean, machine-readable data for the STM32 microcontroller families. It also provides a tool to generate a Rust Peripheral Access Crate (`stm32-metapac`) for these devices.
+
+The generated data includes:
 
 - :heavy_check_mark: Base chip information
   - RAM, flash
@@ -17,14 +18,55 @@ families, including:
 
 :heavy_check_mark: = done, :construction: = work in progress, :x: = to do
 
+## Generated JSON data
+
 The generated JSON files are available [here in the `stm32-data-generated`](https://github.com/embassy-rs/stm32-data-generated/blob/main/data) repo.
 
-## stm32-metapac
+## Generated PAC crate
 
 If you're looking for the API docs for `stm32-metapac` customized to a
 particular chip, they are available here: https://docs.embassy.dev/stm32-metapac
 
 The generated PAC is available [here in the `stm32-data-generated`](https://github.com/embassy-rs/stm32-data-generated/blob/main/stm32-metapac) repo.
+
+## Quick guide
+
+### How to generate everything
+
+- Run `./d download-all`
+
+  > This will download all the required data sources into `sources/`.
+
+- Run `./d gen-all`
+
+  > This (re)generates all the intermediate JSON's to `build/data/` and the `stm32-metapac` crate into `build/stm32-metapac/`.
+
+The generated PAC crate can be included as a local dependency for testing or development:
+
+```toml
+[dependencies]
+stm32-metapac = { path = "../../stm32-data/build/stm32-metapac" }
+```
+
+### How to generate only the JSON data
+
+The JSON files in `build/data/` are generated as follows:
+
+- Run `cargo run --release --bin stm32-data-gen`
+
+  > This generates all the intermediate JSON's in `build/data/`.
+  >
+  > Assignments of registers to peripherals are done in a [perimap](#peripheral-mapping-perimap) and fixes to registers can be done in the files located in `data/registers`.
+
+### How to generate only the `stm32-metapac` crate
+
+When the JSON data was generated as described above, it can be used to generate the PAC:
+
+- Run `cargo run --release --bin stm32-metapac-gen`
+
+  > This generates the `stm32-metapac` crate into `build/stm32-metapac/`.
+
+## In-depth topics
 
 ## Data sources
 
@@ -53,23 +95,44 @@ We don't maintain "patches" for registers unlike the `stm32-rs` project. This ha
 - Fixing mistakes and typos in the SVDs is now much easier (and yes, there are A LOT of those). It doesn't require a complicated patching system, you just edit the YAML to fix the mistake instead of writing a patch that will fix it when applied.
 - Ensuring consistency for the same peripherals between chips. (i.e. we check in a single `i2c_v2.yaml` and ensure it is good, vs trying to patch wildly differing SVDs for what's an identical IP block into being consistent). The `stm32-rs` project doesn't have this as a goal, while we do. Writing a single HAL for all stm32 chips (such as  [the `embassy-stm32` HAL](https://github.com/embassy-rs/embassy/tree/main/embassy-stm32)) is impossible otherwise.
 
-## Generate the `stm32-metapac` crate
+### Toolchain pipeline
 
-- Run `./d download-all`
+This project is built in three stages:
 
-  > This will download all the required data sources into `sources/`.
+1. **Source Acquisition**
+   - `./d download-all` fetches STM32CubeDB XMLs, CubeProg data, mcufinder JSONs, and HAL headers into `sources/`.
 
-- Run `cargo run --release --bin stm32-data-gen`
+2. **JSON Generation**
+   - `stm32-data-gen` generates the JSON files from consolidated YAML and source data:
+     1. Parse YAML files to build an in-memory IR for registers (`src/registers.rs`).
+        - `data/extra/family/*.yaml`: STM32 family metadata (package options, flash/RAM sizes, low-level identifiers).
+        - `data/header_map.yaml`: MCU slug to HAL C-header filename mapping for base addresses & IRQ extraction.
+        - `data/registers/*.yaml`: Register-block definitions (offsets, fields, enums).
+        - `data/dmamux/*.yaml`: DMAMUX profiles for families with a DMA multiplexer.
+        - `src/perimap.rs`: Regex rules mapping each device-peripheral to the correct register-block YAML version.
+     2. Parse HAL headers to extract `#define` macros (base addresses, IRQ numbers) (`src/header.rs`).
+     3. Parse mcufinder docs to collect datasheet and reference manual links (`src/docs.rs`).
+     4. Parse DMA XML to extract DMA channel configurations (`src/dma.rs`).
+     5. Parse GPIO AF XML to extract alternate-function assignments (`src/gpio_af.rs`).
+     6. Parse RCC registers for clock/reset settings (`src/rcc.rs`).
+     7. Parse interrupts to map NVIC lines (`src/interrupts.rs`).
+     8. Group all packages of a chip into `ChipGroup` structures (`src/chips.rs`).
+     9. Use the parsed data to dump one JSON per MCU into `build/data/chips/*.json` (in `process_chip` of `src/chips.rs`).
 
-  > This generates all the intermediate JSON's in `build/data/`.
-  >
-  > > Assignments of registers to peripherals is done in a [perimap](#peripheral-mapping-perimap) and fixes to registers can be done in the files located in `data/registers`.
+3. **PAC Generation**
+   - `stm32-metapac-gen` consumes the JSON files and generates the PAC crate:
+     1. Load JSON from `build/data/chips` & `build/data/registers`.
+     2. Construct IR (`chiptool::ir::IR`), apply transforms (`sort`, `sanitize`, `expand_extends`).
+     3. Render Rust code via `chiptool::generate::render()`.
+     4. Write outputs under `build/stm32-metapac/`, including:
+        - `src/chips/<chip>/pac.rs`, `metadata.rs`, `device.x`
+        - `src/peripherals/*.rs`
+        - `src/registers/*.rs`
+        - `Cargo.toml` and supporting files.
 
-- Run `cargo run --release --bin stm32-metapac-gen`
+`chiptool` provides IR definitions and code-generation templates for PAC generation.
 
-> This generates the `stm32-metapac` crate into `build/stm32-metapac/`.
-
-## Adding support for a new peripheral
+### Adding support for a new peripheral
 
 This will help you add support for a new peripheral to all STM32 families. (Please take the time to add it for all families, even if you personally
 are only interested in one. It's easier than it looks, and doing all families at once is significantly less work than adding one now then having to revisit everything later when adding more. It also helps massively in catching mistakes and inconsistencies in the source SVDs.)
@@ -88,17 +151,17 @@ are only interested in one. It's easier than it looks, and doing all families at
 - Minimize the diff between each pair of versions. For example between `lpuart_v1.yaml` and `lpuart_v2.yaml`. If one is missing enums or descriptions, copy it from another.
 - Make sure the block
 - Add entries to [`perimap`](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/perimap.rs), see below.
-- Regen, then: 
+- Regen, then:
   - Check `data/chips/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
   - Ensure a successful build of the affected pac. e.g.
     ```
     cd build/stm32-metapac
-    cargo build --features stm32u5a9nj --target thumbv8m.main-none-eabihf 
-    ``` 
+    cargo build --features stm32u5a9nj --target thumbv8m.main-none-eabihf
+    ```
 
 Please separate manual changes and changes resulting from regen in separate commits. It helps tremendously with review and rebasing/merging.
 
-## Register cleanup
+### Register cleanup
 
 SVDs have some widespread annoyances that should be fixed when adding register YAMLs to this repo. Check out `chiptool` transforms, they can help in speeding up the cleanups.
 
@@ -111,7 +174,7 @@ SVDs have some widespread annoyances that should be fixed when adding register Y
   - Check out the `MakeRegisterArray`, `MakeFieldArray` chiptool transforms.
 - Use `chiptool fmt` on each of the register yamls.
 
-## Adding support for a new family (RCC)
+### Adding support for a new family (RCC)
 
 NOTE: At the time of writing all families are supported, so this is only useful in particular situations, for example if you want to regenerate an RCC register yaml from scratch.
 
@@ -145,16 +208,9 @@ place:
 mv regs_merged.yaml data/registers/rcc_g0.yaml
 ```
 
-To assign these newly generated registers to peripherals, utilize the mapping done in `parse.py`.
-An example mapping can be seen in the following snippet
+To assign these newly generated registers to peripherals, utilize the mapping done in `stm32-data-gen/src/perimap.rs`.
 
-```
-('STM32G0.*:RCC:.*', 'rcc_g0/RCC'),
-```
-
-such mapping assigns the `rcc_g0/RCC` register block to the `RCC` peripheral in every device from the `STM32G0` family.
-
-## Peripheral mapping (perimap)
+### Peripheral mapping (perimap)
 
 The `stm32-data-gen` binary has a map to match peripherals to the right version in all chips, the [perimap](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/perimap.rs).
 
