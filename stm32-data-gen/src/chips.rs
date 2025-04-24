@@ -808,14 +808,14 @@ fn process_chip(
 ) -> Result<(), anyhow::Error> {
     let chip = chips.get(chip_name).unwrap();
     let docs = docs.documents_for(chip_name);
-    let mut chip = stm32_data_serde::Chip {
+    let chip = stm32_data_serde::Chip {
         name: chip_name.to_string(),
         family: group.family.clone().unwrap(),
         line: group.line.clone().unwrap(),
         die: group.die.clone().unwrap(),
         device_id: u16::from_str_radix(&group.die.as_ref().unwrap()[3..], 16).unwrap(),
         packages: chip.packages.clone(),
-        memory: memory::get(chip_name, false).unwrap(),
+        memory: memory::get(chip_name),
         docs,
         cores: cores.to_vec(),
     };
@@ -825,13 +825,6 @@ fn process_chip(
     let dump = serde_json::to_string_pretty(&chip)?;
     std::fs::write(format!("build/data/chips/{chip_name}.json"), dump)?;
 
-    if let Some(dbank_memory) = memory::get(chip_name, true) {
-        chip.memory = dbank_memory;
-        crate::check::check(&chip);
-
-        let dump = serde_json::to_string_pretty(&chip)?;
-        std::fs::write(format!("build/data/chips/{chip_name}_dual-bank.json"), dump)?;
-    }
     Ok(())
 }
 

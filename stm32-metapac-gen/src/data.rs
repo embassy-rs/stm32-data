@@ -287,7 +287,7 @@ pub struct Chip {
     pub family: String,
     pub line: String,
     pub cores: Vec<Core>,
-    pub memory: Vec<MemoryRegion>,
+    pub memory: Vec<Vec<MemoryRegion>>,
     pub packages: Vec<Package>,
 }
 
