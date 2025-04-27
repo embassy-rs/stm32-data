@@ -51,7 +51,8 @@ pub mod chip {
         pub size: u32,
         #[serde(skip_serializing_if = "Option::is_none")]
         pub settings: Option<memory::Settings>,
-        #[serde(skip)] // as embassy doesn't need this, don't include it in the generated data
+        // probe-rs needs access attributes for automated tests
+        #[serde(skip_serializing_if = "Option::is_none")]
         pub access: Option<memory::Access>,
     }
 
