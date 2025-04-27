@@ -658,44 +658,16 @@ fn process_core(
             }));
         }
 
-        // H7 has some _C pin variants (e.g. PC2 and PC2_C). Digital stuff should always be in the non-C pin.
-        // cubedb puts it either in both, or in the -C pin only! (in chips where the package has only the -C pin)
-        // so we fix that up here.
-        if !pname.starts_with("ADC") && !pname.starts_with("DAC") && !pname.starts_with("COMP") {
-            for pin in &mut p.pins {
-                if let Some(p) = pin.pin.strip_suffix("_C") {
-                    pin.pin = p.to_string();
-                }
-            }
-        }
+        peripherals.insert(p.name.clone(), p);
+    }
 
-        // sort pins to avoid diff for c pins
-        // put the ones with AF number first, so we keep them.
+    apply_family_extras(group, &mut peripherals);
+
+    for p in peripherals.values_mut() {
+        // sort and dedup pins, put the ones with AF number first, so we keep them
         p.pins
             .sort_by_key(|x| (x.pin.clone(), x.signal.clone(), x.af.is_none()));
         p.pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
-
-        peripherals.insert(p.name.clone(), p);
-    }
-    if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family.as_ref().unwrap())) {
-        #[derive(serde::Deserialize)]
-        struct Extra {
-            peripherals: Vec<stm32_data_serde::chip::core::Peripheral>,
-        }
-
-        let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
-        for mut p in extra.peripherals {
-            // filter out pins that may not exist in this package.
-            p.pins = p.pins.into_iter().filter(|p| group.pins.contains_key(&p.pin)).collect();
-
-            if let Some(peripheral) = peripherals.get_mut(&p.name) {
-                // Modify the generated peripheral
-                peripheral.pins.append(&mut p.pins);
-            } else if p.address != 0 {
-                // Only insert the peripheral if the address is not the default
-                peripherals.insert(p.name.clone(), p);
-            }
-        }
     }
 
     let mut peripherals: Vec<_> = peripherals.into_values().collect();
@@ -796,6 +768,63 @@ fn process_core(
     chip_interrupts.process(&mut core, chip_name, h, group)?;
 
     Ok(core)
+}
+
+/// Merge family-specific YAML overlays into the peripheral map.
+///
+/// Loads `data/extra/family/{family}.yaml` if it exists, which may contain:
+/// - `peripherals`: extra or corrective peripheral entries
+/// - `pin_cleanup`: rules to modify pin names
+///
+/// Parameters:
+/// - `group`: ChipGroup context (family/package) for filtering
+/// - `peripherals`: mutable map of peripheral name → `Peripheral` to modify
+fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm32_data_serde::chip::core::Peripheral>) {
+    if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family.as_ref().unwrap())) {
+        #[derive(serde::Deserialize)]
+        struct PinCleanup {
+            strip_suffix: String,
+            exclude_peripherals: Vec<String>,
+        }
+        #[derive(serde::Deserialize)]
+        struct Extra {
+            peripherals: Option<Vec<stm32_data_serde::chip::core::Peripheral>>,
+            pin_cleanup: Option<PinCleanup>,
+        }
+
+        let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
+
+        // merge extra peripherals
+        if let Some(extras) = extra.peripherals {
+            for mut p in extras {
+                // filter out pins that may not exist in this package.
+                p.pins = p.pins.into_iter().filter(|p| group.pins.contains_key(&p.pin)).collect();
+
+                if let Some(peripheral) = peripherals.get_mut(&p.name) {
+                    // Modify the generated peripheral
+                    peripheral.pins.append(&mut p.pins);
+                } else if p.address != 0 {
+                    // Only insert the peripheral if the address is not the default
+                    peripherals.insert(p.name.clone(), p);
+                }
+            }
+        }
+
+        // apply pin_cleanup rules
+        if let Some(clean) = extra.pin_cleanup {
+            for (name, peri) in peripherals.iter_mut() {
+                // skip excluded peripherals
+                if clean.exclude_peripherals.iter().any(|ex| name.starts_with(ex)) {
+                    continue;
+                }
+                for pin in &mut peri.pins {
+                    if let Some(stripped) = pin.pin.strip_suffix(&clean.strip_suffix) {
+                        pin.pin = stripped.to_string();
+                    }
+                }
+            }
+        }
+    }
 }
 
 fn process_chip(
