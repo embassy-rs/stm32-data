@@ -142,9 +142,15 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32F4(05|07).E",             &[mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 112 }, SRAM2 { 0x2001c000 16 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes } )]),
     ("STM32F4(11|46).E",             &[mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 128 }, OTP { 0x1fff7800 528 bytes })]),
     ("STM32F4[14]..C",               &[mem!(BANK_1 { 0x08000000 256 },  SRAM { 0x20000000 128 }, OTP { 0x1fff7800 528 bytes })]),
-    ("STM32F4[23]..G",               &[mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })]),
+    ("STM32F4[23]..G",               &[
+                                        mem!(BANK_1 { 0x08000000 1024 },                            SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes }),
+                                        mem!(BANK_1 { 0x08000000 512  }, BANK_2 { 0x08080000 512 }, SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes }),
+                                      ]),
     ("STM32F4[23]..I",               &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })]),
-    ("STM32F4[67]..G",               &[mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })]),
+    ("STM32F4[67]..G",               &[
+                                        mem!(BANK_1 { 0x08000000 1024 },                             SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes }),
+                                        mem!(BANK_1 { 0x08000000  512 }, BANK_2 { 0x08080000  512 }, SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes }),
+                                      ]),
     ("STM32F4[67]..I",               &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })]),
     ("STM32F40..B",                  &[mem!(BANK_1 { 0x08000000 128 },  SRAM { 0x20000000 64 }, OTP { 0x1fff7800 528 bytes })]),
     ("STM32F40..C",                  &[mem!(BANK_1 { 0x08000000 256 },  SRAM { 0x20000000 64 }, OTP { 0x1fff7800 528 bytes })]),
@@ -160,16 +166,26 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32F469.E",                  &[mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })]),
     // F7
     ("STM32F7...C",                  &[mem!(BANK_1 { 0x08000000 256 },  DTCM { 0x20000000 64 },  SRAM { 0x20010000 192 })]),
+    ("STM32F7[67]..I",               &[
+                                        mem!(BANK_1 { 0x08000000 2048 },                             DTCM { 0x20000000 128 }, SRAM { 0x20020000 384 }),
+                                        mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, DTCM { 0x20000000 128 }, SRAM { 0x20020000 384 }),
+                                      ]),
     ("STM32F7...I",                  &[mem!(BANK_1 { 0x08000000 2048 }, DTCM { 0x20000000 128 }, SRAM { 0x20020000 384 })]),
     ("STM32F7[23]..E",               &[mem!(BANK_1 { 0x08000000 512 },  DTCM { 0x20000000 64 },  SRAM { 0x20010000 192 }, OTP { 0x1ff07800 528 bytes })]),
     ("STM32F7[45]..G",               &[mem!(BANK_1 { 0x08000000 1024 }, DTCM { 0x20000000 64 },  SRAM { 0x20010000 256 }, OTP { 0x08fff000 2 })]),
     ("STM32F73..8",                  &[mem!(BANK_1 { 0x08000000 64 },   DTCM { 0x20000000 64 },  SRAM { 0x20010000 192 })]),
     ("STM32F74..E",                  &[mem!(BANK_1 { 0x08000000 512 },  DTCM { 0x20000000 64 },  SRAM { 0x20010000 256 }, OTP { 0x08fff000 2 })]),
     ("STM32F75..8",                  &[mem!(BANK_1 { 0x08000000 64 },   DTCM { 0x20000000 64 },  SRAM { 0x20010000 256 }, OTP { 0x1ff0f000 1 })]),
-    ("STM32F76..G",                  &[mem!(BANK_1 { 0x08000000 1024 }, DTCM { 0x20000000 128 }, SRAM { 0x20020000 384 }, OTP { 0x1ff0f000 1 })]),
+    ("STM32F76..G",                  &[
+                                        mem!(BANK_1 { 0x08000000 1024 },                             DTCM { 0x20000000 128 }, SRAM { 0x20020000 384 }, OTP { 0x1ff0f000 1 }),
+                                        mem!(BANK_1 { 0x08000000 512  }, BANK_2 { 0x08080000 512  }, DTCM { 0x20000000 128 }, SRAM { 0x20020000 384 }, OTP { 0x1ff0f000 1 }),
+                                      ]),
     // G0
     ("STM32G0...4",                  &[mem!(BANK_1 { 0x08000000 16 },  SRAM { 0x20000000 8 })]),
-    ("STM32G0...C",                  &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 144 })]),
+    ("STM32G0...C",                  &[
+                                        mem!(BANK_1 { 0x08000000 256 },                            SRAM { 0x20000000 144 }),
+                                        mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08020000 128 }, SRAM { 0x20000000 144 }),
+                                      ]),
     ("STM32G0...E",                  &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM { 0x20000000 144 })]),
     ("STM32G0[34]..6",               &[mem!(BANK_1 { 0x08000000 32 },  SRAM { 0x20000000 8 })]),
     ("STM32G0[34]..8",               &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 8 })]),
@@ -265,13 +281,28 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32L4[78]..G",               &[mem!(BANK_1 { 0x08000000 512 }, BANK_2 { 0x08080000 512 }, SRAM { 0x20000000 96 },  SRAM2_ICODE { 0x10000000 32 })]),
     ("STM32L4[9A]..G",               &[mem!(BANK_1 { 0x08000000 512 }, BANK_2 { 0x08080000 512 }, SRAM { 0x20000000 256 }, SRAM2 { 0x20040000 64 }, SRAM2_ICODE { 0x10000000 64 })]),
     // L4+
-    ("STM32L4P..E",                  &[mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 320 })]),
-    ("STM32L4[PQ]..G",               &[mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 320 })]),
-    ("STM32L4R..G",                  &[mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 640 })]),
-    ("STM32L4[RS]..I",               &[mem!(BANK_1 { 0x08000000 2048 }, SRAM { 0x20000000 640 })]),
+    ("STM32L4P..E",                  &[
+                                        mem!(BANK_1 { 0x08000000 512 },                             SRAM { 0x20000000 320 }),
+                                        mem!(BANK_1 { 0x08000000 256 },  BANK_2 { 0x08040000 256 }, SRAM { 0x20000000 320 }),
+                                      ]),
+    ("STM32L4[PQ]..G",               &[
+                                        mem!(BANK_1 { 0x08000000 1024 },                            SRAM { 0x20000000 320 }),
+                                        mem!(BANK_1 { 0x08000000  512 }, BANK_2 { 0x08080000 512 }, SRAM { 0x20000000 320 })
+                                      ]),
+    ("STM32L4R..G",                  &[
+                                        mem!(BANK_1 { 0x08000000 1024 },                            SRAM { 0x20000000 640 }),
+                                        mem!(BANK_1 { 0x08000000  512 }, BANK_2 { 0x08080000 512 }, SRAM { 0x20000000 640 }),
+                                      ]),
+    ("STM32L4[RS]..I",               &[
+                                        mem!(BANK_1 { 0x08000000 2048 },                              SRAM { 0x20000000 640 }),
+                                        mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 10024 }, SRAM { 0x20000000 640 })
+                                      ]),
     // L5
     ("STM32L5...C",                  &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 256 })]),
-    ("STM32L5...E",                  &[mem!(BANK_1 { 0x08000000 512 }, SRAM { 0x20000000 256 })]),
+    ("STM32L5...E",                  &[
+                                        mem!(BANK_1 { 0x08000000 512 },                            SRAM { 0x20000000 256 }),
+                                        mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM { 0x20000000 256 }),
+                                      ]),
     // U0
     ("STM32U031.4",                  &[mem!(BANK_1 { 0x08000000 16 },  SRAM { 0x20000000 12 }, OTP { 0x1fff6800 1 })]),
     ("STM32U031.6",                  &[mem!(BANK_1 { 0x08000000 32 },  SRAM { 0x20000000 12 }, OTP { 0x1fff6800 1 })]),
@@ -327,9 +358,25 @@ static FLASH_INFO: RegexMap<&[FlashInfo]> = RegexMap::new(&[
     ("STM32F1.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  2*1024, 0)] }]),
     ("STM32F2.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }]),
     ("STM32F3.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
+    ("STM32F4[23]..G",          &[
+                                    FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] },
+                                    FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }
+                                 ]),
+    ("STM32F4[67]..G",          &[
+                                    FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] },
+                                    FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }
+                                 ]),
     ("STM32F4.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }]),
+    ("STM32F7[67]..[IG]",       &[
+                                    FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 32*1024, 4), (128*1024, 1), ( 256*1024, 0)] }, // Single bank
+                                    FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 16*1024, 4), ( 64*1024, 1), ( 128*1024, 0)] }, // Dual bank
+                                 ]),
     ("STM32F7[4567].*",         &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 32*1024, 4), (128*1024, 1), ( 256*1024, 0)] }]),
     ("STM32F7.*",               &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[( 16*1024, 4), (64*1024, 1), ( 128*1024, 0)] }]),
+    ("STM32G0...C",             &[
+                                    FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] },
+                                    FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] },
+                                 ]),
     ("STM32G0.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
     ("STM32G4[78].*",           &[
                                     FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }, // Single bank
@@ -340,10 +387,17 @@ static FLASH_INFO: RegexMap<&[FlashInfo]> = RegexMap::new(&[
     ("STM32H7[RS].*",           &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }]),
     ("STM32H7[AB].*",           &[FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(  8*1024, 0)] }]),
     ("STM32H7.*",               &[FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(128*1024, 0)] }]),
-    ("STM32L4[PQRS].*",         &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  8*1024, 0)] }]),
+    ("STM32L4[PQRS].*",         &[
+                                    FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  8*1024, 0)] }, // Single bank
+                                    FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }, // Dual bank
+                                 ]),
     ("STM32L4.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
     ("STM32L0.*",               &[FlashInfo{ erase_value: 0x00, write_size:  4, erase_size: &[(     128, 0)] }]),
     ("STM32L1.*",               &[FlashInfo{ erase_value: 0x00, write_size:  4, erase_size: &[(     256, 0)] }]),
+    ("STM32L5...E",             &[
+                                    FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }, // Single bank
+                                    FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }, // Dual bank
+                                 ]),
     ("STM32L5.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }]),
     ("STM32U0.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
     ("STM32U5.*",               &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }]),
@@ -361,7 +415,7 @@ pub fn get(chip: &str) -> Vec<Vec<Memory>> {
     assert_eq!(
         mems_variations.len(),
         flash_variations.len(),
-        "All memory variants must be present in both the mems and the flash info"
+        "All memory variants must be present in both the mems and the flash info: {chip}"
     );
 
     mems_variations
