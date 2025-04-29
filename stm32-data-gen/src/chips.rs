@@ -824,7 +824,6 @@ fn process_chip(
 
     let dump = serde_json::to_string_pretty(&chip)?;
     std::fs::write(format!("build/data/chips/{chip_name}.json"), dump)?;
-
     Ok(())
 }
 
