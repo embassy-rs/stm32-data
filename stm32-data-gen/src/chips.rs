@@ -210,19 +210,29 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
     Ok((chips, chip_groups))
 }
 
-static NOPELIST: &[&str] = &[
+static NOPELIST: RegexMap<()> = RegexMap::new(&[
     // Not supported, not planned unless someone wants to do it.
-    "STM32MP",
+    ("STM32MP.*", ()),
+    // TODO, PRs welcome :)
+    ("STM32C0[579].*", ()),
+    ("STM32U3.*", ()),
+    ("STM32N6.*", ()),
+    ("STM32G41[14].*", ()),
+    ("STM32G4.*xZ", ()),
+    ("STM32WBA6.*", ()),
+    ("STM32WB0.*", ()),
+    ("STM32WL3.*", ()),
     // Does not exist in ST website. No datasheet, no RM.
-    "STM32GBK",
-    "STM32L485",
+    ("STM32GBK.*", ()),
+    ("STM32L485.*", ()),
     // STM32WxM modules. These are based on a chip that's supported on its own,
     // not sure why we want a separate target for it.
-    "STM32WL5M",
-    "STM32WB1M",
-    "STM32WB3M",
-    "STM32WB5M",
-];
+    ("STM32WL5M.*", ()),
+    ("STM32WB1M.*", ()),
+    ("STM32WB3M.*", ()),
+    ("STM32WB5M.*", ()),
+    ("STM32WBA5M.*", ()),
+]);
 
 fn parse_group(
     f: std::path::PathBuf,
@@ -231,10 +241,8 @@ fn parse_group(
 ) -> anyhow::Result<()> {
     let ff = f.file_name().unwrap().to_string_lossy();
 
-    for nope in NOPELIST {
-        if ff.contains(nope) {
-            return Ok(());
-        }
+    if NOPELIST.get(ff.split('.').next().unwrap()).is_some() {
+        return Ok(());
     }
 
     let parsed: xml::Mcu = quick_xml::de::from_str(&std::fs::read_to_string(f)?)?;
@@ -294,6 +302,7 @@ fn parse_group(
     let mut package_pins: Vec<stm32_data_serde::chip::PackagePin> = package_pins
         .into_iter()
         .map(|(position, mut signals)| {
+            signals.retain(|s| s != "NC");
             signals.sort();
             stm32_data_serde::chip::PackagePin { position, signals }
         })
