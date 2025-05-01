@@ -5,7 +5,7 @@ use gpio_af::pin_sort_key;
 use perimap::PERIMAP;
 use regex::Regex;
 use stm32_data_serde::chip::core::peripheral::Pin;
-use util::RegexMap;
+use util::{RegexMap, RegexSet};
 
 use super::*;
 use crate::gpio_af::parse_signal_name;
@@ -210,28 +210,28 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
     Ok((chips, chip_groups))
 }
 
-static NOPELIST: RegexMap<()> = RegexMap::new(&[
+static NOPELIST: RegexSet = RegexSet::new(&[
     // Not supported, not planned unless someone wants to do it.
-    ("STM32MP.*", ()),
+    "STM32MP.*",
     // TODO, PRs welcome :)
-    ("STM32C0[579].*", ()),
-    ("STM32U3.*", ()),
-    ("STM32N6.*", ()),
-    ("STM32G41[14].*", ()),
-    ("STM32G4.*xZ", ()),
-    ("STM32WBA6.*", ()),
-    ("STM32WB0.*", ()),
-    ("STM32WL3.*", ()),
+    "STM32C0[579].*",
+    "STM32U3.*",
+    "STM32N6.*",
+    "STM32G41[14].*",
+    "STM32G4.*xZ",
+    "STM32WBA6.*",
+    "STM32WB0.*",
+    "STM32WL3.*",
     // Does not exist in ST website. No datasheet, no RM.
-    ("STM32GBK.*", ()),
-    ("STM32L485.*", ()),
+    "STM32GBK.*",
+    "STM32L485.*",
     // STM32WxM modules. These are based on a chip that's supported on its own,
     // not sure why we want a separate target for it.
-    ("STM32WL5M.*", ()),
-    ("STM32WB1M.*", ()),
-    ("STM32WB3M.*", ()),
-    ("STM32WB5M.*", ()),
-    ("STM32WBA5M.*", ()),
+    "STM32WL5M.*",
+    "STM32WB1M.*",
+    "STM32WB3M.*",
+    "STM32WB5M.*",
+    "STM32WBA5M.*",
 ]);
 
 fn parse_group(
@@ -241,7 +241,7 @@ fn parse_group(
 ) -> anyhow::Result<()> {
     let ff = f.file_name().unwrap().to_string_lossy();
 
-    if NOPELIST.get(ff.split('.').next().unwrap()).is_some() {
+    if NOPELIST.contains(ff.split('.').next().unwrap()) {
         return Ok(());
     }
 

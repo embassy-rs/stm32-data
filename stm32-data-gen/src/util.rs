@@ -56,3 +56,19 @@ impl<'a, T> RegexMap<'a, T> {
         res
     }
 }
+
+pub struct RegexSet<'a> {
+    map: RegexMap<'a, ()>,
+}
+
+impl<'a> RegexSet<'a> {
+    pub const fn new(map: &'a [&'a str]) -> Self {
+        Self {
+            map: RegexMap::new(unsafe { std::mem::transmute(map) }),
+        }
+    }
+
+    pub fn contains(&self, key: &str) -> bool {
+        self.map.get(key).is_some()
+    }
+}
