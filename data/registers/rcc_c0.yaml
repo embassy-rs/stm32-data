@@ -13,6 +13,11 @@ block/RCC:
     description: RCC clock configuration register
     byte_offset: 8
     fieldset: CFGR
+  - name: CRRCR
+    description: RCC clock recovery RC register.
+    byte_offset: 20
+    access: Read
+    fieldset: CRRCR
   - name: CIER
     description: RCC clock interrupt enable register
     byte_offset: 24
@@ -20,10 +25,12 @@ block/RCC:
   - name: CIFR
     description: RCC clock interrupt flag register
     byte_offset: 28
+    access: Read
     fieldset: CIFR
   - name: CICR
     description: RCC clock interrupt clear register
     byte_offset: 32
+    access: Write
     fieldset: CICR
   - name: GPIORSTR
     description: RCC I/O port reset register
@@ -73,10 +80,14 @@ block/RCC:
     description: RCC APB peripheral clock enable in Sleep/Stop mode register 2
     byte_offset: 80
     fieldset: APBSMENR2
-  - name: CCIPR
-    description: RCC peripherals independent clock configuration register
+  - name: CCIPR1
+    description: RCC peripherals independent clock configuration register 1
     byte_offset: 84
-    fieldset: CCIPR
+    fieldset: CCIPR1
+  - name: CCIPR2
+    description: RCC peripherals independent clock configuration register 2.
+    byte_offset: 88
+    fieldset: CCIPR2
   - name: CSR1
     description: RCC control/status register 1
     byte_offset: 92
@@ -137,6 +148,10 @@ fieldset/AHBSMENR:
 fieldset/APBENR1:
   description: RCC APB peripheral clock enable register 1
   fields:
+  - name: TIM2EN
+    description: TIM2 timer clock enable Set and cleared by software.
+    bit_offset: 0
+    bit_size: 1
   - name: TIM3EN
     description: "TIM3 timer clock enable\r Set and cleared by software."
     bit_offset: 1
@@ -149,6 +164,18 @@ fieldset/APBENR1:
     description: "WWDG clock enable\r Set by software to enable the window watchdog clock. Cleared by hardware system reset\r This bit can also be set by hardware if the WWDG_SW option bit is 0."
     bit_offset: 11
     bit_size: 1
+  - name: USBEN
+    description: USB clock enable Set and cleared by software.
+    bit_offset: 13
+    bit_size: 1
+  - name: SPI2EN
+    description: SPI2 clock enable Set and cleared by software.
+    bit_offset: 14
+    bit_size: 1
+  - name: CRSEN
+    description: CRS clock enable Set and cleared by software.
+    bit_offset: 16
+    bit_size: 1
   - name: USART2EN
     description: "USART2 clock enable\r Set and cleared by software."
     bit_offset: 17
@@ -156,6 +183,10 @@ fieldset/APBENR1:
   - name: I2C1EN
     description: "I2C1 clock enable\r Set and cleared by software."
     bit_offset: 21
+    bit_size: 1
+  - name: I2C2EN
+    description: I2C2 clock enable Set and cleared by software.
+    bit_offset: 22
     bit_size: 1
   - name: DBGEN
     description: "Debug support clock enable\r Set and cleared by software."
@@ -203,9 +234,25 @@ fieldset/APBENR2:
 fieldset/APBRSTR1:
   description: RCC APB peripheral reset register 1
   fields:
+  - name: TIM2RST
+    description: 'TIM2 timer reset Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 0
+    bit_size: 1
   - name: TIM3RST
     description: "TIM3 timer reset\r Set and cleared by software."
     bit_offset: 1
+    bit_size: 1
+  - name: USBRST
+    description: 'USB reset Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 13
+    bit_size: 1
+  - name: SPI2RST
+    description: 'SPI2 reset Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 14
+    bit_size: 1
+  - name: CRSRST
+    description: 'CRS reset Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 16
     bit_size: 1
   - name: USART2RST
     description: "USART2 reset\r Set and cleared by software."
@@ -214,6 +261,10 @@ fieldset/APBRSTR1:
   - name: I2C1RST
     description: "I2C1 reset\r Set and cleared by software."
     bit_offset: 21
+    bit_size: 1
+  - name: I2C2RST
+    description: 'I2C2 reset Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 22
     bit_size: 1
   - name: DBGRST
     description: "Debug support reset\r Set and cleared by software."
@@ -261,6 +312,10 @@ fieldset/APBRSTR2:
 fieldset/APBSMENR1:
   description: RCC APB peripheral clock enable in Sleep/Stop mode register 1
   fields:
+  - name: TIM2SMEN
+    description: 'TIM2 timer clock enable during Sleep mode Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 0
+    bit_size: 1
   - name: TIM3SMEN
     description: "TIM3 timer clock enable during Sleep mode\r Set and cleared by software."
     bit_offset: 1
@@ -273,6 +328,18 @@ fieldset/APBSMENR1:
     description: "WWDG clock enable during Sleep and Stop modes\r Set and cleared by software."
     bit_offset: 11
     bit_size: 1
+  - name: USBSMEN
+    description: 'USB clock enable during Sleep and Stop modes Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 13
+    bit_size: 1
+  - name: SPI2SMEN
+    description: 'SPI2 clock enable during Sleep and Stop modes Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 14
+    bit_size: 1
+  - name: CRSSMEN
+    description: 'CRS clock enable during Sleep and Stop modes Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 16
+    bit_size: 1
   - name: USART2SMEN
     description: "USART2 clock enable during Sleep and Stop modes\r Set and cleared by software."
     bit_offset: 17
@@ -280,6 +347,10 @@ fieldset/APBSMENR1:
   - name: I2C1SMEN
     description: "I2C1 clock enable during Sleep and Stop modes\r Set and cleared by software."
     bit_offset: 21
+    bit_size: 1
+  - name: I2C2SMEN
+    description: 'I2C2 clock enable during Sleep and Stop modes Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 22
     bit_size: 1
   - name: DBGSMEN
     description: "Debug support clock enable during Sleep mode\r Set and cleared by software."
@@ -324,7 +395,7 @@ fieldset/APBSMENR2:
     description: "ADC clock enable during Sleep mode\r Set and cleared by software."
     bit_offset: 20
     bit_size: 1
-fieldset/CCIPR:
+fieldset/CCIPR1:
   description: RCC peripherals independent clock configuration register
   fields:
   - name: USART1SEL
@@ -347,6 +418,14 @@ fieldset/CCIPR:
     bit_offset: 30
     bit_size: 2
     enum: ADCSEL
+fieldset/CCIPR2:
+  description: RCC peripherals independent clock configuration register 2.
+  fields:
+  - name: USBSEL
+    description: USB clock source selection Set and cleared by software.
+    bit_offset: 12
+    bit_size: 1
+    enum: USBSEL
 fieldset/CFGR:
   description: RCC clock configuration register
   fields:
@@ -401,6 +480,10 @@ fieldset/CICR:
     description: "LSE ready interrupt clear\r This bit is set by software to clear the LSERDYF flag."
     bit_offset: 1
     bit_size: 1
+  - name: HSI48RDYC
+    description: 'HSI48 ready interrupt clear This bit is set software to clear the HSI48RDYF flag. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 2
+    bit_size: 1
   - name: HSIRDYC
     description: "HSI ready interrupt clear\r This bit is set software to clear the HSIRDYF flag."
     bit_offset: 3
@@ -428,6 +511,10 @@ fieldset/CIER:
     description: "LSE ready interrupt enable\r Set and cleared by software to enable/disable interrupt caused by the LSE oscillator stabilization:"
     bit_offset: 1
     bit_size: 1
+  - name: HSI48RDYIE
+    description: 'HSI48 ready interrupt enable Set and cleared by software to enable/disable interrupt caused by the HSI48 oscillator stabilization: Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 2
+    bit_size: 1
   - name: HSIRDYIE
     description: "HSI ready interrupt enable\r Set and cleared by software to enable/disable interrupt caused by the HSI oscillator stabilization:"
     bit_offset: 3
@@ -446,6 +533,10 @@ fieldset/CIFR:
   - name: LSERDYF
     description: "LSE ready interrupt flag\r This flag indicates a pending interrupt upon LSE clock getting ready.\r Set by hardware when the LSE clock becomes stable and LSERDYDIE is set.\r Cleared by software setting the LSERDYC bit."
     bit_offset: 1
+    bit_size: 1
+  - name: HSI48RDYF
+    description: 'HSI48 ready interrupt flag Set by hardware when the HSI48 clock becomes stable and HSI48RDYIE is set as a response to setting HSI48ON (refer to RCC clock control register (CR)). When HSI48ON is not set but the HSI48 oscillator is enabled by the peripheral through a clock request, this bit is not set and no interrupt is generated. Cleared by software setting the HSI48RDYC bit. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 2
     bit_size: 1
   - name: HSIRDYF
     description: "HSI ready interrupt flag\r This flag indicates a pending interrupt upon HSI clock getting ready.\r Set by hardware when the HSI clock becomes stable and HSIRDYIE is set in response to setting the HSION (refer to ). When HSION is not set but the HSI oscillator is enabled by the peripheral through a clock request, this bit is not set and no interrupt is generated.\r Cleared by software setting the HSIRDYC bit."
@@ -466,6 +557,11 @@ fieldset/CIFR:
 fieldset/CR:
   description: RCC clock control register
   fields:
+  - name: SYSDIV
+    description: 'Clock division factor for system clock Set and cleared by software. SYSCLK is result of the division by: Note: This bitfield is only available on STM32C071xx.'
+    bit_offset: 2
+    bit_size: 3
+    enum: SYSDIV
   - name: HSIKERDIV
     description: "HSI kernel clock division factor\r This bitfield controlled by software sets the division factor of the kernel clock divider to produce HSIKER clock:"
     bit_offset: 5
@@ -504,6 +600,21 @@ fieldset/CR:
     description: "Clock security system enable\r Set by software to enable the clock security system. When the bit is set, the clock detector is enabled by hardware when the HSE oscillator is ready, and disabled by hardware if a HSE clock failure is detected. The bit is cleared by hardware upon reset."
     bit_offset: 19
     bit_size: 1
+  - name: HSI48ON
+    description: 'HSI48 clock enable Set and cleared by software and hardware, with hardware taking priority. Kept low by hardware as long as the device is in a low-power mode. Kept high by hardware as long as the system is clocked from HSI48. Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 22
+    bit_size: 1
+  - name: HSI48RDY
+    description: 'HSI48 clock ready flag Set by hardware when the HSI48 oscillator is enabled through HSI48ON and ready to use (stable). Note: Only applicable on STM32C071xx, reserved on other devices.'
+    bit_offset: 23
+    bit_size: 1
+fieldset/CRRCR:
+  description: RCC clock recovery RC register.
+  fields:
+  - name: HSI48CAL
+    description: HSI48 clock calibration These bits are initialized at startup with the factory-programmed HSI48 calibration trim value.
+    bit_offset: 0
+    bit_size: 9
 fieldset/CSR1:
   description: RCC control/status register 1
   fields:
@@ -845,6 +956,15 @@ enum/MCOPRE:
   - name: Div128
     description: MCO clock is divided divided by 128
     value: 7
+  - name: Div256
+    description: MCO clock is divided divided by 256
+    value: 8
+  - name: Div512
+    description: MCO clock is divided divided by 512
+    value: 9
+  - name: Div1024
+    description: MCO clock is divided divided by 1024
+    value: 10
 enum/MCOSEL:
   bit_size: 4
   variants:
@@ -866,6 +986,9 @@ enum/MCOSEL:
   - name: LSE
     description: LSE selected as MCO source
     value: 7
+  - name: HSI48
+    description: HSI48 selected as MCO source
+    value: 8
 enum/PPRE:
   bit_size: 3
   variants:
@@ -914,6 +1037,33 @@ enum/SW:
   - name: LSE
     description: LSE selected as system clock
     value: 4
+enum/SYSDIV:
+  bit_size: 3
+  variants:
+  - name: Div1
+    description: 1 (no division, reset value).
+    value: 0
+  - name: Div2
+    description: '2.'
+    value: 1
+  - name: Div3
+    description: '3.'
+    value: 2
+  - name: Div4
+    description: '4.'
+    value: 3
+  - name: Div5
+    description: '5.'
+    value: 4
+  - name: Div6
+    description: '6.'
+    value: 5
+  - name: Div7
+    description: '7.'
+    value: 6
+  - name: Div8
+    description: '8.'
+    value: 7
 enum/USART1SEL:
   bit_size: 2
   variants:
@@ -929,3 +1079,12 @@ enum/USART1SEL:
   - name: LSE
     description: LSE
     value: 3
+enum/USBSEL:
+  bit_size: 1
+  variants:
+    - name: HSI48
+      description: HSI48.
+      value: 0
+    - name: HSE
+      description: HSE.
+      value: 1

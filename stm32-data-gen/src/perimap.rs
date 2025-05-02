@@ -220,8 +220,8 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F373.*:USBRAM:.*", ("usbram", "16x2_512", "USBRAM")),
     ("STM32(F0|L[045]|G4|WB).*:USB:.*", ("usb", "v3", "USB")),
     ("STM32(F0|L[045]|G4|WB).*:USBRAM:.*", ("usbram", "16x2_1024", "USBRAM")),
-    ("STM32(G0|H5|U5|U0).*:USB:.*", ("usb", "v4", "USB")),
-    ("STM32(G0|H5|U5).*:USBRAM:.*", ("usbram", "32_2048", "USBRAM")),
+    ("STM32(C07|G0|H5|U5|U0).*:USB:.*", ("usb", "v4", "USB")),
+    ("STM32(C07|G0|H5|U5).*:USBRAM:.*", ("usbram", "32_2048", "USBRAM")),
     ("STM32U0.*:USBRAM:.*", ("usbram", "32_1024", "USBRAM")),
     // # USB OTG
     (".*:USB_OTG_FS:otgfs1_.*", ("otg", "v1", "OTG")),
@@ -283,6 +283,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32H50.*:EXTI:.*", ("exti", "h50", "EXTI")),
     ("STM32H5.*:EXTI:.*", ("exti", "h5", "EXTI")),
     (".*:EXTI:.*", ("exti", "v1", "EXTI")),
+    ("STM32C07.*:CRS:.*", ("crs", "v1", "CRS")),
     ("STM32F0.*:CRS:.*", ("crs", "v1", "CRS")),
     ("STM32L0.*:CRS:.*", ("crs", "v1", "CRS")),
     ("STM32L4.*:CRS:.*", ("crs", "v1", "CRS")),
