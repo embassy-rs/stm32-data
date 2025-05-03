@@ -9,7 +9,7 @@ pub fn check(chip: &Chip) {
         for ch in &core.dma_channels {
             let dma = peris.get(&ch.dma).unwrap();
             let signal = ch.name.strip_prefix(&format!("{}_", dma.name)).unwrap();
-            if dma.interrupts.iter().find(|i| i.signal == signal).is_none() {
+            if !dma.interrupts.iter().any(|i| i.signal == signal) {
                 panic!("{}: missing irq for ch {}", chip.name, ch.name);
             }
         }

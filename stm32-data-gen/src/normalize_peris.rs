@@ -14,5 +14,5 @@ pub fn normalize_peri_name(name: &str) -> &str {
     if let Some((_, res)) = NORMALIZE.iter().find(|(n, _)| *n == name) {
         return res;
     }
-    return name;
+    name
 }
