@@ -341,8 +341,6 @@ impl ParsedRccs {
                         maybe_kernel_clock = "PLL1_VCO_DIV_2".to_string();
                     } else if rcc_version.starts_with("h7rs") {
                         maybe_kernel_clock = "USB".to_string();
-                    } else if rcc_version.starts_with("c0") {
-                        maybe_kernel_clock = "USB".to_string();
                     } else {
                         panic!("rcc_{}: peripheral {} missing mux", rcc_version, peri_name)
                     }
