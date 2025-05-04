@@ -24,6 +24,10 @@ fn corename(d: &str) -> String {
     format!("cm{cm}{p}{s}")
 }
 
+/// Merge AF information from GPIO file into peripheral pins.
+///
+/// `core_pins` is modified in-place and updated with AF information from `af_pins`.
+/// Also does some chip-specific adjustments, so we need `chip_name` and `periph_name`.
 fn merge_periph_pins_info(
     chip_name: &str,
     periph_name: &str,
@@ -81,7 +85,7 @@ fn merge_periph_pins_info(
 
 #[allow(clippy::too_many_arguments)]
 fn process_group(
-    mut group: ChipGroup,
+    group: ChipGroup,
     headers: &header::Headers,
     af: &gpio_af::Af,
     chip_interrupts: &interrupts::ChipInterrupts,
@@ -91,14 +95,10 @@ fn process_group(
     docs: &docs::Docs,
 ) -> Result<(), anyhow::Error> {
     let chip_name = group.chip_names[0].clone();
-    group.family = Some(group.xml.family.clone());
-    group.line = Some(group.xml.line.clone());
-    group.die = Some(group.xml.die.clone());
     let rcc_kind = group.ips.values().find(|x| x.name == "RCC").unwrap().version.clone();
-    let rcc_block = PERIMAP
+    let rcc_block = *PERIMAP
         .get(&format!("{chip_name}:RCC:{rcc_kind}"))
-        .unwrap_or_else(|| panic!("could not get rcc for {}", &chip_name))
-        .clone();
+        .unwrap_or_else(|| panic!("could not get rcc for {}", &chip_name));
     let h = headers
         .get_for_chip(&chip_name)
         .unwrap_or_else(|| panic!("could not get header for {}", &chip_name));
@@ -148,6 +148,218 @@ fn process_core(
     let core_name = corename(core_xml);
     let defines = h.get_defines(&core_name);
 
+    let peri_kinds = create_peripheral_map(chip_name, group, defines);
+    let periph_pins = extract_pins_from_chip_group(group);
+    let mut peripherals = HashMap::new();
+    for (pname, pkind) in peri_kinds {
+        // We cannot add this to FAKE peripherals because we need the pins
+        if pname.starts_with("I2S") {
+            continue;
+        }
+
+        let addr = resolve_peri_addr(chip_name, &pname, defines);
+        let Some(address) = addr else { continue };
+
+        let registers = if let Some(&block) = PERIMAP.get(&format!("{chip_name}:{pname}:{pkind}")) {
+            Some(stm32_data_serde::chip::core::peripheral::Registers {
+                kind: block.0.to_string(),
+                version: block.1.to_string(),
+                block: block.2.to_string(),
+            })
+        } else {
+            None
+        };
+
+        let rcc = if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &pname) {
+            if let Some(stop_mode_info) = low_power::peripheral_stop_mode_info(chip_name, &pname) {
+                rcc_info.stop_mode = stop_mode_info;
+            }
+            Some(rcc_info)
+        } else {
+            None
+        };
+
+        let mut pins = merge_afs_into_core_pins(chip_name, chip_af, &periph_pins, &pname);
+        pins.append(&mut merge_i2s_into_spi_pins(chip_name, chip_af, &periph_pins, &pname));
+
+        let p = stm32_data_serde::chip::core::Peripheral {
+            name: pname.clone(),
+            address,
+            registers,
+            rcc,
+            interrupts: Vec::new(),
+            dma_channels: Vec::new(),
+            pins,
+        };
+
+        peripherals.insert(p.name.clone(), p);
+    }
+
+    apply_family_extras(group, &mut peripherals);
+
+    for p in peripherals.values_mut() {
+        // sort and dedup pins, put the ones with AF number first, so we keep them
+        p.pins
+            .sort_by_key(|x| (x.pin.clone(), x.signal.clone(), x.af.is_none()));
+        p.pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
+    }
+
+    let mut peripherals: Vec<_> = peripherals.into_values().collect();
+    peripherals.sort_by_key(|x| x.name.clone());
+    // Collect DMA versions in the chip
+    let mut dmas: Vec<_> = group
+        .ips
+        .values()
+        .filter_map(|ip| {
+            let version = &ip.version;
+            let instance = &ip.instance_name;
+            dma_channels
+                .0
+                .get(version)
+                .or_else(|| dma_channels.0.get(&format!("{version}:{instance}")))
+                .map(|dma| (ip.name.clone(), instance.clone(), dma))
+        })
+        .collect();
+    dmas.sort_by_key(|(name, instance, _)| {
+        (
+            match name.as_str() {
+                "DMA" => 1,
+                "BDMA" => 2,
+                "BDMA1" => 3,
+                "BDMA2" => 4,
+                "GPDMA" => 5,
+                "HPDMA" => 6,
+                _ => 0,
+            },
+            instance.clone(),
+        )
+    });
+
+    // The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
+    // so we have to filter it.
+    static DMA_CHANNEL_COUNTS: RegexMap<usize> = RegexMap::new(&[
+        ("STM32F0[37]0.*:DMA1", 5),
+        ("STM32G4[34]1.*:DMA1", 6),
+        ("STM32G4[34]1.*:DMA2", 6),
+    ]);
+    let have_peris: HashSet<_> = peripherals.iter().map(|p| p.name.clone()).collect();
+    let dma_channels = dmas
+        .iter()
+        .flat_map(|(_, _, dma)| dma.channels.clone())
+        .filter(|ch| have_peris.contains(&ch.dma))
+        .filter(|ch| {
+            DMA_CHANNEL_COUNTS
+                .get(&format!("{}:{}", chip_name, ch.dma))
+                .map_or_else(|| true, |&v| usize::from(ch.channel) < v)
+        })
+        .collect::<Vec<_>>();
+    let have_chs: HashSet<_> = dma_channels.iter().map(|ch| ch.name.clone()).collect();
+
+    // Process peripheral - DMA channel associations
+    for p in &mut peripherals {
+        let mut chs = Vec::new();
+        for (_, _, dma) in &dmas {
+            if let Some(peri_chs) = dma.peripherals.get(&p.name) {
+                chs.extend(
+                    peri_chs
+                        .iter()
+                        .filter(|ch| match &ch.channel {
+                            None => true,
+                            Some(channel) => have_chs.contains(channel),
+                        })
+                        .cloned(),
+                );
+            }
+        }
+        chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
+        p.dma_channels = chs;
+    }
+
+    let mut pins: Vec<_> = group
+        .pins
+        .keys()
+        .map(|x| x.replace("_C", ""))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .map(|name| stm32_data_serde::chip::core::Pin { name })
+        .collect();
+
+    pins.sort_by_key(|p| pin_sort_key(&p.name));
+
+    let mut core = stm32_data_serde::chip::Core {
+        name: core_name.clone(),
+        peripherals,
+        nvic_priority_bits: None,
+        interrupts: vec![],
+        dma_channels,
+        pins,
+    };
+
+    chip_interrupts.process(&mut core, chip_name, h, group)?;
+
+    Ok(core)
+}
+
+/// Merge core xml info with GPIO xml info for the given peripheral.
+///
+/// The GPIO XMLs contain information about AFs for each pin, but the Core XMLs do not.
+/// The core XMLs, on the other hand, contain information about available signals on each pin,
+/// which the GPIO XMLs do not.
+///
+/// This function takes the core pins from `periph_pins` and the AFs from `chip_af`
+/// for the peripheral `pname`, merges the two using [merge_periph_pins_info] and returns
+/// the combined `Pin`s.
+fn merge_afs_into_core_pins(
+    chip_name: &str,
+    chip_af: Option<&HashMap<String, Vec<Pin>>>,
+    periph_pins: &HashMap<String, Vec<Pin>>,
+    pname: &String,
+) -> Vec<Pin> {
+    if let Some(pins) = periph_pins.get(pname) {
+        let mut pins = pins.clone();
+        if let Some(af_pins) = chip_af.and_then(|x| x.get(pname)) {
+            merge_periph_pins_info(chip_name, pname, &mut pins, af_pins.as_slice());
+        }
+        return pins;
+    }
+    Vec::new()
+}
+
+/// Merge I2Sx pins into SPIx pins.
+///
+/// SPIx peripherals have I2Sx pins which are not explicitly listed in the peripheral's pins.
+/// This function merges the I2Sx pins from `chip_af` into the SPIx pins of `periph_pins`,
+/// with a prefix "I2S_". If the peripheral `pname` does not start with "SPI", it returns imediately.
+fn merge_i2s_into_spi_pins(
+    chip_name: &str,
+    chip_af: Option<&HashMap<String, Vec<Pin>>>,
+    periph_pins: &HashMap<String, Vec<Pin>>,
+    pname: &str,
+) -> Vec<Pin> {
+    if !pname.starts_with("SPI") {
+        return Vec::new();
+    }
+    let i2s_name = "I2S".to_owned() + pname.trim_start_matches("SPI");
+    // Do we have I2Sx pins in the peripheral pins and I2Sx AFs in the chip?
+    if let Some(i2s_pins) = periph_pins.get(&i2s_name) {
+        let mut i2s_pins = i2s_pins.clone();
+        if let Some(af_pins) = chip_af.and_then(|x| x.get(&i2s_name)) {
+            merge_periph_pins_info(chip_name, &i2s_name, &mut i2s_pins, af_pins.as_slice());
+        }
+        for p in &mut i2s_pins {
+            p.signal = "I2S_".to_owned() + &p.signal;
+        }
+        return i2s_pins;
+    }
+    Vec::new()
+}
+
+/// Return a HashMap of peripheral names to their kind (name:version).
+///
+/// Some peripherals have different names in the xml files and the header files. We handle these cases here by
+/// normalizing the peripheral names. The function needs to take care of the different cases where a peripheral is not
+/// present in the xml files but is present in the header files, and vice versa.
+fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::Defines) -> HashMap<String, String> {
     let mut peri_kinds = HashMap::new();
     for ip in group.ips.values() {
         let pname = normalize_peri_name(&ip.instance_name);
@@ -278,11 +490,21 @@ fn process_core(
             }
         }
     }
-    // get possible used GPIOs for each peripheral from the chip xml
-    // it's not the full info we would want (stuff like AFIO info which comes from GPIO xml),
-    //   but we actually need to use it because of F1 line
-    //       which doesn't include non-remappable peripherals in GPIO xml
-    //   and some weird edge cases like STM32F030C6 (see merge_periph_pins_info)
+    peri_kinds
+}
+
+/// Get pins for each peripheral based on the chip xmls.
+///
+/// It's not the full info we would want (stuff like AFIO info which comes from
+/// the GPIO xml), but we actually need to use it because of the F1 line
+/// which doesn't include non-remappable peripherals in the GPIO xml and some
+/// weird edge cases like STM32F030C6 (see merge_periph_pins_info).
+///
+/// The function returns a HashMap of peripheral name to Vec of Pins.
+/// The Pins only contain the pin and signal name, and no AF information
+/// (because we don't have it here).
+/// The Vec of Pins is sorted by pin name and deduplicated.
+fn extract_pins_from_chip_group(group: &ChipGroup) -> HashMap<String, Vec<Pin>> {
     let mut periph_pins = HashMap::<_, Vec<_>>::new();
     for (pin_name, pin) in &group.pins {
         for signal in &pin.signals {
@@ -307,196 +529,30 @@ fn process_core(
         pins.sort_by_key(|p| pin_sort_key(&p.pin));
         pins.dedup();
     }
-    let mut peripherals = HashMap::new();
-    for (pname, pkind) in peri_kinds {
-        // We cannot add this to FAKE peripherals because we need the pins
-        if pname.starts_with("I2S") {
-            continue;
-        }
+    periph_pins
+}
 
-        let addr = if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(&pname) {
-            defines.get_peri_addr("FDCANRAM").map(|addr| {
-                if h7_non_rs_re.is_match(chip_name) {
-                    addr
-                } else {
-                    let idx = cap["idx"].parse::<u32>().unwrap();
-                    // FIXME: this offset should not be hardcoded, but I think
-                    // it appears in no data sources (only in RMs)
-                    addr + (idx - 1) * 0x350
-                }
-            })
-        } else {
-            defines.get_peri_addr(&pname)
-        };
-
-        let Some(addr) = addr else { continue };
-
-        let mut p = stm32_data_serde::chip::core::Peripheral {
-            name: pname.clone(),
-            address: addr,
-            registers: None,
-            rcc: None,
-            interrupts: Vec::new(),
-            dma_channels: Vec::new(),
-            pins: Vec::new(),
-        };
-
-        if let Some(&block) = PERIMAP.get(&format!("{chip_name}:{pname}:{pkind}")) {
-            p.registers = Some(stm32_data_serde::chip::core::peripheral::Registers {
-                kind: block.0.to_string(),
-                version: block.1.to_string(),
-                block: block.2.to_string(),
-            });
-        }
-
-        if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &pname) {
-            if let Some(stop_mode_info) = low_power::peripheral_stop_mode_info(chip_name, &pname) {
-                rcc_info.stop_mode = stop_mode_info;
-            }
-
-            p.rcc = Some(rcc_info);
-        }
-        if let Some(pins) = periph_pins.get_mut(&pname) {
-            // merge the core xml info with GPIO xml info to hopefully get the full picture
-            // if the peripheral does not exist in the GPIO xml (one of the notable one is ADC)
-            //   it probably doesn't need any AFIO writes to work
-            if let Some(af_pins) = chip_af.and_then(|x| x.get(&pname)) {
-                merge_periph_pins_info(chip_name, &pname, pins, af_pins.as_slice());
-            }
-            p.pins = pins.clone();
-        }
-
-        let i2s_name = if pname.starts_with("SPI") {
-            "I2S".to_owned() + pname.trim_start_matches("SPI")
-        } else {
-            "".to_owned()
-        };
-
-        if let Some(i2s_pins) = periph_pins.get_mut(&i2s_name) {
-            // merge the core xml info with GPIO xml info to hopefully get the full picture
-            // if the peripheral does not exist in the GPIO xml (one of the notable one is ADC)
-            //   it probably doesn't need any AFIO writes to work
-            if let Some(af_pins) = chip_af.and_then(|x| x.get(&i2s_name)) {
-                merge_periph_pins_info(chip_name, &i2s_name, i2s_pins, af_pins.as_slice());
-            }
-
-            p.pins.extend(i2s_pins.iter().map(|p| Pin {
-                pin: p.pin.clone(),
-                signal: "I2S_".to_owned() + &p.signal,
-                af: p.af,
-            }));
-        }
-
-        peripherals.insert(p.name.clone(), p);
-    }
-
-    apply_family_extras(group, &mut peripherals);
-
-    for p in peripherals.values_mut() {
-        // sort and dedup pins, put the ones with AF number first, so we keep them
-        p.pins
-            .sort_by_key(|x| (x.pin.clone(), x.signal.clone(), x.af.is_none()));
-        p.pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
-    }
-
-    let mut peripherals: Vec<_> = peripherals.into_values().collect();
-    peripherals.sort_by_key(|x| x.name.clone());
-    // Collect DMA versions in the chip
-    let mut dmas: Vec<_> = group
-        .ips
-        .values()
-        .filter_map(|ip| {
-            let version = &ip.version;
-            let instance = &ip.instance_name;
-            if let Some(dma) = dma_channels
-                .0
-                .get(version)
-                .or_else(|| dma_channels.0.get(&format!("{version}:{instance}")))
-            {
-                Some((ip.name.clone(), instance.clone(), dma))
+/// Resolve the address of a peripheral.
+///
+/// In the case of FDCANRAM, the address can be different depending on the chip. The STM32H7 (not RS) has a single
+/// message RAM shared between all FDCANs, while other chips have one message RAM per FDCAN.
+fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) -> Option<u32> {
+    let addr = if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(pname) {
+        defines.get_peri_addr("FDCANRAM").map(|addr| {
+            let h7_non_rs_re = Regex::new(r"STM32H7[0-9AB].*").unwrap();
+            if h7_non_rs_re.is_match(chip_name) {
+                addr
             } else {
-                None
+                let idx = cap["idx"].parse::<u32>().unwrap();
+                // FIXME: this offset should not be hardcoded, but I think
+                // it appears in no data sources (only in RMs)
+                addr + (idx - 1) * 0x350
             }
         })
-        .collect();
-    dmas.sort_by_key(|(name, instance, _)| {
-        (
-            match name.as_str() {
-                "DMA" => 1,
-                "BDMA" => 2,
-                "BDMA1" => 3,
-                "BDMA2" => 4,
-                "GPDMA" => 5,
-                "HPDMA" => 6,
-                _ => 0,
-            },
-            instance.clone(),
-        )
-    });
-
-    // The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
-    // so we have to filter it.
-    static DMA_CHANNEL_COUNTS: RegexMap<usize> = RegexMap::new(&[
-        ("STM32F0[37]0.*:DMA1", 5),
-        ("STM32G4[34]1.*:DMA1", 6),
-        ("STM32G4[34]1.*:DMA2", 6),
-    ]);
-    let have_peris: HashSet<_> = peripherals.iter().map(|p| p.name.clone()).collect();
-    let dma_channels = dmas
-        .iter()
-        .flat_map(|(_, _, dma)| dma.channels.clone())
-        .filter(|ch| have_peris.contains(&ch.dma))
-        .filter(|ch| {
-            DMA_CHANNEL_COUNTS
-                .get(&format!("{}:{}", chip_name, ch.dma))
-                .map_or_else(|| true, |&v| usize::from(ch.channel) < v)
-        })
-        .collect::<Vec<_>>();
-    let have_chs: HashSet<_> = dma_channels.iter().map(|ch| ch.name.clone()).collect();
-
-    // Process peripheral - DMA channel associations
-    for p in &mut peripherals {
-        let mut chs = Vec::new();
-        for (_, _, dma) in &dmas {
-            if let Some(peri_chs) = dma.peripherals.get(&p.name) {
-                chs.extend(
-                    peri_chs
-                        .iter()
-                        .filter(|ch| match &ch.channel {
-                            None => true,
-                            Some(channel) => have_chs.contains(channel),
-                        })
-                        .cloned(),
-                );
-            }
-        }
-        chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
-        p.dma_channels = chs;
-    }
-
-    let mut pins: Vec<_> = group
-        .pins
-        .keys()
-        .map(|x| x.replace("_C", ""))
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .map(|name| stm32_data_serde::chip::core::Pin { name })
-        .collect();
-
-    pins.sort_by_key(|p| pin_sort_key(&p.name));
-
-    let mut core = stm32_data_serde::chip::Core {
-        name: core_name.clone(),
-        peripherals,
-        nvic_priority_bits: None,
-        interrupts: vec![],
-        dma_channels,
-        pins,
+    } else {
+        defines.get_peri_addr(pname)
     };
-
-    chip_interrupts.process(&mut core, chip_name, h, group)?;
-
-    Ok(core)
+    addr
 }
 
 /// Merge family-specific YAML overlays into the peripheral map.
@@ -509,7 +565,7 @@ fn process_core(
 /// - `group`: ChipGroup context (family/package) for filtering
 /// - `peripherals`: mutable map of peripheral name → `Peripheral` to modify
 fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm32_data_serde::chip::core::Peripheral>) {
-    if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family.as_ref().unwrap())) {
+    if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family)) {
         #[derive(serde::Deserialize)]
         struct PinCleanup {
             strip_suffix: String,
@@ -527,7 +583,7 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
         if let Some(extras) = extra.peripherals {
             for mut p in extras {
                 // filter out pins that may not exist in this package.
-                p.pins = p.pins.into_iter().filter(|p| group.pins.contains_key(&p.pin)).collect();
+                p.pins.retain(|p| group.pins.contains_key(&p.pin));
 
                 if let Some(peripheral) = peripherals.get_mut(&p.name) {
                     // Modify the generated peripheral
@@ -568,10 +624,10 @@ fn process_chip(
     let docs = docs.documents_for(chip_name);
     let chip = stm32_data_serde::Chip {
         name: chip_name.to_string(),
-        family: group.family.clone().unwrap(),
-        line: group.line.clone().unwrap(),
-        die: group.die.clone().unwrap(),
-        device_id: u16::from_str_radix(&group.die.as_ref().unwrap()[3..], 16).unwrap(),
+        family: group.family.clone(),
+        line: group.line.clone(),
+        die: group.die.clone(),
+        device_id: u16::from_str_radix(&group.die[3..], 16).unwrap(),
         packages: chip.packages.clone(),
         memory: memory::get(chip_name),
         docs,

@@ -72,9 +72,9 @@ pub struct ChipGroup {
     pub xml: xml::Mcu,
     pub ips: HashMap<String, xml::Ip>,
     pub pins: HashMap<String, xml::Pin>,
-    pub family: Option<String>,
-    pub line: Option<String>,
-    pub die: Option<String>,
+    pub family: String,
+    pub line: String,
+    pub die: String,
 }
 
 fn chip_name_from_package_name(x: &str) -> String {
@@ -211,9 +211,9 @@ fn parse_group(
             xml: parsed.clone(),
             ips: HashMap::new(),
             pins: HashMap::new(),
-            family: None,
-            line: None,
-            die: None,
+            family: parsed.family.clone(),
+            line: parsed.line.clone(),
+            die: parsed.die.clone(),
         });
         group_idx
     });
