@@ -86,6 +86,7 @@ pub struct ChipGroup {
 
 fn chip_name_from_package_name(x: &str) -> String {
     let regexes = [
+        (regex!("^(STM32C0....).xN$"), "$1"),
         (regex!("^(STM32L1....).x([AX])$"), "$1-$2"),
         (regex!("^(STM32G0....).xN$"), "$1"),
         (regex!("^(STM32F412..).xP$"), "$1"),
@@ -214,7 +215,6 @@ static NOPELIST: RegexSet = RegexSet::new(&[
     // Not supported, not planned unless someone wants to do it.
     "STM32MP.*",
     // TODO, PRs welcome :)
-    "STM32C0[579].*",
     "STM32U3.*",
     "STM32N6.*",
     "STM32G41[14].*",
