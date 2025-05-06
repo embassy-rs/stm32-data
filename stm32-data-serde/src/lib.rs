@@ -22,7 +22,7 @@ pub struct Chip {
     pub die: String,
     pub device_id: u16,
     pub packages: Vec<chip::Package>,
-    pub memory: Vec<chip::Memory>,
+    pub memory: Vec<Vec<chip::Memory>>,
     pub docs: Vec<chip::Doc>,
     pub cores: Vec<chip::Core>,
 }

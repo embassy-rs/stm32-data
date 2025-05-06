@@ -167,6 +167,13 @@ impl Gen {
             file
         });
 
+        let memories = chip
+            .memory
+            .iter()
+            .map(|memory| stringify(memory))
+            .collect::<Vec<_>>()
+            .join(",");
+
         let data = format!(
             "include!(\"../{}\");
             use crate::metadata::PeripheralRccKernelClock::{{Clock, Mux}};
@@ -174,19 +181,14 @@ impl Gen {
                 name: {:?},
                 family: {:?},
                 line: {:?},
-                memory: {},
+                memory: &[{}],
                 peripherals: PERIPHERALS,
                 nvic_priority_bits: {:?},
                 interrupts: INTERRUPTS,
                 dma_channels: DMA_CHANNELS,
                 pins: PINS,
             }};",
-            deduped_file,
-            &chip.name,
-            &chip.family,
-            &chip.line,
-            stringify(&chip.memory),
-            &core.nvic_priority_bits,
+            deduped_file, &chip.name, &chip.family, &chip.line, memories, &core.nvic_priority_bits,
         );
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();
