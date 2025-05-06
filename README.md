@@ -117,7 +117,7 @@ This project is built in three stages:
      6. Parse RCC registers for clock/reset settings (`src/rcc.rs`).
      7. Parse interrupts to map NVIC lines (`src/interrupts.rs`).
      8. Group all packages of a chip into `ChipGroup` structures (`src/chips.rs`).
-     9. Use the parsed data to dump one JSON per MCU into `build/data/chips/*.json` (in `process_chip` of `src/chips.rs`).
+     9. Use the parsed data to dump one JSON per MCU into `build/data/chips/*.json` (in `process_chip` of `src/generator.rs`).
 
 3. **PAC Generation**
    - `stm32-metapac-gen` consumes the JSON files and generates the PAC crate:
