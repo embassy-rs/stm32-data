@@ -126,7 +126,7 @@ pub struct Metadata {
     pub name: &'static str,
     pub family: &'static str,
     pub line: &'static str,
-    pub memory: &'static [MemoryRegion],
+    pub memory: &'static [&'static [MemoryRegion]],
     pub peripherals: &'static [Peripheral],
     pub nvic_priority_bits: Option<u8>,
     pub interrupts: &'static [Interrupt],
