@@ -12,18 +12,6 @@ use crate::chips::{Chip, ChipGroup};
 use crate::gpio_af::parse_signal_name;
 use crate::normalize_peris::normalize_peri_name;
 
-fn corename(d: &str) -> String {
-    let m = regex!(r".*Cortex-M(\d+)(\+?)\s*(.*)").captures(d).unwrap();
-    let cm = m.get(1).unwrap().as_str();
-    let p = if m.get(2).unwrap().as_str() == "+" { "p" } else { "" };
-    let s = if m.get(3).unwrap().as_str() == "secure" {
-        "s"
-    } else {
-        ""
-    };
-    format!("cm{cm}{p}{s}")
-}
-
 /// Merge AF information from GPIO file into peripheral pins.
 ///
 /// `core_pins` is modified in-place and updated with AF information from `af_pins`.
@@ -110,9 +98,9 @@ fn process_group(
         .xml
         .cores
         .iter()
-        .map(|core_xml| {
+        .map(|long_core_name| {
             process_core(
-                core_xml,
+                long_core_name,
                 h,
                 &chip_name,
                 &group,
@@ -135,7 +123,7 @@ fn process_group(
 
 #[allow(clippy::too_many_arguments)]
 fn process_core(
-    core_xml: &str,
+    long_core_name: &str,
     h: &header::ParsedHeader,
     chip_name: &str,
     group: &ChipGroup,
@@ -145,7 +133,7 @@ fn process_core(
     chip_af: Option<&HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>>,
     dma_channels: &dma::DmaChannels,
 ) -> anyhow::Result<stm32_data_serde::chip::Core> {
-    let core_name = corename(core_xml);
+    let core_name = create_short_core_name(long_core_name);
     let defines = h.get_defines(&core_name);
 
     let peri_kinds = create_peripheral_map(chip_name, group, defines);
@@ -206,74 +194,10 @@ fn process_core(
 
     let mut peripherals: Vec<_> = peripherals.into_values().collect();
     peripherals.sort_by_key(|x| x.name.clone());
-    // Collect DMA versions in the chip
-    let mut dmas: Vec<_> = group
-        .ips
-        .values()
-        .filter_map(|ip| {
-            let version = &ip.version;
-            let instance = &ip.instance_name;
-            dma_channels
-                .0
-                .get(version)
-                .or_else(|| dma_channels.0.get(&format!("{version}:{instance}")))
-                .map(|dma| (ip.name.clone(), instance.clone(), dma))
-        })
-        .collect();
-    dmas.sort_by_key(|(name, instance, _)| {
-        (
-            match name.as_str() {
-                "DMA" => 1,
-                "BDMA" => 2,
-                "BDMA1" => 3,
-                "BDMA2" => 4,
-                "GPDMA" => 5,
-                "HPDMA" => 6,
-                _ => 0,
-            },
-            instance.clone(),
-        )
-    });
 
-    // The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
-    // so we have to filter it.
-    static DMA_CHANNEL_COUNTS: RegexMap<usize> = RegexMap::new(&[
-        ("STM32F0[37]0.*:DMA1", 5),
-        ("STM32G4[34]1.*:DMA1", 6),
-        ("STM32G4[34]1.*:DMA2", 6),
-    ]);
-    let have_peris: HashSet<_> = peripherals.iter().map(|p| p.name.clone()).collect();
-    let dma_channels = dmas
-        .iter()
-        .flat_map(|(_, _, dma)| dma.channels.clone())
-        .filter(|ch| have_peris.contains(&ch.dma))
-        .filter(|ch| {
-            DMA_CHANNEL_COUNTS
-                .get(&format!("{}:{}", chip_name, ch.dma))
-                .map_or_else(|| true, |&v| usize::from(ch.channel) < v)
-        })
-        .collect::<Vec<_>>();
-    let have_chs: HashSet<_> = dma_channels.iter().map(|ch| ch.name.clone()).collect();
-
-    // Process peripheral - DMA channel associations
-    for p in &mut peripherals {
-        let mut chs = Vec::new();
-        for (_, _, dma) in &dmas {
-            if let Some(peri_chs) = dma.peripherals.get(&p.name) {
-                chs.extend(
-                    peri_chs
-                        .iter()
-                        .filter(|ch| match &ch.channel {
-                            None => true,
-                            Some(channel) => have_chs.contains(channel),
-                        })
-                        .cloned(),
-                );
-            }
-        }
-        chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
-        p.dma_channels = chs;
-    }
+    let dmas = collect_dma_instances(group, dma_channels);
+    let dma_channels = extract_relevant_dma_channels(&peripherals, &dmas, chip_name);
+    associate_peripherals_dma_channels(&mut peripherals, dmas, &dma_channels);
 
     let mut pins: Vec<_> = group
         .pins
@@ -352,6 +276,26 @@ fn merge_i2s_into_spi_pins(
         return i2s_pins;
     }
     Vec::new()
+}
+
+/// Create a short core name from a long name.
+///
+/// Parse a string like "ARM Cortex-M4" or "ARM Cortex-M7 secure" and return a
+/// string like "cm4" or "cm7s". The input string is expected to contain the
+/// string "Cortex-M" followed by a number, optionally followed by the string
+/// "+" or " secure".
+///
+/// FIXME: "secure" does not appear the XML files in that attribute.
+fn create_short_core_name(d: &str) -> String {
+    let m = regex!(r".*Cortex-M(\d+)(\+?)\s*(.*)").captures(d).unwrap();
+    let cm = m.get(1).unwrap().as_str();
+    let p = if m.get(2).unwrap().as_str() == "+" { "p" } else { "" };
+    let s = if m.get(3).unwrap().as_str() == "secure" {
+        "s"
+    } else {
+        ""
+    };
+    format!("cm{cm}{p}{s}")
 }
 
 /// Return a HashMap of peripheral names to their kind (name:version).
@@ -498,7 +442,7 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
 /// It's not the full info we would want (stuff like AFIO info which comes from
 /// the GPIO xml), but we actually need to use it because of the F1 line
 /// which doesn't include non-remappable peripherals in the GPIO xml and some
-/// weird edge cases like STM32F030C6 (see merge_periph_pins_info).
+/// weird edge cases like STM32F030C6 (see [merge_periph_pins_info]).
 ///
 /// The function returns a HashMap of peripheral name to Vec of Pins.
 /// The Pins only contain the pin and signal name, and no AF information
@@ -609,6 +553,121 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
                 }
             }
         }
+    }
+}
+
+/// Collect and sort all DMA IP instances available on the current chip.
+///
+/// Iterates over the parsed MCU IP definitions (`group.ips`), matching each IP’s `version`
+/// and `instance_name` against the pre-built `dma_channels` map.
+/// Searches first by the DMA name (e.g. "BDMA"), then by the DMA name and instance
+/// (e.g. "STM32H7RS_dma3_Cube:GPDMA1"). Returns a `Vec<(ip_name, instance_name, ChipDma)>`.
+fn collect_dma_instances<'a>(
+    group: &ChipGroup,
+    dma_channels: &'a dma::DmaChannels,
+) -> Vec<(String, String, &'a dma::ChipDma)> {
+    // Collect DMA versions in the chip
+    let mut dmas: Vec<_> = group
+        .ips
+        .values()
+        .filter_map(|ip| {
+            let version = &ip.version;
+            let instance = &ip.instance_name;
+            dma_channels
+                .0
+                .get(version)
+                .or_else(|| dma_channels.0.get(&format!("{version}:{instance}")))
+                .map(|dma| (ip.name.clone(), instance.clone(), dma))
+        })
+        .collect();
+    dmas.sort_by_key(|(name, instance, _)| {
+        (
+            match name.as_str() {
+                "DMA" => 1,
+                "BDMA" => 2,
+                "BDMA1" => 3,
+                "BDMA2" => 4,
+                "GPDMA" => 5,
+                "HPDMA" => 6,
+                _ => 0,
+            },
+            instance.clone(),
+        )
+    });
+    dmas
+}
+
+/// Filters and returns a list of DMA channels for the current chip.
+///
+/// It takes the DMA instances from `dmas`, which also occur in `peripherals`.
+/// Of these, only the first channels corresponding to the number of channels
+/// in this chip family are then saved.
+///
+/// E.g. on an STM32F030CC (IP version “STM32F091_dma_v1_1”), DMA2 is removed because
+/// only DMA1 exists; on an STM32G431CB only the first 6 channels of each DMA block
+/// are kept per the hardware limit.
+///
+/// It returns `Vec<DmaChannels>` with the valid DMA channel definitions that
+/// can actually be used on this specific device.
+fn extract_relevant_dma_channels(
+    peripherals: &Vec<stm32_data_serde::chip::core::Peripheral>,
+    dmas: &Vec<(String, String, &dma::ChipDma)>,
+    chip_name: &str,
+) -> Vec<stm32_data_serde::chip::core::DmaChannels> {
+    // The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
+    // so we have to filter it.
+    static DMA_CHANNEL_COUNTS: RegexMap<usize> = RegexMap::new(&[
+        ("STM32F0[37]0.*:DMA1", 5),
+        ("STM32G4[34]1.*:DMA1", 6),
+        ("STM32G4[34]1.*:DMA2", 6),
+    ]);
+    let have_peris: HashSet<_> = peripherals.iter().map(|p| p.name.clone()).collect();
+    let dma_channels = dmas
+        .iter()
+        .flat_map(|(_, _, dma)| dma.channels.clone())
+        .filter(|ch| have_peris.contains(&ch.dma))
+        .filter(|ch| {
+            DMA_CHANNEL_COUNTS
+                .get(&format!("{}:{}", chip_name, ch.dma))
+                .map_or_else(|| true, |&v| usize::from(ch.channel) < v)
+        })
+        .collect::<Vec<_>>();
+    dma_channels
+}
+
+/// Associates each peripheral with its available DMA channels.
+///
+/// This is done by retrieving its mappings from `dmas`, filtering out
+/// channels not present in `dma_channels`, sorting them, and assigning
+/// the sorted list to the peripheral’s `dma_channels` field.
+///
+/// This determines which DMA channels can be used for data transfers for each peripheral.
+/// Modifies each `Peripheral` in-place, setting `peripheral.dma_channels`.
+fn associate_peripherals_dma_channels(
+    peripherals: &mut Vec<stm32_data_serde::chip::core::Peripheral>,
+    dmas: Vec<(String, String, &dma::ChipDma)>,
+    dma_channels: &Vec<stm32_data_serde::chip::core::DmaChannels>,
+) {
+    let have_chs: HashSet<_> = dma_channels.iter().map(|ch| ch.name.clone()).collect();
+
+    // Process peripheral - DMA channel associations
+    for p in peripherals {
+        let mut chs = Vec::new();
+        for (_, _, dma) in &dmas {
+            if let Some(peri_chs) = dma.peripherals.get(&p.name) {
+                chs.extend(
+                    peri_chs
+                        .iter()
+                        .filter(|ch| match &ch.channel {
+                            None => true,
+                            Some(channel) => have_chs.contains(channel),
+                        })
+                        .cloned(),
+                );
+            }
+        }
+        chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
+        p.dma_channels = chs;
     }
 }
 
