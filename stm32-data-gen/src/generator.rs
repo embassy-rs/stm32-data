@@ -198,7 +198,8 @@ fn create_peripherals_for_chip(
         let addr = resolve_peri_addr(chip_name, &pname, defines);
         let Some(address) = addr else { continue };
 
-        let registers = if let Some(&block) = PERIMAP.get(&format!("{chip_name}:{pname}:{pkind}")) {
+        let perimap = PERIMAP.get(&format!("{chip_name}:{pname}:{pkind}"));
+        let registers = if let Some(&block) = perimap {
             Some(stm32_data_serde::chip::core::peripheral::Registers {
                 kind: block.0.to_string(),
                 version: block.1.to_string(),
@@ -574,6 +575,7 @@ fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) ->
 /// Loads `data/extra/family/{family}.yaml` if it exists, which may contain:
 /// - `peripherals`: extra or corrective peripheral entries
 /// - `pin_cleanup`: rules to modify pin names
+/// - `override_pins`: rules to override pin names for specific instances of a peripheral
 ///
 /// Parameters:
 /// - `group`: ChipGroup context (family/package) for filtering
@@ -585,10 +587,14 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
             strip_suffix: String,
             exclude_peripherals: Vec<String>,
         }
+
         #[derive(serde::Deserialize)]
         struct Extra {
             peripherals: Option<Vec<stm32_data_serde::chip::core::Peripheral>>,
             pin_cleanup: Option<PinCleanup>,
+            /// Maps an instance name of a peripheral to a list of pins.
+            /// E.g., {"OPAMP1": [("PA0", "VINP0"), ...], "OPAMP2": [...], ...}
+            override_pins: Option<HashMap<String, Vec<Pin>>>,
         }
 
         let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
@@ -620,6 +626,18 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
                     if let Some(stripped) = pin.pin.strip_suffix(&clean.strip_suffix) {
                         pin.pin = stripped.to_string();
                     }
+                }
+            }
+        }
+
+        // apply override pins rules
+        if let Some(override_pins) = extra.override_pins {
+            for (name, peri) in peripherals.iter_mut() {
+                if let Some(pins) = override_pins.get(name) {
+                    // filter out pins that don't exist in this package.
+                    let mut pins = pins.clone();
+                    pins.retain(|p| group.pins.contains_key(&p.pin));
+                    peri.pins = pins;
                 }
             }
         }
