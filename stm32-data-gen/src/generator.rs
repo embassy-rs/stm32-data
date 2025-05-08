@@ -12,62 +12,50 @@ use crate::chips::{Chip, ChipGroup};
 use crate::gpio_af::parse_signal_name;
 use crate::normalize_peris::normalize_peri_name;
 
-/// Merge AF information from GPIO file into peripheral pins.
-///
-/// `core_pins` is modified in-place and updated with AF information from `af_pins`.
-/// Also does some chip-specific adjustments, so we need `chip_name` and `periph_name`.
-fn merge_periph_pins_info(
-    chip_name: &str,
-    periph_name: &str,
-    core_pins: &mut [stm32_data_serde::chip::core::peripheral::Pin],
-    af_pins: &[stm32_data_serde::chip::core::peripheral::Pin],
-) {
-    if chip_name.contains("STM32F1") {
-        // TODO: actually handle the F1 AFIO information when it will be extracted
-        return;
+#[allow(clippy::too_many_arguments)]
+pub fn dump_all_chips(
+    chip_groups: Vec<ChipGroup>,
+    headers: header::Headers,
+    af: gpio_af::Af,
+    chip_interrupts: interrupts::ChipInterrupts,
+    peripheral_to_clock: rcc::ParsedRccs,
+    dma_channels: dma::DmaChannels,
+    chips: std::collections::HashMap<String, Chip>,
+    docs: docs::Docs,
+) -> Result<(), anyhow::Error> {
+    std::fs::create_dir_all("build/data/chips")?;
+
+    #[cfg(feature = "rayon")]
+    {
+        use rayon::prelude::*;
+
+        chip_groups.into_par_iter().try_for_each(|group| {
+            process_group(
+                group,
+                &headers,
+                &af,
+                &chip_interrupts,
+                &peripheral_to_clock,
+                &dma_channels,
+                &chips,
+                &docs,
+            )
+        })
     }
-
-    // convert to hashmap
-    let af_pins: HashMap<(&str, &str), Option<u8>> = af_pins
-        .iter()
-        .map(|v| ((v.pin.as_str(), v.signal.as_str()), v.af))
-        .collect();
-
-    for pin in &mut core_pins[..] {
-        let af = af_pins.get(&(&pin.pin, &pin.signal)).copied().flatten();
-
-        // try to look for a signal with another name
-        let af = af.or_else(|| {
-            if pin.signal == "CTS" {
-                // for some godforsaken reason UART4's and UART5's CTS are called CTS_NSS in the GPIO xml
-                // so try to match with these
-                af_pins.get(&(pin.pin.as_str(), "CTS_NSS")).copied().flatten()
-            } else if chip_name.starts_with("STM32F0") && periph_name == "I2C1" {
-                // it appears that for __some__ STM32 MCUs there is no AFIO specified in GPIO file
-                // (notably - STM32F030C6 with it's I2C1 on PF6 and PF7)
-                // but the peripheral can actually be mapped to different pins
-                // this breaks embassy's model, so we pretend that it's AF 0
-                // Reference Manual states that there's no GPIOF_AFR register
-                // but according to Cube-generated core it's OK to write to AFIO reg, it seems to be ignored
-                // TODO: are there any more signals that have this "feature"
-                Some(0)
-            } else {
-                None
-            }
-        });
-
-        if let Some(af) = af {
-            pin.af = Some(af);
-        }
-    }
-
-    // apply some renames
-    if chip_name.starts_with("STM32C0") || chip_name.starts_with("STM32G0") {
-        for pin in &mut core_pins[..] {
-            if pin.signal == "MCO" {
-                pin.signal = "MCO_1".to_string()
-            }
-        }
+    #[cfg(not(feature = "rayon"))]
+    {
+        chip_groups.into_iter().try_for_each(|group| {
+            process_group(
+                group,
+                &headers,
+                &af,
+                &chip_interrupts,
+                &peripheral_to_clock,
+                &dma_channels,
+                &chips,
+                &docs,
+            )
+        })
     }
 }
 
@@ -222,60 +210,6 @@ fn process_core(
     chip_interrupts.process(&mut core, chip_name, h, group)?;
 
     Ok(core)
-}
-
-/// Merge core xml info with GPIO xml info for the given peripheral.
-///
-/// The GPIO XMLs contain information about AFs for each pin, but the Core XMLs do not.
-/// The core XMLs, on the other hand, contain information about available signals on each pin,
-/// which the GPIO XMLs do not.
-///
-/// This function takes the core pins from `periph_pins` and the AFs from `chip_af`
-/// for the peripheral `pname`, merges the two using [merge_periph_pins_info] and returns
-/// the combined `Pin`s.
-fn merge_afs_into_core_pins(
-    chip_name: &str,
-    chip_af: Option<&HashMap<String, Vec<Pin>>>,
-    periph_pins: &HashMap<String, Vec<Pin>>,
-    pname: &String,
-) -> Vec<Pin> {
-    if let Some(pins) = periph_pins.get(pname) {
-        let mut pins = pins.clone();
-        if let Some(af_pins) = chip_af.and_then(|x| x.get(pname)) {
-            merge_periph_pins_info(chip_name, pname, &mut pins, af_pins.as_slice());
-        }
-        return pins;
-    }
-    Vec::new()
-}
-
-/// Merge I2Sx pins into SPIx pins.
-///
-/// SPIx peripherals have I2Sx pins which are not explicitly listed in the peripheral's pins.
-/// This function merges the I2Sx pins from `chip_af` into the SPIx pins of `periph_pins`,
-/// with a prefix "I2S_". If the peripheral `pname` does not start with "SPI", it returns imediately.
-fn merge_i2s_into_spi_pins(
-    chip_name: &str,
-    chip_af: Option<&HashMap<String, Vec<Pin>>>,
-    periph_pins: &HashMap<String, Vec<Pin>>,
-    pname: &str,
-) -> Vec<Pin> {
-    if !pname.starts_with("SPI") {
-        return Vec::new();
-    }
-    let i2s_name = "I2S".to_owned() + pname.trim_start_matches("SPI");
-    // Do we have I2Sx pins in the peripheral pins and I2Sx AFs in the chip?
-    if let Some(i2s_pins) = periph_pins.get(&i2s_name) {
-        let mut i2s_pins = i2s_pins.clone();
-        if let Some(af_pins) = chip_af.and_then(|x| x.get(&i2s_name)) {
-            merge_periph_pins_info(chip_name, &i2s_name, &mut i2s_pins, af_pins.as_slice());
-        }
-        for p in &mut i2s_pins {
-            p.signal = "I2S_".to_owned() + &p.signal;
-        }
-        return i2s_pins;
-    }
-    Vec::new()
 }
 
 /// Create a short core name from a long name.
@@ -474,6 +408,120 @@ fn extract_pins_from_chip_group(group: &ChipGroup) -> HashMap<String, Vec<Pin>> 
         pins.dedup();
     }
     periph_pins
+}
+
+/// Merge core xml info with GPIO xml info for the given peripheral.
+///
+/// The GPIO XMLs contain information about AFs for each pin, but the Core XMLs do not.
+/// The core XMLs, on the other hand, contain information about available signals on each pin,
+/// which the GPIO XMLs do not.
+///
+/// This function takes the core pins from `periph_pins` and the AFs from `chip_af`
+/// for the peripheral `pname`, merges the two using [merge_periph_pins_info] and returns
+/// the combined `Pin`s.
+fn merge_afs_into_core_pins(
+    chip_name: &str,
+    chip_af: Option<&HashMap<String, Vec<Pin>>>,
+    periph_pins: &HashMap<String, Vec<Pin>>,
+    pname: &String,
+) -> Vec<Pin> {
+    if let Some(pins) = periph_pins.get(pname) {
+        let mut pins = pins.clone();
+        if let Some(af_pins) = chip_af.and_then(|x| x.get(pname)) {
+            merge_periph_pins_info(chip_name, pname, &mut pins, af_pins.as_slice());
+        }
+        return pins;
+    }
+    Vec::new()
+}
+
+/// Merge I2Sx pins into SPIx pins.
+///
+/// SPIx peripherals have I2Sx pins which are not explicitly listed in the peripheral's pins.
+/// This function merges the I2Sx pins from `chip_af` into the SPIx pins of `periph_pins`,
+/// with a prefix "I2S_". If the peripheral `pname` does not start with "SPI", it returns imediately.
+fn merge_i2s_into_spi_pins(
+    chip_name: &str,
+    chip_af: Option<&HashMap<String, Vec<Pin>>>,
+    periph_pins: &HashMap<String, Vec<Pin>>,
+    pname: &str,
+) -> Vec<Pin> {
+    if !pname.starts_with("SPI") {
+        return Vec::new();
+    }
+    let i2s_name = "I2S".to_owned() + pname.trim_start_matches("SPI");
+    // Do we have I2Sx pins in the peripheral pins and I2Sx AFs in the chip?
+    if let Some(i2s_pins) = periph_pins.get(&i2s_name) {
+        let mut i2s_pins = i2s_pins.clone();
+        if let Some(af_pins) = chip_af.and_then(|x| x.get(&i2s_name)) {
+            merge_periph_pins_info(chip_name, &i2s_name, &mut i2s_pins, af_pins.as_slice());
+        }
+        for p in &mut i2s_pins {
+            p.signal = "I2S_".to_owned() + &p.signal;
+        }
+        return i2s_pins;
+    }
+    Vec::new()
+}
+
+
+/// Merge AF information from GPIO file into peripheral pins.
+///
+/// `core_pins` is modified in-place and updated with AF information from `af_pins`.
+/// Also does some chip-specific adjustments, so we need `chip_name` and `periph_name`.
+fn merge_periph_pins_info(
+    chip_name: &str,
+    periph_name: &str,
+    core_pins: &mut [stm32_data_serde::chip::core::peripheral::Pin],
+    af_pins: &[stm32_data_serde::chip::core::peripheral::Pin],
+) {
+    if chip_name.contains("STM32F1") {
+        // TODO: actually handle the F1 AFIO information when it will be extracted
+        return;
+    }
+
+    // convert to hashmap
+    let af_pins: HashMap<(&str, &str), Option<u8>> = af_pins
+        .iter()
+        .map(|v| ((v.pin.as_str(), v.signal.as_str()), v.af))
+        .collect();
+
+    for pin in &mut core_pins[..] {
+        let af = af_pins.get(&(&pin.pin, &pin.signal)).copied().flatten();
+
+        // try to look for a signal with another name
+        let af = af.or_else(|| {
+            if pin.signal == "CTS" {
+                // for some godforsaken reason UART4's and UART5's CTS are called CTS_NSS in the GPIO xml
+                // so try to match with these
+                af_pins.get(&(pin.pin.as_str(), "CTS_NSS")).copied().flatten()
+            } else if chip_name.starts_with("STM32F0") && periph_name == "I2C1" {
+                // it appears that for __some__ STM32 MCUs there is no AFIO specified in GPIO file
+                // (notably - STM32F030C6 with it's I2C1 on PF6 and PF7)
+                // but the peripheral can actually be mapped to different pins
+                // this breaks embassy's model, so we pretend that it's AF 0
+                // Reference Manual states that there's no GPIOF_AFR register
+                // but according to Cube-generated core it's OK to write to AFIO reg, it seems to be ignored
+                // TODO: are there any more signals that have this "feature"
+                Some(0)
+            } else {
+                None
+            }
+        });
+
+        if let Some(af) = af {
+            pin.af = Some(af);
+        }
+    }
+
+    // apply some renames
+    if chip_name.starts_with("STM32C0") || chip_name.starts_with("STM32G0") {
+        for pin in &mut core_pins[..] {
+            if pin.signal == "MCO" {
+                pin.signal = "MCO_1".to_string()
+            }
+        }
+    }
 }
 
 /// Resolve the address of a peripheral.
@@ -698,51 +746,4 @@ fn process_chip(
     let dump = serde_json::to_string_pretty(&chip)?;
     std::fs::write(format!("build/data/chips/{chip_name}.json"), dump)?;
     Ok(())
-}
-
-#[allow(clippy::too_many_arguments)]
-pub fn dump_all_chips(
-    chip_groups: Vec<ChipGroup>,
-    headers: header::Headers,
-    af: gpio_af::Af,
-    chip_interrupts: interrupts::ChipInterrupts,
-    peripheral_to_clock: rcc::ParsedRccs,
-    dma_channels: dma::DmaChannels,
-    chips: std::collections::HashMap<String, Chip>,
-    docs: docs::Docs,
-) -> Result<(), anyhow::Error> {
-    std::fs::create_dir_all("build/data/chips")?;
-
-    #[cfg(feature = "rayon")]
-    {
-        use rayon::prelude::*;
-
-        chip_groups.into_par_iter().try_for_each(|group| {
-            process_group(
-                group,
-                &headers,
-                &af,
-                &chip_interrupts,
-                &peripheral_to_clock,
-                &dma_channels,
-                &chips,
-                &docs,
-            )
-        })
-    }
-    #[cfg(not(feature = "rayon"))]
-    {
-        chip_groups.into_iter().try_for_each(|group| {
-            process_group(
-                group,
-                &headers,
-                &af,
-                &chip_interrupts,
-                &peripheral_to_clock,
-                &dma_channels,
-                &chips,
-                &docs,
-            )
-        })
-    }
 }
