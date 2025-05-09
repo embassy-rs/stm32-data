@@ -124,6 +124,68 @@ fn process_core(
     let core_name = create_short_core_name(long_core_name);
     let defines = h.get_defines(&core_name);
 
+    let mut peripherals =
+        create_peripherals_for_chip(chip_name, group, peripheral_to_clock, rcc_block, chip_af, defines);
+
+    apply_family_extras(group, &mut peripherals);
+
+    for p in peripherals.values_mut() {
+        // sort and dedup pins, put the ones with AF number first, so we keep them
+        p.pins
+            .sort_by_key(|x| (x.pin.clone(), x.signal.clone(), x.af.is_none()));
+        p.pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
+    }
+
+    let mut peripherals: Vec<_> = peripherals.into_values().collect();
+    peripherals.sort_by_key(|x| x.name.clone());
+
+    let dmas = collect_dma_instances(group, dma_channels);
+    let dma_channels = extract_relevant_dma_channels(&peripherals, &dmas, chip_name);
+    associate_peripherals_dma_channels(&mut peripherals, dmas, &dma_channels);
+
+    let mut pins: Vec<_> = group
+        .pins
+        .keys()
+        .map(|x| x.replace("_C", ""))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .map(|name| stm32_data_serde::chip::core::Pin { name })
+        .collect();
+
+    pins.sort_by_key(|p| pin_sort_key(&p.name));
+
+    let mut core = stm32_data_serde::chip::Core {
+        name: core_name.clone(),
+        peripherals,
+        nvic_priority_bits: None,
+        interrupts: vec![],
+        dma_channels,
+        pins,
+    };
+
+    chip_interrupts.process(&mut core, chip_name, h, group)?;
+
+    Ok(core)
+}
+
+/// Constructs a map of peripherals for a given chip.
+///
+/// This function processes the provided `group` and extracts relevant peripheral information
+/// for the specified `chip_name`.
+/// It fills in addresses from `headers`, registers from their YAML definitions via `PERIMAP`,
+/// RCC configurations from `peripheral_to_clock` and `rcc_block`, and alternate function pins
+/// from `chip_af`.
+///
+/// Returns a `HashMap` where each key is the name of a peripheral, and each value is a `Peripheral`
+/// struct containing the peripheral's configuration details.
+fn create_peripherals_for_chip(
+    chip_name: &str,
+    group: &ChipGroup,
+    peripheral_to_clock: &rcc::ParsedRccs,
+    rcc_block: (&str, &str, &str),
+    chip_af: Option<&HashMap<String, Vec<Pin>>>,
+    defines: &header::Defines,
+) -> HashMap<String, stm32_data_serde::chip::core::Peripheral> {
     let peri_kinds = create_peripheral_map(chip_name, group, defines);
     let periph_pins = extract_pins_from_chip_group(group);
     let mut peripherals = HashMap::new();
@@ -170,46 +232,7 @@ fn process_core(
 
         peripherals.insert(p.name.clone(), p);
     }
-
-    apply_family_extras(group, &mut peripherals);
-
-    for p in peripherals.values_mut() {
-        // sort and dedup pins, put the ones with AF number first, so we keep them
-        p.pins
-            .sort_by_key(|x| (x.pin.clone(), x.signal.clone(), x.af.is_none()));
-        p.pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
-    }
-
-    let mut peripherals: Vec<_> = peripherals.into_values().collect();
-    peripherals.sort_by_key(|x| x.name.clone());
-
-    let dmas = collect_dma_instances(group, dma_channels);
-    let dma_channels = extract_relevant_dma_channels(&peripherals, &dmas, chip_name);
-    associate_peripherals_dma_channels(&mut peripherals, dmas, &dma_channels);
-
-    let mut pins: Vec<_> = group
-        .pins
-        .keys()
-        .map(|x| x.replace("_C", ""))
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .map(|name| stm32_data_serde::chip::core::Pin { name })
-        .collect();
-
-    pins.sort_by_key(|p| pin_sort_key(&p.name));
-
-    let mut core = stm32_data_serde::chip::Core {
-        name: core_name.clone(),
-        peripherals,
-        nvic_priority_bits: None,
-        interrupts: vec![],
-        dma_channels,
-        pins,
-    };
-
-    chip_interrupts.process(&mut core, chip_name, h, group)?;
-
-    Ok(core)
+    peripherals
 }
 
 /// Create a short core name from a long name.
@@ -463,7 +486,6 @@ fn merge_i2s_into_spi_pins(
     }
     Vec::new()
 }
-
 
 /// Merge AF information from GPIO file into peripheral pins.
 ///
