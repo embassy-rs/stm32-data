@@ -180,7 +180,7 @@ NOTE: At the time of writing all families are supported, so this is only useful 
 
 Adding support for a new family is mostly a matter of adding support for RCC.
 
-Now extract the RCC peripheral registers: `./d extract-all RCC --transform ./transform-RCC.yaml`
+Now extract the RCC peripheral registers: `./d extract-all RCC --transform transforms/RCC.yaml`
 
 Note that we have used a transform to mechanically clean up some of the RCC
 definitions. This will produce a YAML file for each chip model in `./tmp/RCC`.
@@ -200,6 +200,13 @@ Finally, we can merge
 ```
 ./merge_regs.py tmp/RCC/g0*.yaml
 ```
+
+> [!Tip]
+> You may need to install the required packages in order to run this
+> ```shell
+> pip install xmltodict
+> pip install pyyaml
+> ```
 
 This will produce `regs_merged.yaml`, which we can copy into its final resting
 place:
