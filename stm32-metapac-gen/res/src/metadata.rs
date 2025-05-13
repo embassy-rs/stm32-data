@@ -154,6 +154,7 @@ pub struct FlashSettings {
 pub enum MemoryRegionKind {
     Flash,
     Ram,
+    Eeprom,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]

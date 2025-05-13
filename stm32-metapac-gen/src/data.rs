@@ -330,6 +330,8 @@ pub enum MemoryRegionKind {
     Flash,
     #[serde(rename = "ram")]
     Ram,
+    #[serde(rename = "eeprom")]
+    Eeprom,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
