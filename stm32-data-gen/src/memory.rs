@@ -55,6 +55,14 @@ macro_rules! mem {
             access: Some(access(stringify!($access))),
         }
     };
+    (@row $name:ident $addr:literal $size:literal bytes $access:ident) => {
+        Mem {
+            name: stringify!($name),
+            address: $addr,
+            size: $size,
+            access: Some(access(stringify!($access))),
+        }
+    };
 
     ($( $name:ident{$($row:tt)*}),*) => {
         &[
@@ -240,33 +248,69 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32H7A..G",                  &[mem!(BANK_1 { 0x08000000 512 },  BANK_2 { 0x08100000 512 },  ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 1024 }, AHBSRAM { 0x30000000 128 })]),
     ("STM32H7B..B",                  &[mem!(BANK_1 { 0x08000000 128 },                              ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 1024 }, AHBSRAM { 0x30000000 128 })]),
     // L0
-    ("STM32L0...3",                  &[mem!(BANK_1 { 0x08000000 8 },   SRAM { 0x20000000 2 })]),
-    ("STM32L0...6",                  &[mem!(BANK_1 { 0x08000000 32 },  SRAM { 0x20000000 8 })]),
-    ("STM32L0...B",                  &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 20 })]),
-    ("STM32L0...Z",                  &[mem!(BANK_1 { 0x08000000 192 }, SRAM { 0x20000000 20 })]),
-    ("STM32L0[12]..4",               &[mem!(BANK_1 { 0x08000000 16 },  SRAM { 0x20000000 2 })]),
-    ("STM32L0[156]..8",              &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 8 })]),
-    ("STM32L0[34]..4",               &[mem!(BANK_1 { 0x08000000 16 },  SRAM { 0x20000000 8 })]),
-    ("STM32L0[78]..8",               &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 20 })]),
+    // L0x0
+    ("STM32L010.4", &[mem!(BANK_1 { 0x08000000 16 }, SRAM { 0x20000000 2 }, EEPROM { 0x08080000 128 bytes rw })]), // STM32L010F4, K4
+    ("STM32L010.6", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 256 bytes rw })]), // STM32L010C6
+    ("STM32L010.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 256 bytes rw })]), // STM32L010K8, R8
+    ("STM32L010.B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 20 }, EEPROM { 0x08080000 512 bytes rw })]), // STM32L010RB
+    // L0x1 Category 1
+    ("STM32L011.3", &[mem!(BANK_1 { 0x08000000 8 }, SRAM { 0x20000000 2 }, EEPROM { 0x08080000 512 bytes rw })]), // STM32L011D3, E3, F3, G3, K3
+    ("STM32L011.4", &[mem!(BANK_1 { 0x08000000 16 }, SRAM { 0x20000000 2 }, EEPROM { 0x08080000 512 bytes rw })]), // STM32L011D4, E4, F4, G4, K4
+    ("STM32L021.4", &[mem!(BANK_1 { 0x08000000 16 }, SRAM { 0x20000000 2 }, EEPROM { 0x08080000 512 bytes rw })]), // STM32L021D4, F4, G4, K4
+    // L0x1 Category 2
+    ("STM32L031.4", &[mem!(BANK_1 { 0x08000000 16 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 1024 bytes rw })]), // STM32L031C4, E4, F4, G4, K4
+    ("STM32L031.6", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 1024 bytes rw })]), // STM32L031C6, E6, F6, G6, K6
+    ("STM32L041.4", &[mem!(BANK_1 { 0x08000000 16 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 1024 bytes rw })]), // STM32L041C4
+    ("STM32L041.6", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 1024 bytes rw })]), // STM32L041C6, E6, F6, G6, K6
+    // L0x1, L0x2, L0x3 Category 3
+    ("STM32L051.6", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 2048 bytes rw })]), // STM32L051C6, K6, R6, T6
+    ("STM32L051.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 2048 bytes rw })]), // STM32L051C8, K8, R8, T8
+    ("STM32L052.6", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 2048 bytes rw })]), // STM32L052C6, K6, R6, T6
+    ("STM32L052.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 2048 bytes rw })]), // STM32L052C8, K8, R8, T8
+    ("STM32L053.6", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 2048 bytes rw })]), // STM32L053C6, R6
+    ("STM32L053.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 2048 bytes rw })]), // STM32L053C8, R8
+    ("STM32L062.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 2048 bytes rw })]), // STM32L062C8, K8
+    ("STM32L063.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 2048 bytes rw })]), // STM32L063C8, R8
+    // L0x1, L0x2, L0x3 Category 5 (64KB Flash, only EEPROM bank 2)
+    ("STM32L071.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 20 }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L071C8, K8, V8
+    ("STM32L072.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 20 }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L072V8
+    ("STM32L073.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 20 }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L073V8
+    ("STM32L083.8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 20 }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L083V8
+    // L0x1, L0x2, L0x3 Category 5 (128KB and 192KB Flash, dual EEPROM banks)
+    ("STM32L071.B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L071CB, KB, RB, VB
+    ("STM32L071.Z", &[mem!(BANK_1 { 0x08000000 192 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L071CZ, KZ, RZ, VZ
+    ("STM32L072.B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L072CB, KB, RB, VB
+    ("STM32L072.Z", &[mem!(BANK_1 { 0x08000000 192 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L072CZ, KZ, RZ, VZ
+    ("STM32L073.B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L073CB, RB, VB
+    ("STM32L073.Z", &[mem!(BANK_1 { 0x08000000 192 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L073CZ, RZ, VZ
+    ("STM32L081.B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L081CB
+    ("STM32L081.Z", &[mem!(BANK_1 { 0x08000000 192 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L081CZ, KZ
+    ("STM32L082.B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L082KB
+    ("STM32L082.Z", &[mem!(BANK_1 { 0x08000000 192 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L082CZ, KZ
+    ("STM32L083.B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L083CB, RB, VB
+    ("STM32L083.Z", &[mem!(BANK_1 { 0x08000000 192 }, SRAM { 0x20000000 20 }, EEPROM_BANK_1 { 0x08080000 3072 bytes rw }, EEPROM_BANK_2 { 0x08080C00 3072 bytes rw })]), // STM32L083CZ, RZ, VZ
     // L1
-    ("STM32L1...C..",                &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 32 })]),
-    ("STM32L1...D..",                &[mem!(BANK_1 { 0x08000000 192 }, BANK_2 { 0x08030000 192 }, SRAM { 0x20000000 80 })]),
-    ("STM32L1...D",                  &[mem!(BANK_1 { 0x08000000 192 }, BANK_2 { 0x08030000 192 }, SRAM { 0x20000000 48 })]),
-    ("STM32L1...E",                  &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM { 0x20000000 80 })]),
-    ("STM32L1[56]..C",               &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 32 })]),
-    ("STM32L10..6..",                &[mem!(BANK_1 { 0x08000000 32 },  SRAM { 0x20000000 4 })]),
-    ("STM32L10..6",                  &[mem!(BANK_1 { 0x08000000 32 },  SRAM { 0x20000000 4 })]),
-    ("STM32L10..8..",                &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 8 })]),
-    ("STM32L10..8",                  &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 8 })]),
-    ("STM32L10..B..",                &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 16 })]),
-    ("STM32L10..B",                  &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 10 })]),
-    ("STM32L10..C",                  &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 16 })]),
-    ("STM32L15..6..",                &[mem!(BANK_1 { 0x08000000 32 },  SRAM { 0x20000000 16 })]),
-    ("STM32L15..6",                  &[mem!(BANK_1 { 0x08000000 32 },  SRAM { 0x20000000 10 })]),
-    ("STM32L15..8..",                &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 32 })]),
-    ("STM32L15..8",                  &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 10 })]),
-    ("STM32L15..B..",                &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 32 })]),
-    ("STM32L15..B",                  &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 16 })]),
+    ("STM32L1...C..", &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 32 }, EEPROM { 0x08080000 8192 bytes rw })]), // Cat.3
+    ("STM32L1...D", &[mem!(BANK_1 { 0x08000000 192 }, BANK_2 { 0x08030000 192 }, SRAM { 0x20000000 48 }, EEPROM_BANK_1 { 0x08080000 6144 bytes rw }, EEPROM_BANK_2 { 0x08081800 6144 bytes rw })]), // Cat.4
+    ("STM32L1...D..", &[mem!(BANK_1 { 0x08000000 192 }, BANK_2 { 0x08030000 192 }, SRAM { 0x20000000 80 }, EEPROM_BANK_1 { 0x08080000 8192 bytes rw }, EEPROM_BANK_2 { 0x08082000 8192 bytes rw })]), // Cat.5/6 (e.g., STM32L151VD-X)
+    ("STM32L1...E", &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM { 0x20000000 80 }, EEPROM_BANK_1 { 0x08080000 8192 bytes rw }, EEPROM_BANK_2 { 0x08082000 8192 bytes rw })]), // Cat.5/6
+    ("STM32L10..6..", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 4 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L100C6-A)
+    ("STM32L10..6", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 4 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L100C6)
+    ("STM32L10..8..", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L100R8-A)
+    ("STM32L10..8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 8 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L100R8)
+    ("STM32L10..B..", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 16 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L100RB-A)
+    ("STM32L10..B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 10 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L100RB)
+    ("STM32L10..C", &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 16 }, EEPROM { 0x08080000 8192 bytes rw })]), // Cat.3 (STM32L100RC)
+    ("STM32L15..6..", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 16 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L151C6-A, etc.)
+    ("STM32L15..6", &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 10 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L151C6, etc.)
+    ("STM32L15..8..", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 32 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L151C8-A, etc.)
+    ("STM32L15..8", &[mem!(BANK_1 { 0x08000000 64 }, SRAM { 0x20000000 10 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L151C8, etc.)
+    ("STM32L15..B..", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 32 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L151CB-A, etc.)
+    ("STM32L15..B", &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 16 }, EEPROM { 0x08080000 4096 bytes rw })]), // Cat.1/2 (STM32L151CB, etc.)
+    ("STM32L15..C", &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 32 }, EEPROM { 0x08080000 8192 bytes rw })]), // Cat.3
+    ("STM32L16..C", &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 32 }, EEPROM { 0x08080000 8192 bytes rw })]), // Cat.3
+    ("STM32L16..D", &[mem!(BANK_1 { 0x08000000 384 }, SRAM { 0x20000000 48 }, EEPROM_BANK_1 { 0x08080000 6144 bytes rw }, EEPROM_BANK_2 { 0x08081800 6144 bytes rw })]), // Cat.4
+    ("STM32L16..E", &[mem!(BANK_1 { 0x08000000 512 }, SRAM { 0x20000000 80 }, EEPROM_BANK_1 { 0x08080000 8192 bytes rw }, EEPROM_BANK_2 { 0x08082000 8192 bytes rw })]), // Cat.5/6
     // L4
     ("STM32L4...8",                  &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 32 },  SRAM2 { 0x20008000 8 },  SRAM2_ICODE { 0x10000000 8 })]),
     ("STM32L4[12]..B",               &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 32 },  SRAM2 { 0x20008000 8 },  SRAM2_ICODE { 0x10000000 8 })]),
@@ -477,6 +521,15 @@ pub fn get(chip: &str) -> Vec<Vec<Memory>> {
                             erase_size: 0,
                             erase_value: flash.erase_value,
                         }),
+                        access: mem.access,
+                    });
+                } else if mem.name.starts_with("EEPROM") {
+                    res.push(Memory {
+                        name: mem.name.to_string(),
+                        address: mem.address,
+                        size: mem.size,
+                        kind: memory::Kind::Eeprom,
+                        settings: None,
                         access: mem.access,
                     });
                 } else {
