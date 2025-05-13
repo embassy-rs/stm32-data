@@ -295,7 +295,7 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
                                       ]),
     ("STM32L4[RS]..I",               &[
                                         mem!(BANK_1 { 0x08000000 2048 },                              SRAM { 0x20000000 640 }),
-                                        mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 10024 }, SRAM { 0x20000000 640 })
+                                        mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 640 })
                                       ]),
     // L5
     ("STM32L5...C",                  &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 256 })]),
