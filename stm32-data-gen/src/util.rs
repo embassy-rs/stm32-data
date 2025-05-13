@@ -64,7 +64,7 @@ pub struct RegexSet<'a> {
 impl<'a> RegexSet<'a> {
     pub const fn new(map: &'a [&'a str]) -> Self {
         Self {
-            map: RegexMap::new(unsafe { std::mem::transmute(map) }),
+            map: RegexMap::new(unsafe { std::mem::transmute::<&[&str], &[(&str, ())]>(map) }),
         }
     }
 
