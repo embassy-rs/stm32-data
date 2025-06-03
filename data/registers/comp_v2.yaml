@@ -12,14 +12,17 @@ fieldset/CSR:
     description: COMP enable bit.
     bit_offset: 0
     bit_size: 1
+    enum: EN
   - name: INMSEL
     description: Comparator signal selector for inverting input INM. (RM0440 24.3.2 Table 197)
     bit_offset: 4
     bit_size: 3
+    enum: INMSEL
   - name: INPSEL
     description: Comparator signal selector for non-inverting input INP. (RM0440 24.3.2 Table 196)
     bit_offset: 8
     bit_size: 1
+    enum: INPSEL
   - name: POLARITY
     description: Comparator polarity selector.
     bit_offset: 15
@@ -34,14 +37,17 @@ fieldset/CSR:
     description: Comparator blanking source selector. (RM0440 24.3.6 Table 198)
     bit_offset: 19
     bit_size: 3
+    enum: BLANKSEL
   - name: BRGEN
     description: Vrefint resistor bridge enable. (RM0440 24.6)
     bit_offset: 22
     bit_size: 1
+    enum: BRGEN
   - name: SCALEN
     description: Vrefint scaled input enable. (RM0440 24.6)
     bit_offset: 23
     bit_size: 1
+    enum: SCALEN
   - name: VALUE_DO_NOT_SET
     description: Comparator output status. (READ ONLY)
     bit_offset: 30
@@ -50,10 +56,12 @@ fieldset/CSR:
     description: CSR register lock.
     bit_offset: 31
     bit_size: 1
+    enum: LOCK
 enum/HYST:
   bit_size: 3
   variants:
   - name: None
+    description: No hysteresis
     value: 0
   - name: Hyst10m
     description: 10mV hysteresis
@@ -85,3 +93,106 @@ enum/POLARITY:
   - name: Inverted
     description: Inverted polarity
     value: 1
+
+enum/LOCK:
+  bit_size: 1
+  variants:
+    - name: Unlocked
+      description: COMP_CxCSR register is unlocked
+      value: 0
+    - name: Locked
+      description: COMP_CxCSR register is locked
+      value: 1
+
+enum/SCALEN:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: VREFINT scaler disable
+      value: 0
+    - name: Enabled
+      description: VREFINT scaler enable
+      value: 1
+
+enum/BRGEN:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: VREFINT resistor bridge disable
+      value: 0
+    - name: Enabled
+      description: VREFINT resistor bridge enable
+      value: 1
+
+enum/BLANKSEL:
+  bit_size: 3
+  variants:
+    - name: TIM1_OC5
+      description: Timer 1 OC5 output
+      value: 1
+    - name: TIM2_OC3
+      description: Timer 2 OC3 output
+      value: 2
+    - name: TIM3_OC3_TIM2_OC4_TIM15_OC1
+      description: TIM3_OC3 / TIM2_OC4 / TIM15_OC1
+      value: 3
+    - name: TIM8_OC5_TIM1_OC5_TIM15_OC2
+      description: TIM8_OC5 / TIM1_OC5 / TIM15_OC2
+      value: 4
+    - name: TIM20_OC5_TIM1_OC5
+      description: TIM20_OC5 / TIM1_OC5
+      value: 5
+    - name: TIM15_OC1
+      description: Timer 15 OC1 output
+      value: 6
+    - name: TIM4_OC3
+      description: Timer 4 OC3 output
+      value: 7
+
+enum/INPSEL:
+  bit_size: 1
+  variants:
+    - name: INP0
+      description: Input PA1 (COMP1) or PA7 (COMP2) or PA0 (COMP3) or PE7 (COMP4) or PD12 (COMP5) or PD11 (COMP6) or PB14 (COMP7)
+      value: 0
+    - name: INP1
+      description: Input PB1 (COMP1) or PA3 (COMP2) or PC1 (COMP3) or PE7 (COMP4) or PD12 (COMP5) or PD11 (COMP6) or PD14 (COMP7)
+      value: 1
+
+enum/INMSEL:
+  bit_size: 3
+  variants:
+    - name: VREFINT_1_4
+      description: 1/4 VREFINT
+      value: 0
+    - name: VREFINT_1_2
+      description: 1/2 VREFINT
+      value: 1
+    - name: VREFINT_3_4
+      description: 3/4 VREFINT
+      value: 2
+    - name: VREFINT
+      description: VREFINT
+      value: 3
+    - name: DAC_CH1
+      description: DAC1_CH1 or DAC3_CH1
+      value: 4
+    - name: DAC_CH2
+      description: DAC1_CH2 or DAC3_CH2
+      value: 5
+    - name: INP0
+      description: IO pin (PA4/PA5/PF1/PE8/PB10/PD10/PD15 depending on COMPx)
+      value: 6
+    - name: INP1
+      description: IO pin (PA0/PA2/PC0/PB2/PD13/PB15/PB12 depending on COMPx)
+      value: 7
+
+enum/EN:
+  bit_size: 1
+  variants:
+    - name: Disabled
+      description: Comparator disable
+      value: 0
+    - name: Enabled
+      description: Comparator enable
+      value: 1
