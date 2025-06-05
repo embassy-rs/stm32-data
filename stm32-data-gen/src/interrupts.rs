@@ -80,7 +80,7 @@ impl ChipInterrupts {
         chip_name: &str,
         h: &crate::header::ParsedHeader,
         group: &ChipGroup,
-    ) {
+    ) -> anyhow::Result<()> {
         trace!("parsing interrupts for chip {} core {}", chip_name, core.name);
 
         // =================== Populate nvic_priority_bits
@@ -117,10 +117,10 @@ impl ChipInterrupts {
                 )
             })
             .unwrap();
-        let nvic_strings = self
-            .irqs
-            .get(&(chip_nvic.name.clone(), chip_nvic.version.clone()))
-            .unwrap();
+        let nvic_strings = match self.irqs.get(&(chip_nvic.name.clone(), chip_nvic.version.clone())) {
+            Some(strings) => strings,
+            None => return Err(anyhow::anyhow!("Failed to find NVIC strings for chip {chip_name}")),
+        };
 
         // peripheral -> signal -> interrupts
         let mut chip_signals = HashMap::<String, HashMap<String, HashSet<String>>>::new();
@@ -343,7 +343,9 @@ impl ChipInterrupts {
 
                     for s in ss {
                         if !known.contains(&s.clone()) {
-                            panic!("Unknown signal {s} for peri {p}, known={known:?}, parts={parts:?}");
+                            panic!(
+                                "Unknown signal {s} for peri {p} chip {chip_name}, known={known:?}, parts={parts:?}"
+                            );
                         }
                         trace!("    signal: {} {}", p, s);
                         interrupt_signals.insert((p.clone(), s));
@@ -399,6 +401,7 @@ impl ChipInterrupts {
                 p.interrupts = all_irqs;
             }
         }
+        Ok(())
     }
 }
 
@@ -495,7 +498,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
             &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
         ),
         ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
-        ("PWR", &["S3WU", "WKUP"]),
+        ("PWR", &["S3WU", "WKUP", "PVD"]),
         ("GTZC", &["GLOBAL", "ILA"]),
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
@@ -504,6 +507,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
         ("ADF", &["FLT0"]),
+        ("RAMECC", &["ECC"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {

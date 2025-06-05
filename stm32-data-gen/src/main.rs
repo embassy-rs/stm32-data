@@ -2,9 +2,11 @@ mod check;
 mod chips;
 mod dma;
 mod docs;
+mod generator;
 mod gpio_af;
 mod header;
 mod interrupts;
+mod low_power;
 mod memory;
 mod normalize_peris;
 mod perimap;
@@ -92,7 +94,7 @@ fn main() -> anyhow::Result<()> {
     let (chips, chip_groups) = chips::parse_groups()?;
 
     stopwatch.section("Processing chips");
-    chips::dump_all_chips(
+    generator::dump_all_chips(
         chip_groups,
         headers,
         af,

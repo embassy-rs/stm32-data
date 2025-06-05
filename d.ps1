@@ -6,7 +6,7 @@ param (
     [string]$peri
 )
 
-$REV="709c1060ac2ec57f6042f2b4eb9cf8c1821a6c57"
+$REV="1659e761beb29d3949bd1ec72039c3ce5f6bdf6c"
 
 Switch ($CMD)
 {
@@ -39,6 +39,10 @@ Switch ($CMD)
             }
 
         }
+    }
+    "gen" {
+        rm -r -Force build/data -ErrorAction SilentlyContinue
+        cargo run --release --bin stm32-data-gen
     }
     default {
         echo "unknown command"

@@ -1,6 +1,6 @@
 [package]
 name = "stm32-metapac"
-version = "15.0.0"
+version = "16.0.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/embassy-rs/stm32-data"
@@ -11,12 +11,14 @@ include = [
     "**/*.rs",
     "**/*.x",
     "Cargo.toml",
+    "README.md",
 ]
 
 [package.metadata.docs.rs]
 features = ["stm32h755zi-cm7", "pac", "metadata"]
 default-target = "thumbv7em-none-eabihf"
 targets = []
+rustdoc-args = ["--cfg", "docsrs"]
 
 [package.metadata.embassy_docs]
 features = ["pac", "metadata"]
@@ -45,6 +47,7 @@ flavors = [
 [dependencies]
 cortex-m = "0.7.6"
 cortex-m-rt = { version = ">=0.6.15,<0.8", optional = true }
+defmt = { version = "0.3.0", optional = true }
 
 [features]
 default = ["pac"]
@@ -58,7 +61,9 @@ pac = []
 # metadata for the currently selected chip.
 metadata = []
 
+# Implement the `defmt::Format` trait for many types.
+defmt = ["dep:defmt"]
+
 rt = ["cortex-m-rt/device"]
-memory-x = []
 
 # Chip-selection features

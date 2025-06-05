@@ -287,7 +287,7 @@ pub struct Chip {
     pub family: String,
     pub line: String,
     pub cores: Vec<Core>,
-    pub memory: Vec<MemoryRegion>,
+    pub memory: Vec<Vec<MemoryRegion>>,
     pub packages: Vec<Package>,
 }
 
@@ -330,6 +330,8 @@ pub enum MemoryRegionKind {
     Flash,
     #[serde(rename = "ram")]
     Ram,
+    #[serde(rename = "eeprom")]
+    Eeprom,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
@@ -340,6 +342,7 @@ pub struct Core {
     pub nvic_priority_bits: Option<u8>,
     pub interrupts: Vec<Interrupt>,
     pub dma_channels: Vec<DmaChannel>,
+    pub pins: Vec<Pin>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
@@ -433,6 +436,11 @@ pub struct PeripheralPin {
     pub pin: String,
     pub signal: String,
     pub af: Option<u8>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct Pin {
+    pub name: String,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]

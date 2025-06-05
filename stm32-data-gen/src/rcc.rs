@@ -37,6 +37,7 @@ struct EnRst {
 }
 
 impl ParsedRccs {
+    /// Parse the RCC information from the `rcc_xx` yaml files in `data/registers`
     pub fn parse(registers: &Registers) -> anyhow::Result<Self> {
         let mut rccs = HashMap::new();
 
@@ -49,6 +50,8 @@ impl ParsedRccs {
         Ok(Self { rccs })
     }
 
+    /// Parse mcu specific RCC information from the IR object
+    /// - Clock source muxes of peripherals
     fn parse_rcc(rcc_version: &str, ir: &IR) -> anyhow::Result<ParsedRcc> {
         let allowed_variants = HashSet::from([
             "DISABLE",
@@ -82,7 +85,6 @@ impl ParsedRccs {
             "PLLSAI2_Q",
             "PLLSAI2_R",
             "PLL1_P",
-            "PLL1_P_MUL_2",
             "PLL1_Q",
             "PLL1_R",
             "PLL1_S",
@@ -116,40 +118,33 @@ impl ParsedRccs {
             // TODO: variants to cleanup
             "AFIF",
             "HSI_HSE",
-            "HSI_Div488",
             "SAI1_EXTCLK",
             "SAI2_EXTCLK",
-            "B_0x0",
-            "B_0x1",
             "I2S_CKIN",
             "DAC_HOLD",
             "DAC_HOLD_2",
-            "RTCCLK",
-            "RTC_WKUP",
             "ICLK",
             "DCLK",
             "I2S1",
             "I2S2",
             "SAI1",
             "SAI2",
-            "HSI256_MSIS1024_MSIS4",
-            "HSI256_MSIS1024_MSIK4",
-            "HSI256_MSIK1024_MSIS4",
-            "HSI256_MSIK1024_MSIK4",
             "SPDIFRX_SYMB",
             "ETH_RMII_REF",
             "ETH",
             "CLK48MOHCI",
+            "HSE_DIV_RTCPRE",
         ]);
 
         let mux_regexes = &[
             regex!(r"^DCKCFGR\d?/(.+)SEL$"),
             regex!(r"^CCIPR\d?/(.+)SEL$"),
+            regex!(r"^BDCR\d?/(.+)SEL$"),
             regex!(r"^D\dCCIP\d?R/(.+)SEL$"),
             regex!(r"^CFGR\d/(.+)SW$"),
             regex!(r"^.+PERCKSELR/(.+)SEL$"),
         ];
-        let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$")];
+        let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$"), regex!(r"^.+/TIMICSEL$")];
 
         let mut mux = HashMap::new();
         for (reg, body) in &ir.fieldsets {
@@ -176,6 +171,9 @@ impl ParsedRccs {
                     for v in &enumm.variants {
                         let mut vname = v.name.as_str();
                         if let Some(captures) = regex!(r"^([A-Z0-9_]+)_DIV_\d+?$").captures(v.name.as_str()) {
+                            vname = captures.get(1).unwrap().as_str();
+                        }
+                        if let Some(captures) = regex!(r"^([A-Z0-9_]+)_MUL_\d+?$").captures(v.name.as_str()) {
                             vname = captures.get(1).unwrap().as_str();
                         }
 
@@ -229,14 +227,6 @@ impl ParsedRccs {
                             }
                         }
 
-                        let stop_mode = if peri == "RTC" {
-                            StopMode::Standby
-                        } else if peri.starts_with("LP") {
-                            StopMode::Stop2
-                        } else {
-                            StopMode::Stop1
-                        };
-
                         let clock = clock.replace("AHB", "HCLK").replace("APB", "PCLK");
 
                         let val = EnRst {
@@ -246,7 +236,8 @@ impl ParsedRccs {
                             },
                             reset,
                             bus_clock: clock,
-                            stop_mode,
+                            // The stop mode info is set in `low_power.rs`
+                            stop_mode: StopMode::default(),
                         };
 
                         if en_rst.insert(peri.to_string(), val).is_some() {
@@ -282,8 +273,8 @@ impl ParsedRccs {
             ("DSIHOST", &["DSI"]),
             ("ETH", &["ETHMAC", "ETH1MAC"]),
             ("SPI1", &["SPI12", "SPI123"]),
-            ("SPI2", &["SPI12", "SPI123"]),
-            ("SPI3", &["SPI123"]),
+            ("SPI2", &["SPI12", "SPI123", "SPI23"]),
+            ("SPI3", &["SPI123", "SPI23"]),
             ("SPI4", &["SPI145", "SPI45"]),
             ("SPI5", &["SPI145", "SPI45"]),
             ("SAI1", &["SAI12"]),
@@ -306,6 +297,7 @@ impl ParsedRccs {
             ("USB", &["USB", "CLK48", "ICLK"]),
             ("USB_OTG_FS", &["USB", "CLK48", "ICLK"]),
             ("USB_OTG_HS", &["USB", "USBPHYC", "OTGHS", "CLK48", "ICLK"]),
+            ("DTS", &["TMPSENS"]),
         ];
 
         let rcc = self.rccs.get(rcc_version)?;

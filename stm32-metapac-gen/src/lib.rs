@@ -4,26 +4,13 @@ use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::str::FromStr;
 
 use chiptool::generate::CommonModule;
 use chiptool::{generate, ir, transform};
-use proc_macro2::TokenStream;
 use regex::Regex;
 
 mod data;
 use data::*;
-
-#[derive(Debug, Eq, PartialEq, Clone)]
-struct Metadata<'a> {
-    name: &'a str,
-    family: &'a str,
-    line: &'a str,
-    memory: &'a [MemoryRegion],
-    peripherals: &'a [Peripheral],
-    interrupts: &'a [Interrupt],
-    dma_channels: &'a [DmaChannel],
-}
 
 pub struct Options {
     pub chips: Vec<String>,
@@ -46,7 +33,7 @@ impl Gen {
         }
     }
 
-    fn gen_chip(&mut self, chip_core_name: &str, chip: &Chip, core: &Core, core_index: usize) {
+    fn gen_chip(&mut self, chip_core_name: &str, chip: &Chip, core: &Core) {
         let mut ir = ir::IR::new();
 
         let mut dev = ir::Device {
@@ -57,9 +44,6 @@ impl Gen {
 
         let mut peripheral_versions: BTreeMap<String, String> = BTreeMap::new();
 
-        let gpio_base = core.peripherals.iter().find(|p| p.name == "GPIOA").unwrap().address as u32;
-        let gpio_stride = 0x400;
-
         for p in &core.peripherals {
             let mut ir_peri = ir::Peripheral {
                 name: p.name.clone(),
@@ -67,7 +51,7 @@ impl Gen {
                 base_address: p.address,
                 block: None,
                 description: None,
-                interrupts: HashMap::new(),
+                interrupts: BTreeMap::new(),
             };
 
             if let Some(bi) = &p.registers {
@@ -80,10 +64,6 @@ impl Gen {
                     }
                 }
                 ir_peri.block = Some(format!("{}::{}", bi.kind, bi.block));
-
-                if bi.kind == "gpio" {
-                    assert_eq!(0, (p.address as u32 - gpio_base) % gpio_stride);
-                }
             }
 
             dev.peripherals.push(ir_peri);
@@ -99,12 +79,7 @@ impl Gen {
 
         ir.devices.insert("".to_string(), dev);
 
-        let mut extra = format!(
-            "pub fn GPIO(n: usize) -> gpio::Gpio {{
-            unsafe {{ gpio::Gpio::from_ptr(({} + {}*n) as _) }}
-        }}",
-            gpio_base, gpio_stride,
-        );
+        let mut extra = String::new();
 
         for (module, version) in &peripheral_versions {
             self.all_peripheral_versions.insert((module.clone(), version.clone()));
@@ -115,38 +90,10 @@ impl Gen {
             )
             .unwrap();
         }
-        writeln!(&mut extra, "pub const CORE_INDEX: usize = {};", core_index).unwrap();
-
-        let flash_regions: Vec<&MemoryRegion> = chip
-            .memory
-            .iter()
-            .filter(|x| x.kind == MemoryRegionKind::Flash && x.name.starts_with("BANK_"))
-            .collect();
-        let first_flash = flash_regions.first().unwrap();
-        let total_flash_size = flash_regions
-            .iter()
-            .map(|x| x.size)
-            .reduce(|acc, item| acc + item)
-            .unwrap();
-
-        writeln!(&mut extra, "pub const FLASH_BASE: usize = {};", first_flash.address).unwrap();
-        writeln!(&mut extra, "pub const FLASH_SIZE: usize = {};", total_flash_size).unwrap();
-
-        let write_sizes: HashSet<_> = flash_regions
-            .iter()
-            .map(|r| r.settings.as_ref().unwrap().write_size)
-            .collect();
-        assert_eq!(1, write_sizes.len());
-        writeln!(
-            &mut extra,
-            "pub const WRITE_SIZE: usize = {};",
-            write_sizes.iter().next().unwrap()
-        )
-        .unwrap();
 
         // Cleanups!
         transform::sort::Sort {}.run(&mut ir).unwrap();
-        transform::Sanitize {}.run(&mut ir).unwrap();
+        transform::sanitize::Sanitize {}.run(&mut ir).unwrap();
 
         // ==============================
         // Setup chip dir
@@ -189,10 +136,12 @@ impl Gen {
                 pub(crate) static PERIPHERALS: &[Peripheral] = {};
                 pub(crate) static INTERRUPTS: &[Interrupt] = {};
                 pub(crate) static DMA_CHANNELS: &[DmaChannel] = {};
+                pub(crate) static PINS: &[Pin] = {};
             ",
             stringify(&core.peripherals),
             stringify(&core.interrupts),
             stringify(&core.dma_channels),
+            stringify(&core.pins),
         )
         .unwrap();
 
@@ -218,6 +167,13 @@ impl Gen {
             file
         });
 
+        let memories = chip
+            .memory
+            .iter()
+            .map(|memory| stringify(memory))
+            .collect::<Vec<_>>()
+            .join(",");
+
         let data = format!(
             "include!(\"../{}\");
             use crate::metadata::PeripheralRccKernelClock::{{Clock, Mux}};
@@ -225,18 +181,14 @@ impl Gen {
                 name: {:?},
                 family: {:?},
                 line: {:?},
-                memory: {},
+                memory: &[{}],
                 peripherals: PERIPHERALS,
                 nvic_priority_bits: {:?},
                 interrupts: INTERRUPTS,
                 dma_channels: DMA_CHANNELS,
+                pins: PINS,
             }};",
-            deduped_file,
-            &chip.name,
-            &chip.family,
-            &chip.line,
-            stringify(&chip.memory),
-            &core.nvic_priority_bits,
+            deduped_file, &chip.name, &chip.family, &chip.line, memories, &core.nvic_priority_bits,
         );
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();
@@ -249,10 +201,6 @@ impl Gen {
             .unwrap()
             .write_all(device_x.as_bytes())
             .unwrap();
-
-        // ==============================
-        // generate default memory.x
-        gen_memory_x(&chip_dir, chip);
     }
 
     fn load_chip(&mut self, name: &str) -> Chip {
@@ -290,14 +238,14 @@ impl Gen {
             }
 
             // Generate
-            for (core_index, core) in chip.cores.iter().enumerate() {
+            for core in &chip.cores {
                 let chip_core_name = match chip.cores.len() {
                     1 => chip_name.clone(),
                     _ => format!("{}-{}", chip_name, core.name),
                 };
 
                 chip_core_names.push(chip_core_name.clone());
-                self.gen_chip(&chip_core_name, &chip, core, core_index)
+                self.gen_chip(&chip_core_name, &chip, core)
             }
         }
 
@@ -320,7 +268,7 @@ impl Gen {
             });
 
             transform::sort::Sort {}.run(&mut ir).unwrap();
-            transform::Sanitize {}.run(&mut ir).unwrap();
+            transform::sanitize::Sanitize {}.run(&mut ir).unwrap();
 
             let items = generate::render(&ir, &gen_opts()).unwrap();
             let mut file = File::create(
@@ -390,6 +338,7 @@ impl Gen {
         }
 
         // copy misc files
+        fs::write(self.opts.out_dir.join("README.md"), include_bytes!("../res/README.md")).unwrap();
         fs::write(self.opts.out_dir.join("build.rs"), include_bytes!("../res/build.rs")).unwrap();
         fs::write(
             self.opts.out_dir.join("src/lib.rs"),
@@ -419,82 +368,7 @@ fn stringify<T: Debug>(metadata: T) -> String {
 }
 
 fn gen_opts() -> generate::Options {
-    generate::Options {
-        common_module: CommonModule::External(TokenStream::from_str("crate::common").unwrap()),
-    }
-}
-
-fn gen_memory_x(out_dir: &Path, chip: &Chip) {
-    let mut memory_x = String::new();
-
-    let flash = get_memory_range(chip, MemoryRegionKind::Flash);
-    let ram = get_memory_range(chip, MemoryRegionKind::Ram);
-
-    write!(memory_x, "MEMORY\n{{\n").unwrap();
-    writeln!(
-        memory_x,
-        "    FLASH : ORIGIN = 0x{:08x}, LENGTH = {:>4}K /* {} */",
-        flash.0,
-        flash.1 / 1024,
-        flash.2
-    )
-    .unwrap();
-    writeln!(
-        memory_x,
-        "    RAM   : ORIGIN = 0x{:08x}, LENGTH = {:>4}K /* {} */",
-        ram.0,
-        ram.1 / 1024,
-        ram.2
-    )
-    .unwrap();
-    write!(memory_x, "}}").unwrap();
-
-    fs::create_dir_all(out_dir.join("memory_x")).unwrap();
-    let mut file = File::create(out_dir.join("memory_x").join("memory.x")).unwrap();
-    file.write_all(memory_x.as_bytes()).unwrap();
-}
-
-fn get_memory_range(chip: &Chip, kind: MemoryRegionKind) -> (u32, u32, String) {
-    let mut mems: Vec<_> = chip.memory.iter().filter(|m| m.kind == kind && m.size != 0).collect();
-    mems.sort_by_key(|m| m.address);
-
-    let mut start = u32::MAX;
-    let mut end = u32::MAX;
-    let mut names = Vec::new();
-    let mut best: Option<(u32, u32, String)> = None;
-    for m in mems {
-        if !mem_filter(&chip.name, &m.name) {
-            continue;
-        }
-
-        if m.address != end {
-            names = Vec::new();
-            start = m.address;
-            end = m.address;
-        }
-
-        end += m.size;
-        names.push(m.name.to_string());
-
-        if best.is_none() || end - start > best.as_ref().unwrap().1 {
-            best = Some((start, end - start, names.join(" + ")));
-        }
-    }
-
-    best.unwrap()
-}
-
-fn mem_filter(chip: &str, region: &str) -> bool {
-    // in STM32WB, SRAM2a/SRAM2b are reserved for the radio core.
-    if chip.starts_with("STM32WB")
-        && !chip.starts_with("STM32WBA")
-        && !chip.starts_with("STM32WB0")
-        && region.starts_with("SRAM2")
-    {
-        return false;
-    }
-
-    true
+    generate::Options::new().with_common_module(CommonModule::External("crate::common".parse().unwrap()))
 }
 
 fn gen_all_chips(chips: &[String]) -> String {

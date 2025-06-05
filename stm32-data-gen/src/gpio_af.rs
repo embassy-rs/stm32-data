@@ -92,7 +92,7 @@ impl Af {
             }
 
             for p in peris.values_mut() {
-                p.sort();
+                p.sort_by_key(|p| pin_sort_key(&p.pin));
                 p.dedup();
             }
 
@@ -122,6 +122,33 @@ pub fn parse_signal_name(signal_name: &str) -> Option<(&str, &str)> {
 
         Some((peri_name, signal_name.strip_suffix("OUT").unwrap_or(signal_name)))
     } else {
-        Some((normalize_peri_name(peri_name), signal_name))
+        Some((
+            normalize_peri_name(peri_name),
+            if signal_name.starts_with("RMII_") {
+                signal_name.strip_prefix("RMII_").unwrap_or(signal_name)
+            } else {
+                signal_name.strip_prefix("MII_").unwrap_or(signal_name)
+            },
+        ))
     }
+}
+
+pub fn pin_sort_key(pin: &str) -> (char, u8) {
+    let captures = regex!(r"^P([A-Z])(\d+)(?:_C)?")
+        .captures(pin)
+        .expect("Could not match regex on pin");
+    let port = captures
+        .get(1)
+        .expect("Could not extract port")
+        .as_str()
+        .chars()
+        .next()
+        .expect("Empty port");
+    let pin_number = captures
+        .get(2)
+        .expect("Could not extract pin number")
+        .as_str()
+        .parse::<u8>()
+        .expect("Could not parse pin number to u8");
+    (port, pin_number)
 }
