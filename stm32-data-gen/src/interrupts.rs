@@ -379,7 +379,7 @@ impl ChipInterrupts {
                     if irqs.len() != 1 && signal != "GLOBAL" {
                         irqs.retain(|irq| irq != &p.name);
                     }
-
+                    
                     if irqs.len() != 1 {
                         panic!(
                             "dup irqs on chip {:?} nvic {:?} peri {} signal {}: {:?}",
@@ -492,7 +492,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("RCC", &["RCC", "CRS"]),
         ("MDIOS", &["GLOBAL", "WKUP"]),
         ("ETH", &["GLOBAL", "WKUP"]),
-        ("LTDC", &["GLOBAL", "ER"]),
+        ("LTDC", &["GLOBAL", "ER", "LO", "ERR"]),
         (
             "DFSDM",
             &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
@@ -503,11 +503,13 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB", &["LP", "HP", "WKUP"]),
+        ("USB", &["LP", "HP", "WKUP", "USB1", "USB2", "OTG_HS"]),
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
         ("ADF", &["FLT0"]),
         ("RAMECC", &["ECC"]),
+        ("RAMCFG", &["BKP", "ECC"]),
+        ("DCMIPP", &["CSI"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
@@ -528,6 +530,8 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32(L5|U5|H5[2367]|WBA5[245]).*", "NVIC2"),
     // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
     ("STM32H7[RS].*", "NVIC2"),
+    // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.
+    ("STM32N6.*", "NVIC2"),
     // catch-all: Most chips have a single NVIC, named "NVIC"
     (".*", "NVIC"),
 ]);

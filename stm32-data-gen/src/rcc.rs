@@ -353,6 +353,7 @@ impl ParsedRccs {
             ("u5", "ADC"),
             ("n6", "I2C4"),
             ("n6", "SDMMC1"), // HCLK2 is corrext per Cube and Docs so no mux check
+            ("n6", "SDMMC2"), // HCLKU is corrext per Cube and Docs so no mux check
         ];
         
         let kernel_clock = match mux {
