@@ -105,7 +105,8 @@ This project is built in three stages:
 2. **JSON Generation**
    - `stm32-data-gen` generates the JSON files from consolidated YAML and source data:
      1. Parse YAML files to build an in-memory IR for registers (`src/registers.rs`).
-        - `data/extra/family/*.yaml`: STM32 family metadata (package options, flash/RAM sizes, low-level identifiers).
+        - `data/extra/family/*.yaml`: Extra or corrective peripheral entries, rules to modify pin names,
+          rules to override pin names for specific instances of a peripheral.
         - `data/header_map.yaml`: MCU slug to HAL C-header filename mapping for base addresses & IRQ extraction.
         - `data/registers/*.yaml`: Register-block definitions (offsets, fields, enums).
         - `data/dmamux/*.yaml`: DMAMUX profiles for families with a DMA multiplexer.
@@ -259,6 +260,3 @@ Sometimes even the same IP name+version in the same chip family has different re
 ('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
 ```
 
-### Peripheral versions
-
-The versions of peripherals can be found in the table [here](https://docs.google.com/spreadsheets/d/1-R-AjYrMLL2_623G-AFN2A9THMf8FFMpFD4Kq-owPmI/edit#gid=0).
