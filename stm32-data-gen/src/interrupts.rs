@@ -379,7 +379,19 @@ impl ChipInterrupts {
                     if irqs.len() != 1 && signal != "GLOBAL" {
                         irqs.retain(|irq| irq != &p.name);
                     }
-                    
+
+                    // Special case for LTDC LO signal with both LTDC_LO and LTDC_LO_ERR IRQs
+                    if irqs.len() != 1 && p.name == "LTDC" && signal == "LO" {
+                        // Prefer the IRQ name that doesn't contain "_ERR"
+                        let non_err_irqs: Vec<_> = irqs.iter().filter(|x| !x.contains("_ERR")).cloned().collect();
+                        if !non_err_irqs.is_empty() {
+                            // If we have non-error IRQs, keep only the first one
+                            let preferred_irq = non_err_irqs[0].clone();
+                            irqs.clear();
+                            irqs.insert(preferred_irq);
+                        }
+                    }
+
                     if irqs.len() != 1 {
                         panic!(
                             "dup irqs on chip {:?} nvic {:?} peri {} signal {}: {:?}",
