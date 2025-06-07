@@ -63,7 +63,9 @@ case "$CMD" in
     ;;
     check)
         cargo batch \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32c011f6 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32c031c6 \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32c071c8 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32f030c6 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32f030r8 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32f030rc \
