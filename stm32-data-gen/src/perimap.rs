@@ -198,6 +198,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:RTC:rtc3_v2_0", ("rtc", "v3", "RTC")),
     (".*:RTC:rtc3_v3_0", ("rtc", "v3", "RTC")),
     (".*:RTC:rtc3_v3_5", ("rtc", "v3", "RTC")),
+    (".*:RTC:rtc3_v4_0", ("rtc", "v3", "RTC")),
     (".*:SAI:sai1_v1_0", ("sai", "v1", "SAI")),
     (".*:SAI:sai1_v1_1", ("sai", "v2", "SAI")),
     (".*:SAI:sai1_v1_2", ("sai", "v2", "SAI")),
