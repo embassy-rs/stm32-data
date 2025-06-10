@@ -502,7 +502,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("GTZC", &["GLOBAL", "ILA"]),
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+        ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP", "USB"]),
         ("USB", &["LP", "HP", "WKUP"]),
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
@@ -525,7 +525,7 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32WL5.*:cm4", "NVIC1"),
     ("STM32WL5.*:cm0p", "NVIC2"),
     // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-    ("STM32(L5|U5|H5[2367]|WBA5[245]).*", "NVIC2"),
+    ("STM32(L5|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
     // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
     ("STM32H7[RS].*", "NVIC2"),
     // catch-all: Most chips have a single NVIC, named "NVIC"
