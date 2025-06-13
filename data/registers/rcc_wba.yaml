@@ -169,6 +169,36 @@ block/RCC:
     description: RCC privilege configuration register
     byte_offset: 276
     fieldset: PRIVCFGR
+  - name: ASCR
+    description: RCC audio synchronization control register
+    byte_offset: 448
+    fieldset: ASCR
+  - name: ASIER
+    description: RCC audio synchronization interrupt enable register
+    byte_offset: 452
+    fieldset: ASIER
+  - name: ASSR
+    description: RCC audio synchronization status register
+    byte_offset: 456
+    fieldset: ASSR
+  - name: ASCNTR
+    description: RCC audio synchronization counter register
+    byte_offset: 460
+    fieldset: ASCNTR
+    access: Read
+  - name: ASARR
+    description: RCC audio synchronization auto-reload register
+    byte_offset: 464
+    fieldset: ASARR
+  - name: ASCAR
+    description: RCC audio synchronization capture register
+    byte_offset: 468
+    fieldset: ASCAR
+    access: Read
+  - name: ASCOR
+    description: RCC audio synchronization compare register
+    byte_offset: 472
+    fieldset: ASCOR
   - name: CFGR4
     description: RCC clock configuration register 2
     byte_offset: 512
@@ -799,11 +829,21 @@ fieldset/CCIPR1:
 fieldset/CCIPR2:
   description: RCC peripherals independent clock configuration register 2
   fields:
+  - name: SAI1SEL
+    description: "SAI1 kernel clock source selection\r These bits allow to select the SAI1 kernel clock source.\r Access can be secured by GTZC_TZSC SAI1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    bit_offset: 5
+    bit_size: 3
+    enum: SAI1SEL
   - name: RNGSEL
     description: "RNGSEL kernel clock source selection\r These bits allow to select the RNG kernel clock source.\r Access can be secured by GTZC_TZSC RNGSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
     bit_offset: 12
     bit_size: 2
     enum: RNGSEL
+  - name: OTGHSSEL
+    description: USB OTG_HS PHY kernel clock source selection.
+    bit_offset: 28
+    bit_size: 2
+    enum: OTGHSSEL
 fieldset/CCIPR3:
   description: RCC peripherals independent clock configuration register 3
   fields:
@@ -1201,8 +1241,8 @@ fieldset/SECCFGR:
 enum/ADCSEL:
   bit_size: 3
   variants:
-  - name: HCLK4
-    description: hclk4 clock selected
+  - name: HCLK1
+    description: hclk1 clock selected
     value: 0
   - name: SYS
     description: SYSCLK selected
@@ -1537,6 +1577,24 @@ enum/RTCSEL:
   - name: HSE
     description: HSE oscillator clock divided by 32 selected, and enabled
     value: 3
+enum/SAI1SEL:
+  bit_size: 3
+  variants:
+  - description: pll1pclk selected.
+    name: PLL1_P
+    value: 0
+  - description: pll1qclk selected.
+    name: PLL1_Q
+    value: 1
+  - description: SYSCLK selected.
+    name: SYS
+    value: 2
+  - description: input pin AUDIOCLK selected.
+    name: AUDIO
+    value: 3
+  - description: HSI16 clock selected.
+    name: HSI
+    value: 4
 enum/SPI1SEL:
   bit_size: 2
   variants:
@@ -1623,4 +1681,595 @@ enum/USARTSEL:
     value: 2
   - name: LSE
     description: LSE selected
+    value: 3
+enum/ASSEL:
+  bit_size: 1
+  variants:
+  - description: pll1pclk selected.
+    name: PLL1_P
+    value: 0
+  - description: pll1qclk selected.
+    name: PLL1_Q
+    value: 1
+enum/HDIV:
+  bit_size: 1
+  variants:
+  - description: hclk5 = SYSCLK not divided.
+    name: SYS
+    value: 0
+  - description: hclk5 = SYSCLK divided by 2.
+    name: SYS_2
+    value: 1
+enum/HDIV5:
+  bit_size: 1
+  variants:
+  - description: hclk5 = SYSCLK not divided
+    name: SYS
+    value: 0
+  - description: hclk5 = SYSCLK divided by 2
+    name: SYS_2
+    value: 1
+enum/HPRE:
+  bit_size: 3
+  variants:
+  - description: hclk1 = SYSCLK divided by 2.
+    name: SYS_2
+    value: 4
+  - description: hclk1 = SYSCLK divided by 4.
+    name: SYS_4
+    value: 5
+  - description: hclk1 = SYSCLK divided by 8.
+    name: SYS_8
+    value: 6
+  - description: hclk1 = SYSCLK divided by 16.
+    name: SYS_16
+    value: 7
+enum/HPRE5:
+  bit_size: 3
+  variants:
+  - description: DCLK not divided
+    name: SYS
+    value: 0
+  - description: hclk5 = SYSCLK divided by 2
+    name: SYS_2
+    value: 4
+  - description: hclk5 = SYSCLK divided by 3
+    name: SYS_3
+    value: 5
+  - description: hclk5 = SYSCLK divided by 4
+    name: SYS_4
+    value: 6
+  - description: hclk5 = SYSCLK divided by 6
+    name: SYS_6
+    value: 7
+enum/HSEPRE:
+  bit_size: 1
+  variants:
+  - description: HSE32 not divided, SYSCLK = HSE32.
+    name: HSE
+    value: 0
+  - description: HSE32 divided, SYSCLK = HSE32/2.
+    name: HSE_2
+    value: 1
+enum/I2C1SEL:
+  bit_size: 2
+  variants:
+  - description: pclk1 selected
+    name: PCLK1
+    value: 0
+  - description: SYSCLK selected
+    name: SYS
+    value: 1
+  - description: HSI selected
+    name: HSI
+    value: 2
+enum/I2C3SEL:
+  bit_size: 2
+  variants:
+  - description: pclk7 selected
+    name: PCLK7
+    value: 0
+  - description: SYSCLK selected
+    name: SYS
+    value: 1
+  - description: HSI selected
+    name: HSI
+    value: 2
+enum/ICSEL:
+  bit_size: 2
+  variants:
+  - description: pclk1 selected.
+    name: PCLK1
+    value: 0
+  - description: SYSCLK selected.
+    name: SYS
+    value: 1
+  - description: HSI16 selected.
+    name: HSI
+    value: 2
+enum/LPTIM1SEL:
+  bit_size: 2
+  variants:
+  - description: pclk7 selected.
+    name: PCLK7
+    value: 0
+  - description: LSI selected
+    name: LSI
+    value: 1
+  - description: HSI selected
+    name: HSI
+    value: 2
+  - description: LSE selected
+    name: LSE
+    value: 3
+enum/LPTIM2SEL:
+  bit_size: 2
+  variants:
+  - description: pclk7 selected.
+    name: PCLK1
+    value: 0
+  - description: LSI selected
+    name: LSI
+    value: 1
+  - description: HSI selected
+    name: HSI
+    value: 2
+  - description: LSE selected
+    name: LSE
+    value: 3
+enum/LPTIMSEL:
+  bit_size: 2
+  variants:
+  - description: pclk7 selected.
+    name: PCLK7
+    value: 0
+  - description: LSI selected.
+    name: LSI
+    value: 1
+  - description: HSI16 selected.
+    name: HSI
+    value: 2
+  - description: LSE selected.
+    name: LSE
+    value: 3
+enum/LPUARTSEL:
+  bit_size: 2
+  variants:
+  - description: pclk7 selected.
+    name: PCLK7
+    value: 0
+  - description: SYSCLK selected.
+    name: SYS
+    value: 1
+  - description: HSI16 selected.
+    name: HSI
+    value: 2
+  - description: LSE selected.
+    name: LSE
+    value: 3
+enum/LSCOSEL:
+  bit_size: 1
+  variants:
+  - description: LSI clock selected.
+    name: LSI
+    value: 0
+  - description: LSE clock selected.
+    name: LSE
+    value: 1
+enum/LSEDRV:
+  bit_size: 2
+  variants:
+  - description: '''Xtal mode'' medium-low driving capability.'
+    name: LO
+    value: 1
+  - description: '''Xtal mode'' medium-high driving capability.'
+    name: MED
+    value: 2
+  - description: '''Xtal mode'' higher driving capability.'
+    name: HI
+    value: 3
+enum/LSETRIM:
+  bit_size: 2
+  variants:
+  - description: current source resistance 5/4 x R.
+    name: R_5_4
+    value: 0
+  - description: current source resistance R.
+    name: R
+    value: 1
+  - description: current source resistance 3/4 x R.
+    name: R_3_4
+    value: 2
+  - description: current source resistance 2/3 x R.
+    name: R_2_3
+    value: 3
+enum/LSICFG:
+  bit_size: 4
+  variants:
+  - description: LSI2 frequency temperature sensitivity is close to 0 at +80 less thansup oless than/sup C.
+    name: LSI_80
+    value: 0
+  - description: LSI2 frequency temperature sensitivity is close to 0 at +50 less thansup oless than/sup C.
+    name: LSI_50
+    value: 1
+  - description: LSI2 frequency temperature sensitivity is close to 0 at +20 less thansup oless than/sup C.
+    name: LSI_20
+    value: 2
+enum/LSIMODE:
+  bit_size: 3
+  variants:
+  - description: nominal-power, high accuracy.
+    name: NOM
+    value: 0
+  - description: low-power, medium accuracy.
+    name: LOW
+    value: 1
+  - description: ultra-low-power, low accuracy.
+    name: ULP
+    value: 2
+enum/LSIPREDIV:
+  bit_size: 1
+  variants:
+  - description: LSI1 not divided.
+    name: LSI1
+    value: 0
+  - description: LSI1 divided by 128.
+    name: LSI1_128
+    value: 1
+enum/MCOPRE:
+  bit_size: 3
+  variants:
+  - description: MCO divided by 1.
+    name: MCO_1
+    value: 0
+  - description: MCO divided by 2.
+    name: MCO_2
+    value: 1
+  - description: MCO divided by 4.
+    name: MCO_4
+    value: 2
+  - description: MCO divided by 8.
+    name: MCO_8
+    value: 3
+  - description: MCO divided by 16.
+    name: MCO_16
+    value: 4
+enum/MCOSEL:
+  bit_size: 4
+  variants:
+  - description: MCO output disabled, no clock on MCO.
+    name: NO_CLK
+    value: 0
+  - description: sysclkpre system clock after PLL1RCLKPRE division selected.
+    name: SYSCLKPRE
+    value: 1
+  - description: HSI16 clock selected.
+    name: HSI
+    value: 3
+  - description: HSE32 clock selected.
+    name: HSE
+    value: 4
+  - description: pll1rclk clock selected.
+    name: PLL1_R
+    value: 5
+  - description: LSI clock selected.
+    name: LSI
+    value: 6
+  - description: LSE clock selected.
+    name: LSE
+    value: 7
+  - description: pll1pclk clock selected.
+    name: PLL1_P
+    value: 8
+  - description: pll1qclk clock selected.
+    name: PLL1_Q
+    value: 9
+  - description: hclk5 clock selected.
+    name: HCLK5
+    value: 10
+enum/OTGHSSEL:
+  bit_size: 2
+  variants:
+  - description: HSE32 selected.
+    name: HSE
+    value: 0
+  - description: pll1pclk selected,.
+    name: PLL1_P
+    value: 1
+  - description: HSE32 divided by 2 selected.
+    name: HSE_2
+    value: 2
+  - description: pll1pclk divided by 2 selected.
+    name: PLL1_P_2
+    value: 3
+enum/PLLM:
+  bit_size: 3
+  variants:
+  - description: division by 1 (bypass).
+    name: PLL1M_1
+    value: 0
+  - description: division by 2.
+    name: PLL1M_2
+    value: 1
+  - description: division by 3.
+    name: PLL1M_3
+    value: 2
+  - description: division by 8.
+    name: PLL1M_8
+    value: 7
+enum/PLLN:
+  bit_size: 9
+  variants:
+  - description: multiplication factor for PLL1 VCO= 4.
+    name: PLL1N_X4
+    value: 3
+  - description: multiplication factor for PLL1 VCO = 5.
+    name: PLL1N_X5
+    value: 4
+  - description: multiplication factor for PLL1 VCO = 6.
+    name: PLL1N_X6
+    value: 5
+  - description: multiplication factor for PLL1 VCO = 129 (default after reset).
+    name: PLL1N_X129
+    value: 128
+  - description: multiplication factor for PLL1 VCO = 512.
+    name: PLL1N_X512
+    value: 511
+enum/PLLP:
+  bit_size: 7
+  variants:
+  - description: Not allowed.
+    name: NOT_VALID
+    value: 0
+  - description: pll1pclk = VCO output frequency / 2 (default after reset).
+    name: PLL1_P_2
+    value: 1
+  - description: not allowed.
+    name: NOT_VALID2
+    value: 2
+  - description: pll1pclk = VCO output frequency / 4.
+    name: PLL1_P_4
+    value: 3
+  - description: pll1pclk = VCO output frequency / 128.
+    name: PLL1_P_128
+    value: 127
+enum/PLLQ:
+  bit_size: 7
+  variants:
+  - description: PLl1QCLK = VCO output frequency.
+    name: PLL1_Q
+    value: 0
+  - description: PLl1QCLK = VCO output frequency / 2 (default after reset).
+    name: PLL1_Q_2
+    value: 1
+  - description: PLl1QCLK = VCO output frequency / 3.
+    name: PLL1_Q_3
+    value: 2
+  - description: PLl1QCLK = VCO output frequency / 4.
+    name: PLL1_Q_4
+    value: 3
+  - description: PLl1QCLK = VCO output frequency / 128.
+    name: PLL1_Q_128
+    value: 127
+enum/PLLR:
+  bit_size: 7
+  variants:
+  - description: pll1rclk = VCO output frequency.
+    name: PLL1_R
+    value: 0
+  - description: pll1rclk = VCO output frequency / 2 (default after reset).
+    name: PLL1_R_2
+    value: 1
+  - description: pll1rclk = VCO output frequency / 3.
+    name: PLL1_R_3
+    value: 2
+  - description: pll1rclk = VCO output frequency / 4.
+    name: PLL1_R_4
+    value: 3
+  - description: pll1rclk = VCO output frequency / 128.
+    name: PLL1_R_128
+    value: 127
+enum/PLLRCLKPRESTEP:
+  bit_size: 1
+  variants:
+  - description: pll1rclk 2-step division.
+    name: PLL_R_2
+    value: 0
+  - description: pll1rclk 3-step division.
+    name: PLL1_R_3
+    value: 1
+enum/PLLRGE:
+  bit_size: 2
+  variants:
+  - description: PLL1 input (ref1_ck) clock range frequency between 8 and 16 MHz.
+    name: FREQ
+    value: 3
+enum/PLLSRC:
+  bit_size: 2
+  variants:
+  - description: no clock sent to PLL1.
+    name: NO_CLK
+    value: 0
+  - description: HSI16 clock selected as PLL1 clock entry.
+    name: HSI
+    value: 2
+  - description: HSE32 clock after HSEPRE divider selected as PLL1 clock entry.
+    name: HSE
+    value: 3
+enum/PPRE:
+  bit_size: 3
+  variants:
+  - description: pclk1 = hclk1 divided by 2.
+    name: HCLK1_2
+    value: 4
+  - description: pclk1 = hclk1 divided by 4.
+    name: HCLK1_4
+    value: 5
+  - description: pclk1 = hclk1 divided by 8.
+    name: HCLK1_8
+    value: 6
+  - description: pclk1 = hclk1 divided by 16.
+    name: HCLK1_16
+    value: 7
+enum/RADIOSTSEL:
+  bit_size: 2
+  variants:
+  - description: no clock selected, 2.4 GHz RADIO sleep timer kernel clock disabled.
+    name: NO_CLK
+    value: 0
+  - description: LSE oscillator clock selected.
+    name: LSE
+    value: 1
+  - description: HSE32 oscillator clock divided by 1000 selected.
+    name: HSE
+    value: 3
+enum/RNGSEL:
+  bit_size: 2
+  variants:
+  - description: LSE selected.
+    name: LSE
+    value: 0
+  - description: LSI selected.
+    name: LSI
+    value: 1
+  - description: HSI16 selected.
+    name: HSI
+    value: 2
+  - description: pll1qclk divide by 2 selected.
+    name: PLL1_Q
+    value: 3
+enum/RTCSEL:
+  bit_size: 2
+  variants:
+  - description: no clock selected, RTC and TAMP kernel clock disabled.
+    name: NO_CLK
+    value: 0
+  - description: LSE oscillator clock selected, and enabled.
+    name: LSE
+    value: 1
+  - description: LSI oscillator clock selected, and enabled.
+    name: LSI
+    value: 2
+  - description: HSE32 oscillator clock divided by 32 selected, and enabled.
+    name: HSE
+    value: 3
+enum/SAISEL:
+  bit_size: 3
+  variants:
+  - description: pll1pclk selected.
+    name: PLL1_P
+    value: 0
+  - description: pll1qclk selected.
+    name: PLL1_Q
+    value: 1
+  - description: SYSCLK selected.
+    name: SYS
+    value: 2
+  - description: input pin AUDIOCLK selected.
+    name: AUDIO
+    value: 3
+  - description: HSI16 clock selected.
+    name: HSI
+    value: 4
+enum/SPI1SEL:
+  bit_size: 2
+  variants:
+  - description: pclk2 selected
+    name: PCLK2
+    value: 0
+  - description: SYSCLK selected
+    name: SYS
+    value: 1
+  - description: HSI selected
+    name: HSI
+    value: 2
+enum/SPI3SEL:
+  bit_size: 2
+  variants:
+  - description: pclk2 selected
+    name: PCLK7
+    value: 0
+  - description: SYSCLK selected
+    name: SYS
+    value: 1
+  - description: HSI selected
+    name: HSI
+    value: 2
+enum/SPISEL:
+  bit_size: 2
+  variants:
+  - description: pclk2 selected.
+    name: PCLK2
+    value: 0
+  - description: SYSCLK selected.
+    name: SYS
+    value: 1
+  - description: HSI16 selected.
+    name: HSI
+    value: 2
+enum/SW:
+  bit_size: 2
+  variants:
+  - description: HSI16 selected as system clock.
+    name: HSI
+    value: 0
+  - description: HSE32 or HSE32/2, as defined by HSEPRE, selected as system clock.
+    name: HSE
+    value: 2
+  - description: pll1rclk selected as system clock.
+    name: PLL1_R
+    value: 3
+enum/SWS:
+  bit_size: 2
+  variants:
+  - description: HSI16 oscillator used as system clock.
+    name: HSI
+    value: 0
+  - description: HSE32 or HSE32/2, as defined by HSEPRE, used as system clock.
+    name: HSE
+    value: 2
+  - description: pll1rclk used as system clock.
+    name: PLL1_R
+    value: 3
+enum/SYSTICKSEL:
+  bit_size: 2
+  variants:
+  - description: hclk1 divided by 8 selected.
+    name: HCLK1_8
+    value: 0
+  - description: LSI selected.
+    name: LSI
+    value: 1
+  - description: LSE selected.
+    name: LSE
+    value: 2
+enum/USART1SEL:
+  bit_size: 2
+  variants:
+  - description: pclk2 selected
+    name: PCLK2
+    value: 0
+  - description: SYSCLK selected
+    name: SYS
+    value: 1
+  - description: HSI selected
+    name: HSI
+    value: 2
+  - description: LSE selected
+    name: LSE
+    value: 3
+enum/USARTSEL:
+  bit_size: 2
+  variants:
+  - description: pclk2 selected.
+    name: PCLK2
+    value: 0
+  - description: SYSCLK selected.
+    name: SYS
+    value: 1
+  - description: HSI16 selected.
+    name: HSI
+    value: 2
+  - description: LSE selected.
+    name: LSE
     value: 3
