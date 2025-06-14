@@ -992,6 +992,11 @@ fieldset/CCIPR2:
     bit_offset: 28
     bit_size: 2
     enum: OTGHSSEL
+  - name: ASSEL
+    description: "RCC audio synchronization kernel clock source selection\r This bit allows to select the audio synchronization kernel clock source.\r Access can be secured by GTZC_TZSC SAI1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with RCC SPRIV or when non-secure with RCC NSPRIV."
+    bit_offset: 30
+    bit_size: 1
+    enum: ASSEL
 fieldset/CCIPR3:
   description: RCC peripherals independent clock configuration register 3
   fields:
@@ -1386,6 +1391,65 @@ fieldset/SECCFGR:
     description: "Remove reset flag security\r Set and reset by software."
     bit_offset: 12
     bit_size: 1
+fieldset/ASCR:
+  description: RCC audio synchronization control register
+  fields:
+  - name: CEN
+    description: "Counter enable\r This bit is set and cleared by software.\r Clearing this bit will reset the audio synchronization counter and capture prescaler and all associated registers ASCR, ASIER, ASSR, ASCNTR, ASARR, ASCAR, and ASCOR."
+    bit_offset: 0
+    bit_size: 1
+  - name: PSC
+    description: "Clock prescaler\r This field is set and cleared by software.\r Counter clock frequency = f_audiosync_ker_ck / (PSC + 1)"
+    bit_offset: 8
+    bit_size: 7
+  - name: CPS
+    description: "Capture prescaler\r This field is set and cleared by software.\r Capture period in number of counter periods. Capture period = counter period * (TPS + 1)"
+    bit_offset: 16
+    bit_size: 7
+fieldset/ASIER:
+  description: RCC audio synchronization interrupt enable register
+  fields:
+  - name: CAIE
+    description: "Capture trigger interrupt enable\r This bit is set and cleared by software."
+    bit_offset: 0
+    bit_size: 1
+  - name: COIE
+    description: "Comparer interrupt enable\r This field is set and cleared by software."
+    bit_offset: 1
+    bit_size: 1
+  - name: CAEIE
+    description: "Capture error interrupt enable\r This field is set and cleared by software."
+    bit_offset: 2
+    bit_size: 1
+fieldset/ASSR:
+  description: RCC audio synchronization status register
+  fields:
+  - name: CAF
+    description: "Capture trigger interrupt flag\r This field is set by hardware, only when CAIE is enabled. This bit is cleared by software by writing it to 0 or masked when CAIE is 0."
+    bit_offset: 0
+    bit_size: 1
+  - name: COF
+    description: "Comparer interrupt flag\r This field is set by hardware, only when COIE is enabled. This bit is cleared by software by writing it to 0 or masked when COIE is 0."
+    bit_offset: 1
+    bit_size: 1
+  - name: CAEF
+    description: "Capture error interrupt flag\r This field is set by hardware, only when CAEIE is enabled. This bit is cleared by software by writing it to 0 or masked when CAEIE is 0."
+    bit_offset: 2
+    bit_size: 1
+fieldset/ASCNTR:
+  description: RCC audio synchronization counter register
+  fields:
+  - name: CNT
+    description: "Counter value\r This field is set by hardware.\r CNT[19:0] is the counter value at the time this register is read."
+    bit_offset: 0
+    bit_size: 19
+fieldset/ASARR:
+  description: RCC audio synchronization auto-reload register
+  fields:
+  - name: AR
+    description: "Auto-reload value\r This field is set by software.\r CA[19:0] is the counter auto-reload value at which to restart the audio synchronization counter from value 0. It defines the counter period."
+    bit_offset: 0
+    bit_size: 19
 enum/ADCSEL:
   bit_size: 3
   variants:
