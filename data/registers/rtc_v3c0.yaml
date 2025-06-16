@@ -55,14 +55,20 @@ block/RTC:
     byte_offset: 56
     access: Read
     fieldset: TSSSR
-  - name: ALRMAR
-    description: Alarm A register
+  - name: ALRMR
+    description: Alarm register
+    array:
+      len: 1
+      stride: 8
     byte_offset: 64
-    fieldset: ALRMAR
-  - name: ALRMASSR
-    description: Alarm A sub second register
+    fieldset: ALRMR
+  - name: ALRMSSR
+    description: Alarm sub second register
+    array:
+      len: 1
+      stride: 8
     byte_offset: 68
-    fieldset: ALRMASSR
+    fieldset: ALRMSSR
   - name: SR
     description: Status register
     byte_offset: 80
@@ -78,74 +84,80 @@ block/RTC:
     byte_offset: 92
     access: Write
     fieldset: SCR
-fieldset/ALRMAR:
-  description: RTC alarm A register.
+fieldset/ALRMR:
+  description: Alarm register
   fields:
   - name: SU
-    description: Second units in BCD format.
+    description: Second units in BCD format
     bit_offset: 0
     bit_size: 4
   - name: ST
-    description: Second tens in BCD format.
+    description: Second tens in BCD format
     bit_offset: 4
     bit_size: 3
   - name: MSK1
-    description: Alarm A seconds mask.
+    description: Alarm A seconds mask
     bit_offset: 7
     bit_size: 1
+    enum: ALRMR_MSK
   - name: MNU
-    description: Minute units in BCD format.
+    description: Minute units in BCD format
     bit_offset: 8
     bit_size: 4
   - name: MNT
-    description: Minute tens in BCD format.
+    description: Minute tens in BCD format
     bit_offset: 12
     bit_size: 3
   - name: MSK2
-    description: Alarm A minutes mask.
+    description: Alarm A minutes mask
     bit_offset: 15
     bit_size: 1
+    enum: ALRMR_MSK
   - name: HU
-    description: Hour units in BCD format.
+    description: Hour units in BCD format
     bit_offset: 16
     bit_size: 4
   - name: HT
-    description: Hour tens in BCD format.
+    description: Hour tens in BCD format
     bit_offset: 20
     bit_size: 2
   - name: PM
-    description: AM/PM notation.
+    description: AM/PM notation
     bit_offset: 22
     bit_size: 1
+    enum: ALRMR_PM
   - name: MSK3
-    description: Alarm A hours mask.
+    description: Alarm A hours mask
     bit_offset: 23
     bit_size: 1
+    enum: ALRMR_MSK
   - name: DU
-    description: Date units or day in BCD format.
+    description: Date units or day in BCD format
     bit_offset: 24
     bit_size: 4
   - name: DT
-    description: Date tens in BCD format.
+    description: Date tens in BCD format
     bit_offset: 28
     bit_size: 2
   - name: WDSEL
-    description: Week day selection.
+    description: Week day selection
     bit_offset: 30
     bit_size: 1
+    enum: ALRMR_WDSEL
   - name: MSK4
-    description: Alarm A date mask.
+    description: Alarm A date mask
     bit_offset: 31
     bit_size: 1
-fieldset/ALRMASSR:
+    enum: ALRMR_MSK
+fieldset/ALRMSSR:
   description: Alarm sub second register
   fields:
   - name: SS
-    description: Sub seconds value This value is compared with the contents of the synchronous prescaler counter to determine if alarm A is to be activated. Only bits 0 up MASKSS-1 are compared.
+    description: Sub seconds value
     bit_offset: 0
     bit_size: 15
   - name: MASKSS
-    description: 'Mask the most-significant bits starting at this bit 2: SS[14:2] are don’t care in alarm A comparison. Only SS[1:0] are compared. 3: SS[14:3] are don’t care in alarm A comparison. Only SS[2:0] are compared. ... 12: SS[14:12] are don’t care in alarm A comparison. SS[11:0] are compared. 13: SS[14:13] are don’t care in alarm A comparison. SS[12:0] are compared. 14: SS[14] is don’t care in alarm A comparison. SS[13:0] are compared. 15: All 15 SS bits are compared and must match to activate alarm. The overflow bits of the synchronous counter (bits 15) is never compared. This bit can be different from 0 only after a shift operation. Note: The overflow bits of the synchronous counter (bits 15) is never compared. This bit can be different from 0 only after a shift operation.'
+    description: Mask the most-significant bits starting at this bit
     bit_offset: 24
     bit_size: 4
 fieldset/CALR:
@@ -191,18 +203,21 @@ fieldset/CR:
     bit_offset: 6
     bit_size: 1
     enum: FMT
-  - name: ALRAE
-    description: Alarm A enable
+  - name: ALRE
+    description: Alarm enable
     bit_offset: 8
     bit_size: 1
   - name: TSE
     description: Timestamp enable
     bit_offset: 11
     bit_size: 1
-  - name: ALRAIE
-    description: Alarm A interrupt enable
+  - name: ALRIE
+    description: Alarm interrupt enable
     bit_offset: 12
     bit_size: 1
+    array:
+      len: 1
+      stride: 1
   - name: TSIE
     description: Timestamp interrupt enable
     bit_offset: 15
@@ -285,10 +300,13 @@ fieldset/DR:
 fieldset/ICSR:
   description: Initialization control and status register
   fields:
-  - name: ALRAWF
-    description: Alarm A write flag
+  - name: ALRWF
+    description: Alarm write enabled
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 1
+      stride: 1
   - name: SHPF
     description: Shift operation pending
     bit_offset: 3
@@ -310,23 +328,27 @@ fieldset/ICSR:
     bit_offset: 7
     bit_size: 1
   - name: RECALPF
-    description: Recalibration pending Flag The RECALPF status flag is automatically set to 1 when software writes to the RTC_CALR register, indicating that the RTC_CALR register is blocked. When the new calibration settings are taken into account, this bit returns to 0. Refer to.
+    description: Recalibration pending Flag
     bit_offset: 16
     bit_size: 1
 fieldset/MISR:
-  description: RTC masked interrupt status register.
+  description: Masked interrupt status register
   fields:
-  - name: ALRAMF
-    description: Alarm A masked flag This flag is set by hardware when the alarm A interrupt occurs.
+  - name: ALRMF
+    description: Alarm masked flag
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 1
+      stride: 1
+    enum: ALRMF
   - name: TSMF
-    description: Timestamp masked flag This flag is set by hardware when a timestamp interrupt occurs.
+    description: Timestamp masked flag
     bit_offset: 3
     bit_size: 1
     enum: TSMF
   - name: TSOVMF
-    description: Timestamp overflow masked flag This flag is set by hardware when a timestamp interrupt occurs while TSMF is already set. It is recommended to check and then clear TSOVF only after clearing the TSF bit. Otherwise, an overflow might not be noticed if a timestamp event occurs immediately before the TSF bit is cleared.
+    description: Timestamp overflow masked flag
     bit_offset: 4
     bit_size: 1
     enum: TSOVMF
@@ -342,18 +364,23 @@ fieldset/PRER:
     bit_offset: 16
     bit_size: 7
 fieldset/SCR:
-  description: RTC status clear register.
+  description: Status clear register
   fields:
-  - name: CALRAF
-    description: Clear alarm A flag Writing 1 in this bit clears the ALRAF bit in the RTC_SR register.
+  - name: CALRF
+    description: Clear alarm A flag
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 1
+      stride: 1
+    enum: CALRF
   - name: CTSF
-    description: Clear timestamp flag Writing 1 in this bit clears the TSOVF bit in the RTC_SR register.
+    description: Clear timestamp flag
     bit_offset: 3
     bit_size: 1
+    enum: CALRF
   - name: CTSOVF
-    description: Clear timestamp overflow flag Writing 1 in this bit clears the TSOVF bit in the RTC_SR register. It is recommended to check and then clear TSOVF only after clearing the TSF bit. Otherwise, an overflow might not be noticed if a timestamp event occurs immediately before the TSF bit is cleared.
+    description: Clear timestamp overflow flag
     bit_offset: 4
     bit_size: 1
 fieldset/SHIFTR:
@@ -370,10 +397,14 @@ fieldset/SHIFTR:
 fieldset/SR:
   description: Status register
   fields:
-  - name: ALRAF
-    description: Alarm A flag This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the alarm A register (RTC_ALRMAR).
+  - name: ALRF
+    description: Alarm flag
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 1
+      stride: 1
+    enum: ALRF
   - name: TSF
     description: Timestamp flag
     bit_offset: 3
@@ -492,6 +523,45 @@ fieldset/WPR:
     bit_offset: 0
     bit_size: 8
     enum: KEY
+enum/ALRF:
+  bit_size: 1
+  variants:
+  - name: Match
+    description: This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the Alarm A register (RTC_ALRMAR)
+    value: 1
+enum/ALRMF:
+  bit_size: 1
+  variants:
+  - name: Match
+    description: This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the Alarm A register (RTC_ALRMAR)
+    value: 1
+enum/ALRMR_MSK:
+  bit_size: 1
+  variants:
+  - name: ToMatch
+    description: Alarm set if the date/day match
+    value: 0
+  - name: NotMatch
+    description: Date/day don’t care in Alarm comparison
+    value: 1
+enum/ALRMR_PM:
+  bit_size: 1
+  variants:
+  - name: AM
+    description: AM or 24-hour format
+    value: 0
+  - name: PM
+    description: PM
+    value: 1
+enum/ALRMR_WDSEL:
+  bit_size: 1
+  variants:
+  - name: DateUnits
+    description: DU[3:0] represents the date units
+    value: 0
+  - name: WeekDay
+    description: DU[3:0] represents the week day. DT[1:0] is don’t care.
+    value: 1
 enum/AMPM:
   bit_size: 1
   variants:
@@ -509,6 +579,12 @@ enum/CALP:
     value: 0
   - name: IncreaseFreq
     description: One RTCCLK pulse is effectively inserted every 2^11 pulses (frequency increased by 488.5 ppm)
+    value: 1
+enum/CALRF:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: Clear interrupt flag by writing 1
     value: 1
 enum/CALW16:
   bit_size: 1
