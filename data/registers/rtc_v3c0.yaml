@@ -207,6 +207,9 @@ fieldset/CR:
     description: Alarm enable
     bit_offset: 8
     bit_size: 1
+    array:
+      len: 1
+      stride: 1
   - name: TSE
     description: Timestamp enable
     bit_offset: 11
@@ -331,6 +334,7 @@ fieldset/ICSR:
     description: Recalibration pending Flag
     bit_offset: 16
     bit_size: 1
+    enum: RECALPF
 fieldset/MISR:
   description: Masked interrupt status register
   fields:
@@ -383,6 +387,7 @@ fieldset/SCR:
     description: Clear timestamp overflow flag
     bit_offset: 4
     bit_size: 1
+    enum: CALRF
 fieldset/SHIFTR:
   description: Shift control register
   fields:
@@ -651,6 +656,12 @@ enum/POL:
     value: 0
   - name: Low
     description: The pin is low when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])
+    value: 1
+enum/RECALPF:
+  bit_size: 1
+  variants:
+  - name: Pending
+    description: The RECALPF status flag is automatically set to 1 when software writes to the RTC_CALR register, indicating that the RTC_CALR register is blocked. When the new calibration settings are taken into account, this bit returns to 0
     value: 1
 enum/TAMPALRM_TYPE:
   bit_size: 1
