@@ -1442,19 +1442,33 @@ fieldset/ASCNTR:
   - name: CNT
     description: "Counter value\r This field is set by hardware.\r CNT[19:0] is the counter value at the time this register is read."
     bit_offset: 0
-    bit_size: 19
+    bit_size: 20
 fieldset/ASARR:
   description: RCC audio synchronization auto-reload register
   fields:
   - name: AR
     description: "Auto-reload value\r This field is set by software.\r CA[19:0] is the counter auto-reload value at which to restart the audio synchronization counter from value 0. It defines the counter period."
     bit_offset: 0
-    bit_size: 19
+    bit_size: 20
+fieldset/ASCAR:
+  description: RCC audio synchronization capture register
+  fields:
+  - name: CA
+    description: "Capture value\r This field is set by hardware.\r CA[26:20] is the capture period counter value loaded on the trigger event. CA[19:0] is the audio synchronization counter value loaded on the trigger event."
+    bit_offset: 0
+    bit_size: 27
+fieldset/ASCOR:
+  description: RCC audio synchronization compare register
+  fields:
+  - name: CO
+    description: "Compare value\r This field is set by software.\r CO[19:0] is the value to be compared to the audio synchronization counter to generate an compare interrupt event."
+    bit_offset: 0
+    bit_size: 20
 enum/ADCSEL:
   bit_size: 3
   variants:
-  - name: HCLK1
-    description: hclk1 clock selected
+  - name: HCLK4
+    description: hclk4 clock selected
     value: 0
   - name: SYS
     description: SYSCLK selected
@@ -1802,7 +1816,7 @@ enum/SAI1SEL:
     name: SYS
     value: 2
   - description: input pin AUDIOCLK selected.
-    name: AUDIO
+    name: AUDIOCLK
     value: 3
   - description: HSI16 clock selected.
     name: HSI
@@ -1915,66 +1929,6 @@ enum/ASSEL:
   - description: pll1qclk selected.
     name: PLL1_Q
     value: 1
-enum/HDIV:
-  bit_size: 1
-  variants:
-  - description: hclk5 = SYSCLK not divided.
-    name: SYS
-    value: 0
-  - description: hclk5 = SYSCLK divided by 2.
-    name: SYS_2
-    value: 1
-enum/ICSEL:
-  bit_size: 2
-  variants:
-  - description: pclk1 selected.
-    name: PCLK1
-    value: 0
-  - description: SYSCLK selected.
-    name: SYS
-    value: 1
-  - description: HSI16 selected.
-    name: HSI
-    value: 2
-enum/LPTIMSEL:
-  bit_size: 2
-  variants:
-  - description: pclk7 selected.
-    name: PCLK7
-    value: 0
-  - description: LSI selected.
-    name: LSI
-    value: 1
-  - description: HSI16 selected.
-    name: HSI
-    value: 2
-  - description: LSE selected.
-    name: LSE
-    value: 3
-enum/LSICFG:
-  bit_size: 4
-  variants:
-  - description: LSI2 frequency temperature sensitivity is close to 0 at +80 less thansup oless than/sup C.
-    name: LSI_80
-    value: 0
-  - description: LSI2 frequency temperature sensitivity is close to 0 at +50 less thansup oless than/sup C.
-    name: LSI_50
-    value: 1
-  - description: LSI2 frequency temperature sensitivity is close to 0 at +20 less thansup oless than/sup C.
-    name: LSI_20
-    value: 2
-enum/LSIMODE:
-  bit_size: 3
-  variants:
-  - description: nominal-power, high accuracy.
-    name: NOM
-    value: 0
-  - description: low-power, medium accuracy.
-    name: LOW
-    value: 1
-  - description: ultra-low-power, low accuracy.
-    name: ULP
-    value: 2
 enum/OTGHSSEL:
   bit_size: 2
   variants:
@@ -1985,137 +1939,8 @@ enum/OTGHSSEL:
     name: PLL1_P
     value: 1
   - description: HSE32 divided by 2 selected.
-    name: HSE_2
+    name: HSE_DIV_2
     value: 2
   - description: pll1pclk divided by 2 selected.
-    name: PLL1_P_2
-    value: 3
-enum/PLLM:
-  bit_size: 3
-  variants:
-  - description: division by 1 (bypass).
-    name: PLL1M_1
-    value: 0
-  - description: division by 2.
-    name: PLL1M_2
-    value: 1
-  - description: division by 3.
-    name: PLL1M_3
-    value: 2
-  - description: division by 8.
-    name: PLL1M_8
-    value: 7
-enum/PLLN:
-  bit_size: 9
-  variants:
-  - description: multiplication factor for PLL1 VCO= 4.
-    name: PLL1N_X4
-    value: 3
-  - description: multiplication factor for PLL1 VCO = 5.
-    name: PLL1N_X5
-    value: 4
-  - description: multiplication factor for PLL1 VCO = 6.
-    name: PLL1N_X6
-    value: 5
-  - description: multiplication factor for PLL1 VCO = 129 (default after reset).
-    name: PLL1N_X129
-    value: 128
-  - description: multiplication factor for PLL1 VCO = 512.
-    name: PLL1N_X512
-    value: 511
-enum/PLLP:
-  bit_size: 7
-  variants:
-  - description: Not allowed.
-    name: NOT_VALID
-    value: 0
-  - description: pll1pclk = VCO output frequency / 2 (default after reset).
-    name: PLL1_P_2
-    value: 1
-  - description: not allowed.
-    name: NOT_VALID2
-    value: 2
-  - description: pll1pclk = VCO output frequency / 4.
-    name: PLL1_P_4
-    value: 3
-  - description: pll1pclk = VCO output frequency / 128.
-    name: PLL1_P_128
-    value: 127
-enum/PLLQ:
-  bit_size: 7
-  variants:
-  - description: PLl1QCLK = VCO output frequency.
-    name: PLL1_Q
-    value: 0
-  - description: PLl1QCLK = VCO output frequency / 2 (default after reset).
-    name: PLL1_Q_2
-    value: 1
-  - description: PLl1QCLK = VCO output frequency / 3.
-    name: PLL1_Q_3
-    value: 2
-  - description: PLl1QCLK = VCO output frequency / 4.
-    name: PLL1_Q_4
-    value: 3
-  - description: PLl1QCLK = VCO output frequency / 128.
-    name: PLL1_Q_128
-    value: 127
-enum/PLLR:
-  bit_size: 7
-  variants:
-  - description: pll1rclk = VCO output frequency.
-    name: PLL1_R
-    value: 0
-  - description: pll1rclk = VCO output frequency / 2 (default after reset).
-    name: PLL1_R_2
-    value: 1
-  - description: pll1rclk = VCO output frequency / 3.
-    name: PLL1_R_3
-    value: 2
-  - description: pll1rclk = VCO output frequency / 4.
-    name: PLL1_R_4
-    value: 3
-  - description: pll1rclk = VCO output frequency / 128.
-    name: PLL1_R_128
-    value: 127
-enum/SAISEL:
-  bit_size: 3
-  variants:
-  - description: pll1pclk selected.
-    name: PLL1_P
-    value: 0
-  - description: pll1qclk selected.
-    name: PLL1_Q
-    value: 1
-  - description: SYSCLK selected.
-    name: SYS
-    value: 2
-  - description: input pin AUDIOCLK selected.
-    name: AUDIO
-    value: 3
-  - description: HSI16 clock selected.
-    name: HSI
-    value: 4
-enum/SPISEL:
-  bit_size: 2
-  variants:
-  - description: pclk2 selected.
-    name: PCLK2
-    value: 0
-  - description: SYSCLK selected.
-    name: SYS
-    value: 1
-  - description: HSI16 selected.
-    name: HSI
-    value: 2
-enum/SWS:
-  bit_size: 2
-  variants:
-  - description: HSI16 oscillator used as system clock.
-    name: HSI
-    value: 0
-  - description: HSE32 or HSE32/2, as defined by HSEPRE, used as system clock.
-    name: HSE
-    value: 2
-  - description: pll1rclk used as system clock.
-    name: PLL1_R
+    name: PLL1_P_DIV_2
     value: 3
