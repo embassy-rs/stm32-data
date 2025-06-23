@@ -275,6 +275,15 @@ impl ChipInterrupts {
                     .map(ToString::to_string)
                     .collect();
 
+                // If this is a USB_OTG_HS interrupt with no further signal details, map to GLOBAL
+                if peri_names.len() == 1
+                    && (peri_names[0] == "USB" || peri_names[0] == "USB_OTG_HS" || peri_names[0] == "USB_OTG_FS")
+                    && name == "USB_OTG_HS"
+                {
+                    interrupt_signals.insert((peri_names[0].clone(), "GLOBAL".to_string()));
+                    continue;
+                }
+
                 trace!("    peri_names: {peri_names:?}");
 
                 let name2 = {
@@ -502,7 +511,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("GTZC", &["GLOBAL", "ILA"]),
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP", "USB"]),
+        ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB", &["LP", "HP", "WKUP"]),
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
