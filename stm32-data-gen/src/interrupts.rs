@@ -275,6 +275,15 @@ impl ChipInterrupts {
                     .map(ToString::to_string)
                     .collect();
 
+                // If this is a USB_OTG_HS interrupt with no further signal details, map to GLOBAL
+                if peri_names.len() == 1
+                    && (peri_names[0] == "USB" || peri_names[0] == "USB_OTG_HS" || peri_names[0] == "USB_OTG_FS")
+                    && name == "USB_OTG_HS"
+                {
+                    interrupt_signals.insert((peri_names[0].clone(), "GLOBAL".to_string()));
+                    continue;
+                }
+
                 trace!("    peri_names: {peri_names:?}");
 
                 let name2 = {
@@ -525,7 +534,7 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32WL5.*:cm4", "NVIC1"),
     ("STM32WL5.*:cm0p", "NVIC2"),
     // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-    ("STM32(L5|U5|H5[2367]|WBA5[245]).*", "NVIC2"),
+    ("STM32(L5|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
     // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
     ("STM32H7[RS].*", "NVIC2"),
     // catch-all: Most chips have a single NVIC, named "NVIC"

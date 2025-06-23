@@ -132,7 +132,10 @@ impl ParsedRccs {
             "SPDIFRX_SYMB",
             "ETH_RMII_REF",
             "ETH",
+            "PLL1_P_DIV_2",
             "CLK48MOHCI",
+            "DIV_RTCPRE",
+            "HSE_DIV_2",
             "HSE_DIV_RTCPRE",
         ]);
 

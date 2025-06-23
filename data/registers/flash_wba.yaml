@@ -14,9 +14,12 @@ block/FLASH:
   - name: OPTKEYR
     description: option key register
     byte_offset: 16
-  - name: PDKEYR
-    description: power-down key register
+  - name: PDKEY1R
+    description: Flash Bank 1 power-down key register
     byte_offset: 24
+  - name: PDKEY2R
+    description: Flash Bank 2 power-down key register
+    byte_offset: 28
   - name: NSSR
     description: status register
     byte_offset: 32
@@ -73,14 +76,30 @@ block/FLASH:
     description: secure watermark register 2
     byte_offset: 84
     fieldset: SECWMR2
-  - name: WRPAR
-    description: WRP area A address register
+  - name: WRP1AR
+    description: Flash WRP bank 1 area A address register
     byte_offset: 88
-    fieldset: WRPAR
-  - name: WRPBR
-    description: WRP area B address register
+    fieldset: WRP1AR
+  - name: WRP1BR
+    description: Flash WRP bank 1 area B address register
     byte_offset: 92
-    fieldset: WRPBR
+    fieldset: WRP1BR
+  - name: SECWM2R1
+    description: Flash bank 2 secure watermark register 1
+    byte_offset: 96
+    fieldset: SECWM2R1
+  - name: SECWM2R2
+    description: Flash bank 2 secure watermark register 2
+    byte_offset: 100
+    fieldset: SECWM2R2
+  - name: WRP2AR
+    description: Flash WRP bank 2 area A address register
+    byte_offset: 104
+    fieldset: WRP2AR
+  - name: WRP2BR
+    description: Flash WRP bank 2 area B address register
+    byte_offset: 108
+    fieldset: WRP2BR
   - name: OEM1KEYR1
     description: OEM1 key register 1
     byte_offset: 112
@@ -93,27 +112,41 @@ block/FLASH:
   - name: OEM2KEYR2
     description: OEM2 key register 2
     byte_offset: 124
-  - name: SECBBR
-    description: secure block based register 1
+  - name: SECBB1R
+    description: Flash bank 1 secure block based register 1
     array:
       len: 4
       stride: 4
     byte_offset: 128
     fieldset: BBR
+  - name: SECBB2R
+    description: Flash bank 2 secure block based register 1
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 160
+    fieldset: BBR
   - name: SECHDPCR
     description: secure HDP control register
     byte_offset: 192
     fieldset: SECHDPCR
-  - name: PRIFCFGR
+  - name: PRIVCFGR
     description: privilege configuration register
     byte_offset: 196
-    fieldset: PRIFCFGR
-  - name: PRIVBBR
-    description: privilege block based register 1
+    fieldset: PRIVCFGR
+  - name: PRIVBB1R
+    description: Flash bank 1 privilege block based register 1
     array:
       len: 4
       stride: 4
     byte_offset: 208
+    fieldset: BBR
+  - name: PRIVBB2R
+    description: Flash bank 2 privilege block based register 1
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 240
     fieldset: BBR
 fieldset/ACR:
   description: access control register
@@ -131,7 +164,7 @@ fieldset/ACR:
     bit_offset: 11
     bit_size: 1
   - name: PDREQ
-    description: "power-down mode request\r This bit requests to enter power-down mode. When enters power-down mode, this bit is cleared by hardware and the PDKEYR is locked.\r This bit is write-protected with PDKEYR. \r Access to the bit can be secured by PWR LPMSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
+    description: "power-down mode request\r This bit requests to enter power-down mode. When enters power-down mode, this bit is cleared by hardware and the PDKEY2R is locked.\r This bit is write-protected with PDKEY2R. \r Access to the bit can be secured by PWR LPMSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 12
     bit_size: 1
   - name: SLEEP_PD
@@ -378,7 +411,7 @@ fieldset/OPTR:
     description: Global TrustZone security enable
     bit_offset: 31
     bit_size: 1
-fieldset/PRIFCFGR:
+fieldset/PRIVCFGR:
   description: privilege configuration register
   fields:
   - name: SPRIV
@@ -500,6 +533,28 @@ fieldset/SECSR:
     description: "Secure wait data to write\r This bit indicates that the memory write buffer has been written by a secure or non-secure operation. It is set when the first data is stored in the buffer and cleared when the write is performed in the memory."
     bit_offset: 17
     bit_size: 1
+fieldset/SECWM2R1:
+  description: Flash bank 2 secure watermark register 1
+  fields:
+  - name: SECWM2_PSTRT
+    description: "WRP area B start page\r This field contains the first page of the secure area in bank 2."
+    bit_offset: 0
+    bit_size: 7
+  - name: SECWM2_PEND
+    description: "End page of secure area\r This field contains the last page of the secure area in bank 2."
+    bit_offset: 16
+    bit_size: 7
+fieldset/SECWM2R2:
+  description: Flash bank 2 secure watermark register 2
+  fields:
+  - name: HDP2_PEND
+    description: "Bank 2 end page of secure hide protection area\r This field contains the last page of the secure HDP area in bank 2."
+    bit_offset: 16
+    bit_size: 7
+  - name: HDP2EN
+    description: Bank 2 secure Hide protection area enable
+    bit_offset: 31
+    bit_size: 1
 fieldset/SECWMR1:
   description: secure watermark register 1
   fields:
@@ -522,14 +577,14 @@ fieldset/SECWMR2:
     description: Secure Hide protection area enable
     bit_offset: 31
     bit_size: 1
-fieldset/WRPAR:
-  description: WRP area A address register
+fieldset/WRP1AR:
+  description: WRP bank 1 area A address register
   fields:
-  - name: WRPA_PSTRT
+  - name: WRP1A_PSTRT
     description: "WPR area A start page\r This field contains the first page of the WPR area A.\r Note that bit 6 is reserved on STM32WBAxEx devices."
     bit_offset: 0
     bit_size: 7
-  - name: WRPA_PEND
+  - name: WRP1A_PEND
     description: "WPR area A end page\r This field contains the last page of the WPR area A.\r Note that bit 22 is reserved on STM32WBAxEx devices."
     bit_offset: 16
     bit_size: 7
@@ -537,19 +592,49 @@ fieldset/WRPAR:
     description: WPR area A unlock
     bit_offset: 31
     bit_size: 1
-fieldset/WRPBR:
-  description: WRP area B address register
+fieldset/WRP1BR:
+  description: WRP bank 1 area B address register
   fields:
-  - name: WRPB_PSTRT
+  - name: WRP1B_PSTRT
     description: "WRP area B start page\r This field contains the first page of the WRP area B.\r Note that bit 6 is reserved on STM32WBAxEx devices."
     bit_offset: 0
     bit_size: 7
-  - name: WRPB_PEND
+  - name: WRP1B_PEND
     description: "WRP area B end page\r This field contains the last page of the WRP area B.\r Note that bit 22 is reserved on STM32WBAxEx devices."
     bit_offset: 16
     bit_size: 7
   - name: UNLOCK
     description: WPR area B unlock
+    bit_offset: 31
+    bit_size: 1
+fieldset/WRP2AR:
+  description: WRP bank 2 area A address register
+  fields:
+  - name: WRP2A_PSTRT
+    description: "WRP bank 2 area A start page\r This field contains the first page of the WRP bank 2 area A."
+    bit_offset: 0
+    bit_size: 7
+  - name: WRP2A_PEND
+    description: "WRP bank 2 area A end page\r This field contains the last page of the WRP bank 2 area A."
+    bit_offset: 16
+    bit_size: 7
+  - name: UNLOCK
+    description: WPR bank 2 area A unlock
+    bit_offset: 31
+    bit_size: 1
+fieldset/WRP2BR:
+  description: WRP bank 2 area B address register
+  fields:
+  - name: WRP2B_PSTRT
+    description: "WRP bank 2 area B start page\r This field contains the first page of the WRP bank 2 area B."
+    bit_offset: 0
+    bit_size: 7
+  - name: WRP2B_PEND
+    description: "WRP bank 2 area B end page\r This field contains the last page of the WRP bank 2 area B."
+    bit_offset: 16
+    bit_size: 7
+  - name: UNLOCK
+    description: WPR bank 2 area B unlock
     bit_offset: 31
     bit_size: 1
 enum/BOR_LEV:

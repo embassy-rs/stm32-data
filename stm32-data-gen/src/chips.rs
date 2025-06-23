@@ -145,7 +145,6 @@ static NOPELIST: RegexSet = RegexSet::new(&[
     "STM32N6.*",
     "STM32G41[14].*",
     "STM32G4.*xZ",
-    "STM32WBA6.*",
     "STM32WB0.*",
     "STM32WL3.*",
     // Does not exist in ST website. No datasheet, no RM.
