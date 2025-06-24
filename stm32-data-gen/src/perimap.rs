@@ -105,7 +105,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:ADC:aditf5_40v2_U5", ("adc", "u5", "ADC")),
     (".*:ADC:aditf5_40v1_U5", ("adc", "u5", "ADC")),
     (".*:ADC:aditf4_v4_U5", ("adc", "u5", "ADC4")),
-    (".*:ADC:aditf4_v4_WBA_CUBE", ("adc", "wba", "ADC4")),
+    (".*:ADC:aditf4_v4_WBA_Cube", ("adc", "wba", "ADC4")),
     (".*:ADC:aditf5_v3_0_H7RS", ("adc", "h7rs", "ADC")),
     ("STM32WL5.*:ADC:.*", ("adc", "g0", "ADC")),
     ("STM32WLE.*:ADC:.*", ("adc", "g0", "ADC")),
