@@ -557,21 +557,6 @@ fieldset/IER:
     bit_offset: 4
     bit_size: 1
     enum: OVRIE
-  - name: AWD1IE
-    description: 'Analog watchdog 1 interrupt enable This bit is set and cleared by software to enable/disable the analog watchdog interrupt. Note: The Software is allowed to write this bit only when ADSTART bit is cleared to 0 by writing ADSTP to 1 (this ensures that no conversion is ongoing).'
-    bit_offset: 7
-    bit_size: 1
-    enum: AWD1IE
-  - name: AWD2IE
-    description: 'Analog watchdog 2 interrupt enable This bit is set and cleared by software to enable/disable the analog watchdog interrupt. Note: The Software is allowed to write this bit only when ADSTART bit is cleared to 0 by writing ADSTP to 1 (this ensures that no conversion is ongoing).'
-    bit_offset: 8
-    bit_size: 1
-    enum: AWD2IE
-  - name: AWD3IE
-    description: 'Analog watchdog 3 interrupt enable This bit is set and cleared by software to enable/disable the analog watchdog interrupt. Note: The Software is allowed to write this bit only when ADSTART bit is cleared to 0 by writing ADSTP to 1 (this ensures that no conversion is ongoing).'
-    bit_offset: 9
-    bit_size: 1
-    enum: AWD3IE
   - name: EOCALIE
     description: 'End of calibration interrupt enable This bit is set and cleared by software to enable/disable the end of calibration interrupt. Note: The software is allowed to write this bit only when ADSTART bit is cleared to 0 by writing ADSTP to 1 (this ensures that no conversion is ongoing).'
     bit_offset: 11
@@ -582,6 +567,14 @@ fieldset/IER:
     bit_offset: 12
     bit_size: 1
     enum: LDORDYIE
+  - name: AWDIE
+    description: 'Analog watchdog 1 interrupt enable This bit is set and cleared by software to enable/disable the analog watchdog interrupt. Note: The Software is allowed to write this bit only when ADSTART bit is cleared to 0 by writing ADSTP to 1 (this ensures that no conversion is ongoing).'
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
+    enum: AWD1IE
 fieldset/ISR:
   description: ADC interrupt and status register.
   fields:
@@ -589,42 +582,22 @@ fieldset/ISR:
     description: ADC ready This bit is set by hardware after the ADC has been enabled (ADEN = 1) and when the ADC reaches a state where it is ready to accept conversion requests. It is cleared by software writing 1 to it.
     bit_offset: 0
     bit_size: 1
-    enum: ADRDY
   - name: EOSMP
     description: End of sampling flag This bit is set by hardware during the conversion, at the end of the sampling phase.It is cleared by software by writing 1 to it.
     bit_offset: 1
     bit_size: 1
-    enum: EOSMP
   - name: EOC
     description: End of conversion flag This bit is set by hardware at the end of each conversion of a channel when a new data result is available in the DR register. It is cleared by software writing 1 to it or by reading the ADC_DR register.
     bit_offset: 2
     bit_size: 1
-    enum: EOC
   - name: EOS
     description: End of sequence flag This bit is set by hardware at the end of the conversion of a sequence of channels selected by the CHSEL bits. It is cleared by software writing 1 to it.
     bit_offset: 3
     bit_size: 1
-    enum: EOS
   - name: OVR
     description: ADC overrun This bit is set by hardware when an overrun occurs, meaning that a new conversion has complete while the EOC flag was already set. It is cleared by software writing 1 to it.
     bit_offset: 4
     bit_size: 1
-    enum: OVR
-  - name: AWD1
-    description: Analog watchdog 1 flag This bit is set by hardware when the converted voltage crosses the values programmed in TR1 and ADC_HR1 registers. It is cleared by software by writing 1 to it.
-    bit_offset: 7
-    bit_size: 1
-    enum: AWD1
-  - name: AWD2
-    description: Analog watchdog 2 flag This bit is set by hardware when the converted voltage crosses the values programmed in AWD2TR and ADC_AWD2TR registers. It is cleared by software writing 1 to it.
-    bit_offset: 8
-    bit_size: 1
-    enum: AWD2
-  - name: AWD3
-    description: Analog watchdog 3 flag This bit is set by hardware when the converted voltage crosses the values programmed in AWD3TR and ADC_AWD3TR registers. It is cleared by software by writing 1 to it.
-    bit_offset: 9
-    bit_size: 1
-    enum: AWD3
   - name: EOCAL
     description: End of calibration flag This bit is set by hardware when calibration is complete. It is cleared by software writing 1 to it.
     bit_offset: 11
@@ -635,6 +608,13 @@ fieldset/ISR:
     bit_offset: 12
     bit_size: 1
     enum: LDORDY
+  - name: AWD
+    description: Analog watchdog 1 flag This bit is set by hardware when the converted voltage crosses the values programmed in TR1 and ADC_HR1 registers. It is cleared by software by writing 1 to it.
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 3
+      stride: 1
 fieldset/PWR:
   description: ADC data register.
   fields:
@@ -758,15 +738,6 @@ enum/ADEN:
   - name: B_0x1
     description: Write 1 to enable the ADC.
     value: 1
-enum/ADRDY:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: ADC not yet ready to start conversion (or the flag event was already acknowledged and cleared by software).
-    value: 0
-  - name: B_0x1
-    description: ADC is ready to start conversion.
-    value: 1
 enum/ADRDYIE:
   bit_size: 1
   variants:
@@ -820,15 +791,6 @@ enum/AUTOFF:
     value: 0
   - name: B_0x1
     description: Auto-off mode enabled.
-    value: 1
-enum/AWD1:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No analog watchdog event occurred (or the flag event was already acknowledged and cleared by software).
-    value: 0
-  - name: B_0x1
-    description: Analog watchdog event occurred.
     value: 1
 enum/AWD1CH:
   bit_size: 5
@@ -1337,15 +1299,6 @@ enum/DPD:
   - name: B_0x1
     description: Deep-power-down mode enabled.
     value: 1
-enum/EOC:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Channel conversion not complete (or the flag event was already acknowledged and cleared by software).
-    value: 0
-  - name: B_0x1
-    description: Channel conversion complete.
-    value: 1
 enum/EOCAL:
   bit_size: 1
   variants:
@@ -1373,15 +1326,6 @@ enum/EOCIE:
   - name: B_0x1
     description: EOC interrupt enabled. An interrupt is generated when the EOC bit is set.
     value: 1
-enum/EOS:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Conversion sequence not complete (or the flag event was already acknowledged and cleared by software).
-    value: 0
-  - name: B_0x1
-    description: Conversion sequence complete.
-    value: 1
 enum/EOSIE:
   bit_size: 1
   variants:
@@ -1390,15 +1334,6 @@ enum/EOSIE:
     value: 0
   - name: B_0x1
     description: EOS interrupt enabled. An interrupt is generated when the EOS bit is set.
-    value: 1
-enum/EOSMP:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Not at the end of the sampling phase (or the flag event was already acknowledged and cleared by software).
-    value: 0
-  - name: B_0x1
-    description: End of sampling phase reached.
     value: 1
 enum/EOSMPIE:
   bit_size: 1
@@ -1474,15 +1409,6 @@ enum/LFTRIG:
   variants:
   - name: B_0x1
     description: Low frequency trigger mode enabled.
-    value: 1
-enum/OVR:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No overrun occurred (or the flag event was already acknowledged and cleared by software).
-    value: 0
-  - name: B_0x1
-    description: Overrun has occurred.
     value: 1
 enum/OVRIE:
   bit_size: 1
