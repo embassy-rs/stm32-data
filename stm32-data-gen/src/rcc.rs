@@ -132,7 +132,10 @@ impl ParsedRccs {
             "SPDIFRX_SYMB",
             "ETH_RMII_REF",
             "ETH",
+            "PLL1_P_DIV_2",
             "CLK48MOHCI",
+            "DIV_RTCPRE",
+            "HSE_DIV_2",
             "HSE_DIV_RTCPRE",
             // N6 extra
             "IC1",
@@ -332,6 +335,7 @@ impl ParsedRccs {
             ("USB_OTG_FS", &["USB", "CLK48", "ICLK"]),
             ("USB_OTG_HS", &["USB", "USBPHYC", "OTGHS", "CLK48", "ICLK"]),
             ("DTS", &["TMPSENS"]),
+            ("SDMMC1", &["SDMMC1", "CLK48"]),
         ];
 
         let rcc = self.rccs.get(rcc_version)?;
