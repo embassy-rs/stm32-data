@@ -359,14 +359,18 @@ impl ParsedRccs {
             ("n6", "SDMMC1"), // HCLK2 is corrext per Cube and Docs so no mux check
             ("n6", "SDMMC2"), // HCLKU is corrext per Cube and Docs so no mux check
         ];
-        
+
         let kernel_clock = match mux {
             Some(mux) => {
                 // check for mismatch between mux and bus clock.
                 //
                 // U5 has one ADCDACSEL for multiple ADCs which may be on
                 // different HCLKs, so we skip the check in that case
-                if !(RCC_PERI_MUX_EXCEPTIONS.iter().any(|x| {rcc_version == x.0 && peri_name.starts_with(x.1)})) && phclk.is_match(&en_rst.bus_clock) {
+                if !(RCC_PERI_MUX_EXCEPTIONS
+                    .iter()
+                    .any(|x| rcc_version == x.0 && peri_name.starts_with(x.1)))
+                    && phclk.is_match(&en_rst.bus_clock)
+                {
                     for v in &mux.variants {
                         if phclk.is_match(v) && v != &maybe_kernel_clock {
                             panic!(
