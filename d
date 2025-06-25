@@ -139,6 +139,10 @@ case "$CMD" in
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32l4a6zg \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32l4r5zi \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32l552ze \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32n657x0 \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32n647x0 \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32n655x0 \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32n645x0 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32u031r8 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32u073mb \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32u083rc \
