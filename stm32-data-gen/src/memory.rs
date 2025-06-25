@@ -382,10 +382,10 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32WB55.Y",                  &[mem!(BANK_1 { 0x08000000 640 },  SRAM { 0x20000000 192 }, SRAM2A { 0x20030000 32 }, SRAM2B { 0x20038000 32 }, SRAM2A_ICODE { 0x10000000 32 }, SRAM2B_ICODE { 0x10008000 32 })]),
     ("STM32WB55.G",                  &[mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 192 }, SRAM2A { 0x20030000 32 }, SRAM2B { 0x20038000 32 }, SRAM2A_ICODE { 0x10000000 32 }, SRAM2B_ICODE { 0x10008000 32 })]),
     // WBA
-    ("STM32WBA...E",                 &[mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 96 }, OTP { 0x0bf90000 512 bytes })]),
-    ("STM32WBA...G",                 &[mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 128 }, OTP { 0x0bf90000 512 bytes })]),
     ("STM32WBA6..G",                 &[mem!(BANK_1 { 0x08000000 512 },  BANK_2 { 0x08080000 512},  SRAM { 0x20000000 192 }, SRAM2 { 0x20070000 64 }, OTP { 0x0bfa0000 512 bytes })]),
     ("STM32WBA6..I",                 &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024}, SRAM { 0x20000000 448 }, SRAM2 { 0x20070000 64 }, OTP { 0x0bfa0000 512 bytes })]),
+    ("STM32WBA...E",                 &[mem!(BANK_1 { 0x08000000 512 },  SRAM { 0x20000000 96 }, OTP { 0x0bf90000 512 bytes })]),
+    ("STM32WBA...G",                 &[mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 128 }, OTP { 0x0bf90000 512 bytes })]),
     // WL
     ("STM32WL[5E]..8",               &[mem!(BANK_1 { 0x08000000 64 },  SRAM1 { 0x20000000 10 }, SRAM2 { 0x20002800 10 })]),
     ("STM32WL[5E]..B",               &[mem!(BANK_1 { 0x08000000 128 }, SRAM1 { 0x20000000 24 }, SRAM2 { 0x20006000 24 })]),
