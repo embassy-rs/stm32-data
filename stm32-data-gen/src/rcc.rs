@@ -275,9 +275,7 @@ impl ParsedRccs {
                             stop_mode: StopMode::default(),
                         };
 
-                        println!("{}: {} -> {:?}", rcc_version, peri, val);
-                        if en_rst.insert(peri.to_string(), val.clone()).is_some() {
-                            println!("{:?}", val);
+                        if en_rst.insert(peri.to_string(), val).is_some() {
                             bail!("rcc: duplicate en/rst for {} for rcc_{}", peri, rcc_version);
                         }
                     }
