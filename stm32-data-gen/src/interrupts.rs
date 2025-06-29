@@ -379,16 +379,6 @@ impl ChipInterrupts {
                 for (signal, irqs) in signals {
                     let mut irqs = irqs.clone();
 
-                    // If there's a duplicate irqs in a signal other than "global", keep the non-global one.
-                    if irqs.len() != 1 && signal != "GLOBAL" {
-                        irqs.retain(|irq| !globals.contains(irq));
-                    }
-
-                    // If there's still duplicate irqs, keep the one that doesn't match the peri name.
-                    if irqs.len() != 1 && signal != "GLOBAL" {
-                        irqs.retain(|irq| irq != &p.name);
-                    }
-
                     // Special case for LTDC LO signal with both LTDC_LO and LTDC_LO_ERR IRQs
                     if irqs.len() != 1 && p.name == "LTDC" && signal == "LO" {
                         // Prefer the IRQ name that doesn't contain "_ERR"
@@ -399,6 +389,16 @@ impl ChipInterrupts {
                             irqs.clear();
                             irqs.insert(preferred_irq);
                         }
+                    }
+
+                    // If there's a duplicate irqs in a signal other than "global", keep the non-global one.
+                    if irqs.len() != 1 && signal != "GLOBAL" {
+                        irqs.retain(|irq| !globals.contains(irq));
+                    }
+
+                    // If there's still duplicate irqs, keep the one that doesn't match the peri name.
+                    if irqs.len() != 1 && signal != "GLOBAL" {
+                        irqs.retain(|irq| irq != &p.name);
                     }
 
                     if irqs.len() != 1 {
