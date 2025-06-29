@@ -379,6 +379,18 @@ impl ChipInterrupts {
                 for (signal, irqs) in signals {
                     let mut irqs = irqs.clone();
 
+                    // Special case for LTDC LO signal with both LTDC_LO and LTDC_LO_ERR IRQs
+                    if irqs.len() != 1 && p.name == "LTDC" && signal == "LO" {
+                        // Prefer the IRQ name that doesn't contain "_ERR"
+                        let non_err_irqs: Vec<_> = irqs.iter().filter(|x| !x.contains("_ERR")).cloned().collect();
+                        if !non_err_irqs.is_empty() {
+                            // If we have non-error IRQs, keep only the first one
+                            let preferred_irq = non_err_irqs[0].clone();
+                            irqs.clear();
+                            irqs.insert(preferred_irq);
+                        }
+                    }
+
                     // If there's a duplicate irqs in a signal other than "global", keep the non-global one.
                     if irqs.len() != 1 && signal != "GLOBAL" {
                         irqs.retain(|irq| !globals.contains(irq));
@@ -501,7 +513,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("RCC", &["RCC", "CRS"]),
         ("MDIOS", &["GLOBAL", "WKUP"]),
         ("ETH", &["GLOBAL", "WKUP"]),
-        ("LTDC", &["GLOBAL", "ER"]),
+        ("LTDC", &["GLOBAL", "ER", "LO", "ERR"]),
         (
             "DFSDM",
             &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
@@ -512,11 +524,13 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB", &["LP", "HP", "WKUP"]),
+        ("USB", &["LP", "HP", "WKUP", "USB1", "USB2", "OTG_HS"]),
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
         ("ADF", &["FLT0"]),
         ("RAMECC", &["ECC"]),
+        ("RAMCFG", &["BKP", "ECC"]),
+        ("DCMIPP", &["CSI"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
@@ -537,6 +551,8 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32(L5|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
     // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
     ("STM32H7[RS].*", "NVIC2"),
+    // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.
+    ("STM32N6.*", "NVIC2"),
     // catch-all: Most chips have a single NVIC, named "NVIC"
     (".*", "NVIC"),
 ]);
