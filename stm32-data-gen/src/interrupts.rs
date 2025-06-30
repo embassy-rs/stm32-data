@@ -429,8 +429,9 @@ impl ChipInterrupts {
 fn tokenize_name(name: &str) -> Vec<String> {
     // Treat IRQ names are "tokens" separated by `_`, except some tokens
     // contain `_` themselves, such as `C1_RX`.
-    let r =
-        regex!(r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*");
+    let r = regex!(
+        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB1_OTG_HS|USB2_OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*"
+    );
     let name = name.to_ascii_uppercase();
 
     r.captures_iter(&name)
@@ -446,6 +447,8 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         ("OTG_FS", &["USB_OTG_FS"]),
         ("USB", &["USB_DRD_FS"]),
         ("USB_DRD_FS", &["USB"]),
+        ("USB1_OTG_HS", &["USB1_OTG_HS"]),
+        ("USB2_OTG_HS", &["USB2_OTG_HS"]), // Add this entry to handle USB2_OTG_HS
         ("UCPD1_2", &["UCPD1", "UCPD2"]),
         ("ADC1", &["ADC"]),
         ("CEC", &["HDMI_CEC"]),
@@ -524,7 +527,9 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB", &["LP", "HP", "WKUP", "USB1", "USB2", "OTG_HS"]),
+        ("USB1_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+        ("USB2_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+        ("USB", &["LP", "HP", "WKUP", "OTG_HS"]),
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
         ("ADF", &["FLT0"]),
