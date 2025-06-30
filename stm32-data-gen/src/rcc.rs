@@ -28,7 +28,7 @@ struct MuxInfo {
     variants: Vec<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct EnRst {
     enable: rcc::Field,
     reset: Option<rcc::Field>,
@@ -137,6 +137,38 @@ impl ParsedRccs {
             "DIV_RTCPRE",
             "HSE_DIV_2",
             "HSE_DIV_RTCPRE",
+            // N6 extra
+            "IC1",
+            "IC2",
+            "IC3",
+            "IC4",
+            "IC5",
+            "IC6",
+            "IC7",
+            "IC8",
+            "IC9",
+            "IC10",
+            "IC11",
+            "IC12",
+            "IC13",
+            "IC14",
+            "IC15",
+            "IC16",
+            "IC17",
+            "IC18",
+            "IC19",
+            "IC20",
+            "HSI_DIV",
+            "HSE_RTC",
+            "HSE_DIV2_OSC",
+            "TIMG",
+            "HCLKE", // ethernet clock
+            "MII",
+            "RGMII",
+            "JTAG_TCK",
+            "SYSA",
+            "SPDIF_SYMB",
+            "HCLKU",
         ]);
 
         let mux_regexes = &[
@@ -317,13 +349,26 @@ impl ParsedRccs {
             maybe_kernel_clock.push_str("_TIM");
         }
 
+        const RCC_PERI_MUX_EXCEPTIONS: &[(&str, &str)] = &[
+            // These peripherals have a different mux name than the bus clock
+            // Format: rcc_version, peripheral_name
+            ("u5", "ADC"),
+            ("n6", "I2C4"),
+            ("n6", "SDMMC1"), // HCLK2 is corrext per Cube and Docs so no mux check
+            ("n6", "SDMMC2"), // HCLKU is corrext per Cube and Docs so no mux check
+        ];
+
         let kernel_clock = match mux {
             Some(mux) => {
                 // check for mismatch between mux and bus clock.
                 //
                 // U5 has one ADCDACSEL for multiple ADCs which may be on
                 // different HCLKs, so we skip the check in that case
-                if !(rcc_version == "u5" && peri_name.starts_with("ADC")) && phclk.is_match(&en_rst.bus_clock) {
+                if !(RCC_PERI_MUX_EXCEPTIONS
+                    .iter()
+                    .any(|x| rcc_version == x.0 && peri_name.starts_with(x.1)))
+                    && phclk.is_match(&en_rst.bus_clock)
+                {
                     for v in &mux.variants {
                         if phclk.is_match(v) && v != &maybe_kernel_clock {
                             panic!(

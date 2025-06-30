@@ -339,7 +339,7 @@ impl ChipInterrupts {
                 }
 
                 for (p, mut ss) in peri_signals.into_iter() {
-                    let known = valid_signals(&p);
+                    let known = valid_signals(&p, chip_name);
 
                     // If we have no interrupt_signals for the peri, assume it's "global" so assign it all known ones
                     if ss.is_empty() {
@@ -379,6 +379,18 @@ impl ChipInterrupts {
                 for (signal, irqs) in signals {
                     let mut irqs = irqs.clone();
 
+                    // Special case for LTDC LO signal with both LTDC_LO and LTDC_LO_ERR IRQs
+                    if irqs.len() != 1 && p.name == "LTDC" && signal == "LO" {
+                        // Prefer the IRQ name that doesn't contain "_ERR"
+                        let non_err_irqs: Vec<_> = irqs.iter().filter(|x| !x.contains("_ERR")).cloned().collect();
+                        if !non_err_irqs.is_empty() {
+                            // If we have non-error IRQs, keep only the first one
+                            let preferred_irq = non_err_irqs[0].clone();
+                            irqs.clear();
+                            irqs.insert(preferred_irq);
+                        }
+                    }
+
                     // If there's a duplicate irqs in a signal other than "global", keep the non-global one.
                     if irqs.len() != 1 && signal != "GLOBAL" {
                         irqs.retain(|irq| !globals.contains(irq));
@@ -417,8 +429,9 @@ impl ChipInterrupts {
 fn tokenize_name(name: &str) -> Vec<String> {
     // Treat IRQ names are "tokens" separated by `_`, except some tokens
     // contain `_` themselves, such as `C1_RX`.
-    let r =
-        regex!(r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*");
+    let r = regex!(
+        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB1_OTG_HS|USB2_OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*"
+    );
     let name = name.to_ascii_uppercase();
 
     r.captures_iter(&name)
@@ -434,6 +447,8 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         ("OTG_FS", &["USB_OTG_FS"]),
         ("USB", &["USB_DRD_FS"]),
         ("USB_DRD_FS", &["USB"]),
+        ("USB1_OTG_HS", &["USB1_OTG_HS"]),
+        ("USB2_OTG_HS", &["USB2_OTG_HS"]), // Add this entry to handle USB2_OTG_HS
         ("UCPD1_2", &["UCPD1", "UCPD2"]),
         ("ADC1", &["ADC"]),
         ("CEC", &["HDMI_CEC"]),
@@ -481,7 +496,37 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
     res
 }
 
-fn valid_signals(peri: &str) -> Vec<String> {
+fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
+    // Special chip-specific signal mappings
+    // Format: (peripheral_prefix, chip_pattern, signals)
+    const CHIP_SPECIFIC_SIGNALS: &[(&str, &str, &[&str])] = &[
+        // LTDC signals: STM32N6 supports all signals, others only basic ones
+        ("LTDC", "STM32N6", &["GLOBAL", "ER", "LO", "ERR"]),
+        ("LTDC", "*", &["GLOBAL", "ER"]), // Default for all other LTDC devices
+        // DCMIPP signals: STM32N6 supports CSI, others only basic signals
+        ("DCMIPP", "STM32N6", &["GLOBAL", "CSI"]),
+        ("DCMIPP", "*", &["GLOBAL"]), // Default for all other DCMIPP devices
+    ];
+
+    // Check for chip-specific overrides first
+    for &(peri_prefix, chip_pattern, signals) in CHIP_SPECIFIC_SIGNALS {
+        if peri.starts_with(peri_prefix) {
+            let matches = if chip_pattern == "*" {
+                // This is a default case - check if no specific pattern matched
+                !CHIP_SPECIFIC_SIGNALS
+                    .iter()
+                    .any(|&(p, c, _)| p == peri_prefix && c != "*" && chip_name.starts_with(c))
+            } else {
+                chip_name.starts_with(chip_pattern)
+            };
+
+            if matches {
+                return signals.iter().map(ToString::to_string).collect();
+            }
+        }
+    }
+
+    // Fallback to the general signal map
     const IRQ_SIGNALS_MAP: &[(&str, &[&str])] = &[
         ("CAN", &["TX", "RX0", "RX1", "SCE"]),
         ("FDCAN", &["IT0", "IT1", "CAL"]),
@@ -501,7 +546,6 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("RCC", &["RCC", "CRS"]),
         ("MDIOS", &["GLOBAL", "WKUP"]),
         ("ETH", &["GLOBAL", "WKUP"]),
-        ("LTDC", &["GLOBAL", "ER"]),
         (
             "DFSDM",
             &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
@@ -512,11 +556,14 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+        ("USB1_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+        ("USB2_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB", &["LP", "HP", "WKUP"]),
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
         ("ADF", &["FLT0"]),
         ("RAMECC", &["ECC"]),
+        ("RAMCFG", &["BKP", "ECC"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
@@ -537,6 +584,8 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32(L5|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
     // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
     ("STM32H7[RS].*", "NVIC2"),
+    // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.
+    ("STM32N6.*", "NVIC2"),
     // catch-all: Most chips have a single NVIC, named "NVIC"
     (".*", "NVIC"),
 ]);

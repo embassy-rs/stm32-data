@@ -353,6 +353,8 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
                                         mem!(BANK_1 { 0x08000000 512 },                            SRAM { 0x20000000 256 }),
                                         mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM { 0x20000000 256 }),
                                       ]),
+    // N6
+    ("STM32N6...0",                  &[mem!(FLEXRAM {0x24000000 400}, AXISRAM { 0x24064000 624 }, AXISRAM2 { 0x24100000 1024 }, AXISRAM3 {0x24200000 448}, AXISRAM4 {0x24270000 448}, AXISRAM5 {0x242E0000 448}, AXISRAM6 {0x24350000 448}, NPURAM {0x243C0000 256}, VENCRAM {0x24400000 128})]),
     // U0
     ("STM32U031.4",                  &[mem!(BANK_1 { 0x08000000 16 },  SRAM { 0x20000000 12 }, OTP { 0x1fff6800 1 })]),
     ("STM32U031.6",                  &[mem!(BANK_1 { 0x08000000 32 },  SRAM { 0x20000000 12 }, OTP { 0x1fff6800 1 })]),
