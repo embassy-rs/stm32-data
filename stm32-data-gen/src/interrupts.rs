@@ -529,7 +529,7 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB1_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB2_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB", &["LP", "HP", "WKUP", "OTG_HS"]),
+        ("USB", &["LP", "HP", "WKUP"]),
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
         ("ADF", &["FLT0"]),
