@@ -339,7 +339,7 @@ impl ChipInterrupts {
                 }
 
                 for (p, mut ss) in peri_signals.into_iter() {
-                    let known = valid_signals(&p);
+                    let known = valid_signals(&p, chip_name);
 
                     // If we have no interrupt_signals for the peri, assume it's "global" so assign it all known ones
                     if ss.is_empty() {
@@ -496,7 +496,7 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
     res
 }
 
-fn valid_signals(peri: &str) -> Vec<String> {
+fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
     const IRQ_SIGNALS_MAP: &[(&str, &[&str])] = &[
         ("CAN", &["TX", "RX0", "RX1", "SCE"]),
         ("FDCAN", &["IT0", "IT1", "CAL"]),
@@ -516,7 +516,6 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("RCC", &["RCC", "CRS"]),
         ("MDIOS", &["GLOBAL", "WKUP"]),
         ("ETH", &["GLOBAL", "WKUP"]),
-        ("LTDC", &["GLOBAL", "ER", "LO", "ERR"]),
         (
             "DFSDM",
             &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
@@ -537,6 +536,22 @@ fn valid_signals(peri: &str) -> Vec<String> {
         ("RAMCFG", &["BKP", "ECC"]),
         ("DCMIPP", &["CSI"]),
     ];
+
+    // Special handling for LTDC based on chip family
+    if peri.starts_with("LTDC") {
+        if chip_name.starts_with("STM32N6") {
+            // STM32N6 variants support all LTDC signals
+            return vec![
+                "GLOBAL".to_string(),
+                "ER".to_string(),
+                "LO".to_string(),
+                "ERR".to_string(),
+            ];
+        } else {
+            // Other devices only support basic LTDC signals
+            return vec!["GLOBAL".to_string(), "ER".to_string()];
+        }
+    }
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
         if peri.starts_with(prefix) {
