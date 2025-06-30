@@ -497,6 +497,36 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
 }
 
 fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
+    // Special chip-specific signal mappings
+    // Format: (peripheral_prefix, chip_pattern, signals)
+    const CHIP_SPECIFIC_SIGNALS: &[(&str, &str, &[&str])] = &[
+        // LTDC signals: STM32N6 supports all signals, others only basic ones
+        ("LTDC", "STM32N6", &["GLOBAL", "ER", "LO", "ERR"]),
+        ("LTDC", "*", &["GLOBAL", "ER"]), // Default for all other LTDC devices
+        // DCMIPP signals: STM32N6 supports CSI, others only basic signals
+        ("DCMIPP", "STM32N6", &["GLOBAL", "CSI"]),
+        ("DCMIPP", "*", &["GLOBAL"]), // Default for all other DCMIPP devices
+    ];
+
+    // Check for chip-specific overrides first
+    for &(peri_prefix, chip_pattern, signals) in CHIP_SPECIFIC_SIGNALS {
+        if peri.starts_with(peri_prefix) {
+            let matches = if chip_pattern == "*" {
+                // This is a default case - check if no specific pattern matched
+                !CHIP_SPECIFIC_SIGNALS
+                    .iter()
+                    .any(|&(p, c, _)| p == peri_prefix && c != "*" && chip_name.starts_with(c))
+            } else {
+                chip_name.starts_with(chip_pattern)
+            };
+
+            if matches {
+                return signals.iter().map(ToString::to_string).collect();
+            }
+        }
+    }
+
+    // Fallback to the general signal map
     const IRQ_SIGNALS_MAP: &[(&str, &[&str])] = &[
         ("CAN", &["TX", "RX0", "RX1", "SCE"]),
         ("FDCAN", &["IT0", "IT1", "CAL"]),
@@ -534,24 +564,7 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("ADF", &["FLT0"]),
         ("RAMECC", &["ECC"]),
         ("RAMCFG", &["BKP", "ECC"]),
-        ("DCMIPP", &["CSI"]),
     ];
-
-    // Special handling for LTDC based on chip family
-    if peri.starts_with("LTDC") {
-        if chip_name.starts_with("STM32N6") {
-            // STM32N6 variants support all LTDC signals
-            return vec![
-                "GLOBAL".to_string(),
-                "ER".to_string(),
-                "LO".to_string(),
-                "ERR".to_string(),
-            ];
-        } else {
-            // Other devices only support basic LTDC signals
-            return vec!["GLOBAL".to_string(), "ER".to_string()];
-        }
-    }
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
         if peri.starts_with(prefix) {
