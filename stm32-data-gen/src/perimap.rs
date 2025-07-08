@@ -229,6 +229,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32U0.*:USBRAM:.*", ("usbram", "32_1024", "USBRAM")),
     // # USB OTG
     (".*:USB_OTG_FS:otgfs1_.*", ("otg", "v1", "OTG")),
+    (".*:USB_OTG_HS:otghs.*", ("otg", "v1", "OTG")),
     (".*:USB_OTG_HS:otghs1_.*", ("otg", "v1", "OTG")),
     ("STM32C0[579].*:RCC:.*", ("rcc", "c0v2", "RCC")),
     ("STM32C0.*:RCC:.*", ("rcc", "c0", "RCC")),
