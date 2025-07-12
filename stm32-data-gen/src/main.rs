@@ -1,3 +1,4 @@
+#![feature(map_try_insert)]
 mod check;
 mod chips;
 mod dma;
