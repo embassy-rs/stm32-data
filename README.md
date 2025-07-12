@@ -237,26 +237,25 @@ correlates very well to changes in the peripheral's register interface.
 You should prefer matching peripherals by IP version whenever possible. For example:
 
 ```
-('.*:SPI:spi2s1_v2_2', 'spi_v1/SPI'),
-('.*:SPI:spi2s1_v3_2', 'spi_v2/SPI'),
+(".*:SPI:spi2s1_v2_2", ("spi", "v1", "SPI")),
+(".*:SPI:spi2s1_v3_2", ("spi", "v2", "SPI")),
 ```
 
 Sometimes it's not possible to map by IP version, and we have to map by chip name. For example:
 
 ```
-('STM32H7.*:FLASH:.*', 'flash_h7/FLASH'),
-('STM32F0.*:FLASH:.*', 'flash_f0/FLASH'),
-('STM32F1.*:FLASH:.*', 'flash_f1/FLASH'),
-('STM32F3.*:FLASH:.*', 'flash_f3/FLASH'),
-('STM32F4.*:FLASH:.*', 'flash_f4/FLASH'),
+("STM32H7.*:FLASH:.*", ("flash", "h7", "FLASH")),
+("STM32F0.*:FLASH:.*", ("flash", "f0", "FLASH")),
+("STM32F1.*:FLASH:.*", ("flash", "f1", "FLASH")),
+("STM32F3.*:FLASH:.*", ("flash", "f3", "FLASH")),
+("STM32F4.*:FLASH:.*", ("flash", "f4", "FLASH")),
 ...etc
 ```
 
 Sometimes even the same IP name+version in the same chip family has different registers (different instances of the IP are configured differently), so we have to map by chip name AND peripheral instance name. This should be the last resort. For example:
 
 ```
-('STM32F7.*:TIM1:.*', 'timer_v1/TIM_ADV'),
-('STM32F7.*:TIM8:.*', 'timer_v1/TIM_ADV'),
-('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
+("STM32F7.*:TIM1:.*", ("timer_v1", "TIM_ADV")),
+("STM32F7.*:TIM8:.*", ("timer_v1", "TIM_ADV")),
+(".*TIM\d.*:gptimer.*", ("timer_v1", "TIM_GP16")),
 ```
-
