@@ -468,7 +468,7 @@ pub struct PeripheralDmaChannelRemap {
     pub peripheral: String,
     pub register: String,
     pub field: String,
-    pub value: String,
+    pub value: u32,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Hash)]

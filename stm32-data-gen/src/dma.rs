@@ -101,12 +101,12 @@ impl RemapKey {
 #[derive(Debug)]
 pub struct DmaChannels(pub HashMap<String, ChipDma>);
 
-fn cfgr(cfgr: u8, field: String, value: impl ToString) -> DmaChannelRemap {
+fn cfgr(cfgr: u8, field: String, value: u32) -> DmaChannelRemap {
     DmaChannelRemap {
         peripheral: "SYSCFG".to_string(),
         register: format!("CFGR{cfgr}").to_string(),
         field,
-        value: value.to_string(),
+        value,
     }
 }
 
@@ -146,43 +146,43 @@ fn build_remap_info_f3() -> HashMap<RemapKey, Vec<DmaChannelRemap>> {
         };
     }
 
-    cfgr1_dma1!("DAC2_CH1_DMA_RMP", true, "DAC2", "CH1", 5); // This bit must always be set. Therefore, no entry with "false".
-    cfgr1_dma2!("TIM18_DAC2_OUT1_DMA_RMP", false, "TIM18", "UP", 5);
-    cfgr1_dma2!("TIM18_DAC2_OUT1_DMA_RMP", false, "DAC2", "CH1", 5);
-    cfgr1_dma1!("TIM18_DAC2_OUT1_DMA_RMP", true, "TIM18", "UP", 4);
-    cfgr1_dma1!("TIM18_DAC2_OUT1_DMA_RMP", true, "DAC2", "CH1", 4);
+    cfgr1_dma1!("DAC2_CH1_DMA_RMP", 1, "DAC2", "CH1", 5); // This bit must always be set. Therefore, no entry with "0".
+    cfgr1_dma2!("TIM18_DAC2_OUT1_DMA_RMP", 0, "TIM18", "UP", 5);
+    cfgr1_dma2!("TIM18_DAC2_OUT1_DMA_RMP", 0, "DAC2", "CH1", 5);
+    cfgr1_dma1!("TIM18_DAC2_OUT1_DMA_RMP", 1, "TIM18", "UP", 4);
+    cfgr1_dma1!("TIM18_DAC2_OUT1_DMA_RMP", 1, "DAC2", "CH1", 4);
 
-    cfgr1_dma2!("TIM7_DAC1_CH2_DMA_RMP", false, "TIM7", "UP", 4);
-    cfgr1_dma2!("TIM7_DAC1_CH2_DMA_RMP", false, "DAC1", "CH2", 4);
-    cfgr1_dma2!("TIM7_DAC1_CH2_DMA_RMP", false, "DAC", "CH2", 4);
-    cfgr1_dma1!("TIM7_DAC1_CH2_DMA_RMP", true, "TIM7", "UP", 4);
-    cfgr1_dma1!("TIM7_DAC1_CH2_DMA_RMP", true, "DAC1", "CH2", 4);
-    cfgr1_dma1!("TIM7_DAC1_CH2_DMA_RMP", true, "DAC", "CH2", 4);
+    cfgr1_dma2!("TIM7_DAC1_CH2_DMA_RMP", 0, "TIM7", "UP", 4);
+    cfgr1_dma2!("TIM7_DAC1_CH2_DMA_RMP", 0, "DAC1", "CH2", 4);
+    cfgr1_dma2!("TIM7_DAC1_CH2_DMA_RMP", 0, "DAC", "CH2", 4);
+    cfgr1_dma1!("TIM7_DAC1_CH2_DMA_RMP", 1, "TIM7", "UP", 4);
+    cfgr1_dma1!("TIM7_DAC1_CH2_DMA_RMP", 1, "DAC1", "CH2", 4);
+    cfgr1_dma1!("TIM7_DAC1_CH2_DMA_RMP", 1, "DAC", "CH2", 4);
 
     // RM0313 (STM32F37xxx) talks inconsistently about TIM6 and TIM7 in the field description.
     // Figure 22+23. "DMA[12] request mapping" have footnotes stating the remap bit must be set/cleared, but the figure itself has not any footnote annotations inside.
     // Assuming the documentation is bad and STM32F37xxx behaves like any other F3 having this field.
-    cfgr1_dma2!("TIM6_DAC1_CH1_DMA_RMP", false, "TIM6", "UP", 3);
-    cfgr1_dma2!("TIM6_DAC1_CH1_DMA_RMP", false, "DAC1", "CH1", 3);
-    cfgr1_dma2!("TIM6_DAC1_CH1_DMA_RMP", false, "DAC", "CH1", 3);
-    cfgr1_dma1!("TIM6_DAC1_CH1_DMA_RMP", true, "TIM6", "UP", 3);
-    cfgr1_dma1!("TIM6_DAC1_CH1_DMA_RMP", true, "DAC1", "CH1", 3);
-    cfgr1_dma1!("TIM6_DAC1_CH1_DMA_RMP", true, "DAC", "CH1", 3);
+    cfgr1_dma2!("TIM6_DAC1_CH1_DMA_RMP", 0, "TIM6", "UP", 3);
+    cfgr1_dma2!("TIM6_DAC1_CH1_DMA_RMP", 0, "DAC1", "CH1", 3);
+    cfgr1_dma2!("TIM6_DAC1_CH1_DMA_RMP", 0, "DAC", "CH1", 3);
+    cfgr1_dma1!("TIM6_DAC1_CH1_DMA_RMP", 1, "TIM6", "UP", 3);
+    cfgr1_dma1!("TIM6_DAC1_CH1_DMA_RMP", 1, "DAC1", "CH1", 3);
+    cfgr1_dma1!("TIM6_DAC1_CH1_DMA_RMP", 1, "DAC", "CH1", 3);
 
-    cfgr1_dma1!("TIM17_DMA_RMP", false, "TIM17", "CH1", 1);
-    cfgr1_dma1!("TIM17_DMA_RMP", false, "TIM17", "UP", 1);
-    cfgr1_dma1!("TIM17_DMA_RMP", true, "TIM17", "CH1", 7);
-    cfgr1_dma1!("TIM17_DMA_RMP", true, "TIM17", "UP", 7);
+    cfgr1_dma1!("TIM17_DMA_RMP", 0, "TIM17", "CH1", 1);
+    cfgr1_dma1!("TIM17_DMA_RMP", 0, "TIM17", "UP", 1);
+    cfgr1_dma1!("TIM17_DMA_RMP", 1, "TIM17", "CH1", 7);
+    cfgr1_dma1!("TIM17_DMA_RMP", 1, "TIM17", "UP", 7);
 
-    cfgr1_dma1!("TIM16_DMA_RMP", false, "TIM16", "CH1", 3);
-    cfgr1_dma1!("TIM16_DMA_RMP", false, "TIM16", "UP", 3);
-    cfgr1_dma1!("TIM16_DMA_RMP", true, "TIM16", "CH1", 6);
-    cfgr1_dma1!("TIM16_DMA_RMP", true, "TIM16", "UP", 6);
+    cfgr1_dma1!("TIM16_DMA_RMP", 0, "TIM16", "CH1", 3);
+    cfgr1_dma1!("TIM16_DMA_RMP", 0, "TIM16", "UP", 3);
+    cfgr1_dma1!("TIM16_DMA_RMP", 1, "TIM16", "CH1", 6);
+    cfgr1_dma1!("TIM16_DMA_RMP", 1, "TIM16", "UP", 6);
 
-    cfgr1_dma2!("ADC2_DMA_RMP", false, "ADC2", "ADC2", 1);
-    cfgr1_dma2!("ADC2_DMA_RMP", false, "ADC4", "ADC4", 2);
-    cfgr1_dma2!("ADC2_DMA_RMP", true, "ADC2", "ADC2", 3);
-    cfgr1_dma2!("ADC2_DMA_RMP", true, "ADC4", "ADC4", 4);
+    cfgr1_dma2!("ADC2_DMA_RMP", 0, "ADC2", "ADC2", 1);
+    cfgr1_dma2!("ADC2_DMA_RMP", 0, "ADC4", "ADC4", 2);
+    cfgr1_dma2!("ADC2_DMA_RMP", 1, "ADC2", "ADC2", 3);
+    cfgr1_dma2!("ADC2_DMA_RMP", 1, "ADC4", "ADC4", 4);
 
     // RM0316 (STM32F303xB/C/D/E, STM32F358xC, STM32F398xE, STM32F303x6/8, STM32F328x8) states "ADC2 mapped on DMA2" if SYSCFG_CFGR3.ADC_DMA_RMP[1] is cleared,
     // but CFGR3 does only exist on devices not having DMA2 (STM32F303x6/x8, STM32F328, STM334xxx)!
@@ -239,69 +239,69 @@ fn build_remap_info_f0_bdma_v1() -> HashMap<RemapKey, Vec<DmaChannelRemap>> {
         };
     }
 
-    cfgr1!("TIM3_DMA_RMP", false, "TIM3", "CH1", 4);
-    cfgr1!("TIM3_DMA_RMP", false, "TIM3", "TRIG", 4);
-    cfgr1!("TIM3_DMA_RMP", true, "TIM3", "CH1", 6);
-    cfgr1!("TIM3_DMA_RMP", true, "TIM3", "TRIG", 6);
+    cfgr1!("TIM3_DMA_RMP", 0, "TIM3", "CH1", 4);
+    cfgr1!("TIM3_DMA_RMP", 0, "TIM3", "TRIG", 4);
+    cfgr1!("TIM3_DMA_RMP", 1, "TIM3", "CH1", 6);
+    cfgr1!("TIM3_DMA_RMP", 1, "TIM3", "TRIG", 6);
 
-    cfgr1!("TIM2_DMA_RMP", false, "TIM2", "CH2", 3);
-    cfgr1!("TIM2_DMA_RMP", false, "TIM2", "CH4", 4);
-    cfgr1!("TIM2_DMA_RMP", true, "TIM2", "CH2", 7);
-    cfgr1!("TIM2_DMA_RMP", true, "TIM2", "CH4", 7);
+    cfgr1!("TIM2_DMA_RMP", 0, "TIM2", "CH2", 3);
+    cfgr1!("TIM2_DMA_RMP", 0, "TIM2", "CH4", 4);
+    cfgr1!("TIM2_DMA_RMP", 1, "TIM2", "CH2", 7);
+    cfgr1!("TIM2_DMA_RMP", 1, "TIM2", "CH4", 7);
 
-    cfgr1!("TIM1_DMA_RMP", false, "TIM1", "CH1", 2);
-    cfgr1!("TIM1_DMA_RMP", false, "TIM1", "CH2", 3);
-    cfgr1!("TIM1_DMA_RMP", false, "TIM1", "CH3", 4);
-    cfgr1!("TIM1_DMA_RMP", true, "TIM1", "CH1", 6);
-    cfgr1!("TIM1_DMA_RMP", true, "TIM1", "CH2", 6);
-    cfgr1!("TIM1_DMA_RMP", true, "TIM1", "CH3", 6);
+    cfgr1!("TIM1_DMA_RMP", 0, "TIM1", "CH1", 2);
+    cfgr1!("TIM1_DMA_RMP", 0, "TIM1", "CH2", 3);
+    cfgr1!("TIM1_DMA_RMP", 0, "TIM1", "CH3", 4);
+    cfgr1!("TIM1_DMA_RMP", 1, "TIM1", "CH1", 6);
+    cfgr1!("TIM1_DMA_RMP", 1, "TIM1", "CH2", 6);
+    cfgr1!("TIM1_DMA_RMP", 1, "TIM1", "CH3", 6);
 
-    cfgr1!("I2C1_DMA_RMP", false, "I2C1", "RX", 3);
-    cfgr1!("I2C1_DMA_RMP", false, "I2C1", "TX", 2);
-    cfgr1!("I2C1_DMA_RMP", true, "I2C1", "RX", 7);
-    cfgr1!("I2C1_DMA_RMP", true, "I2C1", "TX", 6);
+    cfgr1!("I2C1_DMA_RMP", 0, "I2C1", "RX", 3);
+    cfgr1!("I2C1_DMA_RMP", 0, "I2C1", "TX", 2);
+    cfgr1!("I2C1_DMA_RMP", 1, "I2C1", "RX", 7);
+    cfgr1!("I2C1_DMA_RMP", 1, "I2C1", "TX", 6);
 
-    cfgr1!("USART3_DMA_RMP", false, "USART3", "RX", 6);
-    cfgr1!("USART3_DMA_RMP", false, "USART3", "TX", 7);
-    cfgr1!("USART3_DMA_RMP", true, "USART3", "RX", 3);
-    cfgr1!("USART3_DMA_RMP", true, "USART3", "TX", 2);
+    cfgr1!("USART3_DMA_RMP", 0, "USART3", "RX", 6);
+    cfgr1!("USART3_DMA_RMP", 0, "USART3", "TX", 7);
+    cfgr1!("USART3_DMA_RMP", 1, "USART3", "RX", 3);
+    cfgr1!("USART3_DMA_RMP", 1, "USART3", "TX", 2);
 
-    cfgr1!("USART2_DMA_RMP", false, "USART2", "RX", 5);
-    cfgr1!("USART2_DMA_RMP", false, "USART2", "TX", 4);
-    cfgr1!("USART2_DMA_RMP", true, "USART2", "RX", 6);
-    cfgr1!("USART2_DMA_RMP", true, "USART2", "TX", 7);
+    cfgr1!("USART2_DMA_RMP", 0, "USART2", "RX", 5);
+    cfgr1!("USART2_DMA_RMP", 0, "USART2", "TX", 4);
+    cfgr1!("USART2_DMA_RMP", 1, "USART2", "RX", 6);
+    cfgr1!("USART2_DMA_RMP", 1, "USART2", "TX", 7);
 
-    cfgr1!("SPI2_DMA_RMP", false, "SPI2", "RX", 4);
-    cfgr1!("SPI2_DMA_RMP", false, "SPI2", "TX", 5);
-    cfgr1!("SPI2_DMA_RMP", true, "SPI2", "RX", 6);
-    cfgr1!("SPI2_DMA_RMP", true, "SPI2", "TX", 7);
+    cfgr1!("SPI2_DMA_RMP", 0, "SPI2", "RX", 4);
+    cfgr1!("SPI2_DMA_RMP", 0, "SPI2", "TX", 5);
+    cfgr1!("SPI2_DMA_RMP", 1, "SPI2", "RX", 6);
+    cfgr1!("SPI2_DMA_RMP", 1, "SPI2", "TX", 7);
 
-    cfgr1_rmp2!(false, true, "TIM17", "CH1", 7);
-    cfgr1_rmp2!(false, true, "TIM17", "UP", 7);
+    cfgr1_rmp2!(0, 1, "TIM17", "CH1", 7);
+    cfgr1_rmp2!(0, 1, "TIM17", "UP", 7);
 
-    cfgr1_rmp2!(false, true, "TIM16", "CH1", 6);
-    cfgr1_rmp2!(false, true, "TIM16", "UP", 6);
+    cfgr1_rmp2!(0, 1, "TIM16", "CH1", 6);
+    cfgr1_rmp2!(0, 1, "TIM16", "UP", 6);
 
-    cfgr1_rmp2!(false, false, "TIM17", "CH1", 1);
-    cfgr1_rmp2!(false, false, "TIM17", "UP", 1);
+    cfgr1_rmp2!(0, 0, "TIM17", "CH1", 1);
+    cfgr1_rmp2!(0, 0, "TIM17", "UP", 1);
 
-    cfgr1_rmp2!(true, false, "TIM17", "CH1", 2);
-    cfgr1_rmp2!(true, false, "TIM17", "UP", 2);
+    cfgr1_rmp2!(1, 0, "TIM17", "CH1", 2);
+    cfgr1_rmp2!(1, 0, "TIM17", "UP", 2);
 
-    cfgr1_rmp2!(false, false, "TIM16", "CH1", 3);
-    cfgr1_rmp2!(false, false, "TIM16", "UP", 3);
+    cfgr1_rmp2!(0, 0, "TIM16", "CH1", 3);
+    cfgr1_rmp2!(0, 0, "TIM16", "UP", 3);
 
-    cfgr1_rmp2!(true, false, "TIM16", "CH1", 4);
-    cfgr1_rmp2!(true, false, "TIM16", "UP", 4);
+    cfgr1_rmp2!(1, 0, "TIM16", "CH1", 4);
+    cfgr1_rmp2!(1, 0, "TIM16", "UP", 4);
 
-    cfgr1!("USART1_RX_DMA_RMP", false, "USART1", "RX", 3);
-    cfgr1!("USART1_RX_DMA_RMP", true, "USART1", "RX", 5);
+    cfgr1!("USART1_RX_DMA_RMP", 0, "USART1", "RX", 3);
+    cfgr1!("USART1_RX_DMA_RMP", 1, "USART1", "RX", 5);
 
-    cfgr1!("USART1_TX_DMA_RMP", false, "USART1", "TX", 2);
-    cfgr1!("USART1_TX_DMA_RMP", true, "USART1", "TX", 4);
+    cfgr1!("USART1_TX_DMA_RMP", 0, "USART1", "TX", 2);
+    cfgr1!("USART1_TX_DMA_RMP", 1, "USART1", "TX", 4);
 
-    cfgr1!("ADC_DMA_RMP", false, "ADC", "ADC", 1);
-    cfgr1!("ADC_DMA_RMP", true, "ADC", "ADC", 2);
+    cfgr1!("ADC_DMA_RMP", 0, "ADC", "ADC", 1);
+    cfgr1!("ADC_DMA_RMP", 1, "ADC", "ADC", 2);
 
     remap_map
 }

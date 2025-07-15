@@ -259,5 +259,5 @@ pub struct PeripheralDmaChannelRemap {
     pub peripheral: &'static str,
     pub register: &'static str,
     pub field: &'static str,
-    pub value: &'static str,
+    pub value: u32,
 }

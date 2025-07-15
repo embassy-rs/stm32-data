@@ -206,7 +206,7 @@ pub mod chip {
                 pub peripheral: String,
                 pub register: String,
                 pub field: String,
-                pub value: String,
+                pub value: u32,
             }
         }
 
