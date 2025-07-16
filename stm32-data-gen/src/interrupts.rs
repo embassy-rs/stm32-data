@@ -275,15 +275,6 @@ impl ChipInterrupts {
                     .map(ToString::to_string)
                     .collect();
 
-                // If this is a USB_OTG_HS interrupt with no further signal details, map to GLOBAL
-                if peri_names.len() == 1
-                    && (peri_names[0] == "USB" || peri_names[0] == "USB_OTG_HS" || peri_names[0] == "USB_OTG_FS")
-                    && name == "USB_OTG_HS"
-                {
-                    interrupt_signals.insert((peri_names[0].clone(), "GLOBAL".to_string()));
-                    continue;
-                }
-
                 trace!("    peri_names: {peri_names:?}");
 
                 let name2 = {
@@ -430,7 +421,7 @@ fn tokenize_name(name: &str) -> Vec<String> {
     // Treat IRQ names are "tokens" separated by `_`, except some tokens
     // contain `_` themselves, such as `C1_RX`.
     let r = regex!(
-        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB1_OTG_HS|USB2_OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*"
+        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_OTG_HS|USB1_OTG_HS|USB2_OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*"
     );
     let name = name.to_ascii_uppercase();
 
