@@ -412,7 +412,7 @@ fn extract_pins_from_chip_group(group: &ChipGroup) -> HashMap<String, Vec<Pin>> 
         for signal in &pin.signals {
             let signal = &signal.name;
             // TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
-            if ["GPIO", "CEC", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) || signal.contains("EXTI") {
+            if ["GPIO", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) || signal.contains("EXTI") {
                 continue;
             }
             let Some((signal_peri, signal_name)) = parse_signal_name(signal) else {
