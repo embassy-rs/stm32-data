@@ -457,8 +457,17 @@ pub struct PeripheralDmaChannel {
     pub signal: String,
     pub channel: Option<String>,
     pub dmamux: Option<String>,
+    #[serde(default)]
+    pub remap: Vec<RemapInfo>,
     pub dma: Option<String>,
     pub request: Option<u32>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Hash)]
+pub struct RemapInfo {
+    pub register: String,
+    pub field: String,
+    pub value: u8,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Hash)]
