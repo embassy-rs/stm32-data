@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::Context;
-use stm32_data_serde::chip::core::peripheral::DmaChannelRemap;
+use stm32_data_serde::chip::core::peripheral::RemapInfo;
 
 use crate::normalize_peris::normalize_peri_name;
 
@@ -101,16 +101,15 @@ impl RemapKey {
 #[derive(Debug)]
 pub struct DmaChannels(pub HashMap<String, ChipDma>);
 
-fn cfgr(cfgr: u8, field: String, value: u32) -> DmaChannelRemap {
-    DmaChannelRemap {
-        peripheral: "SYSCFG".to_string(),
+fn cfgr(cfgr: u8, field: String, value: u8) -> RemapInfo {
+    RemapInfo {
         register: format!("CFGR{cfgr}").to_string(),
         field,
         value,
     }
 }
 
-fn build_remap_info_f3() -> HashMap<RemapKey, Vec<DmaChannelRemap>> {
+fn build_remap_info_f3() -> HashMap<RemapKey, Vec<RemapInfo>> {
     let mut remap_map = HashMap::new();
 
     macro_rules! cfgr1_dma1 {
@@ -211,7 +210,7 @@ fn build_remap_info_f3() -> HashMap<RemapKey, Vec<DmaChannelRemap>> {
     remap_map
 }
 
-fn build_remap_info_f0_bdma_v1() -> HashMap<RemapKey, Vec<DmaChannelRemap>> {
+fn build_remap_info_f0_bdma_v1() -> HashMap<RemapKey, Vec<RemapInfo>> {
     let mut remap_map = HashMap::new();
 
     macro_rules! cfgr1 {
