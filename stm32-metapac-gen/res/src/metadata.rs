@@ -228,6 +228,7 @@ pub struct PeripheralPin {
     pub pin: &'static str,
     pub signal: &'static str,
     pub af: Option<u8>,
+    pub afio: Option<RemapInfo>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
