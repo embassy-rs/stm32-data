@@ -13,8 +13,15 @@ block/RNG:
     description: data register
     byte_offset: 8
     access: Read
+  - name: NSCR
+    description: RNG noise source control register.
+    byte_offset: 12
+    fieldset: NSCR
   - name: HTCR
     description: health test control register
+    array:
+      len: 4
+      stride: 4
     byte_offset: 16
     fieldset: HTCR
 fieldset/CR:
@@ -59,7 +66,7 @@ fieldset/CR:
   - name: RNG_CONFIG1
     description: RNG configuration 1
     bit_offset: 20
-    bit_size: 6
+    bit_size: 8
     enum: RNG_CONFIG1
   - name: CONDRST
     description: Conditioning soft reset
@@ -76,7 +83,16 @@ fieldset/HTCR:
     description: Health test configuration
     bit_offset: 0
     bit_size: 32
-    enum: HTCFG
+fieldset/NSCR:
+  description: RNG noise source control register.
+  fields:
+  - name: EN_OSC
+    description: When the RNG is enabled (RNGEN bit set), each bit of this bit field enables one of the three inputs from the oscillator instance number X.
+    bit_offset: 0
+    bit_size: 3
+    array:
+      len: 6
+      stride: 3
 fieldset/SR:
   description: status register
   fields:
@@ -91,6 +107,10 @@ fieldset/SR:
   - name: SECS
     description: Seed error current status
     bit_offset: 2
+    bit_size: 1
+  - name: BUSY
+    description: Busy status
+    bit_offset: 4
     bit_size: 1
   - name: CEIS
     description: Clock error interrupt status
@@ -151,15 +171,6 @@ enum/CLKDIV:
   - name: Div_2_15
     description: Divide RNG clock by 2^15
     value: 15
-enum/HTCFG:
-  bit_size: 32
-  variants:
-  - name: Recommended
-    description: Recommended value for RNG certification (0x0000_AA74)
-    value: 43636
-  - name: Magic
-    description: Magic number to be written before any write (0x1759_0ABC)
-    value: 391711420
 enum/NISTC:
   bit_size: 1
   variants:
@@ -170,7 +181,7 @@ enum/NISTC:
     description: Custom values for NIST compliant RNG
     value: 1
 enum/RNG_CONFIG1:
-  bit_size: 6
+  bit_size: 8
   variants:
   - name: ConfigA
     description: Recommended value for config A (NIST certifiable)
