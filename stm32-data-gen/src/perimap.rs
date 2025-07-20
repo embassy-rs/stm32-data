@@ -204,6 +204,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:SAI:sai1_v1_0", ("sai", "v1", "SAI")),
     (".*:SAI:sai1_v1_1", ("sai", "v2", "SAI")),
     (".*:SAI:sai1_v1_2", ("sai", "v2", "SAI")),
+    (r"STM32WB[35]5.*:SAI\d?:.*", ("sai", "v1_4pdm", "SAI")),
     (".*:SAI:sai1_v2_0", ("sai", "v1", "SAI")),
     (".*:SAI:sai1_H7", ("sai", "v3_4pdm", "SAI")),
     (".*:SAI:sai1_v2_1", ("sai", "v4_4pdm", "SAI")),
