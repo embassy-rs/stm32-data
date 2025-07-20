@@ -135,6 +135,7 @@ impl ParsedRccs {
             "PLL1_P_DIV_2",
             "CLK48MOHCI",
             "DIV_RTCPRE",
+            "HSE_DIV_1024",
             "HSE_DIV_2",
             "HSE_DIV_RTCPRE",
             // N6 extra
@@ -178,6 +179,7 @@ impl ParsedRccs {
             regex!(r"^D\dCCIP\d?R/(.+)SEL$"),
             regex!(r"^CFGR\d/(.+)SW$"),
             regex!(r"^.+PERCKSELR/(.+)SEL$"),
+            regex!(r"^CSR/(.+)SEL$"),
         ];
         let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$"), regex!(r"^.+/TIMICSEL$")];
 
@@ -334,6 +336,7 @@ impl ParsedRccs {
             ("USB_OTG_HS", &["USB", "USBPHYC", "OTGHS", "CLK48", "ICLK"]),
             ("DTS", &["TMPSENS"]),
             ("SDMMC1", &["SDMMC1", "CLK48"]),
+            ("IPCC", &["RFWKP"]),
         ];
 
         let rcc = self.rccs.get(rcc_version)?;
