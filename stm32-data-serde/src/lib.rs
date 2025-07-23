@@ -178,6 +178,8 @@ pub mod chip {
                 pub signal: String,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub af: Option<u8>,
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub afio: Option<RemapInfo>,
             }
 
             #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]

@@ -86,6 +86,7 @@ impl Af {
                             pin: pin_name.clone(),
                             signal: signal_name.to_string(),
                             af: afn,
+                            afio: None,
                         },
                     );
                 }
