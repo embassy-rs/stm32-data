@@ -1,0 +1,206 @@
+block/RNG:
+  description: Random number generator
+  items:
+  - name: CR
+    description: control register
+    byte_offset: 0
+    fieldset: CR
+  - name: SR
+    description: status register
+    byte_offset: 4
+    fieldset: SR
+  - name: DR
+    description: data register
+    byte_offset: 8
+    access: Read
+  - name: NSCR
+    description: RNG noise source control register.
+    byte_offset: 12
+    fieldset: NSCR
+  - name: HTCR
+    description: health test control register
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 16
+    fieldset: HTCR
+fieldset/CR:
+  description: control register
+  fields:
+  - name: RNGEN
+    description: Random number generator enable
+    bit_offset: 2
+    bit_size: 1
+  - name: IE
+    description: Interrupt enable
+    bit_offset: 3
+    bit_size: 1
+  - name: CED
+    description: Clock error detection
+    bit_offset: 5
+    bit_size: 1
+  - name: ARDIS
+    description: Auto reset disable
+    bit_offset: 7
+    bit_size: 1
+  - name: RNG_CONFIG3
+    description: RNG configuration 3
+    bit_offset: 8
+    bit_size: 4
+    enum: RNG_CONFIG3
+  - name: NISTC
+    description: Non NIST compliant
+    bit_offset: 12
+    bit_size: 1
+    enum: NISTC
+  - name: RNG_CONFIG2
+    description: RNG configuration 2
+    bit_offset: 13
+    bit_size: 3
+    enum: RNG_CONFIG2
+  - name: CLKDIV
+    description: Clock divider factor
+    bit_offset: 16
+    bit_size: 4
+    enum: CLKDIV
+  - name: RNG_CONFIG1
+    description: RNG configuration 1
+    bit_offset: 20
+    bit_size: 8
+    enum: RNG_CONFIG1
+  - name: CONDRST
+    description: Conditioning soft reset
+    bit_offset: 30
+    bit_size: 1
+  - name: CONFIGLOCK
+    description: Config Lock
+    bit_offset: 31
+    bit_size: 1
+fieldset/HTCR:
+  description: Health test control register
+  fields:
+  - name: HTCFG
+    description: Health test configuration
+    bit_offset: 0
+    bit_size: 32
+fieldset/NSCR:
+  description: RNG noise source control register.
+  fields:
+  - name: EN_OSC
+    description: When the RNG is enabled (RNGEN bit set), each bit of this bit field enables one of the three inputs from the oscillator instance number X.
+    bit_offset: 0
+    bit_size: 3
+    array:
+      len: 6
+      stride: 3
+fieldset/SR:
+  description: status register
+  fields:
+  - name: DRDY
+    description: Data ready
+    bit_offset: 0
+    bit_size: 1
+  - name: CECS
+    description: Clock error current status
+    bit_offset: 1
+    bit_size: 1
+  - name: SECS
+    description: Seed error current status
+    bit_offset: 2
+    bit_size: 1
+  - name: BUSY
+    description: Busy status
+    bit_offset: 4
+    bit_size: 1
+  - name: CEIS
+    description: Clock error interrupt status
+    bit_offset: 5
+    bit_size: 1
+  - name: SEIS
+    description: Seed error interrupt status
+    bit_offset: 6
+    bit_size: 1
+enum/CLKDIV:
+  bit_size: 4
+  variants:
+  - name: NoDiv
+    description: Internal RNG clock after divider is similar to incoming RNG clock
+    value: 0
+  - name: Div_2_1
+    description: Divide RNG clock by 2^1
+    value: 1
+  - name: Div_2_2
+    description: Divide RNG clock by 2^2
+    value: 2
+  - name: Div_2_3
+    description: Divide RNG clock by 2^3
+    value: 3
+  - name: Div_2_4
+    description: Divide RNG clock by 2^4
+    value: 4
+  - name: Div_2_5
+    description: Divide RNG clock by 2^5
+    value: 5
+  - name: Div_2_6
+    description: Divide RNG clock by 2^6
+    value: 6
+  - name: Div_2_7
+    description: Divide RNG clock by 2^7
+    value: 7
+  - name: Div_2_8
+    description: Divide RNG clock by 2^8
+    value: 8
+  - name: Div_2_9
+    description: Divide RNG clock by 2^9
+    value: 9
+  - name: Div_2_10
+    description: Divide RNG clock by 2^10
+    value: 10
+  - name: Div_2_11
+    description: Divide RNG clock by 2^11
+    value: 11
+  - name: Div_2_12
+    description: Divide RNG clock by 2^12
+    value: 12
+  - name: Div_2_13
+    description: Divide RNG clock by 2^13
+    value: 13
+  - name: Div_2_14
+    description: Divide RNG clock by 2^14
+    value: 14
+  - name: Div_2_15
+    description: Divide RNG clock by 2^15
+    value: 15
+enum/NISTC:
+  bit_size: 1
+  variants:
+  - name: Default
+    description: Hardware default values for NIST compliant RNG. In this configuration per 128-bit output two conditioning loops are performed and 256 bits of noise source are used
+    value: 0
+  - name: Custom
+    description: Custom values for NIST compliant RNG
+    value: 1
+enum/RNG_CONFIG1:
+  bit_size: 8
+  variants:
+  - name: ConfigA
+    description: Recommended value for config A (NIST certifiable)
+    value: 15
+  - name: ConfigB
+    description: Recommended value for config B (not NIST certifiable)
+    value: 24
+enum/RNG_CONFIG2:
+  bit_size: 3
+  variants:
+  - name: ConfigA_B
+    description: Recommended value for config A and B
+    value: 0
+enum/RNG_CONFIG3:
+  bit_size: 4
+  variants:
+  - name: ConfigB
+    description: Recommended value for config B (not NIST certifiable)
+    value: 0
+  - name: ConfigA
+    description: Recommended value for config A (NIST certifiable)
+    value: 13
