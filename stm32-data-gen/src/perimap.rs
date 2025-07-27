@@ -22,6 +22,8 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:LPUART:sci3_v1_3", ("usart", "v4", "LPUART")),
     (".*:LPUART:sci3_v1_4", ("usart", "v4", "LPUART")),
     ("STM32[HU]5.*:RNG:.*", ("rng", "v3", "RNG")),
+    ("STM32WBA5.*:RNG:.*", ("rng", "v3", "RNG")),
+    ("STM32WBA6.*:RNG:.*", ("rng", "wba6", "RNG")),
     ("STM32U0.*:RNG:.*", ("rng", "v3", "RNG")),
     ("STM32L5.*:RNG:.*", ("rng", "v2", "RNG")),
     ("STM32L4[PQ]5.*:RNG:.*", ("rng", "v2", "RNG")),
