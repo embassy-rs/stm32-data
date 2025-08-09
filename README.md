@@ -9,8 +9,7 @@ The generated data includes:
   - Packages
 - :heavy_check_mark: Peripheral addresses and interrupts
 - :heavy_check_mark: Interrupts
-- :heavy_check_mark: GPIO AlternateFunction mappings (for all families except F1)
-- :x: GPIO mappings for F1
+- :heavy_check_mark: GPIO AlternateFunction mappings
 - :construction: Register blocks for all peripherals
 - :heavy_check_mark: DMA stream mappings
 - :heavy_check_mark: Per-package pinouts
