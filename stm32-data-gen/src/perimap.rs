@@ -451,6 +451,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32(C|G0|H7|WB|WL).*:TIM15:.*", ("timer", "v1", "TIM_2CH_CMP")),
     ("STM32(C|G0|H7|WB|WL).*:TIM(16|17):.*", ("timer", "v1", "TIM_1CH_CMP")),
     ("STM32[CGHUW].*:HRTIM1?:.*", ("hrtim", "v1", "HRTIM")),
+    ("STM32(H7(R|S)|N6).*:TIM9:.*", ("timer", "v1", "TIM_2CH")),
     // LPTIM for STM32Gx/Hx/Ux/Wx (and Cx) serials
     ("STM32U0.*:LPTIM.*:.*", ("lptim", "v2b", "LPTIM")),
     ("STM32(H5|U5|WBA).*:LPTIM[12356]:.*", ("lptim", "v2a", "LPTIM")),
