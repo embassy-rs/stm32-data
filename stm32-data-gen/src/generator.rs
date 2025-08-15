@@ -221,6 +221,128 @@ fn create_peripherals_for_chip(
         let mut pins = merge_afs_into_core_pins(chip_name, chip_af, &periph_pins, &pname);
         pins.append(&mut merge_i2s_into_spi_pins(chip_name, chip_af, &periph_pins, &pname));
 
+        let afio = if chip_name.starts_with("STM32F1") {
+            let peripheral = if pname == "CAN" {
+                "CAN1".to_string()
+            } else {
+                pname.replace("I2S", "SPI")
+            };
+
+            macro_rules! afio {
+                ($value:expr, $($pins:expr),+) => {
+                    stm32_data_serde::chip::core::peripheral::AfioValue {
+                        value: $value,
+                        pins: vec![$($pins.to_string()),+],
+                    }
+                }
+            }
+
+            #[rustfmt::skip]
+            let afio_mapr = match peripheral.as_str() {
+                "SPI3" => vec![
+                    afio!(0, "PC7", "PA15", "PB3", "PB4", "PB5"),
+                    afio!(1, "PC7", "PA4", "PC10", "PC11", "PC12"),
+                ],
+                "CAN2" => vec![
+                    afio!(0, "PB12", "PB13"),
+                    afio!(1, "PB5", "PB6"),
+                ],
+                "ETH" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3", "PC1", "PC2", "PC3", "PB5", "PB8", "PB10", "PB11", "PB12", "PB13", "PA7", "PC4", "PC5", "PB0", "PB1"),
+                    afio!(1, "PA0", "PA1", "PA2", "PA3", "PC1", "PC2", "PC3", "PB5", "PB8", "PB10", "PB11", "PB12", "PB13", "PD8", "PD9", "PD10", "PD11", "PD12"),
+                ],
+                "CAN1" => vec![
+                    afio!(0, "PA11", "PA12"),
+                    afio!(2, "PB8", "PB9"),
+                    afio!(3, "PD0", "PD1"),
+                ],
+                "TIM4" => vec![
+                    afio!(0, "PE0", "PB6", "PB7", "PB8", "PB9"),
+                    afio!(1, "PE0", "PD12", "PD13", "PD14", "PD15"),
+                ],
+                "TIM3" => vec![
+                    afio!(0, "PD2", "PA6", "PA7", "PB0", "PB1"),
+                    afio!(2, "PD2", "PB4", "PB5", "PB0", "PB1"),
+                    afio!(3, "PD2", "PC6", "PC7", "PC8", "PC9"),
+                ],
+                "TIM2" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3"),
+                    afio!(1, "PA15", "PB3", "PA2", "PA3"),
+                    afio!(2, "PA0", "PA1", "PB10", "PB11"),
+                    afio!(3, "PA15", "PB3", "PB10", "PB11"),
+                ],
+                "TIM1" => vec![
+                    afio!(0, "PA12", "PA8", "PA9", "PA10", "PA11", "PB12", "PB13", "PB14", "PB15"),
+                    afio!(1, "PA12", "PA8", "PA9", "PA10", "PA11", "PA6", "PA7", "PB0", "PB1"),
+                    afio!(3, "PE7", "PE9", "PE11", "PE13", "PE14", "PE15", "PE8", "PE10", "PE12"),
+                ],
+                "USART3" => vec![
+                    afio!(0, "PB10", "PB11", "PB12", "PB13", "PB14"),
+                    afio!(1, "PC10", "PC11", "PC12", "PB13", "PB14"),
+                    afio!(3, "PD8", "PD9", "PD10", "PD11", "PD12"),
+                ],
+                "USART2" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3", "PA4"),
+                    afio!(1, "PD3", "PD4", "PD5", "PD6", "PD7"),
+                ],
+                "USART1" => vec![
+                    afio!(0, "PA11", "PA12", "PA8", "PA9", "PA10"),
+                    afio!(1, "PA11", "PA12", "PA8", "PB6", "PB7"),
+                ],
+                "I2C1" => vec![
+                    afio!(0, "PB6", "PB7"),
+                    afio!(1, "PB8", "PB9"),
+                ],
+                "SPI1" => vec![
+                    afio!(0, "PA4", "PA5", "PA6", "PA7"),
+                    afio!(1, "PA15", "PB3", "PB4", "PB5"),
+                ],
+                _ => vec![],
+            };
+
+            let afio_mapr2 = if chip_name.starts_with("STM32F100") {
+                match peripheral.as_str() {
+                    "TIM12" => vec![afio!(0, "PC4", "PC5"), afio!(1, "PB12", "PB13")],
+                    "TIM14" => vec![afio!(0, "PC9"), afio!(1, "PB1")],
+                    "TIM13" => vec![afio!(0, "PC8"), afio!(1, "PB0")],
+                    "CEC" => vec![afio!(0, "PB8"), afio!(1, "PB10")],
+                    "TIM17" => vec![afio!(0, "PA10", "PB7", "PB9"), afio!(1, "PA10", "PB7", "PA7")],
+                    "TIM16" => vec![afio!(0, "PB5", "PB8"), afio!(1, "PB5", "PA6")],
+                    "TIM15" => vec![afio!(0, "PA9", "PA2", "PA3"), afio!(1, "PA9", "PB14", "PB15")],
+                    _ => vec![],
+                }
+            } else {
+                // STM32F10[12357]
+                match peripheral.as_str() {
+                    "TIM14" => vec![afio!(0, "PA7"), afio!(1, "PF9")],
+                    "TIM13" => vec![afio!(0, "PA6"), afio!(1, "PF8")],
+                    "TIM11" => vec![afio!(0, "PB9"), afio!(1, "PF7")],
+                    "TIM10" => vec![afio!(0, "PB8"), afio!(1, "PF6")],
+                    "TIM9" => vec![afio!(0, "PA2", "PA3"), afio!(1, "PE5", "PE6")],
+                    _ => vec![],
+                }
+            };
+
+            let field = format!("{peripheral}_REMAP");
+            if afio_mapr.len() > 0 {
+                Some(stm32_data_serde::chip::core::peripheral::Afio {
+                    register: "MAPR".to_string(),
+                    field,
+                    values: afio_mapr,
+                })
+            } else if afio_mapr2.len() > 0 {
+                Some(stm32_data_serde::chip::core::peripheral::Afio {
+                    register: "MAPR2".to_string(),
+                    field,
+                    values: afio_mapr2,
+                })
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
         let p = stm32_data_serde::chip::core::Peripheral {
             name: pname.clone(),
             address,
@@ -229,6 +351,7 @@ fn create_peripherals_for_chip(
             interrupts: Vec::new(),
             dma_channels: Vec::new(),
             pins,
+            afio,
         };
 
         peripherals.insert(p.name.clone(), p);
@@ -423,7 +546,6 @@ fn extract_pins_from_chip_group(group: &ChipGroup) -> HashMap<String, Vec<Pin>> 
                     pin: pin_name.clone(),
                     signal: signal_name.to_string(),
                     af: None,
-                    afio: None,
                 },
             );
         }
@@ -531,196 +653,6 @@ fn merge_periph_pins_info(
         if let Some(af) = af {
             pin.af = Some(af);
         }
-
-        if chip_name.starts_with("STM32F1") {
-            let peripheral = if periph_name == "CAN" {
-                "CAN1".to_string()
-            } else {
-                periph_name.replace("I2S", "SPI")
-            };
-
-            let (register, value) = match (peripheral.as_str(), pin.signal.as_str(), pin.pin.as_str()) {
-                // partial remaps are omitted, because the PAC cannot know if the user wants a full or partial remap
-                ("I2S1", "CK", "PA5") => ("MAPR", 0),
-                ("I2S1", "SD", "PA7") => ("MAPR", 0),
-                ("I2S1", "WS", "PA4") => ("MAPR", 0),
-                ("I2S1", "CK", "PB3") => ("MAPR", 0),
-                ("I2S1", "SD", "PB5") => ("MAPR", 0),
-                ("I2S1", "WS", "PB4") => ("MAPR", 0),
-                ("I2S2", "CK", "PA9") => ("MAPR", 0),
-                ("I2S2", "SD", "PA10") => ("MAPR", 0),
-                ("I2S2", "WS", "PA8") => ("MAPR", 0),
-                ("I2S2", "CK", "PB10") => ("MAPR", 0),
-                ("I2S2", "SD", "PB12") => ("MAPR", 0),
-                ("I2S2", "WS", "PB11") => ("MAPR", 0),
-                ("SPI3", "NSS", "PA15") => ("MAPR", 0),
-                ("SPI3", "WS", "PA15") => ("MAPR", 0),
-                ("SPI3", "SCK", "PB3") => ("MAPR", 0),
-                ("SPI3", "CK", "PB3") => ("MAPR", 0),
-                ("SPI3", "MISO", "PB4") => ("MAPR", 0),
-                ("SPI3", "MOSI", "PB5") => ("MAPR", 0),
-                ("SPI3", "SD", "PB5") => ("MAPR", 0),
-                ("SPI3", "NSS", "PA4") => ("MAPR", 1),
-                ("SPI3", "WS", "PA4") => ("MAPR", 1),
-                ("SPI3", "SCK", "PC10") => ("MAPR", 1),
-                ("SPI3", "CK", "PC10") => ("MAPR", 1),
-                ("SPI3", "MISO", "PC11") => ("MAPR", 1),
-                ("SPI3", "MOSI", "PC12") => ("MAPR", 1),
-                ("SPI3", "SD", "PC12") => ("MAPR", 1),
-                ("CAN2", "RX", "PB12") => ("MAPR", 0),
-                ("CAN2", "TX", "PB13") => ("MAPR", 0),
-                ("CAN2", "RX", "PB5") => ("MAPR", 1),
-                ("CAN2", "TX", "PB6") => ("MAPR", 1),
-                ("ETH", "RX_DV", "PA7") => ("MAPR", 0),
-                ("ETH", "CRS_DV", "PA7") => ("MAPR", 0),
-                ("ETH", "RXD0", "PC4") => ("MAPR", 0),
-                ("ETH", "RXD1", "PC5") => ("MAPR", 0),
-                ("ETH", "RXD2", "PB0") => ("MAPR", 0),
-                ("ETH", "RXD3", "PB1") => ("MAPR", 0),
-                ("ETH", "RX_DV", "PD8") => ("MAPR", 1),
-                ("ETH", "CRS_DV", "PD8") => ("MAPR", 1),
-                ("ETH", "RXD0", "PD9") => ("MAPR", 1),
-                ("ETH", "RXD1", "PD10") => ("MAPR", 1),
-                ("ETH", "RXD2", "PD11") => ("MAPR", 1),
-                ("ETH", "RXD3", "PD12") => ("MAPR", 1),
-                ("CAN1", "RX", "PA11") => ("MAPR", 0),
-                ("CAN1", "TX", "PA12") => ("MAPR", 0),
-                ("CAN1", "RX", "PB8") => ("MAPR", 2),
-                ("CAN1", "TX", "PB9") => ("MAPR", 2),
-                ("CAN1", "RX", "PD0") => ("MAPR", 3),
-                ("CAN1", "TX", "PD1") => ("MAPR", 3),
-                ("TIM4", "CH1", "PB6") => ("MAPR", 0),
-                ("TIM4", "CH2", "PB7") => ("MAPR", 0),
-                ("TIM4", "CH3", "PB8") => ("MAPR", 0),
-                ("TIM4", "CH4", "PB9") => ("MAPR", 0),
-                ("TIM4", "CH1", "PD12") => ("MAPR", 1),
-                ("TIM4", "CH2", "PD13") => ("MAPR", 1),
-                ("TIM4", "CH3", "PD14") => ("MAPR", 1),
-                ("TIM4", "CH4", "PD15") => ("MAPR", 1),
-                ("TIM3", "CH1", "PA6") => ("MAPR", 0),
-                ("TIM3", "CH2", "PA7") => ("MAPR", 0),
-                ("TIM3", "CH3", "PB0") => ("MAPR", 0),
-                ("TIM3", "CH4", "PB1") => ("MAPR", 0),
-                // partial remap for TIM3 (value=2) skipped
-                ("TIM3", "CH1", "PC6") => ("MAPR", 3),
-                ("TIM3", "CH2", "PC7") => ("MAPR", 3),
-                ("TIM3", "CH3", "PC8") => ("MAPR", 3),
-                ("TIM3", "CH4", "PC9") => ("MAPR", 3),
-                ("TIM2", "CH1", "PA0") => ("MAPR", 0),
-                ("TIM2", "ETR", "PA0") => ("MAPR", 0),
-                ("TIM2", "CH2", "PA1") => ("MAPR", 0),
-                ("TIM2", "CH3", "PA2") => ("MAPR", 0),
-                ("TIM2", "CH4", "PA3") => ("MAPR", 0),
-                // partial remaps for TIM2 (value=1,2) skipped
-                ("TIM2", "CH1", "PA15") => ("MAPR", 3),
-                ("TIM2", "ETR", "PA15") => ("MAPR", 3),
-                ("TIM2", "CH2", "PB3") => ("MAPR", 3),
-                ("TIM2", "CH3", "PB10") => ("MAPR", 3),
-                ("TIM2", "CH4", "PB11") => ("MAPR", 3),
-                ("TIM1", "ETR", "PA12") => ("MAPR", 0),
-                ("TIM1", "CH1", "PA8") => ("MAPR", 0),
-                ("TIM1", "CH2", "PA9") => ("MAPR", 0),
-                ("TIM1", "CH3", "PA10") => ("MAPR", 0),
-                ("TIM1", "CH4", "PA11") => ("MAPR", 0),
-                ("TIM1", "BKIN", "PB12") => ("MAPR", 0),
-                ("TIM1", "CH1N", "PB13") => ("MAPR", 0),
-                ("TIM1", "CH2N", "PB14") => ("MAPR", 0),
-                ("TIM1", "CH3N", "PB15") => ("MAPR", 0),
-                // partial remap for TIM1 (value=1) skipped
-                ("TIM1", "ETR", "PE7") => ("MAPR", 3),
-                ("TIM1", "CH1", "PE9") => ("MAPR", 3),
-                ("TIM1", "CH2", "PE11") => ("MAPR", 3),
-                ("TIM1", "CH3", "PE13") => ("MAPR", 3),
-                ("TIM1", "CH4", "PE14") => ("MAPR", 3),
-                ("TIM1", "BKIN", "PE15") => ("MAPR", 3),
-                ("TIM1", "CH1N", "PE8") => ("MAPR", 3),
-                ("TIM1", "CH2N", "PE10") => ("MAPR", 3),
-                ("TIM1", "CH3N", "PE12") => ("MAPR", 3),
-                ("USART3", "TX", "PB10") => ("MAPR", 0),
-                ("USART3", "RX", "PB11") => ("MAPR", 0),
-                ("USART3", "CK", "PB12") => ("MAPR", 0),
-                ("USART3", "CTS", "PB13") => ("MAPR", 0),
-                ("USART3", "RTS", "PB14") => ("MAPR", 0),
-                // partial remap for USART3 (value=1) skipped
-                ("USART3", "TX", "PD8") => ("MAPR", 3),
-                ("USART3", "RX", "PD9") => ("MAPR", 3),
-                ("USART3", "CK", "PD10") => ("MAPR", 3),
-                ("USART3", "CTS", "PD11") => ("MAPR", 3),
-                ("USART3", "RTS", "PD12") => ("MAPR", 3),
-                ("USART2", "CTS", "PA0") => ("MAPR", 0),
-                ("USART2", "RTS", "PA1") => ("MAPR", 0),
-                ("USART2", "TX", "PA2") => ("MAPR", 0),
-                ("USART2", "RX", "PA3") => ("MAPR", 0),
-                ("USART2", "CK", "PA4") => ("MAPR", 0),
-                ("USART2", "CTS", "PD3") => ("MAPR", 1),
-                ("USART2", "RTS", "PD4") => ("MAPR", 1),
-                ("USART2", "TX", "PD5") => ("MAPR", 1),
-                ("USART2", "RX", "PD6") => ("MAPR", 1),
-                ("USART2", "CK", "PD7") => ("MAPR", 1),
-                ("USART1", "TX", "PA9") => ("MAPR", 0),
-                ("USART1", "RX", "PA10") => ("MAPR", 0),
-                ("USART1", "TX", "PB6") => ("MAPR", 1),
-                ("USART1", "RX", "PB7") => ("MAPR", 2),
-                ("I2C1", "SCL", "PB6") => ("MAPR", 0),
-                ("I2C1", "SDA", "PB7") => ("MAPR", 0),
-                ("I2C1", "SCL", "PB8") => ("MAPR", 1),
-                ("I2C1", "SDA", "PB9") => ("MAPR", 1),
-                ("SPI1", "NSS", "PA4") => ("MAPR", 0),
-                ("SPI1", "SCK", "PA5") => ("MAPR", 0),
-                ("SPI1", "MISO", "PA6") => ("MAPR", 0),
-                ("SPI1", "MOSI", "PA7") => ("MAPR", 0),
-                ("SPI1", "NSS", "PA15") => ("MAPR", 1),
-                ("SPI1", "SCK", "PB3") => ("MAPR", 1),
-                ("SPI1", "MISO", "PB4") => ("MAPR", 1),
-                ("SPI1", "MOSI", "PB5") => ("MAPR", 1),
-                _ => {
-                    if chip_name.starts_with("STM32F100") {
-                        match (peripheral.as_str(), pin.signal.as_str(), pin.pin.as_str()) {
-                            ("TIM12", "CH1", "PC4") => ("MAPR2", 0),
-                            ("TIM12", "CH2", "PC5") => ("MAPR2", 0),
-                            ("TIM12", "CH1", "PB12") => ("MAPR2", 1),
-                            ("TIM12", "CH2", "PB13") => ("MAPR2", 2),
-                            ("TIM14", "CH1", "PC9") => ("MAPR2", 0),
-                            ("TIM14", "CH1", "PB1") => ("MAPR2", 1),
-                            ("TIM13", "CH1", "PC8") => ("MAPR2", 0),
-                            ("TIM13", "CH1", "PB0") => ("MAPR2", 1),
-                            ("CEC", "CEC", "PB8") => ("MAPR2", 0),
-                            ("CEC", "CEC", "PB10") => ("MAPR2", 1),
-                            ("TIM17", "CH1", "PB9") => ("MAPR2", 0),
-                            ("TIM17", "CH1", "PA7") => ("MAPR2", 1),
-                            ("TIM16", "CH1", "PB8") => ("MAPR2", 0),
-                            ("TIM16", "CH1", "PA6") => ("MAPR2", 1),
-                            ("TIM15", "CH1", "PA2") => ("MAPR2", 0),
-                            ("TIM15", "CH2", "PA3") => ("MAPR2", 0),
-                            ("TIM15", "CH1", "PB14") => ("MAPR2", 1),
-                            ("TIM15", "CH2", "PB15") => ("MAPR2", 1),
-                            _ => continue,
-                        }
-                    } else {
-                        // STM32F10[12357]
-                        match (peripheral.as_str(), pin.signal.as_str(), pin.pin.as_str()) {
-                            ("TIM14", "CH1", "PA6") => ("MAPR2", 0),
-                            ("TIM14", "CH1", "PF8") => ("MAPR2", 1),
-                            ("TIM11", "CH1", "PB9") => ("MAPR2", 0),
-                            ("TIM11", "CH1", "PF7") => ("MAPR2", 1),
-                            ("TIM10", "CH1", "PB8") => ("MAPR2", 0),
-                            ("TIM10", "CH1", "PF6") => ("MAPR2", 1),
-                            ("TIM9", "CH1", "PA2") => ("MAPR2", 0),
-                            ("TIM9", "CH2", "PA3") => ("MAPR2", 0),
-                            ("TIM9", "CH1", "PE5") => ("MAPR2", 1),
-                            ("TIM9", "CH2", "PE6") => ("MAPR2", 1),
-                            _ => continue,
-                        }
-                    }
-                }
-            };
-
-            pin.afio = Some(stm32_data_serde::chip::core::peripheral::RemapInfo {
-                register: register.to_string(),
-                field: format!("{}_REMAP", peripheral),
-                value,
-            });
-        };
     }
 
     // apply some renames

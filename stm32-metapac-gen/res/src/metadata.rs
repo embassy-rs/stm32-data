@@ -178,6 +178,7 @@ pub struct Peripheral {
     pub pins: &'static [PeripheralPin],
     pub dma_channels: &'static [PeripheralDmaChannel],
     pub interrupts: &'static [PeripheralInterrupt],
+    pub afio: Option<PeripheralAfio>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -192,6 +193,19 @@ pub struct PeripheralRegisters {
 pub struct PeripheralInterrupt {
     pub signal: &'static str,
     pub interrupt: &'static str,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralAfio {
+    pub register: &'static str,
+    pub field: &'static str,
+    pub values: &'static [PeripheralAfioValue],
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralAfioValue {
+    pub value: u8,
+    pub pins: &'static [&'static str],
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -228,7 +242,6 @@ pub struct PeripheralPin {
     pub pin: &'static str,
     pub signal: &'static str,
     pub af: Option<u8>,
-    pub afio: Option<RemapInfo>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
