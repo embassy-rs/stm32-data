@@ -374,6 +374,8 @@ pub struct Peripheral {
     pub dma_channels: Vec<PeripheralDmaChannel>,
     #[serde(default)]
     pub interrupts: Vec<PeripheralInterrupt>,
+    #[serde(default)]
+    pub afio: Option<PeripheralAfio>,
 }
 
 // Notice:
@@ -388,6 +390,7 @@ impl std::fmt::Debug for Peripheral {
             .field("pins", &self.pins)
             .field("dma_channels", &self.dma_channels)
             .field("interrupts", &self.interrupts)
+            .field("afio", &self.afio)
             .finish()
     }
 }
@@ -396,6 +399,21 @@ impl std::fmt::Debug for Peripheral {
 pub struct PeripheralInterrupt {
     pub signal: String,
     pub interrupt: String,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct PeripheralAfio {
+    pub register: String,
+    pub field: String,
+    #[serde(default)]
+    pub values: Vec<PeripheralAfioValue>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct PeripheralAfioValue {
+    pub value: u8,
+    #[serde(default)]
+    pub pins: Vec<String>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]

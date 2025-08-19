@@ -221,6 +221,128 @@ fn create_peripherals_for_chip(
         let mut pins = merge_afs_into_core_pins(chip_name, chip_af, &periph_pins, &pname);
         pins.append(&mut merge_i2s_into_spi_pins(chip_name, chip_af, &periph_pins, &pname));
 
+        let afio = if chip_name.starts_with("STM32F1") {
+            let peripheral = if pname == "CAN" {
+                "CAN1".to_string()
+            } else {
+                pname.replace("I2S", "SPI")
+            };
+
+            macro_rules! afio {
+                ($value:expr, $($pins:expr),+) => {
+                    stm32_data_serde::chip::core::peripheral::AfioValue {
+                        value: $value,
+                        pins: vec![$($pins.to_string()),+],
+                    }
+                }
+            }
+
+            #[rustfmt::skip]
+            let afio_mapr = match peripheral.as_str() {
+                "SPI3" => vec![
+                    afio!(0, "PC7", "PA15", "PB3", "PB4", "PB5"),
+                    afio!(1, "PC7", "PA4", "PC10", "PC11", "PC12"),
+                ],
+                "CAN2" => vec![
+                    afio!(0, "PB12", "PB13"),
+                    afio!(1, "PB5", "PB6"),
+                ],
+                "ETH" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3", "PC1", "PC2", "PC3", "PB5", "PB8", "PB10", "PB11", "PB12", "PB13", "PA7", "PC4", "PC5", "PB0", "PB1"),
+                    afio!(1, "PA0", "PA1", "PA2", "PA3", "PC1", "PC2", "PC3", "PB5", "PB8", "PB10", "PB11", "PB12", "PB13", "PD8", "PD9", "PD10", "PD11", "PD12"),
+                ],
+                "CAN1" => vec![
+                    afio!(0, "PA11", "PA12"),
+                    afio!(2, "PB8", "PB9"),
+                    afio!(3, "PD0", "PD1"),
+                ],
+                "TIM4" => vec![
+                    afio!(0, "PE0", "PB6", "PB7", "PB8", "PB9"),
+                    afio!(1, "PE0", "PD12", "PD13", "PD14", "PD15"),
+                ],
+                "TIM3" => vec![
+                    afio!(0, "PD2", "PA6", "PA7", "PB0", "PB1"),
+                    afio!(2, "PD2", "PB4", "PB5", "PB0", "PB1"),
+                    afio!(3, "PD2", "PC6", "PC7", "PC8", "PC9"),
+                ],
+                "TIM2" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3"),
+                    afio!(1, "PA15", "PB3", "PA2", "PA3"),
+                    afio!(2, "PA0", "PA1", "PB10", "PB11"),
+                    afio!(3, "PA15", "PB3", "PB10", "PB11"),
+                ],
+                "TIM1" => vec![
+                    afio!(0, "PA12", "PA8", "PA9", "PA10", "PA11", "PB12", "PB13", "PB14", "PB15"),
+                    afio!(1, "PA12", "PA8", "PA9", "PA10", "PA11", "PA6", "PA7", "PB0", "PB1"),
+                    afio!(3, "PE7", "PE9", "PE11", "PE13", "PE14", "PE15", "PE8", "PE10", "PE12"),
+                ],
+                "USART3" => vec![
+                    afio!(0, "PB10", "PB11", "PB12", "PB13", "PB14"),
+                    afio!(1, "PC10", "PC11", "PC12", "PB13", "PB14"),
+                    afio!(3, "PD8", "PD9", "PD10", "PD11", "PD12"),
+                ],
+                "USART2" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3", "PA4"),
+                    afio!(1, "PD3", "PD4", "PD5", "PD6", "PD7"),
+                ],
+                "USART1" => vec![
+                    afio!(0, "PA11", "PA12", "PA8", "PA9", "PA10"),
+                    afio!(1, "PA11", "PA12", "PA8", "PB6", "PB7"),
+                ],
+                "I2C1" => vec![
+                    afio!(0, "PB6", "PB7"),
+                    afio!(1, "PB8", "PB9"),
+                ],
+                "SPI1" => vec![
+                    afio!(0, "PA4", "PA5", "PA6", "PA7"),
+                    afio!(1, "PA15", "PB3", "PB4", "PB5"),
+                ],
+                _ => vec![],
+            };
+
+            let afio_mapr2 = if chip_name.starts_with("STM32F100") {
+                match peripheral.as_str() {
+                    "TIM12" => vec![afio!(0, "PC4", "PC5"), afio!(1, "PB12", "PB13")],
+                    "TIM14" => vec![afio!(0, "PC9"), afio!(1, "PB1")],
+                    "TIM13" => vec![afio!(0, "PC8"), afio!(1, "PB0")],
+                    "CEC" => vec![afio!(0, "PB8"), afio!(1, "PB10")],
+                    "TIM17" => vec![afio!(0, "PA10", "PB7", "PB9"), afio!(1, "PA10", "PB7", "PA7")],
+                    "TIM16" => vec![afio!(0, "PB5", "PB8"), afio!(1, "PB5", "PA6")],
+                    "TIM15" => vec![afio!(0, "PA9", "PA2", "PA3"), afio!(1, "PA9", "PB14", "PB15")],
+                    _ => vec![],
+                }
+            } else {
+                // STM32F10[12357]
+                match peripheral.as_str() {
+                    "TIM14" => vec![afio!(0, "PA7"), afio!(1, "PF9")],
+                    "TIM13" => vec![afio!(0, "PA6"), afio!(1, "PF8")],
+                    "TIM11" => vec![afio!(0, "PB9"), afio!(1, "PF7")],
+                    "TIM10" => vec![afio!(0, "PB8"), afio!(1, "PF6")],
+                    "TIM9" => vec![afio!(0, "PA2", "PA3"), afio!(1, "PE5", "PE6")],
+                    _ => vec![],
+                }
+            };
+
+            let field = format!("{peripheral}_REMAP");
+            if afio_mapr.len() > 0 {
+                Some(stm32_data_serde::chip::core::peripheral::Afio {
+                    register: "MAPR".to_string(),
+                    field,
+                    values: afio_mapr,
+                })
+            } else if afio_mapr2.len() > 0 {
+                Some(stm32_data_serde::chip::core::peripheral::Afio {
+                    register: "MAPR2".to_string(),
+                    field,
+                    values: afio_mapr2,
+                })
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
         let p = stm32_data_serde::chip::core::Peripheral {
             name: pname.clone(),
             address,
@@ -229,6 +351,7 @@ fn create_peripherals_for_chip(
             interrupts: Vec::new(),
             dma_channels: Vec::new(),
             pins,
+            afio,
         };
 
         peripherals.insert(p.name.clone(), p);
@@ -498,11 +621,6 @@ fn merge_periph_pins_info(
     core_pins: &mut [stm32_data_serde::chip::core::peripheral::Pin],
     af_pins: &[stm32_data_serde::chip::core::peripheral::Pin],
 ) {
-    if chip_name.contains("STM32F1") {
-        // TODO: actually handle the F1 AFIO information when it will be extracted
-        return;
-    }
-
     // convert to hashmap
     let af_pins: HashMap<(&str, &str), Option<u8>> = af_pins
         .iter()
