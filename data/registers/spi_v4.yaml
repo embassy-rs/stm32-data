@@ -75,6 +75,10 @@ block/SPI:
     description: Underrun Data Register
     byte_offset: 76
     fieldset: UDRDR
+  - name: I2SCFGR
+    description: I2S Configuration Register
+    byte_offset: 80
+    fieldset: I2SCFGR
 fieldset/CFG1:
   description: configuration register 1
   fields:
@@ -92,6 +96,11 @@ fieldset/CFG1:
     bit_offset: 9
     bit_size: 2
     enum: UDRCFG
+  - name: UDRDET
+    description: Detection of underrun condition at slave transmitter
+    bit_offset: 11
+    bit_size: 2
+    enum: UDRDET
   - name: RXDMAEN
     description: Rx DMA stream enable
     bit_offset: 14
@@ -113,10 +122,6 @@ fieldset/CFG1:
     bit_offset: 28
     bit_size: 3
     enum: MBR
-  - name: BPASS
-    description: bypass of the prescaler at master baud rate clock generator
-    bit_offset: 31
-    bit_size: 1
 fieldset/CFG2:
   description: configuration register 2
   fields:
@@ -128,18 +133,6 @@ fieldset/CFG2:
     description: Master Inter-Data Idleness
     bit_offset: 4
     bit_size: 4
-  - name: RDIOM
-    description: |-
-      RDY signal input/output management
-       Note: When DSIZE at the CFG1 register is configured shorter than 8-bit, the RDIOM bit has to be kept at zero.
-    bit_offset: 13
-    bit_size: 1
-    enum: RDIOM
-  - name: RDIOP
-    description: RDY signal input/output polarity
-    bit_offset: 14
-    bit_size: 1
-    enum: RDIOP
   - name: IOSWP
     description: Swap functionality of MISO and MOSI pins
     bit_offset: 15
@@ -249,6 +242,10 @@ fieldset/CR2:
     description: Number of data at current transfer
     bit_offset: 0
     bit_size: 16
+  - name: TSER
+    description: Number of data transfer extension to be reload into TSIZE just when a previous
+    bit_offset: 16
+    bit_size: 16
 fieldset/CRCPOLY:
   description: Polynomial Register
   fields:
@@ -299,6 +296,10 @@ fieldset/IER:
     description: Mode Fault interrupt enable
     bit_offset: 9
     bit_size: 1
+  - name: TSERFIE
+    description: Additional number of transactions reload interrupt enable
+    bit_offset: 10
+    bit_size: 1
 fieldset/IFCR:
   description: Interrupt/Status Flags Clear Register
   fields:
@@ -329,6 +330,10 @@ fieldset/IFCR:
   - name: MODFC
     description: Mode Fault flag clear
     bit_offset: 9
+    bit_size: 1
+  - name: TSERFC
+    description: TSERFC flag clear
+    bit_offset: 10
     bit_size: 1
   - name: SUSPC
     description: SUSPend flag clear
@@ -384,6 +389,10 @@ fieldset/SR:
     description: Mode Fault
     bit_offset: 9
     bit_size: 1
+  - name: TSERF
+    description: Additional number of SPI data to be transacted was reload
+    bit_offset: 10
+    bit_size: 1
   - name: SUSP
     description: SUSPend
     bit_offset: 11
@@ -420,6 +429,70 @@ fieldset/UDRDR:
     description: Data at slave underrun condition
     bit_offset: 0
     bit_size: 32
+fieldset/I2SCFGR:
+  description: I2S Configuration Register
+  fields:
+  - name: MCKOE
+    description: Master clock output enable
+    bit_offset: 25
+    bit_size: 1
+  - name: ODD
+    description: Odd factor for the prescaler
+    bit_offset: 24
+    bit_size: 1
+    enum: ODD
+  - name: I2SDIV
+    description: I2S linear prescaler
+    bit_offset: 16
+    bit_size: 8
+  - name: DATFMT
+    description: Data format
+    bit_offset: 14
+    bit_size: 1
+    enum: DATFMT
+  - name: WSINV
+    description: Word select inversion
+    bit_offset: 13
+    bit_size: 1
+  - name: FIXCH
+    description: Fixed channel length in slave
+    bit_offset: 12
+    bit_size: 1
+    enum: FIXCH
+  - name: CKPOL
+    description: Serial audio clock polarity
+    bit_offset: 11
+    bit_size: 1
+    enum: CKPOL
+  - name: CHLEN
+    description: Channel length (number of bits per audio channel)
+    bit_offset: 10
+    bit_size: 1
+    enum: CHLEN
+  - name: DATLEN
+    description: Data length to be transferred
+    bit_offset: 8
+    bit_size: 2
+    enum: DATLEN
+  - name: PCMSYNC
+    description: PCM frame synchronization
+    bit_offset: 7
+    bit_size: 1
+    enum: PCMSYNC
+  - name: I2SSTD
+    description: I2S standard selection
+    bit_offset: 4
+    bit_size: 2
+    enum: I2SSTD
+  - name: I2SCFG
+    description: I2S configuration mode
+    bit_offset: 1
+    bit_size: 3
+    enum: I2SCFG
+  - name: I2SMOD
+    description: I2S mode selection
+    bit_offset: 0
+    bit_size: 1
 enum/COMM:
   bit_size: 2
   variants:
@@ -448,10 +521,10 @@ enum/CPOL:
   bit_size: 1
   variants:
   - name: IdleLow
-    description: CK to 0 when idle
+    description: SCK to 0 when idle
     value: 0
   - name: IdleHigh
-    description: CK to 1 when idle
+    description: SCK to 1 when idle
     value: 1
 enum/FTHLV:
   bit_size: 4
@@ -567,24 +640,6 @@ enum/RCRCINI:
   - name: AllOnes
     description: All ones RX CRC initialization pattern
     value: 1
-enum/RDIOM:
-  bit_size: 1
-  variants:
-  - name: PermanentlyActive
-    description: RDY signal is defined internally fixed as permanently active (RDIOP setting has no effect)
-    value: 0
-  - name: FromInput
-    description: RDY signal is overtaken from alternate function input (at master case) or output (at slave case) of the dedicated pin (RDIOP setting takes effect)
-    value: 1
-enum/RDIOP:
-  bit_size: 1
-  variants:
-  - name: ReadyHigh
-    description: high level of the signal means the slave is ready for communication
-    value: 0
-  - name: ReadyLow
-    description: low level of the signal means the slave is ready for communication
-    value: 1
 enum/RXPLVL:
   bit_size: 2
   variants:
@@ -657,3 +712,117 @@ enum/UDRCFG:
   - name: RepeatTransmitted
     description: Slave repeats last transmitted data frame
     value: 2
+enum/UDRDET:
+  bit_size: 2
+  variants:
+  - name: StartOfFrame
+    description: Underrun is detected at begin of data frame
+    value: 0
+  - name: EndOfFrame
+    description: Underrun is detected at end of last data frame
+    value: 1
+  - name: StartOfSlaveSelect
+    description: Underrun is detected at begin of active SS signal
+    value: 2
+enum/ODD:
+  bit_size: 1
+  variants:
+  - name: Even
+    description: Real divider value is I2SDIV*2
+    value: 0
+  - name: Odd
+    description: Real divider value is I2SDIV*2 + 1
+    value: 1
+enum/DATFMT:
+  bit_size: 1
+  variants:
+  - name: RightAligned
+    description: The data inside RXDR and TXDR are right aligned
+    value: 0
+  - name: LeftAligned
+    description: The data inside RXDR and TXDR are left aligned
+    value: 1
+enum/FIXCH:
+  bit_size: 1
+  variants:
+  - name: NotFixed
+    description: The channel length in slave mode is different from 16 or 32 bits (CHLEN not taken into account)
+    value: 0
+  - name: Fixed
+    description: The channel length in slave mode is supposed to be 16 or 32 bits (according to CHLEN)
+    value: 1
+enum/CKPOL:
+  bit_size: 1
+  variants:
+  - name: IdleLow
+    description: CK idle Level is Low. Signals are sampled on rising and changed on falling clock edges
+    value: 0
+  - name: IdleHigh
+    description: CK idle level is High. Signals are sampled on falling and changed on rising clock edges
+    value: 1
+enum/CHLEN:
+  bit_size: 1
+  variants:
+  - name: Bits16
+    description: 16 bits per channel
+    value: 0
+  - name: Bits32
+    description: 32 bits per channel
+    value: 1
+enum/DATLEN:
+  bit_size: 2
+  variants:
+  - name: Bits16
+    description: 16-bit data length
+    value: 0
+  - name: Bits24
+    description: 24-bit data length
+    value: 1
+  - name: Bits32
+    description: 32-bit data length
+    value: 2
+enum/PCMSYNC:
+  bit_size: 1
+  variants:
+  - name: Short
+    description: Short PCM frame synchronization
+    value: 0
+  - name: Long
+    description: Long PCM frame synchronization
+    value: 1
+enum/I2SSTD:
+  bit_size: 2
+  variants:
+  - name: Philips
+    description: I2S Philips standard
+    value: 0
+  - name: MSB
+    description: MSB/left justified standard
+    value: 1
+  - name: LSB
+    description: LSB/right justified standard
+    value: 2
+  - name: PCM
+    description: PCM standard
+    value: 3
+enum/I2SCFG:
+  bit_size: 3
+  variants:
+  - name: SlaveTx
+    description: Slave, transmit
+    value: 0
+  - name: SlaveRx
+    description: Slave, receive
+    value: 1
+  - name: MasterTx
+    description: Master, transmit
+    value: 2
+  - name: MasterRx
+    description: Master, receive
+    value: 3
+  - name: SlaveFullDuplex
+    description: Slave, full duplex
+    value: 4
+  - name: MasterFullDuplex
+    description: Master, full duplex
+    value: 5

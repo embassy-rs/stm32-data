@@ -31,6 +31,9 @@ block/SPI:
     byte_offset: 24
     access: Write
     fieldset: IFCR
+  - name: AUTOCR
+    byte_offset: 28
+    fieldset: AUTOCR
   - name: TXDR16
     description: Transmit Data Register - half-word sized
     byte_offset: 32
@@ -75,6 +78,28 @@ block/SPI:
     description: Underrun Data Register
     byte_offset: 76
     fieldset: UDRDR
+fieldset/AUTOCR:
+  fields:
+  - name: TRIGSEL
+    description: |-
+      trigger selection (refer ).
+       ...
+       Note: these bits can be written only when SPE = 0.
+    bit_offset: 16
+    bit_size: 4
+  - name: TRIGPOL
+    description: |-
+      trigger polarity
+       Note: This bit can be written only when SPE = 0.
+    bit_offset: 20
+    bit_size: 1
+    enum: TRIGPOL
+  - name: TRIGEN
+    description: |-
+      trigger of CSTART control enable
+       Note: if user can't prevent trigger event during write, the TRIGEN has to be changed when SPI is disabled
+    bit_offset: 21
+    bit_size: 1
 fieldset/CFG1:
   description: configuration register 1
   fields:
@@ -644,6 +669,15 @@ enum/TCRCINI:
     value: 0
   - name: AllOnes
     description: All ones TX CRC initialization pattern
+    value: 1
+enum/TRIGPOL:
+  bit_size: 1
+  variants:
+  - name: RisingEdge
+    description: trigger is active on raising edge
+    value: 0
+  - name: FallingEdge
+    description: trigger is active on falling edge
     value: 1
 enum/UDRCFG:
   bit_size: 2

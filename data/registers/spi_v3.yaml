@@ -9,505 +9,369 @@ block/SPI:
     description: control register 2
     byte_offset: 4
     fieldset: CR2
-  - name: CFG1
-    description: configuration register 1
-    byte_offset: 8
-    fieldset: CFG1
-  - name: CFG2
-    description: configuration register 2
-    byte_offset: 12
-    fieldset: CFG2
-  - name: IER
-    description: Interrupt Enable Register
-    byte_offset: 16
-    fieldset: IER
   - name: SR
-    description: Status Register
+    description: status register
+    byte_offset: 8
+    fieldset: SR
+  - name: DR16
+    description: data register - half-word sized
+    byte_offset: 12
+    bit_size: 16
+  - name: DR8
+    description: data register - byte sized
+    byte_offset: 12
+    bit_size: 8
+  - name: CRCPR
+    description: CRC polynomial register
+    byte_offset: 16
+    fieldset: CRCPR
+  - name: RXCRCR
+    description: RX CRC register
     byte_offset: 20
     access: Read
-    fieldset: SR
-  - name: IFCR
-    description: Interrupt/Status Flags Clear Register
+    fieldset: RXCRCR
+  - name: TXCRCR
+    description: TX CRC register
     byte_offset: 24
-    access: Write
-    fieldset: IFCR
-  - name: TXDR16
-    description: Transmit Data Register - half-word sized
-    byte_offset: 32
-    access: Write
-    bit_size: 16
-  - name: TXDR32
-    description: Transmit Data Register
-    byte_offset: 32
-    access: Write
-  - name: TXDR8
-    description: Transmit Data Register - byte sized
-    byte_offset: 32
-    access: Write
-    bit_size: 8
-  - name: RXDR16
-    description: Receive Data Register - half-word sized
-    byte_offset: 48
     access: Read
-    bit_size: 16
-  - name: RXDR32
-    description: Receive Data Register
-    byte_offset: 48
-    access: Read
-  - name: RXDR8
-    description: Receive Data Register - byte sized
-    byte_offset: 48
-    access: Read
-    bit_size: 8
-  - name: CRCPOLY
-    description: Polynomial Register
-    byte_offset: 64
-    fieldset: CRCPOLY
-  - name: TXCRC
-    description: Transmitter CRC Register
-    byte_offset: 68
-    fieldset: TXCRC
-  - name: RXCRC
-    description: Receiver CRC Register
-    byte_offset: 72
-    fieldset: RXCRC
-  - name: UDRDR
-    description: Underrun Data Register
-    byte_offset: 76
-    fieldset: UDRDR
+    fieldset: TXCRCR
   - name: I2SCFGR
-    description: I2S Configuration Register
-    byte_offset: 80
+    description: I2S configuration register
+    byte_offset: 28
     fieldset: I2SCFGR
-fieldset/CFG1:
-  description: configuration register 1
+  - name: I2SPR
+    description: I2S prescaler register
+    byte_offset: 32
+    fieldset: I2SPR
+fieldset/CR1:
+  description: control register 1
   fields:
-  - name: DSIZE
-    description: Number of bits in at single SPI data frame
-    bit_offset: 0
-    bit_size: 5
-  - name: FTHLV
-    description: threshold level
-    bit_offset: 5
-    bit_size: 4
-    enum: FTHLV
-  - name: UDRCFG
-    description: Behavior of slave transmitter at underrun condition
-    bit_offset: 9
-    bit_size: 2
-    enum: UDRCFG
-  - name: UDRDET
-    description: Detection of underrun condition at slave transmitter
-    bit_offset: 11
-    bit_size: 2
-    enum: UDRDET
-  - name: RXDMAEN
-    description: Rx DMA stream enable
-    bit_offset: 14
-    bit_size: 1
-  - name: TXDMAEN
-    description: Tx DMA stream enable
-    bit_offset: 15
-    bit_size: 1
-  - name: CRCSIZE
-    description: Length of CRC frame to be transacted and compared
-    bit_offset: 16
-    bit_size: 5
-  - name: CRCEN
-    description: Hardware CRC computation enable
-    bit_offset: 22
-    bit_size: 1
-  - name: MBR
-    description: Master baud rate
-    bit_offset: 28
-    bit_size: 3
-    enum: MBR
-fieldset/CFG2:
-  description: configuration register 2
-  fields:
-  - name: MSSI
-    description: Master SS Idleness
-    bit_offset: 0
-    bit_size: 4
-  - name: MIDI
-    description: Master Inter-Data Idleness
-    bit_offset: 4
-    bit_size: 4
-  - name: IOSWP
-    description: Swap functionality of MISO and MOSI pins
-    bit_offset: 15
-    bit_size: 1
-  - name: COMM
-    description: SPI Communication Mode
-    bit_offset: 17
-    bit_size: 2
-    enum: COMM
-  - name: SP
-    description: Serial Protocol
-    bit_offset: 19
-    bit_size: 3
-    enum: SP
-  - name: MASTER
-    description: SPI Master
-    bit_offset: 22
-    bit_size: 1
-    enum: MASTER
-  - name: LSBFIRST
-    description: Data frame format
-    bit_offset: 23
-    bit_size: 1
-    enum: LSBFIRST
   - name: CPHA
     description: Clock phase
-    bit_offset: 24
+    bit_offset: 0
     bit_size: 1
     enum: CPHA
   - name: CPOL
     description: Clock polarity
-    bit_offset: 25
+    bit_offset: 1
     bit_size: 1
     enum: CPOL
-  - name: SSM
-    description: Software management of SS signal input
-    bit_offset: 26
+  - name: MSTR
+    description: Master selection
+    bit_offset: 2
     bit_size: 1
-  - name: SSIOP
-    description: SS input/output polarity
-    bit_offset: 28
-    bit_size: 1
-    enum: SSIOP
-  - name: SSOE
-    description: SS output enable
-    bit_offset: 29
-    bit_size: 1
-  - name: SSOM
-    description: SS output management in master mode
-    bit_offset: 30
-    bit_size: 1
-    enum: SSOM
-  - name: AFCNTR
-    description: Alternate function always control GPIOs
-    bit_offset: 31
-    bit_size: 1
-fieldset/CR1:
-  description: control register 1
-  fields:
+    enum: MSTR
+  - name: BR
+    description: Baud rate control
+    bit_offset: 3
+    bit_size: 3
+    enum: BR
   - name: SPE
-    description: Serial Peripheral Enable
-    bit_offset: 0
+    description: SPI enable
+    bit_offset: 6
     bit_size: 1
-  - name: MASRX
-    description: Master automatic SUSP in Receive mode
+  - name: LSBFIRST
+    description: Frame format
+    bit_offset: 7
+    bit_size: 1
+    enum: LSBFIRST
+  - name: SSI
+    description: Internal slave select
     bit_offset: 8
     bit_size: 1
-  - name: CSTART
-    description: Master transfer start
+  - name: SSM
+    description: Software slave management
     bit_offset: 9
     bit_size: 1
-  - name: CSUSP
-    description: Master SUSPend request
+  - name: RXONLY
+    description: Receive only
     bit_offset: 10
     bit_size: 1
-  - name: HDDIR
-    description: Rx/Tx direction at Half-duplex mode
+    enum: RXONLY
+  - name: CRCL
+    description: CRC length
     bit_offset: 11
     bit_size: 1
-    enum: HDDIR
-  - name: SSI
-    description: Internal SS signal input level
+    enum: CRCL
+  - name: CRCNEXT
+    description: CRC transfer next
     bit_offset: 12
     bit_size: 1
-  - name: CRC33_17
-    description: Full size (33-bit or 17-bit) CRC polynomial is used
+    enum: CRCNEXT
+  - name: CRCEN
+    description: Hardware CRC calculation enable
     bit_offset: 13
     bit_size: 1
-  - name: RCRCINI
-    description: CRC calculation initialization pattern control for receiver
+  - name: BIDIOE
+    description: Select the direction of transfer in bidirectional mode
     bit_offset: 14
     bit_size: 1
-    enum: RCRCINI
-  - name: TCRCINI
-    description: CRC calculation initialization pattern control for transmitter
+    enum: BIDIOE
+  - name: BIDIMODE
+    description: Bidirectional data mode enable
     bit_offset: 15
     bit_size: 1
-    enum: TCRCINI
-  - name: IOLOCK
-    description: Locking the AF configuration of associated IOs
-    bit_offset: 16
-    bit_size: 1
+    enum: BIDIMODE
 fieldset/CR2:
   description: control register 2
   fields:
-  - name: TSIZE
-    description: Number of data at current transfer
+  - name: RXDMAEN
+    description: Rx buffer DMA enable
     bit_offset: 0
-    bit_size: 16
-  - name: TSER
-    description: Number of data transfer extension to be reload into TSIZE just when a previous
-    bit_offset: 16
-    bit_size: 16
-fieldset/CRCPOLY:
-  description: Polynomial Register
+    bit_size: 1
+  - name: TXDMAEN
+    description: Tx buffer DMA enable
+    bit_offset: 1
+    bit_size: 1
+  - name: SSOE
+    description: SS output enable
+    bit_offset: 2
+    bit_size: 1
+  - name: NSSP
+    description: NSS pulse management
+    bit_offset: 3
+    bit_size: 1
+  - name: FRF
+    description: Frame format
+    bit_offset: 4
+    bit_size: 1
+    enum: FRF
+  - name: ERRIE
+    description: Error interrupt enable
+    bit_offset: 5
+    bit_size: 1
+  - name: RXNEIE
+    description: RX buffer not empty interrupt enable
+    bit_offset: 6
+    bit_size: 1
+  - name: TXEIE
+    description: Tx buffer empty interrupt enable
+    bit_offset: 7
+    bit_size: 1
+  - name: DS
+    description: Data size
+    bit_offset: 8
+    bit_size: 4
+    enum: DS
+  - name: FRXTH
+    description: FIFO reception threshold
+    bit_offset: 12
+    bit_size: 1
+    enum: FRXTH
+  - name: LDMA_RX
+    description: Last DMA transfer for reception
+    bit_offset: 13
+    bit_size: 1
+    enum: LDMA_RX
+  - name: LDMA_TX
+    description: Last DMA transfer for transmission
+    bit_offset: 14
+    bit_size: 1
+    enum: LDMA_TX
+fieldset/CRCPR:
+  description: CRC polynomial register
   fields:
   - name: CRCPOLY
     description: CRC polynomial register
     bit_offset: 0
-    bit_size: 32
-fieldset/IER:
-  description: Interrupt Enable Register
-  fields:
-  - name: RXPIE
-    description: RXP Interrupt Enable
-    bit_offset: 0
-    bit_size: 1
-  - name: TXPIE
-    description: TXP interrupt enable
-    bit_offset: 1
-    bit_size: 1
-  - name: DXPIE
-    description: DXP interrupt enabled
-    bit_offset: 2
-    bit_size: 1
-  - name: EOTIE
-    description: EOT, SUSP and TXC interrupt enable
-    bit_offset: 3
-    bit_size: 1
-  - name: TXTFIE
-    description: TXTFIE interrupt enable
-    bit_offset: 4
-    bit_size: 1
-  - name: UDRIE
-    description: UDR interrupt enable
-    bit_offset: 5
-    bit_size: 1
-  - name: OVRIE
-    description: OVR interrupt enable
-    bit_offset: 6
-    bit_size: 1
-  - name: CRCEIE
-    description: CRC Interrupt enable
-    bit_offset: 7
-    bit_size: 1
-  - name: TIFREIE
-    description: TIFRE interrupt enable
-    bit_offset: 8
-    bit_size: 1
-  - name: MODFIE
-    description: Mode Fault interrupt enable
-    bit_offset: 9
-    bit_size: 1
-  - name: TSERFIE
-    description: Additional number of transactions reload interrupt enable
-    bit_offset: 10
-    bit_size: 1
-fieldset/IFCR:
-  description: Interrupt/Status Flags Clear Register
-  fields:
-  - name: EOTC
-    description: End Of Transfer flag clear
-    bit_offset: 3
-    bit_size: 1
-  - name: TXTFC
-    description: Transmission Transfer Filled flag clear
-    bit_offset: 4
-    bit_size: 1
-  - name: UDRC
-    description: Underrun flag clear
-    bit_offset: 5
-    bit_size: 1
-  - name: OVRC
-    description: Overrun flag clear
-    bit_offset: 6
-    bit_size: 1
-  - name: CRCEC
-    description: CRC Error flag clear
-    bit_offset: 7
-    bit_size: 1
-  - name: TIFREC
-    description: TI frame format error flag clear
-    bit_offset: 8
-    bit_size: 1
-  - name: MODFC
-    description: Mode Fault flag clear
-    bit_offset: 9
-    bit_size: 1
-  - name: TSERFC
-    description: TSERFC flag clear
-    bit_offset: 10
-    bit_size: 1
-  - name: SUSPC
-    description: SUSPend flag clear
-    bit_offset: 11
-    bit_size: 1
-fieldset/RXCRC:
-  description: Receiver CRC Register
-  fields:
-  - name: RXCRC
-    description: CRC register for receiver
-    bit_offset: 0
-    bit_size: 32
-fieldset/SR:
-  description: Status Register
-  fields:
-  - name: RXP
-    description: Rx-Packet available
-    bit_offset: 0
-    bit_size: 1
-  - name: TXP
-    description: Tx-Packet space available
-    bit_offset: 1
-    bit_size: 1
-  - name: DXP
-    description: Duplex Packet
-    bit_offset: 2
-    bit_size: 1
-  - name: EOT
-    description: End Of Transfer
-    bit_offset: 3
-    bit_size: 1
-  - name: TXTF
-    description: Transmission Transfer Filled
-    bit_offset: 4
-    bit_size: 1
-  - name: UDR
-    description: Underrun at slave transmission mode
-    bit_offset: 5
-    bit_size: 1
-  - name: OVR
-    description: Overrun
-    bit_offset: 6
-    bit_size: 1
-  - name: CRCE
-    description: CRC Error
-    bit_offset: 7
-    bit_size: 1
-  - name: TIFRE
-    description: TI frame format error
-    bit_offset: 8
-    bit_size: 1
-  - name: MODF
-    description: Mode Fault
-    bit_offset: 9
-    bit_size: 1
-  - name: TSERF
-    description: Additional number of SPI data to be transacted was reload
-    bit_offset: 10
-    bit_size: 1
-  - name: SUSP
-    description: SUSPend
-    bit_offset: 11
-    bit_size: 1
-  - name: TXC
-    description: TxFIFO transmission complete
-    bit_offset: 12
-    bit_size: 1
-  - name: RXPLVL
-    description: RxFIFO Packing LeVeL
-    bit_offset: 13
-    bit_size: 2
-    enum: RXPLVL
-  - name: RXWNE
-    description: RxFIFO Word Not Empty
-    bit_offset: 15
-    bit_size: 1
-    enum: RXWNE
-  - name: CTSIZE
-    description: Number of data frames remaining in current TSIZE session
-    bit_offset: 16
     bit_size: 16
-fieldset/TXCRC:
-  description: Transmitter CRC Register
-  fields:
-  - name: TXCRC
-    description: CRC register for transmitter
-    bit_offset: 0
-    bit_size: 32
-fieldset/UDRDR:
-  description: Underrun Data Register
-  fields:
-  - name: UDRDR
-    description: Data at slave underrun condition
-    bit_offset: 0
-    bit_size: 32
 fieldset/I2SCFGR:
-  description: I2S Configuration Register
+  description: I2S configuration register
   fields:
-  - name: MCKOE
-    description: Master clock output enable
-    bit_offset: 25
-    bit_size: 1
-  - name: ODD
-    description: Odd factor for the prescaler
-    bit_offset: 24
-    bit_size: 1
-    enum: ODD
-  - name: I2SDIV
-    description: I2S linear prescaler
-    bit_offset: 16
-    bit_size: 8
-  - name: DATFMT
-    description: Data format
-    bit_offset: 14
-    bit_size: 1
-    enum: DATFMT
-  - name: WSINV
-    description: Word select inversion
-    bit_offset: 13
-    bit_size: 1
-  - name: FIXCH
-    description: Fixed channel length in slave
-    bit_offset: 12
-    bit_size: 1
-    enum: FIXCH
-  - name: CKPOL
-    description: Serial audio clock polarity
-    bit_offset: 11
-    bit_size: 1
-    enum: CKPOL
   - name: CHLEN
     description: Channel length (number of bits per audio channel)
-    bit_offset: 10
+    bit_offset: 0
     bit_size: 1
     enum: CHLEN
   - name: DATLEN
     description: Data length to be transferred
-    bit_offset: 8
+    bit_offset: 1
     bit_size: 2
     enum: DATLEN
-  - name: PCMSYNC
-    description: PCM frame synchronization
-    bit_offset: 7
+  - name: CKPOL
+    description: Steady state clock polarity
+    bit_offset: 3
     bit_size: 1
-    enum: PCMSYNC
+    enum: CKPOL
   - name: I2SSTD
     description: I2S standard selection
     bit_offset: 4
     bit_size: 2
     enum: I2SSTD
+  - name: PCMSYNC
+    description: PCM frame synchronization
+    bit_offset: 7
+    bit_size: 1
+    enum: PCMSYNC
   - name: I2SCFG
     description: I2S configuration mode
-    bit_offset: 1
-    bit_size: 3
+    bit_offset: 8
+    bit_size: 2
     enum: I2SCFG
+  - name: I2SE
+    description: I2S Enabled
+    bit_offset: 10
+    bit_size: 1
   - name: I2SMOD
     description: I2S mode selection
+    bit_offset: 11
+    bit_size: 1
+  - name: ASTRTEN
+    description: Asynchronous start enable
+    bit_offset: 12
+    bit_size: 1
+fieldset/I2SPR:
+  description: I2S prescaler register
+  fields:
+  - name: I2SDIV
+    description: I2S Linear prescaler
+    bit_offset: 0
+    bit_size: 8
+  - name: ODD
+    description: Odd factor for the prescaler
+    bit_offset: 8
+    bit_size: 1
+    enum: ODD
+  - name: MCKOE
+    description: Master clock output enable
+    bit_offset: 9
+    bit_size: 1
+fieldset/RXCRCR:
+  description: RX CRC register
+  fields:
+  - name: RxCRC
+    description: Rx CRC register
+    bit_offset: 0
+    bit_size: 16
+fieldset/SR:
+  description: status register
+  fields:
+  - name: RXNE
+    description: Receive buffer not empty
     bit_offset: 0
     bit_size: 1
-enum/COMM:
-  bit_size: 2
+  - name: TXE
+    description: Transmit buffer empty
+    bit_offset: 1
+    bit_size: 1
+  - name: CHSIDE
+    description: Channel side
+    bit_offset: 2
+    bit_size: 1
+    enum: CHSIDE
+  - name: UDR
+    description: Underrun flag
+    bit_offset: 3
+    bit_size: 1
+  - name: CRCERR
+    description: CRC error flag
+    bit_offset: 4
+    bit_size: 1
+  - name: MODF
+    description: Mode fault
+    bit_offset: 5
+    bit_size: 1
+  - name: OVR
+    description: Overrun flag
+    bit_offset: 6
+    bit_size: 1
+  - name: BSY
+    description: Busy flag
+    bit_offset: 7
+    bit_size: 1
+  - name: FRE
+    description: frame format error
+    bit_offset: 8
+    bit_size: 1
+  - name: FRLVL
+    description: FIFO reception level
+    bit_offset: 9
+    bit_size: 2
+    enum: FRLVL
+  - name: FTLVL
+    description: FIFO Transmission Level
+    bit_offset: 11
+    bit_size: 2
+    enum: FTLVL
+fieldset/TXCRCR:
+  description: TX CRC register
+  fields:
+  - name: TxCRC
+    description: Tx CRC register
+    bit_offset: 0
+    bit_size: 16
+enum/BIDIMODE:
+  bit_size: 1
   variants:
-  - name: FullDuplex
-    description: Full duplex
+  - name: Unidirectional
+    description: 2-line unidirectional data mode selected
     value: 0
-  - name: Transmitter
-    description: Simplex transmitter only
+  - name: Bidirectional
+    description: 1-line bidirectional data mode selected
     value: 1
-  - name: Receiver
-    description: Simplex receiver only
+enum/BIDIOE:
+  bit_size: 1
+  variants:
+  - name: Receive
+    description: Output disabled (receive-only mode)
+    value: 0
+  - name: Transmit
+    description: Output enabled (transmit-only mode)
+    value: 1
+enum/BR:
+  bit_size: 3
+  variants:
+  - name: Div2
+    description: f_PCLK / 2
+    value: 0
+  - name: Div4
+    description: f_PCLK / 4
+    value: 1
+  - name: Div8
+    description: f_PCLK / 8
     value: 2
-  - name: HalfDuplex
-    description: Half duplex
+  - name: Div16
+    description: f_PCLK / 16
     value: 3
+  - name: Div32
+    description: f_PCLK / 32
+    value: 4
+  - name: Div64
+    description: f_PCLK / 64
+    value: 5
+  - name: Div128
+    description: f_PCLK / 128
+    value: 6
+  - name: Div256
+    description: f_PCLK / 256
+    value: 7
+enum/CHLEN:
+  bit_size: 1
+  variants:
+  - name: Bits16
+    description: 16-bit wide
+    value: 0
+  - name: Bits32
+    description: 32-bit wide
+    value: 1
+enum/CHSIDE:
+  bit_size: 1
+  variants:
+  - name: Left
+    description: Channel left has to be transmitted or has been received
+    value: 0
+  - name: Right
+    description: Channel right has to be transmitted or has been received
+    value: 1
+enum/CKPOL:
+  bit_size: 1
+  variants:
+  - name: IdleLow
+    description: I2S clock inactive state is low level
+    value: 0
+  - name: IdleHigh
+    description: I2S clock inactive state is high level
+    value: 1
 enum/CPHA:
   bit_size: 1
   variants:
@@ -521,253 +385,28 @@ enum/CPOL:
   bit_size: 1
   variants:
   - name: IdleLow
-    description: SCK to 0 when idle
+    description: CK to 0 when idle
     value: 0
   - name: IdleHigh
-    description: SCK to 1 when idle
+    description: CK to 1 when idle
     value: 1
-enum/FTHLV:
-  bit_size: 4
-  variants:
-  - name: OneFrame
-    description: 1 frame
-    value: 0
-  - name: TwoFrames
-    description: 2 frames
-    value: 1
-  - name: ThreeFrames
-    description: 3 frames
-    value: 2
-  - name: FourFrames
-    description: 4 frames
-    value: 3
-  - name: FiveFrames
-    description: 5 frames
-    value: 4
-  - name: SixFrames
-    description: 6 frames
-    value: 5
-  - name: SevenFrames
-    description: 7 frames
-    value: 6
-  - name: EightFrames
-    description: 8 frames
-    value: 7
-  - name: NineFrames
-    description: 9 frames
-    value: 8
-  - name: TenFrames
-    description: 10 frames
-    value: 9
-  - name: ElevenFrames
-    description: 11 frames
-    value: 10
-  - name: TwelveFrames
-    description: 12 frames
-    value: 11
-  - name: ThirteenFrames
-    description: 13 frames
-    value: 12
-  - name: FourteenFrames
-    description: 14 frames
-    value: 13
-  - name: FifteenFrames
-    description: 15 frames
-    value: 14
-  - name: SixteenFrames
-    description: 16 frames
-    value: 15
-enum/HDDIR:
+enum/CRCL:
   bit_size: 1
   variants:
-  - name: Receiver
-    description: Receiver in half duplex mode
+  - name: Bits8
+    description: 8-bit CRC length
     value: 0
-  - name: Transmitter
-    description: Transmitter in half duplex mode
-    value: 1
-enum/LSBFIRST:
-  bit_size: 1
-  variants:
-  - name: MSBFirst
-    description: Data is transmitted/received with the MSB first
-    value: 0
-  - name: LSBFirst
-    description: Data is transmitted/received with the LSB first
-    value: 1
-enum/MASTER:
-  bit_size: 1
-  variants:
-  - name: Slave
-    description: Slave configuration
-    value: 0
-  - name: Master
-    description: Master configuration
-    value: 1
-enum/MBR:
-  bit_size: 3
-  variants:
-  - name: Div2
-    description: f_spi_ker_ck / 2
-    value: 0
-  - name: Div4
-    description: f_spi_ker_ck / 4
-    value: 1
-  - name: Div8
-    description: f_spi_ker_ck / 8
-    value: 2
-  - name: Div16
-    description: f_spi_ker_ck / 16
-    value: 3
-  - name: Div32
-    description: f_spi_ker_ck / 32
-    value: 4
-  - name: Div64
-    description: f_spi_ker_ck / 64
-    value: 5
-  - name: Div128
-    description: f_spi_ker_ck / 128
-    value: 6
-  - name: Div256
-    description: f_spi_ker_ck / 256
-    value: 7
-enum/RCRCINI:
-  bit_size: 1
-  variants:
-  - name: AllZeros
-    description: All zeros RX CRC initialization pattern
-    value: 0
-  - name: AllOnes
-    description: All ones RX CRC initialization pattern
-    value: 1
-enum/RXPLVL:
-  bit_size: 2
-  variants:
-  - name: ZeroFrames
-    description: Zero frames beyond packing ratio available
-    value: 0
-  - name: OneFrame
-    description: One frame beyond packing ratio available
-    value: 1
-  - name: TwoFrames
-    description: Two frame beyond packing ratio available
-    value: 2
-  - name: ThreeFrames
-    description: Three frame beyond packing ratio available
-    value: 3
-enum/RXWNE:
-  bit_size: 1
-  variants:
-  - name: LessThan32
-    description: Less than 32-bit data frame received
-    value: 0
-  - name: AtLeast32
-    description: At least 32-bit data frame received
-    value: 1
-enum/SP:
-  bit_size: 3
-  variants:
-  - name: Motorola
-    description: Motorola SPI protocol
-    value: 0
-  - name: TI
-    description: TI SPI protocol
-    value: 1
-enum/SSIOP:
-  bit_size: 1
-  variants:
-  - name: ActiveLow
-    description: Low level is active for SS signal
-    value: 0
-  - name: ActiveHigh
-    description: High level is active for SS signal
-    value: 1
-enum/SSOM:
-  bit_size: 1
-  variants:
-  - name: Asserted
-    description: SS is asserted until data transfer complete
-    value: 0
-  - name: NotAsserted
-    description: Data frames interleaved with SS not asserted during MIDI
-    value: 1
-enum/TCRCINI:
-  bit_size: 1
-  variants:
-  - name: AllZeros
-    description: All zeros TX CRC initialization pattern
-    value: 0
-  - name: AllOnes
-    description: All ones TX CRC initialization pattern
-    value: 1
-enum/UDRCFG:
-  bit_size: 2
-  variants:
-  - name: Constant
-    description: Slave sends a constant underrun pattern
-    value: 0
-  - name: RepeatReceived
-    description: Slave repeats last received data frame from master
-    value: 1
-  - name: RepeatTransmitted
-    description: Slave repeats last transmitted data frame
-    value: 2
-enum/UDRDET:
-  bit_size: 2
-  variants:
-  - name: StartOfFrame
-    description: Underrun is detected at begin of data frame
-    value: 0
-  - name: EndOfFrame
-    description: Underrun is detected at end of last data frame
-    value: 1
-  - name: StartOfSlaveSelect
-    description: Underrun is detected at begin of active SS signal
-    value: 2
-enum/ODD:
-  bit_size: 1
-  variants:
-  - name: Even
-    description: Real divider value is I2SDIV*2
-    value: 0
-  - name: Odd
-    description: Real divider value is I2SDIV*2 + 1
-    value: 1
-enum/DATFMT:
-  bit_size: 1
-  variants:
-  - name: RightAligned
-    description: The data inside RXDR and TXDR are right aligned
-    value: 0
-  - name: LeftAligned
-    description: The data inside RXDR and TXDR are left aligned
-    value: 1
-enum/FIXCH:
-  bit_size: 1
-  variants:
-  - name: NotFixed
-    description: The channel length in slave mode is different from 16 or 32 bits (CHLEN not taken into account)
-    value: 0
-  - name: Fixed
-    description: The channel length in slave mode is supposed to be 16 or 32 bits (according to CHLEN)
-    value: 1
-enum/CKPOL:
-  bit_size: 1
-  variants:
-  - name: IdleLow
-    description: CK idle Level is Low. Signals are sampled on rising and changed on falling clock edges
-    value: 0
-  - name: IdleHigh
-    description: CK idle level is High. Signals are sampled on falling and changed on rising clock edges
-    value: 1
-enum/CHLEN:
-  bit_size: 1
-  variants:
   - name: Bits16
-    description: 16 bits per channel
+    description: 16-bit CRC length
+    value: 1
+enum/CRCNEXT:
+  bit_size: 1
+  variants:
+  - name: TxBuffer
+    description: Next transmit value is from Tx buffer
     value: 0
-  - name: Bits32
-    description: 32 bits per channel
+  - name: CRC
+    description: Next transmit value is from Tx CRC register
     value: 1
 enum/DATLEN:
   bit_size: 2
@@ -781,15 +420,111 @@ enum/DATLEN:
   - name: Bits32
     description: 32-bit data length
     value: 2
-enum/PCMSYNC:
+enum/DS:
+  bit_size: 4
+  variants:
+  - name: Bits4
+    description: 4-bit
+    value: 3
+  - name: Bits5
+    description: 5-bit
+    value: 4
+  - name: Bits6
+    description: 6-bit
+    value: 5
+  - name: Bits7
+    description: 7-bit
+    value: 6
+  - name: Bits8
+    description: 8-bit
+    value: 7
+  - name: Bits9
+    description: 9-bit
+    value: 8
+  - name: Bits10
+    description: 10-bit
+    value: 9
+  - name: Bits11
+    description: 11-bit
+    value: 10
+  - name: Bits12
+    description: 12-bit
+    value: 11
+  - name: Bits13
+    description: 13-bit
+    value: 12
+  - name: Bits14
+    description: 14-bit
+    value: 13
+  - name: Bits15
+    description: 15-bit
+    value: 14
+  - name: Bits16
+    description: 16-bit
+    value: 15
+enum/FRF:
   bit_size: 1
   variants:
-  - name: Short
-    description: Short PCM frame synchronization
+  - name: Motorola
+    description: SPI Motorola mode
     value: 0
-  - name: Long
-    description: Long PCM frame synchronization
+  - name: TI
+    description: SPI TI mode
     value: 1
+enum/FRLVL:
+  bit_size: 2
+  variants:
+  - name: Empty
+    description: Rx FIFO Empty
+    value: 0
+  - name: Quarter
+    description: Rx 1/4 FIFO
+    value: 1
+  - name: Half
+    description: Rx 1/2 FIFO
+    value: 2
+  - name: Full
+    description: Rx FIFO full
+    value: 3
+enum/FRXTH:
+  bit_size: 1
+  variants:
+  - name: Half
+    description: RXNE event is generated if the FIFO level is greater than or equal to 1/2 (16-bit)
+    value: 0
+  - name: Quarter
+    description: RXNE event is generated if the FIFO level is greater than or equal to 1/4 (8-bit)
+    value: 1
+enum/FTLVL:
+  bit_size: 2
+  variants:
+  - name: Empty
+    description: Tx FIFO Empty
+    value: 0
+  - name: Quarter
+    description: Tx 1/4 FIFO
+    value: 1
+  - name: Half
+    description: Tx 1/2 FIFO
+    value: 2
+  - name: Full
+    description: Tx FIFO full
+    value: 3
+enum/I2SCFG:
+  bit_size: 2
+  variants:
+  - name: SlaveTx
+    description: Slave - transmit
+    value: 0
+  - name: SlaveRx
+    description: Slave - receive
+    value: 1
+  - name: MasterTx
+    description: Master - transmit
+    value: 2
+  - name: MasterRx
+    description: Master - receive
+    value: 3
 enum/I2SSTD:
   bit_size: 2
   variants:
@@ -797,32 +532,74 @@ enum/I2SSTD:
     description: I2S Philips standard
     value: 0
   - name: MSB
-    description: MSB/left justified standard
+    description: MSB justified standard
     value: 1
   - name: LSB
-    description: LSB/right justified standard
+    description: LSB justified standard
     value: 2
   - name: PCM
     description: PCM standard
     value: 3
-enum/I2SCFG:
-  bit_size: 3
+enum/LDMA_RX:
+  bit_size: 1
   variants:
-  - name: SlaveTx
-    description: Slave, transmit
+  - name: Even
+    description: Number of data to transfer for receive is even
     value: 0
-  - name: SlaveRx
-    description: Slave, receive
+  - name: Odd
+    description: Number of data to transfer for receive is odd
     value: 1
-  - name: MasterTx
-    description: Master, transmit
-    value: 2
-  - name: MasterRx
-    description: Master, receive
-    value: 3
-  - name: SlaveFullDuplex
-    description: Slave, full duplex
-    value: 4
-  - name: MasterFullDuplex
-    description: Master, full duplex
-    value: 5
+enum/LDMA_TX:
+  bit_size: 1
+  variants:
+  - name: Even
+    description: Number of data to transfer for transmit is even
+    value: 0
+  - name: Odd
+    description: Number of data to transfer for transmit is odd
+    value: 1
+enum/LSBFIRST:
+  bit_size: 1
+  variants:
+  - name: MSBFirst
+    description: Data is transmitted/received with the MSB first
+    value: 0
+  - name: LSBFirst
+    description: Data is transmitted/received with the LSB first
+    value: 1
+enum/MSTR:
+  bit_size: 1
+  variants:
+  - name: Slave
+    description: Slave configuration
+    value: 0
+  - name: Master
+    description: Master configuration
+    value: 1
+enum/ODD:
+  bit_size: 1
+  variants:
+  - name: Even
+    description: Real divider value is I2SDIV * 2
+    value: 0
+  - name: Odd
+    description: Real divider value is (I2SDIV * 2) + 1
+    value: 1
+enum/PCMSYNC:
+  bit_size: 1
+  variants:
+  - name: Short
+    description: Short frame synchronisation
+    value: 0
+  - name: Long
+    description: Long frame synchronisation
+    value: 1
+enum/RXONLY:
+  bit_size: 1
+  variants:
+  - name: FullDuplex
+    description: Full duplex (Transmit and receive)
+    value: 0
+  - name: OutputDisabled
+    description: Output disabled (Receive-only mode)
+    value: 1
