@@ -13,14 +13,10 @@ block/SPI:
     description: status register
     byte_offset: 8
     fieldset: SR
-  - name: DR16
-    description: data register - half-word sized
+  - name: DR
+    description: data register
     byte_offset: 12
-    bit_size: 16
-  - name: DR8
-    description: data register - byte sized
-    byte_offset: 12
-    bit_size: 8
+    fieldset: DR
   - name: CRCPR
     description: CRC polynomial register
     byte_offset: 16
@@ -35,6 +31,14 @@ block/SPI:
     byte_offset: 24
     access: Read
     fieldset: TXCRCR
+  - name: I2SCFGR
+    description: I2S configuration register
+    byte_offset: 28
+    fieldset: I2SCFGR
+  - name: I2SPR
+    description: I2S prescaler register
+    byte_offset: 32
+    fieldset: I2SPR
 fieldset/CR1:
   description: control register 1
   fields:
@@ -80,11 +84,11 @@ fieldset/CR1:
     bit_offset: 10
     bit_size: 1
     enum: RXONLY
-  - name: CRCL
-    description: CRC length
+  - name: DFF
+    description: Data frame format
     bit_offset: 11
     bit_size: 1
-    enum: CRCL
+    enum: DFF
   - name: CRCNEXT
     description: CRC transfer next
     bit_offset: 12
@@ -119,10 +123,6 @@ fieldset/CR2:
     description: SS output enable
     bit_offset: 2
     bit_size: 1
-  - name: NSSP
-    description: NSS pulse management
-    bit_offset: 3
-    bit_size: 1
   - name: FRF
     description: Frame format
     bit_offset: 4
@@ -140,26 +140,6 @@ fieldset/CR2:
     description: Tx buffer empty interrupt enable
     bit_offset: 7
     bit_size: 1
-  - name: DS
-    description: Data size
-    bit_offset: 8
-    bit_size: 4
-    enum: DS
-  - name: FRXTH
-    description: FIFO reception threshold
-    bit_offset: 12
-    bit_size: 1
-    enum: FRXTH
-  - name: LDMA_RX
-    description: Last DMA transfer for reception
-    bit_offset: 13
-    bit_size: 1
-    enum: LDMA_RX
-  - name: LDMA_TX
-    description: Last DMA transfer for transmission
-    bit_offset: 14
-    bit_size: 1
-    enum: LDMA_TX
 fieldset/CRCPR:
   description: CRC polynomial register
   fields:
@@ -167,6 +147,70 @@ fieldset/CRCPR:
     description: CRC polynomial register
     bit_offset: 0
     bit_size: 16
+fieldset/DR:
+  description: data register
+  fields:
+  - name: DR
+    description: Data register
+    bit_offset: 0
+    bit_size: 16
+fieldset/I2SCFGR:
+  description: I2S configuration register
+  fields:
+  - name: CHLEN
+    description: Channel length (number of bits per audio channel)
+    bit_offset: 0
+    bit_size: 1
+    enum: CHLEN
+  - name: DATLEN
+    description: Data length to be transferred
+    bit_offset: 1
+    bit_size: 2
+    enum: DATLEN
+  - name: CKPOL
+    description: Steady state clock polarity
+    bit_offset: 3
+    bit_size: 1
+    enum: CKPOL
+  - name: I2SSTD
+    description: I2S standard selection
+    bit_offset: 4
+    bit_size: 2
+    enum: I2SSTD
+  - name: PCMSYNC
+    description: PCM frame synchronization
+    bit_offset: 7
+    bit_size: 1
+    enum: PCMSYNC
+  - name: I2SCFG
+    description: I2S configuration mode
+    bit_offset: 8
+    bit_size: 2
+    enum: I2SCFG
+  - name: I2SE
+    description: I2S Enable
+    bit_offset: 10
+    bit_size: 1
+  - name: I2SMOD
+    description: I2S mode selection
+    bit_offset: 11
+    bit_size: 1
+fieldset/I2SPR:
+  description: I2S prescaler register
+  fields:
+  - name: I2SDIV
+    description: I2S Linear prescaler
+    bit_offset: 0
+    bit_size: 8
+  - name: ODD
+    description: Odd factor for the prescaler
+    bit_offset: 8
+    bit_size: 1
+    enum: ODD
+  - name: MCKOE
+    description: Master clock output enable
+    bit_offset: 9
+    bit_size: 1
 fieldset/RXCRCR:
   description: RX CRC register
   fields:
@@ -211,19 +255,9 @@ fieldset/SR:
     bit_offset: 7
     bit_size: 1
   - name: FRE
-    description: frame format error
+    description: TI frame format error
     bit_offset: 8
     bit_size: 1
-  - name: FRLVL
-    description: FIFO reception level
-    bit_offset: 9
-    bit_size: 2
-    enum: FRLVL
-  - name: FTLVL
-    description: FIFO Transmission Level
-    bit_offset: 11
-    bit_size: 2
-    enum: FTLVL
 fieldset/TXCRCR:
   description: TX CRC register
   fields:
@@ -276,6 +310,15 @@ enum/BR:
   - name: Div256
     description: f_PCLK / 256
     value: 7
+enum/CHLEN:
+  bit_size: 1
+  variants:
+  - name: Bits16
+    description: 16-bit wide
+    value: 0
+  - name: Bits32
+    description: 32-bit wide
+    value: 1
 enum/CHSIDE:
   bit_size: 1
   variants:
@@ -284,6 +327,15 @@ enum/CHSIDE:
     value: 0
   - name: Right
     description: Channel right has to be transmitted or has been received
+    value: 1
+enum/CKPOL:
+  bit_size: 1
+  variants:
+  - name: IdleLow
+    description: I2S clock inactive state is low level
+    value: 0
+  - name: IdleHigh
+    description: I2S clock inactive state is high level
     value: 1
 enum/CPHA:
   bit_size: 1
@@ -303,15 +355,6 @@ enum/CPOL:
   - name: IdleHigh
     description: CK to 1 when idle
     value: 1
-enum/CRCL:
-  bit_size: 1
-  variants:
-  - name: Bits8
-    description: 8-bit CRC length
-    value: 0
-  - name: Bits16
-    description: 16-bit CRC length
-    value: 1
 enum/CRCNEXT:
   bit_size: 1
   variants:
@@ -321,48 +364,27 @@ enum/CRCNEXT:
   - name: CRC
     description: Next transmit value is from Tx CRC register
     value: 1
-enum/DS:
-  bit_size: 4
+enum/DATLEN:
+  bit_size: 2
   variants:
-  - name: Bits4
-    description: 4-bit
-    value: 3
-  - name: Bits5
-    description: 5-bit
-    value: 4
-  - name: Bits6
-    description: 6-bit
-    value: 5
-  - name: Bits7
-    description: 7-bit
-    value: 6
-  - name: Bits8
-    description: 8-bit
-    value: 7
-  - name: Bits9
-    description: 9-bit
-    value: 8
-  - name: Bits10
-    description: 10-bit
-    value: 9
-  - name: Bits11
-    description: 11-bit
-    value: 10
-  - name: Bits12
-    description: 12-bit
-    value: 11
-  - name: Bits13
-    description: 13-bit
-    value: 12
-  - name: Bits14
-    description: 14-bit
-    value: 13
-  - name: Bits15
-    description: 15-bit
-    value: 14
   - name: Bits16
-    description: 16-bit
-    value: 15
+    description: 16-bit data length
+    value: 0
+  - name: Bits24
+    description: 24-bit data length
+    value: 1
+  - name: Bits32
+    description: 32-bit data length
+    value: 2
+enum/DFF:
+  bit_size: 1
+  variants:
+  - name: Bits8
+    description: 8-bit data frame format is selected for transmission/reception
+    value: 0
+  - name: Bits16
+    description: 16-bit data frame format is selected for transmission/reception
+    value: 1
 enum/FRF:
   bit_size: 1
   variants:
@@ -372,63 +394,36 @@ enum/FRF:
   - name: TI
     description: SPI TI mode
     value: 1
-enum/FRLVL:
+enum/I2SCFG:
   bit_size: 2
   variants:
-  - name: Empty
-    description: Rx FIFO Empty
+  - name: SlaveTx
+    description: Slave - transmit
     value: 0
-  - name: Quarter
-    description: Rx 1/4 FIFO
+  - name: SlaveRx
+    description: Slave - receive
     value: 1
-  - name: Half
-    description: Rx 1/2 FIFO
+  - name: MasterTx
+    description: Master - transmit
     value: 2
-  - name: Full
-    description: Rx FIFO full
+  - name: MasterRx
+    description: Master - receive
     value: 3
-enum/FRXTH:
-  bit_size: 1
-  variants:
-  - name: Half
-    description: RXNE event is generated if the FIFO level is greater than or equal to 1/2 (16-bit)
-    value: 0
-  - name: Quarter
-    description: RXNE event is generated if the FIFO level is greater than or equal to 1/4 (8-bit)
-    value: 1
-enum/FTLVL:
+enum/I2SSTD:
   bit_size: 2
   variants:
-  - name: Empty
-    description: Tx FIFO Empty
+  - name: Philips
+    description: I2S Philips standard
     value: 0
-  - name: Quarter
-    description: Tx 1/4 FIFO
+  - name: MSB
+    description: MSB justified standard
     value: 1
-  - name: Half
-    description: Tx 1/2 FIFO
+  - name: LSB
+    description: LSB justified standard
     value: 2
-  - name: Full
-    description: Tx FIFO full
+  - name: PCM
+    description: PCM standard
     value: 3
-enum/LDMA_RX:
-  bit_size: 1
-  variants:
-  - name: Even
-    description: Number of data to transfer for receive is even
-    value: 0
-  - name: Odd
-    description: Number of data to transfer for receive is odd
-    value: 1
-enum/LDMA_TX:
-  bit_size: 1
-  variants:
-  - name: Even
-    description: Number of data to transfer for transmit is even
-    value: 0
-  - name: Odd
-    description: Number of data to transfer for transmit is odd
-    value: 1
 enum/LSBFIRST:
   bit_size: 1
   variants:
@@ -446,6 +441,24 @@ enum/MSTR:
     value: 0
   - name: Master
     description: Master configuration
+    value: 1
+enum/ODD:
+  bit_size: 1
+  variants:
+  - name: Even
+    description: Real divider value is I2SDIV * 2
+    value: 0
+  - name: Odd
+    description: Real divider value is (I2SDIV * 2) + 1
+    value: 1
+enum/PCMSYNC:
+  bit_size: 1
+  variants:
+  - name: Short
+    description: Short frame synchronisation
+    value: 0
+  - name: Long
+    description: Long frame synchronisation
     value: 1
 enum/RXONLY:
   bit_size: 1

@@ -35,6 +35,14 @@ block/SPI:
     byte_offset: 24
     access: Read
     fieldset: TXCRCR
+  - name: I2SCFGR
+    description: I2S configuration register
+    byte_offset: 28
+    fieldset: I2SCFGR
+  - name: I2SPR
+    description: I2S prescaler register
+    byte_offset: 32
+    fieldset: I2SPR
 fieldset/CR1:
   description: control register 1
   fields:
@@ -167,6 +175,67 @@ fieldset/CRCPR:
     description: CRC polynomial register
     bit_offset: 0
     bit_size: 16
+fieldset/I2SCFGR:
+  description: I2S configuration register
+  fields:
+  - name: CHLEN
+    description: Channel length (number of bits per audio channel)
+    bit_offset: 0
+    bit_size: 1
+    enum: CHLEN
+  - name: DATLEN
+    description: Data length to be transferred
+    bit_offset: 1
+    bit_size: 2
+    enum: DATLEN
+  - name: CKPOL
+    description: Steady state clock polarity
+    bit_offset: 3
+    bit_size: 1
+    enum: CKPOL
+  - name: I2SSTD
+    description: I2S standard selection
+    bit_offset: 4
+    bit_size: 2
+    enum: I2SSTD
+  - name: PCMSYNC
+    description: PCM frame synchronization
+    bit_offset: 7
+    bit_size: 1
+    enum: PCMSYNC
+  - name: I2SCFG
+    description: I2S configuration mode
+    bit_offset: 8
+    bit_size: 2
+    enum: I2SCFG
+  - name: I2SE
+    description: I2S Enabled
+    bit_offset: 10
+    bit_size: 1
+  - name: I2SMOD
+    description: I2S mode selection
+    bit_offset: 11
+    bit_size: 1
+  - name: ASTRTEN
+    description: Asynchronous start enable
+    bit_offset: 12
+    bit_size: 1
+fieldset/I2SPR:
+  description: I2S prescaler register
+  fields:
+  - name: I2SDIV
+    description: I2S Linear prescaler
+    bit_offset: 0
+    bit_size: 8
+  - name: ODD
+    description: Odd factor for the prescaler
+    bit_offset: 8
+    bit_size: 1
+    enum: ODD
+  - name: MCKOE
+    description: Master clock output enable
+    bit_offset: 9
+    bit_size: 1
 fieldset/RXCRCR:
   description: RX CRC register
   fields:
@@ -276,6 +345,15 @@ enum/BR:
   - name: Div256
     description: f_PCLK / 256
     value: 7
+enum/CHLEN:
+  bit_size: 1
+  variants:
+  - name: Bits16
+    description: 16-bit wide
+    value: 0
+  - name: Bits32
+    description: 32-bit wide
+    value: 1
 enum/CHSIDE:
   bit_size: 1
   variants:
@@ -284,6 +362,15 @@ enum/CHSIDE:
     value: 0
   - name: Right
     description: Channel right has to be transmitted or has been received
+    value: 1
+enum/CKPOL:
+  bit_size: 1
+  variants:
+  - name: IdleLow
+    description: I2S clock inactive state is low level
+    value: 0
+  - name: IdleHigh
+    description: I2S clock inactive state is high level
     value: 1
 enum/CPHA:
   bit_size: 1
@@ -321,6 +408,18 @@ enum/CRCNEXT:
   - name: CRC
     description: Next transmit value is from Tx CRC register
     value: 1
+enum/DATLEN:
+  bit_size: 2
+  variants:
+  - name: Bits16
+    description: 16-bit data length
+    value: 0
+  - name: Bits24
+    description: 24-bit data length
+    value: 1
+  - name: Bits32
+    description: 32-bit data length
+    value: 2
 enum/DS:
   bit_size: 4
   variants:
@@ -411,6 +510,36 @@ enum/FTLVL:
   - name: Full
     description: Tx FIFO full
     value: 3
+enum/I2SCFG:
+  bit_size: 2
+  variants:
+  - name: SlaveTx
+    description: Slave - transmit
+    value: 0
+  - name: SlaveRx
+    description: Slave - receive
+    value: 1
+  - name: MasterTx
+    description: Master - transmit
+    value: 2
+  - name: MasterRx
+    description: Master - receive
+    value: 3
+enum/I2SSTD:
+  bit_size: 2
+  variants:
+  - name: Philips
+    description: I2S Philips standard
+    value: 0
+  - name: MSB
+    description: MSB justified standard
+    value: 1
+  - name: LSB
+    description: LSB justified standard
+    value: 2
+  - name: PCM
+    description: PCM standard
+    value: 3
 enum/LDMA_RX:
   bit_size: 1
   variants:
@@ -446,6 +575,24 @@ enum/MSTR:
     value: 0
   - name: Master
     description: Master configuration
+    value: 1
+enum/ODD:
+  bit_size: 1
+  variants:
+  - name: Even
+    description: Real divider value is I2SDIV * 2
+    value: 0
+  - name: Odd
+    description: Real divider value is (I2SDIV * 2) + 1
+    value: 1
+enum/PCMSYNC:
+  bit_size: 1
+  variants:
+  - name: Short
+    description: Short frame synchronisation
+    value: 0
+  - name: Long
+    description: Long frame synchronisation
     value: 1
 enum/RXONLY:
   bit_size: 1
