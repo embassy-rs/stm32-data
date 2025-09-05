@@ -26,7 +26,7 @@ This repo contains generated output for [`stm32-data`](https://github.com/embass
 The following table shows which STM32 peripheral versions are supported across different families:
 
 EOF
-cargo run --bin summary >> build/README.md
+cargo run --release --bin summary >> build/README.md
 
 COMMIT=$(git rev-parse HEAD)
 cd build
