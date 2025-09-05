@@ -197,7 +197,7 @@ pub mod chip {
                 pub channel: Option<String>,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub dmamux: Option<String>,
-                #[serde(skip_serializing_if = "Vec::is_empty")]
+                #[serde(default, skip_serializing_if = "Vec::is_empty")]
                 pub remap: Vec<RemapInfo>,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub request: Option<u8>,
