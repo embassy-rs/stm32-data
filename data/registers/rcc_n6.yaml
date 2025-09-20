@@ -13,10 +13,10 @@ block/RCC:
     description: RCC Stop mode control register.
     byte_offset: 8
     fieldset: STOPCR
-  - name: CFGR1
+  - name: CFGR
     description: RCC configuration register 1.
     byte_offset: 32
-    fieldset: CFGR1
+    fieldset: CFGR
   - name: CFGR2
     description: RCC configuration register 2.
     byte_offset: 36
@@ -6420,7 +6420,7 @@ fieldset/CCIPR5:
     description: Source selection for the MCO1 kernel clock.
     bit_offset: 0
     bit_size: 3
-    enum: MCOSEL
+    enum: MCO1SEL
   - name: MCO1PRE
     description: MCO1 Prog clock divider selection (for clock ck_icn_p_mce3).
     bit_offset: 4
@@ -6430,7 +6430,7 @@ fieldset/CCIPR5:
     description: Source selection for the MCO2 kernel clock.
     bit_offset: 8
     bit_size: 3
-    enum: MCOSEL
+    enum: MCO2SEL
   - name: MCO2PRE
     description: MCO2 Prog clock divider selection (for clock ck_icn_p_mce4).
     bit_offset: 12
@@ -6591,7 +6591,7 @@ fieldset/CCR:
     array:
       len: 4
       stride: 1
-fieldset/CFGR1:
+fieldset/CFGR:
   description: RCC configuration register 1.
   fields:
   - name: STOPWUCK
@@ -11270,16 +11270,16 @@ enum/ACLKNSEC:
 enum/ADCPRE:
   bit_size: 8
   variants:
-  - name: B_0x0
+  - name: DIV1
     description: ck_icn_p_adf1 is divided by 1.
     value: 0
-  - name: B_0x1
+  - name: DIV2
     description: ck_icn_p_adf1 is divided by 2.
     value: 1
-  - name: B_0x2
+  - name: DIV3
     description: ck_icn_p_adf1 is divided by 3.
     value: 2
-  - name: B_0x3
+  - name: DIV4
     description: ck_icn_p_adf1 is divided by 4.
     value: 3
 enum/ADCSEL:
@@ -13079,7 +13079,7 @@ enum/LSECSSRA:
 enum/LSEDRV:
   bit_size: 2
   variants:
-  - name: LOWEST
+  - name: LOW
     description: Lowest drive (default after reset).
     value: 0
   - name: MEDIUM_LOW
@@ -13088,7 +13088,7 @@ enum/LSEDRV:
   - name: MEDIUM_HIGH
     description: Medium high drive.
     value: 2
-  - name: HIGHEST
+  - name: HIGH
     description: Highest drive.
     value: 3
 enum/LSEEXT:
@@ -13277,7 +13277,7 @@ enum/MCOPRE:
   - name: DIV16
     description: ck_icn_p_mce3 is divided by 16.
     value: 15
-enum/MCOSEL:
+enum/MCO1SEL:
   bit_size: 3
   variants:
   - name: HSI_DIV
@@ -13303,6 +13303,33 @@ enum/MCOSEL:
     value: 6
   - name: SYSA
     description: sysa_ck selected as reference clock.
+    value: 7
+enum/MCO2SEL:
+  bit_size: 3
+  variants:
+  - name: HSI_DIV
+    description: hsi_div_ck selected as reference clock (default after reset).
+    value: 0
+  - name: LSE
+    description: lse_ck selected as reference clock.
+    value: 1
+  - name: MSI
+    description: msi_ck selected as reference clock.
+    value: 2
+  - name: LSI
+    description: lsi_ck selected as reference clock.
+    value: 3
+  - name: HSE
+    description: hse_ck selected as reference clock.
+    value: 4
+  - name: IC15
+    description: ic15_ck selected as reference clock.
+    value: 5
+  - name: IC20
+    description: ic20_ck selected as reference clock.
+    value: 6
+  - name: SYSB
+    description: sysb_ck selected as reference clock.
     value: 7
 enum/MDFSEL:
   bit_size: 3
@@ -13634,9 +13661,6 @@ enum/PLLBYP:
 enum/PLLDIVM:
   bit_size: 6
   variants:
-  - name: NOT_APPLICABLE
-    description: Not applicable when PLL is enabled.
-    value: 0
   - name: DIV1
     description: reference clock is divided by 1 (min value).
     value: 1
@@ -13676,9 +13700,6 @@ enum/PLLMODSSDIS:
 enum/PLLPDIV:
   bit_size: 3
   variants:
-  - name: NOT_APPLICABLE
-    description: Not applicable.
-    value: 0
   - name: DIV1
     description: VCO output is divided by 1 (minimum value) (default after reset).
     value: 1
@@ -13943,6 +13964,9 @@ enum/RTCPRE:
 enum/RTCSEL:
   bit_size: 2
   variants:
+  - name: DISABLE
+    description: No clock used as RTC clock.
+    value: 0
   - name: LSE
     description: lse_ck selected as reference clock.
     value: 1
