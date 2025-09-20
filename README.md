@@ -149,10 +149,10 @@ are only interested in one. It's easier than it looks, and doing all families at
 - For each version, pick the "best" YAML (the one that has less enums/docs missing), place them in `data/registers/lpuart_vX.yaml`
 - Cleanup the register yamls (see below).
 - Minimize the diff between each pair of versions. For example between `lpuart_v1.yaml` and `lpuart_v2.yaml`. If one is missing enums or descriptions, copy it from another.
-- Make sure the block
+- Make sure the block name is changed back to the peripheral without the number (`LPUART1` > `LPUART`)
 - Add entries to [`perimap`](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/perimap.rs), see below.
 - Regen, then:
-  - Check `data/chips/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
+  - Check `data/extra/family/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
   - Ensure a successful build of the affected pac. e.g.
     ```
     cd build/stm32-metapac
