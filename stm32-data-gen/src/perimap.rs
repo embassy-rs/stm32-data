@@ -212,6 +212,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32U5.*:RTC:rtc2_.*", ("rtc", "v3u5", "RTC")), // Cube says v2, but it's v3 with security stuff
     (".*:RTC:rtc3_v1_0", ("rtc", "v3", "RTC")),
     (".*:RTC:rtc3_v1_1", ("rtc", "v3", "RTC")),
+    ("STM32L4.*:RTC:rtc3_v2_0.*", ("rtc", "v3l4", "RTC")), // A slightly cut down v3 RTC
     (".*:RTC:rtc3_v2_0", ("rtc", "v3", "RTC")),
     (".*:RTC:rtc3_v3_0", ("rtc", "v3", "RTC")),
     (".*:RTC:rtc3_v3_5", ("rtc", "v3", "RTC")),
