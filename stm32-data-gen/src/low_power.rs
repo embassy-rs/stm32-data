@@ -19,6 +19,8 @@ pub(crate) fn peripheral_stop_mode_info(mcu_name: &str, peripheral: &str) -> Opt
         (r"^STM32WB55.*:I2C1", StopMode::Stop2),
         (r"^STM32WB55.*:I2C3", StopMode::Standby),
         (r"^STM32WLE5.*:LPUART1", StopMode::Standby),
+        (r"^STM32WLE5.*:I2C1", StopMode::Stop2),
+        (r"^STM32WLE5.*:I2C2", StopMode::Stop2),
         (r"^STM32WLE5.*:I2C3", StopMode::Standby),
         (r"^STM32WLE5.*:LPTIM1", StopMode::Standby),
 
