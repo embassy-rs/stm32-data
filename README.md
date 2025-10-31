@@ -152,7 +152,7 @@ are only interested in one. It's easier than it looks, and doing all families at
 - Make sure the block has the correct name. e.g. `LPUART`, not `LPUART1`.
 - Add entries to [`perimap`](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/perimap.rs), see below.
 - Regen, then:
-  - Check `data/extra/family/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
+  - Check `data/chips/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
   - Ensure a successful build of the affected pac. e.g.
     ```
     cd build/stm32-metapac
