@@ -168,6 +168,7 @@ impl ParsedRccs {
             "RGMII",
             "JTAG_TCK",
             "SYSA",
+            "SYSB",
             "SPDIF_SYMB",
             "HCLKU",
         ]);
