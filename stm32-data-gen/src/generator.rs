@@ -707,12 +707,20 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
         }
 
         #[derive(serde::Deserialize)]
+        pub struct Mapping {
+            pub source: String,
+            pub target: String,
+        }
+
+        #[derive(serde::Deserialize)]
         struct Extra {
             peripherals: Option<Vec<stm32_data_serde::chip::core::Peripheral>>,
             pin_cleanup: Option<PinCleanup>,
             /// Maps an instance name of a peripheral to a list of pins.
             /// E.g., {"OPAMP1": [("PA0", "VINP0"), ...], "OPAMP2": [...], ...}
             override_pins: Option<HashMap<String, Vec<Pin>>>,
+            /// Add additional signal names for certain peripherals
+            map_signals: Option<HashMap<String, Vec<Mapping>>>,
         }
 
         let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
@@ -756,6 +764,33 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
                     let mut pins = pins.clone();
                     pins.retain(|p| group.pins.contains_key(&p.pin));
                     peri.pins = pins;
+                }
+            }
+        }
+
+        // apply map signals rules
+        if let Some(map_signals) = extra.map_signals {
+            for (name, peri) in peripherals.iter_mut() {
+                if let Some(pins) = map_signals.get(name) {
+                    let mut mapping: HashMap<&String, Vec<&String>> = HashMap::with_capacity(pins.len());
+                    for pin in pins {
+                        mapping.entry(&pin.source).or_insert(Vec::new()).push(&pin.target);
+                    }
+
+                    let mut extra: Vec<Pin> = Vec::new();
+                    for pin in peri.pins.iter() {
+                        if let Some(signals) = mapping.get(&pin.signal) {
+                            for signal in signals {
+                                extra.push(Pin {
+                                    pin: pin.pin.clone(),
+                                    signal: signal.to_string(),
+                                    af: pin.af,
+                                });
+                            }
+                        }
+                    }
+
+                    peri.pins.extend(extra);
                 }
             }
         }
