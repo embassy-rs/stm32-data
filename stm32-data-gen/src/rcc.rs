@@ -356,6 +356,8 @@ impl ParsedRccs {
         const RCC_PERI_MUX_EXCEPTIONS: &[(&str, &str)] = &[
             // These peripherals have a different mux name than the bus clock
             // Format: rcc_version, peripheral_name
+            ("u3", "ADC"),
+            ("u3", "DAC"),
             ("u5", "ADC"),
             ("n6", "I2C4"),
             ("n6", "SDMMC1"), // HCLK2 is corrext per Cube and Docs so no mux check
