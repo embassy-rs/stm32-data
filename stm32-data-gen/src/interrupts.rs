@@ -430,7 +430,7 @@ fn tokenize_name(name: &str) -> Vec<String> {
     // Treat IRQ names are "tokens" separated by `_`, except some tokens
     // contain `_` themselves, such as `C1_RX`.
     let r = regex!(
-        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_OTG_HS|USB1_OTG_HS|USB2_OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*"
+        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_OTG_HS|USB1_OTG_HS|USB2_OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|BRK_TERR_IERR|TRG_COM_DIR_IDX|[A-Z0-9]+(_\d+)*)_*"
     );
     let name = name.to_ascii_uppercase();
 
@@ -457,7 +457,7 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         ("TEMP", &["TEMPSENS"]),
         ("DSI", &["DSIHOST"]),
         ("HRTIM1", &["HRTIM"]),
-        ("GTZC", &["GTZC_S"]),
+        ("GTZC", &["GTZC_S", "GTZC_NS"]),
         ("TZIC", &["GTZC_S"]),
     ];
 
@@ -541,7 +541,10 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("I2C", &["ER", "EV"]),
         ("I3C", &["ER", "EV", "WKUP"]),
         ("FMPI2C", &["ER", "EV"]),
-        ("TIM", &["BRK", "UP", "TRG", "COM", "CC"]),
+        (
+            "TIM",
+            &["BRK_TERR_IERR", "BRK", "UP", "TRG", "TRG_COM_DIR_IDX", "COM", "CC"],
+        ),
         // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
         ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU"]),
         ("SUBGHZ", &["RADIO"]),
@@ -589,7 +592,7 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32WL5.*:cm4", "NVIC1"),
     ("STM32WL5.*:cm0p", "NVIC2"),
     // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-    ("STM32(L5|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
+    ("STM32(L5|U3|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
     // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
     ("STM32H7[RS].*", "NVIC2"),
     // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.

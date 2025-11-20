@@ -292,6 +292,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32L4.*:RCC:.*", ("rcc", "l4", "RCC")),
     ("STM32L5.*:RCC:.*", ("rcc", "l5", "RCC")),
     ("STM32U0.*:RCC:.*", ("rcc", "u0", "RCC")),
+    ("STM32U3.*:RCC:.*", ("rcc", "u3", "RCC")),
     ("STM32U5.*:RCC:.*", ("rcc", "u5", "RCC")),
     ("STM32H50.*:RCC:.*", ("rcc", "h50", "RCC")),
     ("STM32H5.*:RCC:.*", ("rcc", "h5", "RCC")),
