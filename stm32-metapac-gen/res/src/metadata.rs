@@ -256,6 +256,7 @@ pub struct DmaChannel {
     pub channel: u32,
     pub dmamux: Option<&'static str>,
     pub dmamux_channel: Option<u32>,
+    pub stop_mode: StopMode,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]

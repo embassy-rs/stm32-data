@@ -466,6 +466,7 @@ pub struct DmaChannel {
     pub name: String,
     pub dma: String,
     pub channel: u32,
+    pub stop_mode: StopMode,
     pub dmamux: Option<String>,
     pub dmamux_channel: Option<u32>,
 }

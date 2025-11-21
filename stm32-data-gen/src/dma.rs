@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::Context;
+use stm32_data_serde::chip::core::peripheral::rcc::StopMode;
 use stm32_data_serde::chip::core::peripheral::RemapInfo;
 
 use crate::normalize_peris::normalize_peri_name;
@@ -426,6 +427,7 @@ impl DmaChannels {
                                     dma: n.to_string(),
                                     // Make sure all channels numbers start at 0
                                     channel: i - low,
+                                    stop_mode: StopMode::default(),
                                     dmamux: Some(dmamux.to_string()),
                                     dmamux_channel: Some(dmamux_channel),
                                     supports_2d: None,
@@ -479,6 +481,7 @@ impl DmaChannels {
                             name: format!("{dma_peri_name}_CH{channel_name}"),
                             dma: dma_peri_name.clone(),
                             channel: channel_name.parse().unwrap(),
+                            stop_mode: StopMode::default(),
                             dmamux: None,
                             dmamux_channel: None,
                             supports_2d: None,
@@ -600,6 +603,7 @@ impl DmaChannels {
                     name: format!("{instance}_CH{i}"),
                     dma: instance.to_string(),
                     channel: i,
+                    stop_mode: StopMode::default(),
                     dmamux: None,
                     dmamux_channel: None,
                     supports_2d: Some(i >= count - count_2d),
