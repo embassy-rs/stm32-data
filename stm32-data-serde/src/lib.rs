@@ -242,6 +242,7 @@ pub mod chip {
             pub name: String,
             pub dma: String,
             pub channel: u8,
+            #[serde(default, skip_serializing_if = "crate::is_default")]
             pub stop_mode: peripheral::rcc::StopMode,
             #[serde(skip_serializing_if = "Option::is_none")]
             pub dmamux: Option<String>,
