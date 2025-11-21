@@ -10,7 +10,7 @@ shift
 case "$CMD" in
     download-all)
         rm -rf ./sources/
-        git clone -b stm32u3xx-support https://github.com/graynode/stm32-data-sources.git ./sources/ -q
+        git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/ -q
         cd ./sources/
         git checkout $REV
     ;;
