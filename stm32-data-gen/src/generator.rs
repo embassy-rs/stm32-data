@@ -707,17 +707,9 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
         }
 
         #[derive(serde::Deserialize)]
-        pub struct Mapping {
-            pub source: String,
-            pub target: String,
-        }
-
-        #[derive(serde::Deserialize)]
         struct Extra {
             peripherals: Option<Vec<stm32_data_serde::chip::core::Peripheral>>,
             pin_cleanup: Option<PinCleanup>,
-            /// Add additional signal names for certain peripherals
-            map_signals: Option<HashMap<String, Vec<Mapping>>>,
         }
 
         let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
@@ -731,8 +723,35 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
                 if let Some(peripheral) = peripherals.get_mut(&p.name)
                     && p.pins.len() > 0
                 {
+                    let signals: HashMap<&String, &String> = peripheral
+                        .pins
+                        .iter()
+                        .filter_map(|p| {
+                            if p.signal.starts_with("PA")
+                                || p.signal.starts_with("PB")
+                                || p.signal.starts_with("PC")
+                                || p.signal.starts_with("PD")
+                                || p.signal.starts_with("PE")
+                                || p.signal.starts_with("PF")
+                            {
+                                None
+                            } else {
+                                Some((&p.signal, &p.pin))
+                            }
+                        })
+                        .collect();
+
                     // Modify the generated peripheral
-                    let mut pins = p.pins.clone();
+                    let mut pins: Vec<Pin> = p
+                        .pins
+                        .iter()
+                        .map(|p| Pin {
+                            pin: (**signals.get(&p.pin).unwrap_or(&&p.pin)).clone(),
+                            signal: p.signal.clone(),
+                            af: p.af,
+                        })
+                        .collect();
+
                     pins.append(&mut peripheral.pins);
                     pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
                     pins.sort_by_key(|p| (p.pin.clone(), p.signal.clone()));
@@ -756,33 +775,6 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
                     if let Some(stripped) = pin.pin.strip_suffix(&clean.strip_suffix) {
                         pin.pin = stripped.to_string();
                     }
-                }
-            }
-        }
-
-        // apply map signals rules
-        if let Some(map_signals) = extra.map_signals {
-            for (name, peri) in peripherals.iter_mut() {
-                if let Some(pins) = map_signals.get(name) {
-                    let mut mapping: HashMap<&String, Vec<&String>> = HashMap::with_capacity(pins.len());
-                    for pin in pins {
-                        mapping.entry(&pin.source).or_insert(Vec::new()).push(&pin.target);
-                    }
-
-                    let mut extra: Vec<Pin> = Vec::new();
-                    for pin in peri.pins.iter() {
-                        if let Some(signals) = mapping.get(&pin.signal) {
-                            for signal in signals {
-                                extra.push(Pin {
-                                    pin: pin.pin.clone(),
-                                    signal: signal.to_string(),
-                                    af: pin.af,
-                                });
-                            }
-                        }
-                    }
-
-                    peri.pins.extend(extra);
                 }
             }
         }
