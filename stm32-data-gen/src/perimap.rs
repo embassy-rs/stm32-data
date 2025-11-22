@@ -374,6 +374,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32L4.*:FLASH:.*", ("flash", "l4", "FLASH")),
     ("STM32L5.*:FLASH:.*", ("flash", "l5", "FLASH")),
     ("STM32U0.*:FLASH:.*", ("flash", "u0", "FLASH")),
+    ("STM32U3.*:FLASH:.*", ("flash", "u3", "FLASH")),
     ("STM32U5.*:FLASH:.*", ("flash", "u5", "FLASH")),
     ("STM32WB0.*:FLASH:.*", ("flash", "wb0", "FLASH")),
     ("STM32WBA.*:FLASH:.*", ("flash", "wba", "FLASH")),
