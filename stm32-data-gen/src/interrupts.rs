@@ -299,13 +299,7 @@ impl ChipInterrupts {
                 for part in tokenize_name(name2) {
                     trace!("    part={part}");
 
-                    let part = {
-                        if part == "TAMPER" {
-                            "TAMP".to_string()
-                        } else {
-                            part
-                        }
-                    };
+                    let part = { if part == "TAMPER" { "TAMP".to_string() } else { part } };
 
                     if part == "LSECSS" {
                         interrupt_signals.insert(("RCC".to_string(), "LSECSS".to_string()));

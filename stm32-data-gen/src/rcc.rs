@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use anyhow::{anyhow, bail, Ok};
+use anyhow::{Ok, anyhow, bail};
 use chiptool::ir::IR;
 use stm32_data_serde::chip::core::peripheral::rcc::{Field, StopMode};
 use stm32_data_serde::chip::core::peripheral::{self, rcc};
