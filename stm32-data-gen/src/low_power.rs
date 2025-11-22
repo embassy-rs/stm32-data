@@ -25,6 +25,8 @@ pub(crate) fn peripheral_stop_mode_info(mcu_name: &str, peripheral: &str) -> Opt
         (r"^STM32WLE5.*:LPTIM1", StopMode::Standby),
         (r"^STM32WLE5.*:SUBGHZSPI", StopMode::Stop2),
         (r"^STM32WLE5.*:ADC1", StopMode::Stop2),
+        (r"^STM32U5.*:GPDMA.*", StopMode::Stop2),
+        (r"^STM32U5.*:LPDMA.*", StopMode::Standby),
 
         // __ATTENTION__: Keep these rules at the bottom to grant precedence to the more specific rules above
         // Every peripheral with LP prefix is assumed to be able enter up to Stop1 mode
