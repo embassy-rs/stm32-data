@@ -209,7 +209,7 @@ impl Gen {
         serde_json::from_slice(&chip).unwrap()
     }
 
-    pub fn gen(&mut self) {
+    pub fn run_gen(&mut self) {
         fs::create_dir_all(self.opts.out_dir.join("src/peripherals")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/registers")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/chips")).unwrap();

@@ -1,5 +1,5 @@
-use stm32_data_serde::chip::memory::{self, Access, Settings};
 use stm32_data_serde::chip::Memory;
+use stm32_data_serde::chip::memory::{self, Access, Settings};
 
 use crate::util::RegexMap;
 

@@ -29,5 +29,5 @@ fn main() {
         data_dir,
         chips,
     };
-    Gen::new(opts).gen();
+    Gen::new(opts).run_gen();
 }
