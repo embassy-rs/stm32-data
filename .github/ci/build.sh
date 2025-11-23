@@ -44,6 +44,7 @@ if [ $DIFF_OK -eq 0 ]; then
 
     cat > /ci/comment.md <<EOF
 diff: https://ci.embassy.dev/jobs/$(jq -r .id < /ci/job.json)/artifacts/diff.html
+git: https://ci.embassy.dev/jobs/$(jq -r .id < /ci/job.json)/artifacts/generated.git
 EOF
 else
     cat > /ci/comment.md <<EOF
