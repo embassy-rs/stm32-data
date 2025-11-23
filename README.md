@@ -198,15 +198,8 @@ that they are all mutually consistent.
 Finally, we can merge
 
 ```
-./merge_regs.py tmp/RCC/g0*.yaml
+cargo run --release --bin merge_regs tmp/RCC/g0*.yaml
 ```
-
-> [!Tip]
-> You may need to install the required packages in order to run this
-> ```shell
-> pip install xmltodict
-> pip install pyyaml
-> ```
 
 This will produce `regs_merged.yaml`, which we can copy into its final resting
 place:
