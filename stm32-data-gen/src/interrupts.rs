@@ -505,8 +505,12 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("DCMIPP", "*", &["GLOBAL"]), // Default for all other DCMIPP devices
         // STM32WB0 Specific Mappings
         ("EXTI", "STM32WB0", &["GPIOA", "GPIOB"]),
-        ("RADIO_TIMER", "STM32WB0", &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"]),
-        ("RADIO", "STM32WB0", &["TXRX", "SEQ"])
+        (
+            "RADIO_TIMER",
+            "STM32WB0",
+            &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
+        ),
+        ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
     ];
 
     // Check for chip-specific overrides first
