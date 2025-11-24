@@ -175,7 +175,6 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32H7.*:SYSCFG:.*", ("syscfg", "h7", "SYSCFG")),
     ("STM32U0.*:SYSCFG:.*", ("syscfg", "u0", "SYSCFG")),
     ("STM32U5.*:SYSCFG:.*", ("syscfg", "u5", "SYSCFG")),
-    ("STM32WB0.*:SYSCFG:.*", ("syscfg", "wb0", "SYSCFG")),
     ("STM32WBA.*:SYSCFG:.*", ("syscfg", "wba", "SYSCFG")),
     ("STM32WB.*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
     ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
