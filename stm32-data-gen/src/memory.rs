@@ -460,7 +460,7 @@ static FLASH_INFO: RegexMap<&[FlashInfo]> = RegexMap::new(&[
     ("STM32L5.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }]),
     ("STM32U0.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
     ("STM32U5.*",               &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }]),
-    ("STM32WB0.*",              &[FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(  2*1024, 0)] }]), // Verify erase_value!
+    ("STM32WB0.*",              &[FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(  2*1024, 0)] }]),
     ("STM32WBA.*",              &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }]),
     ("STM32WB1.*",              &[FlashInfo{ erase_value: 0x00, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
     ("STM32WB.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }]),
