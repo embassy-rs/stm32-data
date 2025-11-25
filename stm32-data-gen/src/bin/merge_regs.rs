@@ -1,8 +1,7 @@
 use std::cmp::Ordering;
-use std::path::PathBuf;
 use std::{env, fs};
 
-use glob::{GlobError, glob};
+use glob::glob;
 use serde_yaml::{Mapping, Value};
 
 /// Extracts byte_offset from a YAML value as an integer
