@@ -402,6 +402,7 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
 struct FlashInfo {
     write_size: u32,
     erase_size: &'static [(u32, u32)],
+    /// If erasing flash memory leaves behind 1's: 0xFF; If 0's: 0x00
     erase_value: u8,
 }
 
