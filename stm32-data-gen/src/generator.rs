@@ -663,6 +663,15 @@ fn merge_periph_pins_info(
             }
         }
     }
+
+    // Rename QUADSPI_NCS for the STM32L* family to QUADSPI_BK1_NCS
+    if periph_name == "QUADSPI" {
+        for pin in &mut core_pins[..] {
+            if pin.signal == "NCS" {
+                pin.signal = "BK1_NCS".to_string();
+            }
+        }
+    }
 }
 
 /// Resolve the address of a peripheral.
