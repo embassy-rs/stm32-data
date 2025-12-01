@@ -95,6 +95,15 @@ impl ChipInterrupts {
         if chip_name.starts_with("STM32F100") {
             header_irqs.remove("DMA2_Channel4_5");
         }
+        // STM32U3 changed the advanced timer IRQ BRK/TRG names
+        // to include multiple signal names. This change maps
+        // them back to the common names.
+        if let Some(num) = header_irqs.remove("TIM1_BRK_TERR_IERR") {
+            header_irqs.insert("TIM1_BRK".to_string(), num);
+        }
+        if let Some(num) = header_irqs.remove("TIM1_TRG_COM_DIR_IDX") {
+            header_irqs.insert("TIM1_TRG_COM".to_string(), num);
+        }
         core.interrupts = header_irqs
             .iter()
             .map(|(k, v)| stm32_data_serde::chip::core::Interrupt {
@@ -153,6 +162,11 @@ impl ChipInterrupts {
                 .replace("USAR11", "USART11")
                 // ST NVIC XML typo seen on STM32N6: "Channe1l4" instead of "Channel14"
                 .replace("Channe1l4", "Channel14");
+                // STM32U3 introduced new naming for advanced timer IRQs
+                // that differ from the rest of the STM32 family.
+                // Map them back to the common names.
+                .replace("TIM1_BRK_TERR_IERR", "TIM1_BRK")
+                .replace("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM");
             trace!("    name={name}");
 
             // Skip interrupts that don't exist.
@@ -430,7 +444,7 @@ fn tokenize_name(name: &str) -> Vec<String> {
     // Treat IRQ names are "tokens" separated by `_`, except some tokens
     // contain `_` themselves, such as `C1_RX`.
     let r = regex!(
-        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_OTG_HS|USB1_OTG_HS|USB2_OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|BRK_TERR_IERR|TRG_COM_DIR_IDX|[A-Z0-9]+(_\d+)*)_*"
+        r"(SPDIF_RX|EP\d+_(IN|OUT)|OTG_FS|OTG_HS|USB_OTG_HS|USB1_OTG_HS|USB2_OTG_HS|USB_DRD_FS|USB_FS|C1_RX|C1_TX|C2_RX|C2_TX|[A-Z0-9]+(_\d+)*)_*"
     );
     let name = name.to_ascii_uppercase();
 
@@ -541,10 +555,7 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("I2C", &["ER", "EV"]),
         ("I3C", &["ER", "EV", "WKUP"]),
         ("FMPI2C", &["ER", "EV"]),
-        (
-            "TIM",
-            &["BRK_TERR_IERR", "BRK", "UP", "TRG", "TRG_COM_DIR_IDX", "COM", "CC"],
-        ),
+        ("TIM", &["BRK", "UP", "TRG", "COM", "CC"]),
         // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
         ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU"]),
         ("SUBGHZ", &["RADIO"]),
