@@ -314,13 +314,7 @@ impl ChipInterrupts {
                 for part in tokenize_name(name2) {
                     trace!("    part={part}");
 
-                    let part = {
-                        if part == "TAMPER" {
-                            "TAMP".to_string()
-                        } else {
-                            part
-                        }
-                    };
+                    let part = { if part == "TAMPER" { "TAMP".to_string() } else { part } };
 
                     if part == "LSECSS" {
                         interrupt_signals.insert(("RCC".to_string(), "LSECSS".to_string()));
@@ -391,6 +385,18 @@ impl ChipInterrupts {
                         let non_err_irqs: Vec<_> = irqs.iter().filter(|x| !x.contains("_ERR")).cloned().collect();
                         if !non_err_irqs.is_empty() {
                             // If we have non-error IRQs, keep only the first one
+                            let preferred_irq = non_err_irqs[0].clone();
+                            irqs.clear();
+                            irqs.insert(preferred_irq);
+                        }
+                    }
+
+                    // Another special case for STM32WB0, with RADIO_TXRX & RADIO_TXRX_SEQ. Copy of the LTDC_L0_ERR case.
+                    if irqs.len() != 1 && p.name == "RADIO" && signal == "TXRX" {
+                        // Prefer the IRQ name that doesn't contain "_SEQ"
+                        let non_err_irqs: Vec<_> = irqs.iter().filter(|x| !x.contains("_SEQ")).cloned().collect();
+                        if !non_err_irqs.is_empty() {
+                            // If we have non-sequence IRQs, keep only the first one
                             let preferred_irq = non_err_irqs[0].clone();
                             irqs.clear();
                             irqs.insert(preferred_irq);
@@ -512,6 +518,14 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         // DCMIPP signals: STM32N6 supports CSI, others only basic signals
         ("DCMIPP", "STM32N6", &["GLOBAL", "CSI"]),
         ("DCMIPP", "*", &["GLOBAL"]), // Default for all other DCMIPP devices
+        // STM32WB0 Specific Mappings
+        ("EXTI", "STM32WB0", &["GPIOA", "GPIOB"]),
+        (
+            "RADIO_TIMER",
+            "STM32WB0",
+            &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
+        ),
+        ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
     ];
 
     // Check for chip-specific overrides first

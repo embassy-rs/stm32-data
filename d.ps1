@@ -6,7 +6,7 @@ param (
     [string]$peri
 )
 
-$REV = "db4473fae6a41fcad7f5c824dcaadba3a6e060e9"
+$REV = "6069ecbad229a1c5354b0e1274ec2ea0132d7d31"
 
 Switch ($CMD) {
     "download-all" {
@@ -28,7 +28,7 @@ Switch ($CMD) {
             echo $f
 
             echo "processing $f ..."
-            chiptool extract-peripheral --svd "sources/svd/stm32$f.svd" --peripheral "$peri" > "tmp/$peri/$f.yaml" 2> "tmp/$peri/$f.err"
+            chiptool extract-peripheral --svd "sources/svd/stm32$f.svd" --peripheral "$peri" | Out-File -FilePath "tmp/$peri/$f.yaml" -Encoding ASCII 2> "tmp/$peri/$f.err"
             if ($LASTEXITCODE -eq 0) {
                 rm "tmp/$peri/$f.err"
                 echo OK

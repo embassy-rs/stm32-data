@@ -390,13 +390,7 @@ impl DmaChannels {
                                     x => x,
                                 };
 
-                                let request = {
-                                    if parts.len() < 2 {
-                                        target_peri_name
-                                    } else {
-                                        parts[1]
-                                    }
-                                };
+                                let request = { if parts.len() < 2 { target_peri_name } else { parts[1] } };
                                 chip_dma
                                     .peripherals
                                     .entry(normalize_peri_name(target_peri_name).to_string())
@@ -574,13 +568,7 @@ impl DmaChannels {
             for (request_name, request_num) in parsed {
                 let parts: Vec<_> = request_name.split('_').collect();
                 let target_peri_name = parts[0];
-                let request = {
-                    if parts.len() < 2 {
-                        target_peri_name
-                    } else {
-                        parts[1]
-                    }
-                };
+                let request = { if parts.len() < 2 { target_peri_name } else { parts[1] } };
                 chip_dma
                     .peripherals
                     .entry(normalize_peri_name(target_peri_name).to_string())
