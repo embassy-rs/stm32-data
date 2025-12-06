@@ -1,0 +1,297 @@
+block/FLASH:
+  description: 4kb addressable space.
+  items:
+  - name: COMMAND
+    description: COMMAND register.
+    byte_offset: 0
+    fieldset: COMMAND
+  - name: CONFIG
+    description: CONFIG register.
+    byte_offset: 4
+    fieldset: CONFIG
+  - name: IRQSTAT
+    description: IRQSTAT register.
+    byte_offset: 8
+    fieldset: IRQSTAT
+  - name: IRQMASK
+    description: IRQMASK register.
+    byte_offset: 12
+    fieldset: IRQMASK
+  - name: IRQRAW
+    description: IRQRAW register.
+    byte_offset: 16
+    fieldset: IRQRAW
+  - name: SIZE
+    description: SIZE register.
+    byte_offset: 20
+    access: Read
+    fieldset: SIZE
+  - name: ADDRESS
+    description: ADDRESS register.
+    byte_offset: 24
+    fieldset: ADDRESS
+  - name: LFSRVAL
+    description: LFSRVAL register.
+    byte_offset: 36
+    access: Read
+    fieldset: LFSRVAL
+  - name: PAGEPROT0
+    description: PAGEPROT0 register.
+    byte_offset: 52
+    fieldset: PAGEPROT0
+  - name: PAGEPROT1
+    description: PAGEPROT1 register.
+    byte_offset: 56
+    fieldset: PAGEPROT1
+  - name: DATA0
+    description: DATA0 register.
+    byte_offset: 64
+    fieldset: DATA0
+  - name: DATA1
+    description: DATA1 register.
+    byte_offset: 68
+    fieldset: DATA1
+  - name: DATA2
+    description: DATA2 register.
+    byte_offset: 72
+    fieldset: DATA2
+  - name: DATA3
+    description: DATA3 register.
+    byte_offset: 76
+    fieldset: DATA3
+  - name: UNLOCK012
+    description: UNLOCK012 register.
+    byte_offset: 80
+    fieldset: UNLOCK012
+  - name: UNLOCK3
+    description: UNLOCK3 register.
+    byte_offset: 84
+    fieldset: UNLOCK3
+fieldset/ADDRESS:
+  description: ADDRESS register.
+  fields:
+  - name: YADDR
+    description: Flash column address offset to be used with some COMMAND.
+    bit_offset: 0
+    bit_size: 6
+  - name: XADDR
+    description: Flash row address offset to be used with some COMMAND.
+    bit_offset: 6
+    bit_size: 10
+fieldset/COMMAND:
+  description: COMMAND register.
+  fields:
+  - name: COMMAND
+    description: 'Macro commands for flash operations (may require DATA0...DATA3 to be set): - 0x11 : ERASE - 0x22 : MASSERASE - 0x33 : WRITE - 0x55 : MASSREAD - 0xAA : SLEEP - 0xBB : WAKEUP - 0xCC : BURSTWRITE - 0xEE : OTPWRITE - 0xFF : KEYWRITE.'
+    bit_offset: 0
+    bit_size: 8
+fieldset/CONFIG:
+  description: CONFIG register.
+  fields:
+  - name: REMAP
+    description: 'CPU access routing (it supersedes PREMAP configuration): - 0 : FLASH memory addressed - 1 : SRAM0 memory addressed.'
+    bit_offset: 1
+    bit_size: 1
+  - name: DIS_GROUP_WRITE
+    description: 'Burst write Control: - 0 : burst write allowed - 1 : burst write forbidden.'
+    bit_offset: 2
+    bit_size: 1
+  - name: WAIT_STATE
+    description: 'Add latency to flash read opeations: - 00 : no latency - 01 : 1 clock cycle latency - 10 : 2 clock cycles latency - 11 : 3 clock cycles latency.'
+    bit_offset: 4
+    bit_size: 2
+  - name: SLEEP_SM
+    description: 'Flash memory power-down mode enable in SLEEP mode This bit allows to have the Flash memory in power-down mode or in idle mode when the device is in Sleep mode. - 0: When the device is in Sleep mode, the NVM is in Idle mode. - 1: When the device is in Sleep mode, the NVM is in power-down mode.'
+    bit_offset: 6
+    bit_size: 1
+fieldset/DATA0:
+  description: DATA0 register.
+  fields:
+  - name: DATA0
+    description: Value to be used as DATA for any COMMAND of type WRITE and compare value for MASSREAD.
+    bit_offset: 0
+    bit_size: 32
+fieldset/DATA1:
+  description: DATA1 register.
+  fields:
+  - name: DATA1
+    description: Value to be used as DATA for any COMMAND of type WRITE.
+    bit_offset: 0
+    bit_size: 32
+fieldset/DATA2:
+  description: DATA2 register.
+  fields:
+  - name: DATA2
+    description: Value to be used as DATA for any COMMAND of type WRITE.
+    bit_offset: 0
+    bit_size: 32
+fieldset/DATA3:
+  description: DATA3 register.
+  fields:
+  - name: DATA3
+    description: Value to be used as DATA for any COMMAND of type WRITE.
+    bit_offset: 0
+    bit_size: 32
+fieldset/IRQMASK:
+  description: IRQMASK register.
+  fields:
+  - name: CMDDONEM
+    description: '(1: mask, 0: inactive) CMDDONE_MIS mask.'
+    bit_offset: 0
+    bit_size: 1
+  - name: CMDSTARTM
+    description: '(1: mask, 0: inactive) CMDSTART_MIS mask.'
+    bit_offset: 1
+    bit_size: 1
+  - name: CMDBUSYERRM
+    description: '(1: mask, 0: inactive) CMDBUSYERR_MIS mask.'
+    bit_offset: 2
+    bit_size: 1
+  - name: ILLCMDM
+    description: '(1: mask, 0: inactive) ILLCMD_MIS mask.'
+    bit_offset: 3
+    bit_size: 1
+  - name: READOKM
+    description: '(1: mask, 0: inactive) READOK_MIS mask.'
+    bit_offset: 4
+    bit_size: 1
+  - name: FNREADYM
+    description: '(1: mask, 0: inactive) FNREADY_MIS mask.'
+    bit_offset: 5
+    bit_size: 1
+fieldset/IRQRAW:
+  description: IRQRAW register.
+  fields:
+  - name: CMDDONE_RIS
+    description: '(1: active, 0: inactive) COMMAND sequence ended.'
+    bit_offset: 0
+    bit_size: 1
+  - name: CMDSTART_RIS
+    description: '(1: active, 0: inactive) COMMAND sequence started.'
+    bit_offset: 1
+    bit_size: 1
+  - name: CMDBUSYERR_RIS
+    description: '(1: active, 0: inactive) COMMAND issued while flash busy.'
+    bit_offset: 2
+    bit_size: 1
+  - name: ILLCMD_RIS
+    description: '(1: active, 0: inactive) Illegal command issued.'
+    bit_offset: 3
+    bit_size: 1
+  - name: READOK_RIS
+    description: '(1: active, 0: inactive) READ COMMAND completed successfully.'
+    bit_offset: 4
+    bit_size: 1
+  - name: CMDSLEEPERR_RIS
+    description: '(1: active, 0: inactive) COMMAND issued while flash in sleep-mode (SLM=1).'
+    bit_offset: 5
+    bit_size: 1
+fieldset/IRQSTAT:
+  description: IRQSTAT register.
+  fields:
+  - name: CMDDONE_MIS
+    description: '(1: clear, 0: inactive) CMDDONE_MIS flag.'
+    bit_offset: 0
+    bit_size: 1
+  - name: CMDSTART_MIS
+    description: '(1: clear, 0: inactive) CMDSTART_MIS flag.'
+    bit_offset: 1
+    bit_size: 1
+  - name: CMDBUSYERR_MIS
+    description: '(1: clear, 0: inactive) CMDBUSYERR_MIS flag.'
+    bit_offset: 2
+    bit_size: 1
+  - name: ILLCMD_MIS
+    description: '(1: clear, 0: inactive) ILLCMD_MIS flag.'
+    bit_offset: 3
+    bit_size: 1
+  - name: READOK_MIS
+    description: '(1: clear, 0: inactive) READOK_MIS flag.'
+    bit_offset: 4
+    bit_size: 1
+  - name: FNREADY_MIS
+    description: '(1: clear, 0: inactive) FNREADY_MIS flag.'
+    bit_offset: 5
+    bit_size: 1
+fieldset/LFSRVAL:
+  description: LFSRVAL register.
+  fields:
+  - name: LFSRVAL
+    description: Flash read data CRC signature.
+    bit_offset: 0
+    bit_size: 32
+fieldset/PAGEPROT0:
+  description: PAGEPROT0 register.
+  fields:
+  - name: SEGSIZE0
+    description: First segment, 7-bit page protection size (number of pages to protect in segment, first page included).
+    bit_offset: 0
+    bit_size: 7
+  - name: SEGOFFSET0
+    description: First segment, 7-bit page protection offset (first page number in protected segment).
+    bit_offset: 8
+    bit_size: 7
+  - name: SEGSIZE1
+    description: Second segment, 7-bit page protection size (number of pages to protect in segment, first page included).
+    bit_offset: 16
+    bit_size: 7
+  - name: SEGOFFSET1
+    description: Second segment, 7-bit page protection offset (first page number in protected segment).
+    bit_offset: 24
+    bit_size: 7
+fieldset/PAGEPROT1:
+  description: PAGEPROT1 register.
+  fields:
+  - name: SEGSIZE2
+    description: Third segment, 7-bit page protection size (number of pages to protect in segment, first page included).
+    bit_offset: 0
+    bit_size: 7
+  - name: SEGOFFSET2
+    description: Third segment, 7-bit page protection offset (first page number in protected segment).
+    bit_offset: 8
+    bit_size: 7
+  - name: SEGSIZE3
+    description: Fourth segment, 7-bit page protection size (number of pages to protect in segment, first page included).
+    bit_offset: 16
+    bit_size: 7
+  - name: SEGOFFSET3
+    description: Fourth segment, 7-bit page protection offset (first page number in protected segment).
+    bit_offset: 24
+    bit_size: 7
+fieldset/SIZE:
+  description: SIZE register.
+  fields:
+  - name: FLASH_SIZE
+    description: 'Maximum valid address for flash memory: - 00 : 0x03FFF (64kb) - 01 : 0x07FFF (128kb) - 10 : 0x0BFFF (192kb) - 11 : 0x0FFFF (256kb).'
+    bit_offset: 0
+    bit_size: 17
+  - name: RAM_SIZE
+    description: 'RAM memory size selection: - 0 : 16kb - 1 : 32kb.'
+    bit_offset: 17
+    bit_size: 1
+  - name: FLASH_SECURE
+    description: 'Flash memory protection (0: no key present, 1: key present).'
+    bit_offset: 19
+    bit_size: 1
+  - name: JTAG_DISABLE
+    description: 'Flash+JTAG protection (0: no JTAG protection - see FLASH_SECURE, 1: Flash and JTAG protected).'
+    bit_offset: 20
+    bit_size: 1
+  - name: PACKAGE_SIZE
+    description: 'Package selection: - 0- : CSP - 10 : 32pins - 11 : 48pins.'
+    bit_offset: 21
+    bit_size: 2
+fieldset/UNLOCK012:
+  description: UNLOCK012 register.
+  fields:
+  - name: UNLOCK012
+    description: (NOT TO BE DOCUMENTED) Remove read-write protection from IFR0, IFR1, IFR2 sectors.
+    bit_offset: 0
+    bit_size: 32
+fieldset/UNLOCK3:
+  description: UNLOCK3 register.
+  fields:
+  - name: UNLOCK3
+    description: (NOT TO BE DOCUMENTED) Remove read-write protection from IFR3 sector.
+    bit_offset: 0
+    bit_size: 32

@@ -1,0 +1,163 @@
+block/LPAWUR:
+  items:
+  - name: FRAME_CONFIG0
+    description: FRAME_CONFIG0 register.
+    byte_offset: 0
+    fieldset: FRAME_CONFIG0
+  - name: FRAME_CONFIG1
+    description: FRAME_CONFIG1 register.
+    byte_offset: 4
+    fieldset: FRAME_CONFIG1
+  - name: FRAME_SYNC_CONFIG
+    description: FRAME_SYNC_CONFIG register.
+    byte_offset: 8
+    fieldset: FRAME_SYNC_CONFIG
+  - name: RFIP_CONFIG
+    description: RFIP_CONFIG register.
+    byte_offset: 12
+    fieldset: RFIP_CONFIG
+  - name: RF_CONFIG
+    description: RF_CONFIG register.
+    byte_offset: 16
+    fieldset: RF_CONFIG
+  - name: AGC_CONFIG
+    description: AGC_CONFIG register.
+    byte_offset: 20
+    fieldset: AGC_CONFIG
+  - name: PAYLOAD_0
+    description: PAYLOAD_0 register.
+    byte_offset: 28
+    access: Read
+    fieldset: PAYLOAD_0
+  - name: PAYLOAD_1
+    description: PAYLOAD_1 register.
+    byte_offset: 32
+    access: Read
+    fieldset: PAYLOAD_1
+fieldset/AGC_CONFIG:
+  description: AGC_CONFIG register.
+  fields:
+  - name: AGC_MODE
+    description: Define the working mode of the AGC:.
+    bit_offset: 0
+    bit_size: 2
+  - name: AGC_HOLD_MODE
+    description: The behavior when the AGC is ON and is working in HOLD mode.
+    bit_offset: 2
+    bit_size: 1
+  - name: AGC_RESET_MODE
+    description: The AGC reset behavior when the AGC is working in ON or HOLD mode.
+    bit_offset: 3
+    bit_size: 1
+fieldset/FRAME_CONFIG0:
+  description: FRAME_CONFIG0 register.
+  fields:
+  - name: PREAMBLE_THRESHOLD_COUNT
+    description: The number of transitions for preamble detection when receiving the manchester encoded preamble.
+    bit_offset: 0
+    bit_size: 8
+  - name: SYNC_LENGTH
+    description: Frame sync pattern length ( Manchester encoded ).
+    bit_offset: 8
+    bit_size: 1
+  - name: SYNC_THRESHOLD_COUNT
+    description: detection threshold when receivng the Frame sync ( Manchester encoded).
+    bit_offset: 10
+    bit_size: 6
+  - name: PAYLOAD_LENGTH
+    description: The number of data Bytes in the payload ( decoded ).
+    bit_offset: 16
+    bit_size: 4
+  - name: SLOW_CLK_CYCLE_PER_BIT_CNT
+    description: The number of expected slow clock cycle per each manchester coded bit.
+    bit_offset: 21
+    bit_size: 5
+fieldset/FRAME_CONFIG1:
+  description: FRAME_CONFIG1 register.
+  fields:
+  - name: KI
+    description: ki gain value for the timing recovery loop.
+    bit_offset: 0
+    bit_size: 4
+  - name: KP
+    description: kp gain value for the timing recovery loop.
+    bit_offset: 4
+    bit_size: 4
+  - name: FRAME_SYNC_COUNTER_TIMEOUT
+    description: The timeout in manchester encoded bits for the Frame Sync,it represents the number of samples after which in case the frame sync is not detected a sync_error is raised.
+    bit_offset: 8
+    bit_size: 8
+  - name: PREAMBLE_ENABLE
+    description: Preamble detection enable.
+    bit_offset: 17
+    bit_size: 1
+  - name: TREC_LOOP_ALGO_SEL
+    description: Timing recovery loop algorithm selection:.
+    bit_offset: 18
+    bit_size: 1
+fieldset/FRAME_SYNC_CONFIG:
+  description: FRAME_SYNC_CONFIG register.
+  fields:
+  - name: FRAME_SYNC_PATTERN_L
+    description: The value of the frame sync pattern, Low word, manchester encoded, used when the frame sync length is 16 bit (default 0x9696 which represent a frame sync value of 0x99).
+    bit_offset: 0
+    bit_size: 16
+  - name: FRAME_SYNC_PATTERN_H
+    description: The value of the frame sync pattern, High word, manchester encoded, used only when the frame sync length is 32 bits (default 0x0000 ).
+    bit_offset: 16
+    bit_size: 16
+fieldset/PAYLOAD_0:
+  description: PAYLOAD_0 register.
+  fields:
+  - name: PAYLOAD_0
+    description: First part of the payload (Least significant Byte First).
+    bit_offset: 0
+    bit_size: 32
+fieldset/PAYLOAD_1:
+  description: PAYLOAD_1 register.
+  fields:
+  - name: PAYLOAD_1
+    description: Second part of the payload (Least significant Byte First).
+    bit_offset: 0
+    bit_size: 32
+fieldset/RFIP_CONFIG:
+  description: RFIP_CONFIG register.
+  fields:
+  - name: LPAWUR_ENABLE
+    description: 'Enable (start) or Disable (stop) the LPAWUR feature (0: disabled by default).'
+    bit_offset: 0
+    bit_size: 1
+  - name: WAKEUP_LEVEL
+    description: '- 00: the bit Sync has been detected.'
+    bit_offset: 1
+    bit_size: 2
+fieldset/RF_CONFIG:
+  description: RF_CONFIG register.
+  fields:
+  - name: ED_SWITCH
+    description: '- 0 : Normal operation (default).'
+    bit_offset: 0
+    bit_size: 1
+  - name: CLKDIV
+    description: Calibrate 4kHz clock (programmable divider).
+    bit_offset: 1
+    bit_size: 4
+  - name: AGC_LOW_LVL
+    description: 'AGC level (Low) (default value: 0x2).'
+    bit_offset: 11
+    bit_size: 2
+  - name: ED_DC_CTRL
+    description: 'DC current subtraction enabling signal (default value: 0x1).'
+    bit_offset: 13
+    bit_size: 1
+  - name: AGC_HIGH_LVL
+    description: 'AGC level (High) (default value: 0x4).'
+    bit_offset: 14
+    bit_size: 4
+  - name: ED_ICAL
+    description: Current versus VBAT calibration for ED.
+    bit_offset: 18
+    bit_size: 3
+  - name: LPF3_CAL
+    bit_offset: 21
+    bit_size: 1
