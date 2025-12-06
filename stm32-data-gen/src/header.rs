@@ -205,6 +205,7 @@ impl Defines {
             ),
             ("FDCANRAM", &["SRAMCAN_BASE", "SRAMCAN_BASE_NS"]),
             ("VREFINTCAL", &["VREFINT_CAL_ADDR_CMSIS"]),
+            ("DESIG", &["PACKAGE_BASE"]),
             ("DSIHOST", &["DSI_BASE"]),
             ("SYSCFG", &["SYSCFG_BASE", "SBS_BASE"]),
             ("XSPI1", &["XSPI1_R_BASE"]),
