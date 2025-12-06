@@ -511,6 +511,14 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
             &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
         ),
         ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
+        // STM32WL3x Specific Mappings
+        ("EXTI", "STM32WL3", &["GPIOA", "GPIOB"]),
+        (
+            "MRSUBG",
+            "STM32WL3",
+            &["BUSY", "TX_RX_SEQUENCE", "TIMER_CPU_WKUP", "WKUP"],
+        ),
+        ("LCSC", "STM32WL3", &["LC", "ACTIVITY"]),
     ];
 
     // Check for chip-specific overrides first
