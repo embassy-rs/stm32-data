@@ -4,7 +4,7 @@ set -e
 cd $(dirname $0)
 
 CMD=$1
-REV=6069ecbad229a1c5354b0e1274ec2ea0132d7d31
+REV=bbe668b5dd62b03329da5e6dd9845dc994023a29
 shift
 
 case "$CMD" in
