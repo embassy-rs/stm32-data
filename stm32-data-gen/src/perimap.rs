@@ -92,6 +92,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:I2C:i2c2_v1_1F7", ("i2c", "v2", "I2C")),
     (".*:I2C:i2c2_v1_1U5", ("i2c", "v2", "I2C")),
     (".*:I2C:i2c1_v1_0H7RS", ("i2c", "v3", "I2C")),
+    (".*:I2C:i2c1_v1_0N6", ("i2c", "v3", "I2C")),
     (".*:FMPI2C:i2c2_v1_1", ("fmpi2c", "v2", "FMPI2C")),
     ("STM32F10[1357].*:DAC:dacif_v1_1F1", ("dac", "v1", "DAC")), // Original F1 are v1
     (".*:DAC:dacif_v1_1F1", ("dac", "v2", "DAC")),
@@ -560,6 +561,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32G[04].*:CRC:.*", ("crc", "v3", "CRC")),
     ("STM32H[57].*:CRC:.*", ("crc", "v3", "CRC")),
     ("STM32L[045].*:CRC:.*", ("crc", "v3", "CRC")),
+    ("STM32N6.*:CRC:.*", ("crc", "v3", "CRC")),
     ("STM32WB0.*:CRC:.*", ("crc", "v2", "CRC")),
     ("STM32W[BL].*:CRC:.*", ("crc", "v3", "CRC")),
     ("STM32C[0].*:CRC:.*", ("crc", "v3", "CRC")),
@@ -627,6 +629,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32WBA.*:HASH:.*", ("hash", "v4", "HASH")),
     (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
     (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
+    (".*:HASH:hash1_v4_0_N6", ("hash", "v3", "HASH")),
     (".*:CRYP:cryp1_v1_0.*", ("cryp", "v1", "CRYP")),
     (".*:CRYP:cryp1_v2_0_H7.*", ("cryp", "v3", "CRYP")),
     (".*:CRYP:cryp1-v2_5", ("cryp", "v4", "CRYP")),
