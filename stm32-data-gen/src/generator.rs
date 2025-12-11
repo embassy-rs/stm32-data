@@ -467,6 +467,7 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
         "USBRAM",
         "VREFINTCAL",
         "UID",
+        "DESIG",
         "HSEM",
         "ADC1_COMMON",
         "ADC12_COMMON",
@@ -479,8 +480,11 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
     ];
     for pname in GHOST_PERIS {
         let normalized_pname = normalize_peri_name(pname);
+        if normalized_pname == "DESIG" && !chip_name.starts_with("STM32WBA") {
+            continue;
+        }
         if let Entry::Vacant(entry) = peri_kinds.entry(normalized_pname.to_string()) {
-            if defines.get_peri_addr(pname).is_some() {
+            if resolve_peri_addr(chip_name, &normalized_pname, defines).is_some() {
                 entry.insert("unknown".to_string());
             }
         }
@@ -674,12 +678,16 @@ fn merge_periph_pins_info(
     }
 }
 
-/// Resolve the address of a peripheral.
-///
-/// In the case of FDCANRAM, the address can be different depending on the chip. The STM32H7 (not RS) has a single
-/// message RAM shared between all FDCANs, while other chips have one message RAM per FDCAN.
 fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) -> Option<u32> {
-    let addr = if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(pname) {
+    if pname == "VREFINTCAL" && chip_name.starts_with("STM32WBA") {
+        if let Some(package_base) = defines.get_peri_addr("DESIG") {
+            // The VREFINTCAL address is located at an offset of 0x2A4 from the DESIG base address
+            // on STM32WBA devices.
+            return package_base.checked_add(0x2A4);
+        }
+    }
+
+    if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(pname) {
         defines.get_peri_addr("FDCANRAM").map(|addr| {
             let h7_non_rs_re = Regex::new(r"STM32H7[0-9AB].*").unwrap();
             if h7_non_rs_re.is_match(chip_name) {
@@ -693,8 +701,7 @@ fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) ->
         })
     } else {
         defines.get_peri_addr(pname)
-    };
-    addr
+    }
 }
 
 /// Merge family-specific YAML overlays into the peripheral map.
