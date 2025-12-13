@@ -104,6 +104,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32L4[1-9A].*:DAC:dacif_v2_0", ("dac", "v3", "DAC")), // L4 non-plus are v3
     (".*:DAC:dacif_v2_0", ("dac", "v5", "DAC")),
     (".*:DAC:dacif_v2_0_U5", ("dac", "v6", "DAC")),
+    (".*:DAC:dacif_v2_0_U3", ("dac", "v6", "DAC")),
     (".*:DAC:dacif_v2_0_U0", ("dac", "v4", "DAC")),
     (".*:DAC:dacif_v3_0", ("dac", "v4", "DAC")),
     (".*:DAC:WL_dacif_v3_0", ("dac", "v4", "DAC")),
@@ -122,6 +123,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:ADC:aditf5_v3_0_H5", ("adc", "h5", "ADC")),
     (".*:ADC:aditf512_v3_0_H5", ("adc", "h5", "ADC")),
     (".*:ADC:aditf5_v3_1", ("adc", "v4", "ADC")),
+    (".*:ADC:aditf5_40v2_U3", ("adc", "u3", "ADC")),
     (".*:ADC:aditf5_40v2_U5", ("adc", "u5", "ADC")),
     (".*:ADC:aditf5_40v1_U5", ("adc", "u5", "ADC")),
     (".*:ADC:aditf4_v4_U5", ("adc", "u5", "ADC4")),
@@ -139,6 +141,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32U0.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
     ("STM32G4.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
     ("STM32U5.*:ADC\\d*_COMMON:.*", ("adccommon", "u5", "ADC_COMMON")),
+    ("STM32U3.*:ADC\\d*_COMMON:.*", ("adccommon", "u3", "ADC_COMMON")),
     (
         "STM32(L[45]|W[BL]).*:ADC\\d*_COMMON:.*",
         ("adccommon", "v3", "ADC_COMMON"),
