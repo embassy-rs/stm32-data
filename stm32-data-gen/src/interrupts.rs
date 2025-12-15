@@ -528,7 +528,6 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
             &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
         ),
         ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
-        ("USB", "STM32U3", &["WKUP"]),
     ];
 
     // Check for chip-specific overrides first
