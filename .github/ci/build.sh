@@ -20,6 +20,12 @@ cargo fmt -- --check
 # so the diff will show this PR's effect
 git remote add upstream https://github.com/embassy-rs/stm32-data
 git fetch --depth 15 upstream main
+if git branch --remote --contains HEAD | grep upstream/main; then
+    echo "on base branch"
+else
+    echo "not on base branch"
+    git pull -q upstream main
+fi
 set +e
 git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build -q
 DIFF_OK=$?
