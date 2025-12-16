@@ -83,6 +83,7 @@ fieldset/HTCR:
     description: Health test configuration
     bit_offset: 0
     bit_size: 32
+    enum: HTCFG
 fieldset/NSCR:
   description: RNG noise source control register.
   fields:
@@ -188,7 +189,10 @@ enum/RNG_CONFIG1:
     value: 15
   - name: ConfigB
     description: Recommended value for config B (not NIST certifiable)
-    value: 24
+    value: 1
+  - name: ConfigC
+    description: Recommended value for config C (not NIST certifiable) (0x0000_82)
+    value: 130
 enum/RNG_CONFIG2:
   bit_size: 3
   variants:
@@ -198,9 +202,21 @@ enum/RNG_CONFIG2:
 enum/RNG_CONFIG3:
   bit_size: 4
   variants:
+  - name: ConfigA
+    description: Recommended value for config A (NIST certifiable)
+    value: 15
   - name: ConfigB
     description: Recommended value for config B (not NIST certifiable)
     value: 0
+enum/HTCFG:
+  bit_size: 32
+  variants:
   - name: ConfigA
-    description: Recommended value for config A (NIST certifiable)
-    value: 13
+    description: Recommended value for RNG certification (0x0000_6688)
+    value: 26248
+  - name: ConfigB_C
+    description: Recommended value for config B and C (not NIST certifiable) (0x0000_AAC7)
+    value: 43727
+  - name: Magic
+    description: Magic number to be written before any write (0x1759_0ABC)
+    value: 391711420
