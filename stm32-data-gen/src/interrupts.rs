@@ -149,7 +149,10 @@ impl ChipInterrupts {
             }
 
             // More typos
-            let name = name.replace("USAR11", "USART11");
+            let name = name
+                .replace("USAR11", "USART11")
+                // ST NVIC XML typo seen on STM32N6: "Channe1l4" instead of "Channel14"
+                .replace("Channe1l4", "Channel14");
             trace!("    name={name}");
 
             // Skip interrupts that don't exist.
