@@ -161,7 +161,7 @@ impl ChipInterrupts {
             let name = name
                 .replace("USAR11", "USART11")
                 // ST NVIC XML typo seen on STM32N6: "Channe1l4" instead of "Channel14"
-                .replace("Channe1l4", "Channel14");
+                .replace("Channe1l4", "Channel14")
                 // STM32U3 introduced new naming for advanced timer IRQs
                 // that differ from the rest of the STM32 family.
                 // Map them back to the common names.
