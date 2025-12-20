@@ -89,6 +89,7 @@ fn chip_name_from_package_name(x: &str) -> String {
         (regex!("^(STM32L5....).x[PQ]$"), "$1"),
         (regex!("^(STM32L0....).xS$"), "$1"),
         (regex!("^(STM32H7....).x[QH]$"), "$1"),
+        (regex!("^(STM32U3....).x[QG]$"), "$1"),
         (regex!("^(STM32U5....).xQ$"), "$1"),
         (regex!("^(STM32H5....).xQ$"), "$1"),
         (regex!("^(STM32WB0....).x$"), "$1"),
@@ -142,8 +143,6 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
 static NOPELIST: RegexSet = RegexSet::new(&[
     // Not supported, not planned unless someone wants to do it.
     "STM32MP.*",
-    // TODO, PRs welcome :)
-    "STM32U3.*",
     // "STM32N6.*",
     "STM32G41[14].*",
     "STM32G4.*xZ",

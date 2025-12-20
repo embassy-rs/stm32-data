@@ -95,6 +95,15 @@ impl ChipInterrupts {
         if chip_name.starts_with("STM32F100") {
             header_irqs.remove("DMA2_Channel4_5");
         }
+        // STM32U3 changed the advanced timer IRQ BRK/TRG names
+        // to include multiple signal names. This change maps
+        // them back to the common names.
+        if let Some(num) = header_irqs.remove("TIM1_BRK_TERR_IERR") {
+            header_irqs.insert("TIM1_BRK".to_string(), num);
+        }
+        if let Some(num) = header_irqs.remove("TIM1_TRG_COM_DIR_IDX") {
+            header_irqs.insert("TIM1_TRG_COM".to_string(), num);
+        }
         core.interrupts = header_irqs
             .iter()
             .map(|(k, v)| stm32_data_serde::chip::core::Interrupt {
@@ -152,7 +161,12 @@ impl ChipInterrupts {
             let name = name
                 .replace("USAR11", "USART11")
                 // ST NVIC XML typo seen on STM32N6: "Channe1l4" instead of "Channel14"
-                .replace("Channe1l4", "Channel14");
+                .replace("Channe1l4", "Channel14")
+                // STM32U3 introduced new naming for advanced timer IRQs
+                // that differ from the rest of the STM32 family.
+                // Map them back to the common names.
+                .replace("TIM1_BRK_TERR_IERR", "TIM1_BRK")
+                .replace("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM");
             trace!("    name={name}");
 
             // Skip interrupts that don't exist.
@@ -457,7 +471,7 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         ("TEMP", &["TEMPSENS"]),
         ("DSI", &["DSIHOST"]),
         ("HRTIM1", &["HRTIM"]),
-        ("GTZC", &["GTZC_S"]),
+        ("GTZC", &["GTZC_S", "GTZC_NS"]),
         ("TZIC", &["GTZC_S"]),
     ];
 
@@ -589,7 +603,7 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32WL5.*:cm4", "NVIC1"),
     ("STM32WL5.*:cm0p", "NVIC2"),
     // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-    ("STM32(L5|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
+    ("STM32(L5|U3|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
     // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
     ("STM32H7[RS].*", "NVIC2"),
     // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.
