@@ -210,6 +210,54 @@ impl Defines {
             ("SYSCFG", &["SYSCFG_BASE", "SBS_BASE"]),
             ("XSPI1", &["XSPI1_R_BASE"]),
             ("XSPI2", &["XSPI2_R_BASE"]),
+            ("RAMCFG", &["RAMCFG_BASE", "RAMCFG_BASE_NS", "RAMCFG_BASE_S"]),
+            (
+                "GTZC",
+                &[
+                    "GTZC_BASE",
+                    "GTZC_TZSC_BASE",
+                    "GTZC_TZSC_BASE_NS",
+                    "GTZC_TZSC_BASE_S",
+                    "GTZC_TZSC1_BASE_NS",
+                    "GTZC_TZSC1_BASE_S",
+                ],
+            ),
+            ("GTZC1", &["GTZC1_BASE", "GTZC1_BASE_NS", "GTZC1_BASE_S"]),
+            (
+                "GTZC_TZSC",
+                &[
+                    "GTZC_TZSC_BASE",
+                    "GTZC_TZSC_BASE_NS",
+                    "GTZC_TZSC_BASE_S",
+                    "GTZC_TZSC1_BASE_NS",
+                    "GTZC_TZSC1_BASE_S",
+                ],
+            ),
+            (
+                "GTZC_TZIC",
+                &[
+                    "GTZC_TZIC_BASE",
+                    "GTZC_TZIC_BASE_S",
+                    "GTZC_TZIC1_BASE_NS",
+                    "GTZC_TZIC1_BASE_S",
+                ],
+            ),
+            (
+                "GTZC_MPCBB1",
+                &["GTZC_MPCBB1_BASE", "GTZC_MPCBB1_BASE_NS", "GTZC_MPCBB1_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB2",
+                &["GTZC_MPCBB2_BASE", "GTZC_MPCBB2_BASE_NS", "GTZC_MPCBB2_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB3",
+                &["GTZC_MPCBB3_BASE", "GTZC_MPCBB3_BASE_NS", "GTZC_MPCBB3_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB6",
+                &["GTZC_MPCBB6_BASE", "GTZC_MPCBB6_BASE_NS", "GTZC_MPCBB6_BASE_S"],
+            ),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 
