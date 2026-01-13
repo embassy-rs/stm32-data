@@ -1,0 +1,179 @@
+block/RAMCFG:
+  description: RAMCFG address block description.
+  items:
+  - name: M1CR
+    description: RAMCFG SRAM1 control register.
+    byte_offset: 0
+    fieldset: M1CR
+  - name: M1ISR
+    description: RAMCFG SRAM1 interrupt status register.
+    byte_offset: 8
+    access: Read
+    fieldset: M1ISR
+  - name: M1ERKEYR
+    description: RAMCFG SRAM1 erase key register.
+    byte_offset: 40
+    access: Write
+    fieldset: M1ERKEYR
+  - name: M2CR
+    description: RAMCFG SRAM2 control register.
+    byte_offset: 64
+    fieldset: M2CR
+  - name: M2IER
+    description: RAMCFG SRAM2 interrupt enable register.
+    byte_offset: 68
+    fieldset: M2IER
+  - name: M2ISR
+    description: RAMCFG SRAM2 interrupt status register.
+    byte_offset: 72
+    access: Read
+    fieldset: M2ISR
+  - name: M2PEAR
+    description: RAMCFG SRAM2 parity error address register.
+    byte_offset: 80
+    access: Read
+    fieldset: M2PEAR
+  - name: M2ICR
+    description: RAMCFG SRAM2 interrupt clear register.
+    byte_offset: 84
+    fieldset: M2ICR
+  - name: M2WPR1
+    description: RAMCFG SRAM2 write protection register 1.
+    byte_offset: 88
+    fieldset: M2WPR1
+  - name: M2WPR2
+    description: RAMCFG SRAM2 write protection register 2.
+    byte_offset: 92
+    fieldset: M2WPR2
+  - name: M2ERKEYR
+    description: RAMCFG SRAM2 erase key register.
+    byte_offset: 104
+    access: Write
+    fieldset: M2ERKEYR
+fieldset/M1CR:
+  description: RAMCFG SRAM1 control register.
+  fields:
+  - name: SRAMER
+    description: SRAM1 erase.
+    bit_offset: 8
+    bit_size: 1
+  - name: WSC
+    description: SRAM1 wait state configuration.
+    bit_offset: 16
+    bit_size: 3
+fieldset/M1ERKEYR:
+  description: RAMCFG SRAM1 erase key register.
+  fields:
+  - name: ERASEKEY
+    description: Erase write protection key.
+    bit_offset: 0
+    bit_size: 8
+fieldset/M1ISR:
+  description: RAMCFG SRAM1 interrupt status register.
+  fields:
+  - name: SRAMBUSY
+    description: SRAM busy with erase operation.
+    bit_offset: 8
+    bit_size: 1
+fieldset/M2CR:
+  description: RAMCFG SRAM2 control register.
+  fields:
+  - name: ALE
+    description: SRAM2 parity fail address latch enable.
+    bit_offset: 4
+    bit_size: 1
+  - name: SRAMER
+    description: SRAM2 erase.
+    bit_offset: 8
+    bit_size: 1
+  - name: WSC
+    description: SRAM2 wait state configuration.
+    bit_offset: 16
+    bit_size: 3
+fieldset/M2ERKEYR:
+  description: RAMCFG SRAM2 erase key register.
+  fields:
+  - name: ERASEKEY
+    description: Erase write protection key.
+    bit_offset: 0
+    bit_size: 8
+fieldset/M2ICR:
+  description: RAMCFG SRAM2 interrupt clear register.
+  fields:
+  - name: CPED
+    description: Clear parity error detect bit.
+    bit_offset: 1
+    bit_size: 1
+fieldset/M2IER:
+  description: RAMCFG SRAM2 interrupt enable register.
+  fields:
+  - name: PEIE
+    description: Parity error interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: PENMI
+    description: Parity error NMI.
+    bit_offset: 3
+    bit_size: 1
+fieldset/M2ISR:
+  description: RAMCFG SRAM2 interrupt status register.
+  fields:
+  - name: PED
+    description: Parity error detected.
+    bit_offset: 1
+    bit_size: 1
+  - name: SRAMBUSY
+    description: SRAM2 busy with erase operation.
+    bit_offset: 8
+    bit_size: 1
+fieldset/M2PEAR:
+  description: RAMCFG SRAM2 parity error address register.
+  fields:
+  - name: PEA
+    description: Parity error SRAM word aligned address offset.
+    bit_offset: 0
+    bit_size: 16
+  - name: ID
+    description: Parity error AHB bus master ID.
+    bit_offset: 24
+    bit_size: 4
+    enum: ID
+  - name: BYTE
+    description: Byte parity error flag.
+    bit_offset: 28
+    bit_size: 4
+fieldset/M2WPR1:
+  description: RAMCFG SRAM2 write protection register 1.
+  fields:
+  - name: PWP
+    description: SRAM2 1-Kbyte write protect page y write protection.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+fieldset/M2WPR2:
+  description: RAMCFG SRAM2 write protection register 2.
+  fields:
+  - name: PWP
+    description: SRAM2 1-Kbyte write protect page y write protection.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+enum/ID:
+  bit_size: 4
+  variants:
+  - name: B_0x2
+    description: parity error detected on CPU access.
+    value: 2
+  - name: B_0x3
+    description: parity error detected on Debugger access.
+    value: 3
+  - name: B_0x6
+    description: parity error detected on DMA master port o access.
+    value: 6
+  - name: B_0x7
+    description: parity error detected on DMA master port 1 access.
+    value: 7

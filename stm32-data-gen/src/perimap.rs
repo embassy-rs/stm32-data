@@ -1,6 +1,23 @@
 use crate::util::RegexMap;
 
 pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
+    // GTZC - TrustZone Security Controller
+    ("STM32H503.*:GTZC:.*", ("gtzc", "h503", "GTZC1")),
+    ("STM32H503.*:GTZC1:.*", ("gtzc", "h503", "GTZC1")),
+    ("STM32H5.*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32H5.*:GTZC1.*:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32U5.*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32U5.*:GTZC1_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32WBA.*:GTZC:.*", ("gtzc", "wba", "GTZC_TZSC")),
+    ("STM32WBA.*:GTZC_TZSC:.*", ("gtzc", "wba", "GTZC_TZSC")),
+    ("STM32L5.*:GTZC_TZSC:.*", ("gtzc", "wba", "GTZC_TZSC")),
+    // RAMCFG - RAM Configuration
+    ("STM32H5.*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
+    ("STM32H7[RS].*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
+    ("STM32N6.*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
+    ("STM32U5.*:RAMCFG:.*", ("ramcfg", "u5", "RAMCFG")),
+    ("STM32U3.*:RAMCFG:.*", ("ramcfg", "u5", "RAMCFG")),
+    ("STM32WBA.*:RAMCFG:.*", ("ramcfg", "wba", "RAMCFG")),
     (".*:USART:sci2_v1_1", ("usart", "v1", "USART")),
     (".*:USART:sci2_v1_2_F1", ("usart", "v1", "USART")),
     (".*:USART:sci2_v1_2", ("usart", "v2", "USART")),
