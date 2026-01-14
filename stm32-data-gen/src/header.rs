@@ -208,8 +208,9 @@ impl Defines {
             ("DESIG", &["PACKAGE_BASE"]),
             ("DSIHOST", &["DSI_BASE"]),
             ("SYSCFG", &["SYSCFG_BASE", "SBS_BASE"]),
-            ("XSPI1", &["XSPI1_R_BASE"]),
-            ("XSPI2", &["XSPI2_R_BASE"]),
+            ("XSPI1", &["XSPI1_R_BASE", "XSPI1_BASE_NS"]),
+            ("XSPI2", &["XSPI2_R_BASE", "XSPI2_BASE_NS"]),
+            ("XSPI3", &["XSPI3_R_BASE", "XSPI3_BASE_NS"]),
             ("RAMCFG", &["RAMCFG_BASE", "RAMCFG_BASE_NS", "RAMCFG_BASE_S"]),
             (
                 "GTZC",
