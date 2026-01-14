@@ -423,6 +423,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F7.*:FMC:.*", ("fmc", "v2x1", "FMC")),
     ("STM32H7.*:FMC:.*", ("fmc", "v3x1", "FMC")),
     ("STM32H5.*:FMC:.*", ("fmc", "v4", "FMC")),
+    ("STM32N6.*:FMC:.*", ("fmc", "v4", "FMC")),
     ("STM32F100.*:FSMC:.*", ("fsmc", "v1x0", "FSMC")),
     ("STM32F10[12357].*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
     ("STM32F2.*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
@@ -700,6 +701,10 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32(L5|WL|WB|WB0).*:PKA:.*", ("pka", "v1c", "PKA")),
     ("STM32(L4Q|L5|WL|WB).*:PKA:.*", ("pka", "v1c", "PKA")),
     (".*:OTFDEC:.*", ("otfdec", "v1", "OTFDEC")),
+    // N6 XSPI support
+    (".*:XSPI[123]:XSPI:xspi_v2_1.*", ("xspi", "v1", "XSPI")),
+    (".*:XSPIM:XSPIM:xspi_v2_1.*", ("xspim", "v1", "XSPIM")),
+    // H7RS XSPI support
     (".*:XSPI[12]:XSPI:xspi_v2_1H7RS*", ("xspi", "v1", "XSPI")),
     (".*:XSPIM:XSPIM:xspi_v2_1H7RS*", ("xspim", "v1", "XSPIM")),
 ]);
