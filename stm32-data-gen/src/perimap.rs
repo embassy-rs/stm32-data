@@ -11,6 +11,10 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32WBA.*:GTZC:.*", ("gtzc", "wba", "GTZC_TZSC")),
     ("STM32WBA.*:GTZC_TZSC:.*", ("gtzc", "wba", "GTZC_TZSC")),
     ("STM32L5.*:GTZC_TZSC:.*", ("gtzc", "wba", "GTZC_TZSC")),
+    // BSEC - Boot Security Engine Controller
+    (".*:BSEC:.*:bsec2.*", ("bsec", "v2", "BSEC")),
+    // RIFSC - Resource Isolation Framework Security Controller
+    ("STM32N6.*:RIFSC:.*:STM32N6_rif.*", ("rifsc", "n6", "RIFSC")),
     // RAMCFG - RAM Configuration
     ("STM32H5.*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
     ("STM32H7[RS].*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
@@ -423,6 +427,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F7.*:FMC:.*", ("fmc", "v2x1", "FMC")),
     ("STM32H7.*:FMC:.*", ("fmc", "v3x1", "FMC")),
     ("STM32H5.*:FMC:.*", ("fmc", "v4", "FMC")),
+    ("STM32N6.*:FMC:.*", ("fmc", "n6", "FMC")),
     ("STM32F100.*:FSMC:.*", ("fsmc", "v1x0", "FSMC")),
     ("STM32F10[12357].*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
     ("STM32F2.*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
@@ -645,6 +650,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32U5.*:ICACHE:.*", ("icache", "v1_3crr", "ICACHE")),
     ("STM32U3.*:ICACHE:.*", ("icache", "v1_3crr", "ICACHE")),
     ("STM32H50.*:ICACHE:.*", ("icache", "v1_0crr", "ICACHE")),
+    ("STM32N6.*:ICACHE:.*", ("icache", "v1_0crr", "ICACHE")),
     ("STM32(L5|H5[67]|WBA).*:ICACHE:.*", ("icache", "v1_4crr", "ICACHE")),
     (".*:CORDIC:.*", ("cordic", "v1", "CORDIC")),
     ("STM32F0.[128].*:TSC:.*", ("tsc", "v1", "TSC")),
@@ -700,6 +706,10 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32(L5|WL|WB|WB0).*:PKA:.*", ("pka", "v1c", "PKA")),
     ("STM32(L4Q|L5|WL|WB).*:PKA:.*", ("pka", "v1c", "PKA")),
     (".*:OTFDEC:.*", ("otfdec", "v1", "OTFDEC")),
+    // N6 XSPI support
+    (".*:XSPI[123]:XSPI:xspi_v2_1.*", ("xspi", "v1", "XSPI")),
+    (".*:XSPIM:XSPIM:xspi_v2_1.*", ("xspim", "v1", "XSPIM")),
+    // H7RS XSPI support
     (".*:XSPI[12]:XSPI:xspi_v2_1H7RS*", ("xspi", "v1", "XSPI")),
     (".*:XSPIM:XSPIM:xspi_v2_1H7RS*", ("xspim", "v1", "XSPIM")),
 ]);

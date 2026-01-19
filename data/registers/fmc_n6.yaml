@@ -1,0 +1,1215 @@
+block/FMC:
+  description: Flexible memory controller (N6 with BCH ECC and Command Sequencer).
+  items:
+  - name: NOR_PSRAM
+    byte_offset: 0
+    block: NOR_PSRAM
+  - name: NAND
+    byte_offset: 128
+    block: NAND
+  - name: NAND_EXT
+    byte_offset: 384
+    block: NAND_EXT
+  - name: CSQ
+    byte_offset: 512
+    block: CSQ
+  - name: BCH
+    byte_offset: 592
+    block: BCH
+  - name: SDRAM
+    byte_offset: 320
+    block: SDRAM
+block/NAND:
+  items:
+  - name: PCR
+    description: NAND Flash control registers.
+    byte_offset: 0
+    fieldset: PCR
+  - name: SR
+    description: FIFO status and interrupt register.
+    byte_offset: 4
+    fieldset: SR
+  - name: PMEM
+    description: Common memory space timing register.
+    byte_offset: 8
+    fieldset: PMEM
+  - name: PATT
+    description: Attribute memory space timing register.
+    byte_offset: 12
+    fieldset: PATT
+  - name: ECCR
+    description: ECC result registers.
+    byte_offset: 20
+block/NOR_PSRAM:
+  items:
+  - name: BCR1
+    description: SRAM/NOR-Flash chip-select control register for bank 1.
+    byte_offset: 0
+    fieldset: BCR1
+  - name: BTR
+    description: SRAM/NOR-Flash chip-select timing register for bank 1.
+    array:
+      len: 4
+      stride: 8
+    byte_offset: 4
+    fieldset: BTR
+  - name: BCR
+    description: SRAM/NOR-Flash chip-select control register for bank 2.
+    array:
+      len: 3
+      stride: 8
+    byte_offset: 8
+    fieldset: BCR
+  - name: PCSCNTR
+    description: PSRAM chip select counter register.
+    byte_offset: 32
+    fieldset: PCSCNTR
+  - name: BWTR
+    description: SRAM/NOR-Flash write timing registers 1.
+    array:
+      len: 4
+      stride: 8
+    byte_offset: 260
+    fieldset: BWTR
+block/SDRAM:
+  items:
+  - name: SDCR
+    description: SDRAM control registers 1.
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 0
+    fieldset: SDCR
+  - name: SDTR
+    description: SDRAM timing registers 1.
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 8
+    fieldset: SDTR
+  - name: SDCMR
+    description: SDRAM Command Mode register.
+    byte_offset: 16
+    fieldset: SDCMR
+  - name: SDRTR
+    description: SDRAM refresh timer register.
+    byte_offset: 20
+    fieldset: SDRTR
+  - name: SDSR
+    description: SDRAM status register.
+    byte_offset: 24
+    fieldset: SDSR
+block/NAND_EXT:
+  description: NAND extended interrupt registers.
+  items:
+  - name: IER
+    description: NAND interrupt enable register.
+    byte_offset: 0
+    fieldset: NAND_IER
+  - name: ISR
+    description: NAND interrupt status register.
+    byte_offset: 4
+    fieldset: NAND_ISR
+  - name: ICR
+    description: NAND interrupt clear register.
+    byte_offset: 8
+    fieldset: NAND_ICR
+block/CSQ:
+  description: NAND Command Sequencer.
+  items:
+  - name: CR
+    description: Command Sequencer control register.
+    byte_offset: 0
+    fieldset: CSQCR
+  - name: CFGR1
+    description: Command Sequencer configuration register 1.
+    byte_offset: 4
+    fieldset: CSQCFGR1
+  - name: CFGR2
+    description: Command Sequencer configuration register 2.
+    byte_offset: 8
+    fieldset: CSQCFGR2
+  - name: CFGR3
+    description: Command Sequencer configuration register 3.
+    byte_offset: 12
+    fieldset: CSQCFGR3
+  - name: AR1
+    description: Command Sequencer address register 1.
+    byte_offset: 16
+    fieldset: CSQAR1
+  - name: AR2
+    description: Command Sequencer address register 2.
+    byte_offset: 20
+    fieldset: CSQAR2
+  - name: IER
+    description: Command Sequencer interrupt enable register.
+    byte_offset: 32
+    fieldset: CSQIER
+  - name: ISR
+    description: Command Sequencer interrupt status register.
+    byte_offset: 36
+    fieldset: CSQISR
+  - name: ICR
+    description: Command Sequencer interrupt clear register.
+    byte_offset: 40
+    fieldset: CSQICR
+  - name: EMSR
+    description: Command Sequencer error mapping status register.
+    byte_offset: 48
+    fieldset: CSQEMSR
+block/BCH:
+  description: BCH error correction code.
+  items:
+  - name: IER
+    description: BCH interrupt enable register.
+    byte_offset: 0
+    fieldset: BCHIER
+  - name: ISR
+    description: BCH interrupt status register.
+    byte_offset: 4
+    fieldset: BCHISR
+  - name: ICR
+    description: BCH interrupt clear register.
+    byte_offset: 8
+    fieldset: BCHICR
+  - name: PBR
+    description: BCH parity bits registers.
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 16
+    fieldset: BCHPBR
+  - name: DSR0
+    description: BCH decoder status register 0.
+    byte_offset: 44
+    fieldset: BCHDSR0
+  - name: DSR1
+    description: BCH decoder status register 1.
+    byte_offset: 48
+    fieldset: BCHDSR1
+  - name: DSR2
+    description: BCH decoder status register 2.
+    byte_offset: 52
+    fieldset: BCHDSR2
+  - name: DSR3
+    description: BCH decoder status register 3.
+    byte_offset: 56
+    fieldset: BCHDSR3
+  - name: DSR4
+    description: BCH decoder status register 4.
+    byte_offset: 60
+    fieldset: BCHDSR4
+fieldset/BCR:
+  description: SRAM/NOR-Flash chip-select control register for bank 4.
+  fields:
+  - name: MBKEN
+    description: Memory bank enable bit Enables the memory bank. After reset Bank1 is enabled, all others are disabled. Accessing a disabled bank causes an ERROR on AHB bus.
+    bit_offset: 0
+    bit_size: 1
+  - name: MUXEN
+    description: Address/data multiplexing enable bit When this bit is set, the address and data values are multiplexed on the data bus, valid only with NOR and PSRAM memories:.
+    bit_offset: 1
+    bit_size: 1
+  - name: MTYP
+    description: Memory type Defines the type of external memory attached to the corresponding memory bank.
+    bit_offset: 2
+    bit_size: 2
+    enum: MTYP
+  - name: MWID
+    description: Memory data bus width Defines the external memory device width, valid for all type of memories.
+    bit_offset: 4
+    bit_size: 2
+    enum: MWID
+  - name: FACCEN
+    description: Flash access enable Enables NOR Flash memory access operations.
+    bit_offset: 6
+    bit_size: 1
+  - name: BURSTEN
+    description: Burst enable bit This bit enables/disables synchronous accesses during read operations. It is valid only for synchronous memories operating in Burst mode.
+    bit_offset: 8
+    bit_size: 1
+  - name: WAITPOL
+    description: Wait signal polarity bit Defines the polarity of the wait signal from memory used for either in Synchronous or Asynchronous mode.
+    bit_offset: 9
+    bit_size: 1
+    enum: WAITPOL
+  - name: WAITCFG
+    description: Wait timing configuration The NWAIT signal indicates whether the data from the memory are valid or if a wait state must be inserted when accessing the memory in Synchronous mode. This configuration bit determines if NWAIT is asserted by the memory one clock cycle before the wait state or during the wait state:.
+    bit_offset: 11
+    bit_size: 1
+    enum: WAITCFG
+  - name: WREN
+    description: Write enable bit This bit indicates whether write operations are enabled/disabled in the bank by the FMC.
+    bit_offset: 12
+    bit_size: 1
+  - name: WAITEN
+    description: Wait enable bit This bit enables/disables wait-state insertion via the NWAIT signal when accessing the memory in Synchronous mode.
+    bit_offset: 13
+    bit_size: 1
+  - name: EXTMOD
+    description: 'Extended mode enable This bit enables the FMC to program the write timings for non multiplexed asynchronous accesses inside the FMC_BWTR register, thus resulting in different timings for read and write operations. Note: When the Extended mode is disabled, the FMC can operate in mode 1 or mode 2 as follows: Mode 1 is the default mode when the SRAM/PSRAM memory type is selected (MTYP = 0x0 or 0x01) Mode 2 is the default mode when the NOR memory type is selected (MTYP = 0x10).'
+    bit_offset: 14
+    bit_size: 1
+  - name: ASYNCWAIT
+    description: Wait signal during asynchronous transfers This bit enables/disables the FMC to use the wait signal even during an asynchronous protocol.
+    bit_offset: 15
+    bit_size: 1
+  - name: CPSIZE
+    description: 'CRAM page size These are used for CellularRAM™ 1.5 which does not allow burst access to cross the address boundaries between pages. When these bits are configured, the FMC controller splits automatically the burst access when the memory page size is reached (refer to memory datasheet for page size). Others: reserved.'
+    bit_offset: 16
+    bit_size: 3
+    enum: CPSIZE
+  - name: CBURSTRW
+    description: Write burst enable For PSRAM (CRAM) operating in Burst mode, the bit enables synchronous accesses during write operations. The enable bit for synchronous read accesses is the BURSTEN bit in the FMC_BCRx register.
+    bit_offset: 19
+    bit_size: 1
+    enum: CBURSTRW
+  - name: CCLKEN
+    description: 'Continuous clock enable This bit enables the FMC_CLK clock output to external memory devices. Note: The CCLKEN bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register. Bank 1 must be configured in Synchronous mode to generate the FMC_CLK continuous clock. Note: If CCLKEN bit is set, the FMC_CLK clock ratio is specified by CLKDIV value in the FMC_BTR1 register. CLKDIV in FMC_BWTR1 is don’t care. Note: If the Synchronous mode is used and CCLKEN bit is set, the synchronous memories connected to other banks than Bank 1 are clocked by the same clock (the CLKDIV value in the FMC_BTR2..4 and FMC_BWTR2..4 registers for other banks has no effect.).'
+    bit_offset: 20
+    bit_size: 1
+  - name: WFDIS
+    description: 'Write FIFO disable This bit disables the Write FIFO used by the FMC controller. Note: The WFDIS bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register.'
+    bit_offset: 21
+    bit_size: 1
+  - name: NBLSET
+    description: Byte lane (NBL) setup These bits configure the NBL setup timing from NBLx low to chip select NEx low.
+    bit_offset: 22
+    bit_size: 2
+  - name: FMCEN
+    description: 'FMC controller enable This bit enables or disables the FMC controller. Note: The FMCEN bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register.'
+    bit_offset: 31
+    bit_size: 1
+fieldset/BCR1:
+  extends: BCR
+  description: SRAM/NOR-Flash chip-select control register for bank 1.
+  fields:
+  - name: CCLKEN
+    description: 'Continuous clock enable This bit enables the FMC_CLK clock output to external memory devices. Note: The CCLKEN bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register. Bank 1 must be configured in Synchronous mode to generate the FMC_CLK continuous clock. Note: If CCLKEN bit is set, the FMC_CLK clock ratio is specified by CLKDIV value in the FMC_BTR1 register. CLKDIV in FMC_BWTR1 is don’t care. Note: If the Synchronous mode is used and CCLKEN bit is set, the synchronous memories connected to other banks than Bank 1 are clocked by the same clock (the CLKDIV value in the FMC_BTR2..4 and FMC_BWTR2..4 registers for other banks has no effect.).'
+    bit_offset: 20
+    bit_size: 1
+  - name: WFDIS
+    description: 'Write FIFO disable This bit disables the Write FIFO used by the FMC controller. Note: The WFDIS bit of the FMC_BCR2..4 registers is don’t care. It is only enabled through the FMC_BCR1 register.'
+    bit_offset: 21
+    bit_size: 1
+fieldset/BTR:
+  extends: BWTR
+  description: SRAM/NOR-Flash chip-select timing register for bank 1.
+  fields:
+  - name: CLKDIV
+    description: 'Clock divide ratio (for FMC_CLK signal) Defines the period of FMC_CLK clock output signal, expressed in number of HCLK cycles: In asynchronous NOR Flash, SRAM or PSRAM accesses, this value is don’t care. Note: Refer to Section 5.6.5: Synchronous transactions for FMC_CLK divider ratio formula).'
+    bit_offset: 20
+    bit_size: 4
+  - name: DATLAT
+    description: '(see note below bit descriptions): Data latency for synchronous memory For synchronous access with read/write Burst mode enabled (BURSTEN / CBURSTRW bits set), defines the number of memory clock cycles (+2) to issue to the memory before reading/writing the first data: This timing parameter is not expressed in HCLK periods, but in FMC_CLK periods. For asynchronous access, this value is don''t care.'
+    bit_offset: 24
+    bit_size: 4
+fieldset/BWTR:
+  description: SRAM/NOR-Flash write timing registers 1.
+  fields:
+  - name: ADDSET
+    description: 'Address setup phase duration. These bits are written by software to define the duration of the address setup phase in HCLK cycles (refer to Figure 21 to Figure 33), used in asynchronous accesses: ... Note: In synchronous accesses, this value is not used, the address setup phase is always 1 Flash clock period duration. In muxed mode, the minimum ADDSET value is 1.'
+    bit_offset: 0
+    bit_size: 4
+  - name: ADDHLD
+    description: 'Address-hold phase duration. These bits are written by software to define the duration of the address hold phase (refer to Figure 30 to Figure 33), used in asynchronous multiplexed accesses: ... Note: In synchronous NOR Flash accesses, this value is not used, the address hold phase is always 1 Flash clock period duration.'
+    bit_offset: 4
+    bit_size: 4
+  - name: DATAST
+    description: 'Data-phase duration. These bits are written by software to define the duration of the data phase (refer to Figure 21 to Figure 33), used in asynchronous SRAM, PSRAM and NOR Flash memory accesses: ...'
+    bit_offset: 8
+    bit_size: 8
+  - name: BUSTURN
+    description: Bus turnaround phase duration These bits are written by software to add a delay at the end of current write transaction to next transaction on the same bank. For FRAM memories, the bus turnaround delay should be configured to match the minimum t<sub>PC</sub> (precharge time) timings. The bus turnaround delay is inserted between any consecutive transactions on the same bank (read/read, write/write, read/write and write/read). The chip select is toggling between any consecutive accesses. (BUSTURN + 1)HCLK period ≥ tPC min ...
+    bit_offset: 16
+    bit_size: 4
+  - name: ACCMOD
+    description: Access mode. Specifies the asynchronous access modes as shown in the next timing diagrams.These bits are taken into account only when the EXTMOD bit in the FMC_BCRx register is 1.
+    bit_offset: 28
+    bit_size: 2
+    enum: ACCMOD
+  - name: DATAHLD
+    description: Data hold phase duration These bits are written by software to define the duration of the data hold phase in HCLK cycles (refer to Figure 21 to Figure 33), used in asynchronous write accesses:.
+    bit_offset: 30
+    bit_size: 2
+fieldset/PATT:
+  description: Attribute memory space timing register.
+  fields:
+  - name: ATTSET
+    description: Attribute memory setup time Defines the number of HCLK (+1) clock cycles to set up address before the command assertion (NWE, NOE), for NAND Flash read or write access to attribute memory space on socket:.
+    bit_offset: 0
+    bit_size: 8
+  - name: ATTWAIT
+    description: Attribute memory wait time Defines the minimum number of HCLK (+1) clock cycles to assert the command (NWE, NOE), for NAND Flash read or write access to attribute memory space on socket x. The duration for command assertion is extended if the wait signal (NWAIT) is active (low) at the end of the programmed value of HCLK:.
+    bit_offset: 8
+    bit_size: 8
+  - name: ATTHOLD
+    description: Attribute memory hold time Defines the number of HCLK clock cycles for write access and HCLK (+2) clock cycles for read access during which the address is held (and data for write access) after the command deassertion (NWE, NOE), for NAND Flash read or write access to attribute memory space on socket:.
+    bit_offset: 16
+    bit_size: 8
+  - name: ATTHIZ
+    description: Attribute memory data bus Hi-Z time Defines the number of HCLK clock cycles during which the data bus is kept in Hi-Z after the start of a NAND Flash write access to attribute memory space on socket. Only valid for writ transaction:.
+    bit_offset: 24
+    bit_size: 8
+fieldset/PCR:
+  description: NAND Flash control registers.
+  fields:
+  - name: PWAITEN
+    description: Wait feature enable bit Enables the Wait feature for the NAND Flash memory bank:.
+    bit_offset: 1
+    bit_size: 1
+  - name: PBKEN
+    description: NAND Flash memory bank enable bit Enables the memory bank. Accessing a disabled memory bank causes an ERROR on AHB bus.
+    bit_offset: 2
+    bit_size: 1
+  - name: PTYP
+    description: Memory type Defines the type of device attached to the corresponding memory bank:.
+    bit_offset: 3
+    bit_size: 1
+    enum: PTYP
+  - name: PWID
+    description: Data bus width Defines the external memory device width.
+    bit_offset: 4
+    bit_size: 2
+    enum: PWID
+  - name: ECCEN
+    description: ECC computation logic enable bit.
+    bit_offset: 6
+    bit_size: 1
+  - name: TCLR
+    description: 'CLE to RE delay Sets time from CLE low to RE low in number of AHB clock cycles (HCLK). Time is t_clr = (TCLR + SET + 2) � THCLK where THCLK is the HCLK clock period Note: SET is MEMSET or ATTSET according to the addressed space.'
+    bit_offset: 9
+    bit_size: 4
+  - name: TAR
+    description: 'ALE to RE delay Sets time from ALE low to RE low in number of AHB clock cycles (HCLK). Time is: t_ar = (TAR + SET + 2) � THCLK where THCLK is the HCLK clock period Note: SET is MEMSET or ATTSET according to the addressed space.'
+    bit_offset: 13
+    bit_size: 4
+  - name: ECCPS
+    description: ECC page size Defines the page size for the extended ECC:.
+    bit_offset: 17
+    bit_size: 3
+    enum: ECCPS
+  - name: BCHECC
+    description: BCH error correction capability enable. Enables the BCH error correction engine.
+    bit_offset: 24
+    bit_size: 1
+fieldset/PCSCNTR:
+  description: PSRAM chip select counter register.
+  fields:
+  - name: CSCOUNT
+    description: Chip select counter. These bits are written by software to define the maximum chip select low pulse duration. It is expressed in FMC_CLK cycles for synchronous accesses and in HCLK cycles for asynchronous accesses. The counter is disabled if the programmed value is 0.
+    bit_offset: 0
+    bit_size: 16
+  - name: CNTBEN
+    description: Counter Bank 1 enable This bit enables the chip select counter for PSRAM/NOR Bank 1.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 4
+      stride: 1
+fieldset/PMEM:
+  description: Common memory space timing register.
+  fields:
+  - name: MEMSET
+    description: Common memory x setup time Defines the number of HCLK (+1) clock cycles to set up the address before the command assertion (NWE, NOE), for NAND Flash read or write access to common memory space on socket x:.
+    bit_offset: 0
+    bit_size: 8
+  - name: MEMWAIT
+    description: Common memory wait time Defines the minimum number of HCLK (+1) clock cycles to assert the command (NWE, NOE), for NAND Flash read or write access to common memory space on socket. The duration of command assertion is extended if the wait signal (NWAIT) is active (low) at the end of the programmed value of HCLK:.
+    bit_offset: 8
+    bit_size: 8
+  - name: MEMHOLD
+    description: Common memory hold time Defines the number of HCLK clock cycles for write access and HCLK (+2) clock cycles for read access during which the address is held (and data for write accesses) after the command is deasserted (NWE, NOE), for NAND Flash read or write access to common memory space on socket x:.
+    bit_offset: 16
+    bit_size: 8
+  - name: MEMHIZ
+    description: Common memory x data bus Hi-Z time Defines the number of HCLK clock cycles during which the data bus is kept Hi-Z after the start of a NAND Flash write access to common memory space on socket. This is only valid for write transactions:.
+    bit_offset: 24
+    bit_size: 8
+fieldset/SDCMR:
+  description: SDRAM Command Mode register.
+  fields:
+  - name: MODE
+    description: 'Command mode These bits define the command issued to the SDRAM device. Note: When a command is issued, at least one Command Target Bank bit ( CTB1 or CTB2) must be set otherwise the command will be ignored. Note: If two SDRAM banks are used, the Auto-refresh and PALL command must be issued simultaneously to the two devices with CTB1 and CTB2 bits set otherwise the command will be ignored. Note: If only one SDRAM bank is used and a command is issued with it’s associated CTB bit set, the other CTB bit of the the unused bank must be kept to 0.'
+    bit_offset: 0
+    bit_size: 3
+    enum: MODE
+  - name: CTB
+    description: Command Target Bank 2 This bit indicates whether the command will be issued to SDRAM Bank 2 or not.
+    bit_offset: 3
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: NRFS
+    description: Number of Auto-refresh These bits define the number of consecutive Auto-refresh commands issued when MODE = ‘011’. ....
+    bit_offset: 5
+    bit_size: 4
+  - name: MRD
+    description: Mode Register definition This 13-bit field defines the SDRAM Mode Register content. The Mode Register is programmed using the Load Mode Register command.
+    bit_offset: 9
+    bit_size: 13
+fieldset/SDCR:
+  description: SDRAM control registers 1.
+  fields:
+  - name: NC
+    description: Number of column address bits These bits define the number of bits of a column address.
+    bit_offset: 0
+    bit_size: 2
+    enum: NC
+  - name: NR
+    description: Number of row address bits These bits define the number of bits of a row address.
+    bit_offset: 2
+    bit_size: 2
+    enum: NR
+  - name: MWID
+    description: Memory data bus width. These bits define the memory device width.
+    bit_offset: 4
+    bit_size: 2
+    enum: MWID
+  - name: NB
+    description: Number of internal banks This bit sets the number of internal banks.
+    bit_offset: 6
+    bit_size: 1
+    enum: NB
+  - name: CAS
+    description: CAS Latency This bits sets the SDRAM CAS latency in number of memory clock cycles.
+    bit_offset: 7
+    bit_size: 2
+    enum: CAS
+  - name: WP
+    description: Write protection This bit enables write mode access to the SDRAM bank.
+    bit_offset: 9
+    bit_size: 1
+  - name: SDCLK
+    description: 'SDRAM clock configuration These bits define the SDRAM clock period for both SDRAM banks and allow disabling the clock before changing the frequency. In this case the SDRAM must be re-initialized. Note: The corresponding bits in the FMC_SDCR2 register are don’t care.'
+    bit_offset: 10
+    bit_size: 2
+    enum: SDCLK
+  - name: RBURST
+    description: 'Burst read This bit enables Burst read mode. The SDRAM controller anticipates the next read commands during the CAS latency and stores data in the Read FIFO. Note: The corresponding bit in the FMC_SDCR2 register is don’t care.'
+    bit_offset: 12
+    bit_size: 1
+  - name: RPIPE
+    description: 'Read pipe These bits define the delay, in clock cycles, for reading data after CAS latency. Note: The corresponding bits in the FMC_SDCR2 register is read only.'
+    bit_offset: 13
+    bit_size: 2
+    enum: RPIPE
+fieldset/SDRTR:
+  description: SDRAM refresh timer register.
+  fields:
+  - name: CRE
+    description: Clear Refresh error flag This bit is used to clear the Refresh Error Flag (RE) in the Status Register.
+    bit_offset: 0
+    bit_size: 1
+  - name: COUNT
+    description: Refresh Timer Count This 13-bit field defines the refresh rate of the SDRAM device. It is expressed in number of memory clock cycles. It must be set at least to 41 SDRAM clock cycles (0x29). Refresh rate = (COUNT + 1) x SDRAM frequency clock COUNT = (SDRAM refresh period / Number of rows) - 20.
+    bit_offset: 1
+    bit_size: 13
+  - name: REIE
+    description: RES Interrupt Enable.
+    bit_offset: 14
+    bit_size: 1
+fieldset/SDSR:
+  description: SDRAM status register.
+  fields:
+  - name: RE
+    description: Refresh error flag An interrupt is generated if REIE = 1 and RE = 1.
+    bit_offset: 0
+    bit_size: 1
+  - name: MODES
+    description: Status Mode for Bank 1 This bit defines the Status Mode of SDRAM Bank 1.
+    bit_offset: 1
+    bit_size: 2
+    array:
+      len: 2
+      stride: 2
+    enum: MODES
+  - name: BUSY
+    description: Busy status This bit defines the status of the SDRAM controller after a Command Mode request 1; SDRAM Controller is not ready to accept a new request.
+    bit_offset: 5
+    bit_size: 1
+fieldset/SDTR:
+  description: SDRAM timing registers 1.
+  fields:
+  - name: TMRD
+    description: Load Mode Register to Active These bits define the delay between a Load Mode Register command and an Active or Refresh command in number of memory clock cycles. ....
+    bit_offset: 0
+    bit_size: 4
+  - name: TXSR
+    description: 'Exit Self-refresh delay These bits define the delay from releasing the Self-refresh command to issuing the Activate command in number of memory clock cycles. .... Note: If two SDRAM devices are used, the FMC_SDTR1 and FMC_SDTR2 must be programmed with the same TXSR timing corresponding to the slowest SDRAM device.'
+    bit_offset: 4
+    bit_size: 4
+  - name: TRAS
+    description: Self refresh time These bits define the minimum Self-refresh period in number of memory clock cycles. ....
+    bit_offset: 8
+    bit_size: 4
+  - name: TRC
+    description: 'Row cycle delay These bits define the delay between the Refresh command and the Activate command, as well as the delay between two consecutive Refresh commands. It is expressed in number of memory clock cycles. The TRC timing is only configured in the FMC_SDTR1 register. If two SDRAM devices are used, the TRC must be programmed with the timings of the slowest device. .... Note: TRC must match the TRC and TRFC (Auto Refresh period) timings defined in the SDRAM device datasheet. Note: The corresponding bits in the FMC_SDTR2 register are don’t care.'
+    bit_offset: 12
+    bit_size: 4
+  - name: TWR
+    description: 'Recovery delay These bits define the delay between a Write and a Precharge command in number of memory clock cycles. .... Note: TWR must be programmed to match the write recovery time (t<sub>WR</sub>) defined in the SDRAM datasheet, and to guarantee that: Note: TWR ≥ TRAS - TRCD and TWR ≥TRC - TRCD - TRP Note: Example: TRAS= 4 cycles, TRCD= 2 cycles. So, TWR >= 2 cycles. TWR must be programmed to 0x1. Note: If two SDRAM devices are used, the FMC_SDTR1 and FMC_SDTR2 must be programmed with the same TWR timing corresponding to the slowest SDRAM device. Note: If only one SDRAM device is used, the TWR timing must be kept at reset value (0xF) for the not used bank.'
+    bit_offset: 16
+    bit_size: 4
+  - name: TRP
+    description: 'Row precharge delay These bits define the delay between a Precharge command and another command in number of memory clock cycles. The TRP timing is only configured in the FMC_SDTR1 register. If two SDRAM devices are used, the TRP must be programmed with the timing of the slowest device. .... Note: The corresponding bits in the FMC_SDTR2 register are don’t care.'
+    bit_offset: 20
+    bit_size: 4
+  - name: TRCD
+    description: Row to column delay These bits define the delay between the Activate command and a Read/Write command in number of memory clock cycles. ....
+    bit_offset: 24
+    bit_size: 4
+fieldset/SR:
+  description: FIFO status and interrupt register.
+  fields:
+  - name: IRS
+    description: 'Interrupt rising edge status The flag is set by hardware and reset by software. Note: If this bit is written by software to 1 it is set.'
+    bit_offset: 0
+    bit_size: 1
+  - name: ILS
+    description: Interrupt high-level status The flag is set by hardware and reset by software.
+    bit_offset: 1
+    bit_size: 1
+  - name: IFS
+    description: 'Interrupt falling edge status The flag is set by hardware and reset by software. Note: If this bit is written by software to 1 it is set.'
+    bit_offset: 2
+    bit_size: 1
+  - name: IREN
+    description: Interrupt rising edge detection enable bit.
+    bit_offset: 3
+    bit_size: 1
+  - name: ILEN
+    description: Interrupt high-level detection enable bit.
+    bit_offset: 4
+    bit_size: 1
+  - name: IFEN
+    description: Interrupt falling edge detection enable bit.
+    bit_offset: 5
+    bit_size: 1
+  - name: FEMPT
+    description: FIFO empty Read-only bit that provides the status of the FIFO.
+    bit_offset: 6
+    bit_size: 1
+fieldset/NAND_IER:
+  description: NAND interrupt enable register.
+  fields:
+  - name: IRSEN
+    description: Interrupt rising edge enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: ILSEN
+    description: Interrupt high-level enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: IFSEN
+    description: Interrupt falling edge enable.
+    bit_offset: 2
+    bit_size: 1
+fieldset/NAND_ISR:
+  description: NAND interrupt status register.
+  fields:
+  - name: IRS
+    description: Interrupt rising edge status.
+    bit_offset: 0
+    bit_size: 1
+  - name: ILS
+    description: Interrupt high-level status.
+    bit_offset: 1
+    bit_size: 1
+  - name: IFS
+    description: Interrupt falling edge status.
+    bit_offset: 2
+    bit_size: 1
+  - name: FEMPT
+    description: FIFO empty.
+    bit_offset: 6
+    bit_size: 1
+fieldset/NAND_ICR:
+  description: NAND interrupt clear register.
+  fields:
+  - name: CIRC
+    description: Clear interrupt rising edge.
+    bit_offset: 0
+    bit_size: 1
+  - name: CILC
+    description: Clear interrupt high-level.
+    bit_offset: 1
+    bit_size: 1
+  - name: CIFC
+    description: Clear interrupt falling edge.
+    bit_offset: 2
+    bit_size: 1
+fieldset/CSQCR:
+  description: Command Sequencer control register.
+  fields:
+  - name: CSQSTART
+    description: Command Sequencer start.
+    bit_offset: 0
+    bit_size: 1
+fieldset/CSQCFGR1:
+  description: Command Sequencer configuration register 1.
+  fields:
+  - name: CMD2EN
+    description: Command cycle 2 enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: DMADEN
+    description: DMA request data enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: ACYNBR
+    description: Address cycle number.
+    bit_offset: 4
+    bit_size: 3
+  - name: CMD1
+    description: Command 1.
+    bit_offset: 8
+    bit_size: 8
+  - name: CMD2
+    description: Command 2.
+    bit_offset: 16
+    bit_size: 8
+  - name: CMD1T
+    description: Command 1 timing.
+    bit_offset: 24
+    bit_size: 1
+  - name: CMD2T
+    description: Command 2 timing.
+    bit_offset: 25
+    bit_size: 1
+fieldset/CSQCFGR2:
+  description: Command Sequencer configuration register 2.
+  fields:
+  - name: SQSDTEN
+    description: Sequencer spare data transfer enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: RCMD2EN
+    description: Random command 2 sequencer enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: DMASEN
+    description: DMA request decoding status enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: RCMD1
+    description: Random command 1.
+    bit_offset: 8
+    bit_size: 8
+  - name: RCMD2
+    description: Random command 2.
+    bit_offset: 16
+    bit_size: 8
+  - name: RCMD1T
+    description: Random command 1 timing.
+    bit_offset: 24
+    bit_size: 1
+fieldset/CSQCFGR3:
+  description: Command Sequencer configuration register 3.
+  fields:
+  - name: SNBR
+    description: Number of sectors to read/write.
+    bit_offset: 0
+    bit_size: 6
+  - name: AC1T
+    description: Address cycle 1 timing.
+    bit_offset: 8
+    bit_size: 1
+  - name: AC2T
+    description: Address cycle 2 timing.
+    bit_offset: 9
+    bit_size: 1
+  - name: AC3T
+    description: Address cycle 3 timing.
+    bit_offset: 10
+    bit_size: 1
+  - name: AC4T
+    description: Address cycle 4 timing.
+    bit_offset: 11
+    bit_size: 1
+  - name: AC5T
+    description: Address cycle 5 timing.
+    bit_offset: 12
+    bit_size: 1
+  - name: SDT
+    description: Spare data transfer timing.
+    bit_offset: 13
+    bit_size: 1
+  - name: RAC1T
+    description: Random address cycle 1 timing.
+    bit_offset: 14
+    bit_size: 1
+  - name: RAC2T
+    description: Random address cycle 2 timing.
+    bit_offset: 15
+    bit_size: 1
+fieldset/CSQAR1:
+  description: Command Sequencer address register 1.
+  fields:
+  - name: ADDC1
+    description: Address cycle 1.
+    bit_offset: 0
+    bit_size: 8
+  - name: ADDC2
+    description: Address cycle 2.
+    bit_offset: 8
+    bit_size: 8
+  - name: ADDC3
+    description: Address cycle 3.
+    bit_offset: 16
+    bit_size: 8
+  - name: ADDC4
+    description: Address cycle 4.
+    bit_offset: 24
+    bit_size: 8
+fieldset/CSQAR2:
+  description: Command Sequencer address register 2.
+  fields:
+  - name: ADDC5
+    description: Address cycle 5.
+    bit_offset: 0
+    bit_size: 8
+  - name: SAO
+    description: Spare area address offset.
+    bit_offset: 16
+    bit_size: 16
+fieldset/CSQIER:
+  description: Command Sequencer interrupt enable register.
+  fields:
+  - name: TCIE
+    description: Transfer complete interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: SCIE
+    description: Sector complete interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: SEIE
+    description: Sector error interrupt enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: SUEIE
+    description: Sector uncorrectable error interrupt enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: CMDTCIE
+    description: Command transfer complete interrupt enable.
+    bit_offset: 4
+    bit_size: 1
+fieldset/CSQISR:
+  description: Command Sequencer interrupt status register.
+  fields:
+  - name: TCF
+    description: Transfer complete flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: SCF
+    description: Sector complete flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: SEF
+    description: Sector error flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: SUEF
+    description: Sector uncorrectable error flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: CMDTCF
+    description: Command transfer complete flag.
+    bit_offset: 4
+    bit_size: 1
+fieldset/CSQICR:
+  description: Command Sequencer interrupt clear register.
+  fields:
+  - name: CTCF
+    description: Clear transfer complete flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: CSCF
+    description: Clear sector complete flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: CSEF
+    description: Clear sector error flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: CSUEF
+    description: Clear sector uncorrectable error flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: CCMDTCF
+    description: Clear command transfer complete flag.
+    bit_offset: 4
+    bit_size: 1
+fieldset/CSQEMSR:
+  description: Command Sequencer error mapping status register.
+  fields:
+  - name: SEM
+    description: Sector error mapping.
+    bit_offset: 0
+    bit_size: 16
+fieldset/BCHIER:
+  description: BCH interrupt enable register.
+  fields:
+  - name: DUEIE
+    description: Decoder uncorrectable error interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: DERIE
+    description: Decoder error ready interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: DEFIE
+    description: Decoder error found interrupt enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: DSRIE
+    description: Decoder syndrome ready interrupt enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: EPBRIE
+    description: Encoder parity bits ready interrupt enable.
+    bit_offset: 4
+    bit_size: 1
+fieldset/BCHISR:
+  description: BCH interrupt status register.
+  fields:
+  - name: DUEF
+    description: Decoder uncorrectable error flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: DERF
+    description: Decoder error ready flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: DEFF
+    description: Decoder error found flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: DSRF
+    description: Decoder syndrome ready flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: EPBRF
+    description: Encoder parity bits ready flag.
+    bit_offset: 4
+    bit_size: 1
+fieldset/BCHICR:
+  description: BCH interrupt clear register.
+  fields:
+  - name: CDUEF
+    description: Clear decoder uncorrectable error flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: CDERF
+    description: Clear decoder error ready flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: CDEFF
+    description: Clear decoder error found flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: CDSRF
+    description: Clear decoder syndrome ready flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: CEPBRF
+    description: Clear encoder parity bits ready flag.
+    bit_offset: 4
+    bit_size: 1
+fieldset/BCHPBR:
+  description: BCH parity bits register.
+  fields:
+  - name: BCHPB
+    description: BCH parity bits.
+    bit_offset: 0
+    bit_size: 32
+fieldset/BCHDSR0:
+  description: BCH decoder status register 0.
+  fields:
+  - name: DUE
+    description: Decoder uncorrectable error.
+    bit_offset: 0
+    bit_size: 1
+  - name: DEF
+    description: Decoder error found.
+    bit_offset: 1
+    bit_size: 1
+  - name: DEN
+    description: Decoder error number.
+    bit_offset: 4
+    bit_size: 4
+fieldset/BCHDSR1:
+  description: BCH decoder status register 1.
+  fields:
+  - name: EBP1
+    description: Error bit position 1.
+    bit_offset: 0
+    bit_size: 13
+  - name: EBP2
+    description: Error bit position 2.
+    bit_offset: 16
+    bit_size: 13
+fieldset/BCHDSR2:
+  description: BCH decoder status register 2.
+  fields:
+  - name: EBP3
+    description: Error bit position 3.
+    bit_offset: 0
+    bit_size: 13
+  - name: EBP4
+    description: Error bit position 4.
+    bit_offset: 16
+    bit_size: 13
+fieldset/BCHDSR3:
+  description: BCH decoder status register 3.
+  fields:
+  - name: EBP5
+    description: Error bit position 5.
+    bit_offset: 0
+    bit_size: 13
+  - name: EBP6
+    description: Error bit position 6.
+    bit_offset: 16
+    bit_size: 13
+fieldset/BCHDSR4:
+  description: BCH decoder status register 4.
+  fields:
+  - name: EBP7
+    description: Error bit position 7.
+    bit_offset: 0
+    bit_size: 13
+  - name: EBP8
+    description: Error bit position 8.
+    bit_offset: 16
+    bit_size: 13
+enum/ACCMOD:
+  bit_size: 2
+  variants:
+  - name: A
+    description: Access mode A
+    value: 0
+  - name: B
+    description: Access mode B
+    value: 1
+  - name: C
+    description: Access mode C
+    value: 2
+  - name: D
+    description: Access mode D
+    value: 3
+enum/CAS:
+  bit_size: 2
+  variants:
+  - name: Clocks1
+    description: 1 cycle
+    value: 1
+  - name: Clocks2
+    description: 2 cycles
+    value: 2
+  - name: Clocks3
+    description: 3 cycles
+    value: 3
+enum/CBURSTRW:
+  bit_size: 1
+  variants:
+  - name: Asynchronous
+    description: Write operations are always performed in Asynchronous mode.
+    value: 0
+  - name: Synchronous
+    description: Write operations are performed in Synchronous mode.
+    value: 1
+enum/CPSIZE:
+  bit_size: 3
+  variants:
+  - name: NoBurstSplit
+    description: No burst split when crossing page boundary
+    value: 0
+  - name: Bytes128
+    description: 128 bytes CRAM page size
+    value: 1
+  - name: Bytes256
+    description: 256 bytes CRAM page size
+    value: 2
+  - name: Bytes512
+    description: 512 bytes CRAM page size
+    value: 3
+  - name: Bytes1024
+    description: 1024 bytes CRAM page size
+    value: 4
+enum/ECCPS:
+  bit_size: 3
+  variants:
+  - name: Bytes256
+    description: ECC page size 256 bytes
+    value: 0
+  - name: Bytes512
+    description: ECC page size 512 bytes
+    value: 1
+  - name: Bytes1024
+    description: ECC page size 1024 bytes
+    value: 2
+  - name: Bytes2048
+    description: ECC page size 2048 bytes
+    value: 3
+  - name: Bytes4096
+    description: ECC page size 4096 bytes
+    value: 4
+  - name: Bytes8192
+    description: ECC page size 8192 bytes
+    value: 5
+enum/MODE:
+  bit_size: 3
+  variants:
+  - name: Normal
+    description: Normal Mode
+    value: 0
+  - name: ClockConfigurationEnable
+    description: Clock Configuration Enable
+    value: 1
+  - name: PALL
+    description: PALL (All Bank Precharge) command
+    value: 2
+  - name: AutoRefreshCommand
+    description: Auto-refresh command
+    value: 3
+  - name: LoadModeRegister
+    description: Load Mode Resgier
+    value: 4
+  - name: SelfRefreshCommand
+    description: Self-refresh command
+    value: 5
+  - name: PowerDownCommand
+    description: Power-down command
+    value: 6
+enum/MODES:
+  bit_size: 2
+  variants:
+  - name: Normal
+    description: Normal Mode
+    value: 0
+  - name: SelfRefresh
+    description: Self-refresh mode
+    value: 1
+  - name: PowerDown
+    description: Power-down mode
+    value: 2
+enum/MTYP:
+  bit_size: 2
+  variants:
+  - name: SRAM
+    description: SRAM memory type
+    value: 0
+  - name: PSRAM
+    description: PSRAM (CRAM) memory type
+    value: 1
+  - name: Flash
+    description: NOR Flash/OneNAND Flash
+    value: 2
+enum/MWID:
+  bit_size: 2
+  variants:
+  - name: Bits8
+    description: Memory data bus width 8 bits
+    value: 0
+  - name: Bits16
+    description: Memory data bus width 16 bits
+    value: 1
+  - name: Bits32
+    description: Memory data bus width 32 bits
+    value: 2
+enum/NB:
+  bit_size: 1
+  variants:
+  - name: NB2
+    description: Two internal Banks
+    value: 0
+  - name: NB4
+    description: Four internal Banks
+    value: 1
+enum/NC:
+  bit_size: 2
+  variants:
+  - name: Bits8
+    description: 8 bits
+    value: 0
+  - name: Bits9
+    description: 9 bits
+    value: 1
+  - name: Bits10
+    description: 10 bits
+    value: 2
+  - name: Bits11
+    description: 11 bits
+    value: 3
+enum/NR:
+  bit_size: 2
+  variants:
+  - name: Bits11
+    description: 11 bits
+    value: 0
+  - name: Bits12
+    description: 12 bits
+    value: 1
+  - name: Bits13
+    description: 13 bits
+    value: 2
+enum/PTYP:
+  bit_size: 1
+  variants:
+  - name: NAND
+    description: NAND flash
+    value: 1
+enum/PWID:
+  bit_size: 2
+  variants:
+  - name: Bits8
+    description: External memory device width 8 bits
+    value: 0
+  - name: Bits16
+    description: External memory device width 16 bits
+    value: 1
+enum/RPIPE:
+  bit_size: 2
+  variants:
+  - name: NoDelay
+    description: No clock cycle delay
+    value: 0
+  - name: Clocks1
+    description: One clock cycle delay
+    value: 1
+  - name: Clocks2
+    description: Two clock cycles delay
+    value: 2
+enum/SDCLK:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: SDCLK clock disabled
+    value: 0
+  - name: Div2
+    description: SDCLK period = 2 x HCLK period
+    value: 2
+  - name: Div3
+    description: SDCLK period = 3 x HCLK period
+    value: 3
+enum/WAITCFG:
+  bit_size: 1
+  variants:
+  - name: BeforeWaitState
+    description: NWAIT signal is active one data cycle before wait state
+    value: 0
+  - name: DuringWaitState
+    description: NWAIT signal is active during wait state
+    value: 1
+enum/WAITPOL:
+  bit_size: 1
+  variants:
+  - name: ActiveLow
+    description: NWAIT active low
+    value: 0
+  - name: ActiveHigh
+    description: NWAIT active high
+    value: 1
