@@ -92,6 +92,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F7.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
     ("STM32G0.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
     ("STM32G4.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
+    ("STM32G414*:SPI:.*", ("spi", "v3", "SPI")),
     ("STM32L4.*:SPI:.*", ("spi", "v3", "SPI")),
     ("STM32L5.*:SPI:.*", ("spi", "v3", "SPI")),
     ("STM32U0.*:SPI:.*", ("spi", "v3", "SPI")),
