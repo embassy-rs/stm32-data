@@ -145,7 +145,7 @@ are only interested in one. It's easier than it looks, and doing all families at
   - 2: SVD inconsistencies, like different register names for the same register
   - 3: SVD mistakes (yes, there are some)
   - 4: Missing stuff in SVDs, usually enums or doc descriptions.
-- Identify how many actually-different (incompatible) versions of the peripheral exist, as we must _not_ merge them. Name them v1, v2.. (if possible, by order of chip release date, see [here](https://docs.google.com/spreadsheets/d/1-R-AjYrMLL2_623G-AFN2A9THMf8FFMpFD4Kq-owPmI/edit#gid=1972450814).
+- Identify how many actually-different (incompatible) versions of the peripheral exist, as we must _not_ merge them. Name them v1, v2... If possible, order them by chip release date.
 - For each version, pick the "best" YAML (the one that has less enums/docs missing), place them in `data/registers/lpuart_vX.yaml`
 - Cleanup the register yamls (see below).
 - Minimize the diff between each pair of versions. For example between `lpuart_v1.yaml` and `lpuart_v2.yaml`. If one is missing enums or descriptions, copy it from another.
