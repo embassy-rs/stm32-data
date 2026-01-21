@@ -1,0 +1,403 @@
+block/CH:
+  description: 'Channel cluster: C?ISR, C?IFCR, C?ESR, C?CR, C?TCR, C?BNDTR, C?SAR, C?DAR, C?BRUR, C?LAR, C?TBR, C?MAR and C?MDR registers.'
+  items:
+  - name: ISR
+    description: MDMA channel x interrupt/status register.
+    byte_offset: 0
+    access: Read
+    fieldset: ISR
+  - name: IFCR
+    description: MDMA channel x interrupt flag clear register.
+    byte_offset: 4
+    access: Write
+    fieldset: IFCR
+  - name: ESR
+    description: MDMA Channel x error status register.
+    byte_offset: 8
+    access: Read
+    fieldset: ESR
+  - name: CR
+    description: This register is used to control the concerned channel.
+    byte_offset: 12
+    fieldset: CR
+  - name: TCR
+    description: This register is used to configure the concerned channel.
+    byte_offset: 16
+    fieldset: TCR
+  - name: BNDTR
+    description: MDMA Channel x block number of data register.
+    byte_offset: 20
+    fieldset: BNDTR
+  - name: SAR
+    description: MDMA channel x source address register.
+    byte_offset: 24
+    fieldset: SAR
+  - name: DAR
+    description: MDMA channel x destination address register.
+    byte_offset: 28
+    fieldset: DAR
+  - name: BRUR
+    description: MDMA channel x Block Repeat address Update register.
+    byte_offset: 32
+    fieldset: BRUR
+  - name: LAR
+    description: MDMA channel x Link Address register.
+    byte_offset: 36
+    fieldset: LAR
+  - name: TBR
+    description: MDMA channel x Trigger and Bus selection Register.
+    byte_offset: 40
+    fieldset: TBR
+  - name: MAR
+    description: MDMA channel x Mask address register.
+    byte_offset: 48
+    fieldset: MAR
+  - name: MDR
+    description: MDMA channel x Mask Data register.
+    byte_offset: 52
+    fieldset: MDR
+block/MDMA:
+  description: MDMA.
+  items:
+  - name: GISR0
+    description: MDMA Global Interrupt/Status Register.
+    byte_offset: 0
+    access: Read
+    fieldset: GISR0
+  - name: CH
+    description: 'Channel cluster: C?ISR, C?IFCR, C?ESR, C?CR, C?TCR, C?BNDTR, C?SAR, C?DAR, C?BRUR, C?LAR, C?TBR, C?MAR and C?MDR registers.'
+    array:
+      len: 16
+      stride: 64
+    byte_offset: 64
+    block: CH
+fieldset/BNDTR:
+  description: MDMA Channel x block number of data register.
+  fields:
+  - name: BNDT
+    description: block number of data to transfer.
+    bit_offset: 0
+    bit_size: 17
+  - name: BRSUM
+    description: Block Repeat Source address Update Mode These bits are protected and can be written only if EN is 0.
+    bit_offset: 18
+    bit_size: 1
+  - name: BRDUM
+    description: Block Repeat Destination address Update Mode These bits are protected and can be written only if EN is 0.
+    bit_offset: 19
+    bit_size: 1
+  - name: BRC
+    description: Block Repeat Count This field contains the number of repetitions of the current block (0 to 4095). When the channel is enabled, this register is read-only, indicating the remaining number of blocks, excluding the current one. This register decrements after each complete block transfer. Once the last block transfer has completed, this register can either stay at zero or be reloaded automatically from memory (in Linked List mode - i.e. Link Address valid). These bits are protected and can be written only if EN is 0.
+    bit_offset: 20
+    bit_size: 12
+fieldset/BRUR:
+  description: MDMA channel x Block Repeat address Update register.
+  fields:
+  - name: SUV
+    description: source adresse update value.
+    bit_offset: 0
+    bit_size: 16
+  - name: DUV
+    description: destination address update.
+    bit_offset: 16
+    bit_size: 16
+fieldset/CR:
+  description: This register is used to control the concerned channel.
+  fields:
+  - name: EN
+    description: channel enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: TEIE
+    description: Transfer error interrupt enable This bit is set and cleared by software.
+    bit_offset: 1
+    bit_size: 1
+  - name: CTCIE
+    description: Channel Transfer Complete interrupt enable This bit is set and cleared by software.
+    bit_offset: 2
+    bit_size: 1
+  - name: BRTIE
+    description: Block Repeat transfer interrupt enable This bit is set and cleared by software.
+    bit_offset: 3
+    bit_size: 1
+  - name: BTIE
+    description: Block Transfer interrupt enable This bit is set and cleared by software.
+    bit_offset: 4
+    bit_size: 1
+  - name: TCIE
+    description: buffer Transfer Complete interrupt enable This bit is set and cleared by software.
+    bit_offset: 5
+    bit_size: 1
+  - name: PL
+    description: Priority level These bits are set and cleared by software. These bits are protected and can be written only if EN is 0.
+    bit_offset: 6
+    bit_size: 2
+  - name: BEX
+    description: byte Endianness exchange.
+    bit_offset: 12
+    bit_size: 1
+  - name: HEX
+    description: Half word Endianes exchange.
+    bit_offset: 13
+    bit_size: 1
+  - name: WEX
+    description: Word Endianness exchange.
+    bit_offset: 14
+    bit_size: 1
+  - name: SWRQ
+    description: 'SW ReQuest Writing a 1 into this bit sets the CRQAx in ISRy register, activating the request on Channel x Note: Either the whole CxCR register or the 8-bit/16-bit register @ Address offset: 0x4E + 0x40 chn may be used for SWRQ activation. In case of a SW request, acknowledge is not generated (neither HW signal, nor CxMAR write access).'
+    bit_offset: 16
+    bit_size: 1
+fieldset/DAR:
+  description: MDMA channel x destination address register.
+  fields:
+  - name: DAR
+    description: Destination adr base.
+    bit_offset: 0
+    bit_size: 32
+fieldset/ESR:
+  description: MDMA Channel x error status register.
+  fields:
+  - name: TEA
+    description: 'Transfer Error Address These bits are set and cleared by HW, in case of an MDMA data transfer error. It is used in conjunction with TED. This field indicates the 7 LSBits of the address which generated a transfer/access error. It may be used by SW to retrieve the failing address, by adding this value (truncated to the buffer transfer length size) to the current SAR/DAR value. Note: The SAR/DAR current value doesnt reflect this last address due to the FIFO management system. The SAR/DAR are only updated at the end of a (buffer) transfer (of TLEN+1 bytes). Note: It is not set in case of a link data error.'
+    bit_offset: 0
+    bit_size: 7
+  - name: TED
+    description: Transfer Error Direction These bit is set and cleared by HW, in case of an MDMA data transfer error.
+    bit_offset: 7
+    bit_size: 1
+  - name: TELD
+    description: Transfer Error Link Data These bit is set by HW, in case of a transfer error while reading the block link data structure. It is cleared by software writing 1 to the CTEIFx bit in the DMA_IFCRy register.
+    bit_offset: 8
+    bit_size: 1
+  - name: TEMD
+    description: Transfer Error Mask Data These bit is set by HW, in case of a transfer error while writing the Mask Data. It is cleared by software writing 1 to the CTEIFx bit in the DMA_IFCRy register.
+    bit_offset: 9
+    bit_size: 1
+  - name: ASE
+    description: Address/Size Error These bit is set by HW, when the programmed address is not aligned with the data size. TED will indicate whether the problem is on the source or destination. It is cleared by software writing 1 to the CTEIFx bit in the DMA_IFCRy register.
+    bit_offset: 10
+    bit_size: 1
+  - name: BSE
+    description: Block Size Error These bit is set by HW, when the block size is not an integer multiple of the data size either for source or destination. TED will indicate whether the problem is on the source or destination. It is cleared by software writing 1 to the CTEIFx bit in the DMA_IFCRy register.
+    bit_offset: 11
+    bit_size: 1
+fieldset/GISR0:
+  description: MDMA Global Interrupt/Status Register.
+  fields:
+  - name: GIF0
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 0
+    bit_size: 1
+  - name: GIF1
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 1
+    bit_size: 1
+  - name: GIF2
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 2
+    bit_size: 1
+  - name: GIF3
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 3
+    bit_size: 1
+  - name: GIF4
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 4
+    bit_size: 1
+  - name: GIF5
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 5
+    bit_size: 1
+  - name: GIF6
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 6
+    bit_size: 1
+  - name: GIF7
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 7
+    bit_size: 1
+  - name: GIF8
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 8
+    bit_size: 1
+  - name: GIF9
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 9
+    bit_size: 1
+  - name: GIF10
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 10
+    bit_size: 1
+  - name: GIF11
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 11
+    bit_size: 1
+  - name: GIF12
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 12
+    bit_size: 1
+  - name: GIF13
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 13
+    bit_size: 1
+  - name: GIF14
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 14
+    bit_size: 1
+  - name: GIF15
+    description: Channel x global interrupt flag (x=...) This bit is set and reset by hardware. It is a logical OR of all the Channel x interrupt flags (CTCIFx, BTIFx, BRTIFx, TEIFx) which are enabled in the interrupt mask register (CTCIEx, BTIEx, BRTIEx, TEIEx).
+    bit_offset: 15
+    bit_size: 1
+fieldset/IFCR:
+  description: MDMA channel x interrupt flag clear register.
+  fields:
+  - name: CTEIF
+    description: Channel x clear transfer error interrupt flag Writing a 1 into this bit clears TEIFx in the ISRy register.
+    bit_offset: 0
+    bit_size: 1
+  - name: CCTCIF
+    description: Clear Channel transfer complete interrupt flag for channel x Writing a 1 into this bit clears CTCIFx in the ISRy register.
+    bit_offset: 1
+    bit_size: 1
+  - name: CBRTIF
+    description: Channel x clear block repeat transfer complete interrupt flag Writing a 1 into this bit clears BRTIFx in the ISRy register.
+    bit_offset: 2
+    bit_size: 1
+  - name: CBTIF
+    description: Channel x Clear block transfer complete interrupt flag Writing a 1 into this bit clears BTIFx in the ISRy register.
+    bit_offset: 3
+    bit_size: 1
+  - name: CLTCIF
+    description: CLear buffer Transfer Complete Interrupt Flag for channel x Writing a 1 into this bit clears TCIFx in the ISRy register.
+    bit_offset: 4
+    bit_size: 1
+fieldset/ISR:
+  description: MDMA channel x interrupt/status register.
+  fields:
+  - name: TEIF
+    description: Channel x transfer error interrupt flag This bit is set by hardware. It is cleared by software writing 1 to the corresponding bit in the DMA_IFCRy register.
+    bit_offset: 0
+    bit_size: 1
+  - name: CTCIF
+    description: Channel x Channel Transfer Complete interrupt flag This bit is set by hardware. It is cleared by software writing 1 to the corresponding bit in the DMA_IFCRy register. CTC is set when the last block was transferred and the channel has been automatically disabled. CTC is also set when the channel is suspended, as a result of writing EN bit to 0.
+    bit_offset: 1
+    bit_size: 1
+  - name: BRTIF
+    description: Channel x block repeat transfer complete interrupt flag This bit is set by hardware. It is cleared by software writing 1 to the corresponding bit in the DMA_IFCRy register.
+    bit_offset: 2
+    bit_size: 1
+  - name: BTIF
+    description: Channel x block transfer complete interrupt flag This bit is set by hardware. It is cleared by software writing 1 to the corresponding bit in the DMA_IFCRy register.
+    bit_offset: 3
+    bit_size: 1
+  - name: TCIF
+    description: channel x buffer transfer complete.
+    bit_offset: 4
+    bit_size: 1
+  - name: CRQA
+    description: channel x request active flag.
+    bit_offset: 16
+    bit_size: 1
+fieldset/LAR:
+  description: MDMA channel x Link Address register.
+  fields:
+  - name: LAR
+    description: Link address register.
+    bit_offset: 0
+    bit_size: 32
+fieldset/MAR:
+  description: MDMA channel x Mask address register.
+  fields:
+  - name: MAR
+    description: Mask address.
+    bit_offset: 0
+    bit_size: 32
+fieldset/MDR:
+  description: MDMA channel x Mask Data register.
+  fields:
+  - name: MDR
+    description: Mask data.
+    bit_offset: 0
+    bit_size: 32
+fieldset/SAR:
+  description: MDMA channel x source address register.
+  fields:
+  - name: SAR
+    description: source adr base.
+    bit_offset: 0
+    bit_size: 32
+fieldset/TBR:
+  description: MDMA channel x Trigger and Bus selection Register.
+  fields:
+  - name: TSEL
+    description: Trigger selection.
+    bit_offset: 0
+    bit_size: 6
+  - name: SBUS
+    description: Source BUS select This bit is protected and can be written only if EN is 0.
+    bit_offset: 16
+    bit_size: 1
+  - name: DBUS
+    description: Destination BUS slect This bit is protected and can be written only if EN is 0.
+    bit_offset: 17
+    bit_size: 1
+fieldset/TCR:
+  description: This register is used to configure the concerned channel.
+  fields:
+  - name: SINC
+    description: 'Source increment mode These bits are set and cleared by software. These bits are protected and can be written only if EN is 0 Note: When source is AHB (SBUS=1), SINC = 00 is forbidden. In Linked List Mode, at the end of a block (single or last block in repeated block transfer mode), this register will be loaded from memory (from address given by current LAR[31:0] + 0x00).'
+    bit_offset: 0
+    bit_size: 2
+  - name: DINC
+    description: 'Destination increment mode These bits are set and cleared by software. These bits are protected and can be written only if EN is 0 Note: When destination is AHB (DBUS=1), DINC = 00 is forbidden.'
+    bit_offset: 2
+    bit_size: 2
+  - name: SSIZE
+    description: 'Source data size These bits are set and cleared by software. These bits are protected and can be written only if EN is 0 Note: If a value of 11 is programmed for the TCM access/AHB port, a transfer error will occur (TEIF bit set) If SINCOS &lt; SSIZE and SINC &#8800; 00, the result will be unpredictable. Note: SSIZE = 11 (double-word) is forbidden when source is TCM/AHB bus (SBUS=1).'
+    bit_offset: 4
+    bit_size: 2
+  - name: DSIZE
+    description: 'Destination data size These bits are set and cleared by software. These bits are protected and can be written only if EN is 0. Note: If a value of 11 is programmed for the TCM access/AHB port, a transfer error will occur (TEIF bit set) If DINCOS &lt; DSIZE and DINC &#8800; 00, the result will be unpredictable. Note: DSIZE = 11 (double-word) is forbidden when destination is TCM/AHB bus (DBUS=1).'
+    bit_offset: 6
+    bit_size: 2
+  - name: SINCOS
+    description: source increment offset size.
+    bit_offset: 8
+    bit_size: 2
+  - name: DINCOS
+    description: Destination increment offset.
+    bit_offset: 10
+    bit_size: 2
+  - name: SBURST
+    description: source burst transfer configuration.
+    bit_offset: 12
+    bit_size: 3
+  - name: DBURST
+    description: Destination burst transfer configuration.
+    bit_offset: 15
+    bit_size: 3
+  - name: TLEN
+    description: buffer transfer lengh.
+    bit_offset: 18
+    bit_size: 7
+  - name: PKE
+    description: PacK Enable These bit is set and cleared by software. If the Source Size is smaller than the destination, it will be padded according to the PAM value. If the Source data size is larger than the destination one, it will be truncated. The alignment will be done according to the PAM[0] value. This bit is protected and can be written only if EN is 0.
+    bit_offset: 25
+    bit_size: 1
+  - name: PAM
+    description: 'Padding/Alignement Mode These bits are set and cleared by software. Case 1: Source data size smaller than destination data size - 3 options are valid. Case 2: Source data size larger than destination data size. The remainder part is discarded. When PKE = 1 or DSIZE=SSIZE, these bits are ignored. These bits are protected and can be written only if EN is 0.'
+    bit_offset: 26
+    bit_size: 2
+  - name: TRGM
+    description: 'Trigger Mode These bits are set and cleared by software. Note: If TRGM is 11 for the current block, all the values loaded at the end of the current block through the linked list mechanism must keep the same value (TRGM=11) and the same SWRM value, otherwise the result is undefined. These bits are protected and can be written only if EN is 0.'
+    bit_offset: 28
+    bit_size: 2
+  - name: SWRM
+    description: SW Request Mode This bit is set and cleared by software. If a HW or SW request is currently active, the bit change will be delayed until the current transfer is completed. If the CxMAR contains a valid address, the CxMDR value will also be written @ CxMAR address. This bit is protected and can be written only if EN is 0.
+    bit_offset: 30
+    bit_size: 1
+  - name: BWM
+    description: 'Bufferable Write Mode This bit is set and cleared by software. This bit is protected and can be written only if EN is 0. Note: All MDMA destination accesses are non-cacheable.'
+    bit_offset: 31
+    bit_size: 1
