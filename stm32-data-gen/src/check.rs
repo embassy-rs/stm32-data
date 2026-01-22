@@ -6,7 +6,8 @@ use stm32_data_serde::Chip;
 pub fn check(chip: &Chip) {
     for core in &chip.cores {
         let peris = mapify(&core.peripherals, |p| &p.name);
-        for ch in &core.dma_channels {
+        // Each channel should have its own interrupt signal, except for MDMA, which uses one GLOBAL interrupt
+        for ch in core.dma_channels.iter().filter(|ch| !ch.name.starts_with("MDMA")) {
             let dma = peris.get(&ch.dma).unwrap();
             let signal = ch.name.strip_prefix(&format!("{}_", dma.name)).unwrap();
             if !dma.interrupts.iter().any(|i| i.signal == signal) {
