@@ -966,53 +966,65 @@ fieldset/CCIPR:
   description: CCIPR
   fields:
   - name: USART1SEL
-    description: USART1 clock source selection
+    description: USART1 clock source selection.
     bit_offset: 0
     bit_size: 2
+    enum: USART1SEL
   - name: USART2SEL
-    description: USART2 clock source selection
+    description: USART2 clock source selection.
     bit_offset: 2
     bit_size: 2
+    enum: UARTSEL
   - name: USART3SEL
-    description: USART3 clock source selection
+    description: USART3 clock source selection.
     bit_offset: 4
     bit_size: 2
+    enum: UARTSEL
   - name: UART4SEL
-    description: UART4 clock source selection
+    description: UART4 clock source selection.
     bit_offset: 6
     bit_size: 2
+    enum: UARTSEL
   - name: UART5SEL
-    description: UART5 clock source selection
+    description: UART5 clock source selection.
     bit_offset: 8
     bit_size: 2
+    enum: UARTSEL
   - name: LPUART1SEL
-    description: LPUART1 clock source selection
+    description: LPUART1 clock source selection.
     bit_offset: 10
     bit_size: 2
+    enum: UARTSEL
   - name: I2C1SEL
-    description: I2C1 clock source selection
+    description: I2C1 clock source selection.
     bit_offset: 12
     bit_size: 2
+    enum: I2CSEL
   - name: I2C2SEL
-    description: I2C2 clock source selection
+    description: I2C2 clock source selection.
     bit_offset: 14
     bit_size: 2
+    enum: I2CSEL
   - name: I2C3SEL
-    description: I2C3 clock source selection
+    description: I2C3 clock source selection.
     bit_offset: 16
     bit_size: 2
+    enum: I2CSEL
   - name: LPTIM1SEL
-    description: Low power timer 1 clock source selection
+    description: Low power timer 1 clock source selection.
     bit_offset: 18
     bit_size: 2
+    enum: LPTIMSEL
   - name: SAI1SEL
-    description: SAI1 clock source selection
+    description: SAI1 clock source selection.
     bit_offset: 20
     bit_size: 2
+    enum: SAISEL
   - name: I2S23SEL
-    description: I2S23 clock source selection
+    description: I2S2/3 clock source selection.
     bit_offset: 22
     bit_size: 2
+    enum: I2SSEL
   - name: FDCANSEL
     description: FDCAN clock source selection
     bit_offset: 24
@@ -1037,13 +1049,15 @@ fieldset/CCIPR2:
   description: Peripherals independent clock configuration register
   fields:
   - name: I2C4SEL
-    description: I2C4 clock source selection
+    description: I2C4 clock source selection.
     bit_offset: 0
     bit_size: 2
-  - name: QUADSPISEL
-    description: Octospi clock source selection
+    enum: I2CSEL
+  - name: QSPISEL
+    description: Octospi clock source selection.
     bit_offset: 20
     bit_size: 2
+    enum: QSPISEL
 fieldset/CFGR:
   description: Clock configuration register
   fields:
@@ -1404,6 +1418,48 @@ enum/HPRE:
   - name: Div512
     description: SYSCLK is divided by 512
     value: 15
+enum/I2CSEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK clock selected as I2C clock.
+    value: 0
+  - name: SYS
+    description: System clock (SYSCLK) selected as I2C clock.
+    value: 1
+  - name: HSI
+    description: HSI16 clock selected as I2C clock.
+    value: 2
+enum/I2SSEL:
+  bit_size: 2
+  variants:
+  - name: SYS
+    description: System clock selected as I2S23 clock.
+    value: 0
+  - name: PLL1_Q
+    description: PLL 'Q' clock selected as I2S23 clock.
+    value: 1
+  - name: I2S_CKIN
+    description: Clock provided on I2S_CKIN pin is selected as I2S23 clock.
+    value: 2
+  - name: HSI
+    description: HSI16 clock selected as I2S23 clock.
+    value: 3
+enum/LPTIMSEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK1 clock selected as LPTIM1 clock.
+    value: 0
+  - name: LSI
+    description: LSI clock selected as LPTIM1 clock.
+    value: 1
+  - name: HSI
+    description: HSI16 clock selected as LPTIM1 clock.
+    value: 2
+  - name: LSE
+    description: LSE clock selected as LPTIM1 clock.
+    value: 3
 enum/LSEDRV:
   bit_size: 2
   variants:
@@ -1864,6 +1920,18 @@ enum/PPRE:
   - name: Div16
     description: HCLK is divided by 16
     value: 7
+enum/QSPISEL:
+  bit_size: 2
+  variants:
+  - name: SYS
+    description: System clock selected as QUADSPI kernel clock.
+    value: 0
+  - name: HSI
+    description: HSI16 clock selected as QUADSPI kernel clock.
+    value: 1
+  - name: PLL1_Q
+    description: PLL 'Q' clock selected as QUADSPI kernel clock.
+    value: 2
 enum/RTCSEL:
   bit_size: 2
   variants:
@@ -1879,6 +1947,21 @@ enum/RTCSEL:
   - name: HSE_DIV_32
     description: HSE divided by 32 used as RTC clock
     value: 3
+enum/SAISEL:
+  bit_size: 2
+  variants:
+  - name: SYS
+    description: System clock selected as SAI clock.
+    value: 0
+  - name: PLL1_Q
+    description: PLL 'Q' clock selected as SAI clock.
+    value: 1
+  - name: I2S_CKIN
+    description: Clock provided on I2S_CKIN pin is selected as SAI clock.
+    value: 2
+  - name: HSI
+    description: HSI16 clock selected as SAI clock.
+    value: 3
 enum/SW:
   bit_size: 2
   variants:
@@ -1890,4 +1973,34 @@ enum/SW:
     value: 2
   - name: PLL1_R
     description: PLLRCLK selected as system clock
+    value: 3
+enum/UARTSEL:
+  bit_size: 2
+  variants:
+  - name: PCLK1
+    description: PCLK1 clock selected as UART clock.
+    value: 0
+  - name: SYS
+    description: System clock (SYSCLK) selected as UART clock.
+    value: 1
+  - name: HSI
+    description: HSI16 clock selected as UART clock.
+    value: 2
+  - name: LSE
+    description: LSE clock selected as UART clock.
+    value: 3
+enum/USART1SEL:
+  bit_size: 2
+  variants:
+  - name: PCLK2
+    description: PCLK2 clock selected as UART clock.
+    value: 0
+  - name: SYS
+    description: System clock (SYSCLK) selected as UART clock.
+    value: 1
+  - name: HSI
+    description: HSI16 clock selected as UART clock.
+    value: 2
+  - name: LSE
+    description: LSE clock selected as UART clock.
     value: 3
