@@ -822,6 +822,7 @@ fn collect_dma_instances<'a>(
                 "BDMA2" => 4,
                 "GPDMA" => 5,
                 "HPDMA" => 6,
+                "MDMA" => 7,
                 _ => 0,
             },
             instance.clone(),

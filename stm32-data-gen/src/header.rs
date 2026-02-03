@@ -259,6 +259,23 @@ impl Defines {
                 "GTZC_MPCBB6",
                 &["GTZC_MPCBB6_BASE", "GTZC_MPCBB6_BASE_NS", "GTZC_MPCBB6_BASE_S"],
             ),
+            ("RISAF1", &["RISAF1_BASE_NS", "RISAF1_BASE_S"]),
+            ("RISAF2", &["RISAF2_BASE_NS", "RISAF2_BASE_S"]),
+            ("RISAF3", &["RISAF3_BASE_NS", "RISAF3_BASE_S"]),
+            ("RISAF4", &["RISAF4_BASE_NS", "RISAF4_BASE_S"]),
+            ("RISAF5", &["RISAF5_BASE_NS", "RISAF5_BASE_S"]),
+            ("RISAF6", &["RISAF6_BASE_NS", "RISAF6_BASE_S"]),
+            ("RISAF7", &["RISAF7_BASE_NS", "RISAF7_BASE_S"]),
+            ("RISAF8", &["RISAF8_BASE_NS", "RISAF8_BASE_S"]),
+            ("RISAF9", &["RISAF9_BASE_NS", "RISAF9_BASE_S"]),
+            ("RISAF11", &["RISAF11_BASE_NS", "RISAF11_BASE_S"]),
+            ("RISAF12", &["RISAF12_BASE_NS", "RISAF12_BASE_S"]),
+            ("RISAF13", &["RISAF13_BASE_NS", "RISAF13_BASE_S"]),
+            ("RISAF14", &["RISAF14_BASE_NS", "RISAF14_BASE_S"]),
+            ("RISAF15", &["RISAF15_BASE_NS", "RISAF15_BASE_S"]),
+            ("RISAF21", &["RISAF21_BASE_NS", "RISAF21_BASE_S"]),
+            ("RISAF22", &["RISAF22_BASE_NS", "RISAF22_BASE_S"]),
+            ("RISAF23", &["RISAF23_BASE_NS", "RISAF23_BASE_S"]),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 
