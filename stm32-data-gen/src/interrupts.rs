@@ -341,6 +341,14 @@ impl ChipInterrupts {
                 }
 
                 for (p, mut ss) in peri_signals.into_iter() {
+                    // Normalize LTDC error signal: N6 uses "ERR" (from LTDC_LO_ERR), standardize to "ER"
+                    if p == "LTDC" {
+                        for s in ss.iter_mut() {
+                            if s == "ERR" {
+                                *s = "ER".to_string();
+                            }
+                        }
+                    }
                     let known = valid_signals(&p, chip_name);
 
                     // If we have no interrupt_signals for the peri, assume it's "global" so assign it all known ones
@@ -514,9 +522,6 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
     // Special chip-specific signal mappings
     // Format: (peripheral_prefix, chip_pattern, signals)
     const CHIP_SPECIFIC_SIGNALS: &[(&str, &str, &[&str])] = &[
-        // LTDC signals: STM32N6 supports all signals, others only basic ones
-        ("LTDC", "STM32N6", &["GLOBAL", "ER", "LO", "ERR"]),
-        ("LTDC", "*", &["GLOBAL", "ER"]), // Default for all other LTDC devices
         // DCMIPP signals: STM32N6 supports CSI, others only basic signals
         ("DCMIPP", "STM32N6", &["GLOBAL", "CSI"]),
         ("DCMIPP", "*", &["GLOBAL"]), // Default for all other DCMIPP devices
@@ -586,6 +591,7 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("ADF", &["FLT0"]),
         ("RAMECC", &["ECC"]),
         ("RAMCFG", &["BKP", "ECC"]),
+        ("LTDC", &["ER", "LO"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
