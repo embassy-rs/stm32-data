@@ -413,15 +413,6 @@ impl ChipInterrupts {
                         }
                     }
 
-                    // For LTDC on non-N6 chips: prefer the base LTDC interrupt over LTDC_ER
-                    // so that both ER and LO signals map to the same LTDC interrupt
-                    if irqs.len() != 1 && p.name == "LTDC" && signal == "ER" {
-                        // Keep LTDC (without _ER suffix) if available
-                        if irqs.contains("LTDC") {
-                            irqs.retain(|irq| irq == "LTDC");
-                        }
-                    }
-
                     // If there's a duplicate irqs in a signal other than "global", keep the non-global one.
                     if irqs.len() != 1 && signal != "GLOBAL" {
                         irqs.retain(|irq| !globals.contains(irq));
