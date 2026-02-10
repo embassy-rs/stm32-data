@@ -175,7 +175,7 @@ impl ParsedRccs {
 
         let mux_regexes = &[
             regex!(r"^DCKCFGR\d?/(.+)SEL$"),
-            regex!(r"^CCIPR\d?/(.+)SEL$"),
+            regex!(r"^CCIPR\d*/(.+)SEL$"),
             regex!(r"^BDCR\d?/(.+)SEL$"),
             regex!(r"^D\dCCIP\d?R/(.+)SEL$"),
             regex!(r"^CFGR\d/(.+)SW$"),
