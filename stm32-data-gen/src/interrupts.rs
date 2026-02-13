@@ -278,6 +278,8 @@ impl ChipInterrupts {
                 interrupt_signals.insert(("IWDG".to_string(), "GLOBAL".to_string()));
             } else if name == "RCC_AUDIOSYNC" {
                 // ignore
+            } else if name.starts_with("HSEM") {
+                interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
             } else {
                 if parts[2].is_empty() {
                     trace!("    skipping because parts[2].is_empty()");
