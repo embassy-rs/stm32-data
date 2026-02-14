@@ -119,6 +119,8 @@ pub mod chip {
             pub interrupts: Vec<peripheral::Interrupt>,
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub dma_channels: Vec<peripheral::DmaChannel>,
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub triggers: Vec<peripheral::Trigger>,
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub afio: Option<peripheral::Afio>,
         }
@@ -186,6 +188,12 @@ pub mod chip {
             pub struct Interrupt {
                 pub signal: String,
                 pub interrupt: String,
+            }
+
+            #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+            pub struct Trigger {
+                pub signal: String,
+                pub source: String,
             }
 
             #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]

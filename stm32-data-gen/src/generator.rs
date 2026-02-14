@@ -4,7 +4,7 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 use gpio_af::pin_sort_key;
 use perimap::PERIMAP;
 use regex::Regex;
-use stm32_data_serde::chip::core::peripheral::Pin;
+use stm32_data_serde::chip::core::peripheral::{Pin, Trigger};
 use util::RegexMap;
 
 use super::*;
@@ -218,6 +218,18 @@ fn create_peripherals_for_chip(
             None
         };
 
+        let triggers = if let Some(triggers) = trigger::peripheral_trigger_info(chip_name, &pname) {
+            triggers
+                .iter()
+                .map(|trigger| Trigger {
+                    signal: trigger.signal.to_string(),
+                    source: trigger.source.to_string(),
+                })
+                .collect()
+        } else {
+            Vec::new()
+        };
+
         let mut pins = merge_afs_into_core_pins(chip_name, chip_af, &periph_pins, &pname);
         pins.append(&mut merge_i2s_into_spi_pins(chip_name, chip_af, &periph_pins, &pname));
 
@@ -350,6 +362,7 @@ fn create_peripherals_for_chip(
             rcc,
             interrupts: Vec::new(),
             dma_channels: Vec::new(),
+            triggers: triggers,
             pins,
             afio,
         };

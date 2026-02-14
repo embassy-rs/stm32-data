@@ -13,6 +13,7 @@ mod normalize_peris;
 mod perimap;
 mod rcc;
 mod registers;
+mod trigger;
 mod util;
 
 #[macro_export]
