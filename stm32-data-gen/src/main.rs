@@ -1,4 +1,6 @@
 #![feature(map_try_insert)]
+
+use crate::trigger::peripheral_trigger_info;
 mod check;
 mod chips;
 mod dma;
@@ -67,6 +69,9 @@ fn main() -> anyhow::Result<()> {
     pretty_env_logger::init();
 
     let mut stopwatch = Stopwatch::new();
+
+    // validate trigger rules
+    peripheral_trigger_info("", "");
 
     stopwatch.section("Parsing headers");
     let headers = header::Headers::parse()?;
