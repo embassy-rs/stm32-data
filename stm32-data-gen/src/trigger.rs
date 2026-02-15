@@ -1,24 +1,12 @@
+use std::collections::HashSet;
+use std::sync::atomic::{AtomicBool, Ordering};
+
 use crate::util::RegexMap;
 
 pub struct Trigger {
     pub signal: &'static str,
     pub source: &'static str,
 }
-
-// /// Trigger selection for STM32F0.
-// #[cfg(stm32f0)]
-// #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-// #[cfg_attr(feature = "defmt", derive(defmt::Format))]
-// pub enum TriggerSel {
-//     Tim6 = 0,
-//     Tim3 = 1,
-//     Tim7 = 2,
-//     Tim15 = 3,
-//     Tim2 = 4,
-//     Exti9 = 6,
-//     Software = 7,
-// }
-//
 
 /// Get the stop mode limit for a peripheral based on the MCU and peripheral name.
 /// Determines the lowest possible stop mode when a peripheral is enabled.
@@ -96,21 +84,21 @@ pub(crate) fn peripheral_trigger_info(mcu_name: &str, peripheral: &str) -> Optio
             Trigger {signal: "DAC_CHX_TRG6", source: "EXTI9_TRG"},
         ]),
         (r"^STM32L4(5|6).*:DAC.*", &[
-            Trigger {signal: "DAC_CHX_TRG0", source: "TIM5_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG1", source: "TIM5_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG3", source: "EXTI9_TRG"},
-            Trigger {signal: "DAC_CHX_TRG4", source: "TIM5_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG5", source: "TIM5_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG6", source: "TIM5_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG0", source: "TIM6_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG1", source: "TIM8_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG3", source: "TIM5_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG4", source: "TIM2_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG5", source: "TIM4_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG6", source: "EXTI9_TRG"},
         ]),
         (r"^STM32(F2|F4|F7|L4).*:DAC.*", &[
-            Trigger {signal: "DAC_CHX_TRG0", source: "TIM5_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG1", source: "TIM5_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG2", source: "TIM6_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG3", source: "EXTI9_TRG"},
-            Trigger {signal: "DAC_CHX_TRG4", source: "TIM5_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG5", source: "TIM5_TRGO"},
-            Trigger {signal: "DAC_CHX_TRG6", source: "TIM5_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG0", source: "TIM6_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG1", source: "TIM8_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG2", source: "TIM7_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG3", source: "TIM5_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG4", source: "TIM2_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG5", source: "TIM4_TRGO"},
+            Trigger {signal: "DAC_CHX_TRG6", source: "EXTI9_TRG"},
         ]),
         (r"^STM32F3(01|02|18).*:DAC.*", &[
             Trigger {signal: "DAC_CHX_TRG0", source: "TIM6_TRGO"},
@@ -365,6 +353,25 @@ pub(crate) fn peripheral_trigger_info(mcu_name: &str, peripheral: &str) -> Optio
             Trigger {signal: "DAC_CHX_TRG14", source: "EXTI9_TRG"},
         ]),
     ]);
+
+    static PERIPHERAL_TRIGGER_RULES_VALID: AtomicBool = AtomicBool::new(false);
+
+    if !PERIPHERAL_TRIGGER_RULES_VALID.load(Ordering::Acquire) {
+        for (expr, triggers) in PERIPHERAL_TRIGGER_RULES.get_map() {
+            let mut trigger_set = HashSet::new();
+
+            for trigger in *triggers {
+                if !trigger_set.insert(trigger.source) {
+                    panic!(
+                        "trigger: failed to validate rules for expr {} (source: {})",
+                        *expr, trigger.source
+                    );
+                }
+            }
+        }
+
+        PERIPHERAL_TRIGGER_RULES_VALID.store(true, Ordering::Release);
+    }
 
     PERIPHERAL_TRIGGER_RULES
         .get(&format!("{mcu_name}:{peripheral}"))
