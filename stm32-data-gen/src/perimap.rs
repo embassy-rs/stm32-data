@@ -95,6 +95,8 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32(H5|WBA).*:AES:.*", ("aes", "v3b", "AES")),
     ("STM32(H5|WBA).*:SAES:.*", ("saes", "v1a", "SAES")),
     ("STM32U5.*:SAES:.*", ("saes", "v1b", "SAES")),
+    ("STM32F3.*:I2S.ext:.*", ("i2sext", "v2", "I2Sext")),
+    ("STM32F4.*:I2S.ext:.*", ("i2sext", "v1", "I2Sext")),
     ("STM32F10[57].*:SPI:.*", ("spi", "v1_i2s", "SPI")),
     ("STM32F10[13].[CDEFG].*:SPI:.*", ("spi", "v1_i2s", "SPI")),
     ("STM32F1.*:SPI:.*", ("spi", "v1", "SPI")),
