@@ -1,0 +1,94 @@
+block/RIFSC:
+  description: Resource isolation framework security controller.
+  items:
+  - name: RISC_CR
+    description: RIFSC RISC slave control register.
+    byte_offset: 0x000
+    fieldset: RISC_CR
+  - name: RISC_SECCFGR
+    description: RIFSC RISC slave security configuration register.
+    byte_offset: 0x10
+    array:
+      len: 6
+      stride: 4
+    fieldset: CFGR
+  - name: RISC_PRIVCFGR
+    description: RIFSC RISC slave privilege configuration register.
+    byte_offset: 0x30
+    array:
+      len: 6
+      stride: 4
+    fieldset: CFGR
+  - name: RISC_RCFGLOCKR
+    description: RIFSC RISC slave resource configuration lock register.
+    byte_offset: 0x50
+    array:
+      len: 6
+      stride: 4
+    fieldset: CFGR
+  - name: RIMC_CR
+    description: RIFSC RIMC master control register.
+    byte_offset: 0xC00
+    fieldset: RIMC_CR
+  - name: RIMC_ATTR
+    description: RIFSC RIMC master attribute register.
+    byte_offset: 0xC10
+    array:
+      len: 12
+      stride: 4
+    fieldset: RIMC_ATTR
+  - name: PPSR
+    description: RIFSC peripheral protection status register.
+    byte_offset: 0xFB0
+    array:
+      len: 6
+      stride: 4
+    access: Read
+    fieldset: CFGR
+fieldset/RISC_CR:
+  description: RIFSC RISC slave control register.
+  fields:
+  - name: GLOCK
+    description: Global lock. When set, all writes to RIFSC RISC registers are ignored.
+    bit_offset: 0
+    bit_size: 1
+fieldset/CFGR:
+  description: RIFSC configuration register for 32 peripherals.
+  fields:
+  - name: CFG
+    description: Configuration bit for peripheral N.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+fieldset/RIMC_CR:
+  description: RIFSC RIMC master control register.
+  fields:
+  - name: GLOCK
+    description: Global lock. When set, all writes to RIFSC RIMC registers are ignored.
+    bit_offset: 0
+    bit_size: 1
+  - name: DAPCID
+    description: Debug access port compartment ID.
+    bit_offset: 8
+    bit_size: 3
+fieldset/RIMC_ATTR:
+  description: RIFSC RIMC master attribute register.
+  fields:
+  - name: MCID
+    description: Master compartment ID.
+    bit_offset: 4
+    bit_size: 3
+  - name: MSEC
+    description: Master secure attribute.
+    bit_offset: 8
+    bit_size: 1
+  - name: MPRIV
+    description: Master privilege attribute.
+    bit_offset: 9
+    bit_size: 1
+  - name: MLOCK
+    description: Master lock. When set, this master attribute register cannot be modified.
+    bit_offset: 16
+    bit_size: 1

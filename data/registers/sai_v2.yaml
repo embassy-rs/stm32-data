@@ -131,11 +131,11 @@ fieldset/CR1:
     description: No fixed divider between MCLK and FS
     bit_offset: 19
     bit_size: 1
-    enum: NODIV
   - name: MCKDIV
     description: 'Master clock divider. These bits are set and cleared by software. These bits are meaningless when the audio block operates in slave mode. They have to be configured when the audio block is disabled. Others: the master clock frequency is calculated accordingly to the following formula:'
     bit_offset: 20
     bit_size: 4
+    enum: MCKDIV
 fieldset/CR2:
   description: Configuration register 2
   fields:
@@ -434,6 +434,41 @@ enum/LSBFIRST:
   - name: LsbFirst
     description: Data are transferred with LSB first
     value: 1
+enum/MCKDIV:
+  bit_size: 4
+  variants:
+  - name: Div1
+    value: 0
+  - name: Div2
+    value: 1
+  - name: Div4
+    value: 2
+  - name: Div6
+    value: 3
+  - name: Div8
+    value: 4
+  - name: Div10
+    value: 5
+  - name: Div12
+    value: 6
+  - name: Div14
+    value: 7
+  - name: Div16
+    value: 8
+  - name: Div18
+    value: 9
+  - name: Div20
+    value: 10
+  - name: Div22
+    value: 11
+  - name: Div24
+    value: 12
+  - name: Div26
+    value: 13
+  - name: Div28
+    value: 14
+  - name: Div30
+    value: 15
 enum/MODE:
   bit_size: 2
   variants:
@@ -466,15 +501,6 @@ enum/MUTEVAL:
     value: 0
   - name: SendLast
     description: Last values are sent during the mute mode
-    value: 1
-enum/NODIV:
-  bit_size: 1
-  variants:
-  - name: MasterClock
-    description: MCLK output is enabled. Forces the ratio between FS and MCLK to 256 or 512 according to the OSR value
-    value: 0
-  - name: NoDiv
-    description: MCLK output enable set by the MCKEN bit (where present, else 0). Ratio between FS and MCLK depends on FRL.
     value: 1
 enum/OUTDRIV:
   bit_size: 1

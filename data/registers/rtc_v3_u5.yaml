@@ -30,10 +30,14 @@ block/RTC:
     description: Control register
     byte_offset: 24
     fieldset: CR
-  - name: PRIVCFGR
+  - name: PRIVCR
     description: Privilege mode control register
     byte_offset: 28
-    fieldset: PRIVCFGR
+    fieldset: PRIVCR
+  - name: SECCFGR
+    description: Secure mode control register
+    byte_offset: 32
+    fieldset: SECCFGR
   - name: WPR
     description: Write protection register
     byte_offset: 36
@@ -87,6 +91,11 @@ block/RTC:
     byte_offset: 84
     access: Read
     fieldset: MISR
+  - name: SMISR
+    description: Secure masked interrupt status register
+    byte_offset: 88
+    access: Read
+    fieldset: SMISR
   - name: SCR
     description: Status clear register
     byte_offset: 92
@@ -100,7 +109,7 @@ block/RTC:
     byte_offset: 112
     fieldset: ALRBINR
 fieldset/ALRBINR:
-  description: RTC alarm binary mode register
+  description: RTC alarm A binary mode register
   fields:
   - name: SS
     description: Synchronous counter alarm value in Binary mode
@@ -318,13 +327,12 @@ fieldset/CR:
     bit_offset: 26
     bit_size: 1
   - name: ALRFCLR
-    description: Alarm flag automatic clear.
+    description: ALRFCLR
     bit_offset: 27
     bit_size: 1
     array:
       len: 2
       stride: 1
-    enum: ALRFCLR
   - name: TAMPALRM_PU
     description: TAMPALRM pull-up enable
     bit_offset: 29
@@ -458,42 +466,36 @@ fieldset/PRER:
     description: Asynchronous prescaler factor
     bit_offset: 16
     bit_size: 7
-fieldset/PRIVCFGR:
+fieldset/PRIVCR:
   description: Privilege mode control register
   fields:
   - name: ALRPRIV
-    description: Alarm and SSR underflow privilege protection
+    description: ALRPRIV
     bit_offset: 0
     bit_size: 1
     array:
       len: 2
       stride: 1
-    enum: PRIV
   - name: WUTPRIV
-    description: Wakeup timer privilege protection.
+    description: WUTPRIV
     bit_offset: 2
     bit_size: 1
-    enum: PRIV
   - name: TSPRIV
-    description: Timestamp privilege protection.
+    description: TSPRIV
     bit_offset: 3
     bit_size: 1
-    enum: PRIV
   - name: CALPRIV
-    description: Shift register, Delight saving, calibration and reference clock privilege protection.
+    description: CALPRIV
     bit_offset: 13
     bit_size: 1
-    enum: PRIV
   - name: INITPRIV
-    description: Initialization privilege protection.
+    description: INITPRIV
     bit_offset: 14
     bit_size: 1
-    enum: PRIV
   - name: PRIV
-    description: RTC privilege protection.
+    description: PRIV
     bit_offset: 15
     bit_size: 1
-    enum: PRIV
 fieldset/SCR:
   description: Status clear register
   fields:
@@ -530,6 +532,37 @@ fieldset/SCR:
     bit_offset: 6
     bit_size: 1
     enum: CALRF
+fieldset/SECCFGR:
+  description: Secure mode control register
+  fields:
+  - name: ALRASEC
+    description: ALRASEC
+    bit_offset: 0
+    bit_size: 1
+  - name: ALRBSEC
+    description: ALRBSEC
+    bit_offset: 1
+    bit_size: 1
+  - name: WUTSEC
+    description: WUTSEC
+    bit_offset: 2
+    bit_size: 1
+  - name: TSSEC
+    description: TSSEC
+    bit_offset: 3
+    bit_size: 1
+  - name: CALSEC
+    description: CALSEC
+    bit_offset: 13
+    bit_size: 1
+  - name: INITSEC
+    description: INITSEC
+    bit_offset: 14
+    bit_size: 1
+  - name: SEC
+    description: SEC
+    bit_offset: 15
+    bit_size: 1
 fieldset/SHIFTR:
   description: Shift control register
   fields:
@@ -540,6 +573,36 @@ fieldset/SHIFTR:
   - name: ADD1S
     description: Add one second
     bit_offset: 31
+    bit_size: 1
+fieldset/SMISR:
+  description: Secure masked interrupt status register
+  fields:
+  - name: ALRMF
+    description: Alarm x interrupt secure masked flag
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: WUTMF
+    description: WUTMF
+    bit_offset: 2
+    bit_size: 1
+  - name: TSMF
+    description: TSMF
+    bit_offset: 3
+    bit_size: 1
+  - name: TSOVMF
+    description: TSOVMF
+    bit_offset: 4
+    bit_size: 1
+  - name: ITSMF
+    description: ITSMF
+    bit_offset: 5
+    bit_size: 1
+  - name: SSRUMF
+    description: SSRUMF
+    bit_offset: 6
     bit_size: 1
 fieldset/SR:
   description: Status register
@@ -701,15 +764,6 @@ enum/ALRF:
   variants:
   - name: Match
     description: This flag is set by hardware when the time/date registers (RTC_TR and RTC_DR) match the Alarm A register (RTC_ALRMAR)
-    value: 1
-enum/ALRFCLR:
-  bit_size: 1
-  variants:
-  - name: Manual
-    description: Alarm x event generates a trigger event and ALRxF must be cleared by software to allow next alarm event.
-    value: 0
-  - name: Automatic
-    description: Alarm x event generates a trigger event. ALRxF is automatically cleared by hardware after 1 ck_apre cycle.
     value: 1
 enum/ALRMF:
   bit_size: 1
@@ -901,19 +955,10 @@ enum/POL:
   bit_size: 1
   variants:
   - name: High
-    description: The pin is high when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0]), or when a TAMPxF/ITAMPxF is asserted (if TAMPOE = 1).
+    description: The pin is high when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])
     value: 0
   - name: Low
-    description: The pin is low when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0]), or when a TAMPxF/ITAMPxF is asserted (if TAMPOE = 1).
-    value: 1
-enum/PRIV:
-  bit_size: 1
-  variants:
-  - name: Anytime
-    description: Alarm and SSR underflow configuration and interrupt clear can be written when the APB access is privileged or non-privileged.
-    value: 0
-  - name: Privileged
-    description: Alarm and SSR underflow configuration and interrupt clear can be written only when the APB access is privileged.
+    description: The pin is low when ALRAF/ALRBF/WUTF is asserted (depending on OSEL[1:0])
     value: 1
 enum/RECALPF:
   bit_size: 1

@@ -95,6 +95,15 @@ impl ChipInterrupts {
         if chip_name.starts_with("STM32F100") {
             header_irqs.remove("DMA2_Channel4_5");
         }
+        // STM32U3 changed the advanced timer IRQ BRK/TRG names
+        // to include multiple signal names. This change maps
+        // them back to the common names.
+        if let Some(num) = header_irqs.remove("TIM1_BRK_TERR_IERR") {
+            header_irqs.insert("TIM1_BRK".to_string(), num);
+        }
+        if let Some(num) = header_irqs.remove("TIM1_TRG_COM_DIR_IDX") {
+            header_irqs.insert("TIM1_TRG_COM".to_string(), num);
+        }
         core.interrupts = header_irqs
             .iter()
             .map(|(k, v)| stm32_data_serde::chip::core::Interrupt {
@@ -149,7 +158,15 @@ impl ChipInterrupts {
             }
 
             // More typos
-            let name = name.replace("USAR11", "USART11");
+            let name = name
+                .replace("USAR11", "USART11")
+                // ST NVIC XML typo seen on STM32N6: "Channe1l4" instead of "Channel14"
+                .replace("Channe1l4", "Channel14")
+                // STM32U3 introduced new naming for advanced timer IRQs
+                // that differ from the rest of the STM32 family.
+                // Map them back to the common names.
+                .replace("TIM1_BRK_TERR_IERR", "TIM1_BRK")
+                .replace("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM");
             trace!("    name={name}");
 
             // Skip interrupts that don't exist.
@@ -261,6 +278,8 @@ impl ChipInterrupts {
                 interrupt_signals.insert(("IWDG".to_string(), "GLOBAL".to_string()));
             } else if name == "RCC_AUDIOSYNC" {
                 // ignore
+            } else if name.starts_with("HSEM") {
+                interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
             } else {
                 if parts[2].is_empty() {
                     trace!("    skipping because parts[2].is_empty()");
@@ -299,13 +318,7 @@ impl ChipInterrupts {
                 for part in tokenize_name(name2) {
                     trace!("    part={part}");
 
-                    let part = {
-                        if part == "TAMPER" {
-                            "TAMP".to_string()
-                        } else {
-                            part
-                        }
-                    };
+                    let part = { if part == "TAMPER" { "TAMP".to_string() } else { part } };
 
                     if part == "LSECSS" {
                         interrupt_signals.insert(("RCC".to_string(), "LSECSS".to_string()));
@@ -330,6 +343,14 @@ impl ChipInterrupts {
                 }
 
                 for (p, mut ss) in peri_signals.into_iter() {
+                    // Normalize LTDC error signal: N6 uses "ERR" (from LTDC_LO_ERR), standardize to "ER"
+                    if p == "LTDC" {
+                        for s in ss.iter_mut() {
+                            if s == "ERR" {
+                                *s = "ER".to_string();
+                            }
+                        }
+                    }
                     let known = valid_signals(&p, chip_name);
 
                     // If we have no interrupt_signals for the peri, assume it's "global" so assign it all known ones
@@ -376,6 +397,18 @@ impl ChipInterrupts {
                         let non_err_irqs: Vec<_> = irqs.iter().filter(|x| !x.contains("_ERR")).cloned().collect();
                         if !non_err_irqs.is_empty() {
                             // If we have non-error IRQs, keep only the first one
+                            let preferred_irq = non_err_irqs[0].clone();
+                            irqs.clear();
+                            irqs.insert(preferred_irq);
+                        }
+                    }
+
+                    // Another special case for STM32WB0, with RADIO_TXRX & RADIO_TXRX_SEQ. Copy of the LTDC_L0_ERR case.
+                    if irqs.len() != 1 && p.name == "RADIO" && signal == "TXRX" {
+                        // Prefer the IRQ name that doesn't contain "_SEQ"
+                        let non_err_irqs: Vec<_> = irqs.iter().filter(|x| !x.contains("_SEQ")).cloned().collect();
+                        if !non_err_irqs.is_empty() {
+                            // If we have non-sequence IRQs, keep only the first one
                             let preferred_irq = non_err_irqs[0].clone();
                             irqs.clear();
                             irqs.insert(preferred_irq);
@@ -448,7 +481,7 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         ("TEMP", &["TEMPSENS"]),
         ("DSI", &["DSIHOST"]),
         ("HRTIM1", &["HRTIM"]),
-        ("GTZC", &["GTZC_S"]),
+        ("GTZC", &["GTZC_S", "GTZC_NS"]),
         ("TZIC", &["GTZC_S"]),
     ];
 
@@ -491,12 +524,17 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
     // Special chip-specific signal mappings
     // Format: (peripheral_prefix, chip_pattern, signals)
     const CHIP_SPECIFIC_SIGNALS: &[(&str, &str, &[&str])] = &[
-        // LTDC signals: STM32N6 supports all signals, others only basic ones
-        ("LTDC", "STM32N6", &["GLOBAL", "ER", "LO", "ERR"]),
-        ("LTDC", "*", &["GLOBAL", "ER"]), // Default for all other LTDC devices
         // DCMIPP signals: STM32N6 supports CSI, others only basic signals
         ("DCMIPP", "STM32N6", &["GLOBAL", "CSI"]),
         ("DCMIPP", "*", &["GLOBAL"]), // Default for all other DCMIPP devices
+        // STM32WB0 Specific Mappings
+        ("EXTI", "STM32WB0", &["GPIOA", "GPIOB"]),
+        (
+            "RADIO_TIMER",
+            "STM32WB0",
+            &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
+        ),
+        ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
     ];
 
     // Check for chip-specific overrides first
@@ -558,6 +596,7 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("ADF", &["FLT0"]),
         ("RAMECC", &["ECC"]),
         ("RAMCFG", &["BKP", "ECC"]),
+        ("LTDC", &["ER", "LO"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
@@ -575,7 +614,7 @@ static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
     ("STM32WL5.*:cm4", "NVIC1"),
     ("STM32WL5.*:cm0p", "NVIC2"),
     // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-    ("STM32(L5|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
+    ("STM32(L5|U3|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
     // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
     ("STM32H7[RS].*", "NVIC2"),
     // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.

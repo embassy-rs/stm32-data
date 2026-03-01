@@ -1,5 +1,8 @@
 #!/bin/bash
 ## on push branch=main
+## priority -100
+## dedup dequeue
+## cooldown 15m
 
 set -euo pipefail
 
@@ -14,7 +17,7 @@ hashtime save /ci/cache/filetime.json
 
 ./d ci
 
-docserver-builder -i ./build/stm32-metapac -o crates/stm32-metapac/git.zup
+docserver build -i ./build/stm32-metapac -o crates/stm32-metapac/git.zup
 
 export KUBECONFIG=/ci/secrets/kubeconfig.yml
 POD=$(kubectl -n embassy get po -l app=docserver -o jsonpath={.items[0].metadata.name})

@@ -1,15 +1,14 @@
 <# #>
 param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$CMD,
 
     [string]$peri
 )
 
-$REV="1659e761beb29d3949bd1ec72039c3ce5f6bdf6c"
+$REV = "6069ecbad229a1c5354b0e1274ec2ea0132d7d31"
 
-Switch ($CMD)
-{
+Switch ($CMD) {
     "download-all" {
         rm -r -Force ./sources/ -ErrorAction SilentlyContinue
         git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
@@ -29,11 +28,12 @@ Switch ($CMD)
             echo $f
 
             echo "processing $f ..."
-            chiptool extract-peripheral --svd "sources/svd/stm32$f.svd" --peripheral "$peri" > "tmp/$peri/$f.yaml" 2> "tmp/$peri/$f.err"
+            chiptool extract-peripheral --svd "sources/svd/stm32$f.svd" --peripheral "$peri" | Out-File -FilePath "tmp/$peri/$f.yaml" -Encoding ASCII 2> "tmp/$peri/$f.err"
             if ($LASTEXITCODE -eq 0) {
                 rm "tmp/$peri/$f.err"
                 echo OK
-            } else {
+            }
+            else {
                 rm "tmp/$peri/$f.yaml"
                 echo FAIL
             }
@@ -43,6 +43,17 @@ Switch ($CMD)
     "gen" {
         rm -r -Force build/data -ErrorAction SilentlyContinue
         cargo run --release --bin stm32-data-gen
+    }
+    "gen-all" {
+        rm -r -Force build/data -ErrorAction SilentlyContinue
+        rm -r -Force build/stm32-metapac -ErrorAction SilentlyContinue
+        cargo run --release --bin stm32-data-gen 
+        cargo run --release --bin stm32-metapac-gen
+        cd build/stm32-metapac
+
+        $files = ls -Recurse -Filter '*.rs' | Where-Object { $_.FullName -notmatch 'target' } | % { $_.FullName } | Resolve-Path -Relative
+        $counter = [pscustomobject] @{ Value = 0 }
+        $files | Group-Object -Property { [math]::Floor($counter.Value++ / 200 ) } | % { rustfmt --skip-children --unstable-features --edition 2021 $_.Group }
     }
     default {
         echo "unknown command"

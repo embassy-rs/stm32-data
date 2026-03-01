@@ -9,8 +9,7 @@ The generated data includes:
   - Packages
 - :heavy_check_mark: Peripheral addresses and interrupts
 - :heavy_check_mark: Interrupts
-- :heavy_check_mark: GPIO AlternateFunction mappings (for all families except F1)
-- :x: GPIO mappings for F1
+- :heavy_check_mark: GPIO AlternateFunction mappings
 - :construction: Register blocks for all peripherals
 - :heavy_check_mark: DMA stream mappings
 - :heavy_check_mark: Per-package pinouts
@@ -146,11 +145,11 @@ are only interested in one. It's easier than it looks, and doing all families at
   - 2: SVD inconsistencies, like different register names for the same register
   - 3: SVD mistakes (yes, there are some)
   - 4: Missing stuff in SVDs, usually enums or doc descriptions.
-- Identify how many actually-different (incompatible) versions of the peripheral exist, as we must _not_ merge them. Name them v1, v2.. (if possible, by order of chip release date, see [here](https://docs.google.com/spreadsheets/d/1-R-AjYrMLL2_623G-AFN2A9THMf8FFMpFD4Kq-owPmI/edit#gid=1972450814).
+- Identify how many actually-different (incompatible) versions of the peripheral exist, as we must _not_ merge them. Name them v1, v2... If possible, order them by chip release date.
 - For each version, pick the "best" YAML (the one that has less enums/docs missing), place them in `data/registers/lpuart_vX.yaml`
 - Cleanup the register yamls (see below).
 - Minimize the diff between each pair of versions. For example between `lpuart_v1.yaml` and `lpuart_v2.yaml`. If one is missing enums or descriptions, copy it from another.
-- Make sure the block
+- Make sure the block has the correct name. e.g. `LPUART`, not `LPUART1`.
 - Add entries to [`perimap`](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/perimap.rs), see below.
 - Regen, then:
   - Check `data/chips/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
@@ -199,15 +198,8 @@ that they are all mutually consistent.
 Finally, we can merge
 
 ```
-./merge_regs.py tmp/RCC/g0*.yaml
+cargo run --release --bin merge_regs tmp/RCC/g0*.yaml
 ```
-
-> [!Tip]
-> You may need to install the required packages in order to run this
-> ```shell
-> pip install xmltodict
-> pip install pyyaml
-> ```
 
 This will produce `regs_merged.yaml`, which we can copy into its final resting
 place:

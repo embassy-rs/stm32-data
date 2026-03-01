@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use anyhow::{anyhow, bail, Ok};
+use anyhow::{Ok, anyhow, bail};
 use chiptool::ir::IR;
 use stm32_data_serde::chip::core::peripheral::rcc::{Field, StopMode};
 use stm32_data_serde::chip::core::peripheral::{self, rcc};
@@ -135,6 +135,7 @@ impl ParsedRccs {
             "PLL1_P_DIV_2",
             "CLK48MOHCI",
             "DIV_RTCPRE",
+            "HSE_DIV_1024",
             "HSE_DIV_2",
             "HSE_DIV_RTCPRE",
             // N6 extra
@@ -167,17 +168,19 @@ impl ParsedRccs {
             "RGMII",
             "JTAG_TCK",
             "SYSA",
+            "SYSB",
             "SPDIF_SYMB",
             "HCLKU",
         ]);
 
         let mux_regexes = &[
             regex!(r"^DCKCFGR\d?/(.+)SEL$"),
-            regex!(r"^CCIPR\d?/(.+)SEL$"),
+            regex!(r"^CCIPR\d*/(.+)SEL$"),
             regex!(r"^BDCR\d?/(.+)SEL$"),
             regex!(r"^D\dCCIP\d?R/(.+)SEL$"),
             regex!(r"^CFGR\d/(.+)SW$"),
             regex!(r"^.+PERCKSELR/(.+)SEL$"),
+            regex!(r"^CSR/(.+)SEL$"),
         ];
         let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$"), regex!(r"^.+/TIMICSEL$")];
 
@@ -334,6 +337,7 @@ impl ParsedRccs {
             ("USB_OTG_HS", &["USB", "USBPHYC", "OTGHS", "CLK48", "ICLK"]),
             ("DTS", &["TMPSENS"]),
             ("SDMMC1", &["SDMMC1", "CLK48"]),
+            ("IPCC", &["RFWKP"]),
         ];
 
         let rcc = self.rccs.get(rcc_version)?;
@@ -352,6 +356,8 @@ impl ParsedRccs {
         const RCC_PERI_MUX_EXCEPTIONS: &[(&str, &str)] = &[
             // These peripherals have a different mux name than the bus clock
             // Format: rcc_version, peripheral_name
+            ("u3", "ADC"),
+            ("u3", "DAC"),
             ("u5", "ADC"),
             ("n6", "I2C4"),
             ("n6", "SDMMC1"), // HCLK2 is corrext per Cube and Docs so no mux check

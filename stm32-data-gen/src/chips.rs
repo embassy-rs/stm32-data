@@ -89,8 +89,10 @@ fn chip_name_from_package_name(x: &str) -> String {
         (regex!("^(STM32L5....).x[PQ]$"), "$1"),
         (regex!("^(STM32L0....).xS$"), "$1"),
         (regex!("^(STM32H7....).x[QH]$"), "$1"),
+        (regex!("^(STM32U3....).x[QG]$"), "$1"),
         (regex!("^(STM32U5....).xQ$"), "$1"),
         (regex!("^(STM32H5....).xQ$"), "$1"),
+        (regex!("^(STM32WB0....).x$"), "$1"),
         (regex!("^(STM32WBA....).x$"), "$1"),
         (regex!("^(STM32MP15...).x$"), "$1"),
         (regex!("^(STM32......).x$"), "$1"),
@@ -151,10 +153,10 @@ static NOPELIST: RegexSet = RegexSet::new(&[
     "STM32U0.*",
     // TODO, PRs welcome :)
     "STM32U3.*",
+    "STM32MP.*",
     // "STM32N6.*",
     "STM32G41[14].*",
     "STM32G4.*xZ",
-    "STM32WB0.*",
     "STM32WL3.*",
     // Does not exist in ST website. No datasheet, no RM.
     "STM32GBK.*",

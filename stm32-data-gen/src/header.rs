@@ -143,6 +143,8 @@ impl Defines {
             self.parse_value(x)
         } else if let Some(m) = regex!(r"^\*?\([0-9A-Za-z_]+ *\*?\)(.*)$").captures(val) {
             self.parse_value(m.get(1).unwrap().as_str())
+        } else if let Some(m) = regex!(r"^(.*)\*(.*)$").captures(val) {
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? * self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)/(.*)$").captures(val) {
             Ok(self.parse_value(m.get(1).unwrap().as_str())? / self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)<<(.*)$").captures(val) {
@@ -205,10 +207,77 @@ impl Defines {
             ),
             ("FDCANRAM", &["SRAMCAN_BASE", "SRAMCAN_BASE_NS"]),
             ("VREFINTCAL", &["VREFINT_CAL_ADDR_CMSIS"]),
+            ("DESIG", &["PACKAGE_BASE"]),
             ("DSIHOST", &["DSI_BASE"]),
             ("SYSCFG", &["SYSCFG_BASE", "SBS_BASE"]),
-            ("XSPI1", &["XSPI1_R_BASE"]),
-            ("XSPI2", &["XSPI2_R_BASE"]),
+            ("XSPI1", &["XSPI1_R_BASE", "XSPI1_BASE_NS"]),
+            ("XSPI2", &["XSPI2_R_BASE", "XSPI2_BASE_NS"]),
+            ("XSPI3", &["XSPI3_R_BASE", "XSPI3_BASE_NS"]),
+            ("RAMCFG", &["RAMCFG_BASE", "RAMCFG_BASE_NS", "RAMCFG_BASE_S"]),
+            (
+                "GTZC",
+                &[
+                    "GTZC_BASE",
+                    "GTZC_TZSC_BASE",
+                    "GTZC_TZSC_BASE_NS",
+                    "GTZC_TZSC_BASE_S",
+                    "GTZC_TZSC1_BASE_NS",
+                    "GTZC_TZSC1_BASE_S",
+                ],
+            ),
+            ("GTZC1", &["GTZC1_BASE", "GTZC1_BASE_NS", "GTZC1_BASE_S"]),
+            (
+                "GTZC_TZSC",
+                &[
+                    "GTZC_TZSC_BASE",
+                    "GTZC_TZSC_BASE_NS",
+                    "GTZC_TZSC_BASE_S",
+                    "GTZC_TZSC1_BASE_NS",
+                    "GTZC_TZSC1_BASE_S",
+                ],
+            ),
+            (
+                "GTZC_TZIC",
+                &[
+                    "GTZC_TZIC_BASE",
+                    "GTZC_TZIC_BASE_S",
+                    "GTZC_TZIC1_BASE_NS",
+                    "GTZC_TZIC1_BASE_S",
+                ],
+            ),
+            (
+                "GTZC_MPCBB1",
+                &["GTZC_MPCBB1_BASE", "GTZC_MPCBB1_BASE_NS", "GTZC_MPCBB1_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB2",
+                &["GTZC_MPCBB2_BASE", "GTZC_MPCBB2_BASE_NS", "GTZC_MPCBB2_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB3",
+                &["GTZC_MPCBB3_BASE", "GTZC_MPCBB3_BASE_NS", "GTZC_MPCBB3_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB6",
+                &["GTZC_MPCBB6_BASE", "GTZC_MPCBB6_BASE_NS", "GTZC_MPCBB6_BASE_S"],
+            ),
+            ("RISAF1", &["RISAF1_BASE_NS", "RISAF1_BASE_S"]),
+            ("RISAF2", &["RISAF2_BASE_NS", "RISAF2_BASE_S"]),
+            ("RISAF3", &["RISAF3_BASE_NS", "RISAF3_BASE_S"]),
+            ("RISAF4", &["RISAF4_BASE_NS", "RISAF4_BASE_S"]),
+            ("RISAF5", &["RISAF5_BASE_NS", "RISAF5_BASE_S"]),
+            ("RISAF6", &["RISAF6_BASE_NS", "RISAF6_BASE_S"]),
+            ("RISAF7", &["RISAF7_BASE_NS", "RISAF7_BASE_S"]),
+            ("RISAF8", &["RISAF8_BASE_NS", "RISAF8_BASE_S"]),
+            ("RISAF9", &["RISAF9_BASE_NS", "RISAF9_BASE_S"]),
+            ("RISAF11", &["RISAF11_BASE_NS", "RISAF11_BASE_S"]),
+            ("RISAF12", &["RISAF12_BASE_NS", "RISAF12_BASE_S"]),
+            ("RISAF13", &["RISAF13_BASE_NS", "RISAF13_BASE_S"]),
+            ("RISAF14", &["RISAF14_BASE_NS", "RISAF14_BASE_S"]),
+            ("RISAF15", &["RISAF15_BASE_NS", "RISAF15_BASE_S"]),
+            ("RISAF21", &["RISAF21_BASE_NS", "RISAF21_BASE_S"]),
+            ("RISAF22", &["RISAF22_BASE_NS", "RISAF22_BASE_S"]),
+            ("RISAF23", &["RISAF23_BASE_NS", "RISAF23_BASE_S"]),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 

@@ -1,5 +1,5 @@
 block/ADC:
-  description: Analog to Digital Converter
+  description: Analog to Digital Converter instance 1
   items:
   - name: ISR
     description: ADC interrupt and status register
@@ -66,50 +66,6 @@ block/ADC:
     description: ADC common control register
     byte_offset: 776
     fieldset: CCR
-  - name: HWCFGR6
-    description: Hardware Configuration Register
-    byte_offset: 984
-    fieldset: HWCFGR6
-  - name: HWCFGR5
-    description: Hardware Configuration Register
-    byte_offset: 988
-    fieldset: HWCFGR5
-  - name: HWCFGR4
-    description: Hardware Configuration Register
-    byte_offset: 992
-    fieldset: HWCFGR4
-  - name: HWCFGR3
-    description: Hardware Configuration Register
-    byte_offset: 996
-    fieldset: HWCFGR3
-  - name: HWCFGR2
-    description: Hardware Configuration Register
-    byte_offset: 1000
-    fieldset: HWCFGR2
-  - name: HWCFGR1
-    description: Hardware Configuration Register
-    byte_offset: 1004
-    fieldset: HWCFGR1
-  - name: HWCFGR0
-    description: Hardware Configuration Register
-    byte_offset: 1008
-    access: Read
-    fieldset: HWCFGR0
-  - name: VERR
-    description: EXTI IP Version register
-    byte_offset: 1012
-    access: Read
-    fieldset: VERR
-  - name: IPIDR
-    description: EXTI Identification register
-    byte_offset: 1016
-    access: Read
-    fieldset: IPIDR
-  - name: SIDR
-    description: EXTI Size ID register
-    byte_offset: 1020
-    access: Read
-    fieldset: SIDR
 fieldset/AWD1TR:
   description: watchdog threshold register
   fields:
@@ -171,6 +127,7 @@ fieldset/CCR:
     description: ADC prescaler
     bit_offset: 18
     bit_size: 4
+    enum: PRESC
   - name: VREFEN
     description: VREFINT enable
     bit_offset: 22
@@ -199,6 +156,7 @@ fieldset/CFGR1:
     description: Scan sequence direction
     bit_offset: 2
     bit_size: 1
+    enum: SCANDIR
   - name: RES
     description: ADC data resolution
     bit_offset: 3
@@ -208,14 +166,17 @@ fieldset/CFGR1:
     description: ADC data alignement
     bit_offset: 5
     bit_size: 1
+    enum: ALIGN
   - name: EXTSEL
     description: ADC group regular external trigger source
     bit_offset: 6
     bit_size: 3
+    enum: EXTSEL
   - name: EXTEN
     description: ADC group regular external trigger polarity
     bit_offset: 10
     bit_size: 2
+    enum: EXTEN
   - name: OVRMOD
     description: ADC group regular overrun configuration
     bit_offset: 12
@@ -248,7 +209,7 @@ fieldset/CFGR1:
     description: ADC analog watchdog 1 enable on scope ADC group regular
     bit_offset: 23
     bit_size: 1
-  - name: AWDCH1CH
+  - name: AWD1CH
     description: ADC analog watchdog 1 monitored channel selection
     bit_offset: 26
     bit_size: 5
@@ -263,10 +224,12 @@ fieldset/CFGR2:
     description: ADC oversampling ratio
     bit_offset: 2
     bit_size: 3
+    enum: OVSR
   - name: OVSS
     description: ADC oversampling shift
     bit_offset: 5
     bit_size: 4
+    enum: OVSS
   - name: TOVS
     description: ADC oversampling discontinuous mode (triggered mode) for ADC group regular
     bit_offset: 9
@@ -279,48 +242,28 @@ fieldset/CFGR2:
     description: ADC clock mode
     bit_offset: 30
     bit_size: 2
+    enum: CKMODE
 fieldset/CHSELR:
   description: channel selection register
   fields:
   - name: CHSEL
     description: Channel-x selection
     bit_offset: 0
-    bit_size: 19
+    bit_size: 1
+    array:
+      len: 19
+      stride: 1
 fieldset/CHSELR_1:
   description: channel selection register CHSELRMOD = 1 in ADC_CFGR1
   fields:
-  - name: SQ1
+  - name: SQ
     description: conversion of the sequence
     bit_offset: 0
     bit_size: 4
-  - name: SQ2
-    description: conversion of the sequence
-    bit_offset: 4
-    bit_size: 4
-  - name: SQ3
-    description: conversion of the sequence
-    bit_offset: 8
-    bit_size: 4
-  - name: SQ4
-    description: conversion of the sequence
-    bit_offset: 12
-    bit_size: 4
-  - name: SQ5
-    description: conversion of the sequence
-    bit_offset: 16
-    bit_size: 4
-  - name: SQ6
-    description: conversion of the sequence
-    bit_offset: 20
-    bit_size: 4
-  - name: SQ7
-    description: conversion of the sequence
-    bit_offset: 24
-    bit_size: 4
-  - name: SQ8
-    description: conversion of the sequence
-    bit_offset: 28
-    bit_size: 4
+    array:
+      len: 8
+      stride: 4
+    enum: SQ
 fieldset/CR:
   description: ADC control register
   fields:
@@ -351,139 +294,10 @@ fieldset/CR:
 fieldset/DR:
   description: ADC group regular conversion data register
   fields:
-  - name: regularDATA
+  - name: DATA
     description: ADC group regular conversion data
     bit_offset: 0
     bit_size: 16
-fieldset/HWCFGR0:
-  description: Hardware Configuration Register
-  fields:
-  - name: NUM_CHAN_24
-    description: NUM_CHAN_24
-    bit_offset: 0
-    bit_size: 4
-  - name: EXTRA_AWDS
-    description: Extra analog watchdog
-    bit_offset: 4
-    bit_size: 4
-  - name: OVS
-    description: Oversampling
-    bit_offset: 8
-    bit_size: 4
-fieldset/HWCFGR1:
-  description: Hardware Configuration Register
-  fields:
-  - name: CHMAP3
-    description: Input channel mapping
-    bit_offset: 0
-    bit_size: 5
-  - name: CHMAP2
-    description: Input channel mapping
-    bit_offset: 8
-    bit_size: 5
-  - name: CHMAP1
-    description: Input channel mapping
-    bit_offset: 16
-    bit_size: 5
-  - name: CHMAP0
-    description: Input channel mapping
-    bit_offset: 24
-    bit_size: 5
-fieldset/HWCFGR2:
-  description: Hardware Configuration Register
-  fields:
-  - name: CHMAP7
-    description: Input channel mapping
-    bit_offset: 0
-    bit_size: 5
-  - name: CHMAP6
-    description: Input channel mapping
-    bit_offset: 8
-    bit_size: 5
-  - name: CHMAP5
-    description: Input channel mapping
-    bit_offset: 16
-    bit_size: 5
-  - name: CHMAP4
-    description: Input channel mapping
-    bit_offset: 24
-    bit_size: 5
-fieldset/HWCFGR3:
-  description: Hardware Configuration Register
-  fields:
-  - name: CHMAP11
-    description: Input channel mapping
-    bit_offset: 0
-    bit_size: 5
-  - name: CHMAP10
-    description: Input channel mapping
-    bit_offset: 8
-    bit_size: 5
-  - name: CHMAP9
-    description: Input channel mapping
-    bit_offset: 16
-    bit_size: 5
-  - name: CHMAP8
-    description: Input channel mapping
-    bit_offset: 24
-    bit_size: 5
-fieldset/HWCFGR4:
-  description: Hardware Configuration Register
-  fields:
-  - name: CHMAP15
-    description: Input channel mapping
-    bit_offset: 0
-    bit_size: 5
-  - name: CHMAP14
-    description: Input channel mapping
-    bit_offset: 8
-    bit_size: 5
-  - name: CHMAP13
-    description: Input channel mapping
-    bit_offset: 16
-    bit_size: 5
-  - name: CHMAP12
-    description: Input channel mapping
-    bit_offset: 24
-    bit_size: 5
-fieldset/HWCFGR5:
-  description: Hardware Configuration Register
-  fields:
-  - name: CHMAP19
-    description: Input channel mapping
-    bit_offset: 0
-    bit_size: 5
-  - name: CHMAP18
-    description: Input channel mapping
-    bit_offset: 8
-    bit_size: 5
-  - name: CHMAP17
-    description: Input channel mapping
-    bit_offset: 16
-    bit_size: 5
-  - name: CHMAP16
-    description: Input channel mapping
-    bit_offset: 24
-    bit_size: 5
-fieldset/HWCFGR6:
-  description: Hardware Configuration Register
-  fields:
-  - name: CHMAP20
-    description: Input channel mapping
-    bit_offset: 0
-    bit_size: 5
-  - name: CHMAP21
-    description: Input channel mapping
-    bit_offset: 8
-    bit_size: 5
-  - name: CHMAP22
-    description: Input channel mapping
-    bit_offset: 16
-    bit_size: 5
-  - name: CHMAP23
-    description: Input channel mapping
-    bit_offset: 24
-    bit_size: 5
 fieldset/IER:
   description: ADC interrupt enable register
   fields:
@@ -527,13 +341,6 @@ fieldset/IER:
     description: Channel Configuration Ready Interrupt enable
     bit_offset: 13
     bit_size: 1
-fieldset/IPIDR:
-  description: EXTI Identification register
-  fields:
-  - name: IPID
-    description: IP Identification
-    bit_offset: 0
-    bit_size: 32
 fieldset/ISR:
   description: ADC interrupt and status register
   fields:
@@ -577,25 +384,16 @@ fieldset/ISR:
     description: Channel Configuration Ready flag
     bit_offset: 13
     bit_size: 1
-fieldset/SIDR:
-  description: EXTI Size ID register
-  fields:
-  - name: SID
-    description: Size Identification
-    bit_offset: 0
-    bit_size: 32
 fieldset/SMPR:
   description: ADC sampling time register
   fields:
-  - name: SMP1
+  - name: SAMPLE_TIME
     description: Sampling time selection
     bit_offset: 0
     bit_size: 3
-    enum: SAMPLE_TIME
-  - name: SMP2
-    description: Sampling time selection
-    bit_offset: 4
-    bit_size: 3
+    array:
+      len: 2
+      stride: 4
     enum: SAMPLE_TIME
   - name: SMPSEL
     description: Channel sampling time selection
@@ -604,65 +402,280 @@ fieldset/SMPR:
     array:
       len: 19
       stride: 1
-fieldset/VERR:
-  description: EXTI IP Version register
-  fields:
-  - name: MINREV
-    description: Minor Revision number
-    bit_offset: 0
-    bit_size: 4
-  - name: MAJREV
-    description: Major Revision number
-    bit_offset: 4
-    bit_size: 4
+    enum: SMPSEL
+enum/ALIGN:
+  bit_size: 1
+  variants:
+  - name: Right
+    description: Right alignment
+    value: 0
+  - name: Left
+    description: Left alignment
+    value: 1
+enum/CKMODE:
+  bit_size: 2
+  variants:
+  - name: ADCLK
+    description: ADCCLK (Asynchronous clock mode)
+    value: 0
+  - name: PCLK_Div2
+    description: PCLK/2 (Synchronous clock mode)
+    value: 1
+  - name: PCLK_Div4
+    description: PCLK/4 (Synchronous clock mode)
+    value: 2
+  - name: PCLK
+    description: PCLK (Synchronous clock mode)
+    value: 3
 enum/DMACFG:
   bit_size: 1
   variants:
   - name: OneShot
-    description: DMA One Shot mode selected
+    description: DMA one shot mode selected
     value: 0
   - name: Circular
-    description: DMA Circular mode selected
+    description: DMA circular mode selected
     value: 1
+enum/EXTEN:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: Hardware trigger detection disabled
+    value: 0
+  - name: RisingEdge
+    description: Hardware trigger detection on the rising edge
+    value: 1
+  - name: FallingEdge
+    description: Hardware trigger detection on the falling edge
+    value: 2
+  - name: BothEdges
+    description: Hardware trigger detection on both the rising and falling edges
+    value: 3
+enum/EXTSEL:
+  bit_size: 3
+  variants:
+  - name: TIM1_TRGO
+    description: Timer 1 TRGO event
+    value: 0
+  - name: TIM1_CC4
+    description: Timer 1 CC4 event
+    value: 1
+  - name: TIM2_TRGO
+    description: Timer 2 TRGO event
+    value: 2
+  - name: TIM2_CH4
+    description: Timer 2 CH4 event
+    value: 3
+  - name: TIM2_CH3
+    description: Timer 2 CH3 event
+    value: 5
+  - name: EXTI_LINE11
+    description: EXTI line 11 event
+    value: 7
+enum/OVSR:
+  bit_size: 3
+  variants:
+  - name: Mul2
+    description: 2x
+    value: 0
+  - name: Mul4
+    description: 4x
+    value: 1
+  - name: Mul8
+    description: 8x
+    value: 2
+  - name: Mul16
+    description: 16x
+    value: 3
+  - name: Mul32
+    description: 32x
+    value: 4
+  - name: Mul64
+    description: 64x
+    value: 5
+  - name: Mul128
+    description: 128x
+    value: 6
+  - name: Mul256
+    description: 256x
+    value: 7
+enum/OVSS:
+  bit_size: 4
+  variants:
+  - name: NoShift
+    description: No shift
+    value: 0
+  - name: Shift1
+    description: Shift 1-bit
+    value: 1
+  - name: Shift2
+    description: Shift 2-bits
+    value: 2
+  - name: Shift3
+    description: Shift 3-bits
+    value: 3
+  - name: Shift4
+    description: Shift 4-bits
+    value: 4
+  - name: Shift5
+    description: Shift 5-bits
+    value: 5
+  - name: Shift6
+    description: Shift 6-bits
+    value: 6
+  - name: Shift7
+    description: Shift 7-bits
+    value: 7
+  - name: Shift8
+    description: Shift 8-bits
+    value: 8
+enum/PRESC:
+  bit_size: 4
+  variants:
+  - name: Div1
+    description: Input ADC clock not divided
+    value: 0
+  - name: Div2
+    description: Input ADC clock divided by 2
+    value: 1
+  - name: Div4
+    description: Input ADC clock divided by 4
+    value: 2
+  - name: Div6
+    description: Input ADC clock divided by 6
+    value: 3
+  - name: Div8
+    description: Input ADC clock divided by 8
+    value: 4
+  - name: Div10
+    description: Input ADC clock divided by 10
+    value: 5
+  - name: Div12
+    description: Input ADC clock divided by 12
+    value: 6
+  - name: Div16
+    description: Input ADC clock divided by 16
+    value: 7
+  - name: Div32
+    description: Input ADC clock divided by 32
+    value: 8
+  - name: Div64
+    description: Input ADC clock divided by 64
+    value: 9
+  - name: Div128
+    description: Input ADC clock divided by 128
+    value: 10
+  - name: Div256
+    description: Input ADC clock divided by 256
+    value: 11
 enum/RES:
   bit_size: 2
   variants:
   - name: Bits12
-    description: 12-bit resolution
+    description: 12 bits
     value: 0
   - name: Bits10
-    description: 10-bit resolution
+    description: 10 bits
     value: 1
   - name: Bits8
-    description: 8-bit resolution
+    description: 8 bits
     value: 2
   - name: Bits6
-    description: 6-bit resolution
+    description: 6 bits
     value: 3
+enum/SCANDIR:
+  bit_size: 1
+  variants:
+  - name: Upward
+    description: Upward scan (from CHSEL0 to CHSEL17)
+    value: 0
+  - name: Backward
+    description: Backward scan (from CHSEL17 to CHSEL0)
+    value: 1
 enum/SAMPLE_TIME:
   bit_size: 3
   variants:
   - name: Cycles1_5
-    description: 1.5 ADC cycles
+    description: 1.5 ADC clock cycles
     value: 0
   - name: Cycles3_5
-    description: 3.5 ADC cycles
+    description: 3.5 ADC clock cycles
     value: 1
   - name: Cycles7_5
-    description: 7.5 ADC cycles
+    description: 7.5 ADC clock cycles
     value: 2
   - name: Cycles12_5
-    description: 12.5 ADC cycles
+    description: 12.5 ADC clock cycles
     value: 3
   - name: Cycles19_5
-    description: 19.5 ADC cycles
+    description: 19.5 ADC clock cycles
     value: 4
   - name: Cycles39_5
-    description: 39.5 ADC cycles
+    description: 39.5 ADC clock cycles
     value: 5
   - name: Cycles79_5
-    description: 79.5 ADC cycles
+    description: 79.5 ADC clock cycles
     value: 6
   - name: Cycles160_5
-    description: 160.5 ADC cycles
+    description: 160.5 ADC clock cycles
     value: 7
+enum/SMPSEL:
+  bit_size: 1
+  variants:
+  - name: Smp1
+    description: Sampling time of CHANNELx use the setting of SMP1 register
+    value: 0
+  - name: Smp2
+    description: Sampling time of CHANNELx use the setting of SMP2 register
+    value: 1
+enum/SQ:
+  bit_size: 4
+  variants:
+  - name: Ch0
+    description: Channel 0 selected for the Nth conversion
+    value: 0
+  - name: Ch1
+    description: Channel 1 selected for the Nth conversion
+    value: 1
+  - name: Ch2
+    description: Channel 2 selected for the Nth conversion
+    value: 2
+  - name: Ch3
+    description: Channel 3 selected for the Nth conversion
+    value: 3
+  - name: Ch4
+    description: Channel 4 selected for the Nth conversion
+    value: 4
+  - name: Ch5
+    description: Channel 5 selected for the Nth conversion
+    value: 5
+  - name: Ch6
+    description: Channel 6 selected for the Nth conversion
+    value: 6
+  - name: Ch7
+    description: Channel 7 selected for the Nth conversion
+    value: 7
+  - name: Ch8
+    description: Channel 8 selected for the Nth conversion
+    value: 8
+  - name: Ch9
+    description: Channel 9 selected for the Nth conversion
+    value: 9
+  - name: Ch10
+    description: Channel 10 selected for the Nth conversion
+    value: 10
+  - name: Ch11
+    description: Channel 11 selected for the Nth conversion
+    value: 11
+  - name: Ch12
+    description: Channel 12 selected for the Nth conversion
+    value: 12
+  - name: Ch13
+    description: Channel 13 selected for the Nth conversion
+    value: 13
+  - name: Ch14
+    description: Channel 14 selected for the Nth conversion
+    value: 14
+  - name: EOS
+    description: End of sequence
+    value: 15

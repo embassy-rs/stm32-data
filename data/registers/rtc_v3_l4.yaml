@@ -30,14 +30,6 @@ block/RTC:
     description: Control register
     byte_offset: 24
     fieldset: CR
-  - name: PRIVCR
-    description: Privilege mode control register
-    byte_offset: 28
-    fieldset: PRIVCR
-  - name: SECCFGR
-    description: Secure mode control register
-    byte_offset: 32
-    fieldset: SECCFGR
   - name: WPR
     description: Write protection register
     byte_offset: 36
@@ -91,30 +83,11 @@ block/RTC:
     byte_offset: 84
     access: Read
     fieldset: MISR
-  - name: SMISR
-    description: Secure masked interrupt status register
-    byte_offset: 88
-    access: Read
-    fieldset: SMISR
   - name: SCR
     description: Status clear register
     byte_offset: 92
     access: Write
     fieldset: SCR
-  - name: ALRBINR
-    description: Alarm binary mode register
-    array:
-      len: 2
-      stride: 4
-    byte_offset: 112
-    fieldset: ALRBINR
-fieldset/ALRBINR:
-  description: RTC alarm A binary mode register
-  fields:
-  - name: SS
-    description: Synchronous counter alarm value in Binary mode
-    bit_offset: 0
-    bit_size: 32
 fieldset/ALRMR:
   description: Alarm register
   fields:
@@ -191,11 +164,6 @@ fieldset/ALRMSSR:
     description: Mask the most-significant bits starting at this bit
     bit_offset: 24
     bit_size: 6
-  - name: SSCLR
-    description: Clear synchronous counter on alarm (Binary mode only)
-    bit_offset: 31
-    bit_size: 1
-    enum: ALRMSSR_SSCLR
 fieldset/CALR:
   description: Calibration register
   fields:
@@ -249,10 +217,6 @@ fieldset/CR:
     bit_offset: 6
     bit_size: 1
     enum: FMT
-  - name: SSRUIE
-    description: SSR underflow interrupt enable
-    bit_offset: 7
-    bit_size: 1
   - name: ALRE
     description: Alarm enable
     bit_offset: 8
@@ -326,13 +290,6 @@ fieldset/CR:
     description: Tamper detection output enable on TAMPALRM
     bit_offset: 26
     bit_size: 1
-  - name: ALRFCLR
-    description: ALRFCLR
-    bit_offset: 27
-    bit_size: 1
-    array:
-      len: 2
-      stride: 1
   - name: TAMPALRM_PU
     description: TAMPALRM pull-up enable
     bit_offset: 29
@@ -380,13 +337,6 @@ fieldset/DR:
 fieldset/ICSR:
   description: Initialization control and status register
   fields:
-  - name: ALRWF
-    description: Alarm write enabled
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 2
-      stride: 1
   - name: WUTWF
     description: Wakeup timer write enabled
     bit_offset: 2
@@ -411,16 +361,6 @@ fieldset/ICSR:
     description: Enter Initialization mode
     bit_offset: 7
     bit_size: 1
-  - name: BIN
-    description: Binary mode
-    bit_offset: 8
-    bit_size: 2
-    enum: BIN
-  - name: BCDU
-    description: BCD update
-    bit_offset: 10
-    bit_size: 3
-    enum: BCDU
   - name: RECALPF
     description: Recalibration pending Flag
     bit_offset: 16
@@ -457,11 +397,6 @@ fieldset/MISR:
     bit_offset: 5
     bit_size: 1
     enum: ITSMF
-  - name: SSRUMF
-    description: SSR underflow masked flag
-    bit_offset: 6
-    bit_size: 1
-    enum: SSRUMF
 fieldset/PRER:
   description: Prescaler register
   fields:
@@ -473,41 +408,11 @@ fieldset/PRER:
     description: Asynchronous prescaler factor
     bit_offset: 16
     bit_size: 7
-fieldset/PRIVCR:
-  description: Privilege mode control register
-  fields:
-  - name: ALRPRIV
-    description: ALRPRIV
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 2
-      stride: 1
-  - name: WUTPRIV
-    description: WUTPRIV
-    bit_offset: 2
-    bit_size: 1
-  - name: TSPRIV
-    description: TSPRIV
-    bit_offset: 3
-    bit_size: 1
-  - name: CALPRIV
-    description: CALPRIV
-    bit_offset: 13
-    bit_size: 1
-  - name: INITPRIV
-    description: INITPRIV
-    bit_offset: 14
-    bit_size: 1
-  - name: PRIV
-    description: PRIV
-    bit_offset: 15
-    bit_size: 1
 fieldset/SCR:
   description: Status clear register
   fields:
   - name: CALRF
-    description: Clear alarm x flag
+    description: Clear alarm A flag
     bit_offset: 0
     bit_size: 1
     array:
@@ -534,42 +439,6 @@ fieldset/SCR:
     bit_offset: 5
     bit_size: 1
     enum: CALRF
-  - name: CSSRUF
-    description: Clear SSR underflow flag
-    bit_offset: 6
-    bit_size: 1
-    enum: CALRF
-fieldset/SECCFGR:
-  description: Secure mode control register
-  fields:
-  - name: ALRASEC
-    description: ALRASEC
-    bit_offset: 0
-    bit_size: 1
-  - name: ALRBSEC
-    description: ALRBSEC
-    bit_offset: 1
-    bit_size: 1
-  - name: WUTSEC
-    description: WUTSEC
-    bit_offset: 2
-    bit_size: 1
-  - name: TSSEC
-    description: TSSEC
-    bit_offset: 3
-    bit_size: 1
-  - name: CALSEC
-    description: CALSEC
-    bit_offset: 13
-    bit_size: 1
-  - name: INITSEC
-    description: INITSEC
-    bit_offset: 14
-    bit_size: 1
-  - name: SEC
-    description: SEC
-    bit_offset: 15
-    bit_size: 1
 fieldset/SHIFTR:
   description: Shift control register
   fields:
@@ -580,36 +449,6 @@ fieldset/SHIFTR:
   - name: ADD1S
     description: Add one second
     bit_offset: 31
-    bit_size: 1
-fieldset/SMISR:
-  description: Secure masked interrupt status register
-  fields:
-  - name: ALRMF
-    description: Alarm x interrupt secure masked flag
-    bit_offset: 0
-    bit_size: 1
-    array:
-      len: 2
-      stride: 1
-  - name: WUTMF
-    description: WUTMF
-    bit_offset: 2
-    bit_size: 1
-  - name: TSMF
-    description: TSMF
-    bit_offset: 3
-    bit_size: 1
-  - name: TSOVMF
-    description: TSOVMF
-    bit_offset: 4
-    bit_size: 1
-  - name: ITSMF
-    description: ITSMF
-    bit_offset: 5
-    bit_size: 1
-  - name: SSRUMF
-    description: SSRUMF
-    bit_offset: 6
     bit_size: 1
 fieldset/SR:
   description: Status register
@@ -642,11 +481,6 @@ fieldset/SR:
     bit_offset: 5
     bit_size: 1
     enum: ITSF
-  - name: SSRUF
-    description: SSR underflow flag
-    bit_offset: 6
-    bit_size: 1
-    enum: SSRUF
 fieldset/SSR:
   description: Sub second register
   fields:
@@ -805,15 +639,6 @@ enum/ALRMR_WDSEL:
   - name: WeekDay
     description: DU[3:0] represents the week day. DT[1:0] is don’t care.
     value: 1
-enum/ALRMSSR_SSCLR:
-  bit_size: 1
-  variants:
-  - name: FreeRunning
-    description: The synchronous binary counter (SS[31:0] in RTC_SSR) is free-running
-    value: 0
-  - name: ALRMBINR
-    description: The synchronous binary counter (SS[31:0] in RTC_SSR) is running from 0xFFFF FFFF to RTC_ALRMABINR → SS[31:0] value and is automatically reloaded with 0xFFFF FFFF when reaching RTC_ALRMABINR → SS[31:0]
-    value: 1
 enum/AMPM:
   bit_size: 1
   variants:
@@ -823,48 +648,6 @@ enum/AMPM:
   - name: PM
     description: PM
     value: 1
-enum/BCDU:
-  bit_size: 3
-  variants:
-  - name: Bit7
-    description: 1s increment each time SS[7:0]=0
-    value: 0
-  - name: Bit8
-    description: 1s increment each time SS[8:0]=0
-    value: 1
-  - name: Bit9
-    description: 1s increment each time SS[9:0]=0
-    value: 2
-  - name: Bit10
-    description: 1s increment each time SS[10:0]=0
-    value: 3
-  - name: Bit11
-    description: 1s increment each time SS[11:0]=0
-    value: 4
-  - name: Bit12
-    description: 1s increment each time SS[12:0]=0
-    value: 5
-  - name: Bit13
-    description: 1s increment each time SS[13:0]=0
-    value: 6
-  - name: Bit14
-    description: 1s increment each time SS[14:0]=0
-    value: 7
-enum/BIN:
-  bit_size: 2
-  variants:
-  - name: BCD
-    description: Free running BCD calendar mode (Binary mode disabled)
-    value: 0
-  - name: Binary
-    description: Free running Binary mode (BCD mode disabled)
-    value: 1
-  - name: BinBCD
-    description: Free running BCD calendar and Binary modes
-    value: 2
-  - name: BinBCD2
-    description: Free running BCD calendar and Binary modes
-    value: 3
 enum/CALP:
   bit_size: 1
   variants:
@@ -972,18 +755,6 @@ enum/RECALPF:
   variants:
   - name: Pending
     description: The RECALPF status flag is automatically set to 1 when software writes to the RTC_CALR register, indicating that the RTC_CALR register is blocked. When the new calibration settings are taken into account, this bit returns to 0
-    value: 1
-enum/SSRUF:
-  bit_size: 1
-  variants:
-  - name: Underflow
-    description: This flag is set by hardware when the SSR rolls under 0. SSRUF is not set when SSCLR=1
-    value: 1
-enum/SSRUMF:
-  bit_size: 1
-  variants:
-  - name: Underflow
-    description: This flag is set by hardware when the SSR rolls under 0. SSRUF is not set when SSCLR=1
     value: 1
 enum/TAMPALRM_TYPE:
   bit_size: 1

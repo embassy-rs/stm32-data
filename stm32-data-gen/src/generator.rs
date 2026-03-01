@@ -4,7 +4,7 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 use gpio_af::pin_sort_key;
 use perimap::PERIMAP;
 use regex::Regex;
-use stm32_data_serde::chip::core::peripheral::Pin;
+use stm32_data_serde::chip::core::peripheral::{Pin, Trigger};
 use util::RegexMap;
 
 use super::*;
@@ -209,7 +209,24 @@ fn create_peripherals_for_chip(
             None
         };
 
-        let rcc = if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &pname) {
+        // The comparators for g4 family uses the same enable and reset bits as SYSCFG
+        let syscfg_for_comp = || {
+            if chip_name.starts_with("STM32G4") && pname.starts_with("COMP") {
+                peripheral_to_clock
+                    .match_peri_clock(rcc_block.1, "SYSCFG")
+                    .map(|mut rcc_info| {
+                        rcc_info.reset = None;
+                        rcc_info
+                    })
+            } else {
+                None
+            }
+        };
+
+        let rcc = if let Some(mut rcc_info) = peripheral_to_clock
+            .match_peri_clock(rcc_block.1, &pname)
+            .or_else(syscfg_for_comp)
+        {
             if let Some(stop_mode_info) = low_power::peripheral_stop_mode_info(chip_name, &pname) {
                 rcc_info.stop_mode = stop_mode_info;
             }
@@ -218,8 +235,142 @@ fn create_peripherals_for_chip(
             None
         };
 
+        let triggers = if let Some(triggers) = trigger::peripheral_trigger_info(chip_name, &pname) {
+            triggers
+                .iter()
+                .map(|trigger| Trigger {
+                    signal: trigger.signal.to_string(),
+                    source: trigger.source.to_string(),
+                })
+                .collect()
+        } else {
+            Vec::new()
+        };
+
         let mut pins = merge_afs_into_core_pins(chip_name, chip_af, &periph_pins, &pname);
         pins.append(&mut merge_i2s_into_spi_pins(chip_name, chip_af, &periph_pins, &pname));
+
+        let afio = if chip_name.starts_with("STM32F1") {
+            let peripheral = if pname == "CAN" {
+                "CAN1".to_string()
+            } else {
+                pname.replace("I2S", "SPI")
+            };
+
+            macro_rules! afio {
+                ($value:expr, $($pins:expr),+) => {
+                    stm32_data_serde::chip::core::peripheral::AfioValue {
+                        value: $value,
+                        pins: vec![$($pins.to_string()),+],
+                    }
+                }
+            }
+
+            #[rustfmt::skip]
+            let afio_mapr = match peripheral.as_str() {
+                "SPI3" => vec![
+                    afio!(0, "PC7", "PA15", "PB3", "PB4", "PB5"),
+                    afio!(1, "PC7", "PA4", "PC10", "PC11", "PC12"),
+                ],
+                "CAN2" => vec![
+                    afio!(0, "PB12", "PB13"),
+                    afio!(1, "PB5", "PB6"),
+                ],
+                "ETH" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3", "PC1", "PC2", "PC3", "PB5", "PB8", "PB10", "PB11", "PB12", "PB13", "PA7", "PC4", "PC5", "PB0", "PB1"),
+                    afio!(1, "PA0", "PA1", "PA2", "PA3", "PC1", "PC2", "PC3", "PB5", "PB8", "PB10", "PB11", "PB12", "PB13", "PD8", "PD9", "PD10", "PD11", "PD12"),
+                ],
+                "CAN1" => vec![
+                    afio!(0, "PA11", "PA12"),
+                    afio!(2, "PB8", "PB9"),
+                    afio!(3, "PD0", "PD1"),
+                ],
+                "TIM4" => vec![
+                    afio!(0, "PE0", "PB6", "PB7", "PB8", "PB9"),
+                    afio!(1, "PE0", "PD12", "PD13", "PD14", "PD15"),
+                ],
+                "TIM3" => vec![
+                    afio!(0, "PD2", "PA6", "PA7", "PB0", "PB1"),
+                    afio!(2, "PD2", "PB4", "PB5", "PB0", "PB1"),
+                    afio!(3, "PD2", "PC6", "PC7", "PC8", "PC9"),
+                ],
+                "TIM2" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3"),
+                    afio!(1, "PA15", "PB3", "PA2", "PA3"),
+                    afio!(2, "PA0", "PA1", "PB10", "PB11"),
+                    afio!(3, "PA15", "PB3", "PB10", "PB11"),
+                ],
+                "TIM1" => vec![
+                    afio!(0, "PA12", "PA8", "PA9", "PA10", "PA11", "PB12", "PB13", "PB14", "PB15"),
+                    afio!(1, "PA12", "PA8", "PA9", "PA10", "PA11", "PA6", "PA7", "PB0", "PB1"),
+                    afio!(3, "PE7", "PE9", "PE11", "PE13", "PE14", "PE15", "PE8", "PE10", "PE12"),
+                ],
+                "USART3" => vec![
+                    afio!(0, "PB10", "PB11", "PB12", "PB13", "PB14"),
+                    afio!(1, "PC10", "PC11", "PC12", "PB13", "PB14"),
+                    afio!(3, "PD8", "PD9", "PD10", "PD11", "PD12"),
+                ],
+                "USART2" => vec![
+                    afio!(0, "PA0", "PA1", "PA2", "PA3", "PA4"),
+                    afio!(1, "PD3", "PD4", "PD5", "PD6", "PD7"),
+                ],
+                "USART1" => vec![
+                    afio!(0, "PA11", "PA12", "PA8", "PA9", "PA10"),
+                    afio!(1, "PA11", "PA12", "PA8", "PB6", "PB7"),
+                ],
+                "I2C1" => vec![
+                    afio!(0, "PB6", "PB7"),
+                    afio!(1, "PB8", "PB9"),
+                ],
+                "SPI1" => vec![
+                    afio!(0, "PA4", "PA5", "PA6", "PA7"),
+                    afio!(1, "PA15", "PB3", "PB4", "PB5"),
+                ],
+                _ => vec![],
+            };
+
+            let afio_mapr2 = if chip_name.starts_with("STM32F100") {
+                match peripheral.as_str() {
+                    "TIM12" => vec![afio!(0, "PC4", "PC5"), afio!(1, "PB12", "PB13")],
+                    "TIM14" => vec![afio!(0, "PC9"), afio!(1, "PB1")],
+                    "TIM13" => vec![afio!(0, "PC8"), afio!(1, "PB0")],
+                    "CEC" => vec![afio!(0, "PB8"), afio!(1, "PB10")],
+                    "TIM17" => vec![afio!(0, "PA10", "PB7", "PB9"), afio!(1, "PA10", "PB7", "PA7")],
+                    "TIM16" => vec![afio!(0, "PB5", "PB8"), afio!(1, "PB5", "PA6")],
+                    "TIM15" => vec![afio!(0, "PA9", "PA2", "PA3"), afio!(1, "PA9", "PB14", "PB15")],
+                    _ => vec![],
+                }
+            } else {
+                // STM32F10[12357]
+                match peripheral.as_str() {
+                    "TIM14" => vec![afio!(0, "PA7"), afio!(1, "PF9")],
+                    "TIM13" => vec![afio!(0, "PA6"), afio!(1, "PF8")],
+                    "TIM11" => vec![afio!(0, "PB9"), afio!(1, "PF7")],
+                    "TIM10" => vec![afio!(0, "PB8"), afio!(1, "PF6")],
+                    "TIM9" => vec![afio!(0, "PA2", "PA3"), afio!(1, "PE5", "PE6")],
+                    _ => vec![],
+                }
+            };
+
+            let field = format!("{peripheral}_REMAP");
+            if afio_mapr.len() > 0 {
+                Some(stm32_data_serde::chip::core::peripheral::Afio {
+                    register: "MAPR".to_string(),
+                    field,
+                    values: afio_mapr,
+                })
+            } else if afio_mapr2.len() > 0 {
+                Some(stm32_data_serde::chip::core::peripheral::Afio {
+                    register: "MAPR2".to_string(),
+                    field,
+                    values: afio_mapr2,
+                })
+            } else {
+                None
+            }
+        } else {
+            None
+        };
 
         let p = stm32_data_serde::chip::core::Peripheral {
             name: pname.clone(),
@@ -228,7 +379,9 @@ fn create_peripherals_for_chip(
             rcc,
             interrupts: Vec::new(),
             dma_channels: Vec::new(),
+            triggers: triggers,
             pins,
+            afio,
         };
 
         peripherals.insert(p.name.clone(), p);
@@ -345,6 +498,7 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
         "USBRAM",
         "VREFINTCAL",
         "UID",
+        "DESIG",
         "HSEM",
         "ADC1_COMMON",
         "ADC12_COMMON",
@@ -357,8 +511,11 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
     ];
     for pname in GHOST_PERIS {
         let normalized_pname = normalize_peri_name(pname);
+        if normalized_pname == "DESIG" && !chip_name.starts_with("STM32WBA") {
+            continue;
+        }
         if let Entry::Vacant(entry) = peri_kinds.entry(normalized_pname.to_string()) {
-            if defines.get_peri_addr(pname).is_some() {
+            if resolve_peri_addr(chip_name, &normalized_pname, defines).is_some() {
                 entry.insert("unknown".to_string());
             }
         }
@@ -413,7 +570,7 @@ fn extract_pins_from_chip_group(group: &ChipGroup) -> HashMap<String, Vec<Pin>> 
         for signal in &pin.signals {
             let signal = &signal.name;
             // TODO: What are those signals (well, GPIO is clear) Which peripheral do they belong to?
-            if ["GPIO", "CEC", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) || signal.contains("EXTI") {
+            if ["GPIO", "AUDIOCLK", "VDDTCXO"].contains(&signal.as_str()) || signal.contains("EXTI") {
                 continue;
             }
             let Some((signal_peri, signal_name)) = parse_signal_name(signal) else {
@@ -499,11 +656,6 @@ fn merge_periph_pins_info(
     core_pins: &mut [stm32_data_serde::chip::core::peripheral::Pin],
     af_pins: &[stm32_data_serde::chip::core::peripheral::Pin],
 ) {
-    if chip_name.contains("STM32F1") {
-        // TODO: actually handle the F1 AFIO information when it will be extracted
-        return;
-    }
-
     // convert to hashmap
     let af_pins: HashMap<(&str, &str), Option<u8>> = af_pins
         .iter()
@@ -546,14 +698,27 @@ fn merge_periph_pins_info(
             }
         }
     }
+
+    // Rename QUADSPI_NCS for the STM32L* family to QUADSPI_BK1_NCS
+    if periph_name == "QUADSPI" {
+        for pin in &mut core_pins[..] {
+            if pin.signal == "NCS" {
+                pin.signal = "BK1_NCS".to_string();
+            }
+        }
+    }
 }
 
-/// Resolve the address of a peripheral.
-///
-/// In the case of FDCANRAM, the address can be different depending on the chip. The STM32H7 (not RS) has a single
-/// message RAM shared between all FDCANs, while other chips have one message RAM per FDCAN.
 fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) -> Option<u32> {
-    let addr = if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(pname) {
+    if pname == "VREFINTCAL" && chip_name.starts_with("STM32WBA") {
+        if let Some(package_base) = defines.get_peri_addr("DESIG") {
+            // The VREFINTCAL address is located at an offset of 0x2A4 from the DESIG base address
+            // on STM32WBA devices.
+            return package_base.checked_add(0x2A4);
+        }
+    }
+
+    if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(pname) {
         defines.get_peri_addr("FDCANRAM").map(|addr| {
             let h7_non_rs_re = Regex::new(r"STM32H7[0-9AB].*").unwrap();
             if h7_non_rs_re.is_match(chip_name) {
@@ -567,8 +732,7 @@ fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) ->
         })
     } else {
         defines.get_peri_addr(pname)
-    };
-    addr
+    }
 }
 
 /// Merge family-specific YAML overlays into the peripheral map.
@@ -593,9 +757,6 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
         struct Extra {
             peripherals: Option<Vec<stm32_data_serde::chip::core::Peripheral>>,
             pin_cleanup: Option<PinCleanup>,
-            /// Maps an instance name of a peripheral to a list of pins.
-            /// E.g., {"OPAMP1": [("PA0", "VINP0"), ...], "OPAMP2": [...], ...}
-            override_pins: Option<HashMap<String, Vec<Pin>>>,
         }
 
         let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
@@ -603,13 +764,39 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
         // merge extra peripherals
         if let Some(extras) = extra.peripherals {
             for mut p in extras {
-                // filter out pins that may not exist in this package.
-                p.pins.retain(|p| group.pins.contains_key(&p.pin));
+                if let Some(peripheral) = peripherals.get_mut(&p.name)
+                    && p.pins.len() > 0
+                {
+                    let signals: HashMap<String, String> =
+                        p.pins.iter().map(|p| (p.pin.clone(), p.signal.clone())).collect();
 
-                if let Some(peripheral) = peripherals.get_mut(&p.name) {
+                    // filter out pins that may not exist in this package.
+                    p.pins.retain(|p| group.pins.contains_key(&p.pin));
+
                     // Modify the generated peripheral
-                    peripheral.pins.append(&mut p.pins);
+                    let mut pins: Vec<Pin> = p.pins.clone();
+                    let mut other_pins: Vec<Pin> = peripheral
+                        .pins
+                        .iter()
+                        .filter_map(|p| {
+                            Some(Pin {
+                                pin: p.pin.clone(),
+                                signal: signals.get(&p.signal)?.clone(),
+                                af: p.af,
+                            })
+                        })
+                        .collect();
+
+                    pins.append(&mut other_pins);
+                    pins.append(&mut peripheral.pins);
+                    pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
+                    pins.sort_by_key(|p| (p.pin.clone(), p.signal.clone()));
+
+                    peripheral.pins = pins;
                 } else if p.address != 0 {
+                    // filter out pins that may not exist in this package.
+                    p.pins.retain(|p| group.pins.contains_key(&p.pin));
+
                     // Only insert the peripheral if the address is not the default
                     peripherals.insert(p.name.clone(), p);
                 }
@@ -627,18 +814,6 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
                     if let Some(stripped) = pin.pin.strip_suffix(&clean.strip_suffix) {
                         pin.pin = stripped.to_string();
                     }
-                }
-            }
-        }
-
-        // apply override pins rules
-        if let Some(override_pins) = extra.override_pins {
-            for (name, peri) in peripherals.iter_mut() {
-                if let Some(pins) = override_pins.get(name) {
-                    // filter out pins that don't exist in this package.
-                    let mut pins = pins.clone();
-                    pins.retain(|p| group.pins.contains_key(&p.pin));
-                    peri.pins = pins;
                 }
             }
         }
@@ -678,6 +853,7 @@ fn collect_dma_instances<'a>(
                 "BDMA2" => 4,
                 "GPDMA" => 5,
                 "HPDMA" => 6,
+                "MDMA" => 7,
                 _ => 0,
             },
             instance.clone(),

@@ -80,10 +80,10 @@ block/RCC:
     description: RCC APB peripheral clock enable in Sleep/Stop mode register 2
     byte_offset: 80
     fieldset: APBSMENR2
-  - name: CCIPR1
+  - name: CCIPR
     description: RCC peripherals independent clock configuration register 1
     byte_offset: 84
-    fieldset: CCIPR1
+    fieldset: CCIPR
   - name: CCIPR2
     description: RCC peripherals independent clock configuration register 2.
     byte_offset: 88
@@ -164,6 +164,10 @@ fieldset/APBENR1:
     description: "WWDG clock enable\r Set by software to enable the window watchdog clock. Cleared by hardware system reset\r This bit can also be set by hardware if the WWDG_SW option bit is 0."
     bit_offset: 11
     bit_size: 1
+  - name: FDCAN1EN
+    description: "FDCAN1 clock enable\r Set and cleared by software."
+    bit_offset: 12
+    bit_size: 1
   - name: USBEN
     description: USB clock enable Set and cleared by software.
     bit_offset: 13
@@ -179,6 +183,14 @@ fieldset/APBENR1:
   - name: USART2EN
     description: "USART2 clock enable\r Set and cleared by software."
     bit_offset: 17
+    bit_size: 1
+  - name: USART3EN
+    description: "USART3 clock enable\r Set and cleared by software."
+    bit_offset: 18
+    bit_size: 1
+  - name: USART4EN
+    description: "USART4 clock enable\r Set and cleared by software."
+    bit_offset: 19
     bit_size: 1
   - name: I2C1EN
     description: "I2C1 clock enable\r Set and cleared by software."
@@ -219,6 +231,10 @@ fieldset/APBENR2:
     description: "TIM14 timer clock enable\r Set and cleared by software."
     bit_offset: 15
     bit_size: 1
+  - name: TIM15EN
+    description: "TIM15 timer clock enable\r Set and cleared by software."
+    bit_offset: 16
+    bit_size: 1
   - name: TIM16EN
     description: "TIM16 timer clock enable\r Set and cleared by software."
     bit_offset: 17
@@ -242,6 +258,10 @@ fieldset/APBRSTR1:
     description: "TIM3 timer reset\r Set and cleared by software."
     bit_offset: 1
     bit_size: 1
+  - name: FDCAN1RST
+    description: 'FDCAN1 reset Set and cleared by software.'
+    bit_offset: 12
+    bit_size: 1
   - name: USBRST
     description: 'USB reset Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
     bit_offset: 13
@@ -257,6 +277,14 @@ fieldset/APBRSTR1:
   - name: USART2RST
     description: "USART2 reset\r Set and cleared by software."
     bit_offset: 17
+    bit_size: 1
+  - name: USART3RST
+    description: "USART3 reset\r Set and cleared by software."
+    bit_offset: 18
+    bit_size: 1
+  - name: USART4RST
+    description: "USART4 reset\r Set and cleared by software."
+    bit_offset: 19
     bit_size: 1
   - name: I2C1RST
     description: "I2C1 reset\r Set and cleared by software."
@@ -297,6 +325,10 @@ fieldset/APBRSTR2:
     description: "TIM14 timer reset\r Set and cleared by software."
     bit_offset: 15
     bit_size: 1
+  - name: TIM15RST
+    description: "TIM15 timer reset\r Set and cleared by software."
+    bit_offset: 16
+    bit_size: 1
   - name: TIM16RST
     description: "TIM16 timer reset\r Set and cleared by software."
     bit_offset: 17
@@ -328,6 +360,10 @@ fieldset/APBSMENR1:
     description: "WWDG clock enable during Sleep and Stop modes\r Set and cleared by software."
     bit_offset: 11
     bit_size: 1
+  - name: FDCAN1EN
+    description: "FDCAN1 clock enable during Sleep and Stop modes\r Set and cleared by software."
+    bit_offset: 12
+    bit_size: 1
   - name: USBSMEN
     description: 'USB clock enable during Sleep and Stop modes Set and cleared by software. Note: Only applicable on STM32C071xx, reserved on other devices.'
     bit_offset: 13
@@ -343,6 +379,14 @@ fieldset/APBSMENR1:
   - name: USART2SMEN
     description: "USART2 clock enable during Sleep and Stop modes\r Set and cleared by software."
     bit_offset: 17
+    bit_size: 1
+  - name: USART3SMEN
+    description: "USART3 clock enable during Sleep and Stop modes\r Set and cleared by software."
+    bit_offset: 18
+    bit_size: 1
+  - name: USART4SMEN
+    description: "USART4 clock enable during Sleep and Stop modes\r Set and cleared by software."
+    bit_offset: 19
     bit_size: 1
   - name: I2C1SMEN
     description: "I2C1 clock enable during Sleep and Stop modes\r Set and cleared by software."
@@ -383,6 +427,10 @@ fieldset/APBSMENR2:
     description: "TIM14 timer clock enable during Sleep mode\r Set and cleared by software."
     bit_offset: 15
     bit_size: 1
+  - name: TIM15SMEN
+    description: "TIM15 timer clock enable during Sleep mode\r Set and cleared by software."
+    bit_offset: 16
+    bit_size: 1
   - name: TIM16SMEN
     description: "TIM16 timer clock enable during Sleep mode\r Set and cleared by software."
     bit_offset: 17
@@ -395,7 +443,7 @@ fieldset/APBSMENR2:
     description: "ADC clock enable during Sleep mode\r Set and cleared by software."
     bit_offset: 20
     bit_size: 1
-fieldset/CCIPR1:
+fieldset/CCIPR:
   description: RCC peripherals independent clock configuration register
   fields:
   - name: USART1SEL
@@ -1082,9 +1130,9 @@ enum/USART1SEL:
 enum/USBSEL:
   bit_size: 1
   variants:
-    - name: HSI48
-      description: HSI48.
-      value: 0
-    - name: HSE
-      description: HSE.
-      value: 1
+  - name: HSI48
+    description: HSI48.
+    value: 0
+  - name: HSE
+    description: HSE.
+    value: 1

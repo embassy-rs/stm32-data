@@ -119,6 +119,10 @@ pub mod chip {
             pub interrupts: Vec<peripheral::Interrupt>,
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub dma_channels: Vec<peripheral::DmaChannel>,
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub triggers: Vec<peripheral::Trigger>,
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub afio: Option<peripheral::Afio>,
         }
 
         pub mod peripheral {
@@ -187,6 +191,12 @@ pub mod chip {
             }
 
             #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+            pub struct Trigger {
+                pub signal: String,
+                pub source: String,
+            }
+
+            #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
             pub struct DmaChannel {
                 pub signal: String,
                 #[serde(skip_serializing_if = "Option::is_none")]
@@ -195,8 +205,32 @@ pub mod chip {
                 pub channel: Option<String>,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub dmamux: Option<String>,
+                #[serde(default, skip_serializing_if = "Vec::is_empty")]
+                pub remap: Vec<RemapInfo>,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub request: Option<u8>,
+            }
+
+            #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+            pub struct RemapInfo {
+                pub register: String,
+                pub field: String,
+                pub value: u8,
+            }
+
+            #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+            pub struct Afio {
+                pub register: String,
+                pub field: String,
+                #[serde(skip_serializing_if = "Vec::is_empty")]
+                pub values: Vec<AfioValue>,
+            }
+
+            #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+            pub struct AfioValue {
+                pub value: u8,
+                #[serde(skip_serializing_if = "Vec::is_empty")]
+                pub pins: Vec<String>,
             }
         }
 

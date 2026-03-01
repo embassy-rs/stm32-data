@@ -18,6 +18,10 @@ impl<'a, T> RegexMap<'a, T> {
         }
     }
 
+    pub const fn get_map(&self) -> &'a [(&'a str, T)] {
+        self.map
+    }
+
     pub fn get(&self, key: &str) -> Option<&'a T> {
         if let Some(&val) = self.cache.lock().unwrap().get_or_insert_with(Default::default).get(key) {
             return val.map(|i| &self.map[i].1);
