@@ -145,15 +145,6 @@ static NOPELIST: RegexSet = RegexSet::new(&[
     // Not supported, not planned unless someone wants to do it.
     "STM32MP13.*",
     "STM32MP2.*",
-    "STM32H7R.*",
-    "STM32H7S.*",
-    "STM32H5.*",
-    "STM32N6.*",
-    "STM32WBA.*",
-    "STM32U0.*",
-    // TODO, PRs welcome :)
-    "STM32U3.*",
-    "STM32MP.*",
     // "STM32N6.*",
     "STM32G41[14].*",
     "STM32G4.*xZ",
@@ -168,7 +159,6 @@ static NOPELIST: RegexSet = RegexSet::new(&[
     "STM32WB3M.*",
     "STM32WB5M.*",
     "STM32WBA5M.*",
-    "STM32WBA50.*",
 ]);
 
 fn parse_group(
