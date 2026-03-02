@@ -90,14 +90,17 @@ fieldset/CR:
     description: Disable Bit DISABLE can be used for reading or setting the state of the TRNG core. The value read is always the one available at the rng core clock domain. When changing the value, the change is effective when the value read is the same as the one written.
     bit_offset: 0
     bit_size: 1
+    enum: DISABLE
   - name: CLR_REVCLK_FLAG
     description: Reset reveal clock error flags when writing a '1' without resetting the whole TRNG. When writing a 1, the value remains until it is seen by RNG core clock domain after resynchronization. Then it is automatically reset.
     bit_offset: 6
     bit_size: 1
+    enum: CLR_REVCLK_FLAG
   - name: RST_HEALTH_FLAGS
     description: Reset Health error flags when writing a '1' without resetting the whole TRNG. When writing a 1, the value remains until it is seen by RNG core clock domain after resynchronization. Then it is automatically reset.
     bit_offset: 7
     bit_size: 1
+    enum: RST_HEALTH_FLAGS
   - name: CLKDIV
     description: Sampling Clock Enable Divider. CLKDIV[15:0] control the sampling clock enable divider, dividing by a factor equal to CLKDIV[15:0] + 1, values being in the range of 1 to 65536.
     bit_offset: 8
@@ -307,6 +310,7 @@ fieldset/POSTP_CR:
     description: Reset AES post processing. When writing a 1, the AES post processing is reinitialized, resulting in a new key and new state generation before 128-bit random words generation. The '1' written is frozen until it is seen by RNG core clock domain after resynchronization. Then it is automatically reset. It also reruns analog source health tests.
     bit_offset: 0
     bit_size: 1
+    enum: AES_RESET
   - name: NB_LOOP_AES
     description: NB_LOOP_AES is the number of 128-bit words got from the noise source that have to be processed by AES for generating a single 128-bit random word. By default, this value is set to 2 (128 bits generated before an AES processing). 0 value means 16 loops. A new AES processing is started only when the previous one is completed.
     bit_offset: 8
@@ -322,14 +326,17 @@ fieldset/POSTP_SR:
     description: AES Post processing has been fully initialized (key and state) and is ready for generating 128-bit random words.
     bit_offset: 1
     bit_size: 1
+    enum: AES_INIT
   - name: AES_KEY_LD
     description: AES random key has been generated and loaded in AES key register.
     bit_offset: 2
     bit_size: 1
+    enum: AES_KEY_LD
   - name: AES_BUSY
     description: AES core is busy, generating a random value.
     bit_offset: 3
     bit_size: 1
+    enum: AES_BUSY
   - name: AES_HEALTH_DONE
     description: AES-CMAC health test is completed.
     bit_offset: 4
@@ -349,26 +356,32 @@ fieldset/SR:
     description: TRNG is disabled.
     bit_offset: 0
     bit_size: 1
+    enum: DISABLED
   - name: ALL_OSCS_DOWN
     description: All oscillators of the random source noise have been powered down. This can cause the rising of OEC3 flag.
     bit_offset: 1
     bit_size: 1
+    enum: ALL_OSCS_DOWN
   - name: REVEAL_CLK_ERR
     description: The internal clock for the RNG core is not revealed.
     bit_offset: 2
     bit_size: 1
+    enum: REVEAL_CLK_ERR
   - name: ENTROPY_ERR
     description: The error refers to a fault in the bit sequence detected by the Entropy Monitor. Failed test is given by REPET_ERROR, and ADAPT_ERROR, OSCS_REPET_ERROR and OSCS_ADAPT_ERROR status flags.
     bit_offset: 3
     bit_size: 1
+    enum: ENTROPY_ERR
   - name: VAL_READY
     description: TRNG Value ready At least one 32-bit random value is available in the data FIFO. Note that application must ensure that a random is available in internal FIFO before starting a read otherwise a bus error will be generated.
     bit_offset: 4
     bit_size: 1
+    enum: VAL_READY
   - name: FIFO_FULL
     description: Indicates whether random data FIFO is full.
     bit_offset: 5
     bit_size: 1
+    enum: FIFO_FULL
   - name: SRC_HEALTH_DONE
     description: First run of noise source health test is completed.
     bit_offset: 20
@@ -400,3 +413,120 @@ fieldset/VAL:
     description: RND_VAL is a 32-bit Random Value. This is the output of the internal four-word FIFO. Note that application must ensure that a random is available in FIFO by ready VAL_READY flag before starting a read otherwise a null value will be returned.
     bit_offset: 0
     bit_size: 32
+enum/AES_BUSY:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: AES core is idle.
+    value: 0
+  - name: B_0x1
+    description: AES core is busy.
+    value: 1
+enum/AES_INIT:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: AES core is not initialized (no key or state set).
+    value: 0
+  - name: B_0x1
+    description: AES core is fully initialized.
+    value: 1
+enum/AES_KEY_LD:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: AES core is waiting for 128 random bits from the entropy sources for generating its key.
+    value: 0
+  - name: B_0x1
+    description: AES key register has been loaded with a random key.
+    value: 1
+enum/AES_RESET:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: No effect.
+    value: 0
+  - name: B_0x1
+    description: Reset AES core.
+    value: 1
+enum/ALL_OSCS_DOWN:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: At least one oscillator is ON.
+    value: 0
+  - name: B_0x1
+    description: All oscillators are down.
+    value: 1
+enum/CLR_REVCLK_FLAG:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: no reset.
+    value: 0
+  - name: B_0x1
+    description: reset revclk flag.
+    value: 1
+enum/DISABLE:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: The RNG core is enabled.
+    value: 0
+  - name: B_0x1
+    description: The RNG core is disabled.
+    value: 1
+enum/ENTROPY_ERR:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: No fault detected.
+    value: 0
+  - name: B_0x1
+    description: Embedded heath monitor detects an error in bit stream quality.
+    value: 1
+enum/FIFO_FULL:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: FIFO is not full.
+    value: 0
+  - name: B_0x1
+    description: The internal data FIFO is full and four 32-bit random values can be read.
+    value: 1
+enum/REVEAL_CLK_ERR:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Internal clock for RNG clock is present.
+    value: 0
+  - name: B_0x1
+    description: Internal RNG clock is not present.
+    value: 1
+enum/RST_HEALTH_FLAGS:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: no reset.
+    value: 0
+  - name: B_0x1
+    description: reset health flag.
+    value: 1
+enum/DISABLED:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Normal operation.
+    value: 0
+  - name: B_0x1
+    description: RNG is disabled.
+    value: 1
+enum/VAL_READY:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: No value is ready in FIFO.
+    value: 0
+  - name: B_0x1
+    description: A 32-bit value is available in the internal FIFO.
+    value: 1
