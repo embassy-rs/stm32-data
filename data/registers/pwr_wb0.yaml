@@ -78,14 +78,37 @@ fieldset/CR1:
     bit_size: 1
     enum: LPMS
   - name: ENSDNBOR
-    description: Enable BOR reset supervising during SHUTDOWN mode.
+    description: 'ENSDNBOR: Enable BOR supply monitoring during shutdown mode.'
     bit_offset: 1
+    bit_size: 1
+    enum: ENSDNBOR
+  - name: IBIAS_RUN_AUTO
+    description: 'IBIAS_RUN_AUTO: Enable automatic IBIAS control during RUN/DEEPSTOP mode. 0: IBIAS control is manual (and controlled by IBIAS_RUN_STATE register) 1: IBIAS control is automatic (default).'
+    bit_offset: 2
+    bit_size: 1
+  - name: IBIAS_RUN_STATE
+    description: 'IBIAS_RUN_STATE: Enable/Disable IBIAS during RUN mode when automatic mode is disabled. 0: IBIAS control is disabled (default). 1: IBIAS control is enabled.'
+    bit_offset: 3
     bit_size: 1
   - name: APC
     description: APC Apply Pull-up and pull-down configuration from CPU.
     bit_offset: 4
     bit_size: 1
     enum: APC
+  - name: ENBORH
+    description: 'ENBORH: enable BORH configuration.'
+    bit_offset: 5
+    bit_size: 1
+    enum: ENBORH
+  - name: SELBORH
+    description: 'SELBORH[1:0]: BORH selection of Vbor threshold.'
+    bit_offset: 6
+    bit_size: 2
+    enum: SELBORH
+  - name: ENBORL
+    description: 'ENBORL: Enable BORL reset supervising during RUN mode. 0: No BORL is monitored during RUN mode. 1: BORL is monitored during RUN mode (a POR reset will happen if VDDIO goes below 1.6V during RUN mode) (default). Note: Enabling this feature prevents blocking the device if VDDIO goes below supported voltages during RUN.'
+    bit_offset: 8
+    bit_size: 1
 fieldset/CR2:
   description: CR2 register.
   fields:
@@ -98,22 +121,28 @@ fieldset/CR2:
     bit_offset: 1
     bit_size: 3
     enum: PVDLS
+  - name: DBGRET
+    description: 'DBGRET: PA2 and PA3 retention enable after DEEPSTOP 0: PA2, PA3 don''t retain their status exiting from DEEPSTOP. (default) 1: PA2, PA3 retain their status exiting from DEEPSTOP.'
+    bit_offset: 4
+    bit_size: 1
   - name: RAMRET1
-    description: 'RAMRET1: RAM1 retention during low power mode.'
+    description: 'Enables the RAM2 bank retention in DEEPSTOP mode.'
     bit_offset: 5
     bit_size: 1
-    enum: RAMRET1
   - name: RAMRET2
-    description: Enables the RAM2 bank retention in DEEPSTOP mode.
+    description: 'Enables the RAM2 bank retention in DEEPSTOP mode.'
     bit_offset: 6
     bit_size: 1
   - name: RAMRET3
-    description: Enables the RAM3 bank retention in DEEPSTOP mode.
+    description: 'Enables the RAM3 bank retention in DEEPSTOP mode.'
     bit_offset: 7
     bit_size: 1
-    enum: RAMRET3
+  - name: GPIORET
+    description: 'GPIORET: GPIO retention enable. 0: GPIO don''t retain their status during DEEPSTOP and exiting from DEEPSTOP (default) 1: GPIO retain their status during DEEPSTOP and exiting from DEEPSTOP. Note: it''s mandatory to ensure this bit is set before entering DEEPSTOP unless DBRG.DEEPSTOP2 bit is set.'
+    bit_offset: 8
+    bit_size: 1
   - name: ENTS
-    description: Enable the temperature sensor.
+    description: 'ENTS: Enable Temperature Sensor.'
     bit_offset: 9
     bit_size: 1
   - name: LSILPMUFEN
@@ -179,6 +208,10 @@ fieldset/CR3:
     description: 'EWBLEHCPU: Enable wakeup on BLE Host CPU event. 0: Wakeup on BLE Host CPU line is disabled (default). 1: Wakeup on BLE Host CPU line is enabled.'
     bit_offset: 13
     bit_size: 1
+  - name: EIWL2
+    description: 'EIWL2: Enable wakeup on Internal event (LPUART). 0: Wakeup on internal line is disabled (default). 1: Wakeup on internal line is enabled.'
+    bit_offset: 14
+    bit_size: 1
   - name: EIWL
     description: 'EIWL: Enable wakeup on Internal event (RTC). 0: Wakeup on internal line is disabled (default). 1: Wakeup on internal line is enabled.'
     bit_offset: 15
@@ -190,62 +223,62 @@ fieldset/CR4:
     description: WUP0 Wake-up Line Polarity 0 (PB0) This bit defines the polarity used for event detection on external wake-up line 0.
     bit_offset: 0
     bit_size: 1
-    enum: WUP0
+    enum: WUP
   - name: WUP1
     description: WUP1 Wake-up Line Polarity 1 (PB1) This bit defines the polarity used for event detection on external wake-up line 1.
     bit_offset: 1
     bit_size: 1
-    enum: WUP1
+    enum: WUP
   - name: WUP2
     description: WUP2 Wake-up Line Polarity 2 (PB2) This bit defines the polarity used for event detection on external wake-up line 2.
     bit_offset: 2
     bit_size: 1
-    enum: WUP2
+    enum: WUP
   - name: WUP3
     description: WUP3 Wake-up Line Polarity 3 (PB3) This bit defines the polarity used for event detection on external wake-up line 3.
     bit_offset: 3
     bit_size: 1
-    enum: WUP3
+    enum: WUP
   - name: WUP4
     description: WUP4 Wake-up Line Polarity 4 (PB4) This bit defines the polarity used for event detection on external wake-up line 4.
     bit_offset: 4
     bit_size: 1
-    enum: WUP4
+    enum: WUP
   - name: WUP5
     description: WUP5 Wake-up Line Polarity 5 (PB5) This bit defines the polarity used for event detection on external wake-up line 5.
     bit_offset: 5
     bit_size: 1
-    enum: WUP5
+    enum: WUP
   - name: WUP6
     description: WUP6 Wake-up Line Polarity 6 (PB6) This bit defines the polarity used for event detection on external wake-up line 6.
     bit_offset: 6
     bit_size: 1
-    enum: WUP6
+    enum: WUP
   - name: WUP7
     description: WUP7 Wake-up Line Polarity 7 (PB7) This bit defines the polarity used for event detection on external wake-up line 7.
     bit_offset: 7
     bit_size: 1
-    enum: WUP7
+    enum: WUP
   - name: WUP8
     description: WUP8 Wake-up Line Polarity 8 (PA8) This bit defines the polarity used for event detection on external wake-up line 8.
     bit_offset: 8
     bit_size: 1
-    enum: WUP8
+    enum: WUP
   - name: WUP9
     description: WUP9 Wake-up Line Polarity 9 (PA9) This bit defines the polarity used for event detection on external wake-up line 9.
     bit_offset: 9
     bit_size: 1
-    enum: WUP9
+    enum: WUP
   - name: WUP10
     description: WUP10 Wake-up Line Polarity 10 (PA10) This bit defines the polarity used for event detection on external wake-up line 10.
     bit_offset: 10
     bit_size: 1
-    enum: WUP10
+    enum: WUP
   - name: WUP11
     description: WUP11 Wake-up Line Polarity 11 (PA11) This bit defines the polarity used for event detection on external wake-up line 11.
     bit_offset: 11
     bit_size: 1
-    enum: WUP11
+    enum: WUP
 fieldset/CR5:
   description: CR5 register.
   fields:
@@ -258,6 +291,11 @@ fieldset/CR5:
     bit_offset: 4
     bit_size: 2
     enum: SMPSBOMSEL
+  - name: SMPSFRDY
+    description: SMPSFB Force ready check When this bit is set, the SMPS FSM will consider the SMPS ready.
+    bit_offset: 7
+    bit_size: 1
+    enum: SMPSFRDY
   - name: SMPSLPOPEN
     description: 'SMPSLPOPEN: In Low Power mode SMPS is in OPEN mode (instead of PRECHARGE mode). When this bit is set, when the chip is in Low power mode the SMPS regulator will be disabled (HZ) Documentation needed.'
     bit_offset: 8
@@ -272,17 +310,19 @@ fieldset/CR5:
     description: 'NOSMPS: No SMPS Mode When this bit is set, the SMPS regulator will be disabled. Note that this configuration should be used only when SMPS_FB pad is directly connected to VBATT or Vext, without L/C BOM.'
     bit_offset: 10
     bit_size: 1
-    enum: NOSMPS
   - name: SMPS_ENA_DCM
     description: 'SMPS_ENA_DCM: enable discontinuous conduction mode.'
     bit_offset: 11
     bit_size: 1
-    enum: SMPS_ENA_DCM
   - name: CLKDETR_DISABLE
     description: 'CLKDETR_DISABLE: disable SMPS clock detection The SMPS clock detection enables an automatic SMPS bypass switching in case of unwanted loss of SMPS clock.'
     bit_offset: 12
     bit_size: 1
-    enum: CLKDETR_DISABLE
+  - name: SMPS_PRECH_CUR_SEL
+    description: SMPS_PRECH_CUR_SEL[1:0] Selection for SMPS PRECHARGE limit current.
+    bit_offset: 13
+    bit_size: 2
+    enum: SMPS_PRECH_CUR_SEL
 fieldset/CR6:
   description: CR6 register.
   fields:
@@ -357,42 +397,42 @@ fieldset/CR7:
     description: WUP12 Wake-up Line Polarity 12 (PA0) This bit defines the polarity used for event detection on external wake-up line 12.
     bit_offset: 0
     bit_size: 1
-    enum: WUP12
+    enum: WUP
   - name: WUP13
     description: WUP13 Wake-up Line Polarity 13 (PA1) This bit defines the polarity used for event detection on external wake-up line 13.
     bit_offset: 1
     bit_size: 1
-    enum: WUP13
+    enum: WUP
   - name: WUP14
     description: WUP14 Wake-up Line Polarity 14 (PA2) This bit defines the polarity used for event detection on external wake-up line 14.
     bit_offset: 2
     bit_size: 1
-    enum: WUP14
+    enum: WUP
   - name: WUP15
     description: WUP15 Wake-up Line Polarity 15 (PA3) This bit defines the polarity used for event detection on external wake-up line 15.
     bit_offset: 3
     bit_size: 1
-    enum: WUP15
+    enum: WUP
   - name: WUP16
     description: WUP16 Wake-up Line Polarity 16 (PB12) This bit defines the polarity used for event detection on external wake-up line 16.
     bit_offset: 4
     bit_size: 1
-    enum: WUP16
+    enum: WUP
   - name: WUP17
     description: WUP17 Wake-up Line Polarity 17 (PB13) This bit defines the polarity used for event detection on external wake-up line 17.
     bit_offset: 5
     bit_size: 1
-    enum: WUP17
+    enum: WUP
   - name: WUP18
     description: WUP18 Wake-up Line Polarity 18 (PB14) This bit defines the polarity used for event detection on external wake-up line 18.
     bit_offset: 6
     bit_size: 1
-    enum: WUP18
+    enum: WUP
   - name: WUP19
     description: WUP19 Wake-up Line Polarity 19 (PB15) This bit defines the polarity used for event detection on external wake-up line 19.
     bit_offset: 7
     bit_size: 1
-    enum: WUP19
+    enum: WUP
   - name: WUP20
     description: Wake-up polarity for PB8 IO event.
     bit_offset: 8
@@ -432,6 +472,10 @@ fieldset/DBGR:
     description: 'DEEPSTOP2: DEEPSTOP2 low power saving emulation enable. 0: normal DEEPSTOP will be applied 1: DEEPSTOP2 (debugger features not lost) will be applied instead of DEEPSTOP.'
     bit_offset: 0
     bit_size: 1
+  - name: DIS_PRECH
+    description: 'DIS_PRECH[2:0]: disable precharge during deepstop (debug) - 111: precharge and SMPS monitoring are disabled (whatever CR5.SMPSLPOPEN) - 101: precharge are activated only at deepstop exit (to be used only with CR5.SMPSLPOPEN=1) - else: No effect (default 0x0).'
+    bit_offset: 13
+    bit_size: 3
 fieldset/EXTSRR:
   description: EXTSRR register.
   fields:
@@ -519,62 +563,62 @@ fieldset/SR1:
     description: WUF0 WakeUp Flag 0 (PB0) This bit is set when a wakeup is detected on wakeup line 0. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 0
     bit_size: 1
-    enum: WUF0
+    enum: WUF
   - name: WUF1
     description: WUF1 WakeUp Flag 1 (PB1) This bit is set when a wakeup is detected on wakeup line 1. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 1
     bit_size: 1
-    enum: WUF1
+    enum: WUF
   - name: WUF2
     description: WUF2 WakeUp Flag 2 (PB2) This bit is set when a wakeup is detected on wakeup line 2. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 2
     bit_size: 1
-    enum: WUF2
+    enum: WUF
   - name: WUF3
     description: WUF3 WakeUp Flag 3 (PB3) This bit is set when a wakeup is detected on wakeup line 3. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 3
     bit_size: 1
-    enum: WUF3
+    enum: WUF
   - name: WUF4
     description: WUF4 WakeUp Flag 4 (PB4) This bit is set when a wakeup is detected on wakeup line 4. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 4
     bit_size: 1
-    enum: WUF4
+    enum: WUF
   - name: WUF5
     description: WUF5 WakeUp Flag 5 (PB5) This bit is set when a wakeup is detected on wakeup line 5. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 5
     bit_size: 1
-    enum: WUF5
+    enum: WUF
   - name: WUF6
     description: WUF6 WakeUp Flag 6 (PB6) This bit is set when a wakeup is detected on wakeup line 6. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 6
     bit_size: 1
-    enum: WUF6
+    enum: WUF
   - name: WUF7
     description: WUF7 WakeUp Flag 7 (PB7) This bit is set when a wakeup is detected on wakeup line 7. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 7
     bit_size: 1
-    enum: WUF7
+    enum: WUF
   - name: WUF8
     description: WUF8 WakeUp Flag 8 (PA8) This bit is set when a wakeup is detected on wakeup line 8. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 8
     bit_size: 1
-    enum: WUF8
+    enum: WUF
   - name: WUF9
     description: WUF9 WakeUp Flag 9 (PA9) This bit is set when a wakeup is detected on wakeup line 9. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 9
     bit_size: 1
-    enum: WUF9
+    enum: WUF
   - name: WUF10
     description: WUF10 WakeUp Flag 10 (PA10) This bit is set when a wakeup is detected on wakeup line 10. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 10
     bit_size: 1
-    enum: WUF10
+    enum: WUF
   - name: WUF11
     description: WUF11 WakeUp Flag 11 (PA11) This bit is set when a wakeup is detected on wakeup line 11. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 11
     bit_size: 1
-    enum: WUF11
+    enum: WUF
   - name: WBLEF
     description: 'WBLEF: BLE wakeup flag. 0: no wakeup from BLE occurred since last clear. 1: a wakeup from BLE occurred since last clear. Cleared by writing 1 in this bit.'
     bit_offset: 12
@@ -582,6 +626,10 @@ fieldset/SR1:
   - name: WBLEHCPUF
     description: 'WBLEHCPUF: BLE Host CPU wakeup flag. 0: no wakeup from BLE Host CPU occurred since last clear. 1: a wakeup from BLE Host CPU occurred since last clear. Cleared by writing 1 in this bit.'
     bit_offset: 13
+    bit_size: 1
+  - name: IWUF2
+    description: 'IWUF2: Internal wakeup 2 flag (LPUART). 0: no wakeup from LPUART occurred since last clear. 1: a wakeup from LPUART occurred since last clear. Note: The user must clear the LPUART wakeup flag inside the LPUART IP to clear this bit (mirror of the LPUART wakeup line on the PWRC block).'
+    bit_offset: 14
     bit_size: 1
   - name: IWUF
     description: 'IWUF: Internal wakeup flag (RTC). 0: no wakeup from RTC occurred since last clear. 1: a wakeup from RTC occurred since last clear. Note: The user must clear the RTC wakeup flag inside the RTC IP to clear this bit (mirror of the RTC wakeup line on the PWRC block).'
@@ -603,6 +651,10 @@ fieldset/SR2:
     bit_offset: 2
     bit_size: 1
     enum: SMPSRDY
+  - name: IOBOOTVAL2
+    description: 'Bit3: PB15 input value on VDD33 latched at POR Bit2: PB14 input value on VDD33 latched at POR Bit1: PB13 input value on VDD33 latched at POR Bit0: PB12 input value on VDD33 latched at POR.'
+    bit_offset: 4
+    bit_size: 4
   - name: REGLPS
     description: 'REGLPS: Regulator Low Power Started This bit provides the information whether low power regulator is ready.'
     bit_offset: 8
@@ -628,42 +680,42 @@ fieldset/SR3:
     description: WUF12 WakeUp Flag 12 PA0 This bit is set when a wakeup is detected on wakeup line 12. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 0
     bit_size: 1
-    enum: WUF12
+    enum: WUF
   - name: WUF13
     description: WUF13 WakeUp Flag 13 PA1 This bit is set when a wakeup is detected on wakeup line 13. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 1
     bit_size: 1
-    enum: WUF13
+    enum: WUF
   - name: WUF14
     description: WUF14 WakeUp Flag 14 PA2 This bit is set when a wakeup is detected on wakeup line 14. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 2
     bit_size: 1
-    enum: WUF14
+    enum: WUF
   - name: WUF15
     description: WUF15 WakeUp Flag 15 PA3 This bit is set when a wakeup is detected on wakeup line 15. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 3
     bit_size: 1
-    enum: WUF15
+    enum: WUF
   - name: WUF16
     description: WUF16 WakeUp Flag 16 PB12 This bit is set when a wakeup is detected on wakeup line 16. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 4
     bit_size: 1
-    enum: WUF16
+    enum: WUF
   - name: WUF17
     description: WUF17 WakeUp Flag 17 PB13 This bit is set when a wakeup is detected on wakeup line 17. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 5
     bit_size: 1
-    enum: WUF17
+    enum: WUF
   - name: WUF18
     description: WUF18 WakeUp Flag 18 PB14 This bit is set when a wakeup is detected on wakeup line 18. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 6
     bit_size: 1
-    enum: WUF18
+    enum: WUF
   - name: WUF19
-    description: PA7 I/O wake-up flag.
+    description: WUF19 WakeUp Flag 19 PB15 This bit is set when a wakeup is detected on wakeup line 19. It is cleared by a reset pad or by writing 1 in this bit field. writting this bit, clears the interrupt:.
     bit_offset: 7
     bit_size: 1
-    enum: WUF19
+    enum: WUF
   - name: WUF20
     description: PB8 I/O wake-up flag.
     bit_offset: 8
@@ -705,15 +757,6 @@ enum/APC:
   - name: B_0x1
     description: the I/O pull-up and pull-down configurations defined in the PUCRx and PDCRx registers is applied.
     value: 1
-enum/CLKDETR_DISABLE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: SMPS clock detection enabled (default).
-    value: 0
-  - name: B_0x1
-    description: SMPS clock detection disabled.
-    value: 1
 enum/DEEPSTOPF:
   bit_size: 1
   variants:
@@ -723,6 +766,24 @@ enum/DEEPSTOPF:
   - name: B_0x1
     description: System has been in DEEPSTOP mode.
     value: 1
+enum/ENBORH:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: 'BORH off (VBOR0): threshold level for above 1.60V voltage operation.'
+    value: 0
+  - name: B_0x1
+    description: BORH is enabled, threshold level depends on SELBOR[1:0].
+    value: 1
+enum/ENSDNBOR:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: the PD_ALL_SHUTDOWN signal is set during SHUTDOWN mode.
+    value: 0
+  - name: B_0x1
+    description: the PD_ALL_SHUTDOWN signal is not set during SHUTDOWN mode.
+    value: 1
 enum/LPMS:
   bit_size: 1
   variants:
@@ -731,15 +792,6 @@ enum/LPMS:
     value: 0
   - name: B_0x1
     description: Shutdown mode.
-    value: 1
-enum/NOSMPS:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No effect, SMPS is enabled.
-    value: 0
-  - name: B_0x1
-    description: SMPS is disabled;.
     value: 1
 enum/PDA:
   bit_size: 16
@@ -804,24 +856,6 @@ enum/PVDLS:
   - name: B_0x7
     description: External input analog voltage (compare internally to VBGP; When external input <VBGP.
     value: 7
-enum/RAMRET1:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: RAM1 bank is disabled during low power mode (by default).
-    value: 0
-  - name: B_0x1
-    description: RAM1 bank is powered during low power mode.
-    value: 1
-enum/RAMRET3:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Temperature sensor is disabled.
-    value: 0
-  - name: B_0x1
-    description: Temperature sensor is enabled.
-    value: 1
 enum/REGLPS:
   bit_size: 1
   variants:
@@ -849,6 +883,21 @@ enum/RFPHASEF:
   - name: B_0x1
     description: RF IP awake and requesting system attention.
     value: 1
+enum/SELBORH:
+  bit_size: 2
+  variants:
+  - name: B_0x0
+    description: 'BORH Level 1 (VBOR1): threshold level for above 2.0V voltage operation.'
+    value: 0
+  - name: B_0x1
+    description: 'BORH Level 2 (VBOR2): threshold level for above 2.21 V voltage operation.'
+    value: 1
+  - name: B_0x2
+    description: 'BORH Level 3 (VBOR3): threshold level for above 2.52 V voltage operation.'
+    value: 2
+  - name: B_0x3
+    description: 'BORH Level 4(VBOR4): threshold level for above 2.81 V voltage operation.'
+    value: 3
 enum/SMPSBOMSEL:
   bit_size: 2
   variants:
@@ -873,6 +922,15 @@ enum/SMPSFBYP:
   - name: B_0x1
     description: SMPS is disabled and bypassed (ENABLE_3V3=0 and PRECHARGE_3V3=1).
     value: 1
+enum/SMPSFRDY:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: no effect (by default).
+    value: 0
+  - name: B_0x1
+    description: SMPS is considered READY.
+    value: 1
 enum/SMPSLPOPEN:
   bit_size: 1
   variants:
@@ -891,34 +949,22 @@ enum/SMPSRDY:
   - name: B_0x1
     description: SMPS regulator is ready.
     value: 1
-enum/SMPS_ENA_DCM:
-  bit_size: 1
+enum/SMPS_PRECH_CUR_SEL:
+  bit_size: 2
   variants:
   - name: B_0x0
-    description: disable.
+    description: 2.5mA.
     value: 0
   - name: B_0x1
-    description: enable.
+    description: 5mA.
     value: 1
-enum/WUF0:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF1:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF10:
+  - name: B_0x2
+    description: 10mA.
+    value: 2
+  - name: B_0x3
+    description: 20mA (default).
+    value: 3
+enum/WUF:
   bit_size: 1
   variants:
   - name: B_0x0
@@ -927,331 +973,7 @@ enum/WUF10:
   - name: B_0x1
     description: clear the interrupt.
     value: 1
-enum/WUF11:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF12:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF13:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF14:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF15:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF16:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF17:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF18:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF19:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF2:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF3:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF4:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF5:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF6:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF7:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF8:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUF9:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: clear the interrupt.
-    value: 1
-enum/WUP0:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP1:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP10:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP11:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP12:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP13:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP14:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP15:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP16:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP17:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP18:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP19:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP2:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP3:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP4:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP5:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP6:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP7:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP8:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Detection on high level (rising edge).
-    value: 0
-  - name: B_0x1
-    description: Detection on low level (falling edge).
-    value: 1
-enum/WUP9:
+enum/WUP:
   bit_size: 1
   variants:
   - name: B_0x0
