@@ -209,7 +209,24 @@ fn create_peripherals_for_chip(
             None
         };
 
-        let rcc = if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &pname) {
+        // The comparators for g4 family uses the same enable and reset bits as SYSCFG
+        let syscfg_for_comp = || {
+            if chip_name.starts_with("STM32G4") && pname.starts_with("COMP") {
+                peripheral_to_clock
+                    .match_peri_clock(rcc_block.1, "SYSCFG")
+                    .map(|mut rcc_info| {
+                        rcc_info.reset = None;
+                        rcc_info
+                    })
+            } else {
+                None
+            }
+        };
+
+        let rcc = if let Some(mut rcc_info) = peripheral_to_clock
+            .match_peri_clock(rcc_block.1, &pname)
+            .or_else(syscfg_for_comp)
+        {
             if let Some(stop_mode_info) = low_power::peripheral_stop_mode_info(chip_name, &pname) {
                 rcc_info.stop_mode = stop_mode_info;
             }

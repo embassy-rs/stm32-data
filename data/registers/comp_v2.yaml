@@ -16,6 +16,7 @@ fieldset/CSR:
     description: Comparator signal selector for inverting input INM. (RM0440 24.3.2 Table 197)
     bit_offset: 4
     bit_size: 3
+    enum: INM
   - name: INPSEL
     description: Comparator signal selector for non-inverting input INP. (RM0440 24.3.2 Table 196)
     bit_offset: 8
@@ -24,16 +25,17 @@ fieldset/CSR:
     description: Comparator polarity selector.
     bit_offset: 15
     bit_size: 1
-    enum: POLARITY
+    enum: Polarity
   - name: HYST
     description: Comparator hysteresis selector.
     bit_offset: 16
     bit_size: 3
-    enum: HYST
+    enum: Hysteresis
   - name: BLANKSEL
     description: Comparator blanking source selector. (RM0440 24.3.6 Table 198)
     bit_offset: 19
     bit_size: 3
+    enum: Blanking
   - name: BRGEN
     description: Vrefint resistor bridge enable. (RM0440 24.6)
     bit_offset: 22
@@ -42,7 +44,7 @@ fieldset/CSR:
     description: Vrefint scaled input enable. (RM0440 24.6)
     bit_offset: 23
     bit_size: 1
-  - name: VALUE_DO_NOT_SET
+  - name: VALUE
     description: Comparator output status. (READ ONLY)
     bit_offset: 30
     bit_size: 1
@@ -50,7 +52,34 @@ fieldset/CSR:
     description: CSR register lock.
     bit_offset: 31
     bit_size: 1
-enum/HYST:
+enum/Blanking:
+  bit_size: 3
+  variants:
+  - name: NoBlanking
+    description: No blanking.
+    value: 0
+  - name: Blank1
+    description: Check data sheet for blanking options
+    value: 1
+  - name: Blank2
+    description: Check data sheet for blanking options
+    value: 2
+  - name: Blank3
+    description: Check data sheet for blanking options
+    value: 3
+  - name: Blank4
+    description: Check data sheet for blanking options
+    value: 4
+  - name: Blank5
+    description: Check data sheet for blanking options
+    value: 5
+  - name: Blank6
+    description: Check data sheet for blanking options
+    value: 6
+  - name: Blank7
+    description: Check data sheet for blanking options
+    value: 7
+enum/Hysteresis:
   bit_size: 3
   variants:
   - name: None
@@ -76,12 +105,39 @@ enum/HYST:
   - name: Hyst70m
     description: 70mV hysteresis
     value: 7
-enum/POLARITY:
+enum/Polarity:
   bit_size: 1
   variants:
-  - name: NonInverted
-    description: Non-inverted polarity
+  - name: NotInverted
+    description: Output is not inverted.
     value: 0
   - name: Inverted
-    description: Inverted polarity
+    description: Output is inverted.
     value: 1
+enum/INM:
+  bit_size: 3
+  variants:
+  - name: QuarterVRef
+    description: Inverting input set to 1/4 VRef
+    value: 0
+  - name: HalfVRef
+    description: Inverting input set to 1/2 VRef
+    value: 1
+  - name: ThreeQuarterVRef
+    description: Inverting input set to 3/4 VRef
+    value: 2
+  - name: VRef
+    description: Inverting input set to VRef
+    value: 3
+  - name: DACA
+    description: Inverting input set to DAC output (RM0440 24.3.2 Table)
+    value: 4
+  - name: DACB
+    description: Inverting input set to DAC output (RM0440 24.3.2 Table)
+    value: 5
+  - name: INM1
+    description: Inverting input set to IO (RM0440 24.3.2 Table)
+    value: 6
+  - name: INM2
+    description: Inverting input set to IO (RM0440 24.3.2 Table)
+    value: 7
