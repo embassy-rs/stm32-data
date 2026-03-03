@@ -228,8 +228,6 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32U0.*:SYSCFG:.*", ("syscfg", "u0", "SYSCFG")),
     ("STM32U3.*:SYSCFG:.*", ("syscfg", "u3", "SYSCFG")),
     ("STM32U5.*:SYSCFG:.*", ("syscfg", "u5", "SYSCFG")),
-    ("STM32WB0[59].*:SYS:.*", ("syscfg", "wb05_09", "SYSCFG")), // SYSTEM_CTRL in the SVD
-    ("STM32WB0[67].*:SYS:.*", ("syscfg", "wb06_07", "SYSCFG")),
     ("STM32WBA.*:SYSCFG:.*", ("syscfg", "wba", "SYSCFG")),
     ("STM32WB[^0].*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
     ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
@@ -436,8 +434,6 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32U0.*:FLASH:.*", ("flash", "u0", "FLASH")),
     ("STM32U3.*:FLASH:.*", ("flash", "u3", "FLASH")),
     ("STM32U5.*:FLASH:.*", ("flash", "u5", "FLASH")),
-    //("STM32WB0[59].*:FLASH:.*", ("flash", "wb05_09", "FLASH")),
-    //("STM32WB0[67].*:FLASH:.*", ("flash", "wb06_07", "FLASH")),
     ("STM32WBA.*:FLASH:.*", ("flash", "wba", "FLASH")),
     ("STM32WB.*:FLASH:.*", ("flash", "wb", "FLASH")),
     ("STM32WL.*:FLASH:.*", ("flash", "wl", "FLASH")),

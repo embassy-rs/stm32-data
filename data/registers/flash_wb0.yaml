@@ -1,4 +1,4 @@
-block/FLASH_CTRL:
+block/FLASH:
   description: 4kb addressable space.
   items:
   - name: COMMAND
@@ -143,6 +143,10 @@ fieldset/IRQMASK:
     description: Mass read OK mask.
     bit_offset: 4
     bit_size: 1
+  - name: FNREADYM
+    description: '(1: mask, 0: inactive) FNREADY_MIS mask.'
+    bit_offset: 5
+    bit_size: 1
 fieldset/IRQRAW:
   description: IRQRAW register.
   fields:
@@ -166,6 +170,10 @@ fieldset/IRQRAW:
     description: Mass read OK raw/unmasked interrupt status.
     bit_offset: 4
     bit_size: 1
+  - name: CMDSLEEPERR_RIS
+    description: '(1: active, 0: inactive) COMMAND issued while flash in sleep-mode (SLM=1).'
+    bit_offset: 5
+    bit_size: 1
 fieldset/IRQSTAT:
   description: IRQSTAT register.
   fields:
@@ -188,6 +196,10 @@ fieldset/IRQSTAT:
   - name: READOK_MIS
     description: Mass read OK masked interrupt status.
     bit_offset: 4
+    bit_size: 1
+  - name: FNREADY_MIS
+    description: '(1: clear, 0: inactive) FNREADY_MIS flag.'
+    bit_offset: 5
     bit_size: 1
 fieldset/LFSRVAL:
   description: LFSRVAL register.
@@ -237,3 +249,7 @@ fieldset/SIZE:
     description: 'Flash+SWD protection: 0: No SWD protection (refer to FLASH_SECURE) 1: Flash and SWD protected.'
     bit_offset: 20
     bit_size: 1
+  - name: PACKAGE_SIZE
+    description: 'Package selection: - 0- : CSP - 10 : 32pins - 11 : 48pins.'
+    bit_offset: 21
+    bit_size: 2
