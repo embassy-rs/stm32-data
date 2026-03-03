@@ -24,7 +24,7 @@ if git branch --remote --contains HEAD | grep upstream/main; then
     echo "on base branch"
 else
     echo "not on base branch"
-    git pull -q upstream main
+    git pull -q upstream main --no-rebase
 fi
 set +e
 git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build -q
