@@ -92,7 +92,7 @@ For register blocks, YAMLs are initially extracted from SVDs, manually cleaned u
 We don't maintain "patches" for registers unlike the `stm32-rs` project. This has two advantages:
 
 - Fixing mistakes and typos in the SVDs is now much easier (and yes, there are A LOT of those). It doesn't require a complicated patching system, you just edit the YAML to fix the mistake instead of writing a patch that will fix it when applied.
-- Ensuring consistency for the same peripherals between chips. (i.e. we check in a single `i2c_v2.yaml` and ensure it is good, vs trying to patch wildly differing SVDs for what's an identical IP block into being consistent). The `stm32-rs` project doesn't have this as a goal, while we do. Writing a single HAL for all stm32 chips (such as  [the `embassy-stm32` HAL](https://github.com/embassy-rs/embassy/tree/main/embassy-stm32)) is impossible otherwise.
+- Ensuring consistency for the same peripherals between chips. (i.e. we check in a single `i2c_v2.yaml` and ensure it is good, vs trying to patch wildly differing SVDs for what's an identical IP block into being consistent). The `stm32-rs` project doesn't have this as a goal, while we do. Writing a single HAL for all stm32 chips (such as [the `embassy-stm32` HAL](https://github.com/embassy-rs/embassy/tree/main/embassy-stm32)) is impossible otherwise.
 
 ### Toolchain pipeline
 
@@ -104,7 +104,7 @@ This project is built in three stages:
 2. **JSON Generation**
    - `stm32-data-gen` generates the JSON files from consolidated YAML and source data:
      1. Parse YAML files to build an in-memory IR for registers (`src/registers.rs`).
-        - `data/extra/family/*.yaml`: Extra or corrective peripheral entries, rules to modify pin names,
+        - `data/extra/*.yaml`: Extra or corrective peripheral entries, rules to modify pin names,
           rules to override pin names for specific instances of a peripheral.
         - `data/header_map.yaml`: MCU slug to HAL C-header filename mapping for base addresses & IRQ extraction.
         - `data/registers/*.yaml`: Register-block definitions (offsets, fields, enums).

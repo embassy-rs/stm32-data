@@ -12,6 +12,40 @@ use crate::chips::{Chip, ChipGroup};
 use crate::gpio_af::parse_signal_name;
 use crate::normalize_peris::normalize_peri_name;
 
+#[derive(serde::Deserialize)]
+struct ExtraMatches {
+    family: Option<String>,
+    chip: Option<String>,
+}
+
+#[derive(serde::Deserialize)]
+struct PinCleanup {
+    strip_suffix: String,
+    exclude_peripherals: Vec<String>,
+}
+
+#[derive(serde::Deserialize)]
+struct Extra {
+    matches: ExtraMatches,
+    peripherals: Option<Vec<stm32_data_serde::chip::core::Peripheral>>,
+    pin_cleanup: Option<PinCleanup>,
+}
+
+fn load_extras() -> Vec<Extra> {
+    let mut extras = Vec::new();
+    for entry in std::fs::read_dir("data/extra").unwrap() {
+        let entry = entry.unwrap();
+        let path = entry.path();
+        if path.extension().map_or(false, |e| e == "yaml") {
+            let data = std::fs::read(&path).unwrap();
+            let extra: Extra =
+                serde_yaml::from_slice(&data).unwrap_or_else(|e| panic!("Error parsing {:?}: {}", path, e));
+            extras.push(extra);
+        }
+    }
+    extras
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn dump_all_chips(
     chip_groups: Vec<ChipGroup>,
@@ -24,6 +58,8 @@ pub fn dump_all_chips(
     docs: docs::Docs,
 ) -> Result<(), anyhow::Error> {
     std::fs::create_dir_all("build/data/chips")?;
+
+    let extras = load_extras();
 
     #[cfg(feature = "rayon")]
     {
@@ -39,6 +75,7 @@ pub fn dump_all_chips(
                 &dma_channels,
                 &chips,
                 &docs,
+                &extras,
             )
         })
     }
@@ -54,6 +91,7 @@ pub fn dump_all_chips(
                 &dma_channels,
                 &chips,
                 &docs,
+                &extras,
             )
         })
     }
@@ -69,6 +107,7 @@ fn process_group(
     dma_channels: &dma::DmaChannels,
     chips: &HashMap<String, Chip>,
     docs: &docs::Docs,
+    extras: &[Extra],
 ) -> Result<(), anyhow::Error> {
     let chip_name = group.chip_names[0].clone();
     let rcc_kind = group.ips.values().find(|x| x.name == "RCC").unwrap().version.clone();
@@ -97,6 +136,7 @@ fn process_group(
                 rcc_block,
                 chip_af,
                 dma_channels,
+                extras,
             )
         })
         .collect();
@@ -120,6 +160,7 @@ fn process_core(
     rcc_block: (&str, &str, &str),
     chip_af: Option<&HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>>,
     dma_channels: &dma::DmaChannels,
+    extras: &[Extra],
 ) -> anyhow::Result<stm32_data_serde::chip::Core> {
     let core_name = create_short_core_name(long_core_name);
     let defines = h.get_defines(&core_name);
@@ -127,7 +168,7 @@ fn process_core(
     let mut peripherals =
         create_peripherals_for_chip(chip_name, group, peripheral_to_clock, rcc_block, chip_af, defines);
 
-    apply_family_extras(group, &mut peripherals);
+    apply_extras(chip_name, group, extras, &mut peripherals);
 
     for p in peripherals.values_mut() {
         // sort and dedup pins, put the ones with AF number first, so we keep them
@@ -734,35 +775,37 @@ fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) ->
     }
 }
 
-/// Merge family-specific YAML overlays into the peripheral map.
+/// Merge YAML overlays into the peripheral map for the current chip.
 ///
-/// Loads `data/extra/family/{family}.yaml` if it exists, which may contain:
+/// Iterates all loaded extras and applies those whose `matches` field matches the current chip.
+/// An extra matches if all specified conditions hold:
+/// - `matches.family`: exact match against `group.family`
+/// - `matches.chip`: regex match against `chip_name`
+///
+/// Each matching extra may contain:
 /// - `peripherals`: extra or corrective peripheral entries
 /// - `pin_cleanup`: rules to modify pin names
-/// - `override_pins`: rules to override pin names for specific instances of a peripheral
-///
-/// Parameters:
-/// - `group`: ChipGroup context (family/package) for filtering
-/// - `peripherals`: mutable map of peripheral name → `Peripheral` to modify
-fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm32_data_serde::chip::core::Peripheral>) {
-    if let Ok(extra_f) = std::fs::read(format!("data/extra/family/{}.yaml", group.family)) {
-        #[derive(serde::Deserialize)]
-        struct PinCleanup {
-            strip_suffix: String,
-            exclude_peripherals: Vec<String>,
+fn apply_extras(
+    chip_name: &str,
+    group: &ChipGroup,
+    extras: &[Extra],
+    peripherals: &mut HashMap<String, stm32_data_serde::chip::core::Peripheral>,
+) {
+    for extra in extras {
+        let family_matches = extra.matches.family.as_ref().map_or(true, |f| f == &group.family);
+        let chip_matches = extra
+            .matches
+            .chip
+            .as_ref()
+            .map_or(true, |c| Regex::new(&format!("^{c}$")).unwrap().is_match(chip_name));
+        if !family_matches || !chip_matches {
+            continue;
         }
-
-        #[derive(serde::Deserialize)]
-        struct Extra {
-            peripherals: Option<Vec<stm32_data_serde::chip::core::Peripheral>>,
-            pin_cleanup: Option<PinCleanup>,
-        }
-
-        let extra: Extra = serde_yaml::from_slice(&extra_f).unwrap();
 
         // merge extra peripherals
-        if let Some(extras) = extra.peripherals {
-            for mut p in extras {
+        if let Some(extra_peris) = &extra.peripherals {
+            for p in extra_peris {
+                let mut p = p.clone();
                 if let Some(peripheral) = peripherals.get_mut(&p.name)
                     && p.pins.len() > 0
                 {
@@ -803,7 +846,7 @@ fn apply_family_extras(group: &ChipGroup, peripherals: &mut HashMap<String, stm3
         }
 
         // apply pin_cleanup rules
-        if let Some(clean) = extra.pin_cleanup {
+        if let Some(clean) = &extra.pin_cleanup {
             for (name, peri) in peripherals.iter_mut() {
                 // skip excluded peripherals
                 if clean.exclude_peripherals.iter().any(|ex| name.starts_with(ex)) {
