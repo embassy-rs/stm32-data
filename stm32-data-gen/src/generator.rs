@@ -792,19 +792,20 @@ fn apply_extras(
     peripherals: &mut HashMap<String, stm32_data_serde::chip::core::Peripheral>,
 ) {
     for extra in extras {
-        let family_matches = extra.matches.family.as_ref().map_or(true, |f| f == &group.family);
+        let family_matches = extra.matches.family.as_ref().is_none_or(|f| f == &group.family);
         let chip_matches = extra
             .matches
             .chip
             .as_ref()
-            .map_or(true, |c| Regex::new(&format!("^{c}$")).unwrap().is_match(chip_name));
+            .is_none_or(|c| Regex::new(&format!("^{c}$")).unwrap().is_match(chip_name));
         if !family_matches || !chip_matches {
             continue;
         }
 
         // merge extra peripherals
-        if let Some(extras) = extra.peripherals {
-            for mut extra_periph in extras {
+        if let Some(extras) = &extra.peripherals {
+            for extra_periph in extras {
+                let mut extra_periph = extra_periph.clone();
                 let Some(generated_periph) = peripherals.get_mut(&extra_periph.name) else {
                     if extra_periph.address != 0 {
                         // filter out pins that may not exist in this package.
