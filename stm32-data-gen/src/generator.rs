@@ -439,10 +439,10 @@ fn create_peripherals_for_chip(
 ///
 /// FIXME: "secure" does not appear the XML files in that attribute.
 fn create_short_core_name(d: &str) -> String {
-    let m = regex!(r".*Cortex-M(\d+)(\+?)\s*(.*)").captures(d).unwrap();
-    let cm = m.get(1).unwrap().as_str();
-    let p = if m.get(2).unwrap().as_str() == "+" { "p" } else { "" };
-    let s = if m.get(3).unwrap().as_str() == "secure" {
+    let m = regex!(r".*Cortex-(A|M)(\d+)(\+?)\s*(.*)").captures(d).unwrap();
+    let cm = m.get(2).unwrap().as_str();
+    let p = if m.get(3).unwrap().as_str() == "+" { "p" } else { "" };
+    let s = if m.get(4).unwrap().as_str() == "secure" {
         "s"
     } else {
         ""
@@ -520,6 +520,7 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
         "GPIOR",
         "GPIOS",
         "GPIOT",
+        "GPIOZ",
         "DMA1",
         "DMA2",
         "BDMA",
