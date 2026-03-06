@@ -1,0 +1,512 @@
+block/TRNG:
+  items:
+  - name: CR
+    description: CR register.
+    byte_offset: 0
+    fieldset: CR
+  - name: SR
+    description: SR register.
+    byte_offset: 4
+    access: Read
+    fieldset: SR
+  - name: VAL
+    description: VAL register.
+    byte_offset: 8
+    access: Read
+    fieldset: VAL
+  - name: OSCS_CR
+    description: OSCS_CR register.
+    byte_offset: 48
+    fieldset: OSCS_CR
+  - name: POSTP_CR
+    description: POSTP_CR register.
+    byte_offset: 52
+    fieldset: POSTP_CR
+  - name: POSTP_SR
+    description: POSTP_SR register.
+    byte_offset: 56
+    access: Read
+    fieldset: POSTP_SR
+  - name: DEFKEY0
+    description: DEFKEY0 register.
+    byte_offset: 64
+    fieldset: DEFKEY0
+  - name: DEFKEY1
+    description: DEFKEY1 register.
+    byte_offset: 68
+    fieldset: DEFKEY1
+  - name: DEFKEY2
+    description: DEFKEY2 register.
+    byte_offset: 72
+    fieldset: DEFKEY2
+  - name: DEFKEY3
+    description: DEFKEY3 register.
+    byte_offset: 76
+    fieldset: DEFKEY3
+  - name: HEALTH_CR
+    description: HEALTH_CR register.
+    byte_offset: 96
+    fieldset: HEALTH_CR
+  - name: HEALTH_OSC1_CR
+    description: HEALTH_OSC1_CR register.
+    byte_offset: 104
+    fieldset: HEALTH_OSC1_CR
+  - name: HEALTH_OSC2_CR
+    description: HEALTH_OSC2_CR register.
+    byte_offset: 108
+    fieldset: HEALTH_OSC2_CR
+  - name: HEALTH_OSC3_CR
+    description: HEALTH_OSC3_CR register.
+    byte_offset: 112
+    fieldset: HEALTH_OSC3_CR
+  - name: HEALTH_OSC1_SR
+    description: HEALTH_OSC1_SR register.
+    byte_offset: 116
+    access: Read
+    fieldset: HEALTH_OSC1_SR
+  - name: HEALTH_OSC2_SR
+    description: HEALTH_OSC2_SR register.
+    byte_offset: 120
+    access: Read
+    fieldset: HEALTH_OSC2_SR
+  - name: HEALTH_OSC3_SR
+    description: HEALTH_OSC3_SR register.
+    byte_offset: 124
+    access: Read
+    fieldset: HEALTH_OSC3_SR
+  - name: IRQ_CR
+    description: IRQ_CR register.
+    byte_offset: 128
+    fieldset: IRQ_CR
+  - name: IRQ_SR
+    description: IRQ_SR register.
+    byte_offset: 132
+    access: Read
+    fieldset: IRQ_SR
+fieldset/CR:
+  description: CR register.
+  fields:
+  - name: DISABLE
+    description: Disable Bit DISABLE can be used for reading or setting the state of the TRNG core. The value read is always the one available at the rng core clock domain. When changing the value, the change is effective when the value read is the same as the one written.
+    bit_offset: 0
+    bit_size: 1
+  - name: CLR_REVCLK_FLAG
+    description: Reset reveal clock error flags when writing a '1' without resetting the whole TRNG. When writing a 1, the value remains until it is seen by RNG core clock domain after resynchronization. Then it is automatically reset.
+    bit_offset: 6
+    bit_size: 1
+    enum: CLR_REVCLK_FLAG
+  - name: RST_HEALTH_FLAGS
+    description: Reset Health error flags when writing a '1' without resetting the whole TRNG. When writing a 1, the value remains until it is seen by RNG core clock domain after resynchronization. Then it is automatically reset.
+    bit_offset: 7
+    bit_size: 1
+    enum: RST_HEALTH_FLAGS
+  - name: CLKDIV
+    description: Sampling Clock Enable Divider. CLKDIV[15:0] control the sampling clock enable divider, dividing by a factor equal to CLKDIV[15:0] + 1, values being in the range of 1 to 65536.
+    bit_offset: 8
+    bit_size: 16
+fieldset/DEFKEY0:
+  description: DEFKEY0 register.
+  fields:
+  - name: DEFKEY0
+    description: Bits 31 to 0 of AES 128-bit Default Key.
+    bit_offset: 0
+    bit_size: 32
+fieldset/DEFKEY1:
+  description: DEFKEY1 register.
+  fields:
+  - name: DEFKEY1
+    description: Bits 63 to 31 of AES 128-bit Default Key.
+    bit_offset: 0
+    bit_size: 32
+fieldset/DEFKEY2:
+  description: DEFKEY2 register.
+  fields:
+  - name: DEFKEY2
+    description: Bits 95 to 64 of AES 128-bit Default Key.
+    bit_offset: 0
+    bit_size: 32
+fieldset/DEFKEY3:
+  description: DEFKEY3 register.
+  fields:
+  - name: DEFKEY3
+    description: Bits 127 to 96 of AES 128-bit Default Key.
+    bit_offset: 0
+    bit_size: 32
+fieldset/HEALTH_CR:
+  description: HEALTH_CR register.
+  fields:
+  - name: REPET_CUTOFF
+    description: 'Cutoff value of Repetition Test. The default value is set to 51. Caution: To be handled with care as any change can lead to misbehavior of TRNG.'
+    bit_offset: 0
+    bit_size: 8
+  - name: ADAP_CUTOFF
+    description: 'Cutoff value of Adaptive Test. The default value is set to 699. Caution: To be handled with care as any change can lead to misbehavior of TRNG.'
+    bit_offset: 16
+    bit_size: 10
+  - name: ITER_ADAP
+    description: Number of iterations minus 1 of Adaptive test during initialization phase. Default value is set to 0 i.e. 1 iteration.
+    bit_offset: 28
+    bit_size: 2
+fieldset/HEALTH_OSC1_CR:
+  description: HEALTH_OSC1_CR register.
+  fields:
+  - name: REPET_CUTOFF_OSC1
+    description: 'Cutoff value of Repetition Test. The default value is set to 51. Caution: To be handled with care as any change can lead to misbehavior of TRNG.'
+    bit_offset: 0
+    bit_size: 8
+  - name: ADAP_CUTOFF_OSC1
+    description: 'Cutoff value of Adaptive Test. The default value is set to 699. Caution: To be handled with care as any change can lead to misbehavior of TRNG.'
+    bit_offset: 16
+    bit_size: 10
+fieldset/HEALTH_OSC1_SR:
+  description: HEALTH_OSC1_SR register.
+  fields:
+  - name: TO1_REPET_ERROR
+    description: Repetition error flag of first oscillator of first triple-oscillator cell.
+    bit_offset: 0
+    bit_size: 1
+  - name: TO1_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of first triple-oscillator cell.
+    bit_offset: 1
+    bit_size: 1
+  - name: TO2_REPET_ERROR
+    description: Repetition error flag of first oscillator of second triple-oscillator cell.
+    bit_offset: 2
+    bit_size: 1
+  - name: TO2_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of second triple-oscillator cell.
+    bit_offset: 3
+    bit_size: 1
+  - name: TO3_REPET_ERROR
+    description: Repetition error flag of first oscillator of third triple-oscillator cell.
+    bit_offset: 4
+    bit_size: 1
+  - name: TO3_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of third triple-oscillator cell.
+    bit_offset: 5
+    bit_size: 1
+fieldset/HEALTH_OSC2_CR:
+  description: HEALTH_OSC2_CR register.
+  fields:
+  - name: REPET_CUTOFF_OSC2
+    description: 'Cutoff value of Repetition Test. The default value is set to 51. Caution: To be handled with care as any change can lead to misbehavior of TRNG.'
+    bit_offset: 0
+    bit_size: 8
+  - name: ADAP_CUTOFF_OSC2
+    description: 'Cutoff value of Adaptive Test. The default value is set to 699. Caution: To be handled with care as any change can lead to misbehavior of TRNG.'
+    bit_offset: 16
+    bit_size: 10
+fieldset/HEALTH_OSC2_SR:
+  description: HEALTH_OSC2_SR register.
+  fields:
+  - name: TO1_REPET_ERROR
+    description: Repetition error flag of first oscillator of first triple-oscillator cell.
+    bit_offset: 0
+    bit_size: 1
+  - name: TO1_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of first triple-oscillator cell.
+    bit_offset: 1
+    bit_size: 1
+  - name: TO2_REPET_ERROR
+    description: Repetition error flag of first oscillator of second triple-oscillator cell.
+    bit_offset: 2
+    bit_size: 1
+  - name: TO2_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of second triple-oscillator cell.
+    bit_offset: 3
+    bit_size: 1
+  - name: TO3_REPET_ERROR
+    description: Repetition error flag of first oscillator of third triple-oscillator cell.
+    bit_offset: 4
+    bit_size: 1
+  - name: TO3_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of third triple-oscillator cell.
+    bit_offset: 5
+    bit_size: 1
+fieldset/HEALTH_OSC3_CR:
+  description: HEALTH_OSC3_CR register.
+  fields:
+  - name: REPET_CUTOFF_OSC3
+    description: 'Cutoff value of Repetition Test. The default value is set to 51. Caution: To be handled with care as any change can lead to misbehavior of TRNG.'
+    bit_offset: 0
+    bit_size: 8
+  - name: ADAP_CUTOFF_OSC3
+    description: 'Cutoff value of Adaptive Test. The default value is set to 699. Caution: To be handled with care as any change can lead to misbehavior of TRNG.'
+    bit_offset: 16
+    bit_size: 10
+fieldset/HEALTH_OSC3_SR:
+  description: HEALTH_OSC3_SR register.
+  fields:
+  - name: TO1_REPET_ERROR
+    description: Repetition error flag of third oscillator of first triple-oscillator cell.
+    bit_offset: 0
+    bit_size: 1
+  - name: TO1_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of first triple-oscillator cell.
+    bit_offset: 1
+    bit_size: 1
+  - name: TO2_REPET_ERROR
+    description: Repetition error flag of first oscillator of second triple-oscillator cell.
+    bit_offset: 2
+    bit_size: 1
+  - name: TO2_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of second triple-oscillator cell.
+    bit_offset: 3
+    bit_size: 1
+  - name: TO3_REPET_ERROR
+    description: Repetition error flag of first oscillator of third triple-oscillator cell.
+    bit_offset: 4
+    bit_size: 1
+  - name: TO3_ADAPT_ERROR
+    description: Adaptive error flag of first oscillator of third triple-oscillator cell.
+    bit_offset: 5
+    bit_size: 1
+fieldset/IRQ_CR:
+  description: IRQ_CR register.
+  fields:
+  - name: EN_FF_FULL_IRQ
+    description: Enable the interrupt when the output fifo is full of new random.
+    bit_offset: 0
+    bit_size: 1
+  - name: EN_ERROR_IRQ
+    description: Enable the interrupt when an error is reported by the health tests.
+    bit_offset: 8
+    bit_size: 1
+fieldset/IRQ_SR:
+  description: IRQ_SR register.
+  fields:
+  - name: FF_FULL_IRQ
+    description: Set to 1 when the output fifo is full of new random. Flag is cleared by writing a 1.
+    bit_offset: 0
+    bit_size: 1
+  - name: ERROR_IRQ
+    description: Set to 1 when an error is reported by the health tests. Flag is cleared by writing a 1.
+    bit_offset: 8
+    bit_size: 1
+fieldset/OSCS_CR:
+  description: OSCS_CR register.
+  fields:
+  - name: PWRD1
+    description: Power down of individual oscillators in triple-oscillator block number 1.
+    bit_offset: 1
+    bit_size: 3
+  - name: PWRD2
+    description: Power down of individual oscillators in triple-oscillator block number 2.
+    bit_offset: 4
+    bit_size: 3
+  - name: PWRD3
+    description: Power down of individual oscillators in triple-oscillator block number 3.
+    bit_offset: 7
+    bit_size: 3
+  - name: SYNC_OSCS
+    description: When set, selection of resynchronized output of oscillators.
+    bit_offset: 31
+    bit_size: 1
+fieldset/POSTP_CR:
+  description: POSTP_CR register.
+  fields:
+  - name: AES_RESET
+    description: Reset AES post processing. When writing a 1, the AES post processing is reinitialized, resulting in a new key and new state generation before 128-bit random words generation. The '1' written is frozen until it is seen by RNG core clock domain after resynchronization. Then it is automatically reset. It also reruns analog source health tests.
+    bit_offset: 0
+    bit_size: 1
+    enum: AES_RESET
+  - name: NB_LOOP_AES
+    description: NB_LOOP_AES is the number of 128-bit words got from the noise source that have to be processed by AES for generating a single 128-bit random word. By default, this value is set to 2 (128 bits generated before an AES processing). 0 value means 16 loops. A new AES processing is started only when the previous one is completed.
+    bit_offset: 8
+    bit_size: 4
+  - name: NB_RND_REINIT
+    description: Number of 128-bit random words generated before AES automatically resets. This number is in the range of 1 to 65535 words. Value 0x0000 means that AES is never reinitialized.
+    bit_offset: 16
+    bit_size: 16
+fieldset/POSTP_SR:
+  description: POSTP_SR register.
+  fields:
+  - name: AES_INIT
+    description: AES Post processing has been fully initialized (key and state) and is ready for generating 128-bit random words.
+    bit_offset: 1
+    bit_size: 1
+    enum: AES_INIT
+  - name: AES_KEY_LD
+    description: AES random key has been generated and loaded in AES key register.
+    bit_offset: 2
+    bit_size: 1
+    enum: AES_KEY_LD
+  - name: AES_BUSY
+    description: AES core is busy, generating a random value.
+    bit_offset: 3
+    bit_size: 1
+    enum: AES_BUSY
+  - name: AES_HEALTH_DONE
+    description: AES-CMAC health test is completed.
+    bit_offset: 4
+    bit_size: 1
+  - name: AES_K12_ERROR
+    description: Health test error on AES-CMAC sub-keys generation.
+    bit_offset: 5
+    bit_size: 1
+  - name: AES_DOUT_ERROR
+    description: Health test error on AES-CMAC output generation.
+    bit_offset: 6
+    bit_size: 1
+fieldset/SR:
+  description: SR register.
+  fields:
+  - name: DISABLED
+    description: TRNG is disabled.
+    bit_offset: 0
+    bit_size: 1
+  - name: ALL_OSCS_DOWN
+    description: All oscillators of the random source noise have been powered down. This can cause the rising of OEC3 flag.
+    bit_offset: 1
+    bit_size: 1
+    enum: ALL_OSCS_DOWN
+  - name: REVEAL_CLK_ERR
+    description: The internal clock for the RNG core is not revealed.
+    bit_offset: 2
+    bit_size: 1
+    enum: REVEAL_CLK_ERR
+  - name: ENTROPY_ERR
+    description: The error refers to a fault in the bit sequence detected by the Entropy Monitor. Failed test is given by REPET_ERROR, and ADAPT_ERROR, OSCS_REPET_ERROR and OSCS_ADAPT_ERROR status flags.
+    bit_offset: 3
+    bit_size: 1
+    enum: ENTROPY_ERR
+  - name: VAL_READY
+    description: TRNG Value ready At least one 32-bit random value is available in the data FIFO. Note that application must ensure that a random is available in internal FIFO before starting a read otherwise a bus error will be generated.
+    bit_offset: 4
+    bit_size: 1
+    enum: VAL_READY
+  - name: FIFO_FULL
+    description: Indicates whether random data FIFO is full.
+    bit_offset: 5
+    bit_size: 1
+    enum: FIFO_FULL
+  - name: SRC_HEALTH_DONE
+    description: First run of noise source health test is completed.
+    bit_offset: 20
+    bit_size: 1
+  - name: REPET_ERROR
+    description: Noise source Repetition health test error.
+    bit_offset: 21
+    bit_size: 1
+  - name: ADAPT_ERROR
+    description: Noise source Adaptive 1024 health test error.
+    bit_offset: 22
+    bit_size: 1
+  - name: OSCS_HEALTH_DONE
+    description: First run of source health tests of individual oscillators composing the noise source are completed.Reserved.
+    bit_offset: 23
+    bit_size: 1
+  - name: OSCS_REPET_ERROR
+    description: Logical OR of repetition health test errors of individual oscillators composing the noise source.
+    bit_offset: 24
+    bit_size: 1
+  - name: OSCS_ADAPT_ERROR
+    description: Logical OR of adaptive health test errors of individual oscillators composing the noise source.
+    bit_offset: 25
+    bit_size: 1
+fieldset/VAL:
+  description: VAL register.
+  fields:
+  - name: RND_VAL
+    description: RND_VAL is a 32-bit Random Value. This is the output of the internal four-word FIFO. Note that application must ensure that a random is available in FIFO by ready VAL_READY flag before starting a read otherwise a null value will be returned.
+    bit_offset: 0
+    bit_size: 32
+enum/AES_BUSY:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: AES core is idle.
+    value: 0
+  - name: B_0x1
+    description: AES core is busy.
+    value: 1
+enum/AES_INIT:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: AES core is not initialized (no key or state set).
+    value: 0
+  - name: B_0x1
+    description: AES core is fully initialized.
+    value: 1
+enum/AES_KEY_LD:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: AES core is waiting for 128 random bits from the entropy sources for generating its key.
+    value: 0
+  - name: B_0x1
+    description: AES key register has been loaded with a random key.
+    value: 1
+enum/AES_RESET:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: No effect.
+    value: 0
+  - name: B_0x1
+    description: Reset AES core.
+    value: 1
+enum/ALL_OSCS_DOWN:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: At least one oscillator is ON.
+    value: 0
+  - name: B_0x1
+    description: All oscillators are down.
+    value: 1
+enum/CLR_REVCLK_FLAG:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: no reset.
+    value: 0
+  - name: B_0x1
+    description: reset revclk flag.
+    value: 1
+enum/ENTROPY_ERR:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: No fault detected.
+    value: 0
+  - name: B_0x1
+    description: Embedded heath monitor detects an error in bit stream quality.
+    value: 1
+enum/FIFO_FULL:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: FIFO is not full.
+    value: 0
+  - name: B_0x1
+    description: The internal data FIFO is full and four 32-bit random values can be read.
+    value: 1
+enum/REVEAL_CLK_ERR:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Internal clock for RNG clock is present.
+    value: 0
+  - name: B_0x1
+    description: Internal RNG clock is not present.
+    value: 1
+enum/RST_HEALTH_FLAGS:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: no reset.
+    value: 0
+  - name: B_0x1
+    description: reset health flag.
+    value: 1
+enum/VAL_READY:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: No value is ready in FIFO.
+    value: 0
+  - name: B_0x1
+    description: A 32-bit value is available in the internal FIFO.
+    value: 1
