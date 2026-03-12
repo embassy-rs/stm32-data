@@ -1,0 +1,35 @@
+matches:
+  family: STM32H7
+pin_cleanup:
+  # H7 has some _C pin variants (e.g. PC2 and PC2_C). Digital stuff should always be in the non-C pin.
+  # cubedb puts it either in both, or in the -C pin only! (in chips where the package has only the -C pin)
+  # so we fix that up here.
+  strip_suffix: "_C"
+  exclude_peripherals:
+    - ADC
+    - DAC
+    - COMP
+
+peripherals:
+  # Corresponds to cmosM40_opamp_v1_0_Cube
+  # STM32H7 variant
+  - name: OPAMP1
+    pins:
+      - pin: PC5
+        signal: VINM0
+      - pin: PA7
+        signal: VINM1
+      - pin: PB0
+        signal: VINP0
+      - pin: PC4
+        signal: VOUT
+  - name: OPAMP2
+    pins:
+      - pin: PE8
+        signal: VINM0
+      - pin: PG1
+        signal: VINM1
+      - pin: PE9
+        signal: VINP0
+      - pin: PE7
+        signal: VOUT

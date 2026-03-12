@@ -1,0 +1,234 @@
+block/GPIO:
+  description: General-purpose I/Os
+  items:
+  - name: MODER
+    description: GPIO port mode register
+    byte_offset: 0
+    fieldset: MODER
+  - name: OTYPER
+    description: GPIO port output type register
+    byte_offset: 4
+    fieldset: OTYPER
+  - name: OSPEEDR
+    description: GPIO port output speed register
+    byte_offset: 8
+    fieldset: OSPEEDR
+  - name: PUPDR
+    description: GPIO port pull-up/pull-down register
+    byte_offset: 12
+    fieldset: PUPDR
+  - name: IDR
+    description: GPIO port input data register
+    byte_offset: 16
+    access: Read
+    fieldset: IDR
+  - name: ODR
+    description: GPIO port output data register
+    byte_offset: 20
+    fieldset: ODR
+  - name: BSRR
+    description: GPIO port bit set/reset register
+    byte_offset: 24
+    access: Write
+    fieldset: BSRR
+  - name: LCKR
+    description: GPIO port configuration lock register
+    byte_offset: 28
+    fieldset: LCKR
+  - name: AFR
+    description: GPIO alternate function registers. The register described in the datasheet as AFRL is index 0 in this array, and AFRH is index 1. Note that when operating on AFRH, you need to subtract 8 from any operations on the field array it contains -- the alternate function for pin 9 is at index 1, for instance.
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 32
+    fieldset: AFR
+  - name: ASCR
+    description: GPIO port analog switch control register
+    byte_offset: 44
+    fieldset: ASCR
+fieldset/AFR:
+  description: GPIO alternate function register. This contains an array of 8 fields, which correspond to pins 0-7 of the port (for AFRL) or pins 8-15 of the port (for AFRH).
+  fields:
+  - name: AFR
+    description: Alternate function selection for one of the pins controlled by this register (0-7).
+    bit_offset: 0
+    bit_size: 4
+    array:
+      len: 8
+      stride: 4
+fieldset/ASCR:
+  description: GPIO port analog switch control register
+  fields:
+  - name: ASC
+    description: Port x analog switch control I/O pin y (y= 0..15)
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/BSRR:
+  description: GPIO port bit set/reset register
+  fields:
+  - name: BS
+    description: Port x set bit y (y= 0..15)
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+  - name: BR
+    description: Port x set bit y (y= 0..15)
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/IDR:
+  description: GPIO port input data register
+  fields:
+  - name: IDR
+    description: Port input data (y = 0..15)
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+    enum: IDR
+fieldset/LCKR:
+  description: GPIO port configuration lock register
+  fields:
+  - name: LCK
+    description: Port configuration locked
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+  - name: LCKK
+    description: Port configuration lock key active
+    bit_offset: 16
+    bit_size: 1
+fieldset/MODER:
+  description: GPIO port mode register
+  fields:
+  - name: MODER
+    description: Port x configuration bits (y = 0..15)
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 16
+      stride: 2
+    enum: MODER
+fieldset/ODR:
+  description: GPIO port output data register
+  fields:
+  - name: ODR
+    description: Port output data (y = 0..15)
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+    enum: ODR
+fieldset/OSPEEDR:
+  description: GPIO port output speed register
+  fields:
+  - name: OSPEEDR
+    description: Port x configuration bits (y = 0..15)
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 16
+      stride: 2
+    enum: OSPEEDR
+fieldset/OTYPER:
+  description: GPIO port output type register
+  fields:
+  - name: OT
+    description: Port x configuration bits (y = 0..15)
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+    enum: OT
+fieldset/PUPDR:
+  description: GPIO port pull-up/pull-down register
+  fields:
+  - name: PUPDR
+    description: Port x configuration bits (y = 0..15)
+    bit_offset: 0
+    bit_size: 2
+    array:
+      len: 16
+      stride: 2
+    enum: PUPDR
+enum/IDR:
+  bit_size: 1
+  variants:
+  - name: Low
+    description: Input is logic low
+    value: 0
+  - name: High
+    description: Input is logic high
+    value: 1
+enum/MODER:
+  bit_size: 2
+  variants:
+  - name: Input
+    description: Input mode (reset state)
+    value: 0
+  - name: Output
+    description: General purpose output mode
+    value: 1
+  - name: Alternate
+    description: Alternate function mode
+    value: 2
+  - name: Analog
+    description: Analog mode
+    value: 3
+enum/ODR:
+  bit_size: 1
+  variants:
+  - name: Low
+    description: Set output to logic low
+    value: 0
+  - name: High
+    description: Set output to logic high
+    value: 1
+enum/OSPEEDR:
+  bit_size: 2
+  variants:
+  - name: LowSpeed
+    description: Low speed
+    value: 0
+  - name: MediumSpeed
+    description: Medium speed
+    value: 1
+  - name: HighSpeed
+    description: High speed
+    value: 2
+  - name: VeryHighSpeed
+    description: Very high speed
+    value: 3
+enum/OT:
+  bit_size: 1
+  variants:
+  - name: PushPull
+    description: Output push-pull (reset state)
+    value: 0
+  - name: OpenDrain
+    description: Output open-drain
+    value: 1
+enum/PUPDR:
+  bit_size: 2
+  variants:
+  - name: Floating
+    description: No pull-up, pull-down
+    value: 0
+  - name: PullUp
+    description: Pull-up
+    value: 1
+  - name: PullDown
+    description: Pull-down
+    value: 2

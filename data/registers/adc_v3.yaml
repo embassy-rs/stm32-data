@@ -201,29 +201,33 @@ fieldset/CFGR2:
   description: configuration register
   fields:
   - name: ROVSE
-    description: DMAEN
+    description: Regular Oversampling Enable
     bit_offset: 0
     bit_size: 1
   - name: JOVSE
-    description: DMACFG
+    description: Injected Oversampling Enable
     bit_offset: 1
     bit_size: 1
   - name: OVSR
-    description: RES
+    description: Oversampling Ratio
     bit_offset: 2
     bit_size: 3
+    enum: OVERSAMPLING_RATIO
   - name: OVSS
-    description: ALIGN
+    description: Oversampling Shift
     bit_offset: 5
     bit_size: 4
-  - name: TOVS
-    description: EXTSEL
+    enum: OVERSAMPLING_SHIFT
+  - name: TROVS
+    description: Triggered Regular Oversampling
     bit_offset: 9
     bit_size: 1
+    enum: TROVS
   - name: ROVSM
-    description: EXTEN
+    description: Regular Oversampling Mode
     bit_offset: 10
     bit_size: 1
+    enum: ROVSM
 fieldset/CR:
   description: control register
   fields:
@@ -532,3 +536,78 @@ enum/SAMPLE_TIME:
   - name: Cycles640_5
     description: 640.5 ADC cycles
     value: 7
+enum/OVERSAMPLING_RATIO:
+  bit_size: 3
+  variants:
+  - name: Ratio2
+    description: 2x Oversampling Ratio
+    value: 0
+  - name: Ratio4
+    description: 4x Oversampling Ratio
+    value: 1
+  - name: Ratio8
+    description: 8x Oversampling Ratio
+    value: 2
+  - name: Ratio16
+    description: 16x Oversampling Ratio
+    value: 3
+  - name: Ratio32
+    description: 32x Oversampling Ratio
+    value: 4
+  - name: Ratio64
+    description: 64x Oversampling Ratio
+    value: 5
+  - name: Ratio128
+    description: 128x Oversampling Ratio
+    value: 6
+  - name: Ratio256
+    description: 256x Oversampling Ratio
+    value: 7
+enum/OVERSAMPLING_SHIFT:
+  bit_size: 4
+  variants:
+  - name: Shift0
+    description: No shift
+    value: 0
+  - name: Shift1
+    description: Shift 1-bit
+    value: 1
+  - name: Shift2
+    description: Shift 2-bits
+    value: 2
+  - name: Shift3
+    description: Shift 3-bits
+    value: 3
+  - name: Shift4
+    description: Shift 4-bits
+    value: 4
+  - name: Shift5
+    description: Shift 5-bits
+    value: 5
+  - name: Shift6
+    description: Shift 6-bits
+    value: 6
+  - name: Shift7
+    description: Shift 7-bits
+    value: 7
+  - name: Shift8
+    description: Shift 8-bits
+    value: 8
+enum/TROVS:
+  bit_size: 1
+  variants:
+  - name: Automatic
+    description: All oversampled conversions for a channel are done consecutively following a trigger
+    value: 0
+  - name: Triggered
+    description: Each oversampled conversion for a channel needs a new trigger
+    value: 1
+enum/ROVSM:
+  bit_size: 1
+  variants:
+  - name: Continued
+    description: Oversampling is temporarily stopped and continued after injection sequence
+    value: 0
+  - name: Resumed
+    description: Oversampling is aborted and resumed from start after injection sequence
+    value: 1

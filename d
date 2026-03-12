@@ -4,7 +4,7 @@ set -e
 cd $(dirname $0)
 
 CMD=$1
-REV=709c1060ac2ec57f6042f2b4eb9cf8c1821a6c57
+REV=bbe668b5dd62b03329da5e6dd9845dc994023a29
 shift
 
 case "$CMD" in
@@ -139,6 +139,10 @@ case "$CMD" in
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32l4a6zg \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32l4r5zi \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32l552ze \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32n657x0 \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32n647x0 \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32n655x0 \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32n645x0 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32u031r8 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32u073mb \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32u083rc \
@@ -149,9 +153,13 @@ case "$CMD" in
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wb15cc \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wb35ce \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wb55rg \
-            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wba50ke \
-            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wba52cg \
-            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wba55ug \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32wba50ke \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32wba52cg \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32wba55ug \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32wba62mg \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32wba63cg \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32wba64ci \
+            --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv8m.main-none-eabihf --features pac,metadata,stm32wba65ri \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wl54jc-cm4 \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wl54jc-cm0p \
             --- build --release --manifest-path build/stm32-metapac/Cargo.toml --target thumbv7em-none-eabi --features pac,metadata,stm32wl55jc-cm4 \

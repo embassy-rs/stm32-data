@@ -111,6 +111,17 @@ impl Gen {
         let data = generate::render(&ir, &gen_opts()).unwrap().to_string();
         let data = data.replace("] ", "]\n");
 
+        // update generated pac.rs to edition 2024
+        // TODO: fix upstream generation
+        let data = data
+            .replace("extern \"C\"", "unsafe extern \"C\"")
+            .replace("unsafe unsafe", "unsafe")
+            .replace(
+                "[link_section = \".vector_table.interrupts\"]",
+                "[unsafe(link_section = \".vector_table.interrupts\")]",
+            )
+            .replace("[no_mangle]", "[unsafe(no_mangle)]");
+
         // Remove inner attributes like #![no_std]
         let data = Regex::new("# *! *\\[.*\\]").unwrap().replace_all(&data, "");
 
@@ -167,6 +178,13 @@ impl Gen {
             file
         });
 
+        let memories = chip
+            .memory
+            .iter()
+            .map(|memory| stringify(memory))
+            .collect::<Vec<_>>()
+            .join(",");
+
         let data = format!(
             "include!(\"../{}\");
             use crate::metadata::PeripheralRccKernelClock::{{Clock, Mux}};
@@ -174,19 +192,14 @@ impl Gen {
                 name: {:?},
                 family: {:?},
                 line: {:?},
-                memory: {},
+                memory: &[{}],
                 peripherals: PERIPHERALS,
                 nvic_priority_bits: {:?},
                 interrupts: INTERRUPTS,
                 dma_channels: DMA_CHANNELS,
                 pins: PINS,
             }};",
-            deduped_file,
-            &chip.name,
-            &chip.family,
-            &chip.line,
-            stringify(&chip.memory),
-            &core.nvic_priority_bits,
+            deduped_file, &chip.name, &chip.family, &chip.line, memories, &core.nvic_priority_bits,
         );
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();
@@ -207,7 +220,7 @@ impl Gen {
         serde_json::from_slice(&chip).unwrap()
     }
 
-    pub fn gen(&mut self) {
+    pub fn run_gen(&mut self) {
         fs::create_dir_all(self.opts.out_dir.join("src/peripherals")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/registers")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/chips")).unwrap();

@@ -1,0 +1,124 @@
+block/EXTI:
+  description: Extended interrupts and event controller.
+  items:
+  - name: RTSR
+    description: EXTI rising trigger selection register.
+    array:
+        len: 3
+        stride: 32
+    byte_offset: 0
+    fieldset: LINES
+  - name: FTSR
+    description: EXTI falling trigger selection register.
+    array:
+        len: 3
+        stride: 32
+    byte_offset: 4
+    fieldset: LINES
+  - name: SWIER
+    description: EXTI software interrupt event register.
+    array:
+        len: 3
+        stride: 32
+    byte_offset: 8
+    fieldset: LINES
+  - name: RPR
+    description: EXTI rising edge pending register.
+    array:
+        len: 3
+        stride: 32
+    byte_offset: 12
+    fieldset: LINES
+  - name: FPR
+    description: EXTI falling edge pending register.
+    array:
+        len: 3
+        stride: 32
+    byte_offset: 16
+    fieldset: LINES
+  - name: SECCFGR
+    description: EXTI security configuration register.
+    array:
+        len: 3
+        stride: 32
+    byte_offset: 20
+    fieldset: SEC
+  - name: PRIVCFGR
+    description: EXTI privilege configuration register.
+    array:
+        len: 3
+        stride: 32
+    byte_offset: 24
+    fieldset: PRIV
+  - name: EXTICR
+    description: EXTI external interrupt selection register 1.
+    array:
+        len: 4
+        stride: 4
+    byte_offset: 96
+    fieldset: EXTI
+  - name: LOCKR
+    description: EXTI lock register.
+    byte_offset: 112
+    fieldset: LOCKR
+  - name: IMR
+    description: EXTI CPU wake-up with interrupt mask register 1.
+    array:
+        len: 3
+        stride: 16
+    byte_offset: 128
+    fieldset: LINES
+  - name: EMR
+    description: EXTI CPU wake-up with event mask register 1.
+    array:
+        len: 3
+        stride: 16
+    byte_offset: 132
+    fieldset: LINES
+fieldset/EXTI:
+  description: EXTI external interrupt selection register 1.
+  fields:
+  - name: EXTI
+    description: EXTI GPIO port selection.
+    bit_offset: 0
+    bit_size: 8
+    array:
+        len: 4
+        stride: 8
+fieldset/LOCKR:
+  description: EXTI lock register.
+  fields:
+  - name: LOCK
+    description: Global security privilege SECCFGRx/PRIVCFGRx.
+    bit_offset: 0
+    bit_size: 1
+fieldset/PRIV:
+  description: EXTI privilege configuration register.
+  fields:
+  - name: PRIV
+    description: Privilege enable on event input x.
+    bit_offset: 0
+    bit_size: 1
+    array:
+        len: 32
+        stride: 1
+fieldset/SEC:
+  description: EXTI security configuration register.
+  fields:
+  - name: SEC
+    description: Security enable on event input x.
+    bit_offset: 0
+    bit_size: 1
+    array:
+        len: 32
+        stride: 1
+fieldset/LINES:
+  description: EXTI lines register, 1 bit per line
+  fields:
+  - name: LINE
+    description: EXTI line
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1

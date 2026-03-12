@@ -9,8 +9,7 @@ The generated data includes:
   - Packages
 - :heavy_check_mark: Peripheral addresses and interrupts
 - :heavy_check_mark: Interrupts
-- :heavy_check_mark: GPIO AlternateFunction mappings (for all families except F1)
-- :x: GPIO mappings for F1
+- :heavy_check_mark: GPIO AlternateFunction mappings
 - :construction: Register blocks for all peripherals
 - :heavy_check_mark: DMA stream mappings
 - :heavy_check_mark: Per-package pinouts
@@ -93,7 +92,7 @@ For register blocks, YAMLs are initially extracted from SVDs, manually cleaned u
 We don't maintain "patches" for registers unlike the `stm32-rs` project. This has two advantages:
 
 - Fixing mistakes and typos in the SVDs is now much easier (and yes, there are A LOT of those). It doesn't require a complicated patching system, you just edit the YAML to fix the mistake instead of writing a patch that will fix it when applied.
-- Ensuring consistency for the same peripherals between chips. (i.e. we check in a single `i2c_v2.yaml` and ensure it is good, vs trying to patch wildly differing SVDs for what's an identical IP block into being consistent). The `stm32-rs` project doesn't have this as a goal, while we do. Writing a single HAL for all stm32 chips (such as  [the `embassy-stm32` HAL](https://github.com/embassy-rs/embassy/tree/main/embassy-stm32)) is impossible otherwise.
+- Ensuring consistency for the same peripherals between chips. (i.e. we check in a single `i2c_v2.yaml` and ensure it is good, vs trying to patch wildly differing SVDs for what's an identical IP block into being consistent). The `stm32-rs` project doesn't have this as a goal, while we do. Writing a single HAL for all stm32 chips (such as [the `embassy-stm32` HAL](https://github.com/embassy-rs/embassy/tree/main/embassy-stm32)) is impossible otherwise.
 
 ### Toolchain pipeline
 
@@ -105,7 +104,8 @@ This project is built in three stages:
 2. **JSON Generation**
    - `stm32-data-gen` generates the JSON files from consolidated YAML and source data:
      1. Parse YAML files to build an in-memory IR for registers (`src/registers.rs`).
-        - `data/extra/family/*.yaml`: STM32 family metadata (package options, flash/RAM sizes, low-level identifiers).
+        - `data/extra/*.yaml`: Extra or corrective peripheral entries, rules to modify pin names,
+          rules to override pin names for specific instances of a peripheral.
         - `data/header_map.yaml`: MCU slug to HAL C-header filename mapping for base addresses & IRQ extraction.
         - `data/registers/*.yaml`: Register-block definitions (offsets, fields, enums).
         - `data/dmamux/*.yaml`: DMAMUX profiles for families with a DMA multiplexer.
@@ -117,7 +117,7 @@ This project is built in three stages:
      6. Parse RCC registers for clock/reset settings (`src/rcc.rs`).
      7. Parse interrupts to map NVIC lines (`src/interrupts.rs`).
      8. Group all packages of a chip into `ChipGroup` structures (`src/chips.rs`).
-     9. Use the parsed data to dump one JSON per MCU into `build/data/chips/*.json` (in `process_chip` of `src/chips.rs`).
+     9. Use the parsed data to dump one JSON per MCU into `build/data/chips/*.json` (in `process_chip` of `src/generator.rs`).
 
 3. **PAC Generation**
    - `stm32-metapac-gen` consumes the JSON files and generates the PAC crate:
@@ -145,11 +145,11 @@ are only interested in one. It's easier than it looks, and doing all families at
   - 2: SVD inconsistencies, like different register names for the same register
   - 3: SVD mistakes (yes, there are some)
   - 4: Missing stuff in SVDs, usually enums or doc descriptions.
-- Identify how many actually-different (incompatible) versions of the peripheral exist, as we must _not_ merge them. Name them v1, v2.. (if possible, by order of chip release date, see [here](https://docs.google.com/spreadsheets/d/1-R-AjYrMLL2_623G-AFN2A9THMf8FFMpFD4Kq-owPmI/edit#gid=1972450814).
+- Identify how many actually-different (incompatible) versions of the peripheral exist, as we must _not_ merge them. Name them v1, v2... If possible, order them by chip release date.
 - For each version, pick the "best" YAML (the one that has less enums/docs missing), place them in `data/registers/lpuart_vX.yaml`
 - Cleanup the register yamls (see below).
 - Minimize the diff between each pair of versions. For example between `lpuart_v1.yaml` and `lpuart_v2.yaml`. If one is missing enums or descriptions, copy it from another.
-- Make sure the block
+- Make sure the block has the correct name. e.g. `LPUART`, not `LPUART1`.
 - Add entries to [`perimap`](https://github.com/embassy-rs/stm32-data/blob/main/stm32-data-gen/src/perimap.rs), see below.
 - Regen, then:
   - Check `data/chips/*.yaml` has the right `block: lpuart_vX/LPUART` fields.
@@ -180,7 +180,7 @@ NOTE: At the time of writing all families are supported, so this is only useful 
 
 Adding support for a new family is mostly a matter of adding support for RCC.
 
-Now extract the RCC peripheral registers: `./d extract-all RCC --transform ./transform-RCC.yaml`
+Now extract the RCC peripheral registers: `./d extract-all RCC --transform transforms/RCC.yaml`
 
 Note that we have used a transform to mechanically clean up some of the RCC
 definitions. This will produce a YAML file for each chip model in `./tmp/RCC`.
@@ -198,7 +198,7 @@ that they are all mutually consistent.
 Finally, we can merge
 
 ```
-./merge_regs.py tmp/RCC/g0*.yaml
+cargo run --release --bin merge_regs tmp/RCC/g0*.yaml
 ```
 
 This will produce `regs_merged.yaml`, which we can copy into its final resting
@@ -229,29 +229,25 @@ correlates very well to changes in the peripheral's register interface.
 You should prefer matching peripherals by IP version whenever possible. For example:
 
 ```
-('.*:SPI:spi2s1_v2_2', 'spi_v1/SPI'),
-('.*:SPI:spi2s1_v3_2', 'spi_v2/SPI'),
+(".*:SPI:spi2s1_v2_2", ("spi", "v1", "SPI")),
+(".*:SPI:spi2s1_v3_2", ("spi", "v2", "SPI")),
 ```
 
 Sometimes it's not possible to map by IP version, and we have to map by chip name. For example:
 
 ```
-('STM32H7.*:FLASH:.*', 'flash_h7/FLASH'),
-('STM32F0.*:FLASH:.*', 'flash_f0/FLASH'),
-('STM32F1.*:FLASH:.*', 'flash_f1/FLASH'),
-('STM32F3.*:FLASH:.*', 'flash_f3/FLASH'),
-('STM32F4.*:FLASH:.*', 'flash_f4/FLASH'),
+("STM32H7.*:FLASH:.*", ("flash", "h7", "FLASH")),
+("STM32F0.*:FLASH:.*", ("flash", "f0", "FLASH")),
+("STM32F1.*:FLASH:.*", ("flash", "f1", "FLASH")),
+("STM32F3.*:FLASH:.*", ("flash", "f3", "FLASH")),
+("STM32F4.*:FLASH:.*", ("flash", "f4", "FLASH")),
 ...etc
 ```
 
 Sometimes even the same IP name+version in the same chip family has different registers (different instances of the IP are configured differently), so we have to map by chip name AND peripheral instance name. This should be the last resort. For example:
 
 ```
-('STM32F7.*:TIM1:.*', 'timer_v1/TIM_ADV'),
-('STM32F7.*:TIM8:.*', 'timer_v1/TIM_ADV'),
-('.*TIM\d.*:gptimer.*', 'timer_v1/TIM_GP16'),
+("STM32F7.*:TIM1:.*", ("timer_v1", "TIM_ADV")),
+("STM32F7.*:TIM8:.*", ("timer_v1", "TIM_ADV")),
+(".*TIM\d.*:gptimer.*", ("timer_v1", "TIM_GP16")),
 ```
-
-### Peripheral versions
-
-The versions of peripherals can be found in the table [here](https://docs.google.com/spreadsheets/d/1-R-AjYrMLL2_623G-AFN2A9THMf8FFMpFD4Kq-owPmI/edit#gid=0).

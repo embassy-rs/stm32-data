@@ -1,7 +1,11 @@
+#![feature(map_try_insert)]
+
+use crate::trigger::peripheral_trigger_info;
 mod check;
 mod chips;
 mod dma;
 mod docs;
+mod generator;
 mod gpio_af;
 mod header;
 mod interrupts;
@@ -11,6 +15,7 @@ mod normalize_peris;
 mod perimap;
 mod rcc;
 mod registers;
+mod trigger;
 mod util;
 
 #[macro_export]
@@ -65,6 +70,9 @@ fn main() -> anyhow::Result<()> {
 
     let mut stopwatch = Stopwatch::new();
 
+    // validate trigger rules
+    peripheral_trigger_info("", "");
+
     stopwatch.section("Parsing headers");
     let headers = header::Headers::parse()?;
 
@@ -93,7 +101,7 @@ fn main() -> anyhow::Result<()> {
     let (chips, chip_groups) = chips::parse_groups()?;
 
     stopwatch.section("Processing chips");
-    chips::dump_all_chips(
+    generator::dump_all_chips(
         chip_groups,
         headers,
         af,

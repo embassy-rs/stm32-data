@@ -1,0 +1,159 @@
+block/RISAF:
+  description: Resource isolation slave unit for address space protection.
+  items:
+  - name: CR
+    description: RISAF configuration register.
+    byte_offset: 0x000
+    fieldset: CR
+  - name: IASR
+    description: RISAF illegal access status register.
+    byte_offset: 0x008
+    access: Read
+    fieldset: IASR
+  - name: IACR
+    description: RISAF illegal access clear register.
+    byte_offset: 0x00C
+    access: Write
+    fieldset: IACR
+  - name: IAESR
+    description: RISAF illegal access error status register.
+    byte_offset: 0x020
+    access: Read
+    fieldset: IAESR
+  - name: IADDR
+    description: RISAF illegal address register.
+    byte_offset: 0x024
+    access: Read
+    fieldset: IADDR
+  - name: REG_CFGR
+    description: RISAF region configuration register.
+    byte_offset: 0x040
+    array:
+      len: 4
+      stride: 0x40
+    fieldset: REG_CFGR
+  - name: REG_STARTR
+    description: RISAF region start address register.
+    byte_offset: 0x044
+    array:
+      len: 4
+      stride: 0x40
+    fieldset: REG_STARTR
+  - name: REG_ENDR
+    description: RISAF region end address register.
+    byte_offset: 0x048
+    array:
+      len: 4
+      stride: 0x40
+    fieldset: REG_ENDR
+  - name: REG_CIDCFGR
+    description: RISAF region CID configuration register.
+    byte_offset: 0x04C
+    array:
+      len: 4
+      stride: 0x40
+    fieldset: REG_CIDCFGR
+fieldset/CR:
+  description: RISAF configuration register.
+  fields:
+  - name: GLOCK
+    description: Global lock. When set, writes to RISAF registers are ignored except for IACR and region configuration registers.
+    bit_offset: 0
+    bit_size: 1
+fieldset/IASR:
+  description: RISAF illegal access status register.
+  fields:
+  - name: CAEF
+    description: Configuration access error flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: IAEF
+    description: Illegal access error flag.
+    bit_offset: 1
+    bit_size: 1
+fieldset/IACR:
+  description: RISAF illegal access clear register.
+  fields:
+  - name: CAEF
+    description: Clear configuration access error flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: IAEF
+    description: Clear illegal access error flag.
+    bit_offset: 1
+    bit_size: 1
+fieldset/IAESR:
+  description: RISAF illegal access error status register.
+  fields:
+  - name: IACID
+    description: Illegal access compartment ID.
+    bit_offset: 0
+    bit_size: 3
+  - name: IAPRIV
+    description: Illegal access was privileged.
+    bit_offset: 4
+    bit_size: 1
+  - name: IASEC
+    description: Illegal access was secure.
+    bit_offset: 5
+    bit_size: 1
+  - name: IANRW
+    description: Illegal access was a write (0 = read/fetch, 1 = write).
+    bit_offset: 7
+    bit_size: 1
+fieldset/IADDR:
+  description: RISAF illegal address register.
+  fields:
+  - name: IADD
+    description: Illegal access address.
+    bit_offset: 0
+    bit_size: 32
+fieldset/REG_CFGR:
+  description: RISAF region configuration register.
+  fields:
+  - name: BREN
+    description: Base region enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: SEC
+    description: Secure region. When set, only secure requests can access this region.
+    bit_offset: 8
+    bit_size: 1
+  - name: PRIVC
+    description: Privileged access for compartment y. When set, compartment y can only access in privileged mode.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 8
+      stride: 1
+fieldset/REG_STARTR:
+  description: RISAF region start address register.
+  fields:
+  - name: BADDSTART
+    description: Base region start address.
+    bit_offset: 0
+    bit_size: 32
+fieldset/REG_ENDR:
+  description: RISAF region end address register.
+  fields:
+  - name: BADDEND
+    description: Base region end address.
+    bit_offset: 0
+    bit_size: 32
+fieldset/REG_CIDCFGR:
+  description: RISAF region CID configuration register.
+  fields:
+  - name: RDENC
+    description: Read enable for compartment y.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 8
+      stride: 1
+  - name: WRENC
+    description: Write enable for compartment y.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 8
+      stride: 1

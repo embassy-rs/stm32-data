@@ -45,6 +45,14 @@ block/SYSCFG:
     description: RSS command register
     byte_offset: 44
     fieldset: RSSCMDR
+  - name: OTGHSPHYCR
+    description: OTG_HS PHY register
+    byte_offset: 116
+    fieldset: OTGHSPHYCR
+  - name: OTGHSPHYTUNER2
+    description: OTG_HS PHY tune register 2
+    byte_offset: 124
+    fieldset: OTGHSPHYTUNER2
 fieldset/CCCR:
   description: compensation cell code register
   fields:
@@ -55,6 +63,14 @@ fieldset/CCCR:
   - name: PCC1
     description: "PMOS compensation code of the I/Os supplied by V<sub>DD</sub>\r These bits are written by software to define an I/Os compensation cell code for PMOS transistors. This code is applied to the I/Os compensation cell when the CS1 bit of the CCCSR is set."
     bit_offset: 4
+    bit_size: 4
+  - name: NCC2
+    description: "NMOS compensation code of the I/Os supplied by V<sub>DDIO2</sub>\r These bits are written by software to define an I/Os compensation cell code for NMOS transistors. This code is applied to the I/Os compensation cell when the CS2 bit of the CCCSR is set."
+    bit_offset: 8
+    bit_size: 4
+  - name: PCC2
+    description: "PMOS compensation code of the I/Os supplied by V<sub>DDIO2</sub>\r These bits are written by software to define an I/Os compensation cell code for PMOS transistors. This code is applied to the I/Os compensation cell when the CS2 bit of the CCCSR is set."
+    bit_offset: 12
     bit_size: 4
 fieldset/CCCSR:
   description: compensation cell control/status register
@@ -67,9 +83,21 @@ fieldset/CCCSR:
     description: "VDD I/Os code selection\r This bit selects the code to be applied for the compensation cell of the I/Os supplied by V<sub>DD</sub>."
     bit_offset: 1
     bit_size: 1
+  - name: EN2
+    description: "VDDIO2 I/Os compensation cell enable\r This bit enables the compensation cell of the I/Os supplied by V<sub>DDIO2</sub>."
+    bit_offset: 2
+    bit_size: 1
+  - name: CS2
+    description: "VDDIO2 I/Os code selection\r This bit selects the code to be applied for the compensation cell of the I/Os supplied by V<sub>DDIO2</sub>."
+    bit_offset: 3
+    bit_size: 1
   - name: RDY1
     description: "VDD I/Os compensation cell ready flag\r This bit provides the compensation cell status of the I/Os supplied by V<sub>DD</sub>.\r Note: The HSI clock is required for the compensation cell to work properly. The compensation cell ready bit (RDY1) is not set if the HSI clock is not enabled (HSION)."
     bit_offset: 8
+    bit_size: 1
+  - name: RDY2
+    description: "VDDIO2 I/Os compensation cell ready flag\r This bit provides the compensation cell status of the I/Os supplied by V<sub>DDIO2</sub>.\r Note: The HSI clock is required for the compensation cell to work properly. The compensation cell ready bit (RDY2) is not set if the HSI clock is not enabled (HSION)."
+    bit_offset: 9
     bit_size: 1
 fieldset/CCVR:
   description: compensation cell value register
@@ -81,6 +109,14 @@ fieldset/CCVR:
   - name: PCV1
     description: "PMOS compensation value of the I/Os supplied by V<sub>DD</sub>\r This value is provided by the cell and can be used by the CPU to compute an I/Os compensation cell code for PMOS transistors. This code is applied to the I/Os compensation cell when the CS1 bit of the CCCSR is reset."
     bit_offset: 4
+    bit_size: 4
+  - name: NCV2
+    description: "NMOS compensation value of the I/Os supplied by V<sub>DDIO2</sub>\r This value is provided by the cell and can be used by the CPU to compute an I/Os compensation cell code for NMOS transistors. This code is applied to the I/Os compensation cell when the CS2 bit of the CCCSR is reset."
+    bit_offset: 8
+    bit_size: 4
+  - name: PCV2
+    description: "PMOS compensation value of the I/Os supplied by V<sub>DDIO2</sub>\r This value is provided by the cell and can be used by the CPU to compute an I/Os compensation cell code for PMOS transistors. This code is applied to the I/Os compensation cell when the CS2 bit of the CCCSR is reset."
+    bit_offset: 12
     bit_size: 4
 fieldset/CFGR1:
   description: configuration register 1
@@ -172,6 +208,37 @@ fieldset/MESR:
     description: "ICACHE and PKA SRAM erase status\r This bit is set by hardware when ICACHE and PKA SRAM erase is completed after potential tamper detection (refer to Section�75: Tamper and backup registers (TAMP) for more details). This bit is cleared by software by writing 1 to it."
     bit_offset: 16
     bit_size: 1
+fieldset/OTGHSPHYCR:
+  description: OTG_HS PHY register
+  fields:
+  - name: EN
+    description: PHY Enable
+    bit_offset: 0
+    bit_size: 1
+  - name: PDCTRL
+    description: Common block power-down control
+    bit_offset: 1
+    bit_size: 1
+  - name: CLKSEL
+    description: Reference clock frequency selection
+    bit_offset: 2
+    bit_size: 4
+    enum: USBREFCKSEL
+fieldset/OTGHSPHYTUNER2:
+  description: OTG_HS tune register 2
+  fields:
+  - name: COMPDISTUNE
+    description: Disconnect threshold adjustment
+    bit_offset: 0
+    bit_size: 3
+  - name: SQRXTUNE
+    description: Squelch threshold adjustment
+    bit_offset: 4
+    bit_size: 3
+  - name: TXPREEMPAMPTUNE
+    description: HS transmitter preemphasis current control
+    bit_offset: 13
+    bit_size: 2
 fieldset/RSSCMDR:
   description: RSS command register
   fields:
@@ -194,3 +261,24 @@ fieldset/SECCFGR:
     description: FPU security
     bit_offset: 3
     bit_size: 1
+enum/USBREFCKSEL:
+  bit_size: 4
+  variants:
+  - name: Mhz16
+    description: The kernel clock frequency provided to the OTG_HS PHY is 16 MHz.
+    value: 3
+  - name: Mhz19_2
+    description: The kernel clock frequency provided to the OTG_HS PHY is 19.2 MHz.
+    value: 8
+  - name: Mhz20
+    description: The kernel clock frequency provided to the OTG_HS PHY is 20MHz.
+    value: 9
+  - name: Mhz24
+    description: The kernel clock frequency provided to the OTG_HS PHY is 24 MHz (default after reset).
+    value: 10
+  - name: Mhz32
+    description: The kernel clock frequency provided to the OTG_HS PHY is 32 MHz.
+    value: 11
+  - name: Mhz26
+    description: The kernel clock frequency provided to the OTG_HS PHY is 26 MHz.
+    value: 14

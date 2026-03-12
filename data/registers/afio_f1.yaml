@@ -125,9 +125,10 @@ fieldset/MAPR:
     bit_offset: 23
     bit_size: 1
   - name: SWJ_CFG
-    description: Serial wire JTAG configuration
+    description: Serial wire JTAG configuration (must be set to NoOp to leave it unchanged!)
     bit_offset: 24
     bit_size: 3
+    enum: SWJ_CFG
   - name: SPI3_REMAP
     description: SPI3/I2S3 remapping
     bit_offset: 28
@@ -140,6 +141,24 @@ fieldset/MAPR:
     description: Ethernet PTP PPS remapping
     bit_offset: 30
     bit_size: 1
+enum/SWJ_CFG:
+  bit_size: 3
+  variants:
+  - name: Reset
+    description: Full SWJ (JTAG-DP + SW-DP) (Reset state)
+    value: 0
+  - name: NoJntRst
+    description: Full SWJ (JTAG-DP + SW-DP) but without NJTRST
+    value: 1
+  - name: JtagDisable
+    description: JTAG-DP Disabled and SW-DP Enabled
+    value: 2
+  - name: Disable
+    description: JTAG-DP Disabled and SW-DP Disabled
+    value: 4
+  - name: NoOp
+    description: Sets all bits to 1, indicating that the configuration should remain unchanged
+    value: 7
 fieldset/MAPR2:
   description: AF remap and debug I/O configuration register
   fields:

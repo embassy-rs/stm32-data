@@ -20,6 +20,12 @@ cargo fmt -- --check
 # so the diff will show this PR's effect
 git remote add upstream https://github.com/embassy-rs/stm32-data
 git fetch --depth 15 upstream main
+if git branch --remote --contains HEAD | grep upstream/main; then
+    echo "on base branch"
+else
+    echo "not on base branch"
+    git pull -q upstream main --no-rebase
+fi
 set +e
 git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build -q
 DIFF_OK=$?
@@ -44,6 +50,11 @@ if [ $DIFF_OK -eq 0 ]; then
 
     cat > /ci/comment.md <<EOF
 diff: https://ci.embassy.dev/jobs/$(jq -r .id < /ci/job.json)/artifacts/diff.html
+git: https://ci.embassy.dev/jobs/$(jq -r .id < /ci/job.json)/artifacts/generated.git
+EOF
+else
+    cat > /ci/comment.md <<EOF
+please pull the base branch so that a diff can be generated
 EOF
 fi
 
@@ -60,3 +71,7 @@ fi
     git update-server-info  # generate .git/info/refs
     mv .git /ci/artifacts/generated.git
 )
+
+if [ $DIFF_OK -ne 0 ]; then
+    exit 1
+fi

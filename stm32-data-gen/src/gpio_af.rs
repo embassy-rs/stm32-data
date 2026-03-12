@@ -109,6 +109,8 @@ pub fn parse_signal_name(signal_name: &str) -> Option<(&str, &str)> {
             ("USB_OTG_FS", signal_name)
         } else if let Some(signal_name) = signal_name.strip_prefix("USB_OTG_HS_") {
             ("USB_OTG_HS", signal_name)
+        } else if signal_name == "CEC" {
+            ("CEC", "CEC")
         } else {
             signal_name.split_once('_')?
         }

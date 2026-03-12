@@ -46,6 +46,7 @@ fieldset/CR1:
     description: "Low-power mode selection\r These bits select the low-power mode entered when CPU enters deepsleep mode.\r 1XX: Shutdown mode"
     bit_offset: 0
     bit_size: 3
+    enum: LPMS
   - name: FPD_STOP
     description: "Flash memory powered down during Stop mode\r This bit determines whether the Flash memory is put in power-down mode or remains in idle mode when the device enters Stop mode."
     bit_offset: 3
@@ -131,3 +132,15 @@ fieldset/SR2:
     description: "Flash ready flag\r This bit is set by hardware to indicate when the Flash memory is ready to be accessed after wakeup from power-down. To place the Flash memory in power-down, set either FPD_SLP or FPD_STP bit.\r Note: If the system boots from SRAM, the user application must wait till FLASH_RDY bit is set, prior to jumping to Flash memory."
     bit_offset: 7
     bit_size: 1
+enum/LPMS:
+  bit_size: 3
+  variants:
+  - name: Stop
+    description: Selects Stop mode when entering DeepSleep.
+    value: 0b000
+  - name: Standby
+    description: Selects Standby mode when entering DeepSleep.
+    value: 0b011
+  - name: Shutdown
+    description: Selects Shutdown mode when entering DeepSleep.
+    value: 0b100

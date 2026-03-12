@@ -18,6 +18,10 @@ impl<'a, T> RegexMap<'a, T> {
         }
     }
 
+    pub const fn get_map(&self) -> &'a [(&'a str, T)] {
+        self.map
+    }
+
     pub fn get(&self, key: &str) -> Option<&'a T> {
         if let Some(&val) = self.cache.lock().unwrap().get_or_insert_with(Default::default).get(key) {
             return val.map(|i| &self.map[i].1);
@@ -54,5 +58,21 @@ impl<'a, T> RegexMap<'a, T> {
             panic!("no regexmap for key '{key}'")
         };
         res
+    }
+}
+
+pub struct RegexSet<'a> {
+    map: RegexMap<'a, ()>,
+}
+
+impl<'a> RegexSet<'a> {
+    pub const fn new(map: &'a [&'a str]) -> Self {
+        Self {
+            map: RegexMap::new(unsafe { std::mem::transmute::<&[&str], &[(&str, ())]>(map) }),
+        }
+    }
+
+    pub fn contains(&self, key: &str) -> bool {
+        self.map.get(key).is_some()
     }
 }

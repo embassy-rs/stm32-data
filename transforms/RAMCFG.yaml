@@ -1,0 +1,24 @@
+transforms:
+  # Delete useless enable/disable enums (single-bit fields)
+  - !DeleteEnums
+    from: ^(ALE|PEIE|PENMI|PED|SRAMER|SRAMBUSY|ECCE|ECCMIE|SEDC|DEDC)$
+
+  # Delete field-specific useless enums
+  - !DeleteEnums
+    from: ^M\d(CR|ISR)_(ALE|PEIE|PENMI|PED|SRAMER|SRAMBUSY|ECCE|WSC)$
+
+  # Delete write protection enums (all PxxWP fields)
+  - !DeleteEnums
+    from: ^P\d+WP$
+
+  # Convert PxxWP fields to arrays in WPR1 registers
+  - !MakeFieldArray
+    fieldsets: ^M\dWPR1$
+    from: P\d+WP
+    to: PWP
+
+  # Convert PxxWP fields to arrays in WPR2 registers
+  - !MakeFieldArray
+    fieldsets: ^M\dWPR2$
+    from: P\d+WP
+    to: PWP
