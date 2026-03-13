@@ -716,7 +716,8 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32WBA.*:COMP[12]:.*", ("comp", "u5", "COMP")),
     ("STM32F373.*:COMP[12]:.*", ("comp", "f3_v1", "COMP")),
     (r".*:.*:DCACHE:.*", ("dcache", "v1", "DCACHE")),
-    (".*:.*:PSSI:.*", ("pssi", "v1", "PSSI")),
+    ("STM32(L4|U5|H5|H7[23AB]).*:PSSI:.*", ("pssi", "v1", "PSSI")),
+    ("STM32H7[RS].*:PSSI:.*", ("pssi", "v1_h7rs", "PSSI")),
     (".*:.*:DTS:.*", ("dts", "v1", "DTS")),
     // HDMI_CEC for F1
     (".*:HDMI_CEC:hdmi_cec_v1_1", ("cec", "v1", "CEC")),
