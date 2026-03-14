@@ -792,32 +792,49 @@ fn apply_extras(
     peripherals: &mut HashMap<String, stm32_data_serde::chip::core::Peripheral>,
 ) {
     for extra in extras {
-        let family_matches = extra.matches.family.as_ref().map_or(true, |f| f == &group.family);
+        let family_matches = extra.matches.family.as_ref().is_none_or(|f| f == &group.family);
         let chip_matches = extra
             .matches
             .chip
             .as_ref()
-            .map_or(true, |c| Regex::new(&format!("^{c}$")).unwrap().is_match(chip_name));
+            .is_none_or(|c| Regex::new(&format!("^{c}$")).unwrap().is_match(chip_name));
         if !family_matches || !chip_matches {
             continue;
         }
 
         // merge extra peripherals
-        if let Some(extra_peris) = &extra.peripherals {
-            for p in extra_peris {
-                let mut p = p.clone();
-                if let Some(peripheral) = peripherals.get_mut(&p.name)
-                    && p.pins.len() > 0
-                {
-                    let signals: HashMap<String, String> =
-                        p.pins.iter().map(|p| (p.pin.clone(), p.signal.clone())).collect();
+        if let Some(extras) = &extra.peripherals {
+            for extra_periph in extras {
+                let mut extra_periph = extra_periph.clone();
+                let Some(generated_periph) = peripherals.get_mut(&extra_periph.name) else {
+                    if extra_periph.address != 0 {
+                        // filter out pins that may not exist in this package.
+                        extra_periph.pins.retain(|p| group.pins.contains_key(&p.pin));
+
+                        // Only insert the peripheral if the address is not the default
+                        peripherals.insert(extra_periph.name.clone(), extra_periph);
+                    }
+                    continue;
+                };
+
+                // Merge in extra's registers if the generated peripheral doesn't have any.
+                if extra_periph.registers.is_some() && generated_periph.registers.is_none() {
+                    generated_periph.registers = extra_periph.registers
+                }
+
+                if extra_periph.pins.len() > 0 {
+                    let signals: HashMap<String, String> = extra_periph
+                        .pins
+                        .iter()
+                        .map(|p| (p.pin.clone(), p.signal.clone()))
+                        .collect();
 
                     // filter out pins that may not exist in this package.
-                    p.pins.retain(|p| group.pins.contains_key(&p.pin));
+                    extra_periph.pins.retain(|p| group.pins.contains_key(&p.pin));
 
                     // Modify the generated peripheral
-                    let mut pins: Vec<Pin> = p.pins.clone();
-                    let mut other_pins: Vec<Pin> = peripheral
+                    let mut pins: Vec<Pin> = extra_periph.pins.clone();
+                    let mut other_pins: Vec<Pin> = generated_periph
                         .pins
                         .iter()
                         .filter_map(|p| {
@@ -830,17 +847,11 @@ fn apply_extras(
                         .collect();
 
                     pins.append(&mut other_pins);
-                    pins.append(&mut peripheral.pins);
+                    pins.append(&mut generated_periph.pins);
                     pins.dedup_by_key(|x| (x.pin.clone(), x.signal.clone()));
                     pins.sort_by_key(|p| (p.pin.clone(), p.signal.clone()));
 
-                    peripheral.pins = pins;
-                } else if p.address != 0 {
-                    // filter out pins that may not exist in this package.
-                    p.pins.retain(|p| group.pins.contains_key(&p.pin));
-
-                    // Only insert the peripheral if the address is not the default
-                    peripherals.insert(p.name.clone(), p);
+                    generated_periph.pins = pins;
                 }
             }
         }
