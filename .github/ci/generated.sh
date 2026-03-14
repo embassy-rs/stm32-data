@@ -1,5 +1,6 @@
 #!/bin/bash
 ## on push branch=main
+## dedup kill
 ## permission contents write
 ## permission_repo stm32-data-generated
 
