@@ -739,6 +739,14 @@ fn merge_periph_pins_info(
         }
     }
 
+    if chip_name.starts_with("STM32U0") || chip_name.starts_with("STM32U3") {
+        for pin in &mut core_pins[..] {
+            if pin.signal == "MCO2" {
+                pin.signal = "MCO_2".to_string()
+            }
+        }
+    }
+
     // Rename QUADSPI_NCS for the STM32L* family to QUADSPI_BK1_NCS
     if periph_name == "QUADSPI" {
         for pin in &mut core_pins[..] {
