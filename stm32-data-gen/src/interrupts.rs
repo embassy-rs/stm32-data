@@ -278,7 +278,12 @@ impl ChipInterrupts {
                 interrupt_signals.insert(("IWDG".to_string(), "GLOBAL".to_string()));
             } else if name == "RCC_AUDIOSYNC" {
                 // ignore
+            } else if name == "HSEM" {
+                interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
+            } else if name == "HSEM_S" {
+                interrupt_signals.insert(("HSEM".to_string(), "HSEM_S".to_string()));
             } else if name.starts_with("HSEM") {
+                // Fallback for unexpected Cube NVIC names that still target HSEM.
                 interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
             } else {
                 if parts[2].is_empty() {
@@ -380,6 +385,17 @@ impl ChipInterrupts {
                 let irqs = signals.entry(s).or_default();
                 irqs.insert(header_name.clone());
             }
+        }
+
+        // TrustZone: `HSEM_S_IRQn` appears in NVIC1 while `pick_nvic` uses NVIC2 for `cm33` on WBA5x/6x.
+        // The CMSIS header still defines both IRQ names, so attach the secure line explicitly.
+        if exists_irq.contains("HSEM") && exists_irq.contains("HSEM_S") {
+            chip_signals
+                .entry("HSEM".to_string())
+                .or_default()
+                .entry("HSEM_S".to_string())
+                .or_default()
+                .insert("HSEM_S".to_string());
         }
 
         for p in &mut core.peripherals {
@@ -594,6 +610,7 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("RAMECC", &["ECC"]),
         ("RAMCFG", &["BKP", "ECC"]),
         ("LTDC", &["ER", "LO"]),
+        ("HSEM", &["GLOBAL", "HSEM_S"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
