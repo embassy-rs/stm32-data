@@ -595,6 +595,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32H743.*:HSEM:.*", ("hsem", "v2", "HSEM")),
     ("STM32WL5.*:HSEM:.*", ("hsem", "v3", "HSEM")),
     ("STM32WLE.*:HSEM:.*", ("hsem", "v4", "HSEM")),
+    ("STM32WBA.*:HSEM:.*", ("hsem", "wba", "HSEM")),
     (".*:DMAMUX.*", ("dmamux", "v1", "DMAMUX")),
     (r".*:GPDMA\d?:.*", ("gpdma", "v1", "GPDMA")),
     (r".*:HPDMA\d?:.*", ("gpdma", "v1", "GPDMA")), // TODO it has a few more bits like DWX
