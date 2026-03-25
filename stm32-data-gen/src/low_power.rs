@@ -36,6 +36,20 @@ pub(crate) fn peripheral_stop_mode_info(mcu_name: &str, peripheral: &str) -> Opt
         (r"^STM32WL55.*:IPCC", StopMode::Standby),
         (r"^STM32WL55.*:HSEM", StopMode::Stop2),
 
+        // STM32WBA series - from RM0515 Table 90
+        // Stop2-capable (Standby in StopMode terms): overrides generic .*:LP.* rule for LPUART1/LPTIM1
+        (r"^STM32WBA.*:LPUART1", StopMode::Standby),
+        (r"^STM32WBA.*:LPTIM1",  StopMode::Standby),
+        (r"^STM32WBA.*:I2C3",    StopMode::Standby),
+        (r"^STM32WBA.*:SPI3",    StopMode::Standby),
+        // Stop1-capable only: USART1/2/3, I2C1, SPI1, ADC4, COMP1/2
+        (r"^STM32WBA.*:USART\d", StopMode::Stop2),
+        (r"^STM32WBA.*:I2C\d",   StopMode::Stop2),
+        (r"^STM32WBA.*:SPI\d",   StopMode::Stop2),
+        (r"^STM32WBA.*:ADC4",    StopMode::Stop2),
+        (r"^STM32WBA.*:COMP\d",  StopMode::Stop2),
+        // GPDMA1 is Stop0-only (BAM wakeup) — default Stop1 is correct, no entry needed
+
         (r"^STM32U3.*:GPDMA.*", StopMode::Stop2),
         (r"^STM32U3.*:LPDMA.*", StopMode::Standby),
         (r"^STM32U5.*:GPDMA.*", StopMode::Stop2),
