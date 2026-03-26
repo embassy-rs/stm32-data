@@ -387,17 +387,6 @@ impl ChipInterrupts {
             }
         }
 
-        // TrustZone: `HSEM_S_IRQn` appears in NVIC1 while `pick_nvic` uses NVIC2 for `cm33` on WBA5x/6x.
-        // The CMSIS header still defines both IRQ names, so attach the secure line explicitly.
-        if exists_irq.contains("HSEM") && exists_irq.contains("HSEM_S") {
-            chip_signals
-                .entry("HSEM".to_string())
-                .or_default()
-                .entry("HSEM_S".to_string())
-                .or_default()
-                .insert("HSEM_S".to_string());
-        }
-
         for p in &mut core.peripherals {
             if let Some(signals) = chip_signals.get(&p.name) {
                 let mut all_irqs: Vec<stm32_data_serde::chip::core::peripheral::Interrupt> = Vec::new();
@@ -610,7 +599,7 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("RAMECC", &["ECC"]),
         ("RAMCFG", &["BKP", "ECC"]),
         ("LTDC", &["ER", "LO"]),
-        ("HSEM", &["GLOBAL", "HSEM_S"]),
+        ("HSEM", &["GLOBAL"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
