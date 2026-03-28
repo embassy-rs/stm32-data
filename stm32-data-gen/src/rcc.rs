@@ -400,6 +400,11 @@ impl ParsedRccs {
                         panic!("rcc_{}: peripheral {} missing mux", rcc_version, peri_name)
                     }
                 }
+                if rcc_version.starts_with("h7") {
+                    if peri_name.starts_with("LTDC") {
+                        maybe_kernel_clock = "PLL3_R".to_string();
+                    }
+                }
                 rcc::KernelClock::Clock(maybe_kernel_clock)
             }
         };
