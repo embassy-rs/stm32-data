@@ -4,6 +4,7 @@ use anyhow::Context;
 use stm32_data_serde::chip::core::peripheral::RemapInfo;
 
 use crate::normalize_peris::normalize_peri_name;
+use crate::util::try_insert;
 
 mod xml {
     use serde::Deserialize;
@@ -114,34 +115,34 @@ fn build_remap_info_f3() -> HashMap<RemapKey, Vec<RemapInfo>> {
 
     macro_rules! cfgr1_dma1 {
         ($field:expr, $value:expr, $peripheral:expr, $signal:expr, $channel:expr) => {
-            remap_map
-                .try_insert(
-                    RemapKey::new($peripheral, $signal, 1, $channel),
-                    vec![cfgr(1, $field.to_string(), $value)],
-                )
-                .unwrap();
+            try_insert(
+                &mut remap_map,
+                RemapKey::new($peripheral, $signal, 1, $channel),
+                vec![cfgr(1, $field.to_string(), $value)],
+            )
+            .unwrap();
         };
     }
 
     macro_rules! cfgr1_dma2 {
         ($field:expr, $value:expr, $peripheral:expr, $signal:expr, $channel:expr) => {
-            remap_map
-                .try_insert(
-                    RemapKey::new($peripheral, $signal, 2, $channel),
-                    vec![cfgr(1, $field.to_string(), $value)],
-                )
-                .unwrap();
+            try_insert(
+                &mut remap_map,
+                RemapKey::new($peripheral, $signal, 2, $channel),
+                vec![cfgr(1, $field.to_string(), $value)],
+            )
+            .unwrap();
         };
     }
 
     macro_rules! cfgr3_dma1 {
         ($field:expr, $value:expr, $peripheral:expr, $signal:expr, $channel:expr) => {
-            remap_map
-                .try_insert(
-                    RemapKey::new($peripheral, $signal, 1, $channel),
-                    vec![cfgr(3, $field.to_string(), $value)],
-                )
-                .unwrap();
+            try_insert(
+                &mut remap_map,
+                RemapKey::new($peripheral, $signal, 1, $channel),
+                vec![cfgr(3, $field.to_string(), $value)],
+            )
+            .unwrap();
         };
     }
 
@@ -215,26 +216,26 @@ fn build_remap_info_f0_bdma_v1() -> HashMap<RemapKey, Vec<RemapInfo>> {
 
     macro_rules! cfgr1 {
         ($field:expr, $value:expr, $peripheral:expr, $signal:expr, $channel:expr) => {
-            remap_map
-                .try_insert(
-                    RemapKey::new($peripheral, $signal, 1, $channel),
-                    vec![cfgr(1, $field.to_string(), $value)],
-                )
-                .unwrap();
+            try_insert(
+                &mut remap_map,
+                RemapKey::new($peripheral, $signal, 1, $channel),
+                vec![cfgr(1, $field.to_string(), $value)],
+            )
+            .unwrap();
         };
     }
 
     macro_rules! cfgr1_rmp2 {
         ($value_rmp:expr, $value_rmp2:expr, $peripheral:expr, $signal:expr, $channel:expr) => {
-            remap_map
-                .try_insert(
-                    RemapKey::new($peripheral, $signal, 1, $channel),
-                    vec![
-                        cfgr(1, format!("{}_DMA_RMP", $peripheral), $value_rmp),
-                        cfgr(1, format!("{}_DMA_RMP2", $peripheral), $value_rmp2),
-                    ],
-                )
-                .unwrap();
+            try_insert(
+                &mut remap_map,
+                RemapKey::new($peripheral, $signal, 1, $channel),
+                vec![
+                    cfgr(1, format!("{}_DMA_RMP", $peripheral), $value_rmp),
+                    cfgr(1, format!("{}_DMA_RMP2", $peripheral), $value_rmp2),
+                ],
+            )
+            .unwrap();
         };
     }
 
