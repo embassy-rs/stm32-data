@@ -1,5 +1,3 @@
-#![feature(map_try_insert)]
-
 use crate::trigger::peripheral_trigger_info;
 mod check;
 mod chips;

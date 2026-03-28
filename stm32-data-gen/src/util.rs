@@ -1,7 +1,20 @@
 use std::collections::HashMap;
+use std::collections::hash_map::Entry;
+use std::hash::Hash;
 use std::sync::{Mutex, OnceLock};
 
 use regex::Regex;
+
+pub fn try_insert<K: Eq + Hash, V>(map: &mut HashMap<K, V>, key: K, value: V) -> Result<(), ()> {
+    match map.entry(key) {
+        Entry::Occupied(_) => Err(()),
+        Entry::Vacant(entry) => {
+            entry.insert(value);
+
+            Ok(())
+        }
+    }
+}
 
 pub struct RegexMap<'a, T> {
     map: &'a [(&'a str, T)],
