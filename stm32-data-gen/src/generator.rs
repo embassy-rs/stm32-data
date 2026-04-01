@@ -830,6 +830,9 @@ fn apply_extras(
                     generated_periph.registers = extra_periph.registers
                 }
 
+                // DMA channels do not exist in generated periph at this point
+                generated_periph.dma_channels = extra_periph.dma_channels;
+
                 if extra_periph.pins.len() > 0 {
                     let signals: HashMap<String, String> = extra_periph
                         .pins
@@ -993,7 +996,7 @@ fn associate_peripherals_dma_channels(
             }
         }
         chs.sort_by_key(|ch| (ch.channel.clone(), ch.dmamux.clone(), ch.request));
-        p.dma_channels = chs;
+        p.dma_channels.append(&mut chs);
     }
 }
 
