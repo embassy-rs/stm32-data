@@ -111,17 +111,6 @@ impl Gen {
         let data = generate::render(&ir, &gen_opts()).unwrap().to_string();
         let data = data.replace("] ", "]\n");
 
-        // update generated pac.rs to edition 2024
-        // TODO: fix upstream generation
-        let data = data
-            .replace("extern \"C\"", "unsafe extern \"C\"")
-            .replace("unsafe unsafe", "unsafe")
-            .replace(
-                "[link_section = \".vector_table.interrupts\"]",
-                "[unsafe(link_section = \".vector_table.interrupts\")]",
-            )
-            .replace("[no_mangle]", "[unsafe(no_mangle)]");
-
         // Remove inner attributes like #![no_std]
         let data = Regex::new("# *! *\\[.*\\]").unwrap().replace_all(&data, "");
 
@@ -358,7 +347,7 @@ impl Gen {
         .unwrap();
         fs::write(
             self.opts.out_dir.join("src/common.rs"),
-            chiptool::generate::COMMON_MODULE,
+            include_bytes!("../res/src/common.rs"),
         )
         .unwrap();
         fs::write(
