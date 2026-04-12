@@ -393,7 +393,7 @@ impl ParsedRccs {
                     } else if rcc_version.starts_with("f2") {
                         maybe_kernel_clock = "PLL1_Q".to_string();
                     } else if rcc_version.starts_with("l1") {
-                        maybe_kernel_clock = "PLL1_VCO_DIV_2".to_string();
+                        maybe_kernel_clock = "PLL1_VCO_DIV2".to_string();
                     } else if rcc_version.starts_with("h7rs") {
                         maybe_kernel_clock = "USB".to_string();
                     } else {

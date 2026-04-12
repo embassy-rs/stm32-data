@@ -93,7 +93,7 @@ impl Gen {
 
         // Cleanups!
         transform::sort::Sort {}.run(&mut ir).unwrap();
-        transform::sanitize::Sanitize {}.run(&mut ir).unwrap();
+        transform::sanitize::Sanitize::default().run(&mut ir).unwrap();
 
         // ==============================
         // Setup chip dir
@@ -268,7 +268,7 @@ impl Gen {
             });
 
             transform::sort::Sort {}.run(&mut ir).unwrap();
-            transform::sanitize::Sanitize {}.run(&mut ir).unwrap();
+            transform::sanitize::Sanitize::default().run(&mut ir).unwrap();
 
             let items = generate::render(&ir, &gen_opts()).unwrap();
             let mut file = File::create(
@@ -347,7 +347,7 @@ impl Gen {
         .unwrap();
         fs::write(
             self.opts.out_dir.join("src/common.rs"),
-            include_bytes!("../res/src/common.rs"),
+            chiptool::generate::COMMON_MODULE,
         )
         .unwrap();
         fs::write(
