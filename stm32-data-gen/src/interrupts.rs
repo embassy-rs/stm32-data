@@ -55,6 +55,7 @@ impl ChipInterrupts {
 
         for f in files {
             trace!("parsing {f:?}");
+
             let file = std::fs::read_to_string(&f)?;
             let parsed: xml::Ip = quick_xml::de::from_str(&file)?;
 
@@ -116,20 +117,35 @@ impl ChipInterrupts {
         // =================== Populate peripheral interrupts
         let core_name = &core.name;
         let want_nvic_name = pick_nvic(chip_name, core_name);
-        let chip_nvic = group
-            .ips
-            .values()
-            .find(|x| x.name == want_nvic_name)
-            .ok_or_else(|| {
-                format!(
-                    "couldn't find nvic. chip_name={chip_name} core_name={core_name} want_nvic_name={want_nvic_name}"
-                )
-            })
-            .unwrap();
-        let nvic_strings = match self.irqs.get(&(chip_nvic.name.clone(), chip_nvic.version.clone())) {
-            Some(strings) => strings,
-            None => return Err(anyhow::anyhow!("Failed to find NVIC strings for chip {chip_name}")),
-        };
+
+        let chip_nvic = group.ips.values().find(|x| x.name == want_nvic_name).ok_or_else(|| {
+            anyhow::anyhow!(
+                "couldn't find nvic. chip_name={chip_name} core_name={core_name} want_nvic_name={want_nvic_name}"
+            )
+        })?;
+
+        let mut nvic_strings: Vec<String> = self
+            .irqs
+            .get(&(chip_nvic.name.clone(), chip_nvic.version.clone()))
+            .ok_or_else(|| anyhow::anyhow!("Failed to find NVIC strings for chip {chip_name}"))?
+            .clone();
+
+        // For TrustZone single-core chips, pick_nvic() selects NVIC2 (non-secure). However,
+        // security peripherals like GTZC have their interrupts defined only in NVIC1 (secure).
+        // Include NVIC1 as well so that the interrupt table includes GTZC and other secure IRQs.
+        //
+        // Intentionally excludes multi-core chips (STM32H7xx, STM32WL5xx) where NVIC1 and
+        // NVIC2 belong to different CPU cores and must not be merged.
+        if want_nvic_name == "NVIC2" && !chip_name.starts_with("STM32H7") && !chip_name.starts_with("STM32WL5") {
+            if let Some(nvic1) = group.ips.values().find(|x| x.name == "NVIC1") {
+                if let Some(strings) = self.irqs.get(&(nvic1.name.clone(), nvic1.version.clone())) {
+                    nvic_strings.extend(strings.iter().cloned());
+                }
+            }
+        }
+
+        nvic_strings.sort();
+        nvic_strings.dedup();
 
         // peripheral -> signal -> interrupts
         let mut chip_signals = HashMap::<String, HashMap<String, HashSet<String>>>::new();
@@ -208,7 +224,7 @@ impl ChipInterrupts {
 
             // F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
             // to the same IRQ number.
-            if chip_nvic.version == "STM32F100E" && name == "DMA2_Channel4_5" {
+            if chip_name.starts_with("STM32F100") && name == "DMA2_Channel4_5" {
                 continue;
             }
             //not supported
@@ -280,6 +296,10 @@ impl ChipInterrupts {
                 // ignore
             } else if name == "HSEM" {
                 interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
+            } else if name == "HSEM1" {
+                interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
+            } else if name == "HSEM2" {
+                interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
             } else if name == "HSEM_S" {
                 interrupt_signals.insert(("HSEM".to_string(), "HSEM_S".to_string()));
             } else if name.starts_with("HSEM") {
@@ -296,6 +316,16 @@ impl ChipInterrupts {
                     .map(|x| if x == "USB_DRD_FS" { "USB" } else { x })
                     .map(|x| if x == "XPI1" { "XSPI1" } else { x })
                     .map(|x| if x == "XPI2" { "XSPI2" } else { x })
+                    // GTZC_S and GTZC_NS are IP instance names for the GTZC controller in
+                    // secure/non-secure context. The interrupt (GTZC_IRQn) belongs to GTZC_TZIC,
+                    // which is the sub-peripheral that handles TrustZone violation interrupts.
+                    .map(|x| {
+                        if x == "GTZC_S" || x == "GTZC_NS" {
+                            "GTZC_TZIC"
+                        } else {
+                            x
+                        }
+                    })
                     .map(ToString::to_string)
                     .collect();
 
@@ -392,12 +422,12 @@ impl ChipInterrupts {
                 let mut all_irqs: Vec<stm32_data_serde::chip::core::peripheral::Interrupt> = Vec::new();
 
                 // remove duplicates
-                let globals = signals.get("GLOBAL").cloned().unwrap_or_default();
+                let _globals = signals.get("GLOBAL").cloned().unwrap_or_default();
                 for (signal, irqs) in signals {
                     let mut irqs = irqs.clone();
 
-                    // Special case for LTDC LO signal with both LTDC_LO and LTDC_LO_ERR IRQs
-                    if irqs.len() != 1 && p.name == "LTDC" && signal == "LO" {
+                    // Special case for LTDC LO/UP signal with both LTDC_LO/UP and LTDC_LO/UP_ERR IRQs
+                    if irqs.len() != 1 && p.name == "LTDC" && (signal == "LO" || signal == "UP") {
                         // Prefer the IRQ name that doesn't contain "_ERR"
                         let non_err_irqs: Vec<_> = irqs.iter().filter(|x| !x.contains("_ERR")).cloned().collect();
                         if !non_err_irqs.is_empty() {
@@ -420,9 +450,72 @@ impl ChipInterrupts {
                         }
                     }
 
+                    // Special case for LTDC ER signal on N6, which has multiple error IRQs
+                    if irqs.len() != 1 && p.name == "LTDC" && signal == "ER" && chip_name.starts_with("STM32N6") {
+                        // Prefer LTDC_LO_ERR
+                        let preferred_irq = "LTDC_LO_ERR".to_string();
+                        if irqs.contains(&preferred_irq) {
+                            irqs.clear();
+                            irqs.insert(preferred_irq);
+                        }
+                    }
+
                     // If there's a duplicate irqs in a signal other than "global", keep the non-global one.
                     if irqs.len() != 1 && signal != "GLOBAL" {
-                        irqs.retain(|irq| !globals.contains(irq));
+                        irqs.retain(|irq| !_globals.contains(irq));
+                    }
+
+                    // Special case for HSEM on dual-core chips
+                    if irqs.len() != 1 && p.name == "HSEM" {
+                        if core_name == "cm7" || core_name == "cm4" || core_name == "cm0p" {
+                            let core_idx = match core_name.as_str() {
+                                "cm7" => "1",
+                                "cm4" => {
+                                    if chip_name.starts_with("STM32H7") {
+                                        "2"
+                                    } else {
+                                        "1"
+                                    }
+                                }
+                                "cm0p" => "2",
+                                _ => unreachable!(),
+                            };
+                            let preferred_irq = format!("HSEM{}", core_idx);
+                            if irqs.contains(&preferred_irq) {
+                                irqs.clear();
+                                irqs.insert(preferred_irq);
+                            }
+                        }
+                    }
+
+                    // If there's still duplicate irqs, keep the one that matches the signal name or peri name.
+                    // Only match peri name for GLOBAL signals: for specific signals (e.g. ALARM, TAMP) we
+                    // want the specific IRQ (e.g. RTC_Alarm, TAMPER) over the generic peri-name one (RTC).
+                    if irqs.len() != 1 {
+                        let matches: Vec<_> = irqs
+                            .iter()
+                            .filter(|irq| {
+                                (signal == "GLOBAL" && *irq == &p.name)
+                                    || **irq == format!("{}_{}", p.name, signal)
+                                    || (p.name == "RCC" && signal == "CRS" && *irq == "CRS")
+                                    || (**irq == *signal && !irq.ends_with("_S"))
+                            })
+                            .cloned()
+                            .collect();
+                        if matches.len() == 1 {
+                            irqs.clear();
+                            irqs.insert(matches[0].clone());
+                        }
+                    }
+
+                    // If there's still duplicate irqs, keep the one that matches the peri name.
+                    // Only for GLOBAL signals, so specific signals prefer the more specific IRQ name.
+                    if irqs.len() != 1 && signal == "GLOBAL" {
+                        let matches_peri: Vec<_> = irqs.iter().filter(|irq| *irq == &p.name).cloned().collect();
+                        if matches_peri.len() == 1 {
+                            irqs.clear();
+                            irqs.insert(matches_peri[0].clone());
+                        }
                     }
 
                     // If there's still duplicate irqs, keep the one that doesn't match the peri name.
@@ -432,8 +525,8 @@ impl ChipInterrupts {
 
                     if irqs.len() != 1 {
                         panic!(
-                            "dup irqs on chip {:?} nvic {:?} peri {} signal {}: {:?}",
-                            chip_name, chip_nvic.version, p.name, signal, irqs
+                            "dup irqs on chip {:?} peri {} signal {}: {:?}",
+                            chip_name, p.name, signal, irqs
                         );
                     }
 
@@ -486,8 +579,12 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         ("TEMP", &["TEMPSENS"]),
         ("DSI", &["DSIHOST"]),
         ("HRTIM1", &["HRTIM"]),
-        ("GTZC", &["GTZC_S", "GTZC_NS"]),
-        ("TZIC", &["GTZC_S"]),
+        ("GTZC", &["GTZC_TZIC"]),
+        ("GTZC_S", &["GTZC_TZIC"]),
+        ("GTZC_NS", &["GTZC_TZIC"]),
+        ("TZIC", &["GTZC_TZIC"]),
+        ("TZIC_ILA", &["GTZC_TZIC"]),
+        ("ILA", &["ILA"]),
     ];
 
     let peri_override: HashMap<_, _> = PERI_OVERRIDE.iter().copied().collect();
@@ -503,6 +600,24 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
             return res;
         }
     }
+
+    if name == "ILA" || name == "TZIC_ILA" || name == "TZIC" {
+        return peris.to_vec();
+    }
+
+    if name == "GTZC" || name == "GTZC_S" || name == "GTZC_NS" {
+        for p in peris {
+            if p == "GTZC_TZIC" {
+                return vec![p.clone()];
+            }
+        }
+        for p in peris {
+            if p == "GTZC" {
+                return vec![p.clone()];
+            }
+        }
+    }
+
     let mut name = name;
     let mut res = Vec::new();
     if let Some(m) = regex!(r"^(I2C|[A-Z]+)(\d+(_\d+)*)$").captures(name) {
@@ -532,6 +647,9 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         // DCMIPP signals: STM32N6 supports CSI, others only basic signals
         ("DCMIPP", "STM32N6", &["GLOBAL", "CSI"]),
         ("DCMIPP", "*", &["GLOBAL"]), // Default for all other DCMIPP devices
+        // LTDC signals: STM32N6 has separate LTDC_UP and LTDC_LO interrupts; all others have a single LTDC IRQ
+        ("LTDC", "STM32N6", &["ER", "LO", "UP"]),
+        ("LTDC", "*", &["ER", "LO"]),
         // STM32WB0 Specific Mappings
         ("EXTI", "STM32WB0", &["GPIOA", "GPIOB"]),
         (
@@ -586,7 +704,9 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ),
         ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
         ("PWR", &["S3WU", "WKUP", "PVD"]),
-        ("GTZC", &["GLOBAL", "ILA"]),
+        ("GTZC", &["GLOBAL", "ILA", "GTZC"]),
+        ("GTZC_TZIC", &["GLOBAL", "ILA", "GTZC"]),
+        ("GTZC_MPCBB", &["GLOBAL", "ILA", "GTZC"]),
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),

@@ -2,6 +2,7 @@ use std::collections::hash_map::Entry;
 use std::collections::{BTreeSet, HashMap, HashSet};
 
 use gpio_af::pin_sort_key;
+use log::warn;
 use perimap::PERIMAP;
 use regex::Regex;
 use stm32_data_serde::chip::core::peripheral::{Pin, Trigger};
@@ -114,9 +115,13 @@ fn process_group(
     let rcc_block = *PERIMAP
         .get(&format!("{chip_name}:RCC:{rcc_kind}"))
         .unwrap_or_else(|| panic!("could not get rcc for {}", &chip_name));
-    let h = headers
-        .get_for_chip(&chip_name)
-        .unwrap_or_else(|| panic!("could not get header for {}", &chip_name));
+    let h = match headers.get_for_chip(&chip_name) {
+        Some(h) => h,
+        None => {
+            warn!("could not get header for {}, skipping", &chip_name);
+            return Ok(());
+        }
+    };
     let chip_af = &group.ips.values().find(|x| x.name == "GPIO").unwrap().version;
     let chip_af = chip_af.strip_suffix("_gpio_v1_0").unwrap();
     let chip_af = af.0.get(chip_af);
@@ -548,6 +553,13 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
         "ADC34_COMMON",
         "ADC345_COMMON",
         "VREFBUF",
+        "GTZC",
+        "GTZC_TZSC",
+        "GTZC_TZIC",
+        "GTZC_MPCBB1",
+        "GTZC_MPCBB2",
+        "GTZC_MPCBB3",
+        "GTZC_MPCBB6",
     ];
     for pname in GHOST_PERIS {
         let normalized_pname = normalize_peri_name(pname);
