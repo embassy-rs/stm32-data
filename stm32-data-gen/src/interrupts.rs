@@ -49,7 +49,7 @@ impl ChipInterrupts {
 
         let mut files: Vec<_> = glob::glob("sources/cubedb/mcu/IP/NVIC*_Modes.xml")?
             .map(Result::unwrap)
-            .filter(|file| !file.to_string_lossy().contains("STM32MP1"))
+            // .filter(|file| !file.to_string_lossy().contains("STM32MP1"))
             .collect();
         files.sort();
 
@@ -570,30 +570,33 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("FMPI2C", &["ER", "EV"]),
         ("TIM", &["BRK", "UP", "TRG", "COM", "CC"]),
         // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
-        ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU"]),
+        ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU", "TIMESTAMP"]),
         ("SUBGHZ", &["RADIO"]),
-        ("IPCC", &["C1_RX", "C1_TX", "C2_RX", "C2_TX"]),
+        (
+            "IPCC",
+            &["C1_RX", "C1_TX", "C2_RX", "C2_TX", "RX0", "TX0", "RX1", "TX1"],
+        ),
         (
             "HRTIM",
             &["MASTER", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF", "FLT"],
         ),
         ("COMP", &["WKUP", "ACQ"]),
-        ("RCC", &["RCC", "CRS"]),
+        ("RCC", &["RCC", "CRS", "WAKEUP"]),
         ("MDIOS", &["GLOBAL", "WKUP"]),
-        ("ETH", &["GLOBAL", "WKUP"]),
+        ("ETH", &["GLOBAL", "WKUP", "LPI"]),
         (
             "DFSDM",
             &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
         ),
         ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
-        ("PWR", &["S3WU", "WKUP", "PVD"]),
+        ("PWR", &["S3WU", "WKUP", "PVD", "AVD", "WAKEUP", "PIN"]),
         ("GTZC", &["GLOBAL", "ILA"]),
         ("WWDG", &["GLOBAL", "RST"]),
         ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+        ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP", "OTG"]),
         ("USB1_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
         ("USB2_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB", &["LP", "HP", "WKUP"]),
+        ("USB", &["LP", "HP", "WKUP", "USBH", "OHCI", "EHCI"]),
         ("GPU2D", &["ER"]),
         ("SAI", &["A", "B"]),
         ("ADF", &["FLT0"]),
