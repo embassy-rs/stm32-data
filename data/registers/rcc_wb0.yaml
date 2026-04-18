@@ -8,6 +8,10 @@ block/RCC:
     description: CFGR register.
     byte_offset: 8
     fieldset: CFGR
+  - name: CSSWCR
+    description: CSSWCR register.
+    byte_offset: 12
+    fieldset: CSSWCR
   - name: CIER
     description: CIER register.
     byte_offset: 24
@@ -545,12 +549,29 @@ fieldset/CSR:
     description: LOCK UP reset flag from CM0 Reset by software by writing the RMVF bit. Set by hardware from unrecoverable exception CPU. It reset V12i domain, FLASH controller and peripherals.
     bit_offset: 30
     bit_size: 1
-fieldset/RFHSECR:
-  description: RFHSECR register.
+fieldset/CSSWCR:
+  description: CSSWCR register.
   fields:
-  - name: XOTUNE
-    description: RF-HSE capacitor bank tuning Set by option byte loading soon after Power On Reset.
+  - name: LSISWTRIMEN
+    description: Low speed internal RC software trimming enable.
     bit_offset: 0
+    bit_size: 1
+  - name: LSISWBW
+    description: This value is taken into account instead of the trimming value loaded by HW at reset if LSISWTRIMEN bit is set.
+    bit_offset: 1
+    bit_size: 4
+  - name: LSEDRV
+    description: GM for the external 32kHz crystal.
+    bit_offset: 5
+    bit_size: 2
+    enum: LSEDRV
+  - name: HSISWTRIMEN
+    description: High speed internal RC software trimming enable.
+    bit_offset: 23
+    bit_size: 1
+  - name: HSISWBW
+    description: This value is taken into account instead of the trimming value loaded by HW at reset if HSISWTRIMEN bit is set.
+    bit_offset: 24
     bit_size: 6
 fieldset/RFSWHSECR:
   description: RFSWHSECR register.
@@ -572,6 +593,13 @@ fieldset/RFSWHSECR:
   - name: SWXOTUNE
     description: RF-HSE capacitor bank tuning value by SW Set by software.
     bit_offset: 8
+    bit_size: 6
+fieldset/RFHSECR:
+  description: RFHSECR register.
+  fields:
+  - name: XOTUNE
+    description: RF-HSE capacitor bank tuning loaded by HW at reset. This field is read-only.
+    bit_offset: 0
     bit_size: 6
 enum/CCOPRE:
   bit_size: 3
@@ -690,6 +718,21 @@ enum/LPUCLKSEL:
   - name: LSE
     description: LSE clock.
     value: 1
+enum/LSEDRV:
+  bit_size: 2
+  variants:
+  - name: Low
+    description: Low drive capability.
+    value: 0
+  - name: MediumLow
+    description: Medium-low drive capability.
+    value: 1
+  - name: MediumHigh
+    description: Medium-high drive capability.
+    value: 2
+  - name: High
+    description: High drive capability.
+    value: 3
 enum/MCOSEL:
   bit_size: 3
   variants:
