@@ -3,14 +3,22 @@ use crate::util::RegexMap;
 pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     // GTZC - TrustZone Security Controller
     ("STM32H503.*:GTZC:.*", ("gtzc", "h503", "GTZC1")),
-    ("STM32H503.*:GTZC1:.*", ("gtzc", "h503", "GTZC1")),
-    ("STM32H5.*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
-    ("STM32H5.*:GTZC1.*:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32H5[2367].*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32H5[2367].*:GTZC_TZIC:.*", ("gtzc", "v1", "TZIC")),
+    ("STM32H5[2367].*:GTZC_MPCBB.*:.*", ("gtzc", "v1", "MPCBB")),
+    ("STM32H5[2367].*:GTZC_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
     ("STM32U5.*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
-    ("STM32U5.*:GTZC1_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32U5.*:GTZC_TZIC:.*", ("gtzc", "v1", "TZIC")),
+    ("STM32U5.*:GTZC_MPCBB.*:.*", ("gtzc", "v1", "MPCBB")),
+    ("STM32U5.*:GTZC_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
     ("STM32WBA.*:GTZC:.*", ("gtzc", "wba", "GTZC_TZSC")),
     ("STM32WBA.*:GTZC_TZSC:.*", ("gtzc", "wba", "GTZC_TZSC")),
-    ("STM32L5.*:GTZC_TZSC:.*", ("gtzc", "wba", "GTZC_TZSC")),
+    ("STM32WBA.*:GTZC_TZIC:.*", ("gtzc", "wba", "TZIC")),
+    ("STM32WBA.*:GTZC_MPCBB.*:.*", ("gtzc", "wba", "MPCBB")),
+    ("STM32L5.*:GTZC:.*", ("gtzc", "l5", "GTZC_TZSC")),
+    ("STM32L5.*:GTZC_TZSC:.*", ("gtzc", "l5", "GTZC_TZSC")),
+    ("STM32L5.*:GTZC_TZIC:.*", ("gtzc", "l5", "TZIC")),
+    ("STM32L5.*:GTZC_MPCBB.*:.*", ("gtzc", "l5", "MPCBB")),
     // BSEC - Boot Security Engine Controller
     (".*:BSEC:.*:bsec2.*", ("bsec", "v2", "BSEC")),
     // RIFSC - Resource Isolation Framework Security Controller
