@@ -295,8 +295,8 @@ impl ParsedRccs {
         peri_name: &str,
     ) -> Option<stm32_data_serde::chip::core::peripheral::Rcc> {
         const FALLBACKS: &[(&str, &[&str])] = &[
-            ("DCMI", &["DCMI_PSSI"]),
-            ("PSSI", &["DCMI_PSSI"]),
+            ("DCMI", &["DCMI_PSSI", "PSSI"]),
+            ("PSSI", &["DCMI_PSSI", "DCMI"]),
             ("FDCAN1", &["FDCAN12"]),
             ("FDCAN2", &["FDCAN12"]),
             ("ADC", &["ADC1", "ADCDAC"]),
