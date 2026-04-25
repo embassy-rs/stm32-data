@@ -1,0 +1,648 @@
+block/SDMMC:
+  description: Secure digital input/output MultiMediaCard interface.
+  items:
+  - name: POWER
+    description: SDMMC power control register.
+    byte_offset: 0
+    fieldset: POWER
+  - name: CLKCR
+    description: SDMMC clock control register.
+    byte_offset: 4
+    fieldset: CLKCR
+  - name: ARGR
+    description: SDMMC argument register.
+    byte_offset: 8
+    fieldset: ARGR
+  - name: CMDR
+    description: SDMMC command register.
+    byte_offset: 12
+    fieldset: CMDR
+  - name: RESPCMDR
+    description: SDMMC command response register.
+    byte_offset: 16
+    fieldset: RESPCMDR
+  - name: RESPR
+    description: SDMMC response 1 register.
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 20
+    fieldset: RESPxR
+  - name: DTIMER
+    description: SDMMC data timer register.
+    byte_offset: 36
+    fieldset: DTIMER
+  - name: DLENR
+    description: SDMMC data length register.
+    byte_offset: 40
+    fieldset: DLENR
+  - name: DCTRL
+    description: SDMMC data control register.
+    byte_offset: 44
+    fieldset: DCTRL
+  - name: DCNTR
+    description: SDMMC data counter register.
+    byte_offset: 48
+    fieldset: DCNTR
+  - name: STAR
+    description: SDMMC status register.
+    byte_offset: 52
+    fieldset: STAR
+  - name: ICR
+    description: SDMMC interrupt clear register.
+    byte_offset: 56
+    fieldset: ICR
+  - name: MASKR
+    description: SDMMC mask register.
+    byte_offset: 60
+    fieldset: MASKR
+  - name: ACKTIMER
+    description: SDMMC acknowledgment timer register.
+    byte_offset: 64
+    fieldset: ACKTIMER
+  - name: FIFOTHRR
+    description: SDMMC data FIFO threshold register.
+    byte_offset: 68
+    fieldset: FIFOTHRR
+  - name: IDMACTRLR
+    description: SDMMC DMA control register.
+    byte_offset: 80
+    fieldset: IDMACTRLR
+  - name: IDMABSIZER
+    description: SDMMC IDMA buffer size register.
+    byte_offset: 84
+    fieldset: IDMABSIZER
+  - name: IDMABASER
+    description: SDMMC IDMA buffer base address register.
+    byte_offset: 88
+    fieldset: IDMABASER
+  - name: IDMALAR
+    description: SDMMC IDMA linked list address register.
+    byte_offset: 100
+    fieldset: IDMALAR
+  - name: IDMABAR
+    description: SDMMC IDMA linked list memory base register.
+    byte_offset: 104
+    fieldset: IDMABAR
+  - name: FIFOR
+    description: SDMMC data FIFO registers 0.
+    array:
+      len: 16
+      stride: 4
+    byte_offset: 128
+    fieldset: FIFOR
+fieldset/ACKTIMER:
+  description: SDMMC acknowledgment timer register.
+  fields:
+  - name: ACKTIME
+    description: Boot acknowledgment timeout period.
+    bit_offset: 0
+    bit_size: 25
+fieldset/ARGR:
+  description: SDMMC argument register.
+  fields:
+  - name: CMDARG
+    description: Command argument.
+    bit_offset: 0
+    bit_size: 32
+fieldset/CLKCR:
+  description: SDMMC clock control register.
+  fields:
+  - name: CLKDIV
+    description: Clock divide factor.
+    bit_offset: 0
+    bit_size: 10
+  - name: PWRSAV
+    description: Power saving configuration bit.
+    bit_offset: 12
+    bit_size: 1
+  - name: WIDBUS
+    description: Wide bus mode enable bit.
+    bit_offset: 14
+    bit_size: 2
+  - name: NEGEDGE
+    description: SDMMC_CK dephasing selection bit for data and command.
+    bit_offset: 16
+    bit_size: 1
+  - name: HWFC_EN
+    description: Hardware flow control enable.
+    bit_offset: 17
+    bit_size: 1
+  - name: DDR
+    description: Data rate signaling selection.
+    bit_offset: 18
+    bit_size: 1
+  - name: BUSSPEED
+    description: Bus speed for selection of SDMMC operating modes.
+    bit_offset: 19
+    bit_size: 1
+  - name: SELCLKRX
+    description: Receive clock selection.
+    bit_offset: 20
+    bit_size: 2
+fieldset/CMDR:
+  description: SDMMC command register.
+  fields:
+  - name: CMDINDEX
+    description: Command index.
+    bit_offset: 0
+    bit_size: 6
+  - name: CMDTRANS
+    description: The CPSM treats the command as a data transfer command, stops the interrupt period, and signals DataEnable to the DPSM.
+    bit_offset: 6
+    bit_size: 1
+  - name: CMDSTOP
+    description: The CPSM treats the command as a Stop Transmission command and signals abort to the DPSM.
+    bit_offset: 7
+    bit_size: 1
+  - name: WAITRESP
+    description: Wait for response bits.
+    bit_offset: 8
+    bit_size: 2
+  - name: WAITINT
+    description: CPSM waits for interrupt request.
+    bit_offset: 10
+    bit_size: 1
+  - name: WAITPEND
+    description: CPSM waits for end of data transfer (CmdPend internal signal) from DPSM.
+    bit_offset: 11
+    bit_size: 1
+  - name: CPSMEN
+    description: Command path state machine (CPSM) enable bit.
+    bit_offset: 12
+    bit_size: 1
+  - name: DTHOLD
+    description: Hold new data block transmission and reception in the DPSM.
+    bit_offset: 13
+    bit_size: 1
+  - name: BOOTMODE
+    description: Select the boot mode procedure to be used.
+    bit_offset: 14
+    bit_size: 1
+  - name: BOOTEN
+    description: Enable boot mode procedure.
+    bit_offset: 15
+    bit_size: 1
+  - name: CMDSUSPEND
+    description: The CPSM treats the command as a Suspend or Resume command and signals interrupt period start/end.
+    bit_offset: 16
+    bit_size: 1
+fieldset/DCNTR:
+  description: SDMMC data counter register.
+  fields:
+  - name: DATACOUNT
+    description: Data count value.
+    bit_offset: 0
+    bit_size: 25
+fieldset/DCTRL:
+  description: SDMMC data control register.
+  fields:
+  - name: DTEN
+    description: Data transfer enable bit.
+    bit_offset: 0
+    bit_size: 1
+  - name: DTDIR
+    description: Data transfer direction selection.
+    bit_offset: 1
+    bit_size: 1
+  - name: DTMODE
+    description: Data transfer mode selection.
+    bit_offset: 2
+    bit_size: 2
+  - name: DBLOCKSIZE
+    description: Data block size.
+    bit_offset: 4
+    bit_size: 4
+  - name: RWSTART
+    description: Read Wait start.
+    bit_offset: 8
+    bit_size: 1
+  - name: RWSTOP
+    description: Read Wait stop.
+    bit_offset: 9
+    bit_size: 1
+  - name: RWMOD
+    description: Read Wait mode.
+    bit_offset: 10
+    bit_size: 1
+  - name: SDIOEN
+    description: SD I/O interrupt enable functions.
+    bit_offset: 11
+    bit_size: 1
+  - name: BOOTACKEN
+    description: Enable the reception of the boot acknowledgment.
+    bit_offset: 12
+    bit_size: 1
+  - name: FIFORST
+    description: FIFO reset, flushes any remaining data.
+    bit_offset: 13
+    bit_size: 1
+fieldset/DLENR:
+  description: SDMMC data length register.
+  fields:
+  - name: DATALENGTH
+    description: Data length value.
+    bit_offset: 0
+    bit_size: 25
+fieldset/DTIMER:
+  description: SDMMC data timer register.
+  fields:
+  - name: DATATIME
+    description: Data and R1b busy timeout period.
+    bit_offset: 0
+    bit_size: 32
+fieldset/FIFOR:
+  description: SDMMC data FIFO registers 0.
+  fields:
+  - name: FIFODATA
+    description: Receive and transmit FIFO data.
+    bit_offset: 0
+    bit_size: 32
+fieldset/FIFOTHRR:
+  description: SDMMC data FIFO threshold register.
+  fields:
+  - name: THR
+    description: FIFO threshold.
+    bit_offset: 0
+    bit_size: 4
+fieldset/ICR:
+  description: SDMMC interrupt clear register.
+  fields:
+  - name: CCRCFAILC
+    description: CCRCFAIL flag clear bit.
+    bit_offset: 0
+    bit_size: 1
+  - name: DCRCFAILC
+    description: DCRCFAIL flag clear bit.
+    bit_offset: 1
+    bit_size: 1
+  - name: CTIMEOUTC
+    description: CTIMEOUT flag clear bit.
+    bit_offset: 2
+    bit_size: 1
+  - name: DTIMEOUTC
+    description: DTIMEOUT flag clear bit.
+    bit_offset: 3
+    bit_size: 1
+  - name: TXUNDERRC
+    description: TXUNDERR flag clear bit.
+    bit_offset: 4
+    bit_size: 1
+  - name: RXOVERRC
+    description: RXOVERR flag clear bit.
+    bit_offset: 5
+    bit_size: 1
+  - name: CMDRENDC
+    description: CMDREND flag clear bit.
+    bit_offset: 6
+    bit_size: 1
+  - name: CMDSENTC
+    description: CMDSENT flag clear bit.
+    bit_offset: 7
+    bit_size: 1
+  - name: DATAENDC
+    description: DATAEND flag clear bit.
+    bit_offset: 8
+    bit_size: 1
+  - name: DHOLDC
+    description: DHOLD flag clear bit.
+    bit_offset: 9
+    bit_size: 1
+  - name: DBCKENDC
+    description: DBCKEND flag clear bit.
+    bit_offset: 10
+    bit_size: 1
+  - name: DABORTC
+    description: DABORT flag clear bit.
+    bit_offset: 11
+    bit_size: 1
+  - name: BUSYD0ENDC
+    description: BUSYD0END flag clear bit.
+    bit_offset: 21
+    bit_size: 1
+  - name: SDIOITC
+    description: SDIOIT flag clear bit.
+    bit_offset: 22
+    bit_size: 1
+  - name: ACKFAILC
+    description: ACKFAIL flag clear bit.
+    bit_offset: 23
+    bit_size: 1
+  - name: ACKTIMEOUTC
+    description: ACKTIMEOUT flag clear bit.
+    bit_offset: 24
+    bit_size: 1
+  - name: VSWENDC
+    description: VSWEND flag clear bit.
+    bit_offset: 25
+    bit_size: 1
+  - name: CKSTOPC
+    description: CKSTOP flag clear bit.
+    bit_offset: 26
+    bit_size: 1
+  - name: IDMATEC
+    description: IDMA transfer error clear bit.
+    bit_offset: 27
+    bit_size: 1
+  - name: IDMABTCC
+    description: IDMA buffer transfer complete clear bit.
+    bit_offset: 28
+    bit_size: 1
+fieldset/IDMABAR:
+  description: SDMMC IDMA linked list memory base register.
+  fields:
+  - name: IDMABA
+    description: Word aligned Linked list memory base address.
+    bit_offset: 2
+    bit_size: 30
+fieldset/IDMABASER:
+  description: SDMMC IDMA buffer base address register.
+  fields:
+  - name: IDMABASE
+    description: Buffer memory base address bits [31:2], must be word aligned (bit [1:0] are always 0 and read only).
+    bit_offset: 0
+    bit_size: 32
+fieldset/IDMABSIZER:
+  description: SDMMC IDMA buffer size register.
+  fields:
+  - name: IDMABNDT
+    description: Number of bytes per buffer.
+    bit_offset: 6
+    bit_size: 11
+fieldset/IDMACTRLR:
+  description: SDMMC DMA control register.
+  fields:
+  - name: IDMAEN
+    description: IDMA enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: IDMABMODE
+    description: Buffer mode selection.
+    bit_offset: 1
+    bit_size: 1
+fieldset/IDMALAR:
+  description: SDMMC IDMA linked list address register.
+  fields:
+  - name: IDMALA
+    description: Word aligned linked list item address offset.
+    bit_offset: 2
+    bit_size: 14
+  - name: ABR
+    description: Acknowledge linked list buffer ready.
+    bit_offset: 29
+    bit_size: 1
+  - name: ULS
+    description: Update SDMMC_IDMABSIZE from the next linked list when in linked list mode (SDMMC_IDMACTRLR.IDMABMODE select linked list mode and ULA = 1).
+    bit_offset: 30
+    bit_size: 1
+  - name: ULA
+    description: Update SDMMC_IDMALAR from linked list when in linked list mode (SDMMC_IDMACTRLR.IDMABMODE select linked list mode).
+    bit_offset: 31
+    bit_size: 1
+fieldset/MASKR:
+  description: SDMMC mask register.
+  fields:
+  - name: CCRCFAILIE
+    description: Command CRC fail interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: DCRCFAILIE
+    description: Data CRC fail interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: CTIMEOUTIE
+    description: Command timeout interrupt enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: DTIMEOUTIE
+    description: Data timeout interrupt enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: TXUNDERRIE
+    description: Tx FIFO underrun error interrupt enable.
+    bit_offset: 4
+    bit_size: 1
+  - name: RXOVERRIE
+    description: Rx FIFO overrun error interrupt enable.
+    bit_offset: 5
+    bit_size: 1
+  - name: CMDRENDIE
+    description: Command response received interrupt enable.
+    bit_offset: 6
+    bit_size: 1
+  - name: CMDSENTIE
+    description: Command sent interrupt enable.
+    bit_offset: 7
+    bit_size: 1
+  - name: DATAENDIE
+    description: Data end interrupt enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: DHOLDIE
+    description: Data hold interrupt enable.
+    bit_offset: 9
+    bit_size: 1
+  - name: DBCKENDIE
+    description: Data block end interrupt enable.
+    bit_offset: 10
+    bit_size: 1
+  - name: DABORTIE
+    description: Data transfer aborted interrupt enable.
+    bit_offset: 11
+    bit_size: 1
+  - name: TXFIFOHEIE
+    description: Tx FIFO half empty interrupt enable.
+    bit_offset: 14
+    bit_size: 1
+  - name: RXFIFOHFIE
+    description: Rx FIFO half full interrupt enable.
+    bit_offset: 15
+    bit_size: 1
+  - name: RXFIFOFIE
+    description: Rx FIFO full interrupt enable.
+    bit_offset: 17
+    bit_size: 1
+  - name: TXFIFOEIE
+    description: Tx FIFO empty interrupt enable.
+    bit_offset: 18
+    bit_size: 1
+  - name: BUSYD0ENDIE
+    description: BUSYD0END interrupt enable.
+    bit_offset: 21
+    bit_size: 1
+  - name: SDIOITIE
+    description: SDIO mode interrupt received interrupt enable.
+    bit_offset: 22
+    bit_size: 1
+  - name: ACKFAILIE
+    description: Acknowledgment Fail interrupt enable.
+    bit_offset: 23
+    bit_size: 1
+  - name: ACKTIMEOUTIE
+    description: Acknowledgment timeout interrupt enable.
+    bit_offset: 24
+    bit_size: 1
+  - name: VSWENDIE
+    description: Voltage switch critical timing section completion interrupt enable.
+    bit_offset: 25
+    bit_size: 1
+  - name: CKSTOPIE
+    description: Voltage Switch clock stopped interrupt enable.
+    bit_offset: 26
+    bit_size: 1
+  - name: IDMABTCIE
+    description: IDMA buffer transfer complete interrupt enable.
+    bit_offset: 28
+    bit_size: 1
+fieldset/POWER:
+  description: SDMMC power control register.
+  fields:
+  - name: PWRCTRL
+    description: SDMMC state control bits.
+    bit_offset: 0
+    bit_size: 2
+  - name: VSWITCH
+    description: Voltage switch sequence start.
+    bit_offset: 2
+    bit_size: 1
+  - name: VSWITCHEN
+    description: Voltage switch procedure enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: DIRPOL
+    description: Data and command direction signals polarity selection.
+    bit_offset: 4
+    bit_size: 1
+fieldset/RESPCMDR:
+  description: SDMMC command response register.
+  fields:
+  - name: RESPCMD
+    description: Response command index.
+    bit_offset: 0
+    bit_size: 6
+fieldset/RESPxR:
+  description: SDMMC response 1 register.
+  fields:
+  - name: CARDSTATUS
+    description: Card status according table below.
+    bit_offset: 0
+    bit_size: 32
+fieldset/STAR:
+  description: SDMMC status register.
+  fields:
+  - name: CCRCFAIL
+    description: Command response received (CRC check failed).
+    bit_offset: 0
+    bit_size: 1
+  - name: DCRCFAIL
+    description: Data block sent/received (CRC check failed).
+    bit_offset: 1
+    bit_size: 1
+  - name: CTIMEOUT
+    description: Command response timeout.
+    bit_offset: 2
+    bit_size: 1
+  - name: DTIMEOUT
+    description: Data timeout.
+    bit_offset: 3
+    bit_size: 1
+  - name: TXUNDERR
+    description: Transmit FIFO underrun error (masked by hardware when IDMA is enabled).
+    bit_offset: 4
+    bit_size: 1
+  - name: RXOVERR
+    description: Received FIFO overrun error (masked by hardware when IDMA is enabled).
+    bit_offset: 5
+    bit_size: 1
+  - name: CMDREND
+    description: Command response received (CRC check passed, or no CRC).
+    bit_offset: 6
+    bit_size: 1
+  - name: CMDSENT
+    description: Command sent (no response required).
+    bit_offset: 7
+    bit_size: 1
+  - name: DATAEND
+    description: Data transfer ended correctly.
+    bit_offset: 8
+    bit_size: 1
+  - name: DHOLD
+    description: Data transfer Hold.
+    bit_offset: 9
+    bit_size: 1
+  - name: DBCKEND
+    description: Data block sent/received.
+    bit_offset: 10
+    bit_size: 1
+  - name: DABORT
+    description: Data transfer aborted by CMD12.
+    bit_offset: 11
+    bit_size: 1
+  - name: DPSMACT
+    description: Data path state machine active, i.e. not in Idle state.
+    bit_offset: 12
+    bit_size: 1
+  - name: CPSMACT
+    description: Command path state machine active, i.e. not in Idle state.
+    bit_offset: 13
+    bit_size: 1
+  - name: TXFIFOHE
+    description: Transmit FIFO half empty.
+    bit_offset: 14
+    bit_size: 1
+  - name: RXFIFOHF
+    description: Receive FIFO half full.
+    bit_offset: 15
+    bit_size: 1
+  - name: TXFIFOF
+    description: Transmit FIFO full.
+    bit_offset: 16
+    bit_size: 1
+  - name: RXFIFOF
+    description: Receive FIFO full.
+    bit_offset: 17
+    bit_size: 1
+  - name: TXFIFOE
+    description: Transmit FIFO empty.
+    bit_offset: 18
+    bit_size: 1
+  - name: RXFIFOE
+    description: Receive FIFO empty.
+    bit_offset: 19
+    bit_size: 1
+  - name: BUSYD0
+    description: Inverted value of SDMMC_D0 line (Busy), sampled at the end of a CMD response and a second time 2 SDMMC_CK cycles after the CMD response.
+    bit_offset: 20
+    bit_size: 1
+  - name: BUSYD0END
+    description: end of SDMMC_D0 Busy following a CMD response detected.
+    bit_offset: 21
+    bit_size: 1
+  - name: SDIOIT
+    description: SDIO interrupt received.
+    bit_offset: 22
+    bit_size: 1
+  - name: ACKFAIL
+    description: Boot acknowledgment received (boot acknowledgment check fail).
+    bit_offset: 23
+    bit_size: 1
+  - name: ACKTIMEOUT
+    description: Boot acknowledgment timeout.
+    bit_offset: 24
+    bit_size: 1
+  - name: VSWEND
+    description: Voltage switch critical timing section completion.
+    bit_offset: 25
+    bit_size: 1
+  - name: CKSTOP
+    description: SDMMC_CK stopped in Voltage switch procedure.
+    bit_offset: 26
+    bit_size: 1
+  - name: IDMATE
+    description: IDMA transfer error.
+    bit_offset: 27
+    bit_size: 1
+  - name: IDMABTC
+    description: IDMA buffer transfer complete.
+    bit_offset: 28
+    bit_size: 1

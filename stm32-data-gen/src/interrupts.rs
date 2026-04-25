@@ -313,6 +313,12 @@ impl ChipInterrupts {
 
                 let peri_names: Vec<_> = parts[2]
                     .split(',')
+                    // On STM32N6 the cube NVIC XML attributes the CSI IRQ to the
+                    // DCMIPP peripheral (`CSI_IRQn:Y:DCMIPP:HAL_DCMIPP_CSI_IRQHandler:`)
+                    // because ST HAL routes it through `HAL_DCMIPP_CSI_IRQHandler`.
+                    // The silicon has a distinct CSI block; re-attribute the IRQ
+                    // to its owning peripheral so embassy drivers can bind CSI::GLOBAL.
+                    .map(|x| if x == "DCMIPP" && name == "CSI" { "CSI" } else { x })
                     .map(|x| if x == "USB_DRD_FS" { "USB" } else { x })
                     .map(|x| if x == "XPI1" { "XSPI1" } else { x })
                     .map(|x| if x == "XPI2" { "XSPI2" } else { x })
@@ -644,9 +650,9 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
     // Special chip-specific signal mappings
     // Format: (peripheral_prefix, chip_pattern, signals)
     const CHIP_SPECIFIC_SIGNALS: &[(&str, &str, &[&str])] = &[
-        // DCMIPP signals: STM32N6 supports CSI, others only basic signals
-        ("DCMIPP", "STM32N6", &["GLOBAL", "CSI"]),
-        ("DCMIPP", "*", &["GLOBAL"]), // Default for all other DCMIPP devices
+        // DCMIPP: only the GLOBAL interrupt belongs here. The separate CSI IRQ
+        // (STM32N6) is attributed to the CSI peripheral instead.
+        ("DCMIPP", "*", &["GLOBAL"]),
         // LTDC signals: STM32N6 has separate LTDC_UP and LTDC_LO interrupts; all others have a single LTDC IRQ
         ("LTDC", "STM32N6", &["ER", "LO", "UP"]),
         ("LTDC", "*", &["ER", "LO"]),
