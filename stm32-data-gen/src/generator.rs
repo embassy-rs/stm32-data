@@ -586,10 +586,11 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
 
     // The STM32H7S / STM32H7R use the FDCAN v1 peripheral instead of the one used in the rest of the H7 family.
     let h7_non_rs_re = Regex::new(r"STM32H7[0-9AB].*").unwrap();
+    let n6 = Regex::new(r"STM32N6.*").unwrap();
 
     if !fdcans.is_empty() {
-        if h7_non_rs_re.is_match(chip_name) {
-            // H7 has one message RAM shared between FDCANs
+        if h7_non_rs_re.is_match(chip_name) || n6.is_match(chip_name) {
+            // H7 and N6 have one message RAM shared between FDCANs
             peri_kinds
                 .entry("FDCANRAM".to_string())
                 .or_insert("unknown".to_string());
