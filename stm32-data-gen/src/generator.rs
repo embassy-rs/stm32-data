@@ -5,7 +5,7 @@ use gpio_af::pin_sort_key;
 use log::warn;
 use perimap::PERIMAP;
 use regex::Regex;
-use stm32_data_serde::chip::core::peripheral::{Pin, Trigger};
+use stm32_data_serde::chip::core::peripheral::{Pin, Trigger, rcc as prcc};
 use util::RegexMap;
 
 use super::*;
@@ -269,9 +269,34 @@ fn create_peripherals_for_chip(
             }
         };
 
+        // Generate reset fields for delay block for n6
+        let syscfg_for_dlyb = || {
+            if chip_name.starts_with("STM32N6") && pname.starts_with("DLYB_") {
+                peripheral_to_clock
+                    .match_peri_clock(rcc_block.1, "SYSCFG")
+                    .map(|mut rcc_info| {
+                        rcc_info.reset = match pname.as_str() {
+                            "DLYB_SDMMC1" => Some(prcc::Field {
+                                register: "miscrstr".to_string(),
+                                field: "sdmmc1dllrst".to_string(),
+                            }),
+                            "DLYB_SDMMC2" => Some(prcc::Field {
+                                register: "miscrstr".to_string(),
+                                field: "sdmmc2dllrst".to_string(),
+                            }),
+                            _ => None,
+                        };
+                        rcc_info
+                    })
+            } else {
+                None
+            }
+        };
+
         let rcc = if let Some(mut rcc_info) = peripheral_to_clock
             .match_peri_clock(rcc_block.1, &pname)
             .or_else(syscfg_for_comp)
+            .or_else(syscfg_for_dlyb)
         {
             if let Some(stop_mode_info) = low_power::peripheral_stop_mode_info(chip_name, &pname) {
                 rcc_info.stop_mode = stop_mode_info;
