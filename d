@@ -10,9 +10,17 @@ shift
 case "$CMD" in
     download-all)
         rm -rf ./sources/
-        git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/ -q
+        git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/ -q --depth 1
         cd ./sources/
+        git fetch origin $REV
         git checkout $REV
+    ;;
+    update-all)
+        [ -d sources ] || ./d download-all
+        cd ./sources/
+        git fetch origin $REV
+        git checkout $REV
+        cd ..
     ;;
     install-chiptool)
         cargo install --git https://github.com/embassy-rs/chiptool
@@ -54,11 +62,7 @@ case "$CMD" in
         find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2021
     ;;
     ci)
-        [ -d sources ] || ./d download-all
-        cd ./sources/
-        git fetch origin $REV
-        git checkout $REV
-        cd ..
+        ./d update-all
         ./d gen-all
     ;;
     check)
