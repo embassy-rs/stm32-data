@@ -6,15 +6,26 @@ param (
     [string]$peri
 )
 
-$REV = "6069ecbad229a1c5354b0e1274ec2ea0132d7d31"
+$REV = ((Select-String -Path ".\d" -Pattern "^REV=") -split "=")[1]
 
 Switch ($CMD) {
     "download-all" {
         rm -r -Force ./sources/ -ErrorAction SilentlyContinue
-        git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/
+        git clone https://github.com/embassy-rs/stm32-data-sources.git ./sources/ --depth 1
         cd ./sources/
+        git fetch origin $REV
         git checkout $REV
         cd ..
+    }
+    "update-all" {
+        if (-Not (Test-Path -Path ".\sources")) {
+            .\d "download-all"
+        } else {
+            cd ./sources/
+            git fetch origin $REV
+            git checkout $REV
+            cd ..
+        }
     }
     "install-chiptool" {
         cargo install --git https://github.com/embassy-rs/chiptool
