@@ -58,6 +58,23 @@ mod xml {
     }
 }
 
+// mod pdsc {
+//     use serde::Deserialize;
+//
+//     #[derive(Clone, Debug, Deserialize, PartialEq)]
+//     pub struct Package {
+//         pub devices: Vec<Family>,
+//     }
+//
+//     #[derive(Clone, Debug, Deserialize, PartialEq)]
+//     pub struct Family {
+//         pub sub_families: Vec<SubFamily>,
+//     }
+//
+//     #[derive(Clone, Debug, Deserialize, PartialEq)]
+//     pub struct SubFamily {}
+// }
+
 pub struct Chip {
     #[allow(dead_code)]
     flash: u32,
@@ -67,6 +84,8 @@ pub struct Chip {
     pub packages: Vec<stm32_data_serde::chip::Package>,
 }
 
+/// On STM32CubeMX1, this corresponds to one XML file
+/// On STM32CubeMX2, this correpsonds to a 'subFamily'
 pub struct ChipGroup {
     pub chip_names: Vec<String>,
     pub xml: xml::Mcu,
