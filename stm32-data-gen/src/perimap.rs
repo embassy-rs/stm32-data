@@ -771,6 +771,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32U0.*:TSC:.*", ("tsc", "v2", "TSC")),
     ("STM32WBA.*:VREFINTCAL:.*", ("vrefintcal", "v2", "VREFINTCAL")),
     ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
+    ("STM32U0.*:TSCAL:.*", ("tscal", "v1", "TSCAL")),
     ("STM32U5.*:ADF[12]:.*", ("adf", "v1", "ADF")),
     ("STM32U3.*:ADF[12]:.*", ("adf", "v1", "ADF")),
     ("STM32N6.*:ADF1:.*", ("adf", "v1", "ADF")),

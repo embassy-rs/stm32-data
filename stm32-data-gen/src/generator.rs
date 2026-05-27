@@ -596,6 +596,7 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
         "BKP",
         "USBRAM",
         "VREFINTCAL",
+        "TSCAL",
         "UID",
         "DESIG",
         "HSEM",
