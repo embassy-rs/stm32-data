@@ -918,3 +918,109 @@ fieldset/SECCFGR3:
     description: secure access mode for RAMSCFG.
     bit_offset: 26
     bit_size: 1
+
+block/MPCBB:
+  description: Block-based memory protection controller.
+  items:
+  - name: CR
+    description: MPCBB control register.
+    byte_offset: 0
+    fieldset: MPCBB_CR
+  - name: CFGLOCK
+    description: MPCBB configuration lock register.
+    byte_offset: 16
+    fieldset: CFGLOCK
+  - name: SECCFGR
+    description: MPCBB security configuration register.
+    byte_offset: 256
+    array:
+      len: 32
+      stride: 4
+    fieldset: SECCFGR
+  - name: PRIVCFGR
+    description: MPCBB privilege configuration register.
+    byte_offset: 512
+    array:
+      len: 32
+      stride: 4
+    fieldset: PRIVCFGR
+
+block/TZIC:
+  description: TrustZone interrupt controller.
+  items:
+  - name: IER
+    description: TZIC interrupt enable register.
+    byte_offset: 0
+    array:
+      len: 4
+      stride: 4
+    fieldset: IER
+  - name: SR
+    description: TZIC status register.
+    byte_offset: 16
+    array:
+      len: 4
+      stride: 4
+    fieldset: SR
+  - name: FCR
+    description: TZIC flag clear register.
+    byte_offset: 32
+    array:
+      len: 4
+      stride: 4
+    fieldset: FCR
+
+fieldset/MPCBB_CR:
+  description: MPCBB control register.
+  fields:
+  - name: GLOCK
+    bit_offset: 0
+    bit_size: 1
+  - name: INVSECSTATE
+    bit_offset: 30
+    bit_size: 1
+  - name: SRWILADIS
+    bit_offset: 31
+    bit_size: 1
+
+fieldset/CFGLOCK:
+  description: MPCBB configuration lock register.
+  fields:
+  - name: SPLCK
+    bit_offset: 0
+    bit_size: 32
+
+fieldset/SECCFGR:
+  description: MPCBB security configuration register.
+  fields:
+  - name: SEC
+    bit_offset: 0
+    bit_size: 32
+
+fieldset/PRIVCFGR:
+  description: MPCBB privilege configuration register.
+  fields:
+  - name: PRIV
+    bit_offset: 0
+    bit_size: 32
+
+fieldset/IER:
+  description: TZIC interrupt enable register.
+  fields:
+  - name: IE
+    bit_offset: 0
+    bit_size: 32
+
+fieldset/SR:
+  description: TZIC status register.
+  fields:
+  - name: F
+    bit_offset: 0
+    bit_size: 32
+
+fieldset/FCR:
+  description: TZIC flag clear register.
+  fields:
+  - name: CF
+    bit_offset: 0
+    bit_size: 32

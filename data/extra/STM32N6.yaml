@@ -103,3 +103,22 @@ peripherals:
       kind: risaf
       version: n6
       block: RISAF
+  # SDMMC DLL delay blocks. Not declared as IPs in cube DB (same situation as
+  # on STM32H5/H7/U5), so we wire them in here. N6 uses a redesigned
+  # tap-select DLL (RM0486 §31.5) with a programming model that's
+  # incompatible with the older sampler-length DLYB used on H7/H5/U5/U3 —
+  # see data/registers/dlybsd_v1.yaml. Instance names match the H7/U5
+  # naming convention so embassy-stm32 driver code can reach the same
+  # peripheral by the same name across families.
+  - name: DLYB_SDMMC1
+    address: 0x48028000
+    registers:
+      kind: dlybsd
+      version: v1
+      block: DLYBSD
+  - name: DLYB_SDMMC2
+    address: 0x48026C00
+    registers:
+      kind: dlybsd
+      version: v1
+      block: DLYBSD

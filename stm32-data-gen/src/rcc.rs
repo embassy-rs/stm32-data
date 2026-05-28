@@ -65,6 +65,7 @@ impl ParsedRccs {
             "PCLK5",
             "PCLK6",
             "PCLK7",
+            "HCLK",
             "HCLK1",
             "HCLK2",
             "HCLK3",
@@ -101,6 +102,10 @@ impl ParsedRccs {
             "PLL3_S",
             "PLL3_T",
             "HSI",
+            "HSIK",
+            "PSI",
+            "PSIK",
+            "PSIS",
             "SHSI",
             "HSI48",
             "HSIKER",
@@ -131,12 +136,10 @@ impl ParsedRccs {
             "SAI2",
             "SPDIFRX_SYMB",
             "ETH_RMII_REF",
+            "ETH_CLK_FB",
             "ETH",
-            "PLL1_P_DIV_2",
             "CLK48MOHCI",
             "DIV_RTCPRE",
-            "HSE_DIV_1024",
-            "HSE_DIV_2",
             "HSE_DIV_RTCPRE",
             // N6 extra
             "IC1",
@@ -161,7 +164,7 @@ impl ParsedRccs {
             "IC20",
             "HSI_DIV",
             "HSE_RTC",
-            "HSE_DIV2_OSC",
+            "HSE_DIV2_OSC", // TODO: remove this
             "TIMG",
             "HCLKE", // ethernet clock
             "MII",
@@ -295,8 +298,8 @@ impl ParsedRccs {
         peri_name: &str,
     ) -> Option<stm32_data_serde::chip::core::peripheral::Rcc> {
         const FALLBACKS: &[(&str, &[&str])] = &[
-            ("DCMI", &["DCMI_PSSI"]),
-            ("PSSI", &["DCMI_PSSI"]),
+            ("DCMI", &["DCMI_PSSI", "PSSI"]),
+            ("PSSI", &["DCMI_PSSI", "DCMI"]),
             ("FDCAN1", &["FDCAN12"]),
             ("FDCAN2", &["FDCAN12"]),
             ("ADC", &["ADC1", "ADCDAC"]),
@@ -393,7 +396,7 @@ impl ParsedRccs {
                     } else if rcc_version.starts_with("f2") {
                         maybe_kernel_clock = "PLL1_Q".to_string();
                     } else if rcc_version.starts_with("l1") {
-                        maybe_kernel_clock = "PLL1_VCO_DIV_2".to_string();
+                        maybe_kernel_clock = "PLL1_VCO_DIV2".to_string();
                     } else if rcc_version.starts_with("h7rs") {
                         maybe_kernel_clock = "USB".to_string();
                     } else {

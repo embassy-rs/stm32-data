@@ -1,0 +1,46 @@
+transforms:
+  # Strip useless "SDMMC_" prefix from register and fieldset names.
+  - !RenameRegisters
+    block: .*
+    from: ^SDMMC_(.*)$
+    to: $1
+  - !Rename
+    from: ^SDMMC_(.*)$
+    to: $1
+    type: Fieldset
+
+  # Rename block SDMMC1 -> SDMMC (instance number is meaningless).
+  - !Rename
+    from: ^SDMMC1$
+    to: SDMMC
+    type: Block
+
+  # Array-ify the four response registers.
+  - !MergeFieldsets
+    from: RESP\d+R
+    to: RESPxR
+    main: RESP1R
+  - !MakeRegisterArray
+    blocks: .*
+    from: RESP\d+R
+    to: RESPR
+
+  # Array-ify the 16 FIFO data registers (contiguous 32-bit words).
+  - !MergeFieldsets
+    from: FIFOR\d+
+    to: FIFOR
+    main: FIFOR0
+  - !MakeRegisterArray
+    blocks: .*
+    from: FIFOR\d+
+    to: FIFOR
+
+  # Drop useless enums (SVD uses unhelpful B_0x0/B_0x1 variant names).
+  # DeleteUselessEnums only catches the cases that already have meaningful
+  # names (enabled/disabled etc.), so we explicitly list the single-bit
+  # boolean-style fields here.
+  # The SDMMC SVD exports enums with generic "B_0x0" / "B_0x1" variant names
+  # that carry no useful information. Drop them all; the v1 / v2 YAMLs also
+  # have no enums and the embassy driver accesses the fields as raw integers.
+  - !DeleteEnums
+    from: .*

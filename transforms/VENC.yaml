@@ -1,0 +1,27 @@
+transforms:
+  # Strip the "VENC_" prefix from register and fieldset names.
+  - !RenameRegisters
+    block: .*
+    from: ^VENC_(.*)$
+    to: $1
+  - !Rename
+    from: ^VENC_(.*)$
+    to: $1
+    type: Fieldset
+
+  # The SVD describes the VENC programming interface as SWREG0..SWREG354 —
+  # a single 32-bit-wide register file at sequential offsets, with each
+  # SWREGn declared individually. Collapse them into one SWREG[355] array.
+  - !MergeFieldsets
+    from: SWREG\d+
+    to: SWREG
+    main: SWREG0
+  - !MakeRegisterArray
+    blocks: .*
+    from: SWREG\d+
+    to: SWREG
+    mode: Holey
+
+  # Drop unhelpful enums (SVD uses B_0x0/B_0x1 placeholder variants).
+  - !DeleteEnums
+    from: .*

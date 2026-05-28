@@ -8,6 +8,10 @@ block/RCC:
     description: CFGR register.
     byte_offset: 8
     fieldset: CFGR
+  - name: CSSWCR
+    description: CSSWCR register.
+    byte_offset: 12
+    fieldset: CSSWCR
   - name: CIER
     description: CIER register.
     byte_offset: 24
@@ -278,10 +282,6 @@ fieldset/APB2ENR:
 fieldset/APB2RSTR:
   description: APB2RSTR register.
   fields:
-  - name: BLERST
-    description: BLE reset.
-    bit_offset: 0
-    bit_size: 1
   - name: MRBLERST
     description: MR_BLE (Bluetooth radio) reset.
     bit_offset: 0
@@ -293,22 +293,18 @@ fieldset/CFGR:
     description: bit to control inversion of the SMPS clock.
     bit_offset: 0
     bit_size: 1
-    enum: SMPSINV
   - name: HSESEL
     description: Clock source selection request:.
     bit_offset: 1
     bit_size: 1
-    enum: HSESEL
   - name: STOPHSI
     description: Stop HSI clock source request.
     bit_offset: 2
     bit_size: 1
-    enum: STOPHSI
   - name: HSESEL_STATUS
     description: Clock source selection Status.
     bit_offset: 3
     bit_size: 1
-    enum: HSESEL_STATUS
   - name: CLKSYSDIV
     description: 'CLKSYSDIV: system clock divided factor from HSI_64M. 000: system clock frequency is 64 MHz (not available when HSESEL=1) 001: system clock frequency is 32 MHz 010: system clock frequency is 16 MHz 011: system clock frequency is 8 MHz * 100: system clock frequency is 4 MHz * 101: system clock frequency is 2 MHz * 110: system clock frequency is 1 MHz * 111: not used. *: If RCC_APB2ENR.MRBLEEN bit is set, writing in CLKSYSDIV one of those values is replaced by a 010b = 16 MHz writing at hardware level. Warning: if the software programs the 64 MHz frequency target while the RCC_CFGR.HSESEL=1, the hardware will switch the system clock tree on HSI64MPLL again (and restart HSIPLL64M analog block if RCC_CFGR.STOPHSI=1) To switch the system frequency between 64 / 32 / 16 MHz without risk when the MR_BLE is used, prefer the RCC_CSCMDR register to change the system frequency. the MR_BLE frequency must always be equal or less than the CPU/system clock to have functional radio.'
     bit_offset: 5
@@ -323,7 +319,7 @@ fieldset/CFGR:
     bit_size: 1
     enum: SMPSDIV
   - name: LPUCLKSEL
-    description: Selection of LPUART clock:.
+    description: Selection of LPUART clock.
     bit_offset: 13
     bit_size: 1
     enum: LPUCLKSEL
@@ -414,27 +410,22 @@ fieldset/CIFR:
     description: LSI Ready Interrupt flag Set by hardware when LSI clock becomes stable.
     bit_offset: 0
     bit_size: 1
-    enum: LSIRDYIF
   - name: LSERDYIF
     description: LSE Ready Interrupt Flag. Set by hardware when LSE clock becomes stable.
     bit_offset: 1
     bit_size: 1
-    enum: LSERDYIF
   - name: HSIRDYIF
     description: HSI Ready Interrupt Flag. Set by hardware when HSI becomes stable.
     bit_offset: 3
     bit_size: 1
-    enum: HSIRDYIF
   - name: HSERDYIF
     description: HSE Ready Interrupt Flag. Set by hardware when HSE becomes stable.
     bit_offset: 4
     bit_size: 1
-    enum: HSERDYIF
   - name: HSIPLLRDYIF
     description: HSI PLL Ready Interrupt Flag. Set by hardware when HSI PLL 64MHz becomes stable.
     bit_offset: 5
     bit_size: 1
-    enum: HSIPLLRDYIF
   - name: HSIPLLUNLOCKDETIF
     description: 'HSIPLLUNLOCKDETIF: HSI PLL unlock detection Interrupt Flag.'
     bit_offset: 6
@@ -451,7 +442,6 @@ fieldset/CIFR:
     description: LPUART reset release flag.
     bit_offset: 9
     bit_size: 1
-    enum: LPURSTF
 fieldset/CR:
   description: CR register.
   fields:
@@ -463,7 +453,6 @@ fieldset/CR:
     description: 'Internal Low Speed oscillator Ready Set and reset by hardware to indicate when the Low Speed Internal RC oscillator is stable. Reset source only for this field: PORESETn.'
     bit_offset: 3
     bit_size: 1
-    enum: LSIRDY
   - name: LSEON
     description: 'External Low Speed Clock enable. Set and reset by software. Reset source only for this field: PORESETn.'
     bit_offset: 4
@@ -472,12 +461,10 @@ fieldset/CR:
     description: External Low Speed Clock ready flag. Set by hardware to indicate that LSE oscillator is stable.
     bit_offset: 5
     bit_size: 1
-    enum: LSERDY
   - name: LSEBYP
     description: 'External Low Speed Clock bypass. Set and reset by software. Reset source only for this field: PORESETn.'
     bit_offset: 6
     bit_size: 1
-    enum: LSEBYP
   - name: LOCKDET_NSTOP
     description: Lock detector Nstop value When start_stop signal is high; a counter is incremented every 16 MHz clock cycle. When the counter reaches (NSTOP+1) x 64 value, the lock_det signal is set high indicating that the PLL is locked. As soon as the start_stop signal is low the counter is reset to 0.
     bit_offset: 7
@@ -486,7 +473,6 @@ fieldset/CR:
     description: Internal High Speed clock ready flag. Set by hardware to indicate that internal RC 64MHz oscillator is stable. This bit is activated only if the RC is enabled by HSION (it is not activated if the RC is enabled by an IP request).
     bit_offset: 10
     bit_size: 1
-    enum: HSIRDY
   - name: HSEPLLBUFON
     description: External High Speed Clock Buffer for PLL RF2G4 enable. Set and reset by software.
     bit_offset: 12
@@ -499,12 +485,10 @@ fieldset/CR:
     description: Internal High Speed Clock PLL ready flag.
     bit_offset: 14
     bit_size: 1
-    enum: HSIPLLRDY
   - name: FMRAT
     description: Force MR_BLE active transmission status (for debug purpose).
     bit_offset: 15
     bit_size: 1
-    enum: FMRAT
   - name: HSEON
     description: External High Speed Clock enable. Set and reset by software. in low power mode, HSE is turned off.
     bit_offset: 16
@@ -513,7 +497,6 @@ fieldset/CR:
     description: External High Speed Clock ready flag. Set by hardware to indicate that HSE oscillator is stable.
     bit_offset: 17
     bit_size: 1
-    enum: HSERDY
 fieldset/CSCMDR:
   description: CSCMDR register.
   fields:
@@ -521,7 +504,6 @@ fieldset/CSCMDR:
     description: Request for system clock switching Cleared by hardware when system clock frequency switch is done.
     bit_offset: 0
     bit_size: 1
-    enum: REQUEST
   - name: CLKSYSDIV_REQ
     description: 'system clock dividing factor from HSI_64M requested Note: behavior depends on BLEEN in APB2ENR register.'
     bit_offset: 1
@@ -547,38 +529,49 @@ fieldset/CSR:
     description: Remove reset flag Set by software to clear the value of the reset flags. It auto clears by HW after clearing reason flags.
     bit_offset: 23
     bit_size: 1
-    enum: RMVF
   - name: PADRSTF
     description: SYSTEM reset flag Reset by software by writing the RMVF bit. Set by hardware when a reset from pad occurs.
     bit_offset: 26
     bit_size: 1
-    enum: PADRSTF
   - name: PORRSTF
     description: POWER reset flag Reset by software by writing the RMVF bit. Set by hardware when a power reset occurs from LPMURESET block.
     bit_offset: 27
     bit_size: 1
-    enum: PORRSTF
   - name: SFTRSTF
     description: Software reset flag Reset by software by writing the RMVF bit. Set by hardware when a software reset occurs.
     bit_offset: 28
     bit_size: 1
-    enum: SFTRSTF
   - name: WDGRSTF
     description: Watchdog reset flag Reset by software by writing the RMVF bit. Set by hardware when a watchdog reset from V33 domain occurs.
     bit_offset: 29
     bit_size: 1
-    enum: WDGRSTF
   - name: LOCKUPRSTF
     description: LOCK UP reset flag from CM0 Reset by software by writing the RMVF bit. Set by hardware from unrecoverable exception CPU. It reset V12i domain, FLASH controller and peripherals.
     bit_offset: 30
     bit_size: 1
-    enum: LOCKUPRSTF
-fieldset/RFHSECR:
-  description: RFHSECR register.
+fieldset/CSSWCR:
+  description: CSSWCR register.
   fields:
-  - name: XOTUNE
-    description: RF-HSE capacitor bank tuning Set by option byte loading soon after Power On Reset.
+  - name: LSISWTRIMEN
+    description: Low speed internal RC software trimming enable.
     bit_offset: 0
+    bit_size: 1
+  - name: LSISWBW
+    description: This value is taken into account instead of the trimming value loaded by HW at reset if LSISWTRIMEN bit is set.
+    bit_offset: 1
+    bit_size: 4
+  - name: LSEDRV
+    description: GM for the external 32kHz crystal.
+    bit_offset: 5
+    bit_size: 2
+    enum: LSEDRV
+  - name: HSISWTRIMEN
+    description: High speed internal RC software trimming enable.
+    bit_offset: 23
+    bit_size: 1
+  - name: HSISWBW
+    description: This value is taken into account instead of the trimming value loaded by HW at reset if HSISWTRIMEN bit is set.
+    bit_offset: 24
     bit_size: 6
 fieldset/RFSWHSECR:
   description: RFSWHSECR register.
@@ -601,399 +594,205 @@ fieldset/RFSWHSECR:
     description: RF-HSE capacitor bank tuning value by SW Set by software.
     bit_offset: 8
     bit_size: 6
+fieldset/RFHSECR:
+  description: RFHSECR register.
+  fields:
+  - name: XOTUNE
+    description: RF-HSE capacitor bank tuning loaded by HW at reset. This field is read-only.
+    bit_offset: 0
+    bit_size: 6
 enum/CCOPRE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: Div1
     description: CCO clock is divided by 1.
     value: 0
-  - name: B_0x1
+  - name: Div2
     description: CCO clock is divided by 2.
     value: 1
-  - name: B_0x2
+  - name: Div4
     description: CCO clock is divided by 4.
     value: 2
-  - name: B_0x3
+  - name: Div8
     description: CCO clock is divided by 8.
     value: 3
-  - name: B_0x4
+  - name: Div16
     description: CCO clock is divided by 16.
     value: 4
 enum/CLKBLEDIV:
   bit_size: 1
   variants:
-  - name: B_0x0
-    description: 32MHz.
+  - name: 32MHz
+    description: BLE Radio clock set to 32MHz.
     value: 0
-  - name: B_0x1
-    description: 16MHz.
+  - name: 16MHz
+    description: BLE Radio clock set to 16MHz.
     value: 1
 enum/CLKSLOWSEL:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: LSILMPU
     description: LSILMPU oscillator clock (default).
     value: 0
-  - name: B_0x1
+  - name: LSE
     description: LSE oscillator clock used as slow clock.
     value: 1
-  - name: B_0x2
+  - name: LSI
     description: LSI oscillator clock used as slow clock.
     value: 2
-  - name: B_0x3
+  - name: HSIDiv2048
     description: HSI_64M divided by 2048 used as slow clock.
     value: 3
 enum/CLKSYSDIV_REQ:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: Div1
     description: div 1 (sys clock 64M).
     value: 0
-  - name: B_0x1
+  - name: Div2
     description: div 2 (sys clock 32M).
     value: 1
-  - name: B_0x2
+  - name: Div4
     description: div 4 (sys clock 16M).
     value: 2
-  - name: B_0x3
+  - name: Div8
     description: div 8 (sys clock 8M).
     value: 3
-  - name: B_0x4
+  - name: Div16
     description: div 16 (sys clock 4M).
     value: 4
-  - name: B_0x5
+  - name: Div32
     description: div 32 (sys clock 2M).
     value: 5
-  - name: B_0x6
+  - name: Div64
     description: div 64 (sys clock 1M).
     value: 6
-enum/FMRAT:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no effect.
-    value: 0
-  - name: B_0x1
-    description: active_transmission is force to '1' whatever the HSIPLLRDY status.
-    value: 1
 enum/GMC:
   bit_size: 3
   variants:
-  - name: B_0x0
-    description: 'max 0.0 001: max 0.57 mA/V.'
+  - name: 0_18mAPerVolt
+    description: max 0.18 mA/V.
     value: 0
-  - name: B_0x2
+  - name: 0_57mAPerVolt
+    description: max 0.57 mA/V.
+    value: 1
+  - name: 0_78mAPerVolt
     description: max 0.78 mA/V.
     value: 2
-  - name: B_0x3
+  - name: 1_13mAPerVolt
     description: max 1.13 mA/V (Default).
     value: 3
-  - name: B_0x4
-    description: max 0.61 mA/V.
+  - name: 1_61mAPerVolt
+    description: max 1.61 mA/V.
     value: 4
-  - name: B_0x5
+  - name: 1_65mAPerVolt
     description: max 1.65 mA/V.
     value: 5
-  - name: B_0x6
+  - name: 2_12mAPerVolt
     description: max 2.12 mA/V.
     value: 6
-  - name: B_0x7
+  - name: 2_84mAPerVolt
     description: max 2.84 mA/V.
     value: 7
-enum/HSERDY:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: HSE oscillator not ready.
-    value: 0
-  - name: B_0x1
-    description: HSE oscillator ready.
-    value: 1
-enum/HSERDYIF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No clock ready interrupt caused by the HSE oscillator.
-    value: 0
-  - name: B_0x1
-    description: Clock ready interrupt caused by the HSE oscillator.
-    value: 1
-enum/HSESEL:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: HSI clock source is requested (default).
-    value: 0
-  - name: B_0x1
-    description: HSE clock source is requested.
-    value: 1
-enum/HSESEL_STATUS:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: HSI clock source is requested (default).
-    value: 0
-  - name: B_0x1
-    description: HSE clock source is requested.
-    value: 1
-enum/HSIPLLRDY:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: PLL is unlocked.
-    value: 0
-  - name: B_0x1
-    description: PLL is locked.
-    value: 1
-enum/HSIPLLRDYIF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No clock ready interrupt caused by the HSI PLL64 MHz oscillator.
-    value: 0
-  - name: B_0x1
-    description: Clock ready interrupt caused by the HSI PLL64 MHz oscillator.
-    value: 1
-enum/HSIRDY:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: internal RC 64 MHz oscillator not ready.
-    value: 0
-  - name: B_0x1
-    description: internal RC 64 MHz oscillator ready.
-    value: 1
-enum/HSIRDYIF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No clock ready interrupt caused by the HSI oscillator.
-    value: 0
-  - name: B_0x1
-    description: Clock ready interrupt caused by the HSI oscillator.
-    value: 1
 enum/LCOSEL:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: Disabled
     description: LCO output disabled, no clock on LCO.
     value: 0
-  - name: B_0x1
+  - name: LSILMPU
     description: internal 32 KHz (LSI_LPMU) oscillator clock selected.
     value: 1
-  - name: B_0x2
+  - name: LSI
     description: internal 32 KHz (LSI) oscillator clock selected.
     value: 2
-  - name: B_0x3
+  - name: LSE
     description: external 32 KHz (LSE) oscillator clock selected.
     value: 3
-enum/LOCKUPRSTF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No lockup reset occurred.
-    value: 0
-  - name: B_0x1
-    description: lockup reset occurred.
-    value: 1
 enum/LPUCLKSEL:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Always16MHz
     description: 16MHz peripheral clock (default).
     value: 0
-  - name: B_0x1
+  - name: LSE
     description: LSE clock.
     value: 1
-enum/LPURSTF:
-  bit_size: 1
+enum/LSEDRV:
+  bit_size: 2
   variants:
-  - name: B_0x0
-    description: no LPUART reset release event occurred.
+  - name: Low
+    description: Low drive capability.
     value: 0
-  - name: B_0x1
-    description: LPUART reset release event occurred.
+  - name: MediumLow
+    description: Medium-low drive capability.
     value: 1
-enum/LSEBYP:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: LSE oscillator bypass OFF.
-    value: 0
-  - name: B_0x1
-    description: LSE oscillator bypass ON.
-    value: 1
-enum/LSERDY:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: LSE oscillator not ready.
-    value: 0
-  - name: B_0x1
-    description: LSE oscillator ready.
-    value: 1
-enum/LSERDYIF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No clock ready interrupt caused by the LSE oscillator.
-    value: 0
-  - name: B_0x1
-    description: Clock ready interrupt caused by the LSE oscillator.
-    value: 1
-enum/LSIRDY:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: LSI RC oscillator not ready.
-    value: 0
-  - name: B_0x1
-    description: LSI RC oscillator ready.
-    value: 1
-enum/LSIRDYIF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No clock ready interrupt caused by the internal RC 32 KHz oscillator.
-    value: 0
-  - name: B_0x1
-    description: Clock ready interrupt caused by the internal RC 32 kHz oscillator.
-    value: 1
+  - name: MediumHigh
+    description: Medium-high drive capability.
+    value: 2
+  - name: High
+    description: High drive capability.
+    value: 3
 enum/MCOSEL:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: Disabled
     description: MCO output disabled, no clock on MCO.
     value: 0
-  - name: B_0x1
+  - name: SysClk
     description: system clock selected.
     value: 1
-  - name: B_0x2
-    description: na.
-    value: 2
-  - name: B_0x3
+  - name: HSI64MHz
     description: internal RC 64 MHz (HSI) oscillator clock selected.
     value: 3
-  - name: B_0x4
+  - name: HSE32MHz
     description: external oscillator (HSE) clock selected.
     value: 4
-  - name: B_0x5
+  - name: HSI64MHzDiv2048
     description: internal RC 64 MHz (HSI) oscillator divided by 2048 and used as slow clock selected.
     value: 5
-  - name: B_0x6
+  - name: SMPS
     description: SMPS clock selected.
     value: 6
-  - name: B_0x7
+  - name: ADC
     description: AUX ADC ANA clock selected.
     value: 7
-enum/PADRSTF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No reset from pad occurred.
-    value: 0
-  - name: B_0x1
-    description: Reset from pad occurred.
-    value: 1
-enum/PORRSTF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No POWER reset occurred.
-    value: 0
-  - name: B_0x1
-    description: POWER reset occurred.
-    value: 1
-enum/REQUEST:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: To cancel an ongiong request - still possible until IRQ assertion.
-    value: 0
-  - name: B_0x1
-    description: To update the system clock frequency.
-    value: 1
-enum/RMVF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Nothing done.
-    value: 0
-  - name: B_0x1
-    description: Reset the value of the reset flags.
-    value: 1
 enum/SATRG:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Ratio1_2
     description: the bias current is confronted to a reference current with a ratio of 1/2.
     value: 0
-  - name: B_0x1
+  - name: Ratio3_4
     description: the bias current is confronted to a reference current with a ratio of 3/4.
-    value: 1
-enum/SFTRSTF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No software reset occurred.
-    value: 0
-  - name: B_0x1
-    description: Software reset occurred.
     value: 1
 enum/SMPSDIV:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Div2
     description: div 2 when ANADIV=2 or 4 (default ).
     value: 0
-  - name: B_0x1
+  - name: Div4
     description: div 4 when ANADIV=1 or 2.
-    value: 1
-enum/SMPSINV:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: SMPS clock not inverted (default value).
-    value: 0
-  - name: B_0x1
-    description: SMPS clock inverted (for debug).
     value: 1
 enum/SPIISCLKSEL:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: 16MHz
     description: 16MHz peripheral clock (default).
     value: 0
-  - name: B_0x1
+  - name: 32MHz
     description: 32MHz peripheral clock.
     value: 1
 enum/STATUS:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: Idle
     description: IDLE no switch requested.
     value: 0
-  - name: B_0x1
+  - name: Ongoing
     description: ONGOING clock frequency switch is ongoing.
     value: 1
-  - name: B_0x2
+  - name: Done
     description: DONE clock frequency switch done.
     value: 2
-enum/STOPHSI:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: HSI is enabled (default).
-    value: 0
-  - name: B_0x1
-    description: disable HSI is requested.
-    value: 1
-enum/WDGRSTF:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No watchdog reset occurred.
-    value: 0
-  - name: B_0x1
-    description: Watchdog reset occurred.
-    value: 1

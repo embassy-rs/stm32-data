@@ -244,7 +244,7 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32H742.G",                  &[mem!(BANK_1 { 0x08000000 512 },  BANK_2 { 0x08100000 512 },  ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 384 }, SRAM1 { 0x30000000 32 },  SRAM2 { 0x30020000 16 }, SRAM4 { 0x38000000 64 })]),
     ("STM32H742.I",                  &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 384 }, SRAM1 { 0x30000000 32 },  SRAM2 { 0x30020000 16 }, SRAM4 { 0x38000000 64 })]),
     ("STM32H7[45]3.G",               &[mem!(BANK_1 { 0x08000000 512 },  BANK_2 { 0x08100000 512 },  ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 512 }, SRAM1 { 0x30000000 128 }, SRAM2 { 0x30020000 128 }, SRAM3 { 0x30040000 32 }, SRAM4 { 0x38000000 64 })]),
-    ("STM32H7[45]3.I",               &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 512 }, SRAM1 { 0x30000000 128 }, SRAM2 { 0x30020000 128 }, SRAM3 { 0x30040000 32 }, SRAM4 { 0x38000000 64 })]),
+    ("STM32H7[45]3.I",               &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 512 }, SRAM1 { 0x30000000 128 }, SRAM2 { 0x30020000 128 }, SRAM3 { 0x30040000 32 }, SRAM4 { 0x38000000 64 }, BKPSRAM { 0x38800000 4 })]),
     ("STM32H750.B",                  &[mem!(BANK_1 { 0x08000000 128 },                              ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 512 }, SRAM1 { 0x30000000 128 }, SRAM2 { 0x30020000 128 }, SRAM3 { 0x30040000 32 }, SRAM4 { 0x38000000 64 })]),
     // --- RM0399 - H745/55/47/57
     ("STM32H7[45][57].G",            &[mem!(BANK_1 { 0x08000000 512 },  BANK_2 { 0x08100000 512 },  ITCM { 0x00000000 64 }, DTCM { 0x20000000 128 },  AXISRAM { 0x24000000 512 }, SRAM1 { 0x30000000 128 }, SRAM2 { 0x30020000 128 }, SRAM3 { 0x30040000 32 }, SRAM4 { 0x38000000 64 })]),
@@ -363,8 +363,8 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32U0[78]3.B",               &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 40 }, OTP { 0x1fff6800 1 })]),
     ("STM32U0[78]3.C",               &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 40 }, OTP { 0x1fff6800 1 })]),
     // U3
-    ("STM32U3[78]..E",               &[mem!(BANK_1 { 0x08000000 256 },   BANK_2 { 0x08010000 256 },   SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes })]),
-    ("STM32U3[78]..G",               &[mem!(BANK_1 { 0x08000000 512 },   BANK_2 { 0x08010000 512 },   SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes })]),
+    ("STM32U3[78]..E",               &[mem!(BANK_1 { 0x08000000 256 },   BANK_2 { 0x08040000 256 },   SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes })]),
+    ("STM32U3[78]..G",               &[mem!(BANK_1 { 0x08000000 512 },   BANK_2 { 0x08080000 512 },   SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes })]),
     // U5
     ("STM32U5[34]..B",               &[mem!(BANK_1 { 0x08000000 64 },   BANK_2 { 0x08010000 64 },   SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes })]),
     ("STM32U5[34]..C",               &[mem!(BANK_1 { 0x08000000 128 },  BANK_2 { 0x08020000 128 },  SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes })]),
@@ -463,6 +463,7 @@ static FLASH_INFO: RegexMap<&[FlashInfo]> = RegexMap::new(&[
                                  ]),
     ("STM32L5.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }]),
     ("STM32U0.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
+    ("STM32U3.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }]),
     ("STM32U5.*",               &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }]),
     ("STM32WB0.*",              &[FlashInfo{ erase_value: 0xFF, write_size: 32, erase_size: &[(  2*1024, 0)] }]),
     ("STM32WBA.*",              &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }]),

@@ -8,9 +8,9 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct Ip {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
-        #[serde(rename = "Version")]
+        #[serde(rename = "@Version")]
         pub version: String,
         #[serde(rename = "GPIO_Pin")]
         pub gpio_pins: Vec<GpioPin>,
@@ -18,7 +18,7 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct GpioPin {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
         #[serde(rename = "PinSignal", default)]
         pub pin_signals: Vec<PinSignal>,
@@ -26,7 +26,7 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct PinSignal {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
         #[serde(rename = "SpecificParameter", default)]
         pub specific_parameter: Option<SpecificParameter>,

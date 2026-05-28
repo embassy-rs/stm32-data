@@ -9,15 +9,15 @@ mod xml {
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     pub struct Mcu {
-        #[serde(rename = "Family")]
+        #[serde(rename = "@Family")]
         pub family: String,
-        #[serde(rename = "Line")]
+        #[serde(rename = "@Line")]
         pub line: String,
         #[serde(rename = "Die")]
         pub die: String,
-        #[serde(rename = "RefName")]
+        #[serde(rename = "@RefName")]
         pub ref_name: String,
-        #[serde(rename = "Package")]
+        #[serde(rename = "@Package")]
         pub package: String,
         #[serde(rename = "Core")]
         pub cores: Vec<String>,
@@ -33,9 +33,9 @@ mod xml {
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     pub struct Pin {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
-        #[serde(rename = "Position")]
+        #[serde(rename = "@Position")]
         pub position: String,
         #[serde(rename = "Signal", default)]
         pub signals: Vec<PinSignal>,
@@ -43,20 +43,37 @@ mod xml {
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     pub struct PinSignal {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
     }
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     pub struct Ip {
-        #[serde(rename = "InstanceName")]
+        #[serde(rename = "@InstanceName")]
         pub instance_name: String,
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
-        #[serde(rename = "Version")]
+        #[serde(rename = "@Version")]
         pub version: String,
     }
 }
+
+// mod pdsc {
+//     use serde::Deserialize;
+//
+//     #[derive(Clone, Debug, Deserialize, PartialEq)]
+//     pub struct Package {
+//         pub devices: Vec<Family>,
+//     }
+//
+//     #[derive(Clone, Debug, Deserialize, PartialEq)]
+//     pub struct Family {
+//         pub sub_families: Vec<SubFamily>,
+//     }
+//
+//     #[derive(Clone, Debug, Deserialize, PartialEq)]
+//     pub struct SubFamily {}
+// }
 
 pub struct Chip {
     #[allow(dead_code)]
@@ -67,6 +84,8 @@ pub struct Chip {
     pub packages: Vec<stm32_data_serde::chip::Package>,
 }
 
+/// On STM32CubeMX1, this corresponds to one XML file
+/// On STM32CubeMX2, this correpsonds to a 'subFamily'
 pub struct ChipGroup {
     pub chip_names: Vec<String>,
     pub xml: xml::Mcu,

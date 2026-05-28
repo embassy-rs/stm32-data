@@ -11,9 +11,9 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct Ip {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
-        #[serde(rename = "Version")]
+        #[serde(rename = "@Version")]
         pub version: String,
         #[serde(rename = "RefParameter")]
         pub ref_parameters: Vec<RefParameter>,
@@ -25,9 +25,9 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct RefMode {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
-        #[serde(rename = "BaseMode")]
+        #[serde(rename = "@BaseMode")]
         pub base_mode: Option<String>,
         #[serde(rename = "Parameter")]
         pub parameters: Vec<Parameter>,
@@ -35,7 +35,7 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct Parameter {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
         #[serde(rename = "PossibleValue", default)]
         pub possible_values: Vec<String>,
@@ -43,7 +43,7 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct RefParameter {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
         #[serde(rename = "PossibleValue", default)]
         pub possible_values: Vec<PossibleValue>,
@@ -51,15 +51,15 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct PossibleValue {
-        #[serde(rename = "Comment")]
+        #[serde(rename = "@Comment")]
         pub comment: String,
-        #[serde(rename = "Value")]
+        #[serde(rename = "@Value")]
         pub value: String,
     }
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct ModeLogicOperator {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
         #[serde(rename = "Mode")]
         pub modes: Vec<Mode>,
@@ -67,7 +67,7 @@ mod xml {
 
     #[derive(Debug, Deserialize, PartialEq)]
     pub struct Mode {
-        #[serde(rename = "Name")]
+        #[serde(rename = "@Name")]
         pub name: String,
         #[serde(rename = "ModeLogicOperator", default)]
         pub mode_logic_operator: Option<ModeLogicOperator>,
