@@ -779,6 +779,12 @@ fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) ->
         }
     }
 
+    if pname == "ADC12_COMMON" && chip_name.starts_with("STM32U5") {
+        // The ADC12_COMMON address is incorrect in the headers for STM32U5.
+        // It is defined as 0x42048308 but should be 0x42048300 according to RM0456.
+        return Some(0x42048300);
+    }
+
     if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(pname) {
         defines.get_peri_addr("FDCANRAM").map(|addr| {
             let h7_non_rs_re = Regex::new(r"STM32H7[0-9AB].*").unwrap();
