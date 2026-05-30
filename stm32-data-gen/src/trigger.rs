@@ -580,6 +580,12 @@ pub(crate) fn peripheral_trigger_info(mcu_name: &str, peripheral: &str) -> Optio
             Trigger {signal: "DAC_INC_CHX_TRG13", source: "HRTIM_DAC_STEP_TRG5"},
             Trigger {signal: "DAC_INC_CHX_TRG14", source: "HRTIM_DAC_STEP_TRG6"},
         ]),
+        (r"^STM32G4.*:TIM1", &[
+            Trigger {signal: "TIMX_TI1_IN1", source: "COMP1_OUT"},
+            Trigger {signal: "TIMX_TI1_IN2", source: "COMP2_OUT"},
+            Trigger {signal: "TIMX_TI1_IN3", source: "COMP3_OUT"},
+            Trigger {signal: "TIMX_TI1_IN4", source: "COMP4_OUT"},
+        ]),
         (r"^STM32WL.*:DAC.*", &[
             Trigger {signal: "DAC_CHX_TRG1", source: "TIM1_TRGO"},
             Trigger {signal: "DAC_CHX_TRG2", source: "TIM2_TRGO"},
