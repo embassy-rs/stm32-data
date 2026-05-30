@@ -197,6 +197,18 @@ pub(crate) fn peripheral_trigger_info(mcu_name: &str, peripheral: &str) -> Optio
             Trigger {signal: "DAC_CHX_TRG5", source: "TIM7_TRGO"},
             Trigger {signal: "DAC_CHX_TRG6", source: "EXTI9_TRG"},
         ]),
+        (r"^STM32L0.*:TIM2", &[
+            Trigger {signal: "TIMX_TI4_IN1", source: "COMP1_OUT"},
+            Trigger {signal: "TIMX_TI4_IN2", source: "COMP2_OUT"},
+        ]),
+        (r"^STM32L0.*:TIM21", &[
+            Trigger {signal: "TIMX_TI1_IN1", source: "COMP1_OUT"},
+            Trigger {signal: "TIMX_TI1_IN2", source: "COMP2_OUT"},
+        ]),
+        (r"^STM32L0.*:TIM22", &[
+            Trigger {signal: "TIMX_TI1_IN1", source: "COMP1_OUT"},
+            Trigger {signal: "TIMX_TI1_IN2", source: "COMP2_OUT"},
+        ]),
         (r"^STM32L1.*:DAC.*", &[
             Trigger {signal: "DAC_CHX_TRG0", source: "TIM6_TRGO"},
             Trigger {signal: "DAC_CHX_TRG2", source: "TIM7_TRGO"},
@@ -348,6 +360,10 @@ pub(crate) fn peripheral_trigger_info(mcu_name: &str, peripheral: &str) -> Optio
             Trigger {signal: "ADC_EXT_TRG1", source: "TIM1_CC4"},
             Trigger {signal: "ADC_EXT_TRG3", source: "TIM3_TRGO"},
             Trigger {signal: "ADC_EXT_TRG7", source: "EXTI11_TRG"},
+        ]),
+        (r"^STM32U0.*:TIM1", &[
+            Trigger {signal: "TIMX_TI1_IN1", source: "COMP1_OUT"},
+            Trigger {signal: "TIMX_TI2_IN1", source: "COMP2_OUT"},
         ]),
         (r"^STM32U0.*:DAC.*", &[
             Trigger {signal: "DAC_CHX_TRG1", source: "TIM1_TRGO"},
@@ -585,6 +601,14 @@ pub(crate) fn peripheral_trigger_info(mcu_name: &str, peripheral: &str) -> Optio
             Trigger {signal: "TIMX_TI1_IN2", source: "COMP2_OUT"},
             Trigger {signal: "TIMX_TI1_IN3", source: "COMP3_OUT"},
             Trigger {signal: "TIMX_TI1_IN4", source: "COMP4_OUT"},
+        ]),
+        (r"^STM32WL.*:TIM1", &[
+            Trigger {signal: "TIMX_TI1_IN1", source: "COMP1_OUT"},
+        ]),
+        (r"^STM32WL.*:TIM2", &[
+            Trigger {signal: "TIMX_TI4_IN1", source: "COMP1_OUT"},
+            Trigger {signal: "TIMX_TI4_IN2", source: "COMP2_OUT"},
+            Trigger {signal: "TIMX_TI4_IN3", source: "COMP1_OUT_OR_COMP2_OUT"},
         ]),
         (r"^STM32WL.*:DAC.*", &[
             Trigger {signal: "DAC_CHX_TRG1", source: "TIM1_TRGO"},
