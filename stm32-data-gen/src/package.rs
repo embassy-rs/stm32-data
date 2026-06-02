@@ -1,0 +1,792 @@
+use std::collections::hash_map::Entry;
+use std::collections::{HashMap, HashSet};
+use std::path::{Path, PathBuf};
+
+use serde::{Deserialize, Serialize};
+use stm32_data_serde::chip::PackagePin;
+
+use crate::chips::xml::PinSignal;
+use crate::chips::{Chip, ChipGroup, xml};
+use crate::gpio_af::Af;
+use crate::package::schema::{peripherals, pinout};
+
+#[derive(Serialize, Deserialize)]
+pub struct Package {
+    pub devices: Devices,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Devices {
+    #[serde(rename = "$text")]
+    pub text: Option<String>,
+    #[serde(rename = "family")]
+    pub families: Vec<Family>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Family {
+    #[serde(default, rename = "@Dfamily")]
+    pub family: String,
+    #[serde(default, rename = "@Dvendor")]
+    pub vendor: String,
+    #[serde(default, rename = "$text")]
+    pub text: Option<String>,
+    #[serde(default, rename = "processor")]
+    pub processors: Vec<Processor>,
+    #[serde(default, rename = "book")]
+    pub books: Vec<Book>,
+    #[serde(default)]
+    pub description: String,
+    #[serde(default, rename = "feature")]
+    pub features: Vec<Feature>,
+    #[serde(default, rename = "environment")]
+    pub environments: Vec<Environment>,
+    #[serde(default, rename = "subFamily")]
+    pub sub_families: Vec<SubFamily>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Processor {
+    #[serde(default, rename = "@Dcore")]
+    pub core: String,
+    #[serde(default, rename = "@DcoreVersion")]
+    pub core_version: String,
+    #[serde(default, rename = "@Dfpu")]
+    pub fpu: String,
+    #[serde(default, rename = "@Dmpu")]
+    pub mpu: String,
+    #[serde(default, rename = "@Ddsp")]
+    pub dsp: String,
+    #[serde(default, rename = "@Dtz")]
+    pub tz: String,
+    #[serde(default, rename = "@Dendian")]
+    pub endian: String,
+    #[serde(default, rename = "@Dclock")]
+    pub clock: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct SubFamily {
+    #[serde(rename = "@DsubFamily")]
+    pub sub_family: String,
+    #[serde(default, rename = "memory")]
+    pub memories: Vec<Memory>,
+    #[serde(default, rename = "book")]
+    pub books: Vec<Book>,
+    #[serde(default, rename = "feature")]
+    pub features: Vec<Feature>,
+    #[serde(default, rename = "environment")]
+    pub environments: Vec<Environment>,
+    #[serde(default, rename = "device")]
+    pub devices: Vec<Device>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Memory {
+    #[serde(default, rename = "@name")]
+    pub name: String,
+    #[serde(default, rename = "@access")]
+    pub access: String,
+    #[serde(default, rename = "@start")]
+    pub start: String,
+    #[serde(default, rename = "@size")]
+    pub size: String,
+    #[serde(default, rename = "@uninit")]
+    pub uninit: String,
+    #[serde(default, rename = "@default")]
+    pub default: String,
+    #[serde(default, rename = "@startup")]
+    pub startup: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Feature {
+    #[serde(rename = "@type")]
+    pub feature_type: String,
+    #[serde(default, rename = "@name")]
+    pub name: String,
+    #[serde(default, rename = "@n")]
+    pub n: String,
+    #[serde(default, rename = "@m")]
+    pub m: String,
+}
+
+/// Corresponds to one `xml::Mcu`
+#[derive(Serialize, Deserialize)]
+pub struct Device {
+    #[serde(rename = "@Dname")]
+    pub name: String,
+    #[serde(rename = "$text")]
+    pub text: Option<String>,
+    #[serde(default, rename = "compile")]
+    pub compiles: Vec<Compile>,
+    #[serde(default, rename = "memory")]
+    pub memories: Vec<Memory>,
+    #[serde(default, rename = "algorithm")]
+    pub algorithms: Vec<Algorithm>,
+    #[serde(default, rename = "book")]
+    pub books: Vec<Book>,
+    #[serde(default, rename = "feature")]
+    pub features: Vec<Feature>,
+    #[serde(default, rename = "environment")]
+    pub environments: Vec<Environment>,
+    #[serde(default)]
+    pub debug: Option<Debug>,
+    #[serde(default)]
+    pub flashinfo: Option<Flashinfo>,
+    #[serde(default, rename = "variant")]
+    pub variants: Vec<Variant>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Compile {
+    #[serde(rename = "@header")]
+    pub header: String,
+    #[serde(rename = "@define")]
+    pub define: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Algorithm {
+    #[serde(rename = "@name")]
+    pub name: String,
+    #[serde(rename = "@start")]
+    pub start: String,
+    #[serde(rename = "@size")]
+    pub size: String,
+    #[serde(rename = "@RAMstart")]
+    pub ramstart: String,
+    #[serde(rename = "@RAMsize")]
+    pub ramsize: String,
+    #[serde(rename = "@default")]
+    pub default: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Book {
+    #[serde(rename = "@name")]
+    pub name: String,
+    #[serde(rename = "@title")]
+    pub title: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Environment {
+    #[serde(rename = "@name")]
+    pub name: String,
+    #[serde(rename = "$text")]
+    pub text: Option<String>,
+    #[serde(default, rename = "device")]
+    pub device: STDevice,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct STDevice {
+    #[serde(rename = "$text")]
+    pub text: Option<String>,
+    #[serde(default)]
+    pub descriptors: Descriptors,
+    #[serde(default, rename = "extra-attributes")]
+    pub extra_attributes: ExtraAttributes,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct Descriptors {
+    #[serde(rename = "descriptor")]
+    pub descriptors: Vec<Descriptor>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Descriptor {
+    #[serde(rename = "@schemaType")]
+    pub schema_type: String,
+    #[serde(rename = "@path")]
+    pub path: String,
+    #[serde(rename = "@schemaVersion")]
+    pub schema_version: String,
+    #[serde(rename = "@version")]
+    pub version: String,
+}
+
+impl Descriptor {
+    fn as_path(&self) -> &Path {
+        Path::new(&self.path)
+    }
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct ExtraAttributes {
+    #[serde(rename = "extra-attribute")]
+    pub extra_attributes: Vec<ExtraAttribute>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ExtraAttribute {
+    #[serde(rename = "@name")]
+    pub name: String,
+    #[serde(rename = "@value")]
+    pub value: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Debug {
+    #[serde(rename = "@svd")]
+    pub svd: String,
+    #[serde(rename = "@__ap")]
+    pub _ap: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Flashinfo {
+    #[serde(rename = "@name")]
+    pub name: String,
+    #[serde(rename = "@start")]
+    pub start: String,
+    #[serde(rename = "@pagesize")]
+    pub pagesize: String,
+    #[serde(rename = "$text")]
+    pub text: Option<String>,
+    pub block: Block,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Block {
+    #[serde(rename = "@count")]
+    pub count: String,
+    #[serde(rename = "@size")]
+    pub size: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Variant {
+    #[serde(rename = "@Dvariant")]
+    pub variant: String,
+    #[serde(rename = "$text")]
+    pub text: Option<String>,
+    #[serde(default, rename = "feature")]
+    pub features: Vec<Feature>,
+    #[serde(default, rename = "environment")]
+    pub environments: Vec<Environment>,
+}
+
+mod schema {
+    pub mod pinout {
+        use serde::{Deserialize, Serialize};
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct File {
+            #[serde(default, rename = "schema_version")]
+            pub schema_version: String,
+            #[serde(default, rename = "characteristics")]
+            pub characteristics: Characteristics,
+            #[serde(default, rename = "pin_type_description")]
+            pub pin_type_description: PinTypeDescription,
+            #[serde(default, rename = "io_structure_type_description")]
+            pub io_structure_type_description: IoStructureTypeDescription,
+            #[serde(default, rename = "io_structure_options_description")]
+            pub io_structure_options_description: IoStructureOptionsDescription,
+            #[serde(default, rename = "package_pins")]
+            pub package_pins: Vec<String>,
+            #[serde(default, rename = "signals")]
+            pub signals: Vec<Signal>,
+            #[serde(default, rename = "bonds")]
+            pub bonds: Vec<Bond>,
+            #[serde(default, rename = "version")]
+            pub version: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Characteristics {
+            #[serde(default, rename = "package_name")]
+            pub package_name: String,
+            #[serde(default, rename = "package_type")]
+            pub package_type: String,
+            #[serde(default, rename = "die_name")]
+            pub die_name: String,
+            #[serde(default, rename = "NbIOs")]
+            pub nb_ios: i64,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct PinTypeDescription {
+            #[serde(default)]
+            pub s: String,
+            #[serde(default, rename = "I/O")]
+            pub i_o: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct IoStructureTypeDescription {
+            #[serde(default, rename = "RST")]
+            pub rst: String,
+            #[serde(default, rename = "FT")]
+            pub ft: String,
+            #[serde(default, rename = "TT")]
+            pub tt: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct IoStructureOptionsDescription {
+            #[serde(default, rename = "a")]
+            pub a: String,
+            #[serde(default, rename = "f")]
+            pub f: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Signal {
+            #[serde(default, rename = "name")]
+            pub name: String,
+            #[serde(default, rename = "instance")]
+            pub instance: String,
+            #[serde(default, rename = "die_pad")]
+            pub die_pad: String,
+            #[serde(default, rename = "function")]
+            pub function: Function,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Function {
+            #[serde(default, rename = "type")]
+            pub type_field: String,
+            #[serde(default, rename = "id")]
+            pub id: Option<String>,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Bond {
+            #[serde(default, rename = "die_pad")]
+            pub die_pad: String,
+            #[serde(default, rename = "position")]
+            pub position: String,
+            #[serde(default, rename = "sharing")]
+            pub sharing: Option<Sharing>,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Sharing {
+            #[serde(default, rename = "signals")]
+            pub signals: Vec<String>,
+        }
+    }
+
+    pub mod peripherals {
+        use serde::{Deserialize, Serialize};
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct File {
+            #[serde(default, rename = "analogInterconnections")]
+            pub analog_interconnections: Vec<AnalogInterconnections>,
+
+            #[serde(default)]
+            pub peripherals: Vec<Peripheral>,
+
+            #[serde(default)]
+            pub schema_version: String,
+
+            #[serde(default)]
+            pub version: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Peripheral {
+            #[serde(default, rename = "busMapping")]
+            pub bus_mapping: Vec<BusMapping>,
+
+            #[serde(default, rename = "digitalName")]
+            pub digital_name: String,
+
+            #[serde(default, rename = "entityType")]
+            pub entity_type: String,
+
+            #[serde(default)]
+            pub interconnect: Vec<serde_json::Value>,
+
+            #[serde(default)]
+            pub name: String,
+
+            #[serde(default, rename = "peripheralType")]
+            pub peripheral_type: String,
+
+            #[serde(default, rename = "peripheralVersionNum")]
+            pub peripheral_version_num: f64,
+
+            #[serde(default)]
+            pub pinout_signals: Vec<PinoutSignals>,
+
+            #[serde(default)]
+            pub protocols: Vec<Protocol>,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Protocol {
+            #[serde(default)]
+            pub modes: Vec<serde_json::Value>,
+
+            #[serde(default)]
+            pub signals: Vec<Signal>,
+
+            #[serde(default, rename = "type")]
+            pub typ: String,
+
+            #[serde(default)]
+            pub version: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Signal {
+            #[serde(default)]
+            pub signal: String,
+
+            #[serde(default, rename = "type")]
+            pub typ: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct PinoutSignals {
+            #[serde(default)]
+            pub id: String,
+
+            #[serde(default)]
+            pub name: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct BusMapping {
+            #[serde(default)]
+            pub connections: Vec<serde_json::Value>,
+
+            #[serde(default)]
+            pub mode: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct AnalogInterconnections {
+            #[serde(default, rename = "digitalName")]
+            pub digital_name: String,
+
+            #[serde(default)]
+            pub inputs: Vec<Inputs>,
+
+            #[serde(default, rename = "instanceName")]
+            pub instance_name: String,
+
+            #[serde(default)]
+            pub name: String,
+
+            #[serde(default)]
+            pub outputs: Vec<serde_json::Value>,
+
+            #[serde(default)]
+            pub version: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Inputs {
+            #[serde(default, rename = "connectionInstance")]
+            pub connection_instance: String,
+
+            #[serde(default, rename = "connectionPin")]
+            pub connection_pin: String,
+
+            #[serde(default, rename = "connectionUser")]
+            pub connection_user: String,
+
+            #[serde(default, rename = "internalSignal")]
+            pub internal_signal: String,
+        }
+    }
+}
+
+struct PackageDirectory {
+    root: PathBuf,
+    pinouts: HashMap<
+        PathBuf,
+        (
+            HashMap<String, xml::Pin>,
+            Vec<PackagePin>,
+            HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+        ),
+    >,
+    peripherals: HashMap<PathBuf, HashMap<String, xml::Ip>>,
+}
+
+impl PackageDirectory {
+    pub fn new(path: PathBuf) -> Self {
+        Self {
+            root: path,
+            pinouts: HashMap::new(),
+            peripherals: HashMap::new(),
+        }
+    }
+
+    fn split(&mut self) -> (Pinouts<'_>, Peripherals<'_>) {
+        (
+            Pinouts {
+                root: &self.root,
+                pinouts: &mut self.pinouts,
+            },
+            Peripherals {
+                root: &self.root,
+                peripherals: &mut self.peripherals,
+            },
+        )
+    }
+}
+
+struct Pinouts<'a> {
+    root: &'a PathBuf,
+    pinouts: &'a mut HashMap<
+        PathBuf,
+        (
+            HashMap<String, xml::Pin>,
+            Vec<PackagePin>,
+            HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+        ),
+    >,
+}
+
+impl<'a> Pinouts<'a> {
+    pub fn load(
+        &mut self,
+        f: &Path,
+    ) -> anyhow::Result<&(
+        HashMap<String, xml::Pin>,
+        Vec<PackagePin>,
+        HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+    )> {
+        match self.pinouts.entry(f.to_path_buf()) {
+            Entry::Occupied(e) => Ok(e.into_mut()),
+            Entry::Vacant(e) => {
+                let parsed: pinout::File = serde_json::from_str(&std::fs::read_to_string(self.root.join(f))?)?;
+                let pins = e.insert(build_pins(&parsed));
+
+                Ok(pins)
+            }
+        }
+    }
+}
+
+struct Peripherals<'a> {
+    root: &'a PathBuf,
+    peripherals: &'a mut HashMap<PathBuf, HashMap<String, xml::Ip>>,
+}
+
+impl<'a> Peripherals<'a> {
+    pub fn load(&mut self, f: &Path) -> anyhow::Result<&HashMap<String, xml::Ip>> {
+        match self.peripherals.entry(f.to_path_buf()) {
+            Entry::Occupied(e) => Ok(e.into_mut()),
+            Entry::Vacant(e) => {
+                let parsed: peripherals::File = serde_json::from_str(&std::fs::read_to_string(self.root.join(f))?)?;
+                let peripherals = e.insert(build_peripherals(&parsed));
+
+                Ok(peripherals)
+            }
+        }
+    }
+}
+
+fn build_peripherals(f: &peripherals::File) -> HashMap<String, xml::Ip> {
+    f.peripherals
+        .iter()
+        .map(|p| {
+            (
+                p.name.clone(),
+                xml::Ip {
+                    instance_name: p.name.clone(),
+                    name: p.peripheral_type.to_ascii_uppercase(),
+                    version: p.digital_name.clone(),
+                },
+            )
+        })
+        .collect()
+}
+
+fn build_pins(
+    f: &pinout::File,
+) -> (
+    HashMap<String, xml::Pin>,
+    Vec<PackagePin>,
+    HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+) {
+    let package_pins: Vec<PackagePin> = f
+        .bonds
+        .iter()
+        .map(|b| PackagePin {
+            position: b.position.clone(),
+            signals: vec![b.die_pad.clone()],
+        })
+        .collect();
+
+    let mut pins: HashMap<String, xml::Pin> = f
+        .bonds
+        .iter()
+        .map(|b| {
+            (
+                b.die_pad.clone(),
+                xml::Pin {
+                    name: b.die_pad.clone(),
+                    position: b.position.clone(),
+                    signals: Vec::new(),
+                },
+            )
+        })
+        .collect();
+
+    let mut gpio_af: HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>> = HashMap::new();
+
+    for signal in &f.signals {
+        let Some(entry) = pins.get_mut(&signal.die_pad) else {
+            continue;
+        };
+
+        entry.signals.push(PinSignal {
+            name: signal.name.clone(),
+        });
+
+        let af = if let Some(function) = &signal.function.id {
+            function.trim_start_matches("AF").parse::<u8>().ok()
+        } else {
+            None
+        };
+
+        gpio_af
+            .entry(signal.instance.clone())
+            .or_default()
+            .push(stm32_data_serde::chip::core::peripheral::Pin {
+                pin: signal.die_pad.clone(),
+                signal: signal.name.to_string(),
+                af: af,
+            });
+    }
+
+    (pins, package_pins, gpio_af)
+}
+
+pub fn parse_packages(
+    chips: &mut HashMap<String, Chip>,
+    chip_groups: &mut Vec<ChipGroup>,
+    af: &mut Af,
+) -> anyhow::Result<()> {
+    let mut files: Vec<_> = glob::glob("sources/cubeprogdb2/**/*.pdsc")?
+        .map(Result::unwrap)
+        .collect();
+    files.sort();
+
+    for f in files {
+        let mut d = PackageDirectory::new(f.parent().unwrap().to_path_buf());
+
+        parse_package(f, &mut d, chips, chip_groups, af)?;
+    }
+
+    Ok(())
+}
+
+fn parse_package(
+    f: PathBuf,
+    d: &mut PackageDirectory,
+    chips: &mut HashMap<String, Chip>,
+    chip_groups: &mut Vec<ChipGroup>,
+    af: &mut Af,
+) -> anyhow::Result<()> {
+    let mut groups: HashMap<String, ChipGroup> = HashMap::new();
+
+    let parsed: Package = quick_xml::de::from_str(&std::fs::read_to_string(f)?)?;
+    let package_features = HashSet::from(["SOP", "QFN"]);
+
+    for family in parsed.devices.families {
+        for subfamily in family.sub_families {
+            for device in subfamily.devices {
+                // TODO: use extra-attribute: PPN to make chipgroup
+                for (variant, features, descriptors, extra_attributes) in device.variants.iter().map(|variant| {
+                    let chain_all = || {
+                        family
+                            .environments
+                            .iter()
+                            .chain(subfamily.environments.iter())
+                            .chain(device.environments.iter())
+                            .chain(variant.environments.iter())
+                    };
+
+                    let features: Vec<_> = family
+                        .features
+                        .iter()
+                        .chain(subfamily.features.iter())
+                        .chain(device.features.iter())
+                        .chain(variant.features.iter())
+                        .collect();
+
+                    let descriptors: HashMap<_, _> = chain_all()
+                        .map(|e| e.device.descriptors.descriptors.iter())
+                        .flatten()
+                        .map(|d| (&d.schema_type, d))
+                        .collect();
+
+                    let extra_attributes: HashMap<_, _> = chain_all()
+                        .map(|e| e.device.extra_attributes.extra_attributes.iter())
+                        .flatten()
+                        .map(|a| (&a.name, a))
+                        .collect();
+
+                    (variant, features, descriptors, extra_attributes)
+                }) {
+                    let (mut pinout_files, mut peripheral_files) = d.split();
+
+                    let Some(ppn) = extra_attributes.get(&"PPN".to_string()) else {
+                        continue;
+                    };
+
+                    let Some(peripherals_descriptor) = descriptors.get(&"peripherals".to_string()) else {
+                        continue;
+                    };
+
+                    let Some(pinout_descriptor) = descriptors.get(&"pinout".to_string()) else {
+                        continue;
+                    };
+
+                    let Some(package) = features.iter().find(|f| package_features.contains(&*f.feature_type)) else {
+                        continue;
+                    };
+
+                    let peripherals = peripheral_files.load(peripherals_descriptor.as_path())?;
+                    let (pins, package_pins, gpio_af) = pinout_files.load(pinout_descriptor.as_path())?;
+
+                    let group = groups.entry(device.name.clone()).or_insert_with(|| ChipGroup {
+                        chip_names: Vec::new(),
+                        cores: family.processors.iter().map(|p| p.core.clone()).collect(),
+                        ips: HashMap::new(),
+                        pins: HashMap::new(),
+                        family: family.family.clone(),
+                        line: subfamily.sub_family.clone(),
+                        die: Default::default(),
+                    });
+
+                    // TODO: do we need to merge the pin signals?
+
+                    group.ips.extend(peripherals.clone());
+                    group.pins.extend(pins.clone());
+                    group.chip_names.push(variant.variant.clone());
+
+                    chips.insert(
+                        variant.variant.clone(),
+                        Chip {
+                            packages: vec![stm32_data_serde::chip::Package {
+                                name: ppn.value.clone(),
+                                package: package.name.clone(),
+                                pins: package_pins.clone(),
+                            }],
+                        },
+                    );
+
+                    af.0.insert(ppn.value.clone(), gpio_af.clone());
+                }
+            }
+        }
+    }
+
+    println!("adding {} groups", groups.len());
+
+    chip_groups.extend(groups.into_values());
+
+    Ok(())
+}

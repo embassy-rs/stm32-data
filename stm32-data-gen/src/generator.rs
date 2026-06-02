@@ -114,7 +114,7 @@ fn process_group(
     let rcc_kind = group.ips.values().find(|x| x.name == "RCC").unwrap().version.clone();
     let rcc_block = *PERIMAP
         .get(&format!("{chip_name}:RCC:{rcc_kind}"))
-        .unwrap_or_else(|| panic!("could not get rcc for {}", &chip_name));
+        .unwrap_or_else(|| panic!("could not get rcc for {} (kind: {})", &chip_name, &rcc_kind));
     let h = match headers.get_for_chip(&chip_name) {
         Some(h) => h,
         None => {
@@ -127,7 +127,6 @@ fn process_group(
     let chip_af = af.0.get(chip_af);
 
     let cores: anyhow::Result<Vec<_>> = group
-        .xml
         .cores
         .iter()
         .map(|long_core_name| {
