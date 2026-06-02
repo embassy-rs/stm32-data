@@ -4,7 +4,7 @@ use util::RegexSet;
 
 use super::*;
 
-mod xml {
+pub mod xml {
     use serde::Deserialize;
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -58,37 +58,15 @@ mod xml {
     }
 }
 
-// mod pdsc {
-//     use serde::Deserialize;
-//
-//     #[derive(Clone, Debug, Deserialize, PartialEq)]
-//     pub struct Package {
-//         pub devices: Vec<Family>,
-//     }
-//
-//     #[derive(Clone, Debug, Deserialize, PartialEq)]
-//     pub struct Family {
-//         pub sub_families: Vec<SubFamily>,
-//     }
-//
-//     #[derive(Clone, Debug, Deserialize, PartialEq)]
-//     pub struct SubFamily {}
-// }
-
+#[derive(Debug)]
 pub struct Chip {
-    #[allow(dead_code)]
-    flash: u32,
-    #[allow(dead_code)]
-    ram: u32,
-    group_idx: usize,
     pub packages: Vec<stm32_data_serde::chip::Package>,
 }
 
-/// On STM32CubeMX1, this corresponds to one XML file
-/// On STM32CubeMX2, this correpsonds to a 'subFamily'
+#[derive(Debug)]
 pub struct ChipGroup {
     pub chip_names: Vec<String>,
-    pub xml: xml::Mcu,
+    pub cores: Vec<String>,
     pub ips: HashMap<String, xml::Ip>,
     pub pins: HashMap<String, xml::Pin>,
     pub family: String,
@@ -141,8 +119,8 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
     // flash/ram sizes yet, we want to do it as late as possible to avoid duplicate
     // work so that generation is faster.
 
-    let mut chips = HashMap::<String, Chip>::new();
-    let mut chip_groups = Vec::new();
+    let mut chips = HashMap::<String, (Chip, usize)>::new();
+    let mut chip_groups = Vec::<(ChipGroup, xml::Mcu)>::new();
 
     let mut files: Vec<_> = glob::glob("sources/cubedb/mcu/STM32*.xml")?
         .map(Result::unwrap)
@@ -153,10 +131,13 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
         parse_group(f, &mut chips, &mut chip_groups)?;
     }
 
-    for (chip_name, chip) in &chips {
-        chip_groups[chip.group_idx].chip_names.push(chip_name.clone());
+    for (chip_name, (_, group_idx)) in &chips {
+        chip_groups[*group_idx].0.chip_names.push(chip_name.clone());
     }
-    Ok((chips, chip_groups))
+    Ok((
+        chips.into_iter().map(|(k, (v, _))| (k, v)).collect(),
+        chip_groups.into_iter().map(|(group, _)| group).collect(),
+    ))
 }
 
 static NOPELIST: RegexSet = RegexSet::new(&[
@@ -180,8 +161,8 @@ static NOPELIST: RegexSet = RegexSet::new(&[
 
 fn parse_group(
     f: std::path::PathBuf,
-    chips: &mut HashMap<String, Chip>,
-    chip_groups: &mut Vec<ChipGroup>,
+    chips: &mut HashMap<String, (Chip, usize)>,
+    chip_groups: &mut Vec<(ChipGroup, xml::Mcu)>,
 ) -> anyhow::Result<()> {
     let ff = f.file_name().unwrap().to_string_lossy();
 
@@ -202,14 +183,14 @@ fn parse_group(
         }
     };
 
-    let package_rams = {
+    let _package_rams = {
         if parsed.rams.len() == 1 {
             vec![parsed.rams[0]; package_names.len()]
         } else {
             parsed.rams.clone()
         }
     };
-    let package_flashes = {
+    let _package_flashes = {
         if parsed.flashs.len() == 1 {
             vec![parsed.flashs[0]; package_names.len()]
         } else {
@@ -219,20 +200,23 @@ fn parse_group(
 
     let group_idx = package_names.iter().find_map(|package_name| {
         let chip_name = chip_name_from_package_name(package_name);
-        chips.get(&chip_name).map(|chip| chip.group_idx)
+        chips.get(&chip_name).map(|(_, group_idx)| *group_idx)
     });
 
     let group_idx = group_idx.unwrap_or_else(|| {
         let group_idx = chip_groups.len();
-        chip_groups.push(ChipGroup {
-            chip_names: Vec::new(),
-            xml: parsed.clone(),
-            ips: HashMap::new(),
-            pins: HashMap::new(),
-            family: parsed.family.clone(),
-            line: parsed.line.clone(),
-            die: parsed.die.clone(),
-        });
+        chip_groups.push((
+            ChipGroup {
+                chip_names: Vec::new(),
+                cores: parsed.cores.clone(),
+                ips: HashMap::new(),
+                pins: HashMap::new(),
+                family: parsed.family.clone(),
+                line: parsed.line.clone(),
+                die: parsed.die.clone(),
+            },
+            parsed.clone(),
+        ));
         group_idx
     });
 
@@ -256,22 +240,11 @@ fn parse_group(
         Err(_) => (None, Some(p.position.clone())),
     });
 
-    for (package_i, package_name) in package_names.iter().enumerate() {
-        let chip_name = chip_name_from_package_name(package_name);
-        if !chips.contains_key(&chip_name) {
-            chips.insert(
-                chip_name.clone(),
-                Chip {
-                    flash: package_flashes[package_i],
-                    ram: package_rams[package_i],
-                    group_idx,
-                    packages: Vec::new(),
-                },
-            );
-        }
+    for (_package_i, package_name) in package_names.iter().enumerate() {
         chips
-            .get_mut(&chip_name)
-            .unwrap()
+            .entry(chip_name_from_package_name(package_name))
+            .or_insert_with(|| (Chip { packages: Vec::new() }, group_idx))
+            .0
             .packages
             .push(stm32_data_serde::chip::Package {
                 name: package_name.clone(),
@@ -284,11 +257,12 @@ fn parse_group(
     // remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
     let group = &mut chip_groups[group_idx];
     for ip in parsed.ips {
-        group.ips.insert(ip.instance_name.clone(), ip);
+        group.0.ips.insert(ip.instance_name.clone(), ip);
     }
     for pin in parsed.pins {
         if let Some(pin_name) = gpio_af::clean_pin(&pin.name) {
             group
+                .0
                 .pins
                 .entry(pin_name)
                 .and_modify(|p| {

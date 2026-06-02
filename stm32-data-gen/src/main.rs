@@ -1,3 +1,4 @@
+use crate::package::parse_packages;
 use crate::trigger::peripheral_trigger_info;
 mod check;
 mod chips;
@@ -10,6 +11,7 @@ mod interrupts;
 mod low_power;
 mod memory;
 mod normalize_peris;
+mod package;
 mod perimap;
 mod rcc;
 mod registers;
@@ -93,10 +95,14 @@ fn main() -> anyhow::Result<()> {
     let dma_channels = dma::DmaChannels::parse()?;
 
     // stopwatch.section("Parsing GPIO AF");
-    let af = gpio_af::Af::parse()?;
+    let mut af = gpio_af::Af::parse()?;
 
     stopwatch.section("Parsing chip groups");
-    let (chips, chip_groups) = chips::parse_groups()?;
+    let (mut chips, mut chip_groups) = chips::parse_groups()?;
+
+    stopwatch.section("Parsing packages");
+
+    parse_packages(&mut chips, &mut chip_groups, &mut af)?;
 
     stopwatch.section("Processing chips");
     generator::dump_all_chips(
