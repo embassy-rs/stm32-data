@@ -68,6 +68,10 @@ impl Stopwatch {
 fn main() -> anyhow::Result<()> {
     pretty_env_logger::init();
 
+    println!("");
+    println!("NOTE: use RUST_LOG=level to set log level");
+    println!("");
+
     let mut stopwatch = Stopwatch::new();
 
     // validate trigger rules

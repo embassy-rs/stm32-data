@@ -72,6 +72,7 @@ pub struct ChipGroup {
     pub family: String,
     pub line: String,
     pub die: String,
+    pub gpio_af: Option<String>,
 }
 
 fn chip_name_from_package_name(x: &str) -> String {
@@ -214,6 +215,7 @@ fn parse_group(
                 family: parsed.family.clone(),
                 line: parsed.line.clone(),
                 die: parsed.die.clone(),
+                gpio_af: None,
             },
             parsed.clone(),
         ));

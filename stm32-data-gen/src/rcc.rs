@@ -377,6 +377,7 @@ impl ParsedRccs {
                     .iter()
                     .any(|x| rcc_version == x.0 && peri_name.starts_with(x.1)))
                     && phclk.is_match(&en_rst.bus_clock)
+                    && rcc_version != "c5"
                 {
                     for v in &mux.variants {
                         if phclk.is_match(v) && v != &maybe_kernel_clock {
