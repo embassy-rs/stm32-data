@@ -138,6 +138,8 @@ fn process_group(
     let chip_af = af.0.get(chip_af);
 
     if chip_name.starts_with("STM32C5") {
+        warn!("skipping c5 for now");
+
         return Ok(());
     }
 

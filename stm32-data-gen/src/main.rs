@@ -87,7 +87,7 @@ fn main() -> anyhow::Result<()> {
     registers.write()?;
 
     // stopwatch.section("Parsing interrupts");
-    let chip_interrupts = interrupts::ChipInterrupts::parse()?;
+    let mut chip_interrupts = interrupts::ChipInterrupts::parse()?;
 
     // stopwatch.section("Parsing RCC registers");
     let peripheral_to_clock = rcc::ParsedRccs::parse(&registers)?;
@@ -104,9 +104,12 @@ fn main() -> anyhow::Result<()> {
     stopwatch.section("Parsing chip groups");
     let (mut chips, mut chip_groups) = chips::parse_groups()?;
 
+    // let mut chips = std::collections::HashMap::new();
+    // let mut chip_groups = Vec::new();
+
     stopwatch.section("Parsing packages");
 
-    parse_packages(&mut chips, &mut chip_groups, &mut af)?;
+    parse_packages(&mut chips, &mut chip_groups, &mut af, &mut chip_interrupts)?;
 
     stopwatch.section("Processing chips");
     generator::dump_all_chips(
