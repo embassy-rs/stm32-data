@@ -7,7 +7,7 @@ use stm32_data_serde::chip::PackagePin;
 
 use crate::chips::xml::PinSignal;
 use crate::chips::{Chip, ChipGroup, xml};
-use crate::gpio_af::Af;
+use crate::gpio_af::{Af, pin_matches};
 use crate::package::schema::{peripherals, pinout};
 
 #[derive(Serialize, Deserialize)]
@@ -612,6 +612,7 @@ fn build_pins(
     let package_pins: Vec<PackagePin> = f
         .bonds
         .iter()
+        .filter(|b| pin_matches(&b.die_pad).is_some())
         .map(|b| PackagePin {
             position: b.position.clone(),
             signals: vec![b.die_pad.clone()],
@@ -621,6 +622,7 @@ fn build_pins(
     let mut pins: HashMap<String, xml::Pin> = f
         .bonds
         .iter()
+        .filter(|b| pin_matches(&b.die_pad).is_some())
         .map(|b| {
             (
                 b.die_pad.clone(),
@@ -759,6 +761,7 @@ fn parse_package(
                         family: family.family.clone(),
                         line: subfamily.sub_family.clone(),
                         die: Default::default(),
+                        gpio_af: Some(ppn.value.clone()),
                     });
 
                     // TODO: do we need to merge the pin signals?
@@ -783,8 +786,6 @@ fn parse_package(
             }
         }
     }
-
-    println!("adding {} groups", groups.len());
 
     chip_groups.extend(groups.into_values());
 

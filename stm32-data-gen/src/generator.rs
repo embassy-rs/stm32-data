@@ -122,9 +122,24 @@ fn process_group(
             return Ok(());
         }
     };
-    let chip_af = &group.ips.values().find(|x| x.name == "GPIO").unwrap().version;
-    let chip_af = chip_af.strip_suffix("_gpio_v1_0").unwrap();
+
+    let chip_af = match &group.gpio_af {
+        Some(gpio_af) => gpio_af,
+        None => {
+            let chip_af = &group.ips.values().find(|x| x.name == "GPIO").unwrap().version;
+            let chip_af = chip_af.strip_suffix("_gpio_v1_0").unwrap_or_else(|| {
+                panic!("unable to parse gpio version: {}", chip_af);
+            });
+
+            &chip_af.to_owned()
+        }
+    };
+
     let chip_af = af.0.get(chip_af);
+
+    if chip_name.starts_with("STM32C5") {
+        return Ok(());
+    }
 
     let cores: anyhow::Result<Vec<_>> = group
         .cores
