@@ -2,13 +2,15 @@ use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use stm32_data_serde::chip::PackagePin;
 
 use crate::chips::xml::PinSignal;
 use crate::chips::{Chip, ChipGroup, xml};
 use crate::gpio_af::{Af, pin_matches};
-use crate::package::schema::{peripherals, pinout};
+use crate::interrupts::ChipInterrupts;
+use crate::package::schema::{interrupts, peripherals, pinout};
 
 #[derive(Serialize, Deserialize)]
 pub struct Package {
@@ -496,6 +498,88 @@ mod schema {
             pub internal_signal: String,
         }
     }
+
+    pub mod interrupts {
+        use serde::{Deserialize, Serialize};
+
+        #[derive(Debug, Serialize, Deserialize)]
+        pub struct File {
+            #[serde(default)]
+            pub instances: Vec<Instance>,
+
+            #[serde(default)]
+            pub schema_version: String,
+
+            #[serde(default)]
+            pub version: String,
+        }
+
+        #[derive(Debug, Serialize, Deserialize)]
+        pub struct Instance {
+            #[serde(default)]
+            pub core_type: String,
+
+            #[serde(default)]
+            pub cpu_instance: String,
+
+            #[serde(default)]
+            pub instance: String,
+
+            #[serde(default)]
+            pub interrupts: Vec<Interrupt>,
+
+            #[serde(default)]
+            pub priority_bits: i64,
+
+            #[serde(default)]
+            pub priority_grouping: bool,
+        }
+
+        #[derive(Debug, Serialize, Deserialize)]
+        pub struct Peripheral {
+            #[serde(default)]
+            pub name: String,
+        }
+
+        #[derive(Debug, Serialize, Deserialize)]
+        pub struct Interrupt {
+            #[serde(default)]
+            pub access: Access,
+
+            #[serde(default)]
+            pub acronyms: Vec<serde_json::Value>,
+
+            #[serde(default)]
+            pub description: String,
+
+            #[serde(default, rename = "instances")]
+            pub peripherals: Vec<Peripheral>,
+
+            #[serde(default)]
+            pub name: String,
+
+            #[serde(default)]
+            pub priority: i64,
+
+            #[serde(default)]
+            pub settable: bool,
+
+            #[serde(default, rename = "type")]
+            pub typ: String,
+
+            #[serde(default)]
+            pub used_at_reset: bool,
+        }
+
+        #[derive(Debug, Serialize, Deserialize, Default)]
+        pub struct Access {
+            #[serde(default)]
+            pub non_secure: bool,
+
+            #[serde(default)]
+            pub secure: bool,
+        }
+    }
 }
 
 struct PackageDirectory {
@@ -509,6 +593,7 @@ struct PackageDirectory {
         ),
     >,
     peripherals: HashMap<PathBuf, HashMap<String, xml::Ip>>,
+    interrupts: HashMap<PathBuf, Vec<String>>,
 }
 
 impl PackageDirectory {
@@ -517,10 +602,11 @@ impl PackageDirectory {
             root: path,
             pinouts: HashMap::new(),
             peripherals: HashMap::new(),
+            interrupts: HashMap::new(),
         }
     }
 
-    fn split(&mut self) -> (Pinouts<'_>, Peripherals<'_>) {
+    fn split(&mut self) -> (Pinouts<'_>, Peripherals<'_>, Interrupts<'_>) {
         (
             Pinouts {
                 root: &self.root,
@@ -529,6 +615,10 @@ impl PackageDirectory {
             Peripherals {
                 root: &self.root,
                 peripherals: &mut self.peripherals,
+            },
+            Interrupts {
+                root: &self.root,
+                interrupts: &mut self.interrupts,
             },
         )
     }
@@ -602,6 +692,37 @@ fn build_peripherals(f: &peripherals::File) -> HashMap<String, xml::Ip> {
         .collect()
 }
 
+struct Interrupts<'a> {
+    root: &'a PathBuf,
+    interrupts: &'a mut HashMap<PathBuf, Vec<String>>,
+}
+
+impl<'a> Interrupts<'a> {
+    pub fn load(&mut self, f: &Path) -> anyhow::Result<&Vec<String>> {
+        match self.interrupts.entry(f.to_path_buf()) {
+            Entry::Occupied(e) => Ok(e.into_mut()),
+            Entry::Vacant(e) => {
+                let parsed: interrupts::File = serde_json::from_str(&std::fs::read_to_string(self.root.join(f))?)?;
+                let interrupts = e.insert(build_interrupts(&parsed));
+
+                Ok(interrupts)
+            }
+        }
+    }
+}
+
+fn build_interrupts(f: &interrupts::File) -> Vec<String> {
+    f.instances
+        .iter()
+        .map(|i| i.interrupts.iter())
+        .flatten()
+        .map(|irq| {
+            // TODO: handle DMA channels
+            irq.name.clone() + "_IRQn" + ":Y:" + &irq.peripherals.iter().map(|p| p.name.clone()).join(",") + "::"
+        })
+        .collect()
+}
+
 fn build_pins(
     f: &pinout::File,
 ) -> (
@@ -669,6 +790,7 @@ pub fn parse_packages(
     chips: &mut HashMap<String, Chip>,
     chip_groups: &mut Vec<ChipGroup>,
     af: &mut Af,
+    irqs: &mut ChipInterrupts,
 ) -> anyhow::Result<()> {
     let mut files: Vec<_> = glob::glob("sources/cubeprogdb2/**/*.pdsc")?
         .map(Result::unwrap)
@@ -678,7 +800,7 @@ pub fn parse_packages(
     for f in files {
         let mut d = PackageDirectory::new(f.parent().unwrap().to_path_buf());
 
-        parse_package(f, &mut d, chips, chip_groups, af)?;
+        parse_package(f, &mut d, chips, chip_groups, af, irqs)?;
     }
 
     Ok(())
@@ -690,6 +812,7 @@ fn parse_package(
     chips: &mut HashMap<String, Chip>,
     chip_groups: &mut Vec<ChipGroup>,
     af: &mut Af,
+    irqs: &mut ChipInterrupts,
 ) -> anyhow::Result<()> {
     let mut groups: HashMap<String, ChipGroup> = HashMap::new();
 
@@ -732,7 +855,7 @@ fn parse_package(
 
                     (variant, features, descriptors, extra_attributes)
                 }) {
-                    let (mut pinout_files, mut peripheral_files) = d.split();
+                    let (mut pinout_files, mut peripheral_files, mut interrupt_files) = d.split();
 
                     let Some(ppn) = extra_attributes.get(&"PPN".to_string()) else {
                         continue;
@@ -746,12 +869,17 @@ fn parse_package(
                         continue;
                     };
 
+                    let Some(interrupt_descriptor) = descriptors.get(&"NVIC".to_string()) else {
+                        continue;
+                    };
+
                     let Some(package) = features.iter().find(|f| package_features.contains(&*f.feature_type)) else {
                         continue;
                     };
 
                     let peripherals = peripheral_files.load(peripherals_descriptor.as_path())?;
                     let (pins, package_pins, gpio_af) = pinout_files.load(pinout_descriptor.as_path())?;
+                    let interrupts = interrupt_files.load(interrupt_descriptor.as_path())?;
 
                     let group = groups.entry(device.name.clone()).or_insert_with(|| ChipGroup {
                         chip_names: Vec::new(),
@@ -761,7 +889,7 @@ fn parse_package(
                         family: family.family.clone(),
                         line: subfamily.sub_family.clone(),
                         die: Default::default(),
-                        gpio_af: Some(ppn.value.clone()),
+                        gpio_af: Some(device.name.clone()),
                     });
 
                     // TODO: do we need to merge the pin signals?
@@ -769,6 +897,11 @@ fn parse_package(
                     group.ips.extend(peripherals.clone());
                     group.pins.extend(pins.clone());
                     group.chip_names.push(variant.variant.clone());
+                    group.ips.entry("NVIC".to_string()).or_insert_with(|| xml::Ip {
+                        instance_name: "NVIC".to_string(),
+                        name: "NVIC".to_string(),
+                        version: device.name.to_string(),
+                    });
 
                     chips.insert(
                         variant.variant.clone(),
@@ -781,7 +914,11 @@ fn parse_package(
                         },
                     );
 
-                    af.0.insert(ppn.value.clone(), gpio_af.clone());
+                    af.0.entry(device.name.clone()).or_insert_with(|| gpio_af.clone());
+
+                    irqs.irqs
+                        .entry(("NVIC".to_string(), device.name.clone()))
+                        .or_insert_with(|| interrupts.clone());
                 }
             }
         }

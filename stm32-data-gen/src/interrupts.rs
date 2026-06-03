@@ -40,7 +40,7 @@ mod xml {
 #[derive(Debug)]
 pub struct ChipInterrupts {
     // (nvic name, nvic version) => [cursed unparsed interrupt string]
-    irqs: HashMap<(String, String), Vec<String>>,
+    pub irqs: HashMap<(String, String), Vec<String>>,
 }
 
 impl ChipInterrupts {
