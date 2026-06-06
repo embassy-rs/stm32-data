@@ -385,7 +385,9 @@ impl ChipInterrupts {
 
                 for (p, mut ss) in peri_signals.into_iter() {
                     // Normalize LTDC error signal: N6 uses "ERR" (from LTDC_LO_ERR), standardize to "ER"
-                    if p == "LTDC" {
+                    if p == "LTDC"
+                        || (chip_name.starts_with("STM32C5") && (p.starts_with("I2C") || p.starts_with("I3C")))
+                    {
                         for s in ss.iter_mut() {
                             if s == "ERR" {
                                 *s = "ER".to_string();
