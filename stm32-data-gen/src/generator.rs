@@ -115,11 +115,15 @@ fn process_group(
     let rcc_block = *PERIMAP
         .get(&format!("{chip_name}:RCC:{rcc_kind}"))
         .unwrap_or_else(|| panic!("could not get rcc for {} (kind: {})", &chip_name, &rcc_kind));
-    let h = match headers.get_for_chip(&chip_name) {
-        Some(h) => h,
-        None => {
-            warn!("could not get header for {}, skipping", &chip_name);
-            return Ok(());
+    let h = if let Some(h) = group.headers.iter().filter_map(|h| headers.get(h)).next() {
+        h
+    } else {
+        match headers.get_for_chip(&chip_name) {
+            Some(h) => h,
+            None => {
+                warn!("could not get header for {}, skipping", &chip_name);
+                return Ok(());
+            }
         }
     };
 
@@ -135,13 +139,13 @@ fn process_group(
         }
     };
 
-    let chip_af = af.0.get(chip_af);
-
     if chip_name.starts_with("STM32C5") {
         warn!("skipping c5 for now");
 
         return Ok(());
     }
+
+    let chip_af = af.0.get(chip_af);
 
     let cores: anyhow::Result<Vec<_>> = group
         .cores
