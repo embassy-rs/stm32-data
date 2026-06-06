@@ -67,6 +67,7 @@ pub struct Chip {
 pub struct ChipGroup {
     pub chip_names: Vec<String>,
     pub cores: Vec<String>,
+    pub headers: Vec<String>,
     pub ips: HashMap<String, xml::Ip>,
     pub pins: HashMap<String, xml::Pin>,
     pub family: String,
@@ -210,6 +211,7 @@ fn parse_group(
             ChipGroup {
                 chip_names: Vec::new(),
                 cores: parsed.cores.clone(),
+                headers: Vec::new(),
                 ips: HashMap::new(),
                 pins: HashMap::new(),
                 family: parsed.family.clone(),

@@ -883,6 +883,7 @@ fn parse_package(
 
                     let group = groups.entry(device.name.clone()).or_insert_with(|| ChipGroup {
                         chip_names: Vec::new(),
+                        headers: device.compiles.iter().map(|c| c.define.to_ascii_lowercase()).collect(),
                         cores: family.processors.iter().map(|p| p.core.clone()).collect(),
                         ips: HashMap::new(),
                         pins: HashMap::new(),

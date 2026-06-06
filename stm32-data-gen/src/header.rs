@@ -26,6 +26,10 @@ impl Headers {
         Ok(Self { map, parsed, regexes })
     }
 
+    pub fn get(&self, header: &str) -> Option<&ParsedHeader> {
+        self.parsed.0.get(header)
+    }
+
     pub fn get_for_chip(&self, model: &str) -> Option<&ParsedHeader> {
         let model = model.to_ascii_lowercase();
         match self.map.0.get(&model) {
