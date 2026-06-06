@@ -739,6 +739,7 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("RAMCFG", &["BKP", "ECC"]),
         ("LTDC", &["ER", "LO"]),
         ("HSEM", &["GLOBAL"]),
+        ("LPDMA", &["CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
