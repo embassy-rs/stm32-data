@@ -1,7 +1,8 @@
-use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
+use std::fs;
 use std::path::{Path, PathBuf};
 
+use anyhow::Ok;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use stm32_data_serde::chip::PackagePin;
@@ -11,6 +12,7 @@ use crate::chips::{Chip, ChipGroup, xml};
 use crate::gpio_af::{Af, pin_matches};
 use crate::interrupts::ChipInterrupts;
 use crate::package::schema::{exti, interrupts, peripherals, pinout};
+use crate::util::entry_or;
 
 #[derive(Serialize, Deserialize)]
 pub struct Package {
@@ -619,185 +621,6 @@ mod schema {
     }
 }
 
-struct PackageDirectory {
-    root: PathBuf,
-    pinouts: HashMap<
-        PathBuf,
-        (
-            HashMap<String, xml::Pin>,
-            Vec<PackagePin>,
-            HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
-        ),
-    >,
-    peripherals: HashMap<PathBuf, HashMap<String, xml::Ip>>,
-    exti: HashMap<PathBuf, HashMap<String, String>>,
-    interrupts: HashMap<PathBuf, Vec<String>>,
-}
-
-impl PackageDirectory {
-    pub fn new(path: PathBuf) -> Self {
-        Self {
-            root: path,
-            pinouts: HashMap::new(),
-            peripherals: HashMap::new(),
-            exti: HashMap::new(),
-            interrupts: HashMap::new(),
-        }
-    }
-
-    fn split(&mut self) -> (Pinouts<'_>, Peripherals<'_>, Exti<'_>, Interrupts<'_>) {
-        (
-            Pinouts {
-                root: &self.root,
-                pinouts: &mut self.pinouts,
-            },
-            Peripherals {
-                root: &self.root,
-                peripherals: &mut self.peripherals,
-            },
-            Exti {
-                root: &self.root,
-                exti: &mut self.exti,
-            },
-            Interrupts {
-                root: &self.root,
-                interrupts: &mut self.interrupts,
-            },
-        )
-    }
-}
-
-struct Pinouts<'a> {
-    root: &'a PathBuf,
-    pinouts: &'a mut HashMap<
-        PathBuf,
-        (
-            HashMap<String, xml::Pin>,
-            Vec<PackagePin>,
-            HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
-        ),
-    >,
-}
-
-impl<'a> Pinouts<'a> {
-    pub fn load(
-        &mut self,
-        f: &Path,
-    ) -> anyhow::Result<&(
-        HashMap<String, xml::Pin>,
-        Vec<PackagePin>,
-        HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
-    )> {
-        match self.pinouts.entry(f.to_path_buf()) {
-            Entry::Occupied(e) => Ok(e.into_mut()),
-            Entry::Vacant(e) => {
-                let parsed: pinout::File = serde_json::from_str(&std::fs::read_to_string(self.root.join(f))?)?;
-                let pins = e.insert(build_pins(&parsed));
-
-                Ok(pins)
-            }
-        }
-    }
-}
-
-struct Peripherals<'a> {
-    root: &'a PathBuf,
-    peripherals: &'a mut HashMap<PathBuf, HashMap<String, xml::Ip>>,
-}
-
-impl<'a> Peripherals<'a> {
-    pub fn load(&mut self, f: &Path) -> anyhow::Result<&HashMap<String, xml::Ip>> {
-        match self.peripherals.entry(f.to_path_buf()) {
-            Entry::Occupied(e) => Ok(e.into_mut()),
-            Entry::Vacant(e) => {
-                let parsed: peripherals::File = serde_json::from_str(&std::fs::read_to_string(self.root.join(f))?)?;
-                let peripherals = e.insert(build_peripherals(&parsed));
-
-                Ok(peripherals)
-            }
-        }
-    }
-}
-
-fn build_peripherals(f: &peripherals::File) -> HashMap<String, xml::Ip> {
-    f.peripherals
-        .iter()
-        .map(|p| {
-            (
-                p.name.clone(),
-                xml::Ip {
-                    instance_name: p.name.clone(),
-                    name: p.peripheral_type.to_ascii_uppercase(),
-                    version: p.digital_name.clone(),
-                },
-            )
-        })
-        .collect()
-}
-
-struct Exti<'a> {
-    root: &'a PathBuf,
-    exti: &'a mut HashMap<PathBuf, HashMap<String, String>>, // map `line_id` to `instance`
-}
-
-impl<'a> Exti<'a> {
-    pub fn load(&mut self, f: &Path) -> anyhow::Result<&HashMap<String, String>> {
-        match self.exti.entry(f.to_path_buf()) {
-            Entry::Occupied(e) => Ok(e.into_mut()),
-            Entry::Vacant(e) => {
-                let parsed: exti::File = serde_json::from_str(&std::fs::read_to_string(self.root.join(f))?)?;
-                let exti = e.insert(build_exti(&parsed));
-
-                Ok(exti)
-            }
-        }
-    }
-}
-
-fn build_exti(f: &exti::File) -> HashMap<String, String> {
-    f.lines
-        .iter()
-        .filter_map(|l| Some((l.line_id.clone(), l.interconnect.iter().next()?.instance.clone())))
-        .filter(|(_, peri)| !peri.starts_with("GPIO"))
-        .collect()
-}
-
-struct Interrupts<'a> {
-    root: &'a PathBuf,
-    interrupts: &'a mut HashMap<PathBuf, Vec<String>>,
-}
-
-impl<'a> Interrupts<'a> {
-    pub fn load(&mut self, f: &Path, exti_map: &HashMap<String, String>) -> anyhow::Result<&Vec<String>> {
-        match self.interrupts.entry(f.to_path_buf()) {
-            Entry::Occupied(e) => Ok(e.into_mut()),
-            Entry::Vacant(e) => {
-                let parsed: interrupts::File = serde_json::from_str(&std::fs::read_to_string(self.root.join(f))?)?;
-                let interrupts = e.insert(build_interrupts(&parsed, exti_map));
-
-                Ok(interrupts)
-            }
-        }
-    }
-}
-
-fn build_interrupts(f: &interrupts::File, exti_map: &HashMap<String, String>) -> Vec<String> {
-    f.instances
-        .iter()
-        .map(|i| i.interrupts.iter())
-        .flatten()
-        .map(|irq| {
-            // TODO: handle DMA channels
-            let mut peripherals = irq
-                .peripherals
-                .iter()
-                .map(|p| exti_map.get(&p.name).unwrap_or(&p.name).clone());
-
-            irq.name.clone() + "_IRQn" + ":Y:" + &peripherals.join(",") + "::"
-        })
-        .collect()
-}
-
 fn build_pins(
     f: &pinout::File,
 ) -> (
@@ -859,6 +682,111 @@ fn build_pins(
     }
 
     (pins, package_pins, gpio_af)
+}
+
+fn build_peripherals(f: &peripherals::File) -> HashMap<String, xml::Ip> {
+    f.peripherals
+        .iter()
+        .map(|p| {
+            (
+                p.name.clone(),
+                xml::Ip {
+                    instance_name: p.name.clone(),
+                    name: p.peripheral_type.to_ascii_uppercase(),
+                    version: p.digital_name.clone(),
+                },
+            )
+        })
+        .collect()
+}
+
+fn build_exti(f: &exti::File) -> HashMap<String, String> {
+    f.lines
+        .iter()
+        .filter_map(|l| Some((l.line_id.clone(), l.interconnect.iter().next()?.instance.clone())))
+        .filter(|(_, peri)| !peri.starts_with("GPIO"))
+        .collect()
+}
+
+fn build_interrupts(f: &interrupts::File, exti_map: &HashMap<String, String>) -> Vec<String> {
+    f.instances
+        .iter()
+        .map(|i| i.interrupts.iter())
+        .flatten()
+        .map(|irq| {
+            // TODO: handle DMA channels
+            let mut peripherals = irq
+                .peripherals
+                .iter()
+                .map(|p| exti_map.get(&p.name).unwrap_or(&p.name).clone());
+
+            irq.name.clone() + "_IRQn" + ":Y:" + &peripherals.join(",") + "::"
+        })
+        .collect()
+}
+
+struct PackageDirectory {
+    root: PathBuf,
+    pinouts: HashMap<
+        PathBuf,
+        (
+            HashMap<String, xml::Pin>,
+            Vec<PackagePin>,
+            HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+        ),
+    >,
+    peripherals: HashMap<PathBuf, HashMap<String, xml::Ip>>,
+    exti: HashMap<PathBuf, HashMap<String, String>>,
+    interrupts: HashMap<PathBuf, Vec<String>>,
+}
+
+impl PackageDirectory {
+    pub fn new(path: PathBuf) -> Self {
+        Self {
+            root: path,
+            pinouts: HashMap::new(),
+            peripherals: HashMap::new(),
+            exti: HashMap::new(),
+            interrupts: HashMap::new(),
+        }
+    }
+
+    pub fn load(
+        &mut self,
+        pinouts: &Path,
+        peripherals: &Path,
+        exti: &Path,
+        interrupts: &Path,
+    ) -> anyhow::Result<(
+        &(
+            HashMap<String, xml::Pin>,
+            Vec<PackagePin>,
+            HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+        ),
+        &HashMap<String, xml::Ip>,
+        &HashMap<String, String>,
+        &Vec<String>,
+    )> {
+        let load_file = |path: &Path| fs::read_to_string(self.root.join(path));
+
+        let pinouts = entry_or(&mut self.pinouts, pinouts.to_path_buf(), || {
+            Ok(build_pins(&serde_json::from_str(&load_file(pinouts)?)?))
+        })?;
+
+        let peripherals = entry_or(&mut self.peripherals, peripherals.to_path_buf(), || {
+            Ok(build_peripherals(&serde_json::from_str(&load_file(peripherals)?)?))
+        })?;
+
+        let exti = entry_or(&mut self.exti, exti.to_path_buf(), || {
+            Ok(build_exti(&serde_json::from_str(&load_file(exti)?)?))
+        })?;
+
+        let interrupts = entry_or(&mut self.interrupts, interrupts.to_path_buf(), || {
+            Ok(build_interrupts(&serde_json::from_str(&load_file(interrupts)?)?, exti))
+        })?;
+
+        Ok((pinouts, peripherals, exti, interrupts))
+    }
 }
 
 pub fn parse_packages(
@@ -930,8 +858,6 @@ fn parse_package(
 
                     (variant, features, descriptors, extra_attributes)
                 }) {
-                    let (mut pinout_files, mut peripheral_files, mut exti_files, mut interrupt_files) = d.split();
-
                     let Some(ppn) = extra_attributes.get(&"PPN".to_string()) else {
                         continue;
                     };
@@ -956,12 +882,12 @@ fn parse_package(
                         continue;
                     };
 
-                    let peripherals = peripheral_files.load(peripherals_descriptor.as_path())?;
-                    let (pins, package_pins, gpio_af) = pinout_files.load(pinout_descriptor.as_path())?;
-
-                    let exti = exti_files.load(exti_descriptor.as_path())?;
-
-                    let interrupts = interrupt_files.load(interrupt_descriptor.as_path(), &exti)?;
+                    let ((pins, package_pins, gpio_af), peripherals, _exti, interrupts) = d.load(
+                        pinout_descriptor.as_path(),
+                        peripherals_descriptor.as_path(),
+                        exti_descriptor.as_path(),
+                        interrupt_descriptor.as_path(),
+                    )?;
 
                     let group = groups.entry(device.name.clone()).or_insert_with(|| ChipGroup {
                         chip_names: Vec::new(),
