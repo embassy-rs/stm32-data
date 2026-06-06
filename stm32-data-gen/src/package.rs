@@ -11,6 +11,7 @@ use crate::chips::xml::PinSignal;
 use crate::chips::{Chip, ChipGroup, xml};
 use crate::gpio_af::{Af, pin_matches};
 use crate::interrupts::ChipInterrupts;
+use crate::package::schema::pinout::Characteristics;
 use crate::package::schema::{exti, interrupts, peripherals, pinout};
 use crate::util::entry_or;
 
@@ -619,6 +620,7 @@ fn build_pins(
     HashMap<String, xml::Pin>,
     Vec<PackagePin>,
     HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+    Characteristics,
 ) {
     let package_pins: Vec<PackagePin> = f
         .bonds
@@ -673,7 +675,7 @@ fn build_pins(
             });
     }
 
-    (pins, package_pins, gpio_af)
+    (pins, package_pins, gpio_af, f.characteristics.clone())
 }
 
 fn build_peripherals(f: &peripherals::File) -> HashMap<String, xml::Ip> {
@@ -725,6 +727,7 @@ struct PackageDirectory {
             HashMap<String, xml::Pin>,
             Vec<PackagePin>,
             HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+            Characteristics,
         ),
     >,
     peripherals: HashMap<PathBuf, HashMap<String, xml::Ip>>,
@@ -754,6 +757,7 @@ impl PackageDirectory {
             HashMap<String, xml::Pin>,
             Vec<PackagePin>,
             HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+            Characteristics,
         ),
         &HashMap<String, xml::Ip>,
         &HashMap<String, String>,
@@ -874,7 +878,7 @@ fn parse_package(
                         continue;
                     };
 
-                    let ((pins, package_pins, gpio_af), peripherals, _exti, interrupts) = d.load(
+                    let ((pins, package_pins, gpio_af, characteristics), peripherals, _exti, interrupts) = d.load(
                         pinout_descriptor.as_path(),
                         peripherals_descriptor.as_path(),
                         exti_descriptor.as_path(),
@@ -889,7 +893,7 @@ fn parse_package(
                         pins: HashMap::new(),
                         family: family.family.clone(),
                         line: subfamily.sub_family.clone(),
-                        die: Default::default(),
+                        die: format!("DIE{}", characteristics.die_name),
                         gpio_af: Some(device.name.clone()),
                     });
 
