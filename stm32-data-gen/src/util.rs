@@ -16,6 +16,17 @@ pub fn try_insert<K: Eq + Hash, V>(map: &mut HashMap<K, V>, key: K, value: V) ->
     }
 }
 
+pub fn entry_or<K: Eq + Hash, V>(
+    hash_map: &mut HashMap<K, V>,
+    key: K,
+    f: impl FnOnce() -> anyhow::Result<V>,
+) -> anyhow::Result<&V> {
+    match hash_map.entry(key) {
+        Entry::Occupied(e) => Ok(e.into_mut()),
+        Entry::Vacant(e) => Ok(e.insert(f()?)),
+    }
+}
+
 pub struct RegexMap<'a, T> {
     map: &'a [(&'a str, T)],
     regexes: OnceLock<Vec<Regex>>,
