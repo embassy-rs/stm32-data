@@ -33,8 +33,6 @@ pub struct Family {
     pub family: String,
     #[serde(default, rename = "@Dvendor")]
     pub vendor: String,
-    #[serde(default, rename = "$text")]
-    pub text: Option<String>,
     #[serde(default, rename = "processor")]
     pub processors: Vec<Processor>,
     #[serde(default, rename = "book")]
@@ -47,6 +45,113 @@ pub struct Family {
     pub environments: Vec<Environment>,
     #[serde(default, rename = "subFamily")]
     pub sub_families: Vec<SubFamily>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct SubFamily {
+    #[serde(rename = "@DsubFamily")]
+    pub sub_family: String,
+    #[serde(default, rename = "memory")]
+    pub memories: Vec<Memory>,
+    #[serde(default, rename = "book")]
+    pub books: Vec<Book>,
+    #[serde(default, rename = "feature")]
+    pub features: Vec<Feature>,
+    #[serde(default, rename = "environment")]
+    pub environments: Vec<Environment>,
+    #[serde(default, rename = "device")]
+    pub devices: Vec<Device>,
+}
+
+/// Corresponds to one `ChipGroup`
+#[derive(Serialize, Deserialize)]
+pub struct Device {
+    #[serde(rename = "@Dname")]
+    pub name: String,
+    #[serde(default, rename = "compile")]
+    pub compiles: Vec<Compile>,
+    #[serde(default, rename = "memory")]
+    pub memories: Vec<Memory>,
+    #[serde(default, rename = "algorithm")]
+    pub algorithms: Vec<Algorithm>,
+    #[serde(default, rename = "book")]
+    pub books: Vec<Book>,
+    #[serde(default)]
+    pub debug: Option<Debug>,
+    #[serde(default)]
+    pub flashinfo: Option<Flashinfo>,
+    #[serde(default, rename = "feature")]
+    pub features: Vec<Feature>,
+    #[serde(default, rename = "environment")]
+    pub environments: Vec<Environment>,
+    #[serde(default, rename = "variant")]
+    pub variants: Vec<Variant>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Variant {
+    #[serde(rename = "@Dvariant")]
+    pub variant: String,
+    #[serde(default, rename = "feature")]
+    pub features: Vec<Feature>,
+    #[serde(default, rename = "environment")]
+    pub environments: Vec<Environment>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Environment {
+    #[serde(rename = "@name")]
+    pub name: String,
+    #[serde(rename = "$text")]
+    pub text: Option<String>,
+    #[serde(default, rename = "device")]
+    pub device: STDevice,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct STDevice {
+    #[serde(default)]
+    pub descriptors: Descriptors,
+    #[serde(default, rename = "extra-attributes")]
+    pub attributes: Attributes,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct Descriptors {
+    #[serde(rename = "descriptor")]
+    pub descriptors: Vec<Descriptor>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Descriptor {
+    #[serde(rename = "@schemaType")]
+    pub schema_type: String,
+    #[serde(rename = "@path")]
+    pub path: String,
+    #[serde(rename = "@schemaVersion")]
+    pub schema_version: String,
+    #[serde(rename = "@version")]
+    pub version: String,
+}
+
+impl Descriptor {
+    fn as_path(&self) -> &Path {
+        Path::new(&self.path)
+    }
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct Attributes {
+    #[serde(rename = "extra-attribute")]
+    pub attributes: Vec<Attribute>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Attribute {
+    #[serde(rename = "@name")]
+    pub name: String,
+    #[serde(rename = "@value")]
+    pub value: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -70,22 +175,6 @@ pub struct Processor {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct SubFamily {
-    #[serde(rename = "@DsubFamily")]
-    pub sub_family: String,
-    #[serde(default, rename = "memory")]
-    pub memories: Vec<Memory>,
-    #[serde(default, rename = "book")]
-    pub books: Vec<Book>,
-    #[serde(default, rename = "feature")]
-    pub features: Vec<Feature>,
-    #[serde(default, rename = "environment")]
-    pub environments: Vec<Environment>,
-    #[serde(default, rename = "device")]
-    pub devices: Vec<Device>,
-}
-
-#[derive(Serialize, Deserialize)]
 pub struct Memory {
     #[serde(default, rename = "@name")]
     pub name: String,
@@ -103,7 +192,7 @@ pub struct Memory {
     pub startup: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Feature {
     #[serde(rename = "@type")]
     pub feature_type: String,
@@ -113,33 +202,6 @@ pub struct Feature {
     pub n: String,
     #[serde(default, rename = "@m")]
     pub m: String,
-}
-
-/// Corresponds to one `xml::Mcu`
-#[derive(Serialize, Deserialize)]
-pub struct Device {
-    #[serde(rename = "@Dname")]
-    pub name: String,
-    #[serde(rename = "$text")]
-    pub text: Option<String>,
-    #[serde(default, rename = "compile")]
-    pub compiles: Vec<Compile>,
-    #[serde(default, rename = "memory")]
-    pub memories: Vec<Memory>,
-    #[serde(default, rename = "algorithm")]
-    pub algorithms: Vec<Algorithm>,
-    #[serde(default, rename = "book")]
-    pub books: Vec<Book>,
-    #[serde(default, rename = "feature")]
-    pub features: Vec<Feature>,
-    #[serde(default, rename = "environment")]
-    pub environments: Vec<Environment>,
-    #[serde(default)]
-    pub debug: Option<Debug>,
-    #[serde(default)]
-    pub flashinfo: Option<Flashinfo>,
-    #[serde(default, rename = "variant")]
-    pub variants: Vec<Variant>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -175,64 +237,6 @@ pub struct Book {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Environment {
-    #[serde(rename = "@name")]
-    pub name: String,
-    #[serde(rename = "$text")]
-    pub text: Option<String>,
-    #[serde(default, rename = "device")]
-    pub device: STDevice,
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct STDevice {
-    #[serde(rename = "$text")]
-    pub text: Option<String>,
-    #[serde(default)]
-    pub descriptors: Descriptors,
-    #[serde(default, rename = "extra-attributes")]
-    pub extra_attributes: ExtraAttributes,
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct Descriptors {
-    #[serde(rename = "descriptor")]
-    pub descriptors: Vec<Descriptor>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Descriptor {
-    #[serde(rename = "@schemaType")]
-    pub schema_type: String,
-    #[serde(rename = "@path")]
-    pub path: String,
-    #[serde(rename = "@schemaVersion")]
-    pub schema_version: String,
-    #[serde(rename = "@version")]
-    pub version: String,
-}
-
-impl Descriptor {
-    fn as_path(&self) -> &Path {
-        Path::new(&self.path)
-    }
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct ExtraAttributes {
-    #[serde(rename = "extra-attribute")]
-    pub extra_attributes: Vec<ExtraAttribute>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ExtraAttribute {
-    #[serde(rename = "@name")]
-    pub name: String,
-    #[serde(rename = "@value")]
-    pub value: String,
-}
-
-#[derive(Serialize, Deserialize)]
 pub struct Debug {
     #[serde(rename = "@svd")]
     pub svd: String,
@@ -259,18 +263,6 @@ pub struct Block {
     pub count: String,
     #[serde(rename = "@size")]
     pub size: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Variant {
-    #[serde(rename = "@Dvariant")]
-    pub variant: String,
-    #[serde(rename = "$text")]
-    pub text: Option<String>,
-    #[serde(default, rename = "feature")]
-    pub features: Vec<Feature>,
-    #[serde(default, rename = "environment")]
-    pub environments: Vec<Environment>,
 }
 
 mod schema {
@@ -820,65 +812,65 @@ fn parse_package(
     let mut groups: HashMap<String, ChipGroup> = HashMap::new();
 
     let parsed: Package = quick_xml::de::from_str(&std::fs::read_to_string(f)?)?;
-    let package_features = HashSet::from(["SOP", "QFN"]);
+    let package_features = HashSet::from(["SOP", "QFN", "QFP"]);
 
     for family in parsed.devices.families {
         for subfamily in family.sub_families {
             for device in subfamily.devices {
-                // TODO: use extra-attribute: PPN to make chipgroup
-                for (variant, features, descriptors, extra_attributes) in device.variants.iter().map(|variant| {
-                    let chain_all = || {
+                for (variant, environments, features) in device.variants.iter().map(|variant| {
+                    (
+                        variant,
                         family
                             .environments
                             .iter()
                             .chain(subfamily.environments.iter())
                             .chain(device.environments.iter())
-                            .chain(variant.environments.iter())
-                    };
-
-                    let features: Vec<_> = family
-                        .features
-                        .iter()
-                        .chain(subfamily.features.iter())
-                        .chain(device.features.iter())
-                        .chain(variant.features.iter())
-                        .collect();
-
-                    let descriptors: HashMap<_, _> = chain_all()
-                        .map(|e| e.device.descriptors.descriptors.iter())
-                        .flatten()
-                        .map(|d| (&d.schema_type, d))
-                        .collect();
-
-                    let extra_attributes: HashMap<_, _> = chain_all()
-                        .map(|e| e.device.extra_attributes.extra_attributes.iter())
-                        .flatten()
-                        .map(|a| (&a.name, a))
-                        .collect();
-
-                    (variant, features, descriptors, extra_attributes)
+                            .chain(variant.environments.iter()),
+                        family
+                            .features
+                            .iter()
+                            .chain(subfamily.features.iter())
+                            .chain(device.features.iter())
+                            .chain(variant.features.iter()),
+                    )
                 }) {
-                    let Some(ppn) = extra_attributes.get(&"PPN".to_string()) else {
-                        continue;
-                    };
+                    let features: Vec<_> = features.collect();
+                    let (descriptors, attributes): (Vec<_>, Vec<_>) = environments
+                        .map(|e| (&e.device.descriptors.descriptors, &e.device.attributes.attributes))
+                        .unzip();
 
-                    let Some(peripherals_descriptor) = descriptors.get(&"peripherals".to_string()) else {
-                        continue;
-                    };
+                    let descriptors: HashMap<_, _> = descriptors
+                        .iter()
+                        .map(|d| d.iter())
+                        .flatten()
+                        .map(|d| (&*d.schema_type, d))
+                        .collect();
 
-                    let Some(pinout_descriptor) = descriptors.get(&"pinout".to_string()) else {
-                        continue;
-                    };
+                    let attributes: HashMap<_, _> = attributes
+                        .iter()
+                        .map(|a| a.iter())
+                        .flatten()
+                        .map(|a| (&*a.name, a))
+                        .collect();
 
-                    let Some(interrupt_descriptor) = descriptors.get(&"NVIC".to_string()) else {
-                        continue;
-                    };
-
-                    let Some(exti_descriptor) = descriptors.get(&"EXTI".to_string()) else {
-                        continue;
-                    };
-
-                    let Some(package) = features.iter().find(|f| package_features.contains(&*f.feature_type)) else {
+                    let Some((
+                        ppn,
+                        peripherals_descriptor,
+                        pinout_descriptor,
+                        interrupt_descriptor,
+                        exti_descriptor,
+                        package_feature,
+                    )) = (|| {
+                        Some((
+                            attributes.get("PPN")?,
+                            descriptors.get("peripherals")?,
+                            descriptors.get("pinout")?,
+                            descriptors.get("NVIC")?,
+                            descriptors.get("EXTI")?,
+                            features.iter().find(|f| package_features.contains(&*f.feature_type))?,
+                        ))
+                    })()
+                    else {
                         continue;
                     };
 
@@ -916,7 +908,7 @@ fn parse_package(
                         Chip {
                             packages: vec![stm32_data_serde::chip::Package {
                                 name: ppn.value.clone(),
-                                package: package.name.clone(),
+                                package: package_feature.name.clone(),
                                 pins: package_pins.clone(),
                             }],
                         },
