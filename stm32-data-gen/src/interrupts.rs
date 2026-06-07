@@ -96,15 +96,26 @@ impl ChipInterrupts {
         if chip_name.starts_with("STM32F100") {
             header_irqs.remove("DMA2_Channel4_5");
         }
-        // STM32U3 changed the advanced timer IRQ BRK/TRG names
+
+        let mut replace = |bad, good: &str| {
+            if let Some(num) = header_irqs.remove(bad) {
+                header_irqs.insert(good.to_string(), num);
+            }
+        };
+
+        // STM32U3 and STM32C5 changed the advanced timer IRQ BRK/TRG names
         // to include multiple signal names. This change maps
         // them back to the common names.
-        if let Some(num) = header_irqs.remove("TIM1_BRK_TERR_IERR") {
-            header_irqs.insert("TIM1_BRK".to_string(), num);
-        }
-        if let Some(num) = header_irqs.remove("TIM1_TRG_COM_DIR_IDX") {
-            header_irqs.insert("TIM1_TRG_COM".to_string(), num);
-        }
+
+        // replace(bad, good)
+        replace("TIM1_BRK_TERR_IERR", "TIM1_BRK");
+        replace("TIM8_BRK_TERR_IERR", "TIM8_BRK");
+        replace("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM");
+        replace("TIM1_TRGI_COM_DIR_IDX", "TIM1_TRG_COM");
+        replace("TIM8_TRGI_COM_DIR_IDX", "TIM8_TRG_COM");
+        replace("TIM1_UPD", "TIM1_UP");
+        replace("TIM8_UPD", "TIM8_UP");
+
         core.interrupts = header_irqs
             .iter()
             .map(|(k, v)| stm32_data_serde::chip::core::Interrupt {
@@ -384,8 +395,10 @@ impl ChipInterrupts {
                 }
 
                 for (p, mut ss) in peri_signals.into_iter() {
-                    // Normalize LTDC error signal: N6 uses "ERR" (from LTDC_LO_ERR), standardize to "ER"
-                    if p == "LTDC" {
+                    // Normalize LTDC and I2C/I3C error signal: N6 and C5 uses "ERR" (from LTDC_LO_ERR and I2C_ERR), standardize to "ER"
+                    if p == "LTDC"
+                        || (chip_name.starts_with("STM32C5") && (p.starts_with("I2C") || p.starts_with("I3C")))
+                    {
                         for s in ss.iter_mut() {
                             if s == "ERR" {
                                 *s = "ER".to_string();
@@ -726,6 +739,7 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
         ("RAMCFG", &["BKP", "ECC"]),
         ("LTDC", &["ER", "LO"]),
         ("HSEM", &["GLOBAL"]),
+        ("LPDMA", &["CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7"]),
     ];
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
