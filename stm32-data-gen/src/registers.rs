@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt::Write;
 
 use anyhow::anyhow;
 use chiptool::ir::IR;
@@ -35,11 +36,41 @@ impl Registers {
                 allow_unused_fieldsets: false,
             };
             let err_vec = validate::validate(&ir, validate_option);
-            let err_string = err_vec.iter().fold(String::new(), |mut acc, cur| {
+            let mut err_string = err_vec.iter().fold(String::new(), |mut acc, cur| {
                 acc.push_str(cur);
                 acc.push('\n');
                 acc
             });
+
+            let mut check_case = |s: &String| {
+                if !s.is_ascii() || s.chars().filter(|c| c.is_alphabetic()).any(|c| !c.is_uppercase()) {
+                    writeln!(&mut err_string, "{} is not ascii uppercase", s).unwrap();
+                }
+            };
+
+            for (n, e) in &ir.enums {
+                check_case(n);
+
+                for v in &e.variants {
+                    check_case(&v.name);
+                }
+            }
+
+            for (n, b) in &ir.blocks {
+                check_case(n);
+
+                for v in &b.items {
+                    check_case(&v.name);
+                }
+            }
+
+            for (n, b) in &ir.fieldsets {
+                check_case(n);
+
+                for v in &b.fields {
+                    check_case(&v.name);
+                }
+            }
 
             if !err_string.is_empty() {
                 return Err(anyhow!(format!("\n{ff}:\n{err_string}")));
