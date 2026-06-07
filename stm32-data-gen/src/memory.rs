@@ -483,7 +483,7 @@ static FLASH_INFO: RegexMap<&[FlashInfo]> = RegexMap::new(&[
     ("STM32.*",                 &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
 ]);
 
-pub fn get(mut chip: &str) -> Vec<Vec<Memory>> {
+pub fn get(chip: &str) -> Vec<Vec<Memory>> {
     let mems_variations = *MEMS.must_get(chip);
     let flash_variations = FLASH_INFO.must_get(chip);
 
