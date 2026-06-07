@@ -603,6 +603,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F4.*:DBGMCU:.*", ("dbgmcu", "f4", "DBGMCU")),
     ("STM32F7.*:DBGMCU:.*", ("dbgmcu", "f7", "DBGMCU")),
     ("STM32C0.*:DBGMCU:.*", ("dbgmcu", "c0", "DBGMCU")),
+    ("STM32C5.*:DBGMCU:.*", ("dbgmcu", "c5", "DBGMCU")),
     ("STM32G0.*:DBGMCU:.*", ("dbgmcu", "g0", "DBGMCU")),
     ("STM32G4.*:DBGMCU:.*", ("dbgmcu", "g4", "DBGMCU")),
     ("STM32H5.*:DBGMCU:.*", ("dbgmcu", "h5", "DBGMCU")),
