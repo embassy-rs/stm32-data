@@ -13,7 +13,7 @@ use crate::gpio_af::{Af, clean_pin, pin_matches};
 use crate::interrupts::ChipInterrupts;
 use crate::package::schema::pinout::Characteristics;
 use crate::package::schema::{exti, interrupts, peripherals, pinout};
-use crate::util::entry_or;
+use crate::util::{entry_or, occupied_entry_or};
 
 #[derive(Serialize, Deserialize)]
 pub struct Package {
@@ -810,6 +810,11 @@ fn parse_package(
     for family in parsed.devices.families {
         for subfamily in family.sub_families {
             for device in subfamily.devices {
+                let chip_name = &device.name;
+                let mut group = groups.entry(chip_name.clone());
+                let mut chip = chips.entry(chip_name.clone());
+                let mut af = af.0.entry(chip_name.clone());
+
                 for (_variant, environments, features) in device.variants.iter().map(|variant| {
                     (
                         variant,
@@ -874,8 +879,7 @@ fn parse_package(
                         interrupt_descriptor.as_path(),
                     )?;
 
-                    let chip_name = &device.name;
-                    let group = groups.entry(device.name.clone()).or_insert_with(|| ChipGroup {
+                    let group = occupied_entry_or(&mut group, || ChipGroup {
                         chip_names: vec![chip_name.clone()],
                         headers: device.compiles.iter().map(|c| c.define.to_ascii_lowercase()).collect(),
                         cores: family.processors.iter().map(|p| p.core.clone()).collect(),
@@ -885,7 +889,8 @@ fn parse_package(
                         line: subfamily.sub_family.clone(),
                         die: format!("DIE{}", characteristics.die_name),
                         gpio_af: Some(device.name.clone()),
-                    });
+                    })
+                    .get_mut();
 
                     group.ips.entry("NVIC".to_string()).or_insert_with(|| xml::Ip {
                         instance_name: "NVIC".to_string(),
@@ -895,9 +900,8 @@ fn parse_package(
 
                     merge_pins(&mut group.pins, pins.clone().into_values());
 
-                    chips
-                        .entry(chip_name.clone())
-                        .or_insert_with(|| Chip { packages: Vec::new() })
+                    occupied_entry_or(&mut chip, || Chip { packages: Vec::new() })
+                        .get_mut()
                         .packages
                         .push(stm32_data_serde::chip::Package {
                             name: ppn.value.clone(),
@@ -905,7 +909,8 @@ fn parse_package(
                             pins: package_pins.clone(),
                         });
 
-                    af.0.entry(chip_name.clone()).or_insert_with(|| gpio_af.clone());
+                    // TODO: merge gpio AF
+                    occupied_entry_or(&mut af, || gpio_af.clone());
 
                     irqs.irqs
                         .entry(("NVIC".to_string(), chip_name.clone()))
