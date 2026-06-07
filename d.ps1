@@ -31,25 +31,10 @@ Switch ($CMD) {
         cargo install --git https://github.com/embassy-rs/chiptool
     }
     "extract-all" {
-        rm -r -Force tmp/$peri -ErrorAction SilentlyContinue
-        mkdir tmp/$peri | Out-Null
-
-        ls sources/svd | foreach-object {
-            $f = $_.Name.TrimStart("stm32").TrimEnd(".svd")
-            echo $f
-
-            echo "processing $f ..."
-            chiptool extract-peripheral --svd "sources/svd/stm32$f.svd" --peripheral "$peri" | Out-File -FilePath "tmp/$peri/$f.yaml" -Encoding ASCII 2> "tmp/$peri/$f.err"
-            if ($LASTEXITCODE -eq 0) {
-                rm "tmp/$peri/$f.err"
-                echo OK
-            }
-            else {
-                rm "tmp/$peri/$f.yaml"
-                echo FAIL
-            }
-
-        }
+        cargo run --release --bin extract-all $peri
+    }
+    "merge-regs" {
+        cargo run --release --bin merge-regs $peri
     }
     "gen" {
         rm -r -Force build/data -ErrorAction SilentlyContinue
