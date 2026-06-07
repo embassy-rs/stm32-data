@@ -8,8 +8,8 @@ use serde::{Deserialize, Serialize};
 use stm32_data_serde::chip::PackagePin;
 
 use crate::chips::xml::PinSignal;
-use crate::chips::{Chip, ChipGroup, xml};
-use crate::gpio_af::{Af, pin_matches};
+use crate::chips::{Chip, ChipGroup, merge_pins, xml};
+use crate::gpio_af::{Af, clean_pin, pin_matches};
 use crate::interrupts::ChipInterrupts;
 use crate::package::schema::pinout::Characteristics;
 use crate::package::schema::{exti, interrupts, peripherals, pinout};
@@ -614,21 +614,23 @@ mod schema {
     }
 }
 
-fn build_pins(
-    f: &pinout::File,
-) -> (
+type BuildPins = (
     HashMap<String, xml::Pin>,
     Vec<PackagePin>,
     HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
     Characteristics,
-) {
+);
+
+fn build_pins(f: &pinout::File) -> BuildPins {
     let package_pins: Vec<PackagePin> = f
         .bonds
         .iter()
         .filter(|b| pin_matches(&b.die_pad).is_some())
-        .map(|b| PackagePin {
-            position: b.position.clone(),
-            signals: vec![b.die_pad.clone()],
+        .filter_map(|b| {
+            Some(PackagePin {
+                position: b.position.clone(),
+                signals: vec![clean_pin(&b.die_pad)?],
+            })
         })
         .collect();
 
@@ -721,15 +723,7 @@ fn build_interrupts(f: &interrupts::File, exti_map: &HashMap<String, String>) ->
 
 struct PackageDirectory {
     root: PathBuf,
-    pinouts: HashMap<
-        PathBuf,
-        (
-            HashMap<String, xml::Pin>,
-            Vec<PackagePin>,
-            HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
-            Characteristics,
-        ),
-    >,
+    pinouts: HashMap<PathBuf, BuildPins>,
     peripherals: HashMap<PathBuf, HashMap<String, xml::Ip>>,
     exti: HashMap<PathBuf, HashMap<String, String>>,
     interrupts: HashMap<PathBuf, Vec<String>>,
@@ -753,12 +747,7 @@ impl PackageDirectory {
         exti: &Path,
         interrupts: &Path,
     ) -> anyhow::Result<(
-        &(
-            HashMap<String, xml::Pin>,
-            Vec<PackagePin>,
-            HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
-            Characteristics,
-        ),
+        &BuildPins,
         &HashMap<String, xml::Ip>,
         &HashMap<String, String>,
         &Vec<String>,
@@ -821,7 +810,7 @@ fn parse_package(
     for family in parsed.devices.families {
         for subfamily in family.sub_families {
             for device in subfamily.devices {
-                for (variant, environments, features) in device.variants.iter().map(|variant| {
+                for (_variant, environments, features) in device.variants.iter().map(|variant| {
                     (
                         variant,
                         family
@@ -885,11 +874,12 @@ fn parse_package(
                         interrupt_descriptor.as_path(),
                     )?;
 
+                    let chip_name = &device.name;
                     let group = groups.entry(device.name.clone()).or_insert_with(|| ChipGroup {
-                        chip_names: Vec::new(),
+                        chip_names: vec![chip_name.clone()],
                         headers: device.compiles.iter().map(|c| c.define.to_ascii_lowercase()).collect(),
                         cores: family.processors.iter().map(|p| p.core.clone()).collect(),
-                        ips: HashMap::new(),
+                        ips: peripherals.clone(),
                         pins: HashMap::new(),
                         family: family.family.clone(),
                         line: subfamily.sub_family.clone(),
@@ -897,32 +887,28 @@ fn parse_package(
                         gpio_af: Some(device.name.clone()),
                     });
 
-                    // TODO: do we need to merge the pin signals?
-
-                    group.ips.extend(peripherals.clone());
-                    group.pins.extend(pins.clone());
-                    group.chip_names.push(variant.variant.clone());
                     group.ips.entry("NVIC".to_string()).or_insert_with(|| xml::Ip {
                         instance_name: "NVIC".to_string(),
                         name: "NVIC".to_string(),
-                        version: device.name.to_string(),
+                        version: chip_name.clone(),
                     });
 
-                    chips.insert(
-                        variant.variant.clone(),
-                        Chip {
-                            packages: vec![stm32_data_serde::chip::Package {
-                                name: ppn.value.clone(),
-                                package: package_feature.name.clone(),
-                                pins: package_pins.clone(),
-                            }],
-                        },
-                    );
+                    merge_pins(&mut group.pins, pins.clone().into_values());
 
-                    af.0.entry(device.name.clone()).or_insert_with(|| gpio_af.clone());
+                    chips
+                        .entry(chip_name.clone())
+                        .or_insert_with(|| Chip { packages: Vec::new() })
+                        .packages
+                        .push(stm32_data_serde::chip::Package {
+                            name: ppn.value.clone(),
+                            package: package_feature.name.clone(),
+                            pins: package_pins.clone(),
+                        });
+
+                    af.0.entry(chip_name.clone()).or_insert_with(|| gpio_af.clone());
 
                     irqs.irqs
-                        .entry(("NVIC".to_string(), device.name.clone()))
+                        .entry(("NVIC".to_string(), chip_name.clone()))
                         .or_insert_with(|| interrupts.clone());
                 }
             }

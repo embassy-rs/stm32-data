@@ -87,15 +87,15 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32C092.B",                  &[mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 30 })]),
     ("STM32C092.C",                  &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 30 })]),
     // C5
-    ("STM32C53..B..",                &[mem!(BANK_1 { 0x08000000 64 }, BANK_2 { 0x08020000 64 }, SRAM1 { 0x20000000 32 }, SRAM2 { 0x20008000 32 } )]),
-    ("STM32C53..C..",                &[mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08020000 128 }, SRAM1 { 0x20000000 32 }, SRAM2 { 0x20008000 32 } )]),
-    ("STM32C542.C..",                &[mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08020000 128 }, SRAM1 { 0x20000000 32 }, SRAM2 { 0x20008000 32 } )]),
-    ("STM32C55..C..",                &[mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08040000 128 }, SRAM1 { 0x20000000 64 }, SRAM2 { 0x20010000 64 } )]),
-    ("STM32C55..E..",                &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM1 { 0x20000000 64 }, SRAM2 { 0x20010000 64 } )]),
-    ("STM32C562.E..",                &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM1 { 0x20000000 64 }, SRAM2 { 0x20010000 64 } )]),
-    ("STM32C59..E..",                &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08080000 256 }, SRAM1 { 0x20000000 128 }, SRAM2 { 0x20020000 128 } )]),
-    ("STM32C59..G..",                &[mem!(BANK_1 { 0x08000000 512 }, BANK_2 { 0x08080000 512 }, SRAM1 { 0x20000000 128 }, SRAM2 { 0x20020000 128 } )]),
-    ("STM32C5A3.G..",                &[mem!(BANK_1 { 0x08000000 512 }, BANK_2 { 0x08080000 512 }, SRAM1 { 0x20000000 128 }, SRAM2 { 0x20020000 128 } )]),
+    ("STM32C53..B",                &[mem!(BANK_1 { 0x08000000 64 }, BANK_2 { 0x08020000 64 }, SRAM1 { 0x20000000 32 }, SRAM2 { 0x20008000 32 } )]),
+    ("STM32C53..C",                &[mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08020000 128 }, SRAM1 { 0x20000000 32 }, SRAM2 { 0x20008000 32 } )]),
+    ("STM32C542.C",                &[mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08020000 128 }, SRAM1 { 0x20000000 32 }, SRAM2 { 0x20008000 32 } )]),
+    ("STM32C55..C",                &[mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08040000 128 }, SRAM1 { 0x20000000 64 }, SRAM2 { 0x20010000 64 } )]),
+    ("STM32C55..E",                &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM1 { 0x20000000 64 }, SRAM2 { 0x20010000 64 } )]),
+    ("STM32C562.E",                &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08040000 256 }, SRAM1 { 0x20000000 64 }, SRAM2 { 0x20010000 64 } )]),
+    ("STM32C59..E",                &[mem!(BANK_1 { 0x08000000 256 }, BANK_2 { 0x08080000 256 }, SRAM1 { 0x20000000 128 }, SRAM2 { 0x20020000 128 } )]),
+    ("STM32C59..G",                &[mem!(BANK_1 { 0x08000000 512 }, BANK_2 { 0x08080000 512 }, SRAM1 { 0x20000000 128 }, SRAM2 { 0x20020000 128 } )]),
+    ("STM32C5A3.G",                &[mem!(BANK_1 { 0x08000000 512 }, BANK_2 { 0x08080000 512 }, SRAM1 { 0x20000000 128 }, SRAM2 { 0x20020000 128 } )]),
     // F0
     ("STM32F0...C",                  &[mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 32 })]),
     ("STM32F0[35]..8",               &[mem!(BANK_1 { 0x08000000 64 },  SRAM { 0x20000000 8 })]),
@@ -483,7 +483,7 @@ static FLASH_INFO: RegexMap<&[FlashInfo]> = RegexMap::new(&[
     ("STM32.*",                 &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
 ]);
 
-pub fn get(mut chip: &str) -> Vec<Vec<Memory>> {
+pub fn get(chip: &str) -> Vec<Vec<Memory>> {
     let mems_variations = *MEMS.must_get(chip);
     let flash_variations = FLASH_INFO.must_get(chip);
 

@@ -263,11 +263,16 @@ fn parse_group(
     for ip in parsed.ips {
         group.0.ips.insert(ip.instance_name.clone(), ip);
     }
-    for pin in parsed.pins {
+
+    merge_pins(&mut group.0.pins, parsed.pins.into_iter());
+
+    Ok(())
+}
+
+pub fn merge_pins(group_pins: &mut HashMap<String, xml::Pin>, pins: impl Iterator<Item = xml::Pin>) {
+    for pin in pins {
         if let Some(pin_name) = gpio_af::clean_pin(&pin.name) {
-            group
-                .0
-                .pins
+            group_pins
                 .entry(pin_name)
                 .and_modify(|p| {
                     // merge signals.
@@ -277,6 +282,4 @@ fn parse_group(
                 .or_insert(pin);
         }
     }
-
-    Ok(())
 }
