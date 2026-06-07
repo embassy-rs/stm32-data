@@ -909,8 +909,9 @@ fn parse_package(
                             pins: package_pins.clone(),
                         });
 
-                    // TODO: merge gpio AF
-                    occupied_entry_or(&mut af, || gpio_af.clone());
+                    occupied_entry_or(&mut af, || HashMap::new())
+                        .get_mut()
+                        .extend(gpio_af.clone());
 
                     irqs.irqs
                         .entry(("NVIC".to_string(), chip_name.clone()))
