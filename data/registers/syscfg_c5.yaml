@@ -1,0 +1,374 @@
+block/SBS:
+  description: SBS register block.
+  items:
+  - name: SBS_HDPLCR
+    description: SBS temporal isolation control register.
+    byte_offset: 16
+    fieldset: SBS_HDPLCR
+  - name: SBS_HDPLSR
+    description: SBS temporal isolation status register.
+    byte_offset: 20
+    access: Read
+    fieldset: SBS_HDPLSR
+  - name: SBS_NEXTTILCR
+    description: SBS next TIL control register.
+    byte_offset: 24
+    fieldset: SBS_NEXTTILCR
+  - name: SBS_PMCR
+    description: SBS product mode and configuration register.
+    byte_offset: 256
+    fieldset: SBS_PMCR
+  - name: SBS_FPUIMR
+    description: SBS FPU interrupt mask register.
+    byte_offset: 260
+    fieldset: SBS_FPUIMR
+  - name: SBS_MESR
+    description: SBS memory erase status register.
+    byte_offset: 264
+    fieldset: SBS_MESR
+  - name: SBS_CCCSR
+    description: SBS compensation cell for I/Os control and status register.
+    byte_offset: 272
+    fieldset: SBS_CCCSR
+  - name: SBS_CCVALR
+    description: SBS compensation cell for I/Os value register.
+    byte_offset: 276
+    access: Read
+    fieldset: SBS_CCVALR
+  - name: SBS_CCSWCR
+    description: SBS compensation cell for I/Os software code register.
+    byte_offset: 280
+    fieldset: SBS_CCSWCR
+  - name: SBS_CFGR2
+    description: SBS Class B register.
+    byte_offset: 288
+    fieldset: SBS_CFGR2
+  - name: SBS_CLCKR
+    description: SBS CPU lock register.
+    byte_offset: 324
+    fieldset: SBS_CLCKR
+  - name: SBS_CNSLCKR
+    description: SBS CPU lock register.
+    byte_offset: 324
+    fieldset: SBS_CNSLCKR
+  - name: SBS_ECCNMIR
+    description: SBS ECC NMI mask register.
+    byte_offset: 332
+    fieldset: SBS_ECCNMIR
+fieldset/SBS_CCCSR:
+  description: SBS compensation cell for I/Os control and status register.
+  fields:
+  - name: EN1
+    description: Enable compensation cell for VDDIO power rail.
+    bit_offset: 0
+    bit_size: 1
+  - name: CS1
+    description: Code selection for VDDIO power rail (reset value set to 1).
+    bit_offset: 1
+    bit_size: 1
+    enum: CS1
+  - name: RDY1
+    description: VDDIO compensation cell ready flag.
+    bit_offset: 8
+    bit_size: 1
+fieldset/SBS_CCSWCR:
+  description: SBS compensation cell for I/Os software code register.
+  fields:
+  - name: SW_ANSRC1
+    description: NMOS compensation code for VDD power rails.
+    bit_offset: 0
+    bit_size: 4
+  - name: SW_APSRC1
+    description: PMOS compensation code for the VDD power rails.
+    bit_offset: 4
+    bit_size: 4
+fieldset/SBS_CCVALR:
+  description: SBS compensation cell for I/Os value register.
+  fields:
+  - name: ANSRC1
+    description: Compensation value for the NMOS transistor.
+    bit_offset: 0
+    bit_size: 4
+  - name: APSRC1
+    description: Compensation value for the PMOS transistor.
+    bit_offset: 4
+    bit_size: 4
+fieldset/SBS_CFGR2:
+  description: SBS Class B register.
+  fields:
+  - name: CLL
+    description: Core lockup lock.
+    bit_offset: 0
+    bit_size: 1
+  - name: SEL
+    description: SRAM ECC error lock.
+    bit_offset: 1
+    bit_size: 1
+    enum: SEL
+  - name: PVDL
+    description: PVD lock.
+    bit_offset: 2
+    bit_size: 1
+    enum: PVDL
+  - name: ECCL
+    description: ECC lock.
+    bit_offset: 3
+    bit_size: 1
+    enum: ECCL
+fieldset/SBS_CLCKR:
+  description: SBS CPU lock register.
+  fields:
+  - name: LOCKVTOR
+    description: VTOR register lock.
+    bit_offset: 0
+    bit_size: 1
+  - name: LOCKMPU
+    description: MPU register lock.
+    bit_offset: 1
+    bit_size: 1
+fieldset/SBS_CNSLCKR:
+  description: SBS CPU lock register.
+  fields:
+  - name: LOCKNSVTOR
+    description: VTOR_NS register lock.
+    bit_offset: 0
+    bit_size: 1
+  - name: LOCKNSMPU
+    description: MPU register lock.
+    bit_offset: 1
+    bit_size: 1
+fieldset/SBS_ECCNMIR:
+  description: SBS ECC NMI mask register.
+  fields:
+  - name: ECCNMI_MASK_EN
+    description: NMI behavior setup when a double ECC error occurs on FLITF data part.
+    bit_offset: 0
+    bit_size: 1
+    enum: ECCNMI_MASK_EN
+fieldset/SBS_FPUIMR:
+  description: SBS FPU interrupt mask register.
+  fields:
+  - name: FPU_IE
+    description: FPU interrupt enable.
+    bit_offset: 0
+    bit_size: 6
+fieldset/SBS_HDPLCR:
+  description: SBS temporal isolation control register.
+  fields:
+  - name: INCR_HDPL
+    description: HDPL value increment.
+    bit_offset: 0
+    bit_size: 8
+    enum: INCR_HDPL
+fieldset/SBS_HDPLSR:
+  description: SBS temporal isolation status register.
+  fields:
+  - name: HDPL
+    description: Temporal isolation level.
+    bit_offset: 0
+    bit_size: 8
+    enum: HDPL
+fieldset/SBS_MESR:
+  description: SBS memory erase status register.
+  fields:
+  - name: MCLR
+    description: Device memories erase status.
+    bit_offset: 0
+    bit_size: 1
+    enum: MCLR
+  - name: IPMEE
+    description: ICACHE erase status.
+    bit_offset: 16
+    bit_size: 1
+    enum: IPMEE
+fieldset/SBS_NEXTTILCR:
+  description: SBS next TIL control register.
+  fields:
+  - name: NEXTTIL
+    description: Next TIL control register.
+    bit_offset: 0
+    bit_size: 2
+    enum: NEXTTIL
+fieldset/SBS_PMCR:
+  description: SBS product mode and configuration register.
+  fields:
+  - name: PB6_FMPLUS
+    description: Fast-mode Plus command on PB(6).
+    bit_offset: 16
+    bit_size: 1
+  - name: PB7_FMPLUS
+    description: Fast-mode Plus command on PB(7).
+    bit_offset: 17
+    bit_size: 1
+  - name: PB8_FMPLUS
+    description: Fast-mode Plus command on PB(8).
+    bit_offset: 18
+    bit_size: 1
+  - name: PB9_FMPLUS
+    description: Fast-mode Plus command on PB(9).
+    bit_offset: 19
+    bit_size: 1
+  - name: PA11_FMPLUS
+    description: Fast-mode Plus command on PA(11).
+    bit_offset: 20
+    bit_size: 1
+  - name: PA12_FMPLUS
+    description: Fast-mode Plus command on PA(12).
+    bit_offset: 21
+    bit_size: 1
+  - name: PB3_FMPLUS
+    description: Fast-mode Plus command on PB(3).
+    bit_offset: 22
+    bit_size: 1
+  - name: PB4_FMPLUS
+    description: Fast-mode Plus command on PB(4).
+    bit_offset: 23
+    bit_size: 1
+  - name: ETH_SEL_PHY
+    description: Ethernet PHY interface selection.
+    bit_offset: 24
+    bit_size: 4
+    enum: ETH_SEL_PHY
+  - name: ETHINTPOL
+    description: Ethernet external PHY interrupt polarity configuration.
+    bit_offset: 28
+    bit_size: 1
+    enum: ETHINTPOL
+  - name: ETHPDACK
+    description: Ethernet power-down acknowledge.
+    bit_offset: 29
+    bit_size: 1
+    enum: ETHPDACK
+  - name: ETHTXLPI
+    description: Ethernet TxLPI status.
+    bit_offset: 30
+    bit_size: 1
+enum/CS1:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Code from the cell (available in the SBS_CCVR).
+    value: 0
+  - name: B_0x1
+    description: Code from SBS_CCCR.
+    value: 1
+enum/ECCL:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Double ECC error flag disconnected to timer break inputs.
+    value: 0
+  - name: B_0x1
+    description: Double ECC error flag connected to timer break inputs.
+    value: 1
+enum/ECCNMI_MASK_EN:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: NMI generated if a double ECC error in the FLITF data part.
+    value: 0
+  - name: B_0x1
+    description: NMI not generated if a double ECC error in the FLITF data part.
+    value: 1
+enum/ETHINTPOL:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: active high.
+    value: 0
+  - name: B_0x1
+    description: active low.
+    value: 1
+enum/ETHPDACK:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Ethernet functional / power-down sequence not yet completed.
+    value: 0
+  - name: B_0x1
+    description: Ethernet power-down sequence completed.
+    value: 1
+enum/ETH_SEL_PHY:
+  bit_size: 4
+  variants:
+  - name: B_0x0
+    description: GMII or MII.
+    value: 0
+  - name: B_0x4
+    description: RMII.
+    value: 4
+  - name: B_0x8
+    description: 10BT1S.
+    value: 8
+enum/HDPL:
+  bit_size: 8
+  variants:
+  - name: B_0x51
+    description: HDPL1, hide protection level to be used to execute and protect an immutable root of trust (IROT) stage.
+    value: 81
+  - name: B_0x6F
+    description: HDPL3, hide protection level to be used to execute the application.
+    value: 111
+  - name: B_0x8A
+    description: HDPL2, hide protection level to be used to execute and protect an updatable Root of Trust (UROT) stage.
+    value: 138
+enum/INCR_HDPL:
+  bit_size: 8
+  variants:
+  - name: B_0x6A
+    description: Recommended value to increment HDPL level by one.
+    value: 106
+  - name: B_0xB4
+    description: No increment.
+    value: 180
+enum/IPMEE:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: ICACHE erase ongoing.
+    value: 0
+  - name: B_0x1
+    description: ICACHE erase ended.
+    value: 1
+enum/MCLR:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Memory erase ongoing if not yet cleared by software.
+    value: 0
+  - name: B_0x1
+    description: Memory erase done.
+    value: 1
+enum/NEXTTIL:
+  bit_size: 2
+  variants:
+  - name: B_0x0
+    description: OBK-TIL = TIL.
+    value: 0
+  - name: B_0x1
+    description: OBK-TIL = TIL + 1.
+    value: 1
+  - name: B_0x2
+    description: OBK-TIL = TIL + 2.
+    value: 2
+  - name: B_0x3
+    description: OBK-TIL = TIL + 3.
+    value: 3
+enum/PVDL:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: PVD interrupt disconnected from timer break inputs.
+    value: 0
+  - name: B_0x1
+    description: PVD interrupt is connected to timer break inputs.
+    value: 1
+enum/SEL:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: SRAM double ECC error flag disconnected from timer break inputs.
+    value: 0
+  - name: B_0x1
+    description: SRAM double ECC error flag connected to timer break inputs.
+    value: 1
