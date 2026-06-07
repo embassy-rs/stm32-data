@@ -198,7 +198,7 @@ that they are all mutually consistent.
 Finally, we can merge
 
 ```
-cargo run --release --bin merge_regs tmp/RCC/g0*.yaml
+.\d merge-regs tmp/RCC/g0*.yaml
 ```
 
 This will produce `regs_merged.yaml`, which we can copy into its final resting

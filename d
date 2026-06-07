@@ -30,25 +30,14 @@ case "$CMD" in
         shift
         echo $@
 
-        rm -rf tmp/$peri
-        mkdir -p tmp/$peri
+        cargo run --release --bin extract-all $peri
+    ;;
+    merge-regs)
+        peri=$1
+        shift
+        echo $@
 
-        for f in `ls sources/svd`; do
-            f=${f#"stm32"}
-            f=${f%".svd"}
-            echo -n processing $f ...
-            if chiptool extract-peripheral --svd sources/svd/stm32$f.svd --peripheral $peri $@ > tmp/$peri/$f.yaml 2> tmp/$peri/$f.err; then
-                rm tmp/$peri/$f.err
-                echo OK
-            else
-                if grep -q 'peripheral not found' tmp/$peri/$f.err; then
-                    echo No Peripheral
-                else
-                    echo OTHER FAILURE
-                fi
-                rm tmp/$peri/$f.yaml
-            fi
-        done
+        cargo run --release --bin merge-regs $peri
     ;;
     gen)
         rm -rf build/data
