@@ -96,7 +96,7 @@ fn main() -> anyhow::Result<()> {
     let docs = docs::Docs::parse()?;
 
     // stopwatch.section("Parsing DMA");
-    let dma_channels = dma::DmaChannels::parse()?;
+    let mut dma_channels = dma::DmaChannels::parse()?;
 
     // stopwatch.section("Parsing GPIO AF");
     let mut af = gpio_af::Af::parse()?;
@@ -109,7 +109,13 @@ fn main() -> anyhow::Result<()> {
 
     stopwatch.section("Parsing packages");
 
-    parse_packages(&mut chips, &mut chip_groups, &mut af, &mut chip_interrupts)?;
+    parse_packages(
+        &mut chips,
+        &mut chip_groups,
+        &mut af,
+        &mut dma_channels,
+        &mut chip_interrupts,
+    )?;
 
     stopwatch.section("Processing chips");
     generator::dump_all_chips(
