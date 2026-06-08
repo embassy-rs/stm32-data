@@ -294,7 +294,7 @@ impl Triggers {
                 Trigger {signal: "DAC_CHX_TRG11", source: "LPTIM1_TRGO"},
                 Trigger {signal: "DAC_CHX_TRG12", source: "LPTIM2_TRGO"},
                 Trigger {signal: "DAC_CHX_TRG13", source: "EXTI9_TRG"},
-            ]),        
+            ]),
             (r"^STM32H5(6|7).*:DAC.*", &[
                 Trigger {signal: "DAC_CHX_TRG3", source: "TIM4_TRGO"},
                 Trigger {signal: "DAC_CHX_TRG4", source: "TIM5_TRGO"},
@@ -904,9 +904,11 @@ impl Triggers {
             }
         }
 
-        Self { map: &PERIPHERAL_TRIGGER_RULES }
+        Self {
+            map: &PERIPHERAL_TRIGGER_RULES,
+        }
     }
-    
+
     /// Get the stop mode limit for a peripheral based on the MCU and peripheral name.
     /// Determines the lowest possible stop mode when a peripheral is enabled.
     ///
@@ -914,8 +916,6 @@ impl Triggers {
     /// - mcu_name: the full name of the MCU (e.g., "STM32WB55RG")
     /// - peripheral: the name of the peripheral (e.g., "USART1")
     pub fn peripheral_trigger_info(&self, mcu_name: &str, peripheral: &str) -> Option<&'static [Trigger]> {
-        self.map
-                .get(&format!("{mcu_name}:{peripheral}"))
-                .map(|v| &**v)
+        self.map.get(&format!("{mcu_name}:{peripheral}")).map(|v| &**v)
     }
 }
