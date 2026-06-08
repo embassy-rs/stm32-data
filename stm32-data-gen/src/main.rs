@@ -2,8 +2,6 @@ use clap::{Parser, ValueEnum};
 use env_logger::Env;
 use log::LevelFilter;
 
-use crate::package::parse_packages;
-use crate::trigger::peripheral_trigger_info;
 mod check;
 mod chips;
 mod dma;
@@ -129,8 +127,7 @@ fn main() -> anyhow::Result<()> {
 
     let mut stopwatch = Stopwatch::new();
 
-    // validate trigger rules
-    peripheral_trigger_info("", "");
+    let triggers = trigger::Triggers::new();
 
     stopwatch.section("Parsing headers");
     let headers = header::Headers::parse()?;
@@ -161,7 +158,7 @@ fn main() -> anyhow::Result<()> {
 
     stopwatch.section("Parsing packages");
 
-    parse_packages(
+    package::parse_packages(
         &mut chips,
         &mut chip_groups,
         &mut af,
@@ -175,6 +172,7 @@ fn main() -> anyhow::Result<()> {
         chip_groups,
         headers,
         af,
+        triggers,
         chip_interrupts,
         peripheral_to_clock,
         dma_channels,
