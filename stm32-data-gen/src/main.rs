@@ -173,6 +173,7 @@ fn main() -> anyhow::Result<()> {
         headers,
         af,
         triggers,
+        registers.blocks,
         chip_interrupts,
         peripheral_to_clock,
         dma_channels,
