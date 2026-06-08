@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use anyhow::anyhow;
 use chiptool::ir::IR;
@@ -7,11 +7,13 @@ use chiptool::validate;
 pub struct Registers {
     /// Maps the file name (without the .yaml extension) to the IR object which is parsed from the mcu .svd file
     pub registers: HashMap<String, IR>,
+    pub blocks: HashMap<String, HashSet<String>>,
 }
 
 impl Registers {
     pub fn parse() -> Result<Self, anyhow::Error> {
         let mut registers = HashMap::new();
+        let mut blocks = HashMap::new();
 
         for f in glob::glob("data/registers/*")? {
             let f = f?;
@@ -45,10 +47,11 @@ impl Registers {
                 return Err(anyhow!(format!("\n{ff}:\n{err_string}")));
             }
 
+            blocks.insert(ff.clone(), ir.blocks.keys().cloned().collect());
             registers.insert(ff, ir);
         }
 
-        Ok(Self { registers })
+        Ok(Self { registers, blocks })
     }
 
     pub fn write(&self) -> Result<(), anyhow::Error> {

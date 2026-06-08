@@ -53,6 +53,7 @@ pub fn dump_all_chips(
     headers: header::Headers,
     af: gpio_af::Af,
     triggers: trigger::Triggers,
+    blocks: HashMap<String, HashSet<String>>,
     chip_interrupts: interrupts::ChipInterrupts,
     peripheral_to_clock: rcc::ParsedRccs,
     dma_channels: dma::DmaChannels,
@@ -73,6 +74,7 @@ pub fn dump_all_chips(
                 &headers,
                 &af,
                 &triggers,
+                &blocks,
                 &chip_interrupts,
                 &peripheral_to_clock,
                 &dma_channels,
@@ -106,6 +108,7 @@ fn process_group(
     headers: &header::Headers,
     af: &gpio_af::Af,
     triggers: &trigger::Triggers,
+    blocks: &HashMap<String, HashSet<String>>,
     chip_interrupts: &interrupts::ChipInterrupts,
     peripheral_to_clock: &rcc::ParsedRccs,
     dma_channels: &dma::DmaChannels,
@@ -154,6 +157,7 @@ fn process_group(
                 &chip_name,
                 &group,
                 &triggers,
+                &blocks,
                 chip_interrupts,
                 peripheral_to_clock,
                 rcc_block,
@@ -179,6 +183,7 @@ fn process_core(
     chip_name: &str,
     group: &ChipGroup,
     triggers: &trigger::Triggers,
+    blocks: &HashMap<String, HashSet<String>>,
     chip_interrupts: &interrupts::ChipInterrupts,
     peripheral_to_clock: &rcc::ParsedRccs,
     rcc_block: (&str, &str, &str),
@@ -193,6 +198,7 @@ fn process_core(
         chip_name,
         group,
         triggers,
+        blocks,
         peripheral_to_clock,
         rcc_block,
         chip_af,
@@ -254,6 +260,7 @@ fn create_peripherals_for_chip(
     chip_name: &str,
     group: &ChipGroup,
     triggers: &trigger::Triggers,
+    blocks: &HashMap<String, HashSet<String>>,
     peripheral_to_clock: &rcc::ParsedRccs,
     rcc_block: (&str, &str, &str),
     chip_af: Option<&HashMap<String, Vec<Pin>>>,
@@ -281,6 +288,19 @@ fn create_peripherals_for_chip(
         } else {
             None
         };
+
+        if let Some(registers) = &registers {
+            let Some(blocks) = blocks.get(&format!("{}_{}", registers.kind, registers.version)) else {
+                panic!("failed to get parsed {}_{} regisers", registers.kind, registers.version);
+            };
+
+            if !blocks.contains(&registers.block) {
+                panic!(
+                    "failed to get parsed block {} from {}_{} regisers",
+                    registers.block, registers.kind, registers.version
+                );
+            };
+        }
 
         // The comparators for the g0/g4 families use the same enable and reset bits as SYSCFG
         let syscfg_for_comp = || {
