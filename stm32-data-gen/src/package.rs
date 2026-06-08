@@ -991,6 +991,7 @@ pub fn parse_packages(
     af: &mut Af,
     dmas: &mut crate::dma::DmaChannels,
     irqs: &mut ChipInterrupts,
+    filter: &Option<String>,
 ) -> anyhow::Result<()> {
     let mut files: Vec<_> = glob::glob("sources/cubeprogdb2/**/*.pdsc")?
         .map(Result::unwrap)
@@ -998,6 +999,16 @@ pub fn parse_packages(
     files.sort();
 
     for f in files {
+        if let Some(filter) = filter
+            && let Some(dir_name) = f.parent().unwrap().file_name()
+            && !dir_name
+                .to_ascii_lowercase()
+                .to_string_lossy()
+                .starts_with(&filter.to_ascii_lowercase())
+        {
+            continue;
+        }
+
         let mut d = PackageDirectory::new(f.parent().unwrap().to_path_buf());
 
         parse_package(f, &mut d, chips, chip_groups, af, dmas, irqs)?;
