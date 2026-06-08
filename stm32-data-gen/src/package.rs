@@ -16,7 +16,7 @@ use crate::gpio_af::{Af, clean_pin, pin_matches};
 use crate::interrupts::ChipInterrupts;
 use crate::package::schema::pinout::Characteristics;
 use crate::package::schema::{dma, exti, interrupts, peripherals, pinout};
-use crate::util::{entry_or, occupied_entry_or};
+use crate::util::{EntryFns, HashMapFns};
 
 #[derive(Serialize, Deserialize)]
 pub struct Package {
@@ -961,23 +961,23 @@ impl PackageDirectory {
     )> {
         let load_file = |path: &Path| fs::read_to_string(self.root.join(path));
 
-        let pinouts = entry_or(&mut self.pinouts, pinouts.to_path_buf(), || {
+        let pinouts = self.pinouts.get_or_try_insert_with(pinouts.to_path_buf(), || {
             Ok(build_pins(&serde_json::from_str(&load_file(pinouts)?)?))
         })?;
 
-        let peripherals = entry_or(&mut self.peripherals, peripherals.to_path_buf(), || {
+        let peripherals = self.peripherals.get_or_try_insert_with(peripherals.to_path_buf(), || {
             Ok(build_peripherals(&serde_json::from_str(&load_file(peripherals)?)?))
         })?;
 
-        let dma = entry_or(&mut self.dma, dma.to_path_buf(), || {
+        let dma = self.dma.get_or_try_insert_with(dma.to_path_buf(), || {
             Ok(build_dma(&serde_json::from_str(&load_file(dma)?)?))
         })?;
 
-        let exti = entry_or(&mut self.exti, exti.to_path_buf(), || {
+        let exti = self.exti.get_or_try_insert_with(exti.to_path_buf(), || {
             Ok(build_exti(&serde_json::from_str(&load_file(exti)?)?))
         })?;
 
-        let interrupts = entry_or(&mut self.interrupts, interrupts.to_path_buf(), || {
+        let interrupts = self.interrupts.get_or_try_insert_with(interrupts.to_path_buf(), || {
             Ok(build_interrupts(&serde_json::from_str(&load_file(interrupts)?)?, exti))
         })?;
 
@@ -1097,7 +1097,7 @@ fn parse_package(
                             interrupt_descriptor.as_path(),
                         )?;
 
-                    let group = occupied_entry_or(&mut group, || ChipGroup {
+                    let group = group.or_insert_with_mut(|| ChipGroup {
                         chip_names: vec![chip_name.clone()],
                         headers: device.compiles.iter().map(|c| c.define.to_ascii_lowercase()).collect(),
                         cores: family.processors.iter().map(|p| p.core.clone()).collect(),
@@ -1117,17 +1117,17 @@ fn parse_package(
 
                     merge_pins(&mut group.pins, pins.clone().into_values());
 
-                    occupied_entry_or(&mut chip, || Chip { packages: Vec::new() })
-                        .packages
-                        .push(stm32_data_serde::chip::Package {
+                    chip.or_insert_with_mut(|| Chip { packages: Vec::new() }).packages.push(
+                        stm32_data_serde::chip::Package {
                             name: ppn.value.clone(),
                             package: package_feature.name.clone(),
                             pins: package_pins.clone(),
-                        });
+                        },
+                    );
 
-                    occupied_entry_or(&mut chip_dma, || dma.clone());
+                    chip_dma.or_insert_with_mut(|| dma.clone());
 
-                    occupied_entry_or(&mut af, || HashMap::new()).extend(gpio_af.clone());
+                    af.or_insert_with_mut(|| HashMap::new()).extend(gpio_af.clone());
 
                     irqs.irqs
                         .entry(("NVIC".to_string(), chip_name.clone()))
