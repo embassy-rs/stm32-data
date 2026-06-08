@@ -1,6 +1,5 @@
-use std::env;
-
 use clap::{Parser, ValueEnum};
+use env_logger::Env;
 use log::LevelFilter;
 
 use crate::package::parse_packages;
@@ -115,21 +114,16 @@ struct Cli {
 fn main() -> anyhow::Result<()> {
     let args = Cli::parse();
 
-    unsafe {
-        env::set_var(
-            "RUST_LOG",
-            match args.log_level {
-                LogLevel::Off => "off",
-                LogLevel::Error => "error",
-                LogLevel::Warn => "warn",
-                LogLevel::Info => "info",
-                LogLevel::Debug => "debug",
-                LogLevel::Trace => "trace",
-            },
-        )
-    };
-
-    pretty_env_logger::init();
+    pretty_env_logger::formatted_builder()
+        .parse_env(Env::default().default_filter_or(match args.log_level {
+            LogLevel::Off => "off",
+            LogLevel::Error => "error",
+            LogLevel::Warn => "warn",
+            LogLevel::Info => "info",
+            LogLevel::Debug => "debug",
+            LogLevel::Trace => "trace",
+        }))
+        .init();
 
     // TODO: apply filter to other groups
 
