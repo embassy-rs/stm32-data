@@ -109,7 +109,7 @@ fn chip_name_from_package_name(x: &str) -> String {
         .unwrap_or_else(|| panic!("bad name: {x}"))
 }
 
-pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow::Error> {
+pub fn parse_groups(filter: &Option<String>) -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow::Error> {
     // XMLs group together chips that are identical except flash/ram size.
     // For example STM32L471Z(E-G)Jx.xml is STM32L471ZEJx, STM32L471ZGJx.
     // However they do NOT group together identical chips with different package.
@@ -130,6 +130,16 @@ pub fn parse_groups() -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow:
     files.sort();
 
     for f in files {
+        if let Some(filter) = filter
+            && let Some(file_name) = f.file_name()
+            && !file_name
+                .to_ascii_lowercase()
+                .to_string_lossy()
+                .starts_with(&filter.to_ascii_lowercase())
+        {
+            continue;
+        }
+
         parse_group(f, &mut chips, &mut chip_groups)?;
     }
 

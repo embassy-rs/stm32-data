@@ -1,3 +1,8 @@
+use std::env;
+
+use clap::{Parser, ValueEnum};
+use log::LevelFilter;
+
 use crate::package::parse_packages;
 use crate::trigger::peripheral_trigger_info;
 mod check;
@@ -65,12 +70,68 @@ impl Stopwatch {
     }
 }
 
+#[derive(Debug, Copy, Clone, Default, ValueEnum)]
+pub enum LogLevel {
+    /// A level lower than all log levels.
+    Off,
+    /// Corresponds to the `Error` log level.
+    Error,
+    /// Corresponds to the `Warn` log level.
+    #[default]
+    Warn,
+    /// Corresponds to the `Info` log level.
+    Info,
+    /// Corresponds to the `Debug` log level.
+    Debug,
+    /// Corresponds to the `Trace` log level.
+    Trace,
+}
+
+impl Into<LevelFilter> for LogLevel {
+    fn into(self) -> LevelFilter {
+        match self {
+            Self::Off => LevelFilter::Off,
+            Self::Error => LevelFilter::Error,
+            Self::Warn => LevelFilter::Warn,
+            Self::Info => LevelFilter::Info,
+            Self::Debug => LevelFilter::Debug,
+            Self::Trace => LevelFilter::Trace,
+        }
+    }
+}
+
+/// Generate chip JSON files
+#[derive(Parser)]
+struct Cli {
+    #[arg(long, value_enum, default_value = "warn")]
+    /// The log level
+    log_level: LogLevel,
+
+    #[arg(long)]
+    /// A filter to use to only generate certain chips
+    filter: Option<String>,
+}
+
 fn main() -> anyhow::Result<()> {
+    let args = Cli::parse();
+
+    unsafe {
+        env::set_var(
+            "RUST_LOG",
+            match args.log_level {
+                LogLevel::Off => "off",
+                LogLevel::Error => "error",
+                LogLevel::Warn => "warn",
+                LogLevel::Info => "info",
+                LogLevel::Debug => "debug",
+                LogLevel::Trace => "trace",
+            },
+        )
+    };
+
     pretty_env_logger::init();
 
-    println!("");
-    println!("NOTE: use RUST_LOG=level to set log level");
-    println!("");
+    // TODO: apply filter to other groups
 
     let mut stopwatch = Stopwatch::new();
 
@@ -102,10 +163,7 @@ fn main() -> anyhow::Result<()> {
     let mut af = gpio_af::Af::parse()?;
 
     stopwatch.section("Parsing chip groups");
-    let (mut chips, mut chip_groups) = chips::parse_groups()?;
-
-    // let mut chips = std::collections::HashMap::new();
-    // let mut chip_groups = Vec::new();
+    let (mut chips, mut chip_groups) = chips::parse_groups(&args.filter)?;
 
     stopwatch.section("Parsing packages");
 
@@ -115,6 +173,7 @@ fn main() -> anyhow::Result<()> {
         &mut af,
         &mut dma_channels,
         &mut chip_interrupts,
+        &args.filter,
     )?;
 
     stopwatch.section("Processing chips");
