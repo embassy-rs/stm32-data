@@ -52,6 +52,7 @@ pub fn dump_all_chips(
     chip_groups: Vec<ChipGroup>,
     headers: header::Headers,
     af: gpio_af::Af,
+    triggers: trigger::Triggers,
     chip_interrupts: interrupts::ChipInterrupts,
     peripheral_to_clock: rcc::ParsedRccs,
     dma_channels: dma::DmaChannels,
@@ -71,6 +72,7 @@ pub fn dump_all_chips(
                 group,
                 &headers,
                 &af,
+                &triggers,
                 &chip_interrupts,
                 &peripheral_to_clock,
                 &dma_channels,
@@ -103,6 +105,7 @@ fn process_group(
     group: ChipGroup,
     headers: &header::Headers,
     af: &gpio_af::Af,
+    triggers: &trigger::Triggers,
     chip_interrupts: &interrupts::ChipInterrupts,
     peripheral_to_clock: &rcc::ParsedRccs,
     dma_channels: &dma::DmaChannels,
@@ -150,6 +153,7 @@ fn process_group(
                 h,
                 &chip_name,
                 &group,
+                &triggers,
                 chip_interrupts,
                 peripheral_to_clock,
                 rcc_block,
@@ -174,6 +178,7 @@ fn process_core(
     h: &header::ParsedHeader,
     chip_name: &str,
     group: &ChipGroup,
+    triggers: &trigger::Triggers,
     chip_interrupts: &interrupts::ChipInterrupts,
     peripheral_to_clock: &rcc::ParsedRccs,
     rcc_block: (&str, &str, &str),
@@ -184,8 +189,15 @@ fn process_core(
     let core_name = create_short_core_name(long_core_name);
     let defines = h.get_defines(&core_name);
 
-    let mut peripherals =
-        create_peripherals_for_chip(chip_name, group, peripheral_to_clock, rcc_block, chip_af, defines);
+    let mut peripherals = create_peripherals_for_chip(
+        chip_name,
+        group,
+        triggers,
+        peripheral_to_clock,
+        rcc_block,
+        chip_af,
+        defines,
+    );
 
     apply_extras(chip_name, group, extras, &mut peripherals);
 
@@ -241,6 +253,7 @@ fn process_core(
 fn create_peripherals_for_chip(
     chip_name: &str,
     group: &ChipGroup,
+    triggers: &trigger::Triggers,
     peripheral_to_clock: &rcc::ParsedRccs,
     rcc_block: (&str, &str, &str),
     chip_af: Option<&HashMap<String, Vec<Pin>>>,
@@ -295,7 +308,7 @@ fn create_peripherals_for_chip(
             None
         };
 
-        let triggers = if let Some(triggers) = trigger::peripheral_trigger_info(chip_name, &pname) {
+        let triggers = if let Some(triggers) = triggers.peripheral_trigger_info(chip_name, &pname) {
             triggers
                 .iter()
                 .map(|trigger| Trigger {
