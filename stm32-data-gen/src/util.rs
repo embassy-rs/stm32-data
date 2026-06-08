@@ -6,45 +6,53 @@ use std::sync::{Mutex, OnceLock};
 
 use regex::Regex;
 
-pub fn try_insert<K: Eq + Hash, V>(map: &mut HashMap<K, V>, key: K, value: V) -> Result<(), ()> {
-    match map.entry(key) {
-        Entry::Occupied(_) => Err(()),
-        Entry::Vacant(entry) => {
-            entry.insert(value);
+pub trait HashMapFns<K: Eq + Hash, V> {
+    fn try_insert_stable(&mut self, key: K, value: V) -> Result<(), ()>;
+    fn get_or_try_insert_with(&mut self, key: K, f: impl FnOnce() -> anyhow::Result<V>) -> anyhow::Result<&V>;
+}
 
-            Ok(())
+impl<K: Eq + Hash, V> HashMapFns<K, V> for HashMap<K, V> {
+    fn try_insert_stable(&mut self, key: K, value: V) -> Result<(), ()> {
+        match self.entry(key) {
+            Entry::Occupied(_) => Err(()),
+            Entry::Vacant(entry) => {
+                entry.insert(value);
+
+                Ok(())
+            }
+        }
+    }
+
+    fn get_or_try_insert_with(&mut self, key: K, f: impl FnOnce() -> anyhow::Result<V>) -> anyhow::Result<&V> {
+        match self.entry(key) {
+            Entry::Occupied(e) => Ok(e.into_mut()),
+            Entry::Vacant(e) => Ok(e.insert(f()?)),
         }
     }
 }
 
-pub fn entry_or<K: Eq + Hash, V>(
-    hash_map: &mut HashMap<K, V>,
-    key: K,
-    f: impl FnOnce() -> anyhow::Result<V>,
-) -> anyhow::Result<&V> {
-    match hash_map.entry(key) {
-        Entry::Occupied(e) => Ok(e.into_mut()),
-        Entry::Vacant(e) => Ok(e.insert(f()?)),
-    }
+pub trait EntryFns<'a, K: Eq + Hash + 'a, V: 'a> {
+    fn or_insert_with_mut(&mut self, f: impl FnOnce() -> V) -> &mut V;
 }
 
-pub fn occupied_entry_or<'a, 'b, K: Eq + Hash + 'a, V: 'a>(
-    entry: &'b mut Entry<'a, K, V>,
-    f: impl FnOnce() -> V,
-) -> &'b mut V {
-    unsafe {
-        let e = if let Entry::Vacant(e) = entry {
-            Some(Entry::Occupied(ptr::read(e).insert_entry(f())))
-        } else {
-            None
-        };
+impl<'a, K: Eq + Hash + 'a, V: 'a> EntryFns<'a, K, V> for Entry<'a, K, V> {
+    fn or_insert_with_mut(&mut self, f: impl FnOnce() -> V) -> &mut V {
+        unsafe {
+            let e = if let Entry::Vacant(e) = self {
+                let r = f(); // If the function panics, there will not be a duplicate entry during unwind
 
-        e.map(|e| ptr::write(entry, e));
-    }
+                Some(Entry::Occupied(ptr::read(e).insert_entry(r)))
+            } else {
+                None
+            };
 
-    match entry {
-        Entry::Occupied(e) => e.get_mut(),
-        _ => unreachable!(),
+            e.map(|e| ptr::write(self, e));
+        }
+
+        match self {
+            Entry::Occupied(e) => e.get_mut(),
+            _ => unreachable!(),
+        }
     }
 }
 
