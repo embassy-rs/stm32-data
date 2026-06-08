@@ -39,6 +39,13 @@ case "$CMD" in
 
         cargo run --release --bin merge-regs $peri
     ;;
+    transform)
+        peri=$1
+        shift
+        echo $@
+
+        chiptool transform --input regs_merged.yaml --output regs_merged.yaml --transform transforms/$peri.yaml
+    ;;
     gen)
         rm -rf build/data
         cargo run --release --bin stm32-data-gen

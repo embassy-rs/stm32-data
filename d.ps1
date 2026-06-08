@@ -36,6 +36,9 @@ Switch ($CMD) {
     "merge-regs" {
         cargo run --release --bin merge-regs $peri
     }
+   "transform" {
+        chiptool transform --input regs_merged.yaml --output regs_merged.yaml --transform transforms/$peri.yaml
+    }
     "gen" {
         rm -r -Force build/data -ErrorAction SilentlyContinue
         cargo run --release --bin stm32-data-gen
