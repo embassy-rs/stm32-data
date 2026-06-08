@@ -4,15 +4,18 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Ok;
 use itertools::Itertools;
+use log::trace;
 use serde::{Deserialize, Serialize};
 use stm32_data_serde::chip::PackagePin;
+use stm32_data_serde::chip::core::{DmaChannels, peripheral};
 
 use crate::chips::xml::PinSignal;
 use crate::chips::{Chip, ChipGroup, merge_pins, xml};
+use crate::dma::ChipDma;
 use crate::gpio_af::{Af, clean_pin, pin_matches};
 use crate::interrupts::ChipInterrupts;
 use crate::package::schema::pinout::Characteristics;
-use crate::package::schema::{exti, interrupts, peripherals, pinout};
+use crate::package::schema::{dma, exti, interrupts, peripherals, pinout};
 use crate::util::{entry_or, occupied_entry_or};
 
 #[derive(Serialize, Deserialize)]
@@ -397,7 +400,7 @@ mod schema {
             pub entity_type: String,
 
             #[serde(default)]
-            pub interconnect: Vec<serde_json::Value>,
+            pub interconnect: Vec<Interconnect>,
 
             #[serde(default)]
             pub name: String,
@@ -413,6 +416,18 @@ mod schema {
 
             #[serde(default)]
             pub protocols: Vec<Protocol>,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        pub struct Interconnect {
+            #[serde(default)]
+            pub id: String,
+
+            #[serde(default)]
+            pub instance: String,
+
+            #[serde(default)]
+            pub source: String,
         }
 
         #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -612,6 +627,143 @@ mod schema {
             pub source: String,
         }
     }
+
+    pub mod dma {
+        use serde::{Deserialize, Serialize};
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct File {
+            #[serde(default)]
+            pub instances: Vec<Instance>,
+            #[serde(default)]
+            pub interconnect: Vec<Interconnect>,
+            #[serde(default, rename = "schema_version")]
+            pub schema_version: String,
+            #[serde(default)]
+            pub version: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct Instance {
+            #[serde(default)]
+            pub channels: Vec<Channel>,
+            #[serde(default)]
+            pub digital_name: String,
+            #[serde(default)]
+            pub entity_type: String,
+            #[serde(default)]
+            pub features: Features,
+            #[serde(default, rename = "master_ports")]
+            pub master_ports: Vec<MasterPort>,
+            #[serde(default)]
+            pub name: String,
+            #[serde(default)]
+            pub peripheral_type: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct Channel {
+            #[serde(default)]
+            pub entity_type: String,
+            #[serde(default)]
+            pub features: ChannelFeatures,
+            #[serde(default)]
+            pub name: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct ChannelFeatures {
+            #[serde(default, rename = "g_addressing")]
+            pub g_addressing: GAddressing,
+            #[serde(default, rename = "g_fifo_size")]
+            pub g_fifo_size: i64,
+            #[serde(default, rename = "g_linked_list")]
+            pub g_linked_list: bool,
+            #[serde(default, rename = "g_per_ctrl")]
+            pub g_per_ctrl: bool,
+            #[serde(default, rename = "g_transfers")]
+            pub g_transfers: GTransfers,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct GAddressing {
+            #[serde(default, rename = "block_size")]
+            pub block_size: bool,
+            #[serde(default, rename = "large_offset")]
+            pub large_offset: bool,
+            #[serde(default)]
+            pub linear: bool,
+            #[serde(default, rename = "programmable2D")]
+            pub programmable2d: bool,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct GTransfers {
+            #[serde(default)]
+            pub burst: bool,
+            #[serde(default)]
+            pub single: bool,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct Features {
+            #[serde(default, rename = "g_cid_width")]
+            pub g_cid_width: i64,
+            #[serde(default, rename = "g_max_cid")]
+            pub g_max_cid: i64,
+            #[serde(default, rename = "g_max_req_id")]
+            pub g_max_req_id: i64,
+            #[serde(default, rename = "g_max_trig_id")]
+            pub g_max_trig_id: i64,
+            #[serde(default, rename = "g_nonsec_optionreg")]
+            pub g_nonsec_optionreg: i64,
+            #[serde(default, rename = "g_num_channels")]
+            pub g_num_channels: i64,
+            #[serde(default, rename = "g_num_resync_ffs")]
+            pub g_num_resync_ffs: i64,
+            #[serde(default, rename = "g_privilege")]
+            pub g_privilege: bool,
+            #[serde(default, rename = "g_sec_optionreg")]
+            pub g_sec_optionreg: i64,
+            #[serde(default, rename = "g_trustzone")]
+            pub g_trustzone: bool,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct MasterPort {
+            #[serde(default, rename = "data_width")]
+            pub data_width: i64,
+            #[serde(default)]
+            pub id: i64,
+            #[serde(default)]
+            pub name: String,
+            #[serde(default, rename = "type")]
+            pub type_field: String,
+        }
+
+        #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct Interconnect {
+            #[serde(default)]
+            pub dma_instance: String,
+            #[serde(default)]
+            pub event: String,
+            #[serde(default)]
+            pub instance: String,
+            #[serde(default, rename = "signal_id")]
+            pub signal_id: Option<String>,
+            #[serde(default, rename = "type")]
+            pub type_field: String,
+        }
+    }
 }
 
 type BuildPins = (
@@ -680,7 +832,9 @@ fn build_pins(f: &pinout::File) -> BuildPins {
     (pins, package_pins, gpio_af, f.characteristics.clone())
 }
 
-fn build_peripherals(f: &peripherals::File) -> HashMap<String, xml::Ip> {
+type BuildPeripherals = HashMap<String, xml::Ip>;
+
+fn build_peripherals(f: &peripherals::File) -> BuildPeripherals {
     f.peripherals
         .iter()
         .map(|p| {
@@ -694,6 +848,55 @@ fn build_peripherals(f: &peripherals::File) -> HashMap<String, xml::Ip> {
             )
         })
         .collect()
+}
+
+fn build_dma(f: &dma::File) -> ChipDma {
+    let mut peripherals: HashMap<String, Vec<peripheral::DmaChannel>> = HashMap::with_capacity(f.interconnect.len());
+
+    for instance in &f.instances {
+        for interconnect in f
+            .interconnect
+            .iter()
+            .filter(|c| c.dma_instance == instance.name)
+            .filter(|c| c.type_field == "request")
+        {
+            let Some(signal_id) = &interconnect.signal_id else {
+                trace!("failed to get signal_id for {}", interconnect.event);
+                continue;
+            };
+
+            peripherals
+                .entry(interconnect.instance.clone())
+                .or_default()
+                .push(peripheral::DmaChannel {
+                    signal: signal_id.clone(),
+                    dma: Some(instance.name.clone()),
+                    channel: None,
+                    dmamux: None,
+                    remap: Vec::new(),
+                    request: None, // TODO: parse request from RM
+                });
+        }
+    }
+
+    ChipDma {
+        peripherals: peripherals,
+        channels: f
+            .instances
+            .iter()
+            .map(|instance| {
+                instance.channels.iter().enumerate().map(|(i, c)| DmaChannels {
+                    name: c.name.clone(),
+                    dma: instance.name.clone(),
+                    channel: i.try_into().unwrap(),
+                    dmamux: None,
+                    dmamux_channel: None,
+                    supports_2d: None,
+                })
+            })
+            .flatten()
+            .collect(),
+    }
 }
 
 fn build_exti(f: &exti::File) -> HashMap<String, String> {
@@ -724,7 +927,8 @@ fn build_interrupts(f: &interrupts::File, exti_map: &HashMap<String, String>) ->
 struct PackageDirectory {
     root: PathBuf,
     pinouts: HashMap<PathBuf, BuildPins>,
-    peripherals: HashMap<PathBuf, HashMap<String, xml::Ip>>,
+    peripherals: HashMap<PathBuf, BuildPeripherals>,
+    dma: HashMap<PathBuf, ChipDma>,
     exti: HashMap<PathBuf, HashMap<String, String>>,
     interrupts: HashMap<PathBuf, Vec<String>>,
 }
@@ -735,6 +939,7 @@ impl PackageDirectory {
             root: path,
             pinouts: HashMap::new(),
             peripherals: HashMap::new(),
+            dma: HashMap::new(),
             exti: HashMap::new(),
             interrupts: HashMap::new(),
         }
@@ -744,11 +949,13 @@ impl PackageDirectory {
         &mut self,
         pinouts: &Path,
         peripherals: &Path,
+        dma: &Path,
         exti: &Path,
         interrupts: &Path,
     ) -> anyhow::Result<(
         &BuildPins,
-        &HashMap<String, xml::Ip>,
+        &BuildPeripherals,
+        &ChipDma,
         &HashMap<String, String>,
         &Vec<String>,
     )> {
@@ -762,6 +969,10 @@ impl PackageDirectory {
             Ok(build_peripherals(&serde_json::from_str(&load_file(peripherals)?)?))
         })?;
 
+        let dma = entry_or(&mut self.dma, dma.to_path_buf(), || {
+            Ok(build_dma(&serde_json::from_str(&load_file(dma)?)?))
+        })?;
+
         let exti = entry_or(&mut self.exti, exti.to_path_buf(), || {
             Ok(build_exti(&serde_json::from_str(&load_file(exti)?)?))
         })?;
@@ -770,7 +981,7 @@ impl PackageDirectory {
             Ok(build_interrupts(&serde_json::from_str(&load_file(interrupts)?)?, exti))
         })?;
 
-        Ok((pinouts, peripherals, exti, interrupts))
+        Ok((pinouts, peripherals, dma, exti, interrupts))
     }
 }
 
@@ -778,6 +989,7 @@ pub fn parse_packages(
     chips: &mut HashMap<String, Chip>,
     chip_groups: &mut Vec<ChipGroup>,
     af: &mut Af,
+    dmas: &mut crate::dma::DmaChannels,
     irqs: &mut ChipInterrupts,
 ) -> anyhow::Result<()> {
     let mut files: Vec<_> = glob::glob("sources/cubeprogdb2/**/*.pdsc")?
@@ -788,7 +1000,7 @@ pub fn parse_packages(
     for f in files {
         let mut d = PackageDirectory::new(f.parent().unwrap().to_path_buf());
 
-        parse_package(f, &mut d, chips, chip_groups, af, irqs)?;
+        parse_package(f, &mut d, chips, chip_groups, af, dmas, irqs)?;
     }
 
     Ok(())
@@ -800,6 +1012,7 @@ fn parse_package(
     chips: &mut HashMap<String, Chip>,
     chip_groups: &mut Vec<ChipGroup>,
     af: &mut Af,
+    dmas: &mut crate::dma::DmaChannels,
     irqs: &mut ChipInterrupts,
 ) -> anyhow::Result<()> {
     let mut groups: HashMap<String, ChipGroup> = HashMap::new();
@@ -813,6 +1026,7 @@ fn parse_package(
                 let chip_name = &device.name;
                 let mut group = groups.entry(chip_name.clone());
                 let mut chip = chips.entry(chip_name.clone());
+                let mut chip_dma = dmas.0.entry(chip_name.clone());
                 let mut af = af.0.entry(chip_name.clone());
 
                 for (_variant, environments, features) in device.variants.iter().map(|variant| {
@@ -855,6 +1069,7 @@ fn parse_package(
                         ppn,
                         peripherals_descriptor,
                         pinout_descriptor,
+                        dma_descriptor,
                         interrupt_descriptor,
                         exti_descriptor,
                         package_feature,
@@ -863,6 +1078,7 @@ fn parse_package(
                             attributes.get("PPN")?,
                             descriptors.get("peripherals")?,
                             descriptors.get("pinout")?,
+                            descriptors.get("DMA")?,
                             descriptors.get("NVIC")?,
                             descriptors.get("EXTI")?,
                             features.iter().find(|f| package_features.contains(&*f.feature_type))?,
@@ -872,12 +1088,14 @@ fn parse_package(
                         continue;
                     };
 
-                    let ((pins, package_pins, gpio_af, characteristics), peripherals, _exti, interrupts) = d.load(
-                        pinout_descriptor.as_path(),
-                        peripherals_descriptor.as_path(),
-                        exti_descriptor.as_path(),
-                        interrupt_descriptor.as_path(),
-                    )?;
+                    let ((pins, package_pins, gpio_af, characteristics), peripherals, dma, _exti, interrupts) = d
+                        .load(
+                            pinout_descriptor.as_path(),
+                            peripherals_descriptor.as_path(),
+                            dma_descriptor.as_path(),
+                            exti_descriptor.as_path(),
+                            interrupt_descriptor.as_path(),
+                        )?;
 
                     let group = occupied_entry_or(&mut group, || ChipGroup {
                         chip_names: vec![chip_name.clone()],
@@ -889,8 +1107,7 @@ fn parse_package(
                         line: subfamily.sub_family.clone(),
                         die: format!("DIE{}", characteristics.die_name),
                         gpio_af: Some(device.name.clone()),
-                    })
-                    .get_mut();
+                    });
 
                     group.ips.entry("NVIC".to_string()).or_insert_with(|| xml::Ip {
                         instance_name: "NVIC".to_string(),
@@ -901,7 +1118,6 @@ fn parse_package(
                     merge_pins(&mut group.pins, pins.clone().into_values());
 
                     occupied_entry_or(&mut chip, || Chip { packages: Vec::new() })
-                        .get_mut()
                         .packages
                         .push(stm32_data_serde::chip::Package {
                             name: ppn.value.clone(),
@@ -909,9 +1125,9 @@ fn parse_package(
                             pins: package_pins.clone(),
                         });
 
-                    occupied_entry_or(&mut af, || HashMap::new())
-                        .get_mut()
-                        .extend(gpio_af.clone());
+                    occupied_entry_or(&mut chip_dma, || dma.clone());
+
+                    occupied_entry_or(&mut af, || HashMap::new()).extend(gpio_af.clone());
 
                     irqs.irqs
                         .entry(("NVIC".to_string(), chip_name.clone()))

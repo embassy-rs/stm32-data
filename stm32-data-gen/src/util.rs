@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::collections::hash_map::{Entry, OccupiedEntry};
+use std::collections::hash_map::Entry;
 use std::hash::Hash;
 use std::ptr;
 use std::sync::{Mutex, OnceLock};
@@ -31,7 +31,7 @@ pub fn entry_or<K: Eq + Hash, V>(
 pub fn occupied_entry_or<'a, 'b, K: Eq + Hash + 'a, V: 'a>(
     entry: &'b mut Entry<'a, K, V>,
     f: impl FnOnce() -> V,
-) -> &'b mut OccupiedEntry<'a, K, V> {
+) -> &'b mut V {
     unsafe {
         let e = if let Entry::Vacant(e) = entry {
             Some(Entry::Occupied(ptr::read(e).insert_entry(f())))
@@ -43,7 +43,7 @@ pub fn occupied_entry_or<'a, 'b, K: Eq + Hash + 'a, V: 'a>(
     }
 
     match entry {
-        Entry::Occupied(e) => e,
+        Entry::Occupied(e) => e.get_mut(),
         _ => unreachable!(),
     }
 }

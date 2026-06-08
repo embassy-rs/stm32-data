@@ -74,7 +74,7 @@ mod xml {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct ChipDma {
     pub peripherals: HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::DmaChannel>>,
     pub channels: Vec<stm32_data_serde::chip::core::DmaChannels>,
