@@ -110,7 +110,7 @@ impl ChipInterrupts {
         // STM32U3 and STM32C5 changed the advanced timer IRQ BRK/TRG names
         // to include multiple signal names. This change maps
         // them back to the common names.
-        for (bad, good) in [
+        const REPLACEMENT_IRQS: &[(&str, &str)] = &[
             ("TIM1_BRK_TERR_IERR", "TIM1_BRK"),
             ("TIM8_BRK_TERR_IERR", "TIM8_BRK"),
             ("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM"),
@@ -118,8 +118,10 @@ impl ChipInterrupts {
             ("TIM8_TRGI_COM_DIR_IDX", "TIM8_TRG_COM"),
             ("TIM1_UPD", "TIM1_UP"),
             ("TIM8_UPD", "TIM8_UP"),
-        ] {
-            if let Some(num) = header_irqs.remove(bad) {
+        ];
+
+        for (bad, good) in REPLACEMENT_IRQS {
+            if let Some(num) = header_irqs.remove(*bad) {
                 header_irqs.insert(good.to_string(), num);
             }
         }
@@ -208,8 +210,6 @@ impl ChipInterrupts {
             // Skip interrupts that don't exist.
             // This is needed because NVIC files are shared between many chips.
             static EQUIVALENT_IRQS: &[(&str, &[&str])] = &[
-                ("TIM1_UPD", &["TIM1_UP"]),
-                ("TIM8_UPD", &["TIM8_UP"]),
                 ("HASH_RNG", &["RNG"]),
                 ("USB_HP_CAN_TX", &["CAN_TX"]),
                 ("USB_LP_CAN_RX0", &["CAN_RX0"]),
@@ -222,7 +222,15 @@ impl ChipInterrupts {
                     .iter()
                     .find(|(irq, _)| irq == &name)
                     .unwrap_or(&("", &[]));
-                let Some(new_name) = eq_irqs.iter().find(|i| exists_irq.contains(**i)) else {
+                let Some(new_name) = eq_irqs
+                    .iter()
+                    .chain(
+                        [REPLACEMENT_IRQS.iter().find(|(irq, _)| irq == &name)]
+                            .iter()
+                            .filter_map(|x| x.map(|x| &x.1)),
+                    )
+                    .find(|i| exists_irq.contains(**i))
+                else {
                     trace!("    {thread_id:?} irq missing in C header, ignoring");
                     continue;
                 };
@@ -678,7 +686,8 @@ struct InterruptSignals {
 
 impl InterruptSignals {
     pub fn new() -> Self {
-        const EQ_SIGNALS: &[(&str, &str)] = &[("ER", "ERR"), ("UP", "UPD")];
+        const EQ_SIGNALS: &[(&str, &[&str])] =
+            &[("UP", &["UPD"]), ("TRG", &["TRGI"]), ("ER", &["ERR", "TERR", "IERR"])];
 
         // Special chip-specific signal mappings
         // Format: (peripheral_prefix, chip_pattern, signals)
@@ -705,7 +714,7 @@ impl InterruptSignals {
             ("I2C", &["ER", "EV"]),
             ("I3C", &["ER", "EV", "WKUP"]),
             ("FMPI2C", &["ER", "EV"]),
-            ("TIM", &["BRK", "UP", "TRG", "COM", "CC"]),
+            ("TIM", &["ER", "BRK", "UP", "TRG", "COM", "CC", "DIR", "IDX"]),
             // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
             ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU"]),
             ("SUBGHZ", &["RADIO"]),
@@ -743,13 +752,19 @@ impl InterruptSignals {
             ("LPDMA", &["CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7"]),
         ];
 
-        let eq_signals: HashMap<&'static str, &'static str> = EQ_SIGNALS.into_iter().cloned().collect();
+        let eq_signals: HashMap<&'static str, &'static [&'static str]> = EQ_SIGNALS.into_iter().cloned().collect();
 
         let collect_signals = |signals: &[&'static str]| -> HashMap<&'static str, &'static str> {
             signals
                 .iter()
                 .map(|s| (*s, *s))
-                .chain(signals.iter().filter_map(|s| Some((*eq_signals.get(*s)?, *s))))
+                .chain(
+                    signals
+                        .iter()
+                        .filter_map(|s| Some((*eq_signals.get(*s)?, *s)))
+                        .map(|(k, v)| k.iter().map(move |k| (*k, v)))
+                        .flatten(),
+                )
                 .collect()
         };
 
