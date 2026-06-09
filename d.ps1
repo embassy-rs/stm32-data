@@ -106,7 +106,7 @@ Switch ($CMD) {
         cargo run --release --bin extract-all $peri
     }
     "merge-regs" {
-        cargo run --release --bin merge-regs $peri
+        cargo run --release --bin merge-regs tmp/$peri
     }
    "transform" {
         chiptool transform --input regs_merged.yaml --output regs_merged.yaml --transform transforms/$peri.yaml

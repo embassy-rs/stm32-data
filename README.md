@@ -165,6 +165,7 @@ Please separate manual changes and changes resulting from regen in separate comm
 
 SVDs have some widespread annoyances that should be fixed when adding register YAMLs to this repo. Check out `chiptool` transforms, they can help in speeding up the cleanups.
 
+- Use `./d merge-regs PWR/c5*.yaml`, for example, to generate `regs_merged.yaml` in the root directory from the matching `tmp/PWR/c5*.yaml`.
 - Use `./d transform SYSCFG_C5`, where `SYSCFG_C5` is the name of the yaml file in the transforms folder to transform the `regs_merged.yaml` file in the root directory.
 - Remove "useless prefixes". For example if all regs in the `RNG` peripheral are named `RNG_FOO`, `RNG_BAR`, the `RNG_` peripheral is not conveying any useful information at all, and must go.
 - Remove "useless enums". Useless enums is one of the biggest cause of slow compilation times in STM32 PACs.

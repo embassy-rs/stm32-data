@@ -37,7 +37,7 @@ case "$CMD" in
         shift
         echo $@
 
-        cargo run --release --bin merge-regs $peri
+        cargo run --release --bin merge-regs tmp/$peri
     ;;
     transform)
         peri=$1
