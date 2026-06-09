@@ -84,11 +84,11 @@ impl HeadersParsed {
             .filter(|f| {
                 if let Some(filter) = filter
                     && let Some(filename) = f.file_name()
-                    && filename.to_ascii_lowercase().to_string_lossy().starts_with(filter)
+                    && !filename.to_ascii_lowercase().to_string_lossy().starts_with(filter)
                 {
-                    true
+                    false
                 } else {
-                    filter.is_none()
+                    true
                 }
             });
 
