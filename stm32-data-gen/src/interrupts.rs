@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
+use anyhow::anyhow;
 use log::*;
 
 use crate::chips::ChipGroup;
@@ -559,6 +560,14 @@ impl ChipInterrupts {
 
                 all_irqs.sort_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
                 all_irqs.dedup_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
+
+                let all_signals: HashSet<String> = all_irqs.iter().map(|i| i.signal.clone()).collect();
+                if let Some(registers) = &p.registers
+                    && registers.kind == "timer"
+                    && (!all_signals.contains("CC") || !all_signals.contains("UP"))
+                {
+                    return Err(anyhow!("timer {} does not contain CC or UP in {}", p.name, chip_name));
+                }
 
                 p.interrupts = all_irqs;
             }
