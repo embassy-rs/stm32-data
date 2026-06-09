@@ -1,6 +1,8 @@
-use std::collections::HashMap;
+use std::borrow::Borrow;
 use std::collections::hash_map::Entry;
+use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
+use std::ops::Bound;
 use std::ptr;
 use std::sync::{Mutex, OnceLock};
 
@@ -53,6 +55,43 @@ impl<'a, K: Eq + Hash + 'a, V: 'a> EntryFns<'a, K, V> for Entry<'a, K, V> {
             Entry::Occupied(e) => e.get_mut(),
             _ => unreachable!(),
         }
+    }
+}
+
+/// Trait that adds a `starts_with` search to BTreeMap
+pub trait BTreeMapFns<K, V> {
+    /// Returns an iterator over all entries whose keys start with `prefix`.
+    fn starts_with<'a>(&'a self, prefix: &'a str) -> Box<dyn Iterator<Item = (&'a K, &'a V)> + 'a>;
+}
+
+impl<K, V> BTreeMapFns<K, V> for BTreeMap<K, V>
+where
+    K: Ord + Borrow<str>,
+{
+    fn starts_with<'a>(&'a self, prefix: &'a str) -> Box<dyn Iterator<Item = (&'a K, &'a V)> + 'a> {
+        if prefix.is_empty() {
+            return Box::new(self.iter());
+        }
+
+        // Compute the lexicographic successor of the prefix
+        // Example: "ap" -> "aq"
+        let mut successor = prefix.as_bytes().to_vec();
+        if let Some(last) = successor.last_mut() {
+            *last = last.saturating_add(1);
+        } else {
+            // Shouldn't happen since prefix is non-empty
+            successor.push(0);
+        }
+        let successor_str = String::from_utf8(successor).expect("prefix must be valid UTF-8");
+
+        let start = Bound::Included(prefix);
+        let end = Bound::Excluded(successor_str.as_str());
+
+        // Keep successor_str alive for the duration of the iterator
+        Box::new(
+            self.range((start, end))
+                .filter(move |(k, _)| Borrow::<str>::borrow(*k).starts_with(prefix)),
+        )
     }
 }
 
