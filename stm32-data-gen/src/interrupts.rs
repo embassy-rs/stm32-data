@@ -104,24 +104,22 @@ impl ChipInterrupts {
             header_irqs.remove("DMA2_Channel4_5");
         }
 
-        let mut replace = |bad, good: &str| {
-            if let Some(num) = header_irqs.remove(bad) {
-                header_irqs.insert(good.to_string(), num);
-            }
-        };
-
         // STM32U3 and STM32C5 changed the advanced timer IRQ BRK/TRG names
         // to include multiple signal names. This change maps
         // them back to the common names.
-
-        // replace(bad, good)
-        replace("TIM1_BRK_TERR_IERR", "TIM1_BRK");
-        replace("TIM8_BRK_TERR_IERR", "TIM8_BRK");
-        replace("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM");
-        replace("TIM1_TRGI_COM_DIR_IDX", "TIM1_TRG_COM");
-        replace("TIM8_TRGI_COM_DIR_IDX", "TIM8_TRG_COM");
-        replace("TIM1_UPD", "TIM1_UP");
-        replace("TIM8_UPD", "TIM8_UP");
+        for (bad, good) in [
+            ("TIM1_BRK_TERR_IERR", "TIM1_BRK"),
+            ("TIM8_BRK_TERR_IERR", "TIM8_BRK"),
+            ("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM"),
+            ("TIM1_TRGI_COM_DIR_IDX", "TIM1_TRG_COM"),
+            ("TIM8_TRGI_COM_DIR_IDX", "TIM8_TRG_COM"),
+            ("TIM1_UPD", "TIM1_UP"),
+            ("TIM8_UPD", "TIM8_UP"),
+        ] {
+            if let Some(num) = header_irqs.remove(bad) {
+                header_irqs.insert(good.to_string(), num);
+            }
+        }
 
         core.interrupts = header_irqs
             .iter()
@@ -404,43 +402,27 @@ impl ChipInterrupts {
                     }
                 }
 
-                for (p, mut ss) in peri_signals.into_iter() {
-                    // Normalize LTDC and I2C/I3C error signal: N6 and C5 uses "ERR" (from LTDC_LO_ERR and I2C_ERR), standardize to "ER"
-                    if p == "LTDC"
-                        || (chip_name.starts_with("STM32C5") && (p.starts_with("I2C") || p.starts_with("I3C")))
-                    {
-                        for s in ss.iter_mut() {
-                            if s == "ERR" {
-                                *s = "ER".to_string();
-                            }
-                        }
-                    } else if p.starts_with("TIM") && chip_name.starts_with("STM32C5") {
-                        for s in ss.iter_mut() {
-                            if s == "UPD" {
-                                *s = "UP".to_string();
-                            }
-                        }
-                    }
-
+                for (p, ss) in peri_signals.into_iter() {
+                    let mut ss: Vec<_> = ss.iter().map(|s| s.as_str()).collect();
                     let known = valid_signals(&p, chip_name);
 
                     // If we have no interrupt_signals for the peri, assume it's "global" so assign it all known ones
                     if ss.is_empty() {
                         if p.starts_with("COMP") {
-                            ss = vec!["WKUP".to_string()];
+                            ss = vec!["WKUP"];
                         } else {
-                            ss = known.clone();
+                            ss = known.keys().map(|k| *k).collect();
                         }
                     }
 
                     for s in ss {
-                        if !known.contains(&s.clone()) {
+                        let Some(s) = known.get(&s) else {
                             panic!(
                                 "Unknown signal {s} for peri {p} chip {chip_name}, known={known:?}, parts={parts:?}"
                             );
-                        }
+                        };
                         trace!("    {thread_id:?} signal: {} {}", p, s);
-                        interrupt_signals.insert((p.clone(), s));
+                        interrupt_signals.insert((p.clone(), s.to_string()));
                     }
                 }
             }
@@ -684,7 +666,9 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
     res
 }
 
-fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
+fn valid_signals(peri: &str, chip_name: &str) -> HashMap<&'static str, &'static str> {
+    let eq_signals: HashMap<&'static str, &'static str> = [("ER", "ERR"), ("UP", "UPD")].into_iter().collect();
+
     // Special chip-specific signal mappings
     // Format: (peripheral_prefix, chip_pattern, signals)
     const CHIP_SPECIFIC_SIGNALS: &[(&str, &str, &[&str])] = &[
@@ -717,7 +701,11 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
             };
 
             if matches {
-                return signals.iter().map(ToString::to_string).collect();
+                return signals
+                    .iter()
+                    .map(|s| (*s, *s))
+                    .chain(signals.iter().filter_map(|s| Some((*eq_signals.get(*s)?, *s))))
+                    .collect();
             }
         }
     }
@@ -769,10 +757,15 @@ fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
 
     for (prefix, signals) in IRQ_SIGNALS_MAP {
         if peri.starts_with(prefix) {
-            return signals.iter().map(ToString::to_string).collect();
+            return signals
+                .iter()
+                .map(|s| (*s, *s))
+                .chain(signals.iter().filter_map(|s| Some((*eq_signals.get(*s)?, *s))))
+                .collect();
         }
     }
-    vec!["GLOBAL".to_string()]
+
+    HashMap::from([("GLOBAL", "GLOBAL")])
 }
 
 static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
