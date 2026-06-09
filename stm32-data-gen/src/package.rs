@@ -1001,10 +1001,7 @@ pub fn parse_packages(
     for f in files {
         if let Some(filter) = filter
             && let Some(dir_name) = f.parent().unwrap().file_name()
-            && !dir_name
-                .to_ascii_lowercase()
-                .to_string_lossy()
-                .starts_with(&filter.to_ascii_lowercase())
+            && !dir_name.to_ascii_lowercase().to_string_lossy().starts_with(filter)
         {
             continue;
         }

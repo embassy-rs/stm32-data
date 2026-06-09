@@ -1,6 +1,8 @@
+use std::fs;
+
 use clap::{Parser, ValueEnum};
 use env_logger::Env;
-use log::LevelFilter;
+use log::{LevelFilter, info};
 
 mod check;
 mod chips;
@@ -123,14 +125,25 @@ fn main() -> anyhow::Result<()> {
         }))
         .init();
 
-    // TODO: apply filter to other groups
+    let filter = args
+        .filter
+        .map(|f| f.to_ascii_lowercase())
+        .map(|f| f[..f.len().min(7)].to_string());
+
+    if let Some(filter) = &filter {
+        info!("using filter: {}", filter);
+    }
 
     let mut stopwatch = Stopwatch::new();
 
     let triggers = trigger::Triggers::new();
 
+    stopwatch.section("Removing build directory");
+
+    let _ = fs::remove_dir_all("build/data");
+
     stopwatch.section("Parsing headers");
-    let headers = header::Headers::parse()?;
+    let headers = header::Headers::parse(&filter)?;
 
     stopwatch.section("Parsing other stuff");
 
@@ -154,7 +167,7 @@ fn main() -> anyhow::Result<()> {
     let mut af = gpio_af::Af::parse()?;
 
     stopwatch.section("Parsing chip groups");
-    let (mut chips, mut chip_groups) = chips::parse_groups(&args.filter)?;
+    let (mut chips, mut chip_groups) = chips::parse_groups(&filter)?;
 
     stopwatch.section("Parsing packages");
 
@@ -164,7 +177,7 @@ fn main() -> anyhow::Result<()> {
         &mut af,
         &mut dma_channels,
         &mut chip_interrupts,
-        &args.filter,
+        &filter,
     )?;
 
     stopwatch.section("Processing chips");

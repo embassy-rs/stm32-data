@@ -132,10 +132,7 @@ pub fn parse_groups(filter: &Option<String>) -> Result<(HashMap<String, Chip>, V
     for f in files {
         if let Some(filter) = filter
             && let Some(file_name) = f.file_name()
-            && !file_name
-                .to_ascii_lowercase()
-                .to_string_lossy()
-                .starts_with(&filter.to_ascii_lowercase())
+            && !file_name.to_ascii_lowercase().to_string_lossy().starts_with(filter)
         {
             continue;
         }
