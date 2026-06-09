@@ -774,6 +774,8 @@ impl InterruptSignals {
     }
 
     pub fn valid_signals<'a>(&'a self, peri: &'a str, chip_name: &str) -> &'a HashMap<&'static str, &'static str> {
+        let peri = trim_trailing_digits(peri);
+
         for (_, (chip_pattern, signals)) in self.chip_signals.starts_with(peri) {
             if chip_name.starts_with(chip_pattern) {
                 return signals;
@@ -786,6 +788,17 @@ impl InterruptSignals {
 
         &self.global
     }
+}
+
+fn trim_trailing_digits(input: &str) -> &str {
+    let new_len = input
+        .char_indices()
+        .rev()
+        .find(|&(_, c)| !c.is_ascii_digit()) // stop at first non-digit
+        .map(|(idx, c)| idx + c.len_utf8()) // keep full char
+        .unwrap_or(0); // all digits case
+
+    &input[..new_len]
 }
 
 fn pick_nvic(chip_name: &str, core_name: &str) -> String {

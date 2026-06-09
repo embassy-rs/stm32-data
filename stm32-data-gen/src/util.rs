@@ -73,21 +73,47 @@ where
             return Box::new(self.iter());
         }
 
-        // Compute the lexicographic successor of the prefix
-        // Example: "ap" -> "aq"
-        let mut successor = prefix.as_bytes().to_vec();
-        if let Some(last) = successor.last_mut() {
-            *last = last.saturating_add(1);
-        } else {
-            // Shouldn't happen since prefix is non-empty
-            successor.push(0);
+        const STACK_LIMIT: usize = 256;
+
+        // We'll store the successor bound in an enum so it lives long enough
+        enum BoundStr {
+            Stack { buf: [u8; STACK_LIMIT], len: usize },
+            Heap(String),
         }
-        let successor_str = String::from_utf8(successor).expect("prefix must be valid UTF-8");
 
-        let start = Bound::Included(prefix);
-        let end = Bound::Excluded(successor_str.as_str());
+        let bound_storage = if prefix.len() <= STACK_LIMIT {
+            // Fast path: stack buffer
+            let mut buf = [0u8; STACK_LIMIT];
+            buf[..prefix.len()].copy_from_slice(prefix.as_bytes());
+            let mut len = prefix.len();
+            if let Some(last) = buf.get_mut(len - 1) {
+                *last = last.saturating_add(1);
+            } else {
+                buf[len] = 0;
+                len += 1;
+            }
+            BoundStr::Stack { buf, len }
+        } else {
+            // Slow path: heap allocation
+            let mut s = prefix.to_owned();
+            if let Some(last) = unsafe { s.as_bytes_mut().last_mut() } {
+                *last = last.saturating_add(1);
+            } else {
+                s.push('\0');
+            }
+            BoundStr::Heap(s)
+        };
 
-        // Keep successor_str alive for the duration of the iterator
+        // Create the range bounds
+        let (start, end) = match &bound_storage {
+            BoundStr::Stack { buf, len } => {
+                let succ_str = std::str::from_utf8(&buf[..*len]).expect("prefix must be valid UTF-8");
+                (Bound::Included(prefix), Bound::Excluded(succ_str))
+            }
+            BoundStr::Heap(s) => (Bound::Included(prefix), Bound::Excluded(s.as_str())),
+        };
+
+        // Capture bound_storage so it lives for the iterator's lifetime
         Box::new(
             self.range((start, end))
                 .filter(move |(k, _)| Borrow::<str>::borrow(*k).starts_with(prefix)),
