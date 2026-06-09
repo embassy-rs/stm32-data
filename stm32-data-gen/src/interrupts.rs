@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use std::thread;
 
 use anyhow::anyhow;
@@ -7,7 +7,7 @@ use log::*;
 use crate::chips::ChipGroup;
 use crate::normalize_peris::normalize_peri_name;
 use crate::regex;
-use crate::util::{BTreeMapFns, RegexMap};
+use crate::util::RegexMap;
 
 mod xml {
     use serde::Deserialize;
@@ -679,8 +679,8 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
 
 #[derive(Debug)]
 struct InterruptSignals {
-    chip_signals: BTreeMap<&'static str, (&'static str, HashMap<&'static str, &'static str>)>,
-    signals: BTreeMap<&'static str, HashMap<&'static str, &'static str>>,
+    chip_signals: HashMap<&'static str, Vec<(&'static str, HashMap<&'static str, &'static str>)>>,
+    signals: HashMap<&'static str, HashMap<&'static str, &'static str>>,
     global: HashMap<&'static str, &'static str>,
 }
 
@@ -768,18 +768,24 @@ impl InterruptSignals {
                 .collect()
         };
 
+        let mut chip_signals: HashMap<&str, Vec<(&str, HashMap<&str, &str>)>> = HashMap::new();
+
+        for (peri, (chip, signals)) in CHIP_SPECIFIC_SIGNALS
+            .iter()
+            .filter(|(_, chip, _)| {
+                if *chip == "*" {
+                    panic!("use IRQ_SIGNALS_MAP for generic signals")
+                } else {
+                    true
+                }
+            })
+            .map(|(peri, chip, signals)| (*peri, (*chip, collect_signals(signals))))
+        {
+            chip_signals.entry(peri).or_default().push((chip, signals));
+        }
+
         Self {
-            chip_signals: CHIP_SPECIFIC_SIGNALS
-                .iter()
-                .filter(|(_, chip, _)| {
-                    if *chip == "*" {
-                        panic!("use IRQ_SIGNALS_MAP for generic signals")
-                    } else {
-                        true
-                    }
-                })
-                .map(|(peri, chip, signals)| (*peri, (*chip, collect_signals(signals))))
-                .collect(),
+            chip_signals,
             signals: IRQ_SIGNALS_MAP
                 .iter()
                 .map(|(peri, signals)| (*peri, collect_signals(signals)))
@@ -788,20 +794,21 @@ impl InterruptSignals {
         }
     }
 
-    pub fn valid_signals<'a>(&'a self, peri: &'a str, chip_name: &str) -> &'a HashMap<&'static str, &'static str> {
+    pub fn valid_signals<'a>(&'a self, peri: &'a str, chip_name: &str) -> &'a HashMap<&'a str, &'a str> {
         let peri = trim_trailing_digits(peri);
 
-        for (_, (chip_pattern, signals)) in self.chip_signals.starts_with(peri) {
-            if chip_name.starts_with(chip_pattern) {
-                return signals;
-            }
-        }
-
-        for (_, signals) in self.signals.starts_with(peri) {
-            return signals;
-        }
-
-        &self.global
+        self.chip_signals
+            .get(peri)
+            .into_iter()
+            .flatten()
+            .find_map(|(chip, signals)| {
+                if chip_name.starts_with(chip) {
+                    Some(signals)
+                } else {
+                    None
+                }
+            })
+            .unwrap_or(self.signals.get(peri).unwrap_or(&self.global))
     }
 }
 
