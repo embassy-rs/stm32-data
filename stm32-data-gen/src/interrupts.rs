@@ -794,7 +794,7 @@ impl InterruptSignals {
         }
     }
 
-    pub fn valid_signals<'a>(&'a self, peri: &'a str, chip_name: &str) -> &'a HashMap<&'a str, &'a str> {
+    pub fn valid_signals(&self, peri: &str, chip_name: &str) -> &HashMap<&str, &str> {
         let peri = trim_trailing_digits(peri);
 
         self.chip_signals
