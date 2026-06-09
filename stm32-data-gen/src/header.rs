@@ -11,9 +11,9 @@ pub struct Headers {
 }
 
 impl Headers {
-    pub fn parse() -> anyhow::Result<Self> {
+    pub fn parse(filter: &Option<String>) -> anyhow::Result<Self> {
         let map = HeaderMap::parse()?;
-        let parsed = HeadersParsed::parse()?;
+        let parsed = HeadersParsed::parse(filter)?;
         let regexes = parsed
             .0
             .keys()
@@ -77,8 +77,20 @@ impl HeaderMap {
 pub struct HeadersParsed(pub HashMap<String, ParsedHeader>);
 
 impl HeadersParsed {
-    pub fn parse() -> anyhow::Result<Self> {
-        let files = glob::glob("sources/headers/*.h").unwrap().map(Result::unwrap);
+    pub fn parse(filter: &Option<String>) -> anyhow::Result<Self> {
+        let files = glob::glob("sources/headers/*.h")
+            .unwrap()
+            .map(Result::unwrap)
+            .filter(|f| {
+                if let Some(filter) = filter
+                    && let Some(filename) = f.file_name()
+                    && !filename.to_ascii_lowercase().to_string_lossy().starts_with(filter)
+                {
+                    false
+                } else {
+                    true
+                }
+            });
 
         let for_each_file = |f: std::path::PathBuf| {
             let ff = f.file_name().unwrap().to_string_lossy();

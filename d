@@ -47,11 +47,9 @@ case "$CMD" in
         chiptool transform --input regs_merged.yaml --output regs_merged.yaml --transform transforms/$peri.yaml
     ;;
     gen)
-        rm -rf build/data
         cargo run --release --bin stm32-data-gen
     ;;
     gen-all)
-        rm -rf build/{data,stm32-metapac}
         cargo run --release --bin stm32-data-gen
         cargo run --release --bin stm32-metapac-gen
         cd build/stm32-metapac
