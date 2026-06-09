@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
+use std::thread;
 
+use anyhow::anyhow;
 use log::*;
 
 use crate::chips::ChipGroup;
@@ -82,7 +84,12 @@ impl ChipInterrupts {
         h: &crate::header::ParsedHeader,
         group: &ChipGroup,
     ) -> anyhow::Result<()> {
-        trace!("parsing interrupts for chip {} core {}", chip_name, core.name);
+        let thread_id = thread::current().id();
+
+        trace!(
+            "{thread_id:?} parsing interrupts for chip {} core {}",
+            chip_name, core.name
+        );
 
         // =================== Populate nvic_priority_bits
         // With the current data sources, this value is always either 2 or 4, and never resolves to None
@@ -164,11 +171,12 @@ impl ChipInterrupts {
         let exists_irq: HashSet<String> = core.interrupts.iter().map(|i| i.name.clone()).collect();
 
         for i in &exists_irq {
-            trace!("  irq in header: {i}");
+            trace!("  {thread_id:?} irq in header: {i}");
         }
 
+        trace!("  {thread_id:?} chip={chip_name}");
         for nvic_string in nvic_strings {
-            trace!("  irq={nvic_string:?}");
+            trace!("  {thread_id:?} irq={nvic_string:?}");
             let parts = {
                 let mut iter = nvic_string.split(':');
                 let parts = [(); 5].map(|_| iter.next().unwrap());
@@ -194,11 +202,13 @@ impl ChipInterrupts {
                 // Map them back to the common names.
                 .replace("TIM1_BRK_TERR_IERR", "TIM1_BRK")
                 .replace("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM");
-            trace!("    name={name}");
+            trace!("    {thread_id:?} name={name}");
 
             // Skip interrupts that don't exist.
             // This is needed because NVIC files are shared between many chips.
             static EQUIVALENT_IRQS: &[(&str, &[&str])] = &[
+                ("TIM1_UPD", &["TIM1_UP"]),
+                ("TIM8_UPD", &["TIM8_UP"]),
                 ("HASH_RNG", &["RNG"]),
                 ("USB_HP_CAN_TX", &["CAN_TX"]),
                 ("USB_LP_CAN_RX0", &["CAN_RX0"]),
@@ -212,7 +222,7 @@ impl ChipInterrupts {
                     .find(|(irq, _)| irq == &name)
                     .unwrap_or(&("", &[]));
                 let Some(new_name) = eq_irqs.iter().find(|i| exists_irq.contains(**i)) else {
-                    trace!("    irq missing in C header, ignoring");
+                    trace!("    {thread_id:?} irq missing in C header, ignoring");
                     continue;
                 };
                 header_name = new_name.to_string();
@@ -318,7 +328,7 @@ impl ChipInterrupts {
                 interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
             } else {
                 if parts[2].is_empty() {
-                    trace!("    skipping because parts[2].is_empty()");
+                    trace!("    {thread_id:?} skipping because parts[2].is_empty()");
                     continue;
                 }
 
@@ -346,7 +356,7 @@ impl ChipInterrupts {
                     .map(ToString::to_string)
                     .collect();
 
-                trace!("    peri_names: {peri_names:?}");
+                trace!("    {thread_id:?} peri_names: {peri_names:?}");
 
                 let name2 = {
                     if name == "USBWakeUp" || name == "USBWakeUp_RMP" {
@@ -368,7 +378,7 @@ impl ChipInterrupts {
 
                 // Parse IRQ interrupt_signals from the IRQ name.
                 for part in tokenize_name(name2) {
-                    trace!("    part={part}");
+                    trace!("    {thread_id:?} part={part}");
 
                     let part = { if part == "TAMPER" { "TAMP".to_string() } else { part } };
 
@@ -382,7 +392,7 @@ impl ChipInterrupts {
                         interrupt_signals.insert(("RCC".to_string(), "CRS".to_string()));
                     } else {
                         let pp = match_peris(&peri_names, &part);
-                        trace!("    part={part}, pp={pp:?}");
+                        trace!("    {thread_id:?} part={part}, pp={pp:?}");
                         if !pp.is_empty() {
                             curr_peris = pp;
                         } else {
@@ -404,7 +414,14 @@ impl ChipInterrupts {
                                 *s = "ER".to_string();
                             }
                         }
+                    } else if p.starts_with("TIM") && chip_name.starts_with("STM32C5") {
+                        for s in ss.iter_mut() {
+                            if s == "UPD" {
+                                *s = "UP".to_string();
+                            }
+                        }
                     }
+
                     let known = valid_signals(&p, chip_name);
 
                     // If we have no interrupt_signals for the peri, assume it's "global" so assign it all known ones
@@ -422,7 +439,7 @@ impl ChipInterrupts {
                                 "Unknown signal {s} for peri {p} chip {chip_name}, known={known:?}, parts={parts:?}"
                             );
                         }
-                        trace!("    signal: {} {}", p, s);
+                        trace!("    {thread_id:?} signal: {} {}", p, s);
                         interrupt_signals.insert((p.clone(), s));
                     }
                 }
@@ -559,6 +576,14 @@ impl ChipInterrupts {
 
                 all_irqs.sort_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
                 all_irqs.dedup_by_key(|x| (x.signal.clone(), x.interrupt.clone()));
+
+                let all_signals: HashSet<String> = all_irqs.iter().map(|i| i.signal.clone()).collect();
+                if let Some(registers) = &p.registers
+                    && registers.kind == "timer"
+                    && (!all_signals.contains("CC") || !all_signals.contains("UP"))
+                {
+                    return Err(anyhow!("timer {} does not contain CC or UP in {}", p.name, chip_name));
+                }
 
                 p.interrupts = all_irqs;
             }
