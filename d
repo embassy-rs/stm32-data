@@ -47,7 +47,22 @@ case "$CMD" in
         chiptool transform --input regs_merged.yaml --output regs_merged.yaml --transform transforms/$peri.yaml
     ;;
     gen)
-        cargo run --release --bin stm32-data-gen
+        peri=$1
+        logLevel=$2
+        shift
+        echo $@
+
+        case "$#" in
+            2)
+                cargo run --release --bin stm32-data-gen -- --filter "$peri" --log-level "$logLevel"
+                ;;
+            1)
+                cargo run --release --bin stm32-data-gen -- --filter "$peri"
+                ;;
+            *)
+                cargo run --release --bin stm32-data-gen
+                ;;
+        esac
     ;;
     gen-all)
         cargo run --release --bin stm32-data-gen
