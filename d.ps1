@@ -3,7 +3,8 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$CMD,
 
-    [string]$peri
+    [string]$peri,
+    [string]$logLevel
 )
 
 $REV = ((Select-String -Path ".\d" -Pattern "^REV=") -split "=")[1]
@@ -111,7 +112,9 @@ Switch ($CMD) {
         chiptool transform --input regs_merged.yaml --output regs_merged.yaml --transform transforms/$peri.yaml
     }
     "gen" {
-        if ($peri -ne "") {
+        if ($peri -ne "" -and $logLevel -ne "") {
+            cargo run --release --bin stm32-data-gen -- --filter $peri --log-level $logLevel
+        } elseif ($peri -ne "") {
             cargo run --release --bin stm32-data-gen -- --filter $peri
         } else {
             cargo run --release --bin stm32-data-gen
