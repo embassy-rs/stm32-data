@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fmt::{Debug, Write as _};
 use std::fs;
 use std::fs::File;
-use std::io::Write;
+use std::io::{BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 
 use chiptool::generate::CommonModule;
@@ -256,7 +256,7 @@ impl Gen {
                 .join("registers")
                 .join(&format!("{}_{}.json", module, version));
 
-            let mut ir: ir::IR = serde_json::from_reader(File::open(regs_path).unwrap()).unwrap();
+            let mut ir: ir::IR = serde_json::from_slice(&fs::read(regs_path).unwrap()).unwrap();
 
             transform::expand_extends::ExpandExtends {}.run(&mut ir).unwrap();
 
@@ -271,13 +271,15 @@ impl Gen {
             transform::sanitize::Sanitize::default().run(&mut ir).unwrap();
 
             let items = generate::render(&ir, &gen_opts()).unwrap();
-            let mut file = File::create(
+            let file = File::create(
                 self.opts
                     .out_dir
                     .join("src/peripherals")
                     .join(format!("{}_{}.rs", module, version)),
             )
             .unwrap();
+
+            let mut file = BufWriter::new(file);
 
             // Allow a few warning
             file.write_all(
