@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::thread;
 
 use anyhow::anyhow;
@@ -7,7 +7,7 @@ use log::*;
 use crate::chips::ChipGroup;
 use crate::normalize_peris::normalize_peri_name;
 use crate::regex;
-use crate::util::RegexMap;
+use crate::util::{BTreeMapFns, RegexMap};
 
 mod xml {
     use serde::Deserialize;
@@ -43,6 +43,7 @@ mod xml {
 pub struct ChipInterrupts {
     // (nvic name, nvic version) => [cursed unparsed interrupt string]
     pub irqs: HashMap<(String, String), Vec<String>>,
+    signals: InterruptSignals,
 }
 
 impl ChipInterrupts {
@@ -74,7 +75,9 @@ impl ChipInterrupts {
             irqs.insert((parsed.name, parsed.version), strings);
         }
 
-        Ok(Self { irqs })
+        let signals = InterruptSignals::new();
+
+        Ok(Self { irqs, signals })
     }
 
     pub(crate) fn process(
@@ -104,24 +107,22 @@ impl ChipInterrupts {
             header_irqs.remove("DMA2_Channel4_5");
         }
 
-        let mut replace = |bad, good: &str| {
-            if let Some(num) = header_irqs.remove(bad) {
-                header_irqs.insert(good.to_string(), num);
-            }
-        };
-
         // STM32U3 and STM32C5 changed the advanced timer IRQ BRK/TRG names
         // to include multiple signal names. This change maps
         // them back to the common names.
-
-        // replace(bad, good)
-        replace("TIM1_BRK_TERR_IERR", "TIM1_BRK");
-        replace("TIM8_BRK_TERR_IERR", "TIM8_BRK");
-        replace("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM");
-        replace("TIM1_TRGI_COM_DIR_IDX", "TIM1_TRG_COM");
-        replace("TIM8_TRGI_COM_DIR_IDX", "TIM8_TRG_COM");
-        replace("TIM1_UPD", "TIM1_UP");
-        replace("TIM8_UPD", "TIM8_UP");
+        for (bad, good) in [
+            ("TIM1_BRK_TERR_IERR", "TIM1_BRK"),
+            ("TIM8_BRK_TERR_IERR", "TIM8_BRK"),
+            ("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM"),
+            ("TIM1_TRGI_COM_DIR_IDX", "TIM1_TRG_COM"),
+            ("TIM8_TRGI_COM_DIR_IDX", "TIM8_TRG_COM"),
+            ("TIM1_UPD", "TIM1_UP"),
+            ("TIM8_UPD", "TIM8_UP"),
+        ] {
+            if let Some(num) = header_irqs.remove(bad) {
+                header_irqs.insert(good.to_string(), num);
+            }
+        }
 
         core.interrupts = header_irqs
             .iter()
@@ -404,43 +405,27 @@ impl ChipInterrupts {
                     }
                 }
 
-                for (p, mut ss) in peri_signals.into_iter() {
-                    // Normalize LTDC and I2C/I3C error signal: N6 and C5 uses "ERR" (from LTDC_LO_ERR and I2C_ERR), standardize to "ER"
-                    if p == "LTDC"
-                        || (chip_name.starts_with("STM32C5") && (p.starts_with("I2C") || p.starts_with("I3C")))
-                    {
-                        for s in ss.iter_mut() {
-                            if s == "ERR" {
-                                *s = "ER".to_string();
-                            }
-                        }
-                    } else if p.starts_with("TIM") && chip_name.starts_with("STM32C5") {
-                        for s in ss.iter_mut() {
-                            if s == "UPD" {
-                                *s = "UP".to_string();
-                            }
-                        }
-                    }
-
-                    let known = valid_signals(&p, chip_name);
+                for (p, ss) in peri_signals.into_iter() {
+                    let mut ss: Vec<_> = ss.iter().map(|s| s.as_str()).collect();
+                    let known = self.signals.valid_signals(&p, chip_name);
 
                     // If we have no interrupt_signals for the peri, assume it's "global" so assign it all known ones
                     if ss.is_empty() {
                         if p.starts_with("COMP") {
-                            ss = vec!["WKUP".to_string()];
+                            ss = vec!["WKUP"];
                         } else {
-                            ss = known.clone();
+                            ss = known.keys().map(|k| *k).collect();
                         }
                     }
 
                     for s in ss {
-                        if !known.contains(&s.clone()) {
+                        let Some(s) = known.get(&s) else {
                             panic!(
                                 "Unknown signal {s} for peri {p} chip {chip_name}, known={known:?}, parts={parts:?}"
                             );
-                        }
+                        };
                         trace!("    {thread_id:?} signal: {} {}", p, s);
-                        interrupt_signals.insert((p.clone(), s));
+                        interrupt_signals.insert((p.clone(), s.to_string()));
                     }
                 }
             }
@@ -684,113 +669,154 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
     res
 }
 
-fn valid_signals(peri: &str, chip_name: &str) -> Vec<String> {
-    // Special chip-specific signal mappings
-    // Format: (peripheral_prefix, chip_pattern, signals)
-    const CHIP_SPECIFIC_SIGNALS: &[(&str, &str, &[&str])] = &[
-        // DCMIPP: only the GLOBAL interrupt belongs here. The separate CSI IRQ
-        // (STM32N6) is attributed to the CSI peripheral instead.
-        ("DCMIPP", "*", &["GLOBAL"]),
-        // LTDC signals: STM32N6 has separate LTDC_UP and LTDC_LO interrupts; all others have a single LTDC IRQ
-        ("LTDC", "STM32N6", &["ER", "LO", "UP"]),
-        ("LTDC", "*", &["ER", "LO"]),
-        // STM32WB0 Specific Mappings
-        ("EXTI", "STM32WB0", &["GPIOA", "GPIOB"]),
-        (
-            "RADIO_TIMER",
-            "STM32WB0",
-            &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
-        ),
-        ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
-    ];
-
-    // Check for chip-specific overrides first
-    for &(peri_prefix, chip_pattern, signals) in CHIP_SPECIFIC_SIGNALS {
-        if peri.starts_with(peri_prefix) {
-            let matches = if chip_pattern == "*" {
-                // This is a default case - check if no specific pattern matched
-                !CHIP_SPECIFIC_SIGNALS
-                    .iter()
-                    .any(|&(p, c, _)| p == peri_prefix && c != "*" && chip_name.starts_with(c))
-            } else {
-                chip_name.starts_with(chip_pattern)
-            };
-
-            if matches {
-                return signals.iter().map(ToString::to_string).collect();
-            }
-        }
-    }
-
-    // Fallback to the general signal map
-    const IRQ_SIGNALS_MAP: &[(&str, &[&str])] = &[
-        ("CAN", &["TX", "RX0", "RX1", "SCE"]),
-        ("FDCAN", &["IT0", "IT1", "CAL"]),
-        ("I2C", &["ER", "EV"]),
-        ("I3C", &["ER", "EV", "WKUP"]),
-        ("FMPI2C", &["ER", "EV"]),
-        ("TIM", &["BRK", "UP", "TRG", "COM", "CC"]),
-        // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
-        ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU"]),
-        ("SUBGHZ", &["RADIO"]),
-        ("IPCC", &["C1_RX", "C1_TX", "C2_RX", "C2_TX"]),
-        (
-            "HRTIM",
-            &["MASTER", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF", "FLT"],
-        ),
-        ("COMP", &["WKUP", "ACQ"]),
-        ("RCC", &["RCC", "CRS"]),
-        ("MDIOS", &["GLOBAL", "WKUP"]),
-        ("ETH", &["GLOBAL", "WKUP"]),
-        (
-            "DFSDM",
-            &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
-        ),
-        ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
-        ("PWR", &["S3WU", "WKUP", "PVD"]),
-        ("GTZC", &["GLOBAL", "ILA", "GTZC"]),
-        ("GTZC_TZIC", &["GLOBAL", "ILA", "GTZC"]),
-        ("GTZC_MPCBB", &["GLOBAL", "ILA", "GTZC"]),
-        ("WWDG", &["GLOBAL", "RST"]),
-        ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB1_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB2_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-        ("USB", &["LP", "HP", "WKUP"]),
-        ("GPU2D", &["ER"]),
-        ("SAI", &["A", "B"]),
-        ("ADF", &["FLT0"]),
-        ("RAMECC", &["ECC"]),
-        ("RAMCFG", &["BKP", "ECC"]),
-        ("LTDC", &["ER", "LO"]),
-        ("HSEM", &["GLOBAL"]),
-        ("LPDMA", &["CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7"]),
-    ];
-
-    for (prefix, signals) in IRQ_SIGNALS_MAP {
-        if peri.starts_with(prefix) {
-            return signals.iter().map(ToString::to_string).collect();
-        }
-    }
-    vec!["GLOBAL".to_string()]
+#[derive(Debug)]
+struct InterruptSignals {
+    chip_signals: BTreeMap<&'static str, (&'static str, HashMap<&'static str, &'static str>)>,
+    signals: BTreeMap<&'static str, HashMap<&'static str, &'static str>>,
+    global: HashMap<&'static str, &'static str>,
 }
 
-static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
-    // Exception 1: Multicore: NVIC1 is the first core, NVIC2 is the second. We have to pick the right one.
-    ("STM32H7(45|47|55|57).*:cm7", "NVIC1"),
-    ("STM32H7(45|47|55|57).*:cm4", "NVIC2"),
-    ("STM32WL5.*:cm4", "NVIC1"),
-    ("STM32WL5.*:cm0p", "NVIC2"),
-    // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-    ("STM32(L5|U3|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
-    // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
-    ("STM32H7[RS].*", "NVIC2"),
-    // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.
-    ("STM32N6.*", "NVIC2"),
-    // catch-all: Most chips have a single NVIC, named "NVIC"
-    (".*", "NVIC"),
-]);
+impl InterruptSignals {
+    pub fn new() -> Self {
+        const EQ_SIGNALS: &[(&str, &str)] = &[("ER", "ERR"), ("UP", "UPD")];
+
+        // Special chip-specific signal mappings
+        // Format: (peripheral_prefix, chip_pattern, signals)
+        const CHIP_SPECIFIC_SIGNALS: &[(&str, &str, &[&str])] = &[
+            // LTDC signals: STM32N6 has separate LTDC_UP and LTDC_LO interrupts; all others have a single LTDC IRQ
+            ("LTDC", "STM32N6", &["ER", "LO", "UP"]),
+            // STM32WB0 Specific Mappings
+            ("EXTI", "STM32WB0", &["GPIOA", "GPIOB"]),
+            (
+                "RADIO_TIMER",
+                "STM32WB0",
+                &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
+            ),
+            ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
+        ];
+
+        // Fallback to the general signal map
+        const IRQ_SIGNALS_MAP: &[(&str, &[&str])] = &[
+            ("CAN", &["TX", "RX0", "RX1", "SCE"]),
+            // DCMIPP: only the GLOBAL interrupt belongs here. The separate CSI IRQ
+            // (STM32N6) is attributed to the CSI peripheral instead.
+            ("DCMIPP", &["GLOBAL"]),
+            ("FDCAN", &["IT0", "IT1", "CAL"]),
+            ("I2C", &["ER", "EV"]),
+            ("I3C", &["ER", "EV", "WKUP"]),
+            ("FMPI2C", &["ER", "EV"]),
+            ("TIM", &["BRK", "UP", "TRG", "COM", "CC"]),
+            // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
+            ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU"]),
+            ("SUBGHZ", &["RADIO"]),
+            ("IPCC", &["C1_RX", "C1_TX", "C2_RX", "C2_TX"]),
+            (
+                "HRTIM",
+                &["MASTER", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF", "FLT"],
+            ),
+            ("COMP", &["WKUP", "ACQ"]),
+            ("RCC", &["RCC", "CRS"]),
+            ("MDIOS", &["GLOBAL", "WKUP"]),
+            ("ETH", &["GLOBAL", "WKUP"]),
+            (
+                "DFSDM",
+                &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
+            ),
+            ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
+            ("PWR", &["S3WU", "WKUP", "PVD"]),
+            ("GTZC", &["GLOBAL", "ILA", "GTZC"]),
+            ("GTZC_TZIC", &["GLOBAL", "ILA", "GTZC"]),
+            ("GTZC_MPCBB", &["GLOBAL", "ILA", "GTZC"]),
+            ("WWDG", &["GLOBAL", "RST"]),
+            ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+            ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+            ("USB1_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+            ("USB2_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+            ("USB", &["LP", "HP", "WKUP"]),
+            ("GPU2D", &["ER"]),
+            ("SAI", &["A", "B"]),
+            ("ADF", &["FLT0"]),
+            ("RAMECC", &["ECC"]),
+            ("RAMCFG", &["BKP", "ECC"]),
+            ("LTDC", &["ER", "LO"]),
+            ("HSEM", &["GLOBAL"]),
+            ("LPDMA", &["CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7"]),
+        ];
+
+        let eq_signals: HashMap<&'static str, &'static str> = EQ_SIGNALS.into_iter().cloned().collect();
+
+        let collect_signals = |signals: &[&'static str]| -> HashMap<&'static str, &'static str> {
+            signals
+                .iter()
+                .map(|s| (*s, *s))
+                .chain(signals.iter().filter_map(|s| Some((*eq_signals.get(*s)?, *s))))
+                .collect()
+        };
+
+        Self {
+            chip_signals: CHIP_SPECIFIC_SIGNALS
+                .iter()
+                .filter(|(_, chip, _)| {
+                    if *chip == "*" {
+                        panic!("use IRQ_SIGNALS_MAP for generic signals")
+                    } else {
+                        true
+                    }
+                })
+                .map(|(peri, chip, signals)| (*peri, (*chip, collect_signals(signals))))
+                .collect(),
+            signals: IRQ_SIGNALS_MAP
+                .iter()
+                .map(|(peri, signals)| (*peri, collect_signals(signals)))
+                .collect(),
+            global: HashMap::from([("GLOBAL", "GLOBAL")]),
+        }
+    }
+
+    pub fn valid_signals<'a>(&'a self, peri: &'a str, chip_name: &str) -> &'a HashMap<&'static str, &'static str> {
+        let peri = trim_trailing_digits(peri);
+
+        for (_, (chip_pattern, signals)) in self.chip_signals.starts_with(peri) {
+            if chip_name.starts_with(chip_pattern) {
+                return signals;
+            }
+        }
+
+        for (_, signals) in self.signals.starts_with(peri) {
+            return signals;
+        }
+
+        &self.global
+    }
+}
+
+fn trim_trailing_digits(input: &str) -> &str {
+    let new_len = input
+        .char_indices()
+        .rev()
+        .find(|&(_, c)| !c.is_ascii_digit()) // stop at first non-digit
+        .map(|(idx, c)| idx + c.len_utf8()) // keep full char
+        .unwrap_or(0); // all digits case
+
+    &input[..new_len]
+}
 
 fn pick_nvic(chip_name: &str, core_name: &str) -> String {
+    static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
+        // Exception 1: Multicore: NVIC1 is the first core, NVIC2 is the second. We have to pick the right one.
+        ("STM32H7(45|47|55|57).*:cm7", "NVIC1"),
+        ("STM32H7(45|47|55|57).*:cm4", "NVIC2"),
+        ("STM32WL5.*:cm4", "NVIC1"),
+        ("STM32WL5.*:cm0p", "NVIC2"),
+        // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
+        ("STM32(L5|U3|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
+        // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
+        ("STM32H7[RS].*", "NVIC2"),
+        // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.
+        ("STM32N6.*", "NVIC2"),
+        // catch-all: Most chips have a single NVIC, named "NVIC"
+        (".*", "NVIC"),
+    ]);
+
     PICK_NVIC.must_get(&format!("{chip_name}:{core_name}")).to_string()
 }
