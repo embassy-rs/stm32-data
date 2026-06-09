@@ -105,7 +105,6 @@ impl ParsedRccs {
             "HSIK",
             "PSI",
             "PSIK",
-            "PSIS",
             "SHSI",
             "HSI48",
             "HSIKER",
