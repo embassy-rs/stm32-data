@@ -591,10 +591,7 @@ impl DmaChannels {
                 channels: Vec::new(),
             };
 
-            let parsed: HashMap<String, u8> =
-                serde_yaml::from_str(&std::fs::read_to_string(format!("data/dmamux/{file}"))?)?;
-
-            for (request_name, request_num) in parsed {
+            for (request_name, request_num) in load_dma_mux(file)? {
                 let parts: Vec<_> = request_name.split('_').collect();
                 let target_peri_name = parts[0];
                 let request = { if parts.len() < 2 { target_peri_name } else { parts[1] } };
@@ -628,4 +625,10 @@ impl DmaChannels {
 
         Ok(Self(dma_channels.chain(gpdma_channels).collect::<anyhow::Result<_>>()?))
     }
+}
+
+pub fn load_dma_mux(file: &str) -> anyhow::Result<HashMap<String, u8>> {
+    Ok(serde_yaml::from_str(&std::fs::read_to_string(format!(
+        "data/dmamux/{file}"
+    ))?)?)
 }
