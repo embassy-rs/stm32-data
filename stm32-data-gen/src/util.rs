@@ -54,18 +54,36 @@ impl<'a, K: Eq + Hash + 'a, V: 'a> EntryFns<'a, K, V> for Entry<'a, K, V> {
     }
 }
 
+struct RegexMapState {
+    regexes: regex::RegexSet,
+    cache: Mutex<HashMap<String, Option<usize>>>,
+}
+
+impl RegexMapState {
+    fn get(&self, key: &str) -> Option<usize> {
+        if let Some(&val) = self.cache.lock().unwrap().get(key) {
+            return val;
+        }
+
+        let val = self.regexes.matches(key).iter().next();
+        let key = key.to_string();
+
+        self.cache.lock().unwrap().insert(key, val);
+
+        val
+    }
+}
+
 pub struct RegexMap<'a, T> {
     map: &'a [(&'a str, T)],
-    regexes: OnceLock<regex::RegexSet>,
-    cache: Mutex<Option<HashMap<String, Option<usize>>>>,
+    state: OnceLock<RegexMapState>,
 }
 
 impl<'a, T> RegexMap<'a, T> {
     pub const fn new(map: &'a [(&'a str, T)]) -> Self {
         Self {
             map,
-            regexes: OnceLock::new(),
-            cache: Mutex::new(None),
+            state: OnceLock::new(),
         }
     }
 
@@ -74,25 +92,13 @@ impl<'a, T> RegexMap<'a, T> {
     }
 
     pub fn get(&self, key: &str) -> Option<&'a T> {
-        if let Some(&val) = self.cache.lock().unwrap().get_or_insert_with(Default::default).get(key) {
-            return val.map(|i| &self.map[i].1);
-        }
-        let val = self.get_uncached(key);
-        self.cache
-            .lock()
-            .unwrap()
-            .as_mut()
-            .unwrap()
-            .insert(key.to_string(), val);
-        val.map(|i| &self.map[i].1)
-    }
-
-    fn get_uncached(&self, key: &str) -> Option<usize> {
-        let regexes = self
-            .regexes
-            .get_or_init(|| regex::RegexSet::new(self.map.iter().map(|(k, _)| format!("^{k}$"))).unwrap());
-
-        regexes.matches(key).iter().next()
+        self.state
+            .get_or_init(|| RegexMapState {
+                regexes: regex::RegexSet::new(self.map.iter().map(|(k, _)| format!("^{k}$"))).unwrap(),
+                cache: Mutex::new(HashMap::new()),
+            })
+            .get(key)
+            .map(|i| &self.map[i].1)
     }
 
     #[track_caller]
