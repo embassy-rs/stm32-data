@@ -11,12 +11,12 @@ use stm32_data_serde::chip::core::{DmaChannels, peripheral};
 
 use crate::chips::xml::PinSignal;
 use crate::chips::{Chip, ChipGroup, merge_pins, xml};
-use crate::dma::ChipDma;
+use crate::dma::{ChipDma, load_dma_mux};
 use crate::gpio_af::{Af, clean_pin, pin_matches};
 use crate::interrupts::ChipInterrupts;
 use crate::package::schema::pinout::Characteristics;
 use crate::package::schema::{dma, exti, interrupts, peripherals, pinout};
-use crate::util::{EntryFns, HashMapFns};
+use crate::util::{EntryFns, HashMapFns, RegexMap};
 
 #[derive(Serialize, Deserialize)]
 pub struct Package {
@@ -850,10 +850,12 @@ fn build_peripherals(f: &peripherals::File) -> BuildPeripherals {
         .collect()
 }
 
-fn build_dma(f: &dma::File) -> ChipDma {
+fn build_dma(f: &dma::File, dma_map: &DmaMap, chip_name: &str) -> ChipDma {
     let mut peripherals: HashMap<String, Vec<peripheral::DmaChannel>> = HashMap::with_capacity(f.interconnect.len());
 
     for instance in &f.instances {
+        let request_map = dma_map.get(&format!("{}:{}:{}", chip_name, instance.name, instance.digital_name));
+
         for interconnect in f
             .interconnect
             .iter()
@@ -874,7 +876,13 @@ fn build_dma(f: &dma::File) -> ChipDma {
                     channel: None,
                     dmamux: None,
                     remap: Vec::new(),
-                    request: None, // TODO: parse request from RM
+                    request: if let Some(request_map) = request_map
+                        && let Some(request) = request_map.get(&interconnect.event.to_ascii_uppercase())
+                    {
+                        Some(*request)
+                    } else {
+                        None
+                    },
                 });
         }
     }
@@ -952,6 +960,8 @@ impl PackageDirectory {
         dma: &Path,
         exti: &Path,
         interrupts: &Path,
+        dma_map: &DmaMap,
+        chip_name: &str,
     ) -> anyhow::Result<(
         &BuildPins,
         &BuildPeripherals,
@@ -970,7 +980,7 @@ impl PackageDirectory {
         })?;
 
         let dma = self.dma.get_or_try_insert_with(dma.to_path_buf(), || {
-            Ok(build_dma(&serde_json::from_str(&load_file(dma)?)?))
+            Ok(build_dma(&serde_json::from_str(&load_file(dma)?)?, dma_map, chip_name))
         })?;
 
         let exti = self.exti.get_or_try_insert_with(exti.to_path_buf(), || {
@@ -985,6 +995,27 @@ impl PackageDirectory {
     }
 }
 
+struct DmaMap<'a> {
+    dma_map: HashMap<&'a str, HashMap<String, u8>>,
+    regex_map: RegexMap<'a, &'a str>,
+}
+
+impl<'a> DmaMap<'a> {
+    pub fn new(map: &'a [(&'a str, &'a str)]) -> anyhow::Result<Self> {
+        Ok(Self {
+            dma_map: map
+                .iter()
+                .map(|(_, f)| Ok((*f, load_dma_mux(f)?)))
+                .collect::<anyhow::Result<_>>()?,
+            regex_map: RegexMap::new(map),
+        })
+    }
+
+    pub fn get(&self, key: &str) -> Option<&HashMap<String, u8>> {
+        self.dma_map.get(self.regex_map.get(key)?)
+    }
+}
+
 pub fn parse_packages(
     chips: &mut HashMap<String, Chip>,
     chip_groups: &mut Vec<ChipGroup>,
@@ -993,10 +1024,12 @@ pub fn parse_packages(
     irqs: &mut ChipInterrupts,
     filter: &Option<String>,
 ) -> anyhow::Result<()> {
-    let mut files: Vec<_> = glob::glob("sources/cubeprogdb2/**/*.pdsc")?
-        .map(Result::unwrap)
-        .collect();
+    let mut files: Vec<_> = glob::glob("sources/cubeprogdb2/**/*.pdsc")?.collect::<Result<_, _>>()?;
     files.sort();
+
+    // This can be parallelized by parallelizing the dma map constructor and parallelizing the parsing of each package
+
+    let dma_map = DmaMap::new(&[("STM32C5.*:LPDMA.*:.*", "C5_LPDMA.yaml")])?;
 
     for f in files {
         if let Some(filter) = filter
@@ -1008,7 +1041,7 @@ pub fn parse_packages(
 
         let mut d = PackageDirectory::new(f.parent().unwrap().to_path_buf());
 
-        parse_package(f, &mut d, chips, chip_groups, af, dmas, irqs)?;
+        parse_package(f, &mut d, chips, chip_groups, af, dmas, irqs, &dma_map)?;
     }
 
     Ok(())
@@ -1022,6 +1055,7 @@ fn parse_package(
     af: &mut Af,
     dmas: &mut crate::dma::DmaChannels,
     irqs: &mut ChipInterrupts,
+    dma_map: &DmaMap,
 ) -> anyhow::Result<()> {
     let mut groups: HashMap<String, ChipGroup> = HashMap::new();
 
@@ -1103,6 +1137,8 @@ fn parse_package(
                             dma_descriptor.as_path(),
                             exti_descriptor.as_path(),
                             interrupt_descriptor.as_path(),
+                            dma_map,
+                            chip_name.as_str(),
                         )?;
 
                     let group = group.or_insert_with_mut(|| ChipGroup {
