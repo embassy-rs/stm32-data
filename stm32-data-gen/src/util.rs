@@ -4,8 +4,6 @@ use std::hash::Hash;
 use std::ptr;
 use std::sync::{Mutex, OnceLock};
 
-use regex::Regex;
-
 pub trait HashMapFns<K: Eq + Hash, V> {
     fn try_insert_stable(&mut self, key: K, value: V) -> Result<(), ()>;
     fn get_or_try_insert_with(&mut self, key: K, f: impl FnOnce() -> anyhow::Result<V>) -> anyhow::Result<&V>;
@@ -58,7 +56,7 @@ impl<'a, K: Eq + Hash + 'a, V: 'a> EntryFns<'a, K, V> for Entry<'a, K, V> {
 
 pub struct RegexMap<'a, T> {
     map: &'a [(&'a str, T)],
-    regexes: OnceLock<Vec<Regex>>,
+    regexes: OnceLock<regex::RegexSet>,
     cache: Mutex<Option<HashMap<String, Option<usize>>>>,
 }
 
@@ -90,19 +88,11 @@ impl<'a, T> RegexMap<'a, T> {
     }
 
     fn get_uncached(&self, key: &str) -> Option<usize> {
-        let regexes = self.regexes.get_or_init(|| {
-            self.map
-                .iter()
-                .map(|(k, _)| Regex::new(&format!("^{k}$")).unwrap())
-                .collect()
-        });
+        let regexes = self
+            .regexes
+            .get_or_init(|| regex::RegexSet::new(self.map.iter().map(|(k, _)| format!("^{k}$"))).unwrap());
 
-        for (i, k) in regexes.iter().enumerate() {
-            if k.is_match(key) {
-                return Some(i);
-            }
-        }
-        None
+        regexes.matches(key).iter().next()
     }
 
     #[track_caller]
