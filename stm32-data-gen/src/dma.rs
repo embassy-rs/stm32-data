@@ -6,6 +6,7 @@ use rayon::prelude::*;
 use stm32_data_serde::chip::core::peripheral::RemapInfo;
 
 use crate::normalize_peris::normalize_peri_name;
+use crate::perimap::Perimap;
 use crate::util::HashMapFns;
 
 mod xml {
@@ -309,7 +310,7 @@ fn build_remap_info_f0_bdma_v1() -> HashMap<RemapKey, Vec<RemapInfo>> {
 }
 
 impl DmaChannels {
-    pub fn parse() -> anyhow::Result<Self> {
+    pub fn parse(perimap: &Perimap) -> anyhow::Result<Self> {
         let f0_bdma_v1_remap = build_remap_info_f0_bdma_v1();
         let f3_remap = build_remap_info_f3();
 
@@ -345,8 +346,7 @@ impl DmaChannels {
                     &f3_remap
                 } else {
                     // apply only to F0 devices having bdma_v1
-                    if let Some((kind, version, _)) = crate::perimap::PERIMAP.get(format!("{}:DMA", &ff[..9]).as_str())
-                    {
+                    if let Some((kind, version, _)) = perimap.get(format!("{}:DMA", &ff[..9]).as_str()) {
                         if ff.starts_with("STM32F0") && *kind == "bdma" && *version == "v1" {
                             &f0_bdma_v1_remap
                         } else {

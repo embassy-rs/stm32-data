@@ -1,8 +1,8 @@
 use std::collections::HashMap;
-
-use util::RegexSet;
+use std::sync::LazyLock;
 
 use super::*;
+use crate::util::new_regex_set;
 
 pub mod xml {
     use serde::Deserialize;
@@ -149,24 +149,26 @@ pub fn parse_groups(filter: &Option<String>) -> Result<(HashMap<String, Chip>, V
     ))
 }
 
-static NOPELIST: RegexSet = RegexSet::new(&[
-    // Not supported, not planned unless someone wants to do it.
-    "STM32MP.*",
-    // "STM32N6.*",
-    "STM32G41[14].*",
-    "STM32G4.*xZ",
-    "STM32WL3.*",
-    // Does not exist in ST website. No datasheet, no RM.
-    "STM32GBK.*",
-    "STM32L485.*",
-    // STM32WxM modules. These are based on a chip that's supported on its own,
-    // not sure why we want a separate target for it.
-    "STM32WL5M.*",
-    "STM32WB1M.*",
-    "STM32WB3M.*",
-    "STM32WB5M.*",
-    "STM32WBA5M.*",
-]);
+static NOPELIST: LazyLock<regex::RegexSet> = LazyLock::new(|| {
+    new_regex_set([
+        // Not supported, not planned unless someone wants to do it.
+        "STM32MP.*",
+        // "STM32N6.*",
+        "STM32G41[14].*",
+        "STM32G4.*xZ",
+        "STM32WL3.*",
+        // Does not exist in ST website. No datasheet, no RM.
+        "STM32GBK.*",
+        "STM32L485.*",
+        // STM32WxM modules. These are based on a chip that's supported on its own,
+        // not sure why we want a separate target for it.
+        "STM32WL5M.*",
+        "STM32WB1M.*",
+        "STM32WB3M.*",
+        "STM32WB5M.*",
+        "STM32WBA5M.*",
+    ])
+});
 
 fn parse_group(
     f: std::path::PathBuf,
@@ -175,7 +177,7 @@ fn parse_group(
 ) -> anyhow::Result<()> {
     let ff = f.file_name().unwrap().to_string_lossy();
 
-    if NOPELIST.contains(ff.split('.').next().unwrap()) {
+    if NOPELIST.is_match(ff.split('.').next().unwrap()) {
         return Ok(());
     }
 

@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::collections::hash_map::Entry;
 use std::hash::Hash;
 use std::ptr;
-use std::sync::{Mutex, OnceLock};
 
 pub trait HashMapFns<K: Eq + Hash, V> {
     fn try_insert_stable(&mut self, key: K, value: V) -> Result<(), ()>;
@@ -54,74 +53,18 @@ impl<'a, K: Eq + Hash + 'a, V: 'a> EntryFns<'a, K, V> for Entry<'a, K, V> {
     }
 }
 
-struct RegexMapState {
-    regexes: regex::RegexSet,
-    cache: Mutex<HashMap<String, Option<usize>>>,
+pub fn new_regex_map<I, S, V>(items: I) -> regex_map::RegexMap<V>
+where
+    I: IntoIterator<Item = (S, V)>,
+    S: AsRef<str>,
+{
+    regex_map::RegexMap::new(items.into_iter().map(|(k, v)| (format!("^{}$", k.as_ref()), v)))
 }
 
-impl RegexMapState {
-    fn get(&self, key: &str) -> Option<usize> {
-        if let Some(&val) = self.cache.lock().unwrap().get(key) {
-            return val;
-        }
-
-        let val = self.regexes.matches(key).iter().next();
-        let key = key.to_string();
-
-        self.cache.lock().unwrap().insert(key, val);
-
-        val
-    }
-}
-
-pub struct RegexMap<'a, T> {
-    map: &'a [(&'a str, T)],
-    state: OnceLock<RegexMapState>,
-}
-
-impl<'a, T> RegexMap<'a, T> {
-    pub const fn new(map: &'a [(&'a str, T)]) -> Self {
-        Self {
-            map,
-            state: OnceLock::new(),
-        }
-    }
-
-    pub const fn get_map(&self) -> &'a [(&'a str, T)] {
-        self.map
-    }
-
-    pub fn get(&self, key: &str) -> Option<&'a T> {
-        self.state
-            .get_or_init(|| RegexMapState {
-                regexes: regex::RegexSet::new(self.map.iter().map(|(k, _)| format!("^{k}$"))).unwrap(),
-                cache: Mutex::new(HashMap::new()),
-            })
-            .get(key)
-            .map(|i| &self.map[i].1)
-    }
-
-    #[track_caller]
-    pub fn must_get(&self, key: &str) -> &T {
-        let Some(res) = self.get(key) else {
-            panic!("no regexmap for key '{key}'")
-        };
-        res
-    }
-}
-
-pub struct RegexSet<'a> {
-    map: RegexMap<'a, ()>,
-}
-
-impl<'a> RegexSet<'a> {
-    pub const fn new(map: &'a [&'a str]) -> Self {
-        Self {
-            map: RegexMap::new(unsafe { std::mem::transmute::<&[&str], &[(&str, ())]>(map) }),
-        }
-    }
-
-    pub fn contains(&self, key: &str) -> bool {
-        self.map.get(key).is_some()
-    }
+pub fn new_regex_set<I, S>(items: I) -> regex::RegexSet
+where
+    I: IntoIterator<Item = S>,
+    S: AsRef<str>,
+{
+    regex::RegexSet::new(items.into_iter().map(|k| format!("^{}$", k.as_ref()))).unwrap()
 }

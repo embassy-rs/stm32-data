@@ -1,17 +1,20 @@
 use std::collections::hash_map::Entry;
 use std::collections::{BTreeSet, HashMap, HashSet};
+use std::sync::LazyLock;
 
 use gpio_af::pin_sort_key;
 use log::warn;
-use perimap::PERIMAP;
+#[cfg(feature = "rayon")]
+use rayon::prelude::*;
 use regex::Regex;
 use stm32_data_serde::chip::core::peripheral::{Pin, Trigger};
-use util::RegexMap;
 
 use super::*;
 use crate::chips::{Chip, ChipGroup};
 use crate::gpio_af::parse_signal_name;
 use crate::normalize_peris::normalize_peri_name;
+use crate::perimap::Perimap;
+use crate::util::new_regex_map;
 
 #[derive(serde::Deserialize)]
 struct ExtraMatches {
@@ -52,7 +55,10 @@ pub fn dump_all_chips(
     chip_groups: Vec<ChipGroup>,
     headers: header::Headers,
     af: gpio_af::Af,
+    perimap: Perimap,
+    stop_modes: low_power::ChipStopModes,
     triggers: trigger::Triggers,
+    chip_memories: memory::ChipMemories,
     blocks: HashMap<String, HashSet<String>>,
     chip_interrupts: interrupts::ChipInterrupts,
     peripheral_to_clock: rcc::ParsedRccs,
@@ -65,41 +71,29 @@ pub fn dump_all_chips(
     let extras = load_extras();
 
     #[cfg(feature = "rayon")]
-    {
-        use rayon::prelude::*;
+    let iter = chip_groups.into_par_iter();
 
-        chip_groups.into_par_iter().try_for_each(|group| {
-            process_group(
-                group,
-                &headers,
-                &af,
-                &triggers,
-                &blocks,
-                &chip_interrupts,
-                &peripheral_to_clock,
-                &dma_channels,
-                &chips,
-                &docs,
-                &extras,
-            )
-        })
-    }
     #[cfg(not(feature = "rayon"))]
-    {
-        chip_groups.into_iter().try_for_each(|group| {
-            process_group(
-                group,
-                &headers,
-                &af,
-                &chip_interrupts,
-                &peripheral_to_clock,
-                &dma_channels,
-                &chips,
-                &docs,
-                &extras,
-            )
-        })
-    }
+    let iter = chip_groups.into_iter();
+
+    iter.try_for_each(|group| {
+        process_group(
+            group,
+            &headers,
+            &af,
+            &perimap,
+            &stop_modes,
+            &triggers,
+            &chip_memories,
+            &blocks,
+            &chip_interrupts,
+            &peripheral_to_clock,
+            &dma_channels,
+            &chips,
+            &docs,
+            &extras,
+        )
+    })
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -107,7 +101,10 @@ fn process_group(
     group: ChipGroup,
     headers: &header::Headers,
     af: &gpio_af::Af,
+    perimap: &Perimap,
+    stop_modes: &low_power::ChipStopModes,
     triggers: &trigger::Triggers,
+    chip_memories: &memory::ChipMemories,
     blocks: &HashMap<String, HashSet<String>>,
     chip_interrupts: &interrupts::ChipInterrupts,
     peripheral_to_clock: &rcc::ParsedRccs,
@@ -118,7 +115,7 @@ fn process_group(
 ) -> Result<(), anyhow::Error> {
     let chip_name = group.chip_names[0].clone();
     let rcc_kind = group.ips.values().find(|x| x.name == "RCC").unwrap().version.clone();
-    let rcc_block = *PERIMAP
+    let rcc_block = perimap
         .get(&format!("{chip_name}:RCC:{rcc_kind}"))
         .unwrap_or_else(|| panic!("could not get rcc for {} (kind: {})", &chip_name, &rcc_kind));
     let h = if let Some(h) = group.headers.iter().filter_map(|h| headers.get(h)).next() {
@@ -156,11 +153,13 @@ fn process_group(
                 h,
                 &chip_name,
                 &group,
+                &perimap,
+                &stop_modes,
                 &triggers,
                 &blocks,
                 chip_interrupts,
                 peripheral_to_clock,
-                rcc_block,
+                *rcc_block,
                 chip_af,
                 dma_channels,
                 extras,
@@ -170,7 +169,7 @@ fn process_group(
     let cores = cores?;
 
     for chip_name in &group.chip_names {
-        process_chip(chips, chip_name, h, docs, &group, &cores)?;
+        process_chip(chips, &chip_memories, chip_name, h, docs, &group, &cores)?;
     }
 
     Ok(())
@@ -182,6 +181,8 @@ fn process_core(
     h: &header::ParsedHeader,
     chip_name: &str,
     group: &ChipGroup,
+    perimap: &Perimap,
+    stop_modes: &low_power::ChipStopModes,
     triggers: &trigger::Triggers,
     blocks: &HashMap<String, HashSet<String>>,
     chip_interrupts: &interrupts::ChipInterrupts,
@@ -197,6 +198,8 @@ fn process_core(
     let mut peripherals = create_peripherals_for_chip(
         chip_name,
         group,
+        perimap,
+        stop_modes,
         triggers,
         blocks,
         peripheral_to_clock,
@@ -259,6 +262,8 @@ fn process_core(
 fn create_peripherals_for_chip(
     chip_name: &str,
     group: &ChipGroup,
+    perimap: &Perimap,
+    stop_modes: &low_power::ChipStopModes,
     triggers: &trigger::Triggers,
     blocks: &HashMap<String, HashSet<String>>,
     peripheral_to_clock: &rcc::ParsedRccs,
@@ -278,7 +283,7 @@ fn create_peripherals_for_chip(
         let addr = resolve_peri_addr(chip_name, &pname, defines);
         let Some(address) = addr else { continue };
 
-        let perimap = PERIMAP.get(&format!("{chip_name}:{pname}:{pkind}"));
+        let perimap = perimap.get(&format!("{chip_name}:{pname}:{pkind}"));
         let registers = if let Some(&block) = perimap {
             Some(stm32_data_serde::chip::core::peripheral::Registers {
                 kind: block.0.to_string(),
@@ -320,7 +325,7 @@ fn create_peripherals_for_chip(
             .match_peri_clock(rcc_block.1, &pname)
             .or_else(syscfg_for_comp)
         {
-            if let Some(stop_mode_info) = low_power::peripheral_stop_mode_info(chip_name, &pname) {
+            if let Some(stop_mode_info) = stop_modes.peripheral_stop_mode_info(chip_name, &pname) {
                 rcc_info.stop_mode = stop_mode_info;
             }
             Some(rcc_info)
@@ -1011,11 +1016,13 @@ fn extract_relevant_dma_channels(
 ) -> Vec<stm32_data_serde::chip::core::DmaChannels> {
     // The dma_channels[xx] is generic for multiple chips. The current chip may have less DMAs,
     // so we have to filter it.
-    static DMA_CHANNEL_COUNTS: RegexMap<usize> = RegexMap::new(&[
-        ("STM32F0[37]0.*:DMA1", 5),
-        ("STM32G4[34]1.*:DMA1", 6),
-        ("STM32G4[34]1.*:DMA2", 6),
-    ]);
+    static DMA_CHANNEL_COUNTS: LazyLock<regex_map::RegexMap<usize>> = LazyLock::new(|| {
+        new_regex_map([
+            ("STM32F0[37]0.*:DMA1", 5),
+            ("STM32G4[34]1.*:DMA1", 6),
+            ("STM32G4[34]1.*:DMA2", 6),
+        ])
+    });
     let have_peris: HashSet<_> = peripherals.iter().map(|p| p.name.clone()).collect();
     let dma_channels = dmas
         .iter()
@@ -1024,6 +1031,7 @@ fn extract_relevant_dma_channels(
         .filter(|ch| {
             DMA_CHANNEL_COUNTS
                 .get(&format!("{}:{}", chip_name, ch.dma))
+                .next()
                 .map_or_else(|| true, |&v| usize::from(ch.channel) < v)
         })
         .collect::<Vec<_>>();
@@ -1068,6 +1076,7 @@ fn associate_peripherals_dma_channels(
 
 fn process_chip(
     chips: &HashMap<String, Chip>,
+    chip_memories: &memory::ChipMemories,
     chip_name: &str,
     _h: &header::ParsedHeader,
     docs: &docs::Docs,
@@ -1083,7 +1092,7 @@ fn process_chip(
         die: group.die.clone(),
         device_id: u16::from_str_radix(&group.die[3..], 16).unwrap(),
         packages: chip.packages.clone(),
-        memory: memory::get(chip_name),
+        memory: chip_memories.get(chip_name),
         docs,
         cores: cores.to_vec(),
     };
