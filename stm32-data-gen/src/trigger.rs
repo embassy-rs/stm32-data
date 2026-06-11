@@ -2,22 +2,23 @@ use std::collections::{HashMap, HashSet};
 
 use regex::Regex;
 
-use crate::util::RegexMap;
+use crate::util::new_regex_map;
 
+#[derive(Clone)]
 pub struct Trigger {
     pub signal: &'static str,
     pub source: &'static str,
 }
 
 pub struct Triggers {
-    map: &'static RegexMap<'static, &'static [Trigger]>,
+    map: regex_map::RegexMap<Vec<Trigger>>,
 }
 
 impl Triggers {
     pub fn new() -> Self {
         /// Regexmap where the key is mcu_name:peripheral and the value is the trigger list.
         #[rustfmt::skip]
-        static PERIPHERAL_TRIGGER_RULES: RegexMap<&'static [Trigger]> = RegexMap::new(&[
+        const PERIPHERAL_TRIGGER_RULES: &[(&str, &'static [Trigger])] = &[
             (r"^STM32F0.*:DAC.*", &[
                 Trigger {signal: "DAC_CHX_TRG0", source: "TIM6_TRGO"},
                 Trigger {signal: "DAC_CHX_TRG1", source: "TIM3_TRGO"},
@@ -884,11 +885,11 @@ impl Triggers {
                 Trigger {signal: "DAC_CHX_TRG13", source: "LPTIM3_TRGO"},
                 Trigger {signal: "DAC_CHX_TRG14", source: "EXTI9_TRG"},
             ]),
-        ]);
+        ];
 
         let trigger_expr = Regex::new(r"(?m)(.+?)(\d+)").unwrap();
 
-        for (expr, triggers) in PERIPHERAL_TRIGGER_RULES.get_map() {
+        for (expr, triggers) in PERIPHERAL_TRIGGER_RULES {
             let mut trigger_sets: HashMap<String, HashSet<&str>> = HashMap::new();
 
             for trigger in *triggers {
@@ -905,7 +906,7 @@ impl Triggers {
         }
 
         Self {
-            map: &PERIPHERAL_TRIGGER_RULES,
+            map: new_regex_map(PERIPHERAL_TRIGGER_RULES.iter().map(|(k, v)| (k, v.to_vec()))),
         }
     }
 
@@ -915,7 +916,7 @@ impl Triggers {
     /// Parameters:
     /// - mcu_name: the full name of the MCU (e.g., "STM32WB55RG")
     /// - peripheral: the name of the peripheral (e.g., "USART1")
-    pub fn peripheral_trigger_info(&self, mcu_name: &str, peripheral: &str) -> Option<&'static [Trigger]> {
-        self.map.get(&format!("{mcu_name}:{peripheral}")).map(|v| &**v)
+    pub fn peripheral_trigger_info(&self, mcu_name: &str, peripheral: &str) -> Option<&[Trigger]> {
+        self.map.get(&format!("{mcu_name}:{peripheral}")).next().map(|v| &**v)
     }
 }

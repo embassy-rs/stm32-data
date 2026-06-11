@@ -1,6 +1,6 @@
-use crate::util::RegexMap;
+use crate::util::new_regex_map;
 
-pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
+const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     // GTZC - TrustZone Security Controller
     ("STM32H503.*:GTZC:.*", ("gtzc", "h503", "GTZC1")),
     ("STM32H5[2367].*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
@@ -790,4 +790,20 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:XSPI[12]:XSPI:xspi_v2_1H7RS*", ("xspi", "v1", "XSPI")),
     (".*:XSPIM:XSPIM:xspi_v2_1H7RS*", ("xspim", "v1", "XSPIM")),
     ("STM32H7.*:MDMA:.*", ("mdma", "v1", "MDMA")),
-]);
+];
+
+pub struct Perimap {
+    map: regex_map::RegexMap<(&'static str, &'static str, &'static str)>,
+}
+
+impl Perimap {
+    pub fn new() -> Self {
+        Self {
+            map: new_regex_map(PERIMAP.iter().map(|(k, v)| (*k, *v))),
+        }
+    }
+
+    pub fn get(&self, pattern: &str) -> Option<&(&'static str, &'static str, &'static str)> {
+        self.map.get(pattern).next()
+    }
+}

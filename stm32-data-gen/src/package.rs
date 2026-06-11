@@ -16,7 +16,7 @@ use crate::gpio_af::{Af, clean_pin, pin_matches};
 use crate::interrupts::ChipInterrupts;
 use crate::package::schema::pinout::Characteristics;
 use crate::package::schema::{dma, exti, interrupts, peripherals, pinout};
-use crate::util::{EntryFns, HashMapFns, RegexMap};
+use crate::util::{EntryFns, HashMapFns, new_regex_map};
 
 #[derive(Serialize, Deserialize)]
 pub struct Package {
@@ -995,24 +995,26 @@ impl PackageDirectory {
     }
 }
 
-struct DmaMap<'a> {
-    dma_map: HashMap<&'a str, HashMap<String, u8>>,
-    regex_map: RegexMap<'a, &'a str>,
+struct DmaMap {
+    dma_files: Vec<HashMap<String, u8>>,
+    regex_map: regex_map::RegexMap<usize>,
 }
 
-impl<'a> DmaMap<'a> {
-    pub fn new(map: &'a [(&'a str, &'a str)]) -> anyhow::Result<Self> {
+impl DmaMap {
+    pub fn new(map: &[(&str, &str)]) -> anyhow::Result<Self> {
+        let (keys, values): (Vec<_>, Vec<_>) = map.iter().map(|(k, v)| (*k, *v)).unzip();
+
         Ok(Self {
-            dma_map: map
+            dma_files: values
                 .iter()
-                .map(|(_, f)| Ok((*f, load_dma_mux(f)?)))
+                .map(|f| Ok(load_dma_mux(*f)?))
                 .collect::<anyhow::Result<_>>()?,
-            regex_map: RegexMap::new(map),
+            regex_map: new_regex_map(keys.iter().enumerate().map(|(k, v)| (*v, k))),
         })
     }
 
     pub fn get(&self, key: &str) -> Option<&HashMap<String, u8>> {
-        self.dma_map.get(self.regex_map.get(key)?)
+        Some(&self.dma_files[*self.regex_map.get(key).next()?])
     }
 }
 

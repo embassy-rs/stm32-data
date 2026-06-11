@@ -1,8 +1,9 @@
 use stm32_data_serde::chip::Memory;
 use stm32_data_serde::chip::memory::{self, Access, Settings};
 
-use crate::util::RegexMap;
+use crate::util::new_regex_map;
 
+#[derive(Clone)]
 struct Mem {
     name: &'static str,
     address: u32,
@@ -72,7 +73,7 @@ macro_rules! mem {
 }
 
 #[rustfmt::skip]
-static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
+const MEMS: &[(&str, &[&[Mem]])] = &[
     // C0
     ("STM32C01..4",                  &[mem!(BANK_1 { 0x08000000 16 }, SRAM { 0x20000000 6 })]),
     ("STM32C01..6",                  &[mem!(BANK_1 { 0x08000000 32 }, SRAM { 0x20000000 6 })]),
@@ -410,8 +411,9 @@ static MEMS: RegexMap<&[&[Mem]]> = RegexMap::new(&[
     ("STM32WL[5E]..8",               &[mem!(BANK_1 { 0x08000000 64 },  SRAM1 { 0x20000000 10 }, SRAM2 { 0x20002800 10 })]),
     ("STM32WL[5E]..B",               &[mem!(BANK_1 { 0x08000000 128 }, SRAM1 { 0x20000000 24 }, SRAM2 { 0x20006000 24 })]),
     ("STM32WL[5E]..C",               &[mem!(BANK_1 { 0x08000000 256 }, SRAM1 { 0x20000000 32 }, SRAM2 { 0x20008000 32 })]),
-]);
+];
 
+#[derive(Clone)]
 struct FlashInfo {
     write_size: u32,
     erase_size: &'static [(u32, u32)],
@@ -421,7 +423,7 @@ struct FlashInfo {
 
 #[rustfmt::skip]
 #[allow(clippy::identity_op)]
-static FLASH_INFO: RegexMap<&[FlashInfo]> = RegexMap::new(&[
+const FLASH_INFO: &[(&str, &[FlashInfo])] = &[
     ("STM32C0.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
     ("STM32F030.C",             &[FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  2*1024, 0)] }]),
     ("STM32F070.6",             &[FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  1*1024, 0)] }]),
@@ -481,27 +483,80 @@ static FLASH_INFO: RegexMap<&[FlashInfo]> = RegexMap::new(&[
     ("STM32WB.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  4*1024, 0)] }]),
     ("STM32WL.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
     ("STM32.*",                 &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
-]);
+];
 
-pub fn get(chip: &str) -> Vec<Vec<Memory>> {
-    let mems_variations = *MEMS.must_get(chip);
-    let flash_variations = FLASH_INFO.must_get(chip);
+pub struct ChipMemories {
+    mems: regex_map::RegexMap<Vec<Vec<Mem>>>,
+    flash_info: regex_map::RegexMap<Vec<FlashInfo>>,
+}
 
-    assert_eq!(
-        mems_variations.len(),
-        flash_variations.len(),
-        "All memory variants must be present in both the mems and the flash info: {chip}"
-    );
+impl ChipMemories {
+    pub fn new() -> Self {
+        Self {
+            mems: new_regex_map(MEMS.iter().map(|(k, v)| (k, v.iter().map(|x| x.to_vec()).collect()))),
+            flash_info: new_regex_map(FLASH_INFO.iter().map(|(k, v)| (k, v.to_vec()))),
+        }
+    }
 
-    mems_variations
-        .into_iter()
-        .zip(flash_variations.into_iter())
-        .map(|(mems, flash)| {
-            let mut res = Vec::new();
+    pub fn get(&self, chip: &str) -> Vec<Vec<Memory>> {
+        let mems_variations = self.mems.get(chip).next().unwrap();
+        let flash_variations = self.flash_info.get(chip).next().unwrap();
 
-            for mem in *mems {
-                if mem.name.starts_with("BANK") {
-                    if flash.erase_size.len() == 1 || mem.size <= flash.erase_size[0].0 * flash.erase_size[0].1 {
+        assert_eq!(
+            mems_variations.len(),
+            flash_variations.len(),
+            "All memory variants must be present in both the mems and the flash info: {chip}"
+        );
+
+        mems_variations
+            .into_iter()
+            .zip(flash_variations.into_iter())
+            .map(|(mems, flash)| {
+                let mut res = Vec::new();
+
+                for mem in mems {
+                    if mem.name.starts_with("BANK") {
+                        if flash.erase_size.len() == 1 || mem.size <= flash.erase_size[0].0 * flash.erase_size[0].1 {
+                            res.push(Memory {
+                                name: mem.name.to_string(),
+                                address: mem.address,
+                                size: mem.size,
+                                kind: memory::Kind::Flash,
+                                settings: Some(Settings {
+                                    write_size: flash.write_size,
+                                    erase_size: flash.erase_size[0].0,
+                                    erase_value: flash.erase_value,
+                                }),
+                                access: mem.access,
+                            });
+                        } else {
+                            let mut offs = 0;
+                            for (i, &(erase_size, count)) in flash.erase_size.iter().enumerate() {
+                                if offs >= mem.size {
+                                    break;
+                                }
+                                let left = mem.size - offs;
+                                let mut size = left;
+                                if i != flash.erase_size.len() - 1 {
+                                    size = size.min(erase_size * count);
+                                }
+                                #[allow(clippy::redundant_field_names)]
+                                res.push(Memory {
+                                    name: format!("{}_REGION_{}", mem.name, i + 1),
+                                    address: mem.address + offs,
+                                    size: size,
+                                    kind: memory::Kind::Flash,
+                                    settings: Some(Settings {
+                                        write_size: flash.write_size,
+                                        erase_size: erase_size,
+                                        erase_value: flash.erase_value,
+                                    }),
+                                    access: mem.access,
+                                });
+                                offs += size;
+                            }
+                        }
+                    } else if mem.name == "OTP" {
                         res.push(Memory {
                             name: mem.name.to_string(),
                             address: mem.address,
@@ -509,79 +564,40 @@ pub fn get(chip: &str) -> Vec<Vec<Memory>> {
                             kind: memory::Kind::Flash,
                             settings: Some(Settings {
                                 write_size: flash.write_size,
-                                erase_size: flash.erase_size[0].0,
+                                erase_size: 0,
                                 erase_value: flash.erase_value,
                             }),
                             access: mem.access,
                         });
+                    } else if mem.name.starts_with("EEPROM") {
+                        res.push(Memory {
+                            name: mem.name.to_string(),
+                            address: mem.address,
+                            size: mem.size,
+                            kind: memory::Kind::Eeprom,
+                            settings: None,
+                            access: mem.access,
+                        });
                     } else {
-                        let mut offs = 0;
-                        for (i, &(erase_size, count)) in flash.erase_size.iter().enumerate() {
-                            if offs >= mem.size {
-                                break;
-                            }
-                            let left = mem.size - offs;
-                            let mut size = left;
-                            if i != flash.erase_size.len() - 1 {
-                                size = size.min(erase_size * count);
-                            }
-                            #[allow(clippy::redundant_field_names)]
-                            res.push(Memory {
-                                name: format!("{}_REGION_{}", mem.name, i + 1),
-                                address: mem.address + offs,
-                                size: size,
-                                kind: memory::Kind::Flash,
-                                settings: Some(Settings {
-                                    write_size: flash.write_size,
-                                    erase_size: erase_size,
-                                    erase_value: flash.erase_value,
-                                }),
-                                access: mem.access,
-                            });
-                            offs += size;
+                        let mut kind = memory::Kind::Ram;
+                        if mem.name.contains("FLASH") || mem.name.contains("AXIICP") {
+                            kind = memory::Kind::Flash;
                         }
+                        res.push(Memory {
+                            name: mem.name.to_string(),
+                            address: mem.address,
+                            size: mem.size,
+                            kind,
+                            settings: None,
+                            access: mem.access,
+                        });
                     }
-                } else if mem.name == "OTP" {
-                    res.push(Memory {
-                        name: mem.name.to_string(),
-                        address: mem.address,
-                        size: mem.size,
-                        kind: memory::Kind::Flash,
-                        settings: Some(Settings {
-                            write_size: flash.write_size,
-                            erase_size: 0,
-                            erase_value: flash.erase_value,
-                        }),
-                        access: mem.access,
-                    });
-                } else if mem.name.starts_with("EEPROM") {
-                    res.push(Memory {
-                        name: mem.name.to_string(),
-                        address: mem.address,
-                        size: mem.size,
-                        kind: memory::Kind::Eeprom,
-                        settings: None,
-                        access: mem.access,
-                    });
-                } else {
-                    let mut kind = memory::Kind::Ram;
-                    if mem.name.contains("FLASH") || mem.name.contains("AXIICP") {
-                        kind = memory::Kind::Flash;
-                    }
-                    res.push(Memory {
-                        name: mem.name.to_string(),
-                        address: mem.address,
-                        size: mem.size,
-                        kind,
-                        settings: None,
-                        access: mem.access,
-                    });
                 }
-            }
 
-            res.sort_by_key(|m| (m.address, m.name.clone()));
+                res.sort_by_key(|m| (m.address, m.name.clone()));
 
-            res
-        })
-        .collect()
+                res
+            })
+            .collect()
+    }
 }

@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::sync::LazyLock;
 use std::thread;
 
 use anyhow::anyhow;
@@ -7,7 +8,7 @@ use log::*;
 use crate::chips::ChipGroup;
 use crate::normalize_peris::normalize_peri_name;
 use crate::regex;
-use crate::util::RegexMap;
+use crate::util::new_regex_map;
 
 mod xml {
     use serde::Deserialize;
@@ -824,21 +825,27 @@ fn trim_trailing_digits(input: &str) -> &str {
 }
 
 fn pick_nvic(chip_name: &str, core_name: &str) -> String {
-    static PICK_NVIC: RegexMap<&str> = RegexMap::new(&[
-        // Exception 1: Multicore: NVIC1 is the first core, NVIC2 is the second. We have to pick the right one.
-        ("STM32H7(45|47|55|57).*:cm7", "NVIC1"),
-        ("STM32H7(45|47|55|57).*:cm4", "NVIC2"),
-        ("STM32WL5.*:cm4", "NVIC1"),
-        ("STM32WL5.*:cm0p", "NVIC2"),
-        // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-        ("STM32(L5|U3|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
-        // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
-        ("STM32H7[RS].*", "NVIC2"),
-        // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.
-        ("STM32N6.*", "NVIC2"),
-        // catch-all: Most chips have a single NVIC, named "NVIC"
-        (".*", "NVIC"),
-    ]);
+    static PICK_NVIC: LazyLock<regex_map::RegexMap<&str>> = LazyLock::new(|| {
+        new_regex_map([
+            // Exception 1: Multicore: NVIC1 is the first core, NVIC2 is the second. We have to pick the right one.
+            ("STM32H7(45|47|55|57).*:cm7", "NVIC1"),
+            ("STM32H7(45|47|55|57).*:cm4", "NVIC2"),
+            ("STM32WL5.*:cm4", "NVIC1"),
+            ("STM32WL5.*:cm0p", "NVIC2"),
+            // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
+            ("STM32(L5|U3|U5|H5[2367]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
+            // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
+            ("STM32H7[RS].*", "NVIC2"),
+            // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.
+            ("STM32N6.*", "NVIC2"),
+            // catch-all: Most chips have a single NVIC, named "NVIC"
+            (".*", "NVIC"),
+        ])
+    });
 
-    PICK_NVIC.must_get(&format!("{chip_name}:{core_name}")).to_string()
+    PICK_NVIC
+        .get(&format!("{chip_name}:{core_name}"))
+        .next()
+        .unwrap()
+        .to_string()
 }

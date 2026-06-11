@@ -136,7 +136,10 @@ fn main() -> anyhow::Result<()> {
 
     let mut stopwatch = Stopwatch::new();
 
+    let perimap = perimap::Perimap::new();
+    let stop_modes = low_power::ChipStopModes::new();
     let triggers = trigger::Triggers::new();
+    let chip_memories = memory::ChipMemories::new();
 
     stopwatch.section("Removing build directory");
 
@@ -161,7 +164,7 @@ fn main() -> anyhow::Result<()> {
     let docs = docs::Docs::parse()?;
 
     // stopwatch.section("Parsing DMA");
-    let mut dma_channels = dma::DmaChannels::parse()?;
+    let mut dma_channels = dma::DmaChannels::parse(&perimap)?;
 
     // stopwatch.section("Parsing GPIO AF");
     let mut af = gpio_af::Af::parse()?;
@@ -185,7 +188,10 @@ fn main() -> anyhow::Result<()> {
         chip_groups,
         headers,
         af,
+        perimap,
+        stop_modes,
         triggers,
+        chip_memories,
         registers.blocks,
         chip_interrupts,
         peripheral_to_clock,
