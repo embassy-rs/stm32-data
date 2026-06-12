@@ -53,7 +53,7 @@ impl ChipInterrupts {
 
         let mut files: Vec<_> = glob::glob("sources/cubedb/mcu/IP/NVIC*_Modes.xml")?
             .map(Result::unwrap)
-            .filter(|file| !file.to_string_lossy().contains("STM32MP1"))
+            // .filter(|file| !file.to_string_lossy().contains("STM32MP1"))
             .collect();
         files.sort();
 
@@ -350,7 +350,13 @@ impl ChipInterrupts {
                     // The silicon has a distinct CSI block; re-attribute the IRQ
                     // to its owning peripheral so embassy drivers can bind CSI::GLOBAL.
                     .map(|x| if x == "DCMIPP" && name == "CSI" { "CSI" } else { x })
-                    .map(|x| if x == "USB_DRD_FS" { "USB" } else { x })
+                    .map(|x| {
+                        if x == "USB_DRD_FS" || x.starts_with("USBH_HS") {
+                            "USB"
+                        } else {
+                            x
+                        }
+                    })
                     .map(|x| if x == "XPI1" { "XSPI1" } else { x })
                     .map(|x| if x == "XPI2" { "XSPI2" } else { x })
                     // GTZC_S and GTZC_NS are IP instance names for the GTZC controller in
@@ -717,32 +723,35 @@ impl InterruptSignals {
             ("FMPI2C", &["ER", "EV"]),
             ("TIM", &["ER", "BRK", "UP", "TRG", "COM", "CC", "DIR", "IDX"]),
             // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
-            ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU"]),
+            ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU", "TIMESTAMP"]),
             ("SUBGHZ", &["RADIO"]),
-            ("IPCC", &["C1_RX", "C1_TX", "C2_RX", "C2_TX"]),
+            (
+                "IPCC",
+                &["C1_RX", "C1_TX", "C2_RX", "C2_TX", "RX0", "TX0", "RX1", "TX1"],
+            ),
             (
                 "HRTIM",
                 &["MASTER", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF", "FLT"],
             ),
             ("COMP", &["WKUP", "ACQ"]),
-            ("RCC", &["RCC", "CRS"]),
+            ("RCC", &["RCC", "CRS", "WAKEUP"]),
             ("MDIOS", &["GLOBAL", "WKUP"]),
-            ("ETH", &["GLOBAL", "WKUP"]),
+            ("ETH", &["GLOBAL", "WKUP", "LPI"]),
             (
                 "DFSDM",
                 &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
             ),
             ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
-            ("PWR", &["S3WU", "WKUP", "PVD"]),
+            ("PWR", &["S3WU", "WKUP", "PVD", "AVD", "WAKEUP", "PIN"]),
             ("GTZC", &["GLOBAL", "ILA", "GTZC"]),
             ("GTZC_TZIC", &["GLOBAL", "ILA", "GTZC"]),
             ("GTZC_MPCBB", &["GLOBAL", "ILA", "GTZC"]),
             ("WWDG", &["GLOBAL", "RST"]),
             ("USB_OTG_FS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-            ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
+            ("USB_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP", "OTG"]),
             ("USB1_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
             ("USB2_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
-            ("USB", &["LP", "HP", "WKUP"]),
+            ("USB", &["LP", "HP", "WKUP", "USBH", "OHCI", "EHCI"]),
             ("GPU2D", &["ER"]),
             ("SAI", &["A", "B"]),
             ("ADF", &["FLT0"]),
