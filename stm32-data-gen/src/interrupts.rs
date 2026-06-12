@@ -350,7 +350,13 @@ impl ChipInterrupts {
                     // The silicon has a distinct CSI block; re-attribute the IRQ
                     // to its owning peripheral so embassy drivers can bind CSI::GLOBAL.
                     .map(|x| if x == "DCMIPP" && name == "CSI" { "CSI" } else { x })
-                    .map(|x| if x == "USB_DRD_FS" { "USB" } else { x })
+                    .map(|x| {
+                        if x == "USB_DRD_FS" || x.starts_with("USBH_HS") {
+                            "USB"
+                        } else {
+                            x
+                        }
+                    })
                     .map(|x| if x == "XPI1" { "XSPI1" } else { x })
                     .map(|x| if x == "XPI2" { "XSPI2" } else { x })
                     // GTZC_S and GTZC_NS are IP instance names for the GTZC controller in

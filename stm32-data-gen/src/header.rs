@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use anyhow::Context;
+use anyhow::{Context, anyhow};
 
 use crate::regex;
 
@@ -23,6 +23,19 @@ impl Headers {
                 (regex, h.clone())
             })
             .collect();
+
+        for v in map.0.values() {
+            if let Some(filter) = filter
+                && !v.starts_with(filter)
+            {
+                continue;
+            } else if parsed.0.get(v).is_none() {
+                return Err(anyhow!(
+                    "parsed headers do not contain {v}, specified in the header map",
+                ));
+            }
+        }
+
         Ok(Self { map, parsed, regexes })
     }
 
