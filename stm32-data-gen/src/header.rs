@@ -188,7 +188,16 @@ impl Defines {
     pub fn get_peri_addr(&self, pname: &str) -> Option<u32> {
         const ALT_PERI_DEFINES: &[(&str, &[&str])] = &[
             ("DBGMCU", &["DBGMCU_BASE", "DBG_BASE"]),
-            ("QUADSPI", &["QUADSPI_BASE", "QSPI_R", "QSPI_R_BASE", "QSPI_REG_BASE"]),
+            (
+                "QUADSPI",
+                &[
+                    "QUADSPI_R_BASE",
+                    "QUADSPI_BASE",
+                    "QSPI_R",
+                    "QSPI_R_BASE",
+                    "QSPI_REG_BASE",
+                ],
+            ),
             ("QUADSPI1", &["QUADSPI1_BASE", "QSPI_R", "QSPI_R_BASE", "QSPI_REG_BASE"]),
             (
                 "OCTOSPI",
