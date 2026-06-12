@@ -1149,7 +1149,7 @@ fn parse_package(
                         cores: family.processors.iter().map(|p| p.core.clone()).collect(),
                         ips: peripherals.clone(),
                         pins: HashMap::new(),
-                        family: family.family.clone(),
+                        family: family.family.trim_end_matches("Series").trim().to_string(),
                         line: subfamily.sub_family.clone(),
                         die: format!("DIE{}", characteristics.die_name),
                         gpio_af: Some(device.name.clone()),
