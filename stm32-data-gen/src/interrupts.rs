@@ -721,7 +721,7 @@ impl InterruptSignals {
             ("I2C", &["ER", "EV"]),
             ("I3C", &["ER", "EV", "WKUP"]),
             ("FMPI2C", &["ER", "EV"]),
-            ("TIM", &["BRK", "UP", "TRG", "COM", "CC"]),
+            ("TIM", &["ER", "BRK", "UP", "TRG", "COM", "CC", "DIR", "IDX"]),
             // ("HRTIM", &["Master", "TIMA", "TIMB", "TIMC", "TIMD", "TIME", "TIMF"]),
             ("RTC", &["ALARM", "WKUP", "TAMP", "STAMP", "SSRU", "TIMESTAMP"]),
             ("SUBGHZ", &["RADIO"]),
