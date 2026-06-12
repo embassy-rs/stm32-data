@@ -1,28 +1,25 @@
 use std::collections::HashMap;
 
 use anyhow::{Context, anyhow};
+use regex_map::RegexMap;
 
 use crate::regex;
 
 pub struct Headers {
     map: HeaderMap,
     parsed: HeadersParsed,
-    regexes: Vec<(regex::Regex, String)>,
+    regexes: RegexMap<String>,
 }
 
 impl Headers {
     pub fn parse(filter: &Option<String>) -> anyhow::Result<Self> {
         let map = HeaderMap::parse()?;
         let parsed = HeadersParsed::parse(filter)?;
-        let regexes = parsed
-            .0
-            .keys()
-            .map(|h| {
-                let pattern = h.replace('x', ".");
-                let regex = regex::Regex::new(&format!("^{pattern}$")).unwrap();
-                (regex, h.clone())
-            })
-            .collect();
+        let regexes = RegexMap::new(parsed.0.keys().map(|h| {
+            let pattern = h.replace('x', ".");
+
+            (format!("^{pattern}$"), h.clone())
+        }));
 
         for v in map.0.values() {
             if let Some(filter) = filter
@@ -50,10 +47,7 @@ impl Headers {
             Some(name) => Some(self.parsed.0.get(name).unwrap()),
             // if not, find it by regex, taking `x` meaning `anything`
             None => {
-                let mut results = self
-                    .regexes
-                    .iter()
-                    .filter_map(|(r, name)| if r.is_match(&model) { Some(name) } else { None });
+                let mut results = self.regexes.get(&model);
                 let res = results.next();
                 assert_eq!(results.next(), None, "found more than one match");
                 res.map(|name| self.parsed.0.get(name).unwrap())
