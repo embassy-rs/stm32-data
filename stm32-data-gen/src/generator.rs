@@ -612,6 +612,7 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
         "GTZC_MPCBB1",
         "GTZC_MPCBB2",
         "GTZC_MPCBB3",
+        "GTZC_MPCBB4",
         "GTZC_MPCBB6",
     ];
     for pname in GHOST_PERIS {

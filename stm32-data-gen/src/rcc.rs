@@ -300,7 +300,7 @@ impl ParsedRccs {
             ("DCMI", &["DCMI_PSSI", "PSSI"]),
             ("PSSI", &["DCMI_PSSI", "DCMI"]),
             ("FDCAN1", &["FDCAN12"]),
-            ("FDCAN2", &["FDCAN12"]),
+            ("FDCAN2", &["FDCAN12", "FDCAN1", "FDCAN"]),
             ("ADC", &["ADC1", "ADCDAC"]),
             ("ADC1", &["ADC12", "ADCDAC"]),
             ("ADC2", &["ADC12", "ADCDAC"]),
