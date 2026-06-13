@@ -35,6 +35,9 @@ git clone --depth 1 --branch stm32-data-$MERGE_BASE https://github.com/embassy-r
 DIFF_OK=$?
 set -e
 
+# move the sources directory out of the cache if it exists
+mv /ci/cache/sources ./sources || true
+
 # in the event that the CI has not yet generated this, we need to build it ourselves
 if [ $DIFF_OK -ne 0 ]; then
     echo "rebuilding merge base"
@@ -56,9 +59,6 @@ if [ $DIFF_OK -ne 0 ]; then
     # checkout saved commit
     git checkout $COMMIT
 fi
-
-# move the sources directory out of the cache if it exists
-mv /ci/cache/sources ./sources || true
 
 ./d ci
 ./d check
