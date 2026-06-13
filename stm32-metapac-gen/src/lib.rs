@@ -9,6 +9,7 @@ use std::sync::Mutex;
 use blake3::hash;
 use chiptool::generate::CommonModule;
 use chiptool::{generate, ir, transform};
+use lazy_regex::regex;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
 use regex::Regex;
@@ -32,7 +33,6 @@ struct Dedup {
 pub struct Gen {
     opts: Options,
     dedup: Mutex<Dedup>,
-    ir_regex: regex::Regex,
 }
 
 impl Gen {
@@ -45,7 +45,6 @@ impl Gen {
                 dma_channels: HashSet::new(),
                 pins: HashSet::new(),
             }),
-            ir_regex: Regex::new("\":ir_for:([a-z0-9]+):\"").unwrap(),
         }
     }
 
@@ -169,8 +168,7 @@ impl Gen {
                 mod_peripherals.contents
             );
 
-            let mut rendered_peripherals = self
-                .ir_regex
+            let mut rendered_peripherals = regex!("\":ir_for:([a-z0-9]+):\"")
                 .replace_all(&rendered_peripherals, "&$1::REGISTERS")
                 .to_string();
 
@@ -256,7 +254,7 @@ impl Gen {
         // ==============================
         // generate device.x
 
-        fs::write(chip_dir.join("device.x"), device_x.as_bytes()).unwrap();
+        fs::write(chip_dir.join("device.x"), &device_x).unwrap();
 
         peripheral_versions
     }
@@ -352,38 +350,14 @@ impl Gen {
                 transform::sort::Sort {}.run(&mut ir).unwrap();
                 transform::sanitize::Sanitize::default().run(&mut ir).unwrap();
 
-                let items = generate::render(&ir, &gen_opts()).unwrap();
-
-                {
-                    let mut file = String::new();
-
-                    // Allow a few warning
-                    write!(
-                        &mut file,
-                        "#![allow(clippy::missing_safety_doc)]
-                #![allow(clippy::identity_op)]
-                #![allow(clippy::unnecessary_cast)]
-                #![allow(clippy::erasing_op)]",
-                    )
-                    .unwrap();
-
-                    let data = items.to_string().replace("] ", "]\n");
-
-                    // Remove inner attributes like #![no_std]
-                    let re = Regex::new("# *! *\\[.*\\]").unwrap();
-                    let data = re.replace_all(&data, "");
-
-                    write!(&mut file, "{}", data).unwrap();
-
-                    fs::write(
-                        self.opts
-                            .out_dir
-                            .join("src/peripherals")
-                            .join(format!("{}_{}.rs", module, version)),
-                        &file,
-                    )
-                    .unwrap();
-                }
+                fs::write(
+                    self.opts
+                        .out_dir
+                        .join("src/peripherals")
+                        .join(format!("{}_{}.rs", module, version)),
+                    generate::render(&ir, &gen_opts()).unwrap().to_string(),
+                )
+                .unwrap();
 
                 {
                     let ir = crate::data::ir::IR::from_chiptool(ir);
@@ -480,7 +454,9 @@ fn stringify_module<T: Debug>(metadata: T, r#type: &str, root: &Path) -> Module 
 }
 
 fn gen_opts() -> generate::Options {
-    generate::Options::new().with_common_module(CommonModule::External("crate::common".parse().unwrap()))
+    generate::Options::new()
+        .with_common_module(CommonModule::External("crate::common".parse().unwrap()))
+        .with_skip_no_std(true)
 }
 
 fn gen_all_chips(chips: &[String]) -> String {

@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
+use lazy_regex::regex;
 use regex::Captures;
 
 use crate::normalize_peris::normalize_peri_name;
-use crate::regex;
 
 mod xml {
     use serde::Deserialize;

@@ -2,10 +2,10 @@ use std::collections::{HashMap, HashSet};
 
 use anyhow::{Ok, anyhow, bail};
 use chiptool::ir::IR;
+use lazy_regex::regex;
 use stm32_data_serde::chip::core::peripheral::rcc::{Field, StopMode};
 use stm32_data_serde::chip::core::peripheral::{self, rcc};
 
-use crate::regex;
 use crate::registers::Registers;
 
 #[derive(Debug)]

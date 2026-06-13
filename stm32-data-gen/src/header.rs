@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 
 use anyhow::{Context, anyhow};
+use lazy_regex::regex;
 use regex_map::RegexMap;
-
-use crate::regex;
 
 pub struct Headers {
     map: HeaderMap,

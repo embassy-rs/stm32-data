@@ -3,11 +3,11 @@ use std::sync::LazyLock;
 use std::thread;
 
 use anyhow::anyhow;
+use lazy_regex::regex;
 use log::*;
 
 use crate::chips::ChipGroup;
 use crate::normalize_peris::normalize_peri_name;
-use crate::regex;
 use crate::util::new_regex_map;
 
 mod xml {
