@@ -927,7 +927,8 @@ fn build_interrupts(f: &interrupts::File, exti_map: &HashMap<String, String>) ->
                 .iter()
                 .map(|p| exti_map.get(&p.name).unwrap_or(&p.name).clone());
 
-            irq.name.clone() + "_IRQn" + ":Y:" + &peripherals.join(",") + "::"
+            let t = if irq.name.starts_with("EXTI") { ":EXTI:" } else { ":Y:" };
+            irq.name.clone() + "_IRQn" + t + &peripherals.join(",") + "::"
         })
         .collect()
 }
