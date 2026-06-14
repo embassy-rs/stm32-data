@@ -3,6 +3,7 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 use std::sync::LazyLock;
 
 use gpio_af::pin_sort_key;
+use lazy_regex::regex;
 use log::warn;
 #[cfg(feature = "rayon")]
 use rayon::prelude::*;
