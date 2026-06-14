@@ -384,6 +384,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32WBA.*:EXTI:.*", ("exti", "l5", "EXTI")),
     ("STM32L5.*:EXTI:.*", ("exti", "l5", "EXTI")),
     ("STM32C0.*:EXTI:.*", ("exti", "c0", "EXTI")),
+    ("STM32C5.*:EXTI:.*", ("exti", "u5", "EXTI")),
     ("STM32G0.*:EXTI:.*", ("exti", "g0", "EXTI")),
     ("STM32H7(45|47|55|57).*:EXTI:.*", ("exti", "h7rm0399", "EXTI")),
     ("STM32H7.*:EXTI:.*", ("exti", "h7", "EXTI")),
