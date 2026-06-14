@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+use lazy_regex::regex;
+
 use super::*;
 use crate::util::new_regex_set;
 

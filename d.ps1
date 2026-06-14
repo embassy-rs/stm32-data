@@ -126,7 +126,7 @@ Switch ($CMD) {
         cd build/stm32-metapac
 
         ls -Recurse -Filter '*.rs' | Where-Object { $_.FullName -notmatch 'target' } | % { $_.FullName } | Resolve-Path -Relative `
-            | xargs rustfmt --skip-children --unstable-features --edition 2021
+            | xargs rustfmt --skip-children --unstable-features --edition 2024
     }
     default {
         echo "unknown command"

@@ -22,16 +22,6 @@ mod registers;
 mod trigger;
 mod util;
 
-#[macro_export]
-macro_rules! regex {
-    ($re:literal) => {{
-        ::ref_thread_local::ref_thread_local! {
-            static managed REGEX: ::regex::Regex = ::regex::Regex::new($re).unwrap();
-        }
-        <REGEX as ::ref_thread_local::RefThreadLocal<::regex::Regex>>::borrow(&REGEX)
-    }};
-}
-
 struct Stopwatch {
     start: std::time::Instant,
     section_start: Option<std::time::Instant>,

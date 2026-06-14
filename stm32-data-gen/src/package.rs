@@ -997,25 +997,21 @@ impl PackageDirectory {
 }
 
 struct DmaMap {
-    dma_files: Vec<HashMap<String, u8>>,
-    regex_map: regex_map::RegexMap<usize>,
+    map: regex_map::RegexMap<HashMap<String, u8>>,
 }
 
 impl DmaMap {
     pub fn new(map: &[(&str, &str)]) -> anyhow::Result<Self> {
-        let (keys, values): (Vec<_>, Vec<_>) = map.iter().map(|(k, v)| (*k, *v)).unzip();
-
         Ok(Self {
-            dma_files: values
-                .iter()
-                .map(|f| Ok(load_dma_mux(*f)?))
-                .collect::<anyhow::Result<_>>()?,
-            regex_map: new_regex_map(keys.iter().enumerate().map(|(k, v)| (*v, k))),
+            map: new_regex_map(
+                map.iter()
+                    .map(|(k, v)| (k, load_dma_mux(v).expect(&format!("failed to load: {v}")))),
+            ),
         })
     }
 
     pub fn get(&self, key: &str) -> Option<&HashMap<String, u8>> {
-        Some(&self.dma_files[*self.regex_map.get(key).next()?])
+        self.map.get(key).next()
     }
 }
 

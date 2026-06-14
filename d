@@ -68,7 +68,7 @@ case "$CMD" in
         cargo run --release --bin stm32-data-gen
         cargo run --release --bin stm32-metapac-gen
         cd build/stm32-metapac
-        find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2021
+        find . -name '*.rs' -not -path '*target*' | xargs rustfmt --skip-children --unstable-features --edition 2024
     ;;
     ci)
         ./d update-all
