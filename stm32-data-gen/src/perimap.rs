@@ -667,6 +667,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32H7.*:DMA.*", ("dma", "v1", "DMA")),
     (".*:DMA.*", ("bdma", "v1", "DMA")),
     (".*:CAN:bxcan1_v1_1.*", ("can", "bxcan", "CAN")),
+    ("STM32C5.*:FDCAN:.*", ("can", "fdcan_v1", "FDCAN")),
     ("STM32H7[RS].*FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
     ("STM32H7.*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v2", "FDCAN")),
     (".*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
