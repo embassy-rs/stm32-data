@@ -231,7 +231,16 @@ impl Defines {
             ("CAN", &["CAN_BASE", "CAN1_BASE"]),
             ("FMC", &["FMC_R_BASE", "FMC_R_BASE_NS"]),
             ("FSMC", &["FSMC_R_BASE"]),
-            ("USB", &["USB_BASE", "USB_DRD_BASE", "USB_BASE_NS", "USB_DRD_BASE_NS"]),
+            (
+                "USB",
+                &[
+                    "USB_BASE",
+                    "USB_DRD_BASE",
+                    "USB_DRD_FS_BASE",
+                    "USB_BASE_NS",
+                    "USB_DRD_BASE_NS",
+                ],
+            ),
             (
                 "USBRAM",
                 &["USB_PMAADDR", "USB_DRD_PMAADDR", "USB_PMAADDR_NS", "USB_DRD_PMAADDR_NS"],
