@@ -871,7 +871,7 @@ fn build_dma(f: &dma::File, dma_map: &DmaMap, chip_name: &str) -> ChipDma {
                 .entry(interconnect.instance.clone())
                 .or_default()
                 .push(peripheral::DmaChannel {
-                    signal: signal_id.clone(),
+                    signal: signal_id.to_uppercase(),
                     dma: Some(instance.name.clone()),
                     channel: None,
                     dmamux: None,
