@@ -12,7 +12,7 @@ use stm32_data_serde::chip::core::{DmaChannels, peripheral};
 use crate::chips::xml::PinSignal;
 use crate::chips::{Chip, ChipGroup, merge_pins, xml};
 use crate::dma::{ChipDma, load_dma_mux};
-use crate::gpio_af::{Af, clean_pin, pin_matches};
+use crate::gpio_af::{self, Af, clean_pin, pin_matches};
 use crate::interrupts::ChipInterrupts;
 use crate::package::schema::pinout::Characteristics;
 use crate::package::schema::{dma, exti, interrupts, peripherals, pinout};
@@ -819,12 +819,15 @@ fn build_pins(f: &pinout::File) -> BuildPins {
             None
         };
 
+        let Some((_, short_signal_name)) = gpio_af::parse_signal_name(&signal.name) else {
+            continue;
+        };
         gpio_af
             .entry(signal.instance.clone())
             .or_default()
             .push(stm32_data_serde::chip::core::peripheral::Pin {
                 pin: signal.die_pad.clone(),
-                signal: signal.name.to_string(),
+                signal: short_signal_name.to_string(),
                 af: af,
             });
     }
