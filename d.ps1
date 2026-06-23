@@ -3,10 +3,82 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$CMD,
 
-    [string]$peri
+    [string]$peri,
+    [string]$logLevel
 )
 
 $REV = ((Select-String -Path ".\d" -Pattern "^REV=") -split "=")[1]
+
+function xargs {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline)]
+        [string] $InputObject,
+
+        [int] $MaxArgs = [int]::MaxValue,
+        [int] $MaxLength = 30000,
+        [switch] $NullDelimited,
+
+        # All unnamed args: first is command, rest are prefix args
+        [Parameter(Position=0, ValueFromRemainingArguments)]
+        [string[]] $CommandAndPrefix
+    )
+
+    begin {
+        if ($CommandAndPrefix.Count -lt 1) {
+            throw "xargs requires at least a command name."
+        }
+
+        $Command    = $CommandAndPrefix[0]
+        $PrefixArgs = $CommandAndPrefix[1..($CommandAndPrefix.Count - 1)]
+
+        $batch  = @()
+        $buffer = ""
+    }
+
+    process {
+        if ($NullDelimited) {
+            $buffer += $InputObject
+            $parts   = $buffer -split "`0"
+            $buffer  = $parts[-1]
+            $args    = $parts[0..($parts.Count - 2)]
+        } else {
+            $args = @($InputObject)
+        }
+
+        foreach ($arg in $args) {
+            $testBatch = $batch + $arg
+
+            $cmdLine = $Command + " " +
+                       ($PrefixArgs -join " ") + " " +
+                       ($testBatch -join " ")
+
+            $tooLong = $cmdLine.Length -ge $MaxLength
+            $tooMany = $testBatch.Count -gt $MaxArgs
+
+            if ($tooLong -or $tooMany) {
+                if ($batch.Count -gt 0) {
+                    & $Command @PrefixArgs @batch
+                }
+                $batch = @($arg)
+            } else {
+                $batch += $arg
+            }
+        }
+    }
+
+    end {
+        if ($NullDelimited -and $buffer.Length -gt 0) {
+            $batch += $buffer
+        }
+
+        if ($batch.Count -gt 0) {
+            & $Command @PrefixArgs @batch
+        }
+    }
+}
+
+
 
 Switch ($CMD) {
     "download-all" {
@@ -31,40 +103,30 @@ Switch ($CMD) {
         cargo install --git https://github.com/embassy-rs/chiptool
     }
     "extract-all" {
-        rm -r -Force tmp/$peri -ErrorAction SilentlyContinue
-        mkdir tmp/$peri | Out-Null
-
-        ls sources/svd | foreach-object {
-            $f = $_.Name.TrimStart("stm32").TrimEnd(".svd")
-            echo $f
-
-            echo "processing $f ..."
-            chiptool extract-peripheral --svd "sources/svd/stm32$f.svd" --peripheral "$peri" | Out-File -FilePath "tmp/$peri/$f.yaml" -Encoding ASCII 2> "tmp/$peri/$f.err"
-            if ($LASTEXITCODE -eq 0) {
-                rm "tmp/$peri/$f.err"
-                echo OK
-            }
-            else {
-                rm "tmp/$peri/$f.yaml"
-                echo FAIL
-            }
-
-        }
+        cargo run --release --bin extract-all $peri
+    }
+    "merge-regs" {
+        cargo run --release --bin merge-regs tmp/$peri
+    }
+   "transform" {
+        chiptool transform --input regs_merged.yaml --output regs_merged.yaml --transform transforms/$peri.yaml
     }
     "gen" {
-        rm -r -Force build/data -ErrorAction SilentlyContinue
-        cargo run --release --bin stm32-data-gen
+        if ($peri -ne "" -and $logLevel -ne "") {
+            cargo run --release --bin stm32-data-gen -- --filter $peri --log-level $logLevel
+        } elseif ($peri -ne "") {
+            cargo run --release --bin stm32-data-gen -- --filter $peri
+        } else {
+            cargo run --release --bin stm32-data-gen
+        }
     }
     "gen-all" {
-        rm -r -Force build/data -ErrorAction SilentlyContinue
-        rm -r -Force build/stm32-metapac -ErrorAction SilentlyContinue
         cargo run --release --bin stm32-data-gen 
         cargo run --release --bin stm32-metapac-gen
         cd build/stm32-metapac
 
-        $files = ls -Recurse -Filter '*.rs' | Where-Object { $_.FullName -notmatch 'target' } | % { $_.FullName } | Resolve-Path -Relative
-        $counter = [pscustomobject] @{ Value = 0 }
-        $files | Group-Object -Property { [math]::Floor($counter.Value++ / 200 ) } | % { rustfmt --skip-children --unstable-features --edition 2021 $_.Group }
+        ls -Recurse -Filter '*.rs' | Where-Object { $_.FullName -notmatch 'target' } | % { $_.FullName } | Resolve-Path -Relative `
+            | xargs rustfmt --skip-children --unstable-features --edition 2024
     }
     default {
         echo "unknown command"

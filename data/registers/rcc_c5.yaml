@@ -1,18 +1,18 @@
 block/RCC:
   description: RCC register block
   items:
-  - name: CR1
+  - name: CR
     description: RCC clock control register
     byte_offset: 0
-    fieldset: CR1
+    fieldset: CR
   - name: CR2
     description: RCC clock control register
     byte_offset: 4
     fieldset: CR2
-  - name: CFGR1
+  - name: CFGR
     description: RCC clock configuration register1
     byte_offset: 28
-    fieldset: CFGR1
+    fieldset: CFGR
   - name: CFGR2
     description: RCC CPU domain clock configuration register 2
     byte_offset: 32
@@ -1054,16 +1054,16 @@ fieldset/CCIPR2:
     bit_offset: 16
     bit_size: 2
     enum: LPTIMSEL
-  - name: CK48SEL
+  - name: CLK48SEL
     description: CK48 clock source selection
     bit_offset: 24
     bit_size: 2
-    enum: CKSEL
-  - name: SYSTICKSEL
+    enum: CLKSEL
+  - name: SYSTICLKSEL
     description: SYSTICK clock source selection
     bit_offset: 30
     bit_size: 2
-    enum: SYSTICKSEL
+    enum: SYSTICLKSEL
 fieldset/CCIPR3:
   description: RCC kernel clock configuration register
   fields:
@@ -1097,7 +1097,7 @@ fieldset/CCIPR3:
     bit_offset: 28
     bit_size: 4
     enum: ETHPTPDIV
-fieldset/CFGR1:
+fieldset/CFGR:
   description: RCC clock configuration register1
   fields:
   - name: SW
@@ -1109,7 +1109,7 @@ fieldset/CFGR1:
     description: System clock switch status
     bit_offset: 3
     bit_size: 2
-    enum: SWS
+    enum: SW
   - name: STOPWUCK
     description: System clock selection after a wake-up from system Stop mode
     bit_offset: 6
@@ -1197,8 +1197,8 @@ fieldset/CICR:
     description: LSE ready interrupt clear
     bit_offset: 1
     bit_size: 1
-  - name: HSISRDYC
-    description: HSIS ready interrupt clear
+  - name: HSIRDYC
+    description: HSI ready interrupt clear
     bit_offset: 2
     bit_size: 1
   - name: HSIDIV3RDYC
@@ -1209,8 +1209,8 @@ fieldset/CICR:
     description: HSIK ready interrupt clear
     bit_offset: 4
     bit_size: 1
-  - name: PSISRDYC
-    description: PSIS ready interrupt clear
+  - name: PSIRDYC
+    description: PSI ready interrupt clear
     bit_offset: 5
     bit_size: 1
   - name: PSIDIV3RDYC
@@ -1244,8 +1244,8 @@ fieldset/CIER:
     description: LSE ready interrupt enable
     bit_offset: 1
     bit_size: 1
-  - name: HSISRDYIE
-    description: HSIS ready interrupt enable
+  - name: HSIRDYIE
+    description: HSI ready interrupt enable
     bit_offset: 2
     bit_size: 1
   - name: HSIDIV3RDYIE
@@ -1256,8 +1256,8 @@ fieldset/CIER:
     description: HSIK ready interrupt enable
     bit_offset: 4
     bit_size: 1
-  - name: PSISRDYIE
-    description: PSIS ready interrupt enable
+  - name: PSIRDYIE
+    description: PSI ready interrupt enable
     bit_offset: 5
     bit_size: 1
   - name: PSIDIV3RDYIE
@@ -1283,8 +1283,8 @@ fieldset/CIFR:
     description: LSE ready interrupt flag
     bit_offset: 1
     bit_size: 1
-  - name: HSISRDYF
-    description: HSIS ready interrupt flag
+  - name: HSIRDYF
+    description: HSI ready interrupt flag
     bit_offset: 2
     bit_size: 1
   - name: HSIDIV3RDYF
@@ -1295,8 +1295,8 @@ fieldset/CIFR:
     description: HSIK ready interrupt flag
     bit_offset: 4
     bit_size: 1
-  - name: PSISRDYF
-    description: PSIS ready interrupt flag
+  - name: PSIRDYF
+    description: PSI ready interrupt flag
     bit_offset: 5
     bit_size: 1
   - name: PSIDIV3RDYF
@@ -1315,11 +1315,11 @@ fieldset/CIFR:
     description: HSE clock security system interrupt flag
     bit_offset: 10
     bit_size: 1
-fieldset/CR1:
+fieldset/CR:
   description: RCC clock control register
   fields:
-  - name: HSISON
-    description: HSIS clock enable
+  - name: HSION
+    description: HSI clock enable
     bit_offset: 0
     bit_size: 1
   - name: HSIDIV3ON
@@ -1334,8 +1334,8 @@ fieldset/CR1:
     description: HSI clock enable in Stop mode
     bit_offset: 3
     bit_size: 1
-  - name: HSISRDY
-    description: HSIS clock ready flag
+  - name: HSIRDY
+    description: HSI clock ready flag
     bit_offset: 4
     bit_size: 1
   - name: HSIDIV3RDY
@@ -1346,8 +1346,8 @@ fieldset/CR1:
     description: HSIK clock ready flag
     bit_offset: 6
     bit_size: 1
-  - name: PSISON
-    description: PSIS clock enable
+  - name: PSION
+    description: PSI clock enable
     bit_offset: 8
     bit_size: 1
   - name: PSIDIV3ON
@@ -1362,8 +1362,8 @@ fieldset/CR1:
     description: PSI clock enable in Stop mode
     bit_offset: 11
     bit_size: 1
-  - name: PSISRDY
-    description: PSIS clock ready flag
+  - name: PSIRDY
+    description: PSI clock ready flag
     bit_offset: 12
     bit_size: 1
   - name: PSIDIV3RDY
@@ -1557,8 +1557,8 @@ enum/ADCDACSEL:
   - name: HCLK1
     description: rcc_hclk selected as kernel clock
     value: 0
-  - name: PSIS
-    description: psis_ck selected as kernel clock (default after reset)
+  - name: PSI
+    description: psi_ck selected as kernel clock (default after reset)
     value: 1
   - name: PSIK
     description: psik_ck selected as kernel clock
@@ -1566,7 +1566,7 @@ enum/ADCDACSEL:
   - name: HSIK
     description: hsik_ck selected as kernel clock
     value: 3
-enum/CKSEL:
+enum/CLKSEL:
   bit_size: 2
   variants:
   - name: PSI_DIV_3
@@ -1602,8 +1602,8 @@ enum/ETHCLKDIV:
 enum/ETHCLKSEL:
   bit_size: 2
   variants:
-  - name: PSIS
-    description: psis_ck selected as kernel clock
+  - name: PSI
+    description: psi_ck selected as kernel clock
     value: 1
   - name: PSIK
     description: psik_ck selected as kernel clock
@@ -1617,8 +1617,8 @@ enum/ETHPTPCLKSEL:
   - name: HCLK1
     description: rcc_hclk1 selected as kernel clock
     value: 1
-  - name: PSIS
-    description: psis_ck selected as kernel clock
+  - name: PSI
+    description: psi_ck selected as kernel clock
     value: 2
   - name: PSIK
     description: psik_ck selected as kernel clock
@@ -1689,8 +1689,8 @@ enum/FDCANSEL:
   - name: PCLK1
     description: rcc_pclk1 selected as kernel clock (default after reset)
     value: 0
-  - name: PSIS
-    description: psis_ck selected as kernel clock
+  - name: PSI
+    description: psi_ck selected as kernel clock
     value: 1
   - name: PSIK
     description: psik_ck selected as kernel clock
@@ -1701,6 +1701,9 @@ enum/FDCANSEL:
 enum/HPRE:
   bit_size: 4
   variants:
+  - name: Div1
+    description: rcc_hclk = sys_ck
+    value: 0
   - name: Div2
     description: rcc_hclk = sys_ck / 2
     value: 8
@@ -1860,7 +1863,7 @@ enum/LSEEXT:
 enum/MCOPRE:
   bit_size: 4
   variants:
-  - name: PrescalerDisabled
+  - name: Disabled
     description: Prescaler disabled (default after reset)
     value: 0
   - name: Div1
@@ -1929,26 +1932,29 @@ enum/MCOSEL:
   - name: HSIK
     description: HSIK clock selected (hsik_ck)
     value: 5
-  - name: PSIS
-    description: PSIS clock selected (psis_ck)
+  - name: PSI
+    description: PSI clock selected (psi_ck)
     value: 6
-  - name: HSIS
-    description: HSIS clock selected (hsis_ck)
+  - name: HSI
+    description: HSI clock selected (hsi_ck)
     value: 7
 enum/PPRE:
   bit_size: 3
   variants:
+  - name: Div1
+    description: rcc_pclk = rcc_hclk1
+    value: 0
   - name: Div2
-    description: rcc_pclk1 = rcc_hclk1 / 2
+    description: rcc_pclk = rcc_hclk1 / 2
     value: 4
   - name: Div4
-    description: rcc_pclk1 = rcc_hclk1 / 4
+    description: rcc_pclk = rcc_hclk1 / 4
     value: 5
   - name: Div8
-    description: rcc_pclk1 = rcc_hclk1 / 8
+    description: rcc_pclk = rcc_hclk1 / 8
     value: 6
   - name: Div16
-    description: rcc_pclk1 = rcc_hclk1 / 16
+    description: rcc_pclk = rcc_hclk1 / 16
     value: 7
 enum/PSIFREQ:
   bit_size: 2
@@ -2085,8 +2091,8 @@ enum/STOPWUCK:
   - name: HSIDIV3
     description: HSIDIV3 selected as wake-up clock from system Stop mode (default after reset)
     value: 0
-  - name: HSIS
-    description: HSIS selected as wake-up clock from system Stop mode
+  - name: HSI
+    description: HSI selected as wake-up clock from system Stop mode
     value: 1
 enum/SW:
   bit_size: 2
@@ -2094,31 +2100,16 @@ enum/SW:
   - name: HSIDIV3
     description: HSIDIV3 selected as system clock (hsidiv3_ck) (default after reset)
     value: 0
-  - name: HSIS
-    description: HSIS selected as system clock (hsis_ck)
+  - name: HSI
+    description: HSI selected as system clock (hsi_ck)
     value: 1
   - name: HSE
     description: HSE selected as system clock (hse_ck)
     value: 2
-  - name: PSIS
-    description: PSIS selected as system clock (psis_ck)
+  - name: PSI
+    description: PSI selected as system clock (psi_ck)
     value: 3
-enum/SWS:
-  bit_size: 2
-  variants:
-  - name: HSIDIV3
-    description: HSIDIV3 used as system clock (hsidiv3_ck) (default after reset)
-    value: 0
-  - name: HSIS
-    description: HSIS used as system clock (hsis_ck)
-    value: 1
-  - name: HSE
-    description: HSE used as system clock (hse_ck)
-    value: 2
-  - name: PSIS
-    description: PSIS used as system clock (psis_ck)
-    value: 3
-enum/SYSTICKSEL:
+enum/SYSTICLKSEL:
   bit_size: 2
   variants:
   - name: HCLK_DIV_8

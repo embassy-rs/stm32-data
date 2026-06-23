@@ -1,0 +1,415 @@
+block/PWR:
+  description: PWR register block.
+  items:
+  - name: PMCR
+    description: PWR power mode control register.
+    byte_offset: 0
+    fieldset: PMCR
+  - name: PMSR
+    description: PWR status register.
+    byte_offset: 4
+    access: Read
+    fieldset: PMSR
+  - name: RTCCR
+    description: PWR RTC domain control register.
+    byte_offset: 36
+    fieldset: RTCCR
+  - name: VMCR
+    description: PWR voltage monitor control register.
+    byte_offset: 52
+    fieldset: VMCR
+  - name: VMSR
+    description: PWR voltage monitor status register.
+    byte_offset: 60
+    access: Read
+    fieldset: VMSR
+  - name: WUSCR
+    description: PWR wake-up status clear register.
+    byte_offset: 64
+    access: Write
+    fieldset: WUSCR
+  - name: WUSR
+    description: PWR wake-up status register.
+    byte_offset: 68
+    access: Read
+    fieldset: WUSR
+  - name: WUCR
+    description: PWR wake-up configuration register.
+    byte_offset: 72
+    fieldset: WUCR
+  - name: IORETR
+    description: PWR I/O retention register.
+    byte_offset: 80
+    fieldset: IORETR
+  - name: PRIVCFGR
+    description: PWR privilege configuration register.
+    byte_offset: 260
+    fieldset: PRIVCFGR
+fieldset/IORETR:
+  description: PWR I/O retention register.
+  fields:
+  - name: IORETEN
+    description: IO retention enable.
+    bit_offset: 0
+    bit_size: 1
+    enum: RETEN
+  - name: JTAGIORETEN
+    description: IO retention enable for JTAG I/Os.
+    bit_offset: 16
+    bit_size: 1
+    enum: RETEN
+fieldset/PMCR:
+  description: PWR power mode control register.
+  fields:
+  - name: LPMS
+    description: low-power mode selection.
+    bit_offset: 0
+    bit_size: 2
+    enum: LPMS
+  - name: CSSF
+    description: Clear Standby and Stop flags (always read as 0).
+    bit_offset: 7
+    bit_size: 1
+    enum: CSSF
+  - name: FLPS
+    description: Flash memory low-power mode in Stop mode.
+    bit_offset: 9
+    bit_size: 1
+    enum: FLPS
+  - name: SRAM2_3_SO
+    description: AHB SRAM2 block 3 shut-off in Stop mode.
+    bit_offset: 23
+    bit_size: 1
+    enum: SRAM_SO
+  - name: SRAM2_1_SO
+    description: AHB SRAM2 block 1 shut-off in Stop mode.
+    bit_offset: 24
+    bit_size: 1
+    enum: SRAM_SO
+  - name: SRAM2_LSO
+    description: AHB SRAM2 16-Kbyte shut-off in Stop mode (lower address).
+    bit_offset: 24
+    bit_size: 1
+    enum: SRAM_SO
+  - name: SRAM2_2_SO
+    description: AHB SRAM2 block 2 shut-off in Stop mode.
+    bit_offset: 25
+    bit_size: 1
+    enum: SRAM_SO
+  - name: SRAM2_HSO
+    description: AHB SRAM2 48-Kbyte shut-off in Stop mode (higher address).
+    bit_offset: 25
+    bit_size: 1
+    enum: SRAM_SO
+  - name: SRAM1SO
+    description: AHB SRAM1 block 1shut-off in Stop mode.
+    bit_offset: 26
+    bit_size: 1
+    enum: SRAM_SO
+fieldset/PMSR:
+  description: PWR status register.
+  fields:
+  - name: STOPF
+    description: Stop flag.
+    bit_offset: 5
+    bit_size: 1
+  - name: SBF
+    description: System standby flag.
+    bit_offset: 6
+    bit_size: 1
+fieldset/PRIVCFGR:
+  description: PWR privilege configuration register.
+  fields:
+  - name: PRIV
+    description: PWR nonsecure functions privilege configuration.
+    bit_offset: 1
+    bit_size: 1
+fieldset/RTCCR:
+  description: PWR RTC domain control register.
+  fields:
+  - name: DRTCP
+    description: Disable RTC domain write protection.
+    bit_offset: 0
+    bit_size: 1
+fieldset/VMCR:
+  description: PWR voltage monitor control register.
+  fields:
+  - name: PVDE
+    description: PVD enable.
+    bit_offset: 0
+    bit_size: 1
+fieldset/VMSR:
+  description: PWR voltage monitor status register.
+  fields:
+  - name: PVDO
+    description: programmable voltage detect output.
+    bit_offset: 22
+    bit_size: 1
+    enum: PVDO
+fieldset/WUCR:
+  description: PWR wake-up configuration register.
+  fields:
+  - name: WUPEN1
+    description: Enable wake-up pin WKUPx (x=5to1).
+    bit_offset: 0
+    bit_size: 1
+    enum: WUPEN
+  - name: WUPEN2
+    description: Enable wake-up pin WKUPx (x=5to1).
+    bit_offset: 1
+    bit_size: 1
+    enum: WUPEN
+  - name: WUPEN3
+    description: Enable wake-up pin WKUPx (x=7to1).
+    bit_offset: 2
+    bit_size: 1
+    enum: WUPEN
+  - name: WUPEN4
+    description: Enable wake-up pin WKUPx (x=5to1).
+    bit_offset: 3
+    bit_size: 1
+    enum: WUPEN
+  - name: WUPEN5
+    description: Enable wake-up pin WKUPx (x=5to1).
+    bit_offset: 4
+    bit_size: 1
+    enum: WUPEN
+  - name: WUPEN6
+    description: Enable wake-up pin WKUPx (x=7to1).
+    bit_offset: 5
+    bit_size: 1
+    enum: WUPEN
+  - name: WUPEN7
+    description: Enable wake-up pin WKUPx (x=7to1).
+    bit_offset: 6
+    bit_size: 1
+    enum: WUPEN
+  - name: WUPP1
+    description: Wake-up pin polarity bit for WKUPx (x=5to1).
+    bit_offset: 8
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP2
+    description: Wake-up pin polarity bit for WKUPx (x=5to1).
+    bit_offset: 9
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP3
+    description: Wake-up pin polarity bit for WKUPx (x=7to1).
+    bit_offset: 10
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP4
+    description: Wake-up pin polarity bit for WKUPx (x=5to1).
+    bit_offset: 11
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP5
+    description: Wake-up pin polarity bit for WKUPx (x=5to1).
+    bit_offset: 12
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP6
+    description: Wake-up pin polarity bit for WKUPx (x=7to1).
+    bit_offset: 13
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP7
+    description: Wake-up pin polarity bit for WKUPx (x=7to1).
+    bit_offset: 14
+    bit_size: 1
+    enum: WUPP
+  - name: WUPPUPD1
+    description: Wake-up pin pull configuration for WKUPx (x=5to1).
+    bit_offset: 16
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD2
+    description: Wake-up pin pull configuration for WKUPx (x=5to1).
+    bit_offset: 18
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD3
+    description: Wake-up pin pull configuration for WKUPx (x=7to1).
+    bit_offset: 20
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD4
+    description: Wake-up pin pull configuration for WKUPx (x=5to1).
+    bit_offset: 22
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD5
+    description: Wake-up pin pull configuration for WKUPx (x=5to1).
+    bit_offset: 24
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD6
+    description: Wake-up pin pull configuration for WKUPx (x=7to1).
+    bit_offset: 26
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD7
+    description: Wake-up pin pull configuration for WKUPx (x=7to1).
+    bit_offset: 28
+    bit_size: 2
+    enum: WUPPUPD
+fieldset/WUSCR:
+  description: PWR wake-up status clear register.
+  fields:
+  - name: CWUF1
+    description: clear wake-up pin flag for WUFx (x=5 to 1).
+    bit_offset: 0
+    bit_size: 1
+    enum: CWUF
+  - name: CWUF2
+    description: clear wake-up pin flag for WUFx (x=5 to 1).
+    bit_offset: 1
+    bit_size: 1
+    enum: CWUF
+  - name: CWUF3
+    description: clear wake-up pin flag for WUFx (x=7 to 1).
+    bit_offset: 2
+    bit_size: 1
+    enum: CWUF
+  - name: CWUF4
+    description: clear wake-up pin flag for WUFx (x=5 to 1).
+    bit_offset: 3
+    bit_size: 1
+    enum: CWUF
+  - name: CWUF5
+    description: clear wake-up pin flag for WUFx (x=5 to 1).
+    bit_offset: 4
+    bit_size: 1
+    enum: CWUF
+  - name: CWUF6
+    description: clear wake-up pin flag for WUFx (x=7 to 1).
+    bit_offset: 5
+    bit_size: 1
+    enum: CWUF
+  - name: CWUF7
+    description: clear wake-up pin flag for WUFx (x=7 to 1).
+    bit_offset: 6
+    bit_size: 1
+    enum: CWUF
+fieldset/WUSR:
+  description: PWR wake-up status register.
+  fields:
+  - name: WUF1
+    description: wake-up pin WUFx flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: WUF2
+    description: wake-up pin WUFx flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: WUF3
+    description: wake-up pin WUFx flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: WUF4
+    description: wake-up pin WUFx flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: WUF5
+    description: wake-up pin WUFx flag.
+    bit_offset: 4
+    bit_size: 1
+  - name: WUF6
+    description: wake-up pin WUFx flag.
+    bit_offset: 5
+    bit_size: 1
+  - name: WUF7
+    description: wake-up pin WUFx flag.
+    bit_offset: 6
+    bit_size: 1
+enum/CSSF:
+  bit_size: 1
+  variants:
+  - name: CLEAR
+    description: STOPF and SBF flags cleared.
+    value: 1
+enum/CWUF:
+  bit_size: 1
+  variants:
+  - name: CLEAR
+    description: Writing 1 clears the WUFx wake-up pin flag (bit is cleared to 0 by hardware).
+    value: 1
+enum/FLPS:
+  bit_size: 1
+  variants:
+  - name: NORMAL
+    description: Flash memory remains in normal mode when the system enters Stop mode (quickrestart time).
+    value: 0
+  - name: STOP
+    description: Flash memory enters low-power mode when the system enters Stop mode(low-power consumption).
+    value: 1
+enum/LPMS:
+  bit_size: 2
+  variants:
+  - name: STOP0
+    description: Stop 0 mode when entering DeepSleep.
+    value: 0
+  - name: STOP1
+    description: Stop 1mode when entering DeepSleep..
+    value: 1
+  - name: STANDBY
+    description: Standby mode when entering DeepSleep.
+    value: 2
+enum/PVDO:
+  bit_size: 1
+  variants:
+  - name: ABOVE
+    description: Vless thansub>DDless than/sub> is equal or higher than the PVD threshold.
+    value: 0
+  - name: BELOW
+    description: Vless thansub>DDless than/sub> is lower than the PVD threshold.
+    value: 1
+enum/RETEN:
+  bit_size: 1
+  variants:
+  - name: DISABLED
+    description: I/O retention mode is disabled.
+    value: 0
+  - name: RETAINED
+    description: I/O retention mode is enabling for all I/Os except the I/O support the standby functionality and PA13, PA14, PA15, and PB4.
+    value: 1
+enum/SRAM_SO:
+  bit_size: 1
+  variants:
+  - name: RETAINED
+    description: RAM content is kept in Stop mode.
+    value: 0
+  - name: DISABLED
+    description: RAM content is lost in Stop mode.
+    value: 1
+enum/WUPEN:
+  bit_size: 1
+  variants:
+  - name: ENABLED
+    description: An event on WUPx pin does not wake-up the system from Standby mode.
+    value: 0
+  - name: DISABLED
+    description: A rising or falling edge on WUPx pin wakes up the system from Standby mode.
+    value: 1
+enum/WUPP:
+  bit_size: 1
+  variants:
+  - name: RISING
+    description: Detection on high level (rising edge).
+    value: 0
+  - name: FALLING
+    description: Detection on low level (falling edge).
+    value: 1
+enum/WUPPUPD:
+  bit_size: 2
+  variants:
+  - name: DISABLED
+    description: No pull-up.
+    value: 0
+  - name: PULL_UP
+    description: Pull-up.
+    value: 1
+  - name: PULL_DOWN
+    description: Pull-down.
+    value: 2

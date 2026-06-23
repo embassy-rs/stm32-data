@@ -1,6 +1,6 @@
-use crate::util::RegexMap;
+use crate::util::new_regex_map;
 
-pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
+const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     // GTZC - TrustZone Security Controller
     ("STM32H503.*:GTZC:.*", ("gtzc", "h503", "GTZC1")),
     ("STM32H5[2367].*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
@@ -11,6 +11,10 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32U5.*:GTZC_TZIC:.*", ("gtzc", "v1", "TZIC")),
     ("STM32U5.*:GTZC_MPCBB.*:.*", ("gtzc", "v1", "MPCBB")),
     ("STM32U5.*:GTZC_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32U3.*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
+    ("STM32U3.*:GTZC_TZIC:.*", ("gtzc", "v1", "TZIC")),
+    ("STM32U3.*:GTZC_MPCBB.*:.*", ("gtzc", "v1", "MPCBB")),
+    ("STM32U3.*:GTZC_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
     ("STM32WBA.*:GTZC:.*", ("gtzc", "wba", "GTZC_TZSC")),
     ("STM32WBA.*:GTZC_TZSC:.*", ("gtzc", "wba", "GTZC_TZSC")),
     ("STM32WBA.*:GTZC_TZIC:.*", ("gtzc", "wba", "TZIC")),
@@ -60,18 +64,22 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:USART:sci3_v2_0", ("usart", "v4", "USART")),
     (".*:USART:sci3_v2_1", ("usart", "v4", "USART")),
     (".*:USART:sci3_v3_0", ("usart", "v4", "USART")),
+    ("STM32C5.*:USART:.*", ("usart", "v4", "USART")),
     (".*:UART:sci2_v1_1", ("usart", "v1", "USART")),
     (".*:UART:sci2_v1_2_F4", ("usart", "v2", "USART")),
     (".*:UART:sci2_v2_1", ("usart", "v3", "USART")),
     (".*:UART:sci2_v3_0", ("usart", "v4", "USART")),
     (".*:UART:sci2_v3_1", ("usart", "v4", "USART")),
     (".*:UART:sci2_v3_3", ("usart", "v4", "USART")),
+    ("STM32C5.*:UART:.*", ("usart", "v4", "USART")),
     (".*:LPUART:sci3_v1_1", ("usart", "v3", "LPUART")),
     (".*:LPUART:sci3_v1_2", ("usart", "v4", "LPUART")),
     (".*:LPUART:sci3_v1_3", ("usart", "v4", "LPUART")),
     (".*:LPUART:sci3_v1_4", ("usart", "v4", "LPUART")),
     (".*:LPUART:sci3_v3_3", ("usart", "v4", "LPUART")),
+    ("STM32C5.*:LPUART:.*", ("usart", "v4", "LPUART")),
     ("STM32[HU]5.*:RNG:.*", ("rng", "v3", "RNG")),
+    ("STM32U3.*:RNG:.*", ("rng", "v3", "RNG")),
     ("STM32WBA5.*:RNG:.*", ("rng", "v3", "RNG")),
     ("STM32WBA6.*:RNG:.*", ("rng", "wba6", "RNG")),
     ("STM32U0.*:RNG:.*", ("rng", "v3", "RNG")),
@@ -105,9 +113,11 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32WL5.*:AES:.*", ("aes", "v2", "AES")),
     ("STM32WLE.*:AES:.*", ("aes", "v2", "AES")),
     ("STM32U5.*:AES:.*", ("aes", "v3a", "AES")),
+    ("STM32U3.*:AES:.*", ("aes", "v3a", "AES")),
     ("STM32(H5|WBA).*:AES:.*", ("aes", "v3b", "AES")),
     ("STM32(H5|WBA).*:SAES:.*", ("saes", "v1a", "SAES")),
     ("STM32U5.*:SAES:.*", ("saes", "v1b", "SAES")),
+    ("STM32U3.*:SAES:.*", ("saes", "v1b", "SAES")),
     ("STM32F10[57].*:SPI:.*", ("spi", "v1_i2s", "SPI")),
     ("STM32F10[13].[CDEFG].*:SPI:.*", ("spi", "v1_i2s", "SPI")),
     ("STM32F1.*:SPI:.*", ("spi", "v1", "SPI")),
@@ -148,6 +158,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:I2C:F0-i2c2_v1_1", ("i2c", "v2", "I2C")),
     (".*:I2C:i2c2_v1_1F7", ("i2c", "v2", "I2C")),
     (".*:I2C:i2c2_v1_1U5", ("i2c", "v2", "I2C")),
+    (".*:I2C:i2c2_v1_1U3", ("i2c", "v2", "I2C")),
     (".*:I2C:i2c1_v1_0H7RS", ("i2c", "v3", "I2C")),
     (".*:I2C:i2c1_v1_0N6", ("i2c", "v3", "I2C")),
     (".*:FMPI2C:i2c2_v1_1", ("fmpi2c", "v2", "FMPI2C")),
@@ -221,6 +232,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:DCMI:.*", ("dcmi", "v1", "DCMI")),
     ("STM32WB0.*:RADIO:.*", ("radio", "v1", "RADIO")),
     ("STM32C0.*:SYSCFG:.*", ("syscfg", "c0", "SYSCFG")),
+    ("STM32C5.*:SYSCFG:.*", ("syscfg", "c5", "SYSCFG")),
     ("STM32F0.*:SYSCFG:.*", ("syscfg", "f0", "SYSCFG")),
     ("STM32F2.*:SYSCFG:.*", ("syscfg", "f2", "SYSCFG")),
     ("STM32F3.*:SYSCFG:.*", ("syscfg", "f3", "SYSCFG")),
@@ -301,6 +313,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:SAI:sai1_H7", ("sai", "v3_4pdm", "SAI")),
     (".*:SAI:sai1_v2_1", ("sai", "v4_4pdm", "SAI")),
     (r"STM32([HU]5|WBA).*:SAI\d?:.*", ("sai", "v4_2pdm", "SAI")),
+    (r"STM32U3.*:SAI\d?:.*", ("sai", "v3_2pdm", "SAI")),
     (r"STM32L5.*:SAI\d?:.*", ("sai", "v3_2pdm", "SAI")),
     (".*:SDIO:sdmmc_v1_2", ("sdmmc", "v1", "SDMMC")),
     (".*:SDMMC:sdmmc_v1_3", ("sdmmc", "v1", "SDMMC")),
@@ -317,8 +330,8 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F373.*:USBRAM:.*", ("usbram", "16x2_512", "USBRAM")),
     ("STM32(F0|L[045]|G4|WB).*:USB:.*", ("usb", "v3", "USB")),
     ("STM32(F0|L[045]|G4|WB).*:USBRAM:.*", ("usbram", "16x2_1024", "USBRAM")),
-    ("STM32(C07|G0|H5|U[035]).*:USB:.*", ("usb", "v4", "USB")),
-    ("STM32(C07|G0|H5|U[53]).*:USBRAM:.*", ("usbram", "32_2048", "USBRAM")),
+    ("STM32(C07|C5|G0|H5|U[035]).*:USB:.*", ("usb", "v4", "USB")),
+    ("STM32(C07|C5|G0|H5|U[53]).*:USBRAM:.*", ("usbram", "32_2048", "USBRAM")),
     ("STM32U0.*:USBRAM:.*", ("usbram", "32_1024", "USBRAM")),
     // # USB OTG
     (".*:USB_OTG_FS:otgfs1_.*", ("otg", "v1", "OTG")),
@@ -326,6 +339,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:USB_OTG_HS:otghs1_.*", ("otg", "v1", "OTG")),
     ("STM32C0[579].*:RCC:.*", ("rcc", "c0v2", "RCC")),
     ("STM32C0.*:RCC:.*", ("rcc", "c0", "RCC")),
+    ("STM32C5.*:RCC:.*", ("rcc", "c5", "RCC")),
     ("STM32F030.[46].*:RCC:.*", ("rcc", "f0v1", "RCC")),
     ("STM32F05[128].*:RCC:.*", ("rcc", "f0v1", "RCC")),
     ("STM32F030.8.*:RCC:.*", ("rcc", "f0v2", "RCC")),
@@ -370,10 +384,12 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32WL5.*:RCC:.*", ("rcc", "wl5", "RCC")),
     ("STM32WLE.*:RCC:.*", ("rcc", "wle", "RCC")),
     ("STM32N6.*:RCC:.*", ("rcc", "n6", "RCC")),
+    ("STM32MP.*:RCC:.*", ("rcc", "mp1", "RCC")),
     ("STM32F1.*:AFIO:.*", ("afio", "f1", "AFIO")),
     ("STM32WBA.*:EXTI:.*", ("exti", "l5", "EXTI")),
     ("STM32L5.*:EXTI:.*", ("exti", "l5", "EXTI")),
     ("STM32C0.*:EXTI:.*", ("exti", "c0", "EXTI")),
+    ("STM32C5.*:EXTI:.*", ("exti", "u5", "EXTI")),
     ("STM32G0.*:EXTI:.*", ("exti", "g0", "EXTI")),
     ("STM32H7(45|47|55|57).*:EXTI:.*", ("exti", "h7rm0399", "EXTI")),
     ("STM32H7.*:EXTI:.*", ("exti", "h7", "EXTI")),
@@ -404,6 +420,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*SDMMC:sdmmc2_v2_1.*", ("sdmmc", "v2", "SDMMC")),
     (".*SDMMC:sdmmc2_v3_0.*", ("sdmmc", "v3", "SDMMC")),
     ("STM32C0.*:PWR:.*", ("pwr", "c0", "PWR")),
+    ("STM32C5.*:PWR:.*", ("pwr", "c5", "PWR")),
     ("STM32G0.*:PWR:.*", ("pwr", "g0", "PWR")),
     ("STM32G4.*:PWR:.*", ("pwr", "g4", "PWR")),
     ("STM32H7[RS].*:PWR:.*", ("pwr", "h7rs", "PWR")),
@@ -453,6 +470,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32WB.*:FLASH:.*", ("flash", "wb", "FLASH")),
     ("STM32WL.*:FLASH:.*", ("flash", "wl", "FLASH")),
     ("STM32C0.*:FLASH:.*", ("flash", "c0", "FLASH")),
+    ("STM32C5.*:FLASH:.*", ("flash", "c5", "FLASH")),
     ("STM32G0.0.*:FLASH:.*", ("flash", "g0x0", "FLASH")),
     ("STM32G0.1.*:FLASH:.*", ("flash", "g0x1", "FLASH")),
     ("STM32G4(3|4).*:FLASH:.*", ("flash", "g4c2", "FLASH")),
@@ -464,6 +482,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F[24].*:ETH:.*", ("eth", "v1b", "ETH")),
     ("STM32F7.*:ETH:.*", ("eth", "v1c", "ETH")),
     ("STM32H.*:ETH:.*", ("eth", "v2", "ETH")),
+    ("STM32N6.*:ETH:.*", ("eth", "v2a", "ETH")),
     ("STM32F4[23][79].*:FMC:.*", ("fmc", "v1x3", "FMC")),
     ("STM32F446.*:FMC:.*", ("fmc", "v2x1", "FMC")),
     ("STM32F469.*:FMC:.*", ("fmc", "v2x1", "FMC")),
@@ -604,6 +623,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32F4.*:DBGMCU:.*", ("dbgmcu", "f4", "DBGMCU")),
     ("STM32F7.*:DBGMCU:.*", ("dbgmcu", "f7", "DBGMCU")),
     ("STM32C0.*:DBGMCU:.*", ("dbgmcu", "c0", "DBGMCU")),
+    ("STM32C5.*:DBGMCU:.*", ("dbgmcu", "c5", "DBGMCU")),
     ("STM32G0.*:DBGMCU:.*", ("dbgmcu", "g0", "DBGMCU")),
     ("STM32G4.*:DBGMCU:.*", ("dbgmcu", "g4", "DBGMCU")),
     ("STM32H5.*:DBGMCU:.*", ("dbgmcu", "h5", "DBGMCU")),
@@ -649,6 +669,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32H7.*:DMA.*", ("dma", "v1", "DMA")),
     (".*:DMA.*", ("bdma", "v1", "DMA")),
     (".*:CAN:bxcan1_v1_1.*", ("can", "bxcan", "CAN")),
+    ("STM32C5.*:FDCAN:.*", ("can", "fdcan_v1", "FDCAN")),
     ("STM32H7[RS].*FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
     ("STM32H7.*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v2", "FDCAN")),
     (".*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
@@ -682,6 +703,7 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32G4.*:TAMP:.*", ("tamp", "g4", "TAMP")),
     ("STM32H5.*:TAMP:.*", ("tamp", "h5", "TAMP")),
     ("STM32L5.*:TAMP:.*", ("tamp", "l5", "TAMP")),
+    ("STM32U3.*:TAMP:.*", ("tamp", "l5", "TAMP")),
     ("STM32U5.*:TAMP:.*", ("tamp", "u5", "TAMP")),
     ("STM32WL.*:TAMP:.*", ("tamp", "wl", "TAMP")),
     ("STM32WBA[56].*:TAMP:.*", ("tamp", "wba", "TAMP")),
@@ -711,6 +733,10 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
         "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
         ("octospi", "v2", "OCTOSPI"),
     ),
+    (
+        "STM32U3.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
+        ("octospi", "v2", "OCTOSPI"),
+    ),
     ("STM32U5[AFG9]9.*:HSPI1:HSPI:hspi1_v1_0.*", ("hspi", "v1", "HSPI")),
     ("STM32L4.*:GFXMMU:.*", ("gfxmmu", "v1", "GFXMMU")),
     ("STM32U5.*:GFXMMU:.*", ("gfxmmu", "v2", "GFXMMU")),
@@ -727,10 +753,12 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32WBA.*:TSC:.*", ("tsc", "v1", "TSC")),
     ("STM32L[045].*:TSC:.*", ("tsc", "v3", "TSC")),
     ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
+    ("STM32U3.*:TSC:.*", ("tsc", "v1", "TSC")),
     ("STM32U0.*:TSC:.*", ("tsc", "v2", "TSC")),
     ("STM32WBA.*:VREFINTCAL:.*", ("vrefintcal", "v2", "VREFINTCAL")),
     ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
     ("STM32U5.*:ADF[12]:.*", ("adf", "v1", "ADF")),
+    ("STM32U3.*:ADF[12]:.*", ("adf", "v1", "ADF")),
     (".*:HASH:hash1_v1_0", ("hash", "v1", "HASH")),
     (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
     ("STM32U5.*:HASH:.*", ("hash", "v4", "HASH")),
@@ -775,9 +803,12 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     ("STM32H5.*:I3C:.*", ("i3c", "v1", "I3C")),
     ("STM32U3.*:I3C:.*", ("i3c", "v1", "I3C")),
     ("STM32(H5|H7[RS]|WBA).*:PKA:.*", ("pka", "v1a", "PKA")),
+    ("STM32U3.*:PKA:.*", ("pka", "v1b", "PKA")),
     ("STM32U5.*:PKA:.*", ("pka", "v1b", "PKA")),
     ("STM32(L5|WL|WB|WB0).*:PKA:.*", ("pka", "v1c", "PKA")),
     ("STM32(L4Q|L5|WL|WB).*:PKA:.*", ("pka", "v1c", "PKA")),
+    ("STM32U3.*:CCB:.*", ("ccb", "v1", "CCB")),
+    ("STM32U3.*:HSP1:.*", ("hsp", "v1", "HSP")),
     (".*:OTFDEC:.*", ("otfdec", "v1", "OTFDEC")),
     // N6 XSPI support
     (".*:XSPI[123]:XSPI:xspi_v2_1.*", ("xspi", "v1", "XSPI")),
@@ -786,4 +817,20 @@ pub static PERIMAP: RegexMap<(&str, &str, &str)> = RegexMap::new(&[
     (".*:XSPI[12]:XSPI:xspi_v2_1H7RS*", ("xspi", "v1", "XSPI")),
     (".*:XSPIM:XSPIM:xspi_v2_1H7RS*", ("xspim", "v1", "XSPIM")),
     ("STM32H7.*:MDMA:.*", ("mdma", "v1", "MDMA")),
-]);
+];
+
+pub struct Perimap {
+    map: regex_map::RegexMap<(&'static str, &'static str, &'static str)>,
+}
+
+impl Perimap {
+    pub fn new() -> Self {
+        Self {
+            map: new_regex_map(PERIMAP.iter().map(|(k, v)| (*k, *v))),
+        }
+    }
+
+    pub fn get(&self, pattern: &str) -> Option<&(&'static str, &'static str, &'static str)> {
+        self.map.get(pattern).next()
+    }
+}

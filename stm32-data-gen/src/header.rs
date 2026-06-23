@@ -1,29 +1,42 @@
 use std::collections::HashMap;
 
-use anyhow::Context;
-
-use crate::regex;
+use anyhow::{Context, anyhow};
+use lazy_regex::regex;
+use regex_map::RegexMap;
 
 pub struct Headers {
     map: HeaderMap,
     parsed: HeadersParsed,
-    regexes: Vec<(regex::Regex, String)>,
+    regexes: RegexMap<String>,
 }
 
 impl Headers {
-    pub fn parse() -> anyhow::Result<Self> {
+    pub fn parse(filter: &Option<String>) -> anyhow::Result<Self> {
         let map = HeaderMap::parse()?;
-        let parsed = HeadersParsed::parse()?;
-        let regexes = parsed
-            .0
-            .keys()
-            .map(|h| {
-                let pattern = h.replace('x', ".");
-                let regex = regex::Regex::new(&format!("^{pattern}$")).unwrap();
-                (regex, h.clone())
-            })
-            .collect();
+        let parsed = HeadersParsed::parse(filter)?;
+        let regexes = RegexMap::new(parsed.0.keys().map(|h| {
+            let pattern = h.replace('x', ".");
+
+            (format!("^{pattern}$"), h.clone())
+        }));
+
+        for v in map.0.values() {
+            if let Some(filter) = filter
+                && !v.starts_with(filter)
+            {
+                continue;
+            } else if parsed.0.get(v).is_none() {
+                return Err(anyhow!(
+                    "parsed headers do not contain {v}, specified in the header map",
+                ));
+            }
+        }
+
         Ok(Self { map, parsed, regexes })
+    }
+
+    pub fn get(&self, header: &str) -> Option<&ParsedHeader> {
+        self.parsed.0.get(header)
     }
 
     pub fn get_for_chip(&self, model: &str) -> Option<&ParsedHeader> {
@@ -33,10 +46,7 @@ impl Headers {
             Some(name) => Some(self.parsed.0.get(name).unwrap()),
             // if not, find it by regex, taking `x` meaning `anything`
             None => {
-                let mut results = self
-                    .regexes
-                    .iter()
-                    .filter_map(|(r, name)| if r.is_match(&model) { Some(name) } else { None });
+                let mut results = self.regexes.get(&model);
                 let res = results.next();
                 assert_eq!(results.next(), None, "found more than one match");
                 res.map(|name| self.parsed.0.get(name).unwrap())
@@ -73,8 +83,20 @@ impl HeaderMap {
 pub struct HeadersParsed(pub HashMap<String, ParsedHeader>);
 
 impl HeadersParsed {
-    pub fn parse() -> anyhow::Result<Self> {
-        let files = glob::glob("sources/headers/*.h").unwrap().map(Result::unwrap);
+    pub fn parse(filter: &Option<String>) -> anyhow::Result<Self> {
+        let files = glob::glob("sources/headers/*.h")
+            .unwrap()
+            .map(Result::unwrap)
+            .filter(|f| {
+                if let Some(filter) = filter
+                    && let Some(filename) = f.file_name()
+                    && !filename.to_ascii_lowercase().to_string_lossy().starts_with(filter)
+                {
+                    false
+                } else {
+                    true
+                }
+            });
 
         let for_each_file = |f: std::path::PathBuf| {
             let ff = f.file_name().unwrap().to_string_lossy();
@@ -172,7 +194,16 @@ impl Defines {
     pub fn get_peri_addr(&self, pname: &str) -> Option<u32> {
         const ALT_PERI_DEFINES: &[(&str, &[&str])] = &[
             ("DBGMCU", &["DBGMCU_BASE", "DBG_BASE"]),
-            ("QUADSPI", &["QUADSPI_BASE", "QSPI_R", "QSPI_R_BASE", "QSPI_REG_BASE"]),
+            (
+                "QUADSPI",
+                &[
+                    "QUADSPI_R_BASE",
+                    "QUADSPI_BASE",
+                    "QSPI_R",
+                    "QSPI_R_BASE",
+                    "QSPI_REG_BASE",
+                ],
+            ),
             ("QUADSPI1", &["QUADSPI1_BASE", "QSPI_R", "QSPI_R_BASE", "QSPI_REG_BASE"]),
             (
                 "OCTOSPI",
@@ -200,7 +231,16 @@ impl Defines {
             ("CAN", &["CAN_BASE", "CAN1_BASE"]),
             ("FMC", &["FMC_R_BASE", "FMC_R_BASE_NS"]),
             ("FSMC", &["FSMC_R_BASE"]),
-            ("USB", &["USB_BASE", "USB_DRD_BASE", "USB_BASE_NS", "USB_DRD_BASE_NS"]),
+            (
+                "USB",
+                &[
+                    "USB_BASE",
+                    "USB_DRD_BASE",
+                    "USB_DRD_FS_BASE",
+                    "USB_BASE_NS",
+                    "USB_DRD_BASE_NS",
+                ],
+            ),
             (
                 "USBRAM",
                 &["USB_PMAADDR", "USB_DRD_PMAADDR", "USB_PMAADDR_NS", "USB_DRD_PMAADDR_NS"],

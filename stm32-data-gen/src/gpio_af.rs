@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
+use lazy_regex::regex;
+use regex::Captures;
+
 use crate::normalize_peris::normalize_peri_name;
-use crate::regex;
 
 mod xml {
     use serde::Deserialize;
@@ -135,10 +137,12 @@ pub fn parse_signal_name(signal_name: &str) -> Option<(&str, &str)> {
     }
 }
 
+pub fn pin_matches(pin: &str) -> Option<Captures<'_>> {
+    regex!(r"^P([A-Z])(\d+)(?:_C)?").captures(pin)
+}
+
 pub fn pin_sort_key(pin: &str) -> (char, u8) {
-    let captures = regex!(r"^P([A-Z])(\d+)(?:_C)?")
-        .captures(pin)
-        .expect("Could not match regex on pin");
+    let captures = pin_matches(pin).expect(&format!("Could not match regex on pin: {}", pin));
     let port = captures
         .get(1)
         .expect("Could not extract port")

@@ -2,10 +2,10 @@ use std::collections::{HashMap, HashSet};
 
 use anyhow::{Ok, anyhow, bail};
 use chiptool::ir::IR;
+use lazy_regex::regex;
 use stm32_data_serde::chip::core::peripheral::rcc::{Field, StopMode};
 use stm32_data_serde::chip::core::peripheral::{self, rcc};
 
-use crate::regex;
 use crate::registers::Registers;
 
 #[derive(Debug)]
@@ -105,7 +105,6 @@ impl ParsedRccs {
             "HSIK",
             "PSI",
             "PSIK",
-            "PSIS",
             "SHSI",
             "HSI48",
             "HSIKER",
@@ -301,7 +300,7 @@ impl ParsedRccs {
             ("DCMI", &["DCMI_PSSI", "PSSI"]),
             ("PSSI", &["DCMI_PSSI", "DCMI"]),
             ("FDCAN1", &["FDCAN12"]),
-            ("FDCAN2", &["FDCAN12"]),
+            ("FDCAN2", &["FDCAN12", "FDCAN1", "FDCAN"]),
             ("ADC", &["ADC1", "ADCDAC"]),
             ("ADC1", &["ADC12", "ADCDAC"]),
             ("ADC2", &["ADC12", "ADCDAC"]),
@@ -377,6 +376,7 @@ impl ParsedRccs {
                     .iter()
                     .any(|x| rcc_version == x.0 && peri_name.starts_with(x.1)))
                     && phclk.is_match(&en_rst.bus_clock)
+                    && rcc_version != "c5"
                 {
                     for v in &mux.variants {
                         if phclk.is_match(v) && v != &maybe_kernel_clock {
