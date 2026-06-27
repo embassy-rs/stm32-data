@@ -174,7 +174,6 @@ fieldset/ACR:
     description: Read latency.
     bit_offset: 0
     bit_size: 4
-    enum: LATENCY
   - name: WRHIGHFREQ
     description: FLASH signal delay.
     bit_offset: 4
@@ -183,12 +182,10 @@ fieldset/ACR:
     description: Prefetch enable.
     bit_offset: 8
     bit_size: 1
-    enum: PRFTEN
   - name: EMPTY
     description: Main Flash memory area empty (not reset by system reset).
     bit_offset: 16
     bit_size: 1
-    enum: EMPTY
 fieldset/BL_COM_CFG_CUR:
   description: FLASH Bootloader interface selection.
   fields:
@@ -316,32 +313,26 @@ fieldset/CR:
     description: end of operation interrupt control bit.
     bit_offset: 16
     bit_size: 1
-    enum: EOPIE
   - name: WRPERRIE
     description: write protection error interrupt enable bit.
     bit_offset: 17
     bit_size: 1
-    enum: WRPERRIE
   - name: PGSERRIE
     description: programming sequence error interrupt enable bit.
     bit_offset: 18
     bit_size: 1
-    enum: PGSERRIE
   - name: STRBERRIE
     description: strobe error interrupt enable bit.
     bit_offset: 19
     bit_size: 1
-    enum: STRBERRIE
   - name: INCERRIE
     description: inconsistency error interrupt enable bit.
     bit_offset: 20
     bit_size: 1
-    enum: INCERRIE
   - name: OPTCHANGEERRIE
     description: Option-byte change error interrupt enable bit.
     bit_offset: 23
     bit_size: 1
-    enum: OPTCHANGEERRIE
   - name: EDATASEL
     description: EDATA erase selector bit.
     bit_offset: 29
@@ -383,7 +374,6 @@ fieldset/ECCCORR:
     description: ECC single correction error interrupt enable bit When ECCCIE bit is set to 1, an interrupt is generated when an ECC single correction error occurs during a read operation.
     bit_offset: 25
     bit_size: 1
-    enum: ECCCIE
   - name: ECCC
     description: ECC correction.
     bit_offset: 30
@@ -556,7 +546,6 @@ fieldset/OPTCR:
     description: OPTCR lock option configuration bit.
     bit_offset: 0
     bit_size: 1
-    enum: OPTLOCK
   - name: OPTSTRT
     description: Option-byte start change option configuration bit.
     bit_offset: 1
@@ -660,7 +649,6 @@ fieldset/OPTSR_CUR:
     description: Flash data area enable.
     bit_offset: 29
     bit_size: 1
-    enum: OPTSR_CUR_EDATA_EN
   - name: SINGLE_BANK
     description: Dual bank selection option status bit.
     bit_offset: 30
@@ -931,15 +919,6 @@ enum/DBNE:
   - name: B_0x1
     description: data buffer used, wait.
     value: 1
-enum/ECCCIE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no interrupt generated when an ECC single correction error occurs.
-    value: 0
-  - name: B_0x1
-    description: interrupt generated when an ECC single correction error occurs.
-    value: 1
 enum/EDATASEL:
   bit_size: 1
   variants:
@@ -949,15 +928,6 @@ enum/EDATASEL:
   - name: B_0x1
     description: Flash data area EDATA page erase.
     value: 1
-enum/EMPTY:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Boot address in Main Flash memory area programmed.
-    value: 0
-  - name: B_0x1
-    description: Boot address in Main Flash memory area empty.
-    value: 1
 enum/EOP:
   bit_size: 1
   variants:
@@ -966,15 +936,6 @@ enum/EOP:
     value: 0
   - name: B_0x1
     description: a operation completed.
-    value: 1
-enum/EOPIE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no interrupt generated at the end of operation.
-    value: 0
-  - name: B_0x1
-    description: interrupt enabled when at the end of operation.
     value: 1
 enum/BOOTR_CUR_BOOT_LOCK:
   bit_size: 8
@@ -1074,15 +1035,6 @@ enum/OPTSR_CUR_BOOT_SEL:
     value: 0
   - name: B_0x1
     description: BOOT0 signal is defined by BOOT0 pin value (legacy mode).
-    value: 1
-enum/OPTSR_CUR_EDATA_EN:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: No flash data area (EDATA pages are 128 bits writable).
-    value: 0
-  - name: B_0x1
-    description: Flash data area is enabled (EDATA pages are 16/32 bits writable).
     value: 1
 enum/OPTSR_CUR_IWDG_STDBY:
   bit_size: 1
@@ -1300,33 +1252,6 @@ enum/INCERR:
   - name: B_0x1
     description: a inconsistency error occurs.
     value: 1
-enum/INCERRIE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no interrupt generated when a inconsistency error occurs.
-    value: 0
-  - name: B_0x1
-    description: interrupt generated when a inconsistency error occurs.
-    value: 1
-enum/LATENCY:
-  bit_size: 4
-  variants:
-  - name: B_0x0
-    description: zero wait state used to read a word from non-volatile memory.
-    value: 0
-  - name: B_0x1
-    description: one wait state used to read a word from non-volatile memory.
-    value: 1
-  - name: B_0x2
-    description: two wait states used to read a word from non-volatile memory.
-    value: 2
-  - name: B_0x7
-    description: seven wait states used to read a word from non-volatile memory.
-    value: 7
-  - name: B_0xF
-    description: 15 wait states used to read from non-volatile memory.
-    value: 15
 enum/LOCK:
   bit_size: 1
   variants:
@@ -1353,24 +1278,6 @@ enum/OPTCHANGEERR:
     value: 0
   - name: B_0x1
     description: one or more errors occurred during an option-byte change operation.
-    value: 1
-enum/OPTCHANGEERRIE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no interrupt is generated when an error occurs during an option-byte change.
-    value: 0
-  - name: B_0x1
-    description: an interrupt is generated when and error occurs during an option-byte change.
-    value: 1
-enum/OPTLOCK:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: OPTCR register unlocked.
-    value: 0
-  - name: B_0x1
-    description: OPTCR register locked.
     value: 1
 enum/PER:
   bit_size: 1
@@ -1399,15 +1306,6 @@ enum/PGSERR:
   - name: B_0x1
     description: a sequence error occurred.
     value: 1
-enum/PGSERRIE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no interrupt generated when a sequence error occurs.
-    value: 0
-  - name: B_0x1
-    description: interrupt generated when sequence error occurs.
-    value: 1
 enum/PNB:
   bit_size: 6
   variants:
@@ -1416,15 +1314,6 @@ enum/PNB:
     value: 0
   - name: B_0x01
     description: Page 1 selected.
-    value: 1
-enum/PRFTEN:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: prefetch disabled.
-    value: 0
-  - name: B_0x1
-    description: prefetch enabled when latency is at least one wait-state.
     value: 1
 enum/PRIV:
   bit_size: 1
@@ -1444,15 +1333,6 @@ enum/STRBERR:
   - name: B_0x1
     description: a strobe error occurred.
     value: 1
-enum/STRBERRIE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no interrupt generated when a strobe error occurs.
-    value: 0
-  - name: B_0x1
-    description: interrupt generated when strobe error occurs.
-    value: 1
 enum/WBNE:
   bit_size: 1
   variants:
@@ -1470,15 +1350,6 @@ enum/WRPERR:
     value: 0
   - name: B_0x1
     description: a write protection error occurred.
-    value: 1
-enum/WRPERRIE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: no interrupt generated when a protection error occurs.
-    value: 0
-  - name: B_0x1
-    description: interrupt generated when a protection error occurs.
     value: 1
 enum/OPTSR_CUR_DUAL_BANK:
   bit_size: 1
