@@ -158,7 +158,12 @@ impl ChipInterrupts {
         //
         // Intentionally excludes multi-core chips (STM32H7xx, STM32WL5xx) where NVIC1 and
         // NVIC2 belong to different CPU cores and must not be merged.
-        if want_nvic_name == "NVIC2" && !chip_name.starts_with("STM32H7") && !chip_name.starts_with("STM32WL5") {
+        if want_nvic_name == "NVIC2"
+            && (!chip_name.starts_with("STM32H7")
+                || chip_name.starts_with("STM32H7R")
+                || chip_name.starts_with("STM32H7S"))
+            && !chip_name.starts_with("STM32WL5")
+        {
             if let Some(nvic1) = group.ips.values().find(|x| x.name == "NVIC1") {
                 if let Some(strings) = self.irqs.get(&(nvic1.name.clone(), nvic1.version.clone())) {
                     nvic_strings.extend(strings.iter().cloned());
