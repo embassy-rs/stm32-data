@@ -753,7 +753,7 @@ impl InterruptSignals {
             ("USB1_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
             ("USB2_OTG_HS", &["GLOBAL", "EP1_OUT", "EP1_IN", "WKUP"]),
             ("USB", &["LP", "HP", "WKUP", "USBH", "OHCI", "EHCI"]),
-            ("GPU2D", &["ER"]),
+            ("GPU2D", &["GLOBAL", "ER"]),
             ("SAI", &["A", "B"]),
             ("ADF", &["FLT0"]),
             ("RAMECC", &["ECC"]),
