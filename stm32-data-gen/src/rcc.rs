@@ -102,8 +102,10 @@ impl ParsedRccs {
             "PLL3_S",
             "PLL3_T",
             "HSI",
+            "HSIDIV3",
             "HSIK",
             "PSI",
+            "PSIDIV3",
             "PSIK",
             "SHSI",
             "HSI48",
@@ -341,6 +343,7 @@ impl ParsedRccs {
             ("USB_OTG_HS", &["USB", "USBPHYC", "OTGHS", "CLK48", "ICLK"]),
             ("DTS", &["TMPSENS"]),
             ("SDMMC1", &["SDMMC1", "CLK48"]),
+            ("RNG", &["CLK48"]),
             ("IPCC", &["RFWKP"]),
         ];
 
