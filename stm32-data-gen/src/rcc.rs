@@ -315,6 +315,7 @@ impl ParsedRccs {
             ("DAC2", &["DAC12", "ADCDAC"]),
             ("DSIHOST", &["DSI"]),
             ("ETH", &["ETHMAC", "ETH1MAC"]),
+            ("ETH1", &["ETH1CLK"]),
             ("SPI1", &["SPI12", "SPI123"]),
             ("SPI2", &["SPI12", "SPI123", "SPI23"]),
             ("SPI3", &["SPI123", "SPI23"]),
@@ -369,6 +370,7 @@ impl ParsedRccs {
             ("n6", "I2C4"),
             ("n6", "SDMMC1"), // HCLK2 is corrext per Cube and Docs so no mux check
             ("n6", "SDMMC2"), // HCLKU is corrext per Cube and Docs so no mux check
+            ("n6", "ETH1"),   // HCLKE is corrext per RM0486 Figure "Core and bus clock generation" so no mux check
         ];
 
         let kernel_clock = match mux {
