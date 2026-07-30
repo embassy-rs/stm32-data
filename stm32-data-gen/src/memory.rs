@@ -429,6 +429,7 @@ struct FlashInfo {
 #[allow(clippy::identity_op)]
 const FLASH_INFO: &[(&str, &[FlashInfo])] = &[
     ("STM32C0.*",               &[FlashInfo{ erase_value: 0xFF, write_size:  8, erase_size: &[(  2*1024, 0)] }]),
+    ("STM32C5.*",               &[FlashInfo{ erase_value: 0xFF, write_size: 16, erase_size: &[(  8*1024, 0)] }]),
     ("STM32F030.C",             &[FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  2*1024, 0)] }]),
     ("STM32F070.6",             &[FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  1*1024, 0)] }]),
     ("STM32F0[79].*",           &[FlashInfo{ erase_value: 0xFF, write_size:  4, erase_size: &[(  2*1024, 0)] }]),
