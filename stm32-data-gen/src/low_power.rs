@@ -54,6 +54,9 @@ impl ChipStopModes {
             (r"^STM32U5.*:GPDMA.*", StopMode::Stop2),
             (r"^STM32U5.*:LPDMA.*", StopMode::Standby),
 
+            // STM32U0 series - from RM0503 Table 22: all LPTIMs functional in Stop 2
+            (r"^STM32U0.*:LPTIM\d", StopMode::Standby),
+
             // __ATTENTION__: Keep these rules at the bottom to grant precedence to the more specific rules above
             // Every peripheral with LP prefix is assumed to be able enter up to Stop1 mode
             (r".*:LP.*", StopMode::Stop2),
@@ -103,6 +106,12 @@ mod tests {
         // Rule covering all STM32WB55 for LPTIM1
         assert_eq!(
             chip_stop_modes.peripheral_stop_mode_info("STM32WB55RG", "LPTIM1"),
+            Some(StopMode::Standby)
+        );
+
+        // U0 LPTIMs run in Stop 2; the specific rule must beat the generic LP rule
+        assert_eq!(
+            chip_stop_modes.peripheral_stop_mode_info("STM32U083RC", "LPTIM1"),
             Some(StopMode::Standby)
         );
     }
