@@ -127,7 +127,6 @@ fieldset/BDCR2:
     description: VBAT charging enable
     bit_offset: 0
     bit_size: 1
-    enum: VBE
   - name: VBRS
     description: VBAT charging resistor selection
     bit_offset: 1
@@ -732,42 +731,42 @@ fieldset/WUCR3:
     description: "Wakeup pin WKUP1 selection\r This field must be configured when WUPEN1 = 0."
     bit_offset: 0
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL1
   - name: WUSEL2
     description: "Wakeup pin WKUP2 selection\r This field must be configured when WUPEN2 = 0."
     bit_offset: 2
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL2
   - name: WUSEL3
     description: "Wakeup pin WKUP3 selection\r This field must be configured when WUPEN3 = 0."
     bit_offset: 4
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL3
   - name: WUSEL4
     description: "Wakeup pin WKUP4 selection\r This field must be configured when WUPEN4 = 0."
     bit_offset: 6
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL4
   - name: WUSEL5
     description: "Wakeup pin WKUP5 selection\r This field must be configured when WUPEN5 = 0."
     bit_offset: 8
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL5
   - name: WUSEL6
     description: "Wakeup pin WKUP6 selection\r This field must be configured when WUPEN6 = 0."
     bit_offset: 10
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL6
   - name: WUSEL7
     description: "Wakeup pin WKUP7 selection\r This field must be configured when WUPEN7 = 0."
     bit_offset: 12
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL7
   - name: WUSEL8
     description: "Wakeup pin WKUP8 selection\r This field must be configured when WUPEN8 = 0."
     bit_offset: 14
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL8
 fieldset/WUSCR:
   description: wakeup status clear register
   fields:
@@ -934,10 +933,10 @@ enum/REGSEL:
 enum/SRAMFWU:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: LowPower
     description: SRAM4 enters low-power mode in Stop 0, 1 and 2 modes (source biasing for lower-power consumption).
     value: 0
-  - name: B_0x1
+  - name: Normal
     description: SRAM4 remains in normal mode in Stop 0, 1 and 2 modes (higher consumption but no SRAM4 wakeup time).
     value: 1
 enum/SRAMPD:
@@ -952,46 +951,37 @@ enum/SRAMPD:
 enum/TEMPH:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Below
     description: Temperature < high threshold
     value: 0
-  - name: B_0x1
+  - name: AboveOrEqual
     description: Temperature ≥ high threshold
     value: 1
 enum/TEMPL:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Above
     description: Temperature > low threshold
     value: 0
-  - name: B_0x1
+  - name: BelowOrEqual
     description: Temperature ≤ low threshold
     value: 1
 enum/VBATH:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Below
     description: Backup domain voltage level < high threshold
     value: 0
-  - name: B_0x1
+  - name: AboveOrEqual
     description: Backup domain voltage level ≥ high threshold
-    value: 1
-enum/VBE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: VBAT battery charging disabled
-    value: 0
-  - name: B_0x1
-    description: VBAT battery charging enabled
     value: 1
 enum/VBRS:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: R5kOhm
     description: Charge VBAT through a 5 kΩ resistor
     value: 0
-  - name: B_0x1
+  - name: R1_5kOhm
     description: Charge VBAT through a 1.5 kΩ resistor
     value: 1
 enum/VOS:
@@ -1018,20 +1008,125 @@ enum/WUPP:
   - name: Low
     description: Detection on low level (falling edge)
     value: 1
-enum/WUSEL:
+enum/WUSEL1:
   bit_size: 2
   variants:
-  - name: B_0x0
-    description: WKUP7_0
+  - name: PA0
+    description: WKUP1 sourced from PA0
     value: 0
-  - name: B_0x1
-    description: WKUP7_1
+  - name: PB2
+    description: WKUP1 sourced from PB2
     value: 1
-  - name: B_0x2
-    description: WKUP7_2
+  - name: PE4
+    description: WKUP1 sourced from PE4
     value: 2
-  - name: B_0x3
-    description: WKUP7_3
+  - name: Reserved
+    description: Reserved
+    value: 3
+enum/WUSEL2:
+  bit_size: 2
+  variants:
+  - name: PA4
+    description: WKUP2 sourced from PA4
+    value: 0
+  - name: PC13
+    description: WKUP2 sourced from PC13
+    value: 1
+  - name: PE5
+    description: WKUP2 sourced from PE5
+    value: 2
+  - name: Reserved
+    description: Reserved
+    value: 3
+enum/WUSEL3:
+  bit_size: 2
+  variants:
+  - name: PE6
+    description: WKUP3 sourced from PE6
+    value: 0
+  - name: PA1
+    description: WKUP3 sourced from PA1
+    value: 1
+  - name: PB6
+    description: WKUP3 sourced from PB6
+    value: 2
+  - name: Reserved
+    description: Reserved
+    value: 3
+enum/WUSEL4:
+  bit_size: 2
+  variants:
+  - name: PA2
+    description: WKUP4 sourced from PA2
+    value: 0
+  - name: PB1
+    description: WKUP4 sourced from PB1
+    value: 1
+  - name: PB7
+    description: WKUP4 sourced from PB7
+    value: 2
+  - name: Reserved
+    description: Reserved
+    value: 3
+enum/WUSEL5:
+  bit_size: 2
+  variants:
+  - name: PC5
+    description: WKUP5 sourced from PC5
+    value: 0
+  - name: PA3
+    description: WKUP5 sourced from PA3
+    value: 1
+  - name: PB8
+    description: WKUP5 sourced from PB8
+    value: 2
+  - name: EarlyIwdg
+    description: WKUP5 sourced from the early IWDG interrupt
+    value: 3
+enum/WUSEL6:
+  bit_size: 2
+  variants:
+  - name: PB5
+    description: WKUP6 sourced from PB5
+    value: 0
+  - name: PA5
+    description: WKUP6 sourced from PA5
+    value: 1
+  - name: PE7
+    description: WKUP6 sourced from PE7
+    value: 2
+  - name: Rtc
+    description: WKUP6 sourced from RTC_ALRA_S, RTC_ALRB_S, RTC_WUT_S, or RTC_TS_S
+    value: 3
+enum/WUSEL7:
+  bit_size: 2
+  variants:
+  - name: PB15
+    description: WKUP7 sourced from PB15
+    value: 0
+  - name: PA6
+    description: WKUP7 sourced from PA6
+    value: 1
+  - name: PE8
+    description: WKUP7 sourced from PE8
+    value: 2
+  - name: Rtc
+    description: WKUP7 sourced from RTC_ALRA, RTC_ALRB, RTC_WUT, or RTC_TS
+    value: 3
+enum/WUSEL8:
+  bit_size: 2
+  variants:
+  - name: PF2
+    description: WKUP8 sourced from PF2
+    value: 0
+  - name: PA7
+    description: WKUP8 sourced from PA7
+    value: 1
+  - name: PB10
+    description: WKUP8 sourced from PB10
+    value: 2
+  - name: Tamp
+    description: WKUP8 sourced from TAMP
     value: 3
 enum/FORCE_USBPWR:
   bit_size: 1
