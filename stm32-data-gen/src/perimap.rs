@@ -706,6 +706,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:LCD:lcdc1_v1.2.*", ("lcd", "v2", "LCD")),
     (".*:LCD:lcdc1_v1.3.*", ("lcd", "v2", "LCD")),
     (".*:LCD:lcdc1_v1.4.*", ("lcd", "v2", "LCD")),
+    ("STM32L[01].*:UID:.*", ("uid", "l0", "UID")),
     (".*:UID:.*", ("uid", "v1", "UID")),
     ("STM32WBA.*:DESIG:.*", ("desig", "wba", "DESIG")),
     ("STM32H5.*:UCPD:.*", ("ucpd", "h5", "UCPD")),
