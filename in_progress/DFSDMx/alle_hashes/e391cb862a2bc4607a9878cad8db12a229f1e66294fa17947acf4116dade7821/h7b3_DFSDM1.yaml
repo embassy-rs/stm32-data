@@ -1,0 +1,454 @@
+block/CH:
+  description: Cluster CH%s, containing CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR, CH?DATINR, CH?DLYR.
+  items:
+  - name: CFGR1
+    description: DFSDM channel 0 configuration register.
+    byte_offset: 0
+    fieldset: CFGR1
+  - name: CFGR2
+    description: DFSDM channel 0 configuration register.
+    byte_offset: 4
+    fieldset: CFGR2
+  - name: AWSCDR
+    description: DFSDM channel 0 analog watchdog and short-circuit detector register.
+    byte_offset: 8
+    fieldset: AWSCDR
+  - name: WDATR
+    description: DFSDM channel 0 watchdog filter data register.
+    byte_offset: 12
+    fieldset: WDATR
+  - name: DATINR
+    description: DFSDM channel 0 data input register.
+    byte_offset: 16
+    fieldset: DATINR
+  - name: DLYR
+    byte_offset: 20
+    fieldset: DLYR
+block/DFSDM1:
+  description: Digital filter for sigma delta modulators.
+  items:
+  - name: CH
+    description: Cluster CH%s, containing CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR, CH?DATINR, CH?DLYR.
+    array:
+      len: 8
+      stride: 32
+    byte_offset: 0
+    block: CH
+  - name: FLT
+    description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
+    array:
+      len: 8
+      stride: 128
+    byte_offset: 256
+    block: FLT
+block/FLT:
+  description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
+  items:
+  - name: CR1
+    byte_offset: 0
+    fieldset: CR1
+  - name: CR2
+    byte_offset: 4
+    fieldset: CR2
+  - name: ISR
+    byte_offset: 8
+    fieldset: ISR
+  - name: ICR
+    byte_offset: 12
+    fieldset: ICR
+  - name: JCHGR
+    byte_offset: 16
+    fieldset: JCHGR
+  - name: FCR
+    byte_offset: 20
+    fieldset: FCR
+  - name: JDATAR
+    byte_offset: 24
+    fieldset: JDATAR
+  - name: RDATAR
+    byte_offset: 28
+    fieldset: RDATAR
+  - name: AWHTR
+    byte_offset: 32
+    fieldset: AWHTR
+  - name: AWLTR
+    byte_offset: 36
+    fieldset: AWLTR
+  - name: AWSR
+    byte_offset: 40
+    fieldset: AWSR
+  - name: AWCFR
+    byte_offset: 44
+    fieldset: AWCFR
+  - name: EXMAX
+    byte_offset: 48
+    fieldset: EXMAX
+  - name: EXMIN
+    byte_offset: 52
+    fieldset: EXMIN
+  - name: FLTCNVTIMR
+    byte_offset: 56
+    fieldset: FLTCNVTIMR
+fieldset/AWCFR:
+  fields:
+  - name: CLRAWLTF
+    description: "Clear the analog watchdog low threshold flag CLRAWLTF[y]=0: Writing '0â\x80\x99 has no effect CLRAWLTF[y]=1: Writing '1â\x80\x99 to position y clears the corresponding AWLTF[y] bit in the DFSDM_FLTxAWSR register."
+    bit_offset: 0
+    bit_size: 8
+  - name: CLRAWHTF
+    description: "Clear the analog watchdog high threshold flag CLRAWHTF[y]=0: Writing '0â\x80\x99 has no effect CLRAWHTF[y]=1: Writing '1â\x80\x99 to position y clears the corresponding AWHTF[y] bit in the DFSDM_FLTxAWSR register."
+    bit_offset: 8
+    bit_size: 8
+fieldset/AWHTR:
+  fields:
+  - name: BKAWH
+    description: 'Break signal assignment to analog watchdog high threshold event BKAWH[i] = 0: Break i signal is not assigned to an analog watchdog high threshold event BKAWH[i] = 1: Break i signal is assigned to an analog watchdog high threshold event.'
+    bit_offset: 0
+    bit_size: 4
+  - name: AWHT
+    description: 'Analog watchdog high threshold These bits are written by software to define the high threshold for the analog watchdog. Note: In case channel transceivers monitor (AWFSEL=1), the higher 16 bits (AWHT[23:8]) define the 16-bit threshold as compared with the analog watchdog filter output (because data coming from the analog watchdog filter are up to a 16-bit resolution). Bits AWHT[7:0] are not taken into comparison in this case.'
+    bit_offset: 8
+    bit_size: 24
+fieldset/AWLTR:
+  fields:
+  - name: BKAWL
+    description: 'Break signal assignment to analog watchdog low threshold event BKAWL[i] = 0: Break i signal is not assigned to an analog watchdog low threshold event BKAWL[i] = 1: Break i signal is assigned to an analog watchdog low threshold event.'
+    bit_offset: 0
+    bit_size: 4
+  - name: AWLT
+    description: 'Analog watchdog low threshold These bits are written by software to define the low threshold for the analog watchdog. Note: In case channel transceivers monitor (AWFSEL=1), only the higher 16 bits (AWLT[23:8]) define the 16-bit threshold as compared with the analog watchdog filter output (because data coming from the analog watchdog filter are up to a 16-bit resolution). Bits AWLT[7:0] are not taken into comparison in this case.'
+    bit_offset: 8
+    bit_size: 24
+fieldset/AWSCDR:
+  description: DFSDM channel 0 analog watchdog and short-circuit detector register.
+  fields:
+  - name: SCDT
+    description: short-circuit detector threshold for channel y These bits are written by software to define the threshold counter for the short-circuit detector. If this value is reached, then a short-circuit detector event occurs on a given channel.
+    bit_offset: 0
+    bit_size: 8
+  - name: BKSCD
+    description: 'Break signal assignment for short-circuit detector on channel y BKSCD[i] = 0: Break i signal not assigned to short-circuit detector on channel y BKSCD[i] = 1: Break i signal assigned to short-circuit detector on channel y.'
+    bit_offset: 12
+    bit_size: 4
+  - name: AWFOSR
+    description: 'Analog watchdog filter oversampling ratio (decimation rate) on channel y also the decimation ratio of the analog data rate. This bit can be modified only when CHEN=0 (in DFSDM_CHyCFGR1 register). Note: If AWFOSR = 0 then the filter has no effect (filter bypass). 0 - 31: Defines the length of the Sinc type filter in the range 1 - 32 (AWFOSR + 1). This number is.'
+    bit_offset: 16
+    bit_size: 5
+  - name: AWFORD
+    description: 'Analog watchdog Sinc filter order on channel y 2: Sinc2 filter type 3: Sinc3 filter type Sincx filter type transfer function: FastSinc filter type transfer function: This bit can be modified only when CHEN=0 (in DFSDM_CHyCFGR1 register).'
+    bit_offset: 22
+    bit_size: 2
+fieldset/AWSR:
+  fields:
+  - name: AWLTF
+    description: Analog watchdog low threshold flag AWLTF[y]=1 indicates a low threshold error on channel y. It is set by hardware. It can be cleared by software using the corresponding CLRAWLTF[y] bit in the DFSDM_FLTxAWCFR register.
+    bit_offset: 0
+    bit_size: 8
+  - name: AWHTF
+    description: Analog watchdog high threshold flag AWHTF[y]=1 indicates a high threshold error on channel y. It is set by hardware. It can be cleared by software using the corresponding CLRAWHTF[y] bit in the DFSDM_FLTxAWCFR register.
+    bit_offset: 8
+    bit_size: 8
+fieldset/CFGR1:
+  description: DFSDM channel 0 configuration register.
+  fields:
+  - name: SITP
+    description: Serial interface type for channel y This value can only be modified when CHEN=0 (in DFSDM_CHyCFGR1 register).
+    bit_offset: 0
+    bit_size: 2
+  - name: SPICKSEL
+    description: "SPI clock select for channel y 2: clock coming from internal CKOUT - sampling point on each second CKOUT falling edge. For connection to external Î£â\x88\x86 modulator which divides its clock input (from CKOUT) by 2 to generate its output serial communication clock (and this output clock change is active on each clock input rising edge). 3: clock coming from internal CKOUT output - sampling point on each second CKOUT rising edge. For connection to external Î£â\x88\x86 modulator which divides its clock input (from CKOUT) by 2 to generate its output serial communication clock (and this output clock change is active on each clock input falling edge). This value can be modified only when CHEN=0 (in DFSDM_CHyCFGR1 register)."
+    bit_offset: 2
+    bit_size: 2
+  - name: SCDEN
+    description: Short-circuit detector enable on channel y.
+    bit_offset: 5
+    bit_size: 1
+  - name: CKABEN
+    description: Clock absence detector enable on channel y.
+    bit_offset: 6
+    bit_size: 1
+  - name: CHEN
+    description: Channel y enable If channel y is enabled, then serial data receiving is started according to the given channel setting.
+    bit_offset: 7
+    bit_size: 1
+  - name: CHINSEL
+    description: Channel inputs selection This value can be modified only when CHEN=0 (in DFSDM_CHyCFGR1 register).
+    bit_offset: 8
+    bit_size: 1
+  - name: DATMPX
+    description: 'Input data multiplexer for channel y 2: Data to channel y are taken from internal DFSDM_CHyDATINR register by direct CPU/DMA write. There can be written one or two 16-bit data samples according DATPACK[1:0] bit field setting. 3: Reserved This value can be modified only when CHEN=0 (in DFSDM_CHyCFGR1 register).'
+    bit_offset: 12
+    bit_size: 2
+  - name: DATPACK
+    description: 'Data packing mode in DFSDM_CHyDATINR register. first sample in INDAT0[15:0] (assigned to channel y) second sample INDAT1[15:0] (assigned to channel y) To empty DFSDM_CHyDATINR register, two samples must be read by the digital filter from channel y (INDAT0[15:0] part is read as first sample and then INDAT1[15:0] part is read as next sample). 2: Dual: input data in DFSDM_CHyDATINR register are stored as two samples: first sample INDAT0[15:0] (assigned to channel y) second sample INDAT1[15:0] (assigned to channel y+1) To empty DFSDM_CHyDATINR register first sample must be read by the digital filter from channel y and second sample must be read by another digital filter from channel y+1. Dual mode is available only on even channel numbers (y = 0, 2, 4, 6), for odd channel numbers (y = 1, 3, 5, 7) DFSDM_CHyDATINR is write protected. If an even channel is set to dual mode then the following odd channel must be set into standard mode (DATPACK[1:0]=0) for correct cooperation with even channel. 3: Reserved This value can be modified only when CHEN=0 (in DFSDM_CHyCFGR1 register).'
+    bit_offset: 14
+    bit_size: 2
+  - name: CKOUTDIV
+    description: 'Output serial clock divider Â 256 (Divider = CKOUTDIV+1). CKOUTDIV also defines the threshold for a clock absence detection. This value can only be modified when DFSDMEN=0 (in DFSDM_CH0CFGR1 register). If DFSDMEN=0 (in DFSDM_CH0CFGR1 register) then CKOUT signal is set to low state (setting is performed one DFSDM clock cycle after DFSDMEN=0). Note: CKOUTDIV is present only in DFSDM_CH0CFGR1 register (channel y=0) 1- 255: Defines the division of system clock for the serial clock output for CKOUT signal in range 2Â -.'
+    bit_offset: 16
+    bit_size: 8
+  - name: CKOUTSRC
+    description: 'Output serial clock source selection This value can be modified only when DFSDMEN=0 (in DFSDM_CH0CFGR1 register). Note: CKOUTSRC is present only in DFSDM_CH0CFGR1 register (channel y=0).'
+    bit_offset: 30
+    bit_size: 1
+  - name: DFSDMEN
+    description: 'Global enable for DFSDM interface If DFSDM interface is enabled, then it is started to operate according to enabled y channels and enabled x filters settings (CHEN bit in DFSDM_CHyCFGR1 and DFEN bit in DFSDM_FLTxCR1). Data cleared by setting DFSDMEN=0: all registers DFSDM_FLTxISR are set to reset state (x = 0..7) all registers DFSDM_FLTxAWSR are set to reset state (x = 0..7) Note: DFSDMEN is present only in DFSDM_CH0CFGR1 register (channel y=0).'
+    bit_offset: 31
+    bit_size: 1
+fieldset/CFGR2:
+  description: DFSDM channel 0 configuration register.
+  fields:
+  - name: DTRBS
+    description: 'Data right bit-shift for channel y will be performed to have final results. Bit-shift is performed before offset correction. The data shift is rounding the result to nearest integer value. The sign of shifted result is maintained (to have valid 24-bit signed format of result data). This value can be modified only when CHEN=0 (in DFSDM_CHyCFGR1 register). 0-31: Defines the shift of the data result coming from the integrator - how many bit shifts to the right.'
+    bit_offset: 3
+    bit_size: 5
+  - name: OFFSET
+    description: 24-bit calibration offset for channel y For channel y, OFFSET is applied to the results of each conversion from this channel. This value is set by software.
+    bit_offset: 8
+    bit_size: 24
+fieldset/CR1:
+  fields:
+  - name: DFEN
+    description: 'DFSDM_FLTx enable Data which are cleared by setting DFEN=0: register DFSDM_FLTxISR is set to the reset state register DFSDM_FLTxAWSR is set to the reset state.'
+    bit_offset: 0
+    bit_size: 1
+  - name: JSWSTART
+    description: "Start a conversion of the injected group of channels This bit is always read as '0â\x80\x99."
+    bit_offset: 1
+    bit_size: 1
+  - name: JSYNC
+    description: Launch an injected conversion synchronously with the DFSDM_FLT0 JSWSTART trigger This bit can be modified only when DFEN=0 (DFSDM_FLTxCR1).
+    bit_offset: 3
+    bit_size: 1
+  - name: JSCAN
+    description: Scanning conversion mode for injected conversions This bit can be modified only when DFEN=0 (DFSDM_FLTxCR1). Writing JCHG if JSCAN=0 resets the channel selection to the lowest selected channel.
+    bit_offset: 4
+    bit_size: 1
+  - name: JDMAEN
+    description: DMA channel enabled to read data for the injected channel group This bit can be modified only when DFEN=0 (DFSDM_FLTxCR1).
+    bit_offset: 5
+    bit_size: 1
+  - name: JEXTSEL
+    description: 'Trigger signal selection for launching injected conversions This bit can be modified only when DFEN=0 (DFSDM_FLTxCR1). Note: synchronous trigger has latency up to one fDFSDMCLK clock cycle (with deterministic jitter), asynchronous trigger has latency 2-3 fDFSDMCLK clock cycles (with jitter up to 1 cycle). DFSDM_FLTx 0x00 dfsdm_jtrg0 0x01 dfsdm_jtrg1 ... 0x1E dfsdm_jtrg30 0x1F dfsdm_jtrg31 Refer to . 0x0-0x1F: Trigger inputs selected by the following table (internal or external trigger).'
+    bit_offset: 8
+    bit_size: 5
+  - name: JEXTEN
+    description: Trigger enable and trigger edge selection for injected conversions This bit can be modified only when DFEN=0 (DFSDM_FLTxCR1).
+    bit_offset: 13
+    bit_size: 2
+  - name: RSWSTART
+    description: "Software start of a conversion on the regular channel This bit is always read as '0â\x80\x99."
+    bit_offset: 17
+    bit_size: 1
+  - name: RCONT
+    description: "Continuous mode selection for regular conversions Writing '0â\x80\x99 to this bit while a continuous regular conversion is already in progress stops the continuous mode immediately."
+    bit_offset: 18
+    bit_size: 1
+  - name: RSYNC
+    description: Launch regular conversion synchronously with DFSDM_FLT0 This bit can be modified only when DFEN=0 (DFSDM_FLTxCR1).
+    bit_offset: 19
+    bit_size: 1
+  - name: RDMAEN
+    description: DMA channel enabled to read data for the regular conversion This bit can be modified only when DFEN=0 (DFSDM_FLTxCR1).
+    bit_offset: 21
+    bit_size: 1
+  - name: RCH
+    description: 'Regular channel selection ... 7: Channel 7 is selected as the regular channel Writing these bits when RCIP=1 takes effect when the next regular conversion begins. This is especially useful in continuous mode (when RCONT=1). It also affects regular conversions which are pending (due to ongoing injected conversion).'
+    bit_offset: 24
+    bit_size: 3
+  - name: FAST
+    description: 'Fast conversion mode selection for regular conversions When converting a regular conversion in continuous mode, having enabled the fast mode causes each conversion (except the first) to execute faster than in standard mode. This bit has no effect on conversions which are not continuous. This bit can be modified only when DFEN=0 (DFSDM_FLTxCR1). if FAST=0 (or first conversion in continuous mode if FAST=1): t = [FOSR * (IOSR-1 + FORD) + FORD] / fCKIN ..... for Sincx filters t = [FOSR * (IOSR-1 + 4) + 2] / fCKIN ..... for FastSinc filter if FAST=1 in continuous mode (except first conversion): t = [FOSR * IOSR] / fCKIN in case if FOSR = FOSR[9:0]+1 = 1 (filter bypassed, active only integrator): t = IOSR / fCKIN (... but CNVCNT=0) where: fCKIN is the channel input clock frequency (on given channel CKINy pin) or input data rate in case of parallel data input.'
+    bit_offset: 29
+    bit_size: 1
+  - name: AWFSEL
+    description: Analog watchdog fast mode select.
+    bit_offset: 30
+    bit_size: 1
+fieldset/CR2:
+  fields:
+  - name: JEOCIE
+    description: Injected end of conversion interrupt enable Please see the explanation of JEOCF in DFSDM_FLTxISR.
+    bit_offset: 0
+    bit_size: 1
+  - name: REOCIE
+    description: Regular end of conversion interrupt enable Please see the explanation of REOCF in DFSDM_FLTxISR.
+    bit_offset: 1
+    bit_size: 1
+  - name: JOVRIE
+    description: Injected data overrun interrupt enable Please see the explanation of JOVRF in DFSDM_FLTxISR.
+    bit_offset: 2
+    bit_size: 1
+  - name: ROVRIE
+    description: Regular data overrun interrupt enable Please see the explanation of ROVRF in DFSDM_FLTxISR.
+    bit_offset: 3
+    bit_size: 1
+  - name: AWDIE
+    description: Analog watchdog interrupt enable Please see the explanation of AWDF in DFSDM_FLTxISR.
+    bit_offset: 4
+    bit_size: 1
+  - name: SCDIE
+    description: 'Short-circuit detector interrupt enable Please see the explanation of SCDF[7:0] in DFSDM_FLTxISR. Note: SCDIE is present only in DFSDM_FLT0CR2 register (filter x=0).'
+    bit_offset: 5
+    bit_size: 1
+  - name: CKABIE
+    description: 'Clock absence interrupt enable Please see the explanation of CKABF[7:0] in DFSDM_FLTxISR. Note: CKABIE is present only in DFSDM_FLT0CR2 register (filter x=0).'
+    bit_offset: 6
+    bit_size: 1
+  - name: EXCH
+    description: 'Extremes detector channel selection These bits select the input channels to be taken by the Extremes detector. EXCH[y] = 0: Extremes detector does not accept data from channel y EXCH[y] = 1: Extremes detector accepts data from channel y.'
+    bit_offset: 8
+    bit_size: 8
+  - name: AWDCH
+    description: 'Analog watchdog channel selection These bits select the input channel to be guarded continuously by the analog watchdog. AWDCH[y] = 0: Analog watchdog is disabled on channel y AWDCH[y] = 1: Analog watchdog is enabled on channel y.'
+    bit_offset: 16
+    bit_size: 8
+fieldset/DATINR:
+  description: DFSDM channel 0 data input register.
+  fields:
+  - name: INDAT0
+    description: 'Input data for channel y Input parallel channel data to be processed by the digital filter if DATMPX[1:0]=1 or DATMPX[1:0]=2. Data can be written by CPU/DMA (if DATMPX[1:0]=2) or directly by internal ADC (if DATMPX[1:0]=1). If DATPACK[1:0]=0 (standard mode) Channel y data sample is stored into INDAT0[15:0]. If DATPACK[1:0]=1 (interleaved mode) First channel y data sample is stored into INDAT0[15:0]. Second channel y data sample is stored into INDAT1[15:0]. Both samples are read sequentially by DFSDM_FLTx filter as two channel y data samples. If DATPACK[1:0]=2 (dual mode). For even y channels: Channel y data sample is stored into INDAT0[15:0]. For odd y channels: INDAT0[15:0] is write protected. See for more details. INDAT0[15:0] is in the16-bit signed format.'
+    bit_offset: 0
+    bit_size: 16
+  - name: INDAT1
+    description: 'Input data for channel y or channel y+1 Input parallel channel data to be processed by the digital filter if DATMPX[1:0]=1 or DATMPX[1:0]=2. Data can be written by CPU/DMA (if DATMPX[1:0]=2) or directly by internal ADC (if DATMPX[1:0]=1). If DATPACK[1:0]=0 (standard mode) INDAT0[15:0] is write protected (not used for input sample). If DATPACK[1:0]=1 (interleaved mode) Second channel y data sample is stored into INDAT1[15:0]. First channel y data sample is stored into INDAT0[15:0]. Both samples are read sequentially by DFSDM_FLTx filter as two channel y data samples. If DATPACK[1:0]=2 (dual mode). For even y channels: sample in INDAT1[15:0] is automatically copied into INDAT0[15:0] of channel (y+1). For odd y channels: INDAT1[15:0] is write protected. See for more details. INDAT0[15:1] is in the16-bit signed format.'
+    bit_offset: 16
+    bit_size: 16
+fieldset/DLYR:
+  fields:
+  - name: PLSSKP
+    description: 'Pulses to skip for input data skipping function immediately after writing to this field. Reading of PLSSKP[5:0] returns current value of pulses which will be skipped. If PLSSKP[5:0]=0 then all required data samples were already skipped. Note: User can update PLSSKP[5:0] also when PLSSKP[5:0] is not zero. 0-63: Defines the number of serial input samples that will be skipped. Skipping is applied.'
+    bit_offset: 0
+    bit_size: 6
+fieldset/EXMAX:
+  fields:
+  - name: EXMAXCH
+    description: Extremes detector maximum data channel. These bits contains information about the channel on which the data is stored into EXMAX[23:0]. Bits are cleared by reading of this register.
+    bit_offset: 0
+    bit_size: 3
+  - name: EXMAX
+    description: Extremes detector maximum value These bits are set by hardware and indicate the highest value converted by DFSDM_FLTx. EXMAX[23:0] bits are reset to value (0x800000) by reading of this register.
+    bit_offset: 8
+    bit_size: 24
+fieldset/EXMIN:
+  fields:
+  - name: EXMINCH
+    description: Extremes detector minimum data channel These bits contain information about the channel on which the data is stored into EXMIN[23:0]. Bits are cleared by reading of this register.
+    bit_offset: 0
+    bit_size: 3
+  - name: EXMIN
+    description: Extremes detector minimum value These bits are set by hardware and indicate the lowest value converted by DFSDM_FLTx. EXMIN[23:0] bits are reset to value (0x7FFFFF) by reading of this register.
+    bit_offset: 8
+    bit_size: 24
+fieldset/FCR:
+  fields:
+  - name: IOSR
+    description: 'Integrator oversampling ratio (averaging length) from Sinc filter will be summed into one output data sample from the integrator. The output data rate from the integrator will be decreased by this number (additional data decimation ratio). This bit can only be modified when DFEN=0 (DFSDM_FLTxCR1) Note: If IOSR = 0, then the Integrator has no effect (Integrator bypass). 0- 255: The length of the Integrator in the range 1 - 256 (IOSR + 1). Defines how many samples.'
+    bit_offset: 0
+    bit_size: 8
+  - name: FOSR
+    description: 'Sinc filter oversampling ratio (decimation rate) number is also the decimation ratio of the output data rate from filter. This bit can only be modified when DFEN=0 (DFSDM_FLTxCR1) Note: If FOSR = 0, then the filter has no effect (filter bypass). 0 - 1023: Defines the length of the Sinc type filter in the range 1 - 1024 (FOSR = FOSR[9:0] +1). This.'
+    bit_offset: 16
+    bit_size: 10
+  - name: FORD
+    description: 'Sinc filter order 2: Sinc2 filter type 3: Sinc3 filter type 4: Sinc4 filter type 5: Sinc5 filter type 6-7: Reserved Sincx filter type transfer function: FastSinc filter type transfer function: This bit can only be modified when DFEN=0 (DFSDM_FLTxCR1).'
+    bit_offset: 29
+    bit_size: 3
+fieldset/FLTCNVTIMR:
+  fields:
+  - name: CNVCNT
+    description: '28-bit timer counting conversion time t = CNVCNT[27:0] / fDFSDMCLK The timer has an input clock from DFSDM clock (system clock fDFSDMCLK). Conversion time measurement is started on each conversion start and stopped when conversion finishes (interval between first and last serial sample). Only in case of filter bypass (FOSR[9:0] = 0) is the conversion time measurement stopped and CNVCNT[27:0] = 0. The counted time is: if FAST=0 (or first conversion in continuous mode if FAST=1): t = [FOSR * (IOSR-1 + FORD) + FORD] / fCKIN ..... for Sincx filters t = [FOSR * (IOSR-1 + 4) + 2] / fCKIN ..... for FastSinc filter if FAST=1 in continuous mode (except first conversion): t = [FOSR * IOSR] / fCKIN in case if FOSR = FOSR[9:0]+1 = 1 (filter bypassed, active only integrator): CNVCNT = 0 (counting is stopped, conversion time: t = IOSR / fCKIN) where: fCKIN is the channel input clock frequency (on given channel CKINy pin) or input data rate in case of parallel data input (from internal ADC or from CPU/DMA write) Note: When conversion is interrupted (e.g. by disable/enable selected channel) the timer counts also this interruption time.'
+    bit_offset: 4
+    bit_size: 28
+fieldset/ICR:
+  fields:
+  - name: CLRJOVRF
+    description: Clear the injected conversion overrun flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: CLRROVRF
+    description: Clear the regular conversion overrun flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: CLRCKABF
+    description: "Clear the clock absence flag CLRCKABF[y]=0: Writing '0â\x80\x99 has no effect CLRCKABF[y]=1: Writing '1â\x80\x99 to position y clears the corresponding CKABF[y] bit in the DFSDM_FLTxISR register. When the transceiver is not yet synchronized, the clock absence flag is set and cannot be cleared by CLRCKABF[y]. Note: CLRCKABF[7:0] is present only in DFSDM_FLT0ICR register (filter x=0)."
+    bit_offset: 16
+    bit_size: 8
+  - name: CLRSCDF
+    description: "Clear the short-circuit detector flag CLRSCDF[y]=0: Writing '0â\x80\x99 has no effect CLRSCDF[y]=1: Writing '1â\x80\x99 to position y clears the corresponding SCDF[y] bit in the DFSDM_FLTxISR register Note: CLRSCDF[7:0] is present only in DFSDM_FLT0ICR register (filter x=0)."
+    bit_offset: 24
+    bit_size: 8
+fieldset/ISR:
+  fields:
+  - name: JEOCF
+    description: End of injected conversion flag This bit is set by hardware. It is cleared when the software or DMA reads DFSDM_FLTxJDATAR.
+    bit_offset: 0
+    bit_size: 1
+  - name: REOCF
+    description: End of regular conversion flag This bit is set by hardware. It is cleared when the software or DMA reads DFSDM_FLTxRDATAR.
+    bit_offset: 1
+    bit_size: 1
+  - name: JOVRF
+    description: Injected conversion overrun flag This bit is set by hardware. It can be cleared by software using the CLRJOVRF bit in the DFSDM_FLTxICR register.
+    bit_offset: 2
+    bit_size: 1
+  - name: ROVRF
+    description: Regular conversion overrun flag This bit is set by hardware. It can be cleared by software using the CLRROVRF bit in the DFSDM_FLTxICR register.
+    bit_offset: 3
+    bit_size: 1
+  - name: AWDF
+    description: "Analog watchdog This bit is set by hardware. It is cleared by software by clearing all source flag bits AWHTF[7:0] and AWLTF[7:0] in DFSDM_FLTxAWSR register (by writing '1â\x80\x99 into the clear bits in DFSDM_FLTxAWCFR register)."
+    bit_offset: 4
+    bit_size: 1
+  - name: JCIP
+    description: Injected conversion in progress status A request to start an injected conversion is ignored when JCIP=1.
+    bit_offset: 13
+    bit_size: 1
+  - name: RCIP
+    description: Regular conversion in progress status A request to start a regular conversion is ignored when RCIP=1.
+    bit_offset: 14
+    bit_size: 1
+  - name: CKABF
+    description: 'Clock absence flag CKABF[y]=0: Clock signal on channel y is present. CKABF[y]=1: Clock signal on channel y is not present. Given y bit is set by hardware when clock absence is detected on channel y. It is held at CKABF[y]=1 state by hardware when CHEN=0 (see DFSDM_CHyCFGR1 register). It is held at CKABF[y]=1 state by hardware when the transceiver is not yet synchronized.It can be cleared by software using the corresponding CLRCKABF[y] bit in the DFSDM_FLTxICR register. Note: CKABF[7:0] is present only in DFSDM_FLT0ISR register (filter x=0).'
+    bit_offset: 16
+    bit_size: 8
+  - name: SCDF
+    description: 'short-circuit detector flag SDCF[y]=0: No short-circuit detector event occurred on channel y SDCF[y]=1: The short-circuit detector counter reaches, on channel y, the value programmed in the DFSDM_CHyAWSCDR registers This bit is set by hardware. It can be cleared by software using the corresponding CLRSCDF[y] bit in the DFSDM_FLTxICR register. SCDF[y] is cleared also by hardware when CHEN[y] = 0 (given channel is disabled). Note: SCDF[7:0] is present only in DFSDM_FLT0ISR register (filter x=0).'
+    bit_offset: 24
+    bit_size: 8
+fieldset/JCHGR:
+  fields:
+  - name: JCHG
+    description: 'Injected channel group selection JCHG[y]=0: channel y is not part of the injected group JCHG[y]=1: channel y is part of the injected group If JSCAN=1, each of the selected channels is converted, one after another. The lowest channel (channel 0, if selected) is converted first and the sequence ends at the highest selected channel. If JSCAN=0, then only one channel is converted from the selected channels, and the channel selection is moved to the next channel. Writing JCHG, if JSCAN=0, resets the channel selection to the lowest selected channel. At least one channel must always be selected for the injected group. Writes causing all JCHG bits to be zero are ignored.'
+    bit_offset: 0
+    bit_size: 8
+fieldset/JDATAR:
+  fields:
+  - name: JDATACH
+    description: Injected channel most recently converted When each conversion of a channel in the injected group finishes, JDATACH[2:0] is updated to indicate which channel was converted. Thus, JDATA[23:0] holds the data that corresponds to the channel indicated by JDATACH[2:0].
+    bit_offset: 0
+    bit_size: 3
+  - name: JDATA
+    description: Injected group conversion data When each conversion of a channel in the injected group finishes, its resulting data is stored in this field. The data is valid when JEOCF=1. Reading this register clears the corresponding JEOCF.
+    bit_offset: 8
+    bit_size: 24
+fieldset/RDATAR:
+  fields:
+  - name: RDATACH
+    description: Regular channel most recently converted When each regular conversion finishes, RDATACH[2:0] is updated to indicate which channel was converted (because regular channel selection RCH[2:0] in DFSDM_FLTxCR1 register can be updated during regular conversion). Thus RDATA[23:0] holds the data that corresponds to the channel indicated by RDATACH[2:0].
+    bit_offset: 0
+    bit_size: 3
+  - name: RPEND
+    description: Regular channel pending data Regular data in RDATA[23:0] was delayed due to an injected channel trigger during the conversion.
+    bit_offset: 4
+    bit_size: 1
+  - name: RDATA
+    description: Regular channel conversion data When each regular conversion finishes, its data is stored in this register. The data is valid when REOCF=1. Reading this register clears the corresponding REOCF.
+    bit_offset: 8
+    bit_size: 24
+fieldset/WDATR:
+  description: DFSDM channel 0 watchdog filter data register.
+  fields:
+  - name: WDATA
+    description: Input channel y watchdog data Data converted by the analog watchdog filter for input channel y. This data is continuously converted (no trigger) for this channel, with a limited resolution (OSR=1..32/sinc order = 1..3).
+    bit_offset: 0
+    bit_size: 16
