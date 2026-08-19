@@ -53,3 +53,99 @@ b1fc1ebb5675f43be274b17b818b1dd8b9d0176f30176f1d1d91669ac07cf6b2  f412_DFSDM.yam
 de520e211fc96ae2ab30f7dcdf72a06f7bb355392213d1416e42b555271108a9  l4x6_DFSDM1.yaml
 e391cb862a2bc4607a9878cad8db12a229f1e66294fa17947acf4116dade7821  h7b3_DFSDM1.yaml
 ```
+
+# TRMS of DFSDM Chips according to STM32:
+## rm0351-stm32l47xxx-stm32l48xxx-stm32l49xxx-and-stm32l4axxx-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32L471
+- STM32L475
+- STM32L476
+- STM32L486
+- STM32L496
+- STM32L4A6
+
+## rm0394-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32L451
+- STM32L452
+- STM32L462
+
+## rm0399-stm32h745755-and-stm32h747757-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32H745
+- STM32H747
+- STM32H755
+- STM32H757
+
+## rm0402-stm32f412-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32F412
+
+## rm0410-stm32f76xxx-and-stm32f77xxx-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32F765
+- STM32F767
+- STM32F769
+- STM32F777
+- STM32F778
+- STM32F779
+
+## rm0430-stm32f413423-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32F413
+- STM32F423
+
+## rm0432-stm32l4-series-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32L4P5
+- STM32L4Q5
+- STM32L4R5
+- STM32L4R7
+- STM32L4R9
+- STM32L4S5
+- STM32L4S7
+- STM32L4S9
+
+## rm0433-stm32h742-stm32h743753-and-stm32h750-value-line-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32H742
+- STM32H743
+- STM32H750
+- STM32H753
+
+## rm0436-stm32mp157-advanced-armbased-32bit-mpus-stmicroelectronics
+
+- STM32MP157
+
+## rm0438-stm32l5-series-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32L552
+- STM32L562
+
+## rm0441-stm32mp151-advanced-armbased-32bit-mpus-stmicroelectronics
+
+- STM32MP151
+
+## rm0442-stm32mp153-advanced-armbased-32bit-mpus-stmicroelectronics
+
+- STM32MP153
+
+## rm0455-stm32h7a37b3-and-stm32h7b0-value-line-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32H7A3
+- STM32H7B0
+- STM32H7B3
+
+## rm0468-stm32h723733-stm32h725735-and-stm32h730-value-line-advanced-armbased-32bit-mcus-stmicroelectronics
+
+- STM32H723
+- STM32H725
+- STM32H730
+- STM32H733
+- STM32H735
+
+## rm0475-stm32mp13xx-advanced-armbased-32bit-mpus-stmicroelectronics
+
+- STM32MP131
+- STM32MP133
+- STM32MP135
