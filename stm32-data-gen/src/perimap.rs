@@ -853,6 +853,8 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:XSPI[12]:XSPI:xspi_v2_1H7RS*", ("xspi", "v1", "XSPI")),
     (".*:XSPIM:XSPIM:xspi_v2_1H7RS*", ("xspim", "v1", "XSPIM")),
     ("STM32H7.*:MDMA:.*", ("mdma", "v1", "MDMA")),
+    //TODO DFSDM
+    ("STM32H7[AB].*:DFSDM:.*", ("dfsdm", "v1", "DFSDM")),
 ];
 
 pub struct Perimap {
