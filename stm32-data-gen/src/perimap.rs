@@ -553,6 +553,8 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32L.*:TIM(16|17):.*", ("timer", "v1", "TIM_1CH_CMP")),
     // LPTIM for STM32Lx
     ("STM32L5.*:LPTIM.*:.*", ("lptim", "v1c", "LPTIM")),
+    // These L4 parts include the repetition counter and update-event flags.
+    ("STM32L4(P5|Q5|12|22).*:LPTIM.*:.*", ("lptim", "v1c", "LPTIM")),
     ("STM32L4[PQRS].*:LPTIM.*:.*", ("lptim", "v1b", "LPTIM")),
     ("STM32L4[^PQRS].*:LPTIM.*:.*", ("lptim", "v1a", "LPTIM")),
     ("STM32L0.*:LPTIM.*:.*", ("lptim", "v1", "LPTIM")),
