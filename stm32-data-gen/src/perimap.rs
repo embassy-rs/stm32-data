@@ -702,7 +702,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32N6.*:CRC:.*", ("crc", "v3", "CRC")),
     ("STM32WB0.*:CRC:.*", ("crc", "v3", "CRC")),
     ("STM32W[BL].*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32C[0].*:CRC:.*", ("crc", "v3", "CRC")),
+    ("STM32C[05].*:CRC:.*", ("crc", "v3", "CRC")),
     ("STM32U[035].*:CRC:.*", ("crc", "v3", "CRC")),
     (".*:LCD:lcdc1_v1.0.*", ("lcd", "v1", "LCD")),
     (".*:LCD:lcdc1_v1.2.*", ("lcd", "v2", "LCD")),
