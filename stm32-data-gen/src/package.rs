@@ -870,11 +870,17 @@ fn build_dma(f: &dma::File, dma_map: &DmaMap, chip_name: &str) -> ChipDma {
                 continue;
             };
 
+            let signal = if interconnect.instance.starts_with("ADC") && signal_id.eq_ignore_ascii_case("global") {
+                interconnect.instance.clone()
+            } else {
+                signal_id.to_uppercase()
+            };
+
             peripherals
                 .entry(interconnect.instance.clone())
                 .or_default()
                 .push(peripheral::DmaChannel {
-                    signal: signal_id.to_uppercase(),
+                    signal,
                     dma: Some(instance.name.clone()),
                     channel: None,
                     dmamux: None,
