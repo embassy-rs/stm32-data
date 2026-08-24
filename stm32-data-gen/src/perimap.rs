@@ -424,6 +424,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32H5.*:CRS:.*", ("crs", "v1", "CRS")),
     ("STM32H7.*:CRS:.*", ("crs", "v1", "CRS")),
     ("STM32WB.*:CRS:.*", ("crs", "v1", "CRS")),
+    ("STM32C5.*:CRS:.*", ("crs", "v1", "CRS")),
     (".*SDMMC:sdmmc2_v1_0.*", ("sdmmc", "v2", "SDMMC")),
     (".*SDMMC:sdmmc2_v2_1.*", ("sdmmc", "v2", "SDMMC")),
     (".*SDMMC:sdmmc2_v3_0.*", ("sdmmc", "v3", "SDMMC")),
