@@ -794,6 +794,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
     ("STM32U5.*:HASH:.*", ("hash", "v4", "HASH")),
     ("STM32WBA.*:HASH:.*", ("hash", "v4", "HASH")),
+    ("STM32C5.*:HASH:.*", ("hash", "c5", "HASH")),
     (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
     (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
     (".*:HASH:hash1_v4_0_N6", ("hash", "v3", "HASH")),
