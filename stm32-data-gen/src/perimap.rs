@@ -845,6 +845,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32(L5|WL|WB|WB0).*:PKA:.*", ("pka", "v1c", "PKA")),
     ("STM32(L4Q|L5|WL|WB).*:PKA:.*", ("pka", "v1c", "PKA")),
     ("STM32U3.*:CCB:.*", ("ccb", "v1", "CCB")),
+    ("STM32C5A3.*:CCB:.*", ("ccb", "v2", "CCB")),
     ("STM32U3.*:HSP1:.*", ("hsp", "v1", "HSP")),
     (".*:OTFDEC:.*", ("otfdec", "v1", "OTFDEC")),
     // N6 XSPI support
