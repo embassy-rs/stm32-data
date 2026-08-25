@@ -1,0 +1,882 @@
+block/FLASH:
+  description: FLASH register block.
+  items:
+  - name: ACR
+    description: Each register is assigned a offset address and a reset value. In case of registers representing option byte value, the reset value is determined by the OBL process. In case of success the reset value is loaded from OB. In case of OBL failure, a highly restrictive default value is set.FLASH access control register.
+    byte_offset: 0
+    fieldset: ACR
+  - name: KEYR
+    description: FLASH key register.
+    byte_offset: 4
+    access: Write
+  - name: OPTKEYR
+    description: FLASH option key register.
+    byte_offset: 12
+    access: Write
+    fieldset: OPTKEYR
+  - name: OPSR
+    description: FLASH operation status register.
+    byte_offset: 24
+    access: Read
+    fieldset: OPSR
+  - name: OPTCR
+    description: FLASH option control register.
+    byte_offset: 28
+    fieldset: OPTCR
+  - name: SR
+    description: FLASH status register.
+    byte_offset: 32
+    access: Read
+    fieldset: SR
+  - name: CR
+    description: FLASH control register.
+    byte_offset: 40
+    fieldset: CR
+  - name: CCR
+    description: FLASH clear control register.
+    byte_offset: 48
+    access: Write
+    fieldset: CCR
+  - name: PRIVCFGR
+    description: FLASH privilege configuration register.
+    byte_offset: 60
+    fieldset: PRIVCFGR
+  - name: HDPEXTR
+    description: FLASH HDP extension register.
+    byte_offset: 72
+    fieldset: HDPEXTR
+  - name: OPTSR_CUR
+    description: FLASH option status register.
+    byte_offset: 80
+    access: Read
+    fieldset: OPTSR
+  - name: OPTSR_PRG
+    description: FLASH option status register.
+    byte_offset: 84
+    fieldset: OPTSR
+  - name: OPTSR2_CUR
+    description: FLASH option status register 2.
+    byte_offset: 112
+    access: Read
+    fieldset: OPTSR2
+  - name: OPTSR2_PRG
+    description: FLASH option status register 2.
+    byte_offset: 116
+    fieldset: OPTSR2
+  - name: BOOTR_CUR
+    description: FLASH unique boot entry register.
+    byte_offset: 128
+    access: Read
+    fieldset: BOOTR
+  - name: BOOTR_PRG
+    description: FLASH unique boot entry address.
+    byte_offset: 132
+    access: Read
+    fieldset: BOOTR
+  - name: OTPBLR_CUR
+    description: FLASH OTP block lock.
+    byte_offset: 144
+    access: Read
+    fieldset: OTPBLR
+  - name: OTPBLR_PRG
+    description: FLASH OTP block lock.
+    byte_offset: 148
+    fieldset: OTPBLR
+  - name: BL_COM_CFG_CUR
+    description: FLASH Bootloader interface selection.
+    byte_offset: 152
+    access: Read
+    fieldset: BL_COM_CFG
+  - name: BL_COM_CFG_PRG
+    description: FLASH Bootloader interface selection.
+    byte_offset: 156
+    access: Read
+    fieldset: BL_COM_CFG
+  - name: OEMKEYR1_PRG
+    description: FLASH OEM Key register 1.
+    byte_offset: 164
+    access: Write
+    fieldset: OEMKEYR1_PRG
+  - name: OEMKEYR2_PRG
+    description: FLASH OEM Key register 2.
+    byte_offset: 172
+    access: Write
+    fieldset: OEMKEYR2_PRG
+  - name: OEMKEYR3_PRG
+    description: FLASH OEM Key register 3.
+    byte_offset: 180
+    access: Write
+    fieldset: OEMKEYR3_PRG
+  - name: OEMKEYR4_PRG
+    description: FLASH OEM Key register 4.
+    byte_offset: 188
+    access: Write
+    fieldset: OEMKEYR4_PRG
+  - name: BSKEYR_PRG
+    description: FLASH Boundary Scan key register.
+    byte_offset: 196
+    access: Write
+    fieldset: BSKEYR_PRG
+  - name: WRP1R_CUR
+    description: FLASH write page protection for bank1.
+    byte_offset: 232
+    access: Read
+    fieldset: WRP1R
+  - name: WRP1R_PRG
+    description: FLASH write page protection for bank1.
+    byte_offset: 236
+    fieldset: WRP1R
+  - name: HDP1R_CUR
+    description: FLASH HDP bank1 register.
+    byte_offset: 248
+    access: Read
+    fieldset: HDP1R
+  - name: HDP1R_PRG
+    description: FLASH HDP bank1 register.
+    byte_offset: 252
+    fieldset: HDP1R
+  - name: ECCCORR
+    description: FLASH ECC correction register.
+    byte_offset: 256
+    fieldset: ECCCORR
+  - name: ECCDETR
+    description: FLASH ECC detection register.
+    byte_offset: 260
+    fieldset: ECCDETR
+  - name: ECCDR
+    description: FLASH ECC data.
+    byte_offset: 264
+    access: Read
+    fieldset: ECCDR
+  - name: WRP2R_CUR
+    description: FLASH write page protection for bank2.
+    byte_offset: 488
+    access: Read
+    fieldset: WRP2R
+  - name: WRP2R_PRG
+    description: FLASH write page protection for bank2.
+    byte_offset: 492
+    fieldset: WRP2R
+  - name: HDP2R_CUR
+    description: FLASH HDP bank2 register.
+    byte_offset: 504
+    access: Read
+    fieldset: HDP2R
+  - name: HDP2R_PRG
+    description: FLASH HDP bank2 register.
+    byte_offset: 508
+    fieldset: HDP2R
+fieldset/ACR:
+  description: Each register is assigned a offset address and a reset value.
+  fields:
+  - name: LATENCY
+    description: Read latency.
+    bit_offset: 0
+    bit_size: 4
+  - name: WRHIGHFREQ
+    description: FLASH signal delay.
+    bit_offset: 4
+    bit_size: 2
+  - name: PRFTEN
+    description: Prefetch enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: EMPTY
+    description: Main Flash memory area empty (not reset by system reset).
+    bit_offset: 16
+    bit_size: 1
+fieldset/BL_COM_CFG:
+  description: FLASH Bootloader interface selection.
+  fields:
+  - name: BL_COM_CFG
+    description: Bootloader interface selection/configuration.
+    bit_offset: 0
+    bit_size: 32
+fieldset/BOOTR:
+  description: FLASH unique boot entry register.
+  fields:
+  - name: BOOT_LOCK
+    description: A field locking the values of BOOT0, BOOT_SEL, SWAP_BANK, and BOOTADD option settings.
+    bit_offset: 0
+    bit_size: 8
+    enum: BOOT_LOCK
+  - name: BOOTADD
+    description: unique boot entry address.
+    bit_offset: 8
+    bit_size: 24
+fieldset/BSKEYR_PRG:
+  description: FLASH Boundary Scan key register.
+  fields:
+  - name: BSKEY
+    description: Boundary Scan KEY.
+    bit_offset: 0
+    bit_size: 32
+fieldset/CCR:
+  description: FLASH clear control register.
+  fields:
+  - name: CLR_EOP
+    description: EOP flag clear bit.
+    bit_offset: 16
+    bit_size: 1
+  - name: CLR_WRPERR
+    description: WRPERR flag clear bit.
+    bit_offset: 17
+    bit_size: 1
+  - name: CLR_PGSERR
+    description: PGSERR flag clear bit.
+    bit_offset: 18
+    bit_size: 1
+  - name: CLR_STRBERR
+    description: STRBERR flag clear bit.
+    bit_offset: 19
+    bit_size: 1
+  - name: CLR_INCERR
+    description: INCERR flag clear bit.
+    bit_offset: 20
+    bit_size: 1
+  - name: CLR_OPTCHANGEERR
+    description: Clear the flag corresponding flag in SR by writing this bit.
+    bit_offset: 23
+    bit_size: 1
+fieldset/CR:
+  description: FLASH control register.
+  fields:
+  - name: LOCK
+    description: configuration lock bit.
+    bit_offset: 0
+    bit_size: 1
+  - name: PG
+    description: programming control bit.
+    bit_offset: 1
+    bit_size: 1
+  - name: PER
+    description: page erase request.
+    bit_offset: 2
+    bit_size: 1
+  - name: BER
+    description: Bank erase request.
+    bit_offset: 3
+    bit_size: 1
+  - name: FW
+    description: write forcing control bit.
+    bit_offset: 4
+    bit_size: 1
+  - name: STRT
+    description: erase start control bit.
+    bit_offset: 5
+    bit_size: 1
+  - name: PNB
+    description: page erase selection number.
+    bit_offset: 6
+    bit_size: 6
+  - name: MER
+    description: Mass erase request.
+    bit_offset: 15
+    bit_size: 1
+  - name: EOPIE
+    description: end of operation interrupt control bit.
+    bit_offset: 16
+    bit_size: 1
+  - name: WRPERRIE
+    description: write protection error interrupt enable bit.
+    bit_offset: 17
+    bit_size: 1
+  - name: PGSERRIE
+    description: programming sequence error interrupt enable bit.
+    bit_offset: 18
+    bit_size: 1
+  - name: STRBERRIE
+    description: strobe error interrupt enable bit.
+    bit_offset: 19
+    bit_size: 1
+  - name: INCERRIE
+    description: inconsistency error interrupt enable bit.
+    bit_offset: 20
+    bit_size: 1
+  - name: OPTCHANGEERRIE
+    description: Option-byte change error interrupt enable bit.
+    bit_offset: 23
+    bit_size: 1
+  - name: EDATASEL
+    description: EDATA erase selector bit.
+    bit_offset: 29
+    bit_size: 1
+    enum: EDATASEL
+  - name: BKSEL
+    description: Bank selector bit.
+    bit_offset: 31
+    bit_size: 1
+    enum: BKSEL
+fieldset/ECCCORR:
+  description: FLASH ECC correction register.
+  fields:
+  - name: ADDR_ECC
+    description: ECC error address.
+    bit_offset: 0
+    bit_size: 16
+  - name: EDATA_ECC
+    description: ECC fail for corrected ECC error in flash data area.
+    bit_offset: 21
+    bit_size: 1
+  - name: DATA_ECC
+    description: ECC fail for corrected ECC error in flash data area.
+    bit_offset: 21
+    bit_size: 1
+  - name: BK_ECC
+    description: ECC bank flag for corrected ECC error.
+    bit_offset: 22
+    bit_size: 1
+  - name: SYSF_ECC
+    description: ECC flag for corrected ECC error in system FLASH.
+    bit_offset: 23
+    bit_size: 1
+  - name: OTP_ECC
+    description: OTP ECC error bit.
+    bit_offset: 24
+    bit_size: 1
+  - name: ECCCIE
+    description: ECC single correction error interrupt enable bit When ECCCIE bit is set to 1, an interrupt is generated when an ECC single correction error occurs during a read operation.
+    bit_offset: 25
+    bit_size: 1
+  - name: ECCC
+    description: ECC correction.
+    bit_offset: 30
+    bit_size: 1
+fieldset/ECCDETR:
+  description: FLASH ECC detection register.
+  fields:
+  - name: ADDR_ECC
+    description: ECC error address.
+    bit_offset: 0
+    bit_size: 16
+  - name: EDATA_ECC
+    description: ECC fail for double ECC error in flash data area.
+    bit_offset: 21
+    bit_size: 1
+  - name: DATA_ECC
+    description: ECC fail for double ECC error in flash data area.
+    bit_offset: 21
+    bit_size: 1
+  - name: BK_ECC
+    description: ECC fail bank for double ECC Error.
+    bit_offset: 22
+    bit_size: 1
+  - name: SYSF_ECC
+    description: ECC fail for double ECC error in system flash memory.
+    bit_offset: 23
+    bit_size: 1
+  - name: OTP_ECC
+    description: OTP ECC error bit.
+    bit_offset: 24
+    bit_size: 1
+  - name: ECCD
+    description: ECC detection set by hardware when two ECC error has been detected.
+    bit_offset: 31
+    bit_size: 1
+fieldset/ECCDR:
+  description: FLASH ECC data.
+  fields:
+  - name: DATA_ECC
+    description: ECC error data.
+    bit_offset: 0
+    bit_size: 16
+  - name: DATA_ADDR_ECC
+    description: DATA ECC error address.
+    bit_offset: 16
+    bit_size: 3
+    enum: DATA_ADDR_ECC
+fieldset/HDP1R:
+  description: FLASH HDP bank1 register.
+  fields:
+  - name: HDP1_STRT
+    description: Bank 1 HDPL barrier start set in number of 8Kbytes pages.
+    bit_offset: 0
+    bit_size: 4
+  - name: HDP1_END
+    description: Bank 1 HDPL barrier end set in number of 8Kbytes pages.
+    bit_offset: 16
+    bit_size: 4
+fieldset/HDP2R:
+  description: FLASH HDP bank2 register.
+  fields:
+  - name: HDP2_STRT
+    description: Bank 2 HDPL barrier start set in number of 8Kbytes pages.
+    bit_offset: 0
+    bit_size: 4
+  - name: HDP2_END
+    description: Bank 2 HDPL barrier end set in number of 8Kbytes pages.
+    bit_offset: 16
+    bit_size: 4
+fieldset/HDPEXTR:
+  description: FLASH HDP extension register.
+  fields:
+  - name: HDP1_EXT
+    description: HDP area extension in 8Kbytes pages in bank1. Extension is added after the HDP1_END page (included).
+    bit_offset: 0
+    bit_size: 4
+  - name: HDP2_EXT
+    description: HDP area extension in 8Kbytes pages in bank2. Extension is added after the HDP2_END page (included).
+    bit_offset: 16
+    bit_size: 4
+fieldset/OEMKEYR1_PRG:
+  description: FLASH OEM Key register 1.
+  fields:
+  - name: OEMKEY
+    description: Least significants bytes of OEMKEY.
+    bit_offset: 0
+    bit_size: 32
+fieldset/OEMKEYR2_PRG:
+  description: FLASH OEM Key register 2.
+  fields:
+  - name: OEMKEY
+    description: Mid-least significants bytes of OEMKEY.
+    bit_offset: 0
+    bit_size: 32
+fieldset/OEMKEYR3_PRG:
+  description: FLASH OEM Key register 3.
+  fields:
+  - name: OEMKEY
+    description: Mid-most significants bytes of OEMKEY.
+    bit_offset: 0
+    bit_size: 32
+fieldset/OEMKEYR4_PRG:
+  description: FLASH OEM Key register 4.
+  fields:
+  - name: OEMKEY
+    description: Most significants bytes of OEMKEY.
+    bit_offset: 0
+    bit_size: 32
+fieldset/OPSR:
+  description: FLASH operation status register.
+  fields:
+  - name: ADDR_OP
+    description: Interrupted operation address.
+    bit_offset: 0
+    bit_size: 16
+  - name: DATA_OP
+    description: Flash data area operation interrupted.
+    bit_offset: 21
+    bit_size: 1
+  - name: BK_OP
+    description: Interrupted operation bank.
+    bit_offset: 22
+    bit_size: 1
+  - name: SYSF_OP
+    description: Operation in system flash memory interrupted.
+    bit_offset: 23
+    bit_size: 1
+  - name: OTP_OP
+    description: OTP operation interrupted.
+    bit_offset: 24
+    bit_size: 1
+  - name: CODE_OP
+    description: Flash memory operation code.
+    bit_offset: 29
+    bit_size: 3
+    enum: CODE_OP
+fieldset/OPTCR:
+  description: FLASH option control register.
+  fields:
+  - name: OPTLOCK
+    description: OPTCR lock option configuration bit.
+    bit_offset: 0
+    bit_size: 1
+  - name: OPTSTRT
+    description: Option-byte start change option configuration bit.
+    bit_offset: 1
+    bit_size: 1
+  - name: SWAP_BANK
+    description: Bank swapping option configuration bit.
+    bit_offset: 31
+    bit_size: 1
+    enum: OPTCR_SWAP_BANK
+fieldset/OPTKEYR:
+  description: FLASH option key register.
+  fields:
+  - name: OPTKEY
+    description: FLASH option-byte control access unlock key.
+    bit_offset: 0
+    bit_size: 32
+fieldset/OPTSR2:
+  description: FLASH option status register 2.
+  fields:
+  - name: SRAM1_RST
+    description: SRAM1 erase upon system reset.
+    bit_offset: 0
+    bit_size: 1
+  - name: SRAM2_RST
+    description: SRAM2 erase when system reset.
+    bit_offset: 1
+    bit_size: 1
+  - name: SRAM2_ECC
+    description: SRAM2 ECC detection and correction disable.
+    bit_offset: 4
+    bit_size: 1
+    enum: OPTSR2_SRAM2_ECC
+fieldset/OPTSR:
+  description: FLASH option status register.
+  fields:
+  - name: IWDG_SW
+    description: IWDG control mode option status bit.
+    bit_offset: 3
+    bit_size: 1
+    enum: OPTSR_IWDG_SW
+  - name: WWDG_SW
+    description: WWDG control mode option status bit.
+    bit_offset: 4
+    bit_size: 1
+    enum: OPTSR_WWDG_SW
+  - name: NRST_STOP
+    description: Core domain Stop entry reset option status bit.
+    bit_offset: 6
+    bit_size: 1
+    enum: OPTSR_NRST_STOP
+  - name: NRST_STDBY
+    description: Core domain Standby entry reset option status bit.
+    bit_offset: 7
+    bit_size: 1
+    enum: OPTSR_NRST_STDBY
+  - name: RDP_LEVEL
+    description: RDP level code (based on Hamming 8,4). See Section7.5.8.
+    bit_offset: 8
+    bit_size: 8
+  - name: IWDG_STOP
+    description: IWDG Stop mode freeze option status bit.
+    bit_offset: 20
+    bit_size: 1
+    enum: OPTSR_IWDG_STOP
+  - name: IWDG_STDBY
+    description: IWDG Standby mode freeze option status bit.
+    bit_offset: 21
+    bit_size: 1
+    enum: OPTSR_IWDG_STDBY
+  - name: BOOT_SEL
+    description: Boot 0 source selection.
+    bit_offset: 22
+    bit_size: 1
+    enum: OPTSR_BOOT_SEL
+  - name: BOOT0
+    description: Boot 0 option bit.
+    bit_offset: 23
+    bit_size: 1
+    enum: OPTSR_BOOT0
+  - name: EDATA_EN
+    description: Flash data area enable.
+    bit_offset: 29
+    bit_size: 1
+  - name: SINGLE_BANK
+    description: Dual bank selection option status bit.
+    bit_offset: 30
+    bit_size: 1
+    enum: OPTSR_SINGLE_BANK
+  - name: DUAL_BANK
+    description: Dual bank selection option status bit.
+    bit_offset: 30
+    bit_size: 1
+    enum: OPTSR_DUAL_BANK
+  - name: SWAP_BANK
+    description: Bank swapping option status bit.
+    bit_offset: 31
+    bit_size: 1
+    enum: OPTSR_SWAP_BANK
+fieldset/OTPBLR:
+  description: FLASH OTP block lock.
+  fields:
+  - name: LOCKBL
+    description: OTP block lock.
+    bit_offset: 0
+    bit_size: 24
+fieldset/PRIVCFGR:
+  description: FLASH privilege configuration register.
+  fields:
+  - name: PRIV
+    description: privilege attribute.
+    bit_offset: 1
+    bit_size: 1
+    enum: PRIV
+fieldset/SR:
+  description: FLASH status register.
+  fields:
+  - name: BSY
+    description: busy flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: WBNE
+    description: write buffer not empty flag.
+    bit_offset: 1
+    bit_size: 1
+    enum: WBNE
+  - name: DBNE
+    description: data buffer not empty flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: OEMLOCK
+    description: OEM lock.
+    bit_offset: 8
+    bit_size: 1
+  - name: BSLOCK
+    description: BS lock.
+    bit_offset: 9
+    bit_size: 1
+  - name: EOP
+    description: end of operation flag.
+    bit_offset: 16
+    bit_size: 1
+  - name: WRPERR
+    description: write protection error flag.
+    bit_offset: 17
+    bit_size: 1
+  - name: PGSERR
+    description: programming sequence error flag.
+    bit_offset: 18
+    bit_size: 1
+  - name: STRBERR
+    description: strobe error flag.
+    bit_offset: 19
+    bit_size: 1
+  - name: INCERR
+    description: Inconsistency error flag.
+    bit_offset: 20
+    bit_size: 1
+  - name: OPTCHANGEERR
+    description: Option-byte change error flag.
+    bit_offset: 23
+    bit_size: 1
+fieldset/WRP1R:
+  description: FLASH write page protection for bank1.
+  fields:
+  - name: WRPSG1
+    description: Bank1 page protection option status byte.
+    bit_offset: 0
+    bit_size: 32
+    enum: WRP1R_WRPSG1
+fieldset/WRP2R:
+  description: FLASH write page protection for bank2.
+  fields:
+  - name: WRPSG2
+    description: Bank2 page protection option status byte.
+    bit_offset: 0
+    bit_size: 32
+    enum: WRP2R_WRPSG2
+enum/BKSEL:
+  bit_size: 1
+  variants:
+  - name: Bank1
+    description: Bank1 is selected for bank erase (BER)/page erase (PER)/interrupt enable.
+    value: 0
+  - name: Bank2
+    description: Bank2 is selected for BER/PER.
+    value: 1
+enum/CODE_OP:
+  bit_size: 3
+  variants:
+  - name: B_0x0
+    description: No FLASH operation ongoing during previous reset.
+    value: 0
+  - name: B_0x1
+    description: Single write operation interrupted.
+    value: 1
+  - name: B_0x3
+    description: Page erase operation interrupted.
+    value: 3
+  - name: B_0x4
+    description: Bank erase operation interrupted.
+    value: 4
+  - name: B_0x5
+    description: Mass erase operation interrupted.
+    value: 5
+  - name: B_0x6
+    description: Option change operation interrupted.
+    value: 6
+enum/DATA_ADDR_ECC:
+  bit_size: 3
+  variants:
+  - name: B_0x0
+    description: Double error on first 16bits data or first 32 bits data accessed on the FLASH line.
+    value: 0
+  - name: B_0x1
+    description: Double error on second 16bits data accessed on the FLASH line.
+    value: 1
+  - name: B_0x2
+    description: Double error on third 16bits data or second 32 bits data accessed on the FLASH line.
+    value: 2
+  - name: B_0x3
+    description: Double error on fourth 16bits data accessed on the FLASH line.
+    value: 3
+  - name: B_0x4
+    description: Double error on fifth 16bits data or third 32 bits data accessed on the FLASH line.
+    value: 4
+  - name: B_0x5
+    description: Double error on sixth 16bits data.
+    value: 5
+enum/EDATASEL:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Main flash page erase.
+    value: 0
+  - name: B_0x1
+    description: Flash data area EDATA page erase.
+    value: 1
+enum/BOOT_LOCK:
+  bit_size: 8
+  variants:
+  - name: Locked
+    description: The BOOT0, BOOT_SEL, SWAP_BANK and BOOTADD are frozen.
+    value: 180
+  - name: Unlocked
+    description: The BOOT0, BOOT_SEL, SWAP_BANK and BOOTADD can still be modified following their individual rules.
+    value: 195
+enum/OPTCR_SWAP_BANK:
+  bit_size: 1
+  variants:
+  - name: NotSwapped
+    description: Bank1 and bank2 not swapped.
+    value: 0
+  - name: Swapped
+    description: Bank1 and bank2 swapped.
+    value: 1
+enum/OPTSR2_SRAM2_ECC:
+  bit_size: 1
+  variants:
+  - name: Enabled
+    description: SRAM2 ECC check enabled.
+    value: 0
+  - name: Disabled
+    description: SRAM2 ECC check disabled.
+    value: 1
+enum/OPTSR_BOOT0:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: BOOT0 = 0.
+    value: 0
+  - name: B_0x1
+    description: BOOT0 = 1.
+    value: 1
+enum/OPTSR_IWDG_STDBY:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Independent watchdog frozen in Standby mode.
+    value: 0
+  - name: B_0x1
+    description: Independent watchdog keep running in Standby mode.
+    value: 1
+enum/OPTSR_IWDG_STOP:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Independent watchdog frozen in system Stop mode.
+    value: 0
+  - name: B_0x1
+    description: Independent watchdog keep running in system Stop mode.
+    value: 1
+enum/OPTSR_IWDG_SW:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: IWDG watchdog is controlled by hardware.
+    value: 0
+  - name: B_0x1
+    description: IWDG watchdog is controlled by software.
+    value: 1
+enum/OPTSR_NRST_STDBY:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: a reset is generated when entering Standby mode on core domain.
+    value: 0
+  - name: B_0x1
+    description: no reset generated when entering Standby mode on core domain.
+    value: 1
+enum/OPTSR_NRST_STOP:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: a reset is generated when entering Stop mode on core domain.
+    value: 0
+  - name: B_0x1
+    description: no reset generated when entering Stop mode on core domain.
+    value: 1
+enum/OPTSR_SINGLE_BANK:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: 128 Kbytes of user flash split with 64 Kbytes in Bank 1 and 64 Kbytes in Bank 2.
+    value: 0
+  - name: B_0x1
+    description: 128 Kbytes of user flash located in one bank.
+    value: 1
+enum/OPTSR_SWAP_BANK:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Bank1 and bank2 not swapped.
+    value: 0
+  - name: B_0x1
+    description: Bank1 and bank2 swapped.
+    value: 1
+enum/OPTSR_WWDG_SW:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: WWDG watchdog is controlled by hardware.
+    value: 0
+  - name: B_0x1
+    description: WWDG watchdog is controlled by software.
+    value: 1
+enum/OPTSR_BOOT_SEL:
+  bit_size: 1
+  variants:
+  - name: OptionBit
+    description: BOOT0 signal is defined by the BOOT0 option bit.
+    value: 0
+  - name: Pin
+    description: BOOT0 signal is defined by BOOT0 pin value (legacy mode).
+    value: 1
+enum/OPTSR_DUAL_BANK:
+  bit_size: 1
+  variants:
+  - name: DualBank
+    description: x Kbytes of user flash split with x/2 Kbytes in Bank 1 and x/2 Kbytes in Bank 2.
+    value: 0
+  - name: SingleBank
+    description: x Kbytes of user flash located in one bank.
+    value: 1
+enum/WRP1R_WRPSG1:
+  bit_size: 32
+  variants:
+  - name: B_0x0
+    description: write protected;.
+    value: 0
+  - name: B_0x1
+    description: not write protected.
+    value: 1
+enum/WRP2R_WRPSG2:
+  bit_size: 32
+  variants:
+  - name: B_0x0
+    description: write protected.
+    value: 0
+  - name: B_0x1
+    description: not write protected.
+    value: 1
+enum/PRIV:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Access to registers is always granted.
+    value: 0
+  - name: B_0x1
+    description: Access to registers is denied in case of unprivileged access.
+    value: 1
+enum/WBNE:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: write buffer empty or full.
+    value: 0
+  - name: B_0x1
+    description: write buffer waiting data to complete.
+    value: 1

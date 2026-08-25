@@ -1,0 +1,303 @@
+block/BSEC:
+  description: Boot and security and OTP control.
+  items:
+  - name: FVR
+    description: BSEC fuse value register.
+    byte_offset: 0
+    array:
+      len: 376
+      stride: 4
+    fieldset: FVR
+  - name: SPLOCK
+    description: BSEC sticky program lock register.
+    byte_offset: 0x800
+    array:
+      len: 12
+      stride: 4
+    fieldset: LOCKR
+  - name: SWLOCK
+    description: BSEC sticky write lock register.
+    byte_offset: 0x840
+    array:
+      len: 12
+      stride: 4
+    fieldset: LOCKR
+  - name: SRLOCK
+    description: BSEC sticky read lock register.
+    byte_offset: 0x880
+    array:
+      len: 12
+      stride: 4
+    fieldset: LOCKR
+  - name: OTPVLDR
+    description: BSEC OTP valid status register.
+    byte_offset: 0x8C0
+    array:
+      len: 12
+      stride: 4
+    access: Read
+    fieldset: VLDR
+  - name: SFSR
+    description: BSEC shadow fuse status register.
+    byte_offset: 0x940
+    array:
+      len: 12
+      stride: 4
+    access: Read
+    fieldset: SFSR
+  - name: OTPCR
+    description: BSEC OTP control register.
+    byte_offset: 0xC04
+    fieldset: OTPCR
+  - name: WDR
+    description: BSEC OTP write data register.
+    byte_offset: 0xC08
+    fieldset: WDR
+  - name: SCRATCHR
+    description: BSEC scratch register.
+    byte_offset: 0xE00
+    array:
+      len: 4
+      stride: 4
+  - name: LOCKR
+    description: BSEC global lock register.
+    byte_offset: 0xE10
+    fieldset: GLOCKR
+  - name: JTAGINR
+    description: BSEC JTAG input register.
+    byte_offset: 0xE14
+  - name: JTAGOUTR
+    description: BSEC JTAG output register.
+    byte_offset: 0xE18
+  - name: UNMAPR
+    description: BSEC unmap register.
+    byte_offset: 0xE24
+    fieldset: UNMAPR
+  - name: SR
+    description: BSEC status register.
+    byte_offset: 0xE40
+    access: Read
+    fieldset: SR
+  - name: OTPSR
+    description: BSEC OTP status register.
+    byte_offset: 0xE44
+    fieldset: OTPSR
+  - name: EPOCHR
+    description: BSEC epoch register.
+    byte_offset: 0xE80
+    array:
+      len: 2
+      stride: 4
+    access: Read
+  - name: EPOCH_SELR
+    description: BSEC epoch select register.
+    byte_offset: 0xE88
+    fieldset: EPOCH_SELR
+  - name: DBGCR
+    description: BSEC debug control register.
+    byte_offset: 0xE8C
+    fieldset: DBGCR
+  - name: AP_UNLOCK
+    description: BSEC AP unlock register.
+    byte_offset: 0xE90
+    fieldset: AP_UNLOCK
+  - name: HDPLSR
+    description: BSEC HDPL status register.
+    byte_offset: 0xE94
+    access: Read
+    fieldset: HDPLSR
+  - name: HDPLCR
+    description: BSEC HDPL control register.
+    byte_offset: 0xE98
+    fieldset: HDPLCR
+  - name: NEXTLR
+    description: BSEC next HDPL register.
+    byte_offset: 0xE9C
+    fieldset: NEXTLR
+  - name: WOSCR
+    description: BSEC write-once scratch register.
+    byte_offset: 0xF40
+    array:
+      len: 8
+      stride: 4
+  - name: HRCR
+    description: BSEC hot reset count register.
+    byte_offset: 0xFE8
+    access: Read
+  - name: WRCR
+    description: BSEC warm reset count register.
+    byte_offset: 0xFEC
+    access: Read
+fieldset/FVR:
+  description: BSEC fuse value register.
+  fields:
+  - name: FV
+    description: Fuse value.
+    bit_offset: 0
+    bit_size: 32
+fieldset/LOCKR:
+  description: BSEC lock register.
+  fields:
+  - name: LOCK
+    description: Lock bits for fuse words 0 to 31 of the corresponding group.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+fieldset/VLDR:
+  description: BSEC OTP valid status register.
+  fields:
+  - name: OTPVLD
+    description: OTP valid status bits.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+fieldset/SFSR:
+  description: BSEC shadow fuse status register.
+  fields:
+  - name: SFSR
+    description: Shadow fuse status bits.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+fieldset/OTPCR:
+  description: BSEC OTP control register.
+  fields:
+  - name: ADDR
+    description: Fuse word address.
+    bit_offset: 0
+    bit_size: 9
+  - name: PROG
+    description: Fuse word programming.
+    bit_offset: 13
+    bit_size: 1
+  - name: PPLOCK
+    description: Permanent programming lock.
+    bit_offset: 14
+    bit_size: 1
+  - name: BKPSEC
+    description: Backup registers security.
+    bit_offset: 16
+    bit_size: 1
+fieldset/WDR:
+  description: BSEC write data register.
+  fields:
+  - name: WDATA
+    description: Write data value to program in OTP.
+    bit_offset: 0
+    bit_size: 32
+fieldset/GLOCKR:
+  description: BSEC global lock register.
+  fields:
+  - name: GLOCK
+    description: Global lock. When set, all writes to BSEC are ignored until next reset.
+    bit_offset: 0
+    bit_size: 1
+fieldset/UNMAPR:
+  description: BSEC unmap register.
+  fields:
+  - name: UNMAP
+    description: Unmap OTP area.
+    bit_offset: 0
+    bit_size: 1
+fieldset/SR:
+  description: BSEC status register.
+  fields:
+  - name: HVALID
+    description: Hardware key valid. When set, DHUK can be used in SAES.
+    bit_offset: 1
+    bit_size: 1
+  - name: DBGREQ
+    description: Debug request. Host debugger is requesting debug.
+    bit_offset: 16
+    bit_size: 1
+  - name: NVSTATE
+    description: Non-volatile state.
+    bit_offset: 26
+    bit_size: 6
+fieldset/OTPSR:
+  description: BSEC OTP status register.
+  fields:
+  - name: BUSY
+    description: OTP busy flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: HIDEUP
+    description: Hide-up status.
+    bit_offset: 1
+    bit_size: 1
+  - name: PPLOCK
+    description: Programming permanent lock status.
+    bit_offset: 2
+    bit_size: 1
+  - name: OTPERR
+    description: OTP error.
+    bit_offset: 3
+    bit_size: 1
+  - name: OTPSEC
+    description: OTP security.
+    bit_offset: 4
+    bit_size: 1
+fieldset/EPOCH_SELR:
+  description: BSEC epoch select register.
+  fields:
+  - name: EPOCH_SEL
+    description: Epoch select.
+    bit_offset: 0
+    bit_size: 1
+fieldset/DBGCR:
+  description: BSEC debug control register.
+  fields:
+  - name: DBGEN
+    description: Debug enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: NIDEN
+    description: Non-invasive debug enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: SPIDEN
+    description: Secure privileged invasive debug enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: SPNIDEN
+    description: Secure privileged non-invasive debug enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: DBGSWEN
+    description: Debug software enable.
+    bit_offset: 4
+    bit_size: 1
+fieldset/AP_UNLOCK:
+  description: BSEC AP unlock register.
+  fields:
+  - name: AP_UNLOCK
+    description: Access port unlock key.
+    bit_offset: 0
+    bit_size: 32
+fieldset/HDPLSR:
+  description: BSEC HDPL status register.
+  fields:
+  - name: HDPL
+    description: Current hardware device protection level.
+    bit_offset: 0
+    bit_size: 8
+fieldset/HDPLCR:
+  description: BSEC HDPL control register.
+  fields:
+  - name: INCR_HDPL
+    description: Increment HDPL. Write HDPL_INCR_CODE to increment HDPL.
+    bit_offset: 0
+    bit_size: 8
+fieldset/NEXTLR:
+  description: BSEC next HDPL register.
+  fields:
+  - name: NEXTL
+    description: Next HDPL level.
+    bit_offset: 0
+    bit_size: 2

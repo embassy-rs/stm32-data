@@ -287,7 +287,7 @@ pub struct Chip {
     pub family: String,
     pub line: String,
     pub cores: Vec<Core>,
-    pub memory: Vec<MemoryRegion>,
+    pub memory: Vec<Vec<MemoryRegion>>,
     pub packages: Vec<Package>,
 }
 
@@ -330,6 +330,8 @@ pub enum MemoryRegionKind {
     Flash,
     #[serde(rename = "ram")]
     Ram,
+    #[serde(rename = "eeprom")]
+    Eeprom,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
@@ -340,6 +342,7 @@ pub struct Core {
     pub nvic_priority_bits: Option<u8>,
     pub interrupts: Vec<Interrupt>,
     pub dma_channels: Vec<DmaChannel>,
+    pub pins: Vec<Pin>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
@@ -370,7 +373,11 @@ pub struct Peripheral {
     #[serde(default)]
     pub dma_channels: Vec<PeripheralDmaChannel>,
     #[serde(default)]
+    pub triggers: Vec<PeripheralTrigger>,
+    #[serde(default)]
     pub interrupts: Vec<PeripheralInterrupt>,
+    #[serde(default)]
+    pub afio: Option<PeripheralAfio>,
 }
 
 // Notice:
@@ -384,7 +391,9 @@ impl std::fmt::Debug for Peripheral {
             .field("rcc", &self.rcc)
             .field("pins", &self.pins)
             .field("dma_channels", &self.dma_channels)
+            .field("triggers", &self.triggers)
             .field("interrupts", &self.interrupts)
+            .field("afio", &self.afio)
             .finish()
     }
 }
@@ -393,6 +402,21 @@ impl std::fmt::Debug for Peripheral {
 pub struct PeripheralInterrupt {
     pub signal: String,
     pub interrupt: String,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct PeripheralAfio {
+    pub register: String,
+    pub field: String,
+    #[serde(default)]
+    pub values: Vec<PeripheralAfioValue>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct PeripheralAfioValue {
+    pub value: u8,
+    #[serde(default)]
+    pub pins: Vec<String>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
@@ -436,12 +460,19 @@ pub struct PeripheralPin {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct Pin {
+    pub name: String,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
 pub struct DmaChannel {
     pub name: String,
     pub dma: String,
     pub channel: u32,
     pub dmamux: Option<String>,
     pub dmamux_channel: Option<u32>,
+    #[serde(default)]
+    pub supports_2d: Option<bool>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Hash)]
@@ -449,8 +480,23 @@ pub struct PeripheralDmaChannel {
     pub signal: String,
     pub channel: Option<String>,
     pub dmamux: Option<String>,
+    #[serde(default)]
+    pub remap: Vec<RemapInfo>,
     pub dma: Option<String>,
     pub request: Option<u32>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Hash)]
+pub struct PeripheralTrigger {
+    pub signal: String,
+    pub source: String,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Hash)]
+pub struct RemapInfo {
+    pub register: String,
+    pub field: String,
+    pub value: u8,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Hash)]

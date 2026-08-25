@@ -13,6 +13,14 @@ block/PWR:
     description: control register 3
     byte_offset: 8
     fieldset: CR3
+  - name: CR4
+    description: control register 4
+    byte_offset: 0xA8
+    fieldset: CR4
+  - name: CR5
+    description: control register 5
+    byte_offset: 0xAC
+    fieldset: CR5
   - name: VOSR
     description: voltage scaling register
     byte_offset: 12
@@ -119,7 +127,6 @@ fieldset/BDCR2:
     description: VBAT charging enable
     bit_offset: 0
     bit_size: 1
-    enum: VBE
   - name: VBRS
     description: VBAT charging resistor selection
     bit_offset: 1
@@ -183,6 +190,21 @@ fieldset/CR1:
     bit_offset: 11
     bit_size: 1
     enum: SRAMPD
+  - name: SRAM5PD
+    description: "SRAM5 power down\r This bit is used to reduce the consumption by powering off the SRAM5."
+    bit_offset: 12
+    bit_size: 1
+    enum: SRAMPD
+  - name: SRAM6PD
+    description: "SRAM6 power down\r This bit is used to reduce the consumption by powering off the SRAM6."
+    bit_offset: 13
+    bit_size: 1
+    enum: SRAMPD
+  - name: FORCE_USBPWR
+    description: "OTG_HS PHY power maintained during Stop 2, Stop 3, and Standby low-power modes."
+    bit_offset: 15
+    bit_size: 1
+    enum: FORCE_USBPWR
 fieldset/CR2:
   description: control register 2
   fields:
@@ -467,6 +489,10 @@ fieldset/UCPDR:
 fieldset/VOSR:
   description: voltage scaling register
   fields:
+  - name: USBBOOSTRDY
+    description: "OTG_HS EPOD booster ready\r This bit is set to one by hardware when the power booster startup time is reached. The OTG_HS clock can be provided only after this bit is set."
+    bit_offset: 13
+    bit_size: 1
   - name: BOOSTRDY
     description: "EPOD booster ready\r This bit is set to 1 by hardware when the power booster startup time is reached. The system clock frequency can be switched higher than 50 MHz only after this bit is set."
     bit_offset: 14
@@ -484,6 +510,199 @@ fieldset/VOSR:
     description: EPOD booster enable
     bit_offset: 18
     bit_size: 1
+  - name: USBPWREN
+    description: OTG_HS power enable
+    bit_offset: 19
+    bit_size: 1
+  - name: USBBOOSTEN
+    description: OTG_HS EPOD booster enable
+    bit_offset: 20
+    bit_size: 1
+  - name: VDD11USBDIS
+    description: OTG_HS VDD11USB disable
+    bit_offset: 21
+    bit_size: 1
+fieldset/CR4:
+  description: control register 4
+  fields:
+  - name: SRAM1PDS4
+    description: SRAM1 page 4 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 0
+    bit_size: 1
+    enum: PDS
+  - name: SRAM1PDS5
+    description: SRAM1 page 5 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 1
+    bit_size: 1
+    enum: PDS
+  - name: SRAM1PDS6
+    description: SRAM1 page 6 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 2
+    bit_size: 1
+    enum: PDS
+  - name: SRAM1PDS7
+    description: SRAM1 page 7 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 3
+    bit_size: 1
+    enum: PDS
+  - name: SRAM1PDS8
+    description: SRAM1 page 8 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 4
+    bit_size: 1
+    enum: PDS
+  - name: SRAM1PDS9
+    description: SRAM1 page 9 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 5
+    bit_size: 1
+    enum: PDS
+  - name: SRAM1PDS10
+    description: SRAM1 page 10 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 6
+    bit_size: 1
+    enum: PDS
+  - name: SRAM1PDS11
+    description: SRAM1 page 11 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 7
+    bit_size: 1
+    enum: PDS
+  - name: SRAM1PDS12
+    description: SRAM1 page 12 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 8
+    bit_size: 1
+    enum: PDS
+  - name: SRAM3PDS9
+    description: SRAM3 page 9 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 10
+    bit_size: 1
+    enum: PDS
+  - name: SRAM3PDS10
+    description: SRAM3 page 10 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 11
+    bit_size: 1
+    enum: PDS
+  - name: SRAM3PDS11
+    description: SRAM3 page 11 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 12
+    bit_size: 1
+    enum: PDS
+  - name: SRAM3PDS12
+    description: SRAM3 page 12 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 13
+    bit_size: 1
+    enum: PDS
+  - name: SRAM3PDS13
+    description: SRAM3 page 13 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 14
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS1
+    description: SRAM5 page 1 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 16
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS2
+    description: SRAM5 page 2 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 17
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS3
+    description: SRAM5 page 3 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 18
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS4
+    description: SRAM5 page 4 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 19
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS5
+    description: SRAM5 page 5 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 20
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS6
+    description: SRAM5 page 6 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 21
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS7
+    description: SRAM5 page 7 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 22
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS8
+    description: SRAM5 page 8 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 23
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS9
+    description: SRAM5 page 9 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 24
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS10
+    description: SRAM5 page 10 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 25
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS11
+    description: SRAM5 page 11 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 26
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS12
+    description: SRAM5 page 12 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 27
+    bit_size: 1
+    enum: PDS
+  - name: SRAM5PDS13
+    description: SRAM5 page 13 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 28
+    bit_size: 1
+    enum: PDS
+fieldset/CR5:
+  description: control register 5
+  fields:
+  - name: SRAM6PDS1
+    description: SRAM6 page 1 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 0
+    bit_size: 1
+    enum: PDS
+  - name: SRAM6PDS2
+    description: SRAM6 page 2 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 1
+    bit_size: 1
+    enum: PDS
+  - name: SRAM6PDS3
+    description: SRAM6 page 3 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 2
+    bit_size: 1
+    enum: PDS
+  - name: SRAM6PDS4
+    description: SRAM6 page 4 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 3
+    bit_size: 1
+    enum: PDS
+  - name: SRAM6PDS5
+    description: SRAM6 page 5 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 4
+    bit_size: 1
+    enum: PDS
+  - name: SRAM6PDS6
+    description: SRAM6 page 6 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 5
+    bit_size: 1
+    enum: PDS
+  - name: SRAM6PDS7
+    description: SRAM6 page 7 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 6
+    bit_size: 1
+    enum: PDS
+  - name: SRAM6PDS8
+    description: SRAM6 page 8 (64 Kbytes) power-down in Stop modes (Stop 0, 1, 2, 3)
+    bit_offset: 7
+    bit_size: 1
+    enum: PDS
 fieldset/WUCR1:
   description: wakeup control register 1
   fields:
@@ -512,42 +731,42 @@ fieldset/WUCR3:
     description: "Wakeup pin WKUP1 selection\r This field must be configured when WUPEN1 = 0."
     bit_offset: 0
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL1
   - name: WUSEL2
     description: "Wakeup pin WKUP2 selection\r This field must be configured when WUPEN2 = 0."
     bit_offset: 2
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL2
   - name: WUSEL3
     description: "Wakeup pin WKUP3 selection\r This field must be configured when WUPEN3 = 0."
     bit_offset: 4
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL3
   - name: WUSEL4
     description: "Wakeup pin WKUP4 selection\r This field must be configured when WUPEN4 = 0."
     bit_offset: 6
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL4
   - name: WUSEL5
     description: "Wakeup pin WKUP5 selection\r This field must be configured when WUPEN5 = 0."
     bit_offset: 8
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL5
   - name: WUSEL6
     description: "Wakeup pin WKUP6 selection\r This field must be configured when WUPEN6 = 0."
     bit_offset: 10
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL6
   - name: WUSEL7
     description: "Wakeup pin WKUP7 selection\r This field must be configured when WUPEN7 = 0."
     bit_offset: 12
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL7
   - name: WUSEL8
     description: "Wakeup pin WKUP8 selection\r This field must be configured when WUPEN8 = 0."
     bit_offset: 14
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL8
 fieldset/WUSCR:
   description: wakeup status clear register
   fields:
@@ -714,10 +933,10 @@ enum/REGSEL:
 enum/SRAMFWU:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: LowPower
     description: SRAM4 enters low-power mode in Stop 0, 1 and 2 modes (source biasing for lower-power consumption).
     value: 0
-  - name: B_0x1
+  - name: Normal
     description: SRAM4 remains in normal mode in Stop 0, 1 and 2 modes (higher consumption but no SRAM4 wakeup time).
     value: 1
 enum/SRAMPD:
@@ -732,46 +951,37 @@ enum/SRAMPD:
 enum/TEMPH:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Below
     description: Temperature < high threshold
     value: 0
-  - name: B_0x1
+  - name: AboveOrEqual
     description: Temperature ≥ high threshold
     value: 1
 enum/TEMPL:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Above
     description: Temperature > low threshold
     value: 0
-  - name: B_0x1
+  - name: BelowOrEqual
     description: Temperature ≤ low threshold
     value: 1
 enum/VBATH:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Below
     description: Backup domain voltage level < high threshold
     value: 0
-  - name: B_0x1
+  - name: AboveOrEqual
     description: Backup domain voltage level ≥ high threshold
-    value: 1
-enum/VBE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: VBAT battery charging disabled
-    value: 0
-  - name: B_0x1
-    description: VBAT battery charging enabled
     value: 1
 enum/VBRS:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: R5kOhm
     description: Charge VBAT through a 5 kΩ resistor
     value: 0
-  - name: B_0x1
+  - name: R1_5kOhm
     description: Charge VBAT through a 1.5 kΩ resistor
     value: 1
 enum/VOS:
@@ -798,18 +1008,132 @@ enum/WUPP:
   - name: Low
     description: Detection on low level (falling edge)
     value: 1
-enum/WUSEL:
+enum/WUSEL1:
   bit_size: 2
   variants:
-  - name: B_0x0
-    description: WKUP7_0
+  - name: PA0
+    description: WKUP1 sourced from PA0
     value: 0
-  - name: B_0x1
-    description: WKUP7_1
+  - name: PB2
+    description: WKUP1 sourced from PB2
     value: 1
-  - name: B_0x2
-    description: WKUP7_2
+  - name: PE4
+    description: WKUP1 sourced from PE4
     value: 2
-  - name: B_0x3
-    description: WKUP7_3
+  - name: Reserved
+    description: Reserved
     value: 3
+enum/WUSEL2:
+  bit_size: 2
+  variants:
+  - name: PA4
+    description: WKUP2 sourced from PA4
+    value: 0
+  - name: PC13
+    description: WKUP2 sourced from PC13
+    value: 1
+  - name: PE5
+    description: WKUP2 sourced from PE5
+    value: 2
+  - name: Reserved
+    description: Reserved
+    value: 3
+enum/WUSEL3:
+  bit_size: 2
+  variants:
+  - name: PE6
+    description: WKUP3 sourced from PE6
+    value: 0
+  - name: PA1
+    description: WKUP3 sourced from PA1
+    value: 1
+  - name: PB6
+    description: WKUP3 sourced from PB6
+    value: 2
+  - name: Reserved
+    description: Reserved
+    value: 3
+enum/WUSEL4:
+  bit_size: 2
+  variants:
+  - name: PA2
+    description: WKUP4 sourced from PA2
+    value: 0
+  - name: PB1
+    description: WKUP4 sourced from PB1
+    value: 1
+  - name: PB7
+    description: WKUP4 sourced from PB7
+    value: 2
+  - name: Reserved
+    description: Reserved
+    value: 3
+enum/WUSEL5:
+  bit_size: 2
+  variants:
+  - name: PC5
+    description: WKUP5 sourced from PC5
+    value: 0
+  - name: PA3
+    description: WKUP5 sourced from PA3
+    value: 1
+  - name: PB8
+    description: WKUP5 sourced from PB8
+    value: 2
+  - name: EarlyIwdg
+    description: WKUP5 sourced from the early IWDG interrupt
+    value: 3
+enum/WUSEL6:
+  bit_size: 2
+  variants:
+  - name: PB5
+    description: WKUP6 sourced from PB5
+    value: 0
+  - name: PA5
+    description: WKUP6 sourced from PA5
+    value: 1
+  - name: PE7
+    description: WKUP6 sourced from PE7
+    value: 2
+  - name: Rtc
+    description: WKUP6 sourced from RTC_ALRA_S, RTC_ALRB_S, RTC_WUT_S, or RTC_TS_S
+    value: 3
+enum/WUSEL7:
+  bit_size: 2
+  variants:
+  - name: PB15
+    description: WKUP7 sourced from PB15
+    value: 0
+  - name: PA6
+    description: WKUP7 sourced from PA6
+    value: 1
+  - name: PE8
+    description: WKUP7 sourced from PE8
+    value: 2
+  - name: Rtc
+    description: WKUP7 sourced from RTC_ALRA, RTC_ALRB, RTC_WUT, or RTC_TS
+    value: 3
+enum/WUSEL8:
+  bit_size: 2
+  variants:
+  - name: PF2
+    description: WKUP8 sourced from PF2
+    value: 0
+  - name: PA7
+    description: WKUP8 sourced from PA7
+    value: 1
+  - name: PB10
+    description: WKUP8 sourced from PB10
+    value: 2
+  - name: Tamp
+    description: WKUP8 sourced from TAMP
+    value: 3
+enum/FORCE_USBPWR:
+  bit_size: 1
+  variants:
+  - name: NotMaintained
+    description: OTG_HS PHY power is not maintained during low-power modes
+    value: 0
+  - name: Maintained
+    description: OTG_HS PHY power is maintained during low-power modes
+    value: 1

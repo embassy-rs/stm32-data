@@ -1,0 +1,931 @@
+block/MDF:
+  description: Multi-function digital filter.
+  items:
+  - name: GCR
+    description: MDF global control register.
+    byte_offset: 0
+    fieldset: GCR
+  - name: CKGCR
+    description: MDF clock generator control register.
+    byte_offset: 4
+    fieldset: CKGCR
+  - name: SITFCR
+    description: This register is used to control the serial interfaces (SITFx).
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 128
+    fieldset: SITFCR
+  - name: BSMXCR
+    description: This register is used to select the bitstream to be provided to the corresponding digital filter and to the SCD.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 132
+    fieldset: BSMXCR
+  - name: DFLTCR
+    description: This register is used to control the digital filter x.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 136
+    fieldset: DFLTCR
+  - name: DFLTCICR
+    description: This register is used to control the main CIC filter.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 140
+    fieldset: DFLTCICR
+  - name: DFLTRSFR
+    description: This register is used to control the reshape and HPF filters.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 144
+    fieldset: DFLTRSFR
+  - name: DFLTINTR
+    description: This register is used to the integrator (INT) settings.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 148
+    fieldset: DFLTINTR
+  - name: OLDCR
+    description: This register is used to configure the Out-of Limit Detector function.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 152
+    fieldset: OLDCR
+  - name: OLDTHLR
+    description: This register is used for the adjustment of the Out-off Limit low threshold.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 156
+    fieldset: OLDTHLR
+  - name: OLDTHHR
+    description: This register is used for the adjustment of the Out-off Limit high threshold.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 160
+    fieldset: OLDTHHR
+  - name: DLYCR
+    description: This register is used for the adjustment stream delays.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 164
+    fieldset: DLYCR
+  - name: SCDCR
+    description: This register is used for the adjustment stream delays.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 168
+    fieldset: SCDCR
+  - name: DFLTIER
+    description: This register is used for allowing or not the events to generate an interrupt.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 172
+    fieldset: DFLTIER
+  - name: DFLTISR
+    description: MDF DFLT0 interrupt status register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 176
+    fieldset: DFLTISR
+  - name: OECCR
+    description: This register contains the offset compensation value.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 180
+    fieldset: OECCR
+  - name: SNPSDR
+    description: This register is used to read the data processed by each digital filter in snapshot mode.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 236
+    access: Read
+    fieldset: SNPSDR
+  - name: DFLTDR
+    description: This register is used to read the data processed by each digital filter.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 240
+    access: Read
+    fieldset: DFLTDR
+fieldset/BSMXCR:
+  description: This register is used to select the bitstream to be provided to the corresponding digital filter and to the SCD.
+  fields:
+  - name: BSSEL
+    description: 'Bitstream Selection Set and cleared by software. This field is used to select the bitstream to be processed for the digital filter x and for the SCDx. The size of this field depends on the number of DFLTx instantiated. If the BSSEL is selecting an input which is not instantiated, the MDF will select the valid stream bs[x]_F having the higher index number. - 00000: The bitstream bs[0]_R is provided to DFLTx and SCDx - 00001: The bitstream bs[0]_F is provided to DFLTx and SCDx - 00010: The bitstream bs[1]_R is provided to DFLTx and SCDx (if instantiated) - 00011: The bitstream bs[1]_F is provided to DFLTx and SCDx (if instantiated) ... - 11110: The bitstream bs[15]_R is provided to DFLTx and SCDx (if instantiated) - 11111: The bitstream bs[15]_F is provided to DFLTx and SCDx (if instantiated) This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 0
+    bit_size: 5
+    enum: BSSEL
+  - name: BSMXACTIVE
+    description: 'BSMX Active flag Set and cleared by hardware. This flag must be used by the application in order to check if the BSMX is effectively enabled (active) or not. BSSEL[4:0] can only be updated when the BSMXACTIVE is set . The BSMXACTIVE flag is a logical between OLDACTIVE, DFLTACTIVE, and SCDACTIVE flags. Both of them must be set in order update BSSEL[4:0] field. - 0: The BSMX is not active, and can be configured if needed - 1: The BSMX is active, and protected fields cannot be configured.'
+    bit_offset: 31
+    bit_size: 1
+fieldset/CKGCR:
+  description: MDF clock generator control register.
+  fields:
+  - name: CKGDEN
+    description: CKGDEN.
+    bit_offset: 0
+    bit_size: 1
+  - name: CCK0EN
+    description: CCK0EN.
+    bit_offset: 1
+    bit_size: 1
+  - name: CCK1EN
+    description: CCK1EN.
+    bit_offset: 2
+    bit_size: 1
+  - name: CKGMOD
+    description: CKGMOD.
+    bit_offset: 4
+    bit_size: 1
+    enum: CKGMOD
+  - name: CCK0DIR
+    description: CCK0DIR.
+    bit_offset: 5
+    bit_size: 1
+    enum: CCKDIR
+  - name: CCK1DIR
+    description: CCK1DIR.
+    bit_offset: 6
+    bit_size: 1
+    enum: CCKDIR
+  - name: TRGSENS
+    description: TRGSENS.
+    bit_offset: 8
+    bit_size: 1
+    enum: TRGSENS
+  - name: TRGSRC
+    description: TRGSRC.
+    bit_offset: 12
+    bit_size: 4
+    enum: TRGSRC
+  - name: CCKDIV
+    description: CCKDIV.
+    bit_offset: 16
+    bit_size: 4
+    enum: CCKDIV
+  - name: PROCDIV
+    description: PROCDIV.
+    bit_offset: 24
+    bit_size: 7
+  - name: CKGACTIVE
+    description: CKGACTIVE.
+    bit_offset: 31
+    bit_size: 1
+fieldset/DFLTCICR:
+  description: This register is used to control the main CIC filter.
+  fields:
+  - name: DATSRC
+    description: 'Source data for the digital filter Set and cleared by software. 0x: Select the stream coming from the BSMX - 10: Select the stream coming from the ADCITF1 - 11: Select the stream coming from the ADCITF2 This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 0
+    bit_size: 2
+    enum: DATSRC
+  - name: CICMOD
+    description: 'Select the CIC mode Set and cleared by software. This field allows the application to select the configuration and the order of the MCIC. When CICMOD[2:0] is equal to 0xx , the CIC is split into two filters: - The main CIC (MCIC) - The auxiliary CIC (ACIC), used for the out-off limit detector - 000: The CIC is split into 2 filters, and the main CIC (MCIC) is configured in FastSinc filter - 001: The CIC is split into 2 filters, and the main CIC (MCIC) is configured in Sinc1 filter - 010: The CIC is split into 2 filters, and the main CIC (MCIC) is configured in Sinc2 filter - 011: The CIC is split into 2 filters, and the main CIC (MCIC) is configured in Sinc3 filter - 100: The CIC is configured in single sinc4 filter others: The CIC is configured in single sinc5 filter This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 4
+    bit_size: 3
+    enum: CICMOD
+  - name: MCICD
+    description: 'CIC decimation ratio selection Set and cleared by software. This bit is used to allow the application to select the decimation ratio of the CIC. Decimation ratio smaller than 2 is not allowed. The decimation ratio is given by (CICDEC+1). - 0: Decimation ratio is 2 - 1: Decimation ratio is 2 - 2: Decimation ratio is 3 - 3: Decimation ratio is 4 ... - 511: Decimation ratio is 512 This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 8
+    bit_size: 9
+  - name: SCALE
+    description: 'Scaling factor selection Set and cleared by software. This field is used to allow the application to select the gain to be applied at CIC output. Please refer to Table 13: Possible gain values for details. If the application attempts to write a new gain value while the previous one is not yet applied, this new gain value is ignored. Reading back the SCALE[5:0] field will inform the application on the current gain value. - 100000: - 48.2 dB, or shift right by 8 bits (default value) - 100001: - 44.6 dB, - 100010: - 42.1 dB, or shift right by 7 bits - 100011: - 38.6 dB, ... - 101110: -6 dB, or shift right by 1 bit - 101111: -2.5 dB, - 000000: 0 dB - 000001: + 3.5 dB, - 000010: + 6 dB, or shift left by 1 bit ... - 011000: + 72 dB, or shift left by 12 bits.'
+    bit_offset: 20
+    bit_size: 6
+fieldset/DFLTCR:
+  description: This register is used to control the digital filter x.
+  fields:
+  - name: DFLTEN
+    description: 'Digital Filter Enable Set and cleared by software. This bit is used to control the start of acquisition of the corresponding digital filter path. The behavior of this bit depends on ACQMOD and external events. or the acquisition starts when the proper trigger event occurs if ACQMOD = 01x . The serial or parallel interface delivering the samples shall be enabled as well. - 0: The acquisition is stopped immediately - 1: The acquisition is immediately started if ACQMOD = 00x or 1xx ,.'
+    bit_offset: 0
+    bit_size: 1
+  - name: DMAEN
+    description: 'DMA Requests Enable Set and cleared by software. This bit is used to control the generation of DMA request in order to transfer the processed samples into the memory. - 0: The DMA interface for the corresponding digital filter is disabled - 1: The DMA interface for the corresponding digital filter is enabled This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 1
+    bit_size: 1
+  - name: FTH
+    description: RXFIFO Threshold selection Set and cleared by software.
+    bit_offset: 2
+    bit_size: 1
+    enum: RXFIFO
+  - name: ACQMOD
+    description: 'Digital filter Trigger mode Set and cleared by software. This field is used to select the filter trigger mode. - 000: Asynchronous, continuous acquisition mode - 001: Asynchronous, single-shot acquisition mode - 010: Synchronous, continuous acquisition mode - 011: Synchronous, single-shot acquisition mode - 100: Window, continuous acquisition mode - 101: Synchronous, snapshot mode others: same a 000 This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 4
+    bit_size: 3
+    enum: ACQMOD
+  - name: TRGSENS
+    description: 'Digital filter Trigger sensitivity selection Set and cleared by software. This field is used to select the trigger sensitivity of the external signals - 0: A rising edge event triggers the acquisition - 1: A falling edge even triggers the acquisition Note that when the trigger source is TRGO or OLDx event, TRGSENS value is not taken into account. When TRGO is selected, the sensitivity is forced to falling edge, when OLDx event is selected, the sensitivity is forced to rising edge. This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 8
+    bit_size: 1
+    enum: TRGSENS
+  - name: TRGSRC
+    description: 'Digital filter Trigger signal selection, Set and cleared by software. This field is used to select which external signals is used as trigger for the corresponding filter. - 0000: TRGO is selected - 0001: OLDx event is selected - 0010: mdf_trg[0] is selected ... - 1111: mdf_trg[13] is selected This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 12
+    bit_size: 4
+    enum: TRGSRC
+  - name: SNPSFMT
+    description: 'Snapshot data format Set and cleared by software. This field is used to select the data format for the snapshot mode. - 0: The integrator counter (INT_CNT) is not inserted into the MDF_SNPSxDR register, leaving a data resolution of 23 bits. - 1: The integrator counter (INT_CNT) is inserted at position [15:9] of MDF_SNPSxDR register, leaving a data resolution of 16 bits. This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 16
+    bit_size: 1
+    enum: SNPSFMT
+  - name: NBDIS
+    description: 'Number of samples to be discarded Set and cleared by software. This field is used to define the number of samples to be discarded every time the DFLTx is re-started. - 0: no sample discarded - 1: 1 sample discarded - 2: 2 samples discarded ... - 255: 255 samples discarded This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 20
+    bit_size: 8
+  - name: DFLTRUN
+    description: 'Digital filter Run Status Flag Set and cleared by hardware. This bit indicates if the digital filter is running or not. - 0: The digital filter is not running, and ready to accept a new trigger event - 1: The digital filter is running.'
+    bit_offset: 30
+    bit_size: 1
+  - name: DFLTACTIVE
+    description: 'Digital filter Active Flag Set and cleared by hardware. This bit indicates if the digital filter is active: can be running or waiting for events. - 0: The digital filter is not active, and can be re-enabled again (via DFLTEN bit) if needed - 1: The digital filter is active.'
+    bit_offset: 31
+    bit_size: 1
+fieldset/DFLTDR:
+  description: This register is used to read the data processed by each digital filter.
+  fields:
+  - name: DR
+    description: Data processed by digital filter.
+    bit_offset: 8
+    bit_size: 24
+fieldset/DFLTIER:
+  description: This register is used for allowing or not the events to generate an interrupt.
+  fields:
+  - name: FTHIE
+    description: 'RXFIFO threshold interrupt enable Set and cleared by software. - 0: RXFIFO threshold interrupt disabled - 1: RXFIFO threshold interrupt enabled.'
+    bit_offset: 0
+    bit_size: 1
+  - name: DOVRIE
+    description: 'Data overflow interrupt enable Set and cleared by software. - 0: Data overflow interrupt disabled - 1: Data overflow interrupt enabled.'
+    bit_offset: 1
+    bit_size: 1
+  - name: SSDRIE
+    description: 'Snapshot data ready interrupt enable Set and cleared by software. - 0: Snapshot data ready interrupt disabled - 1: Snapshot data ready interrupt enabled.'
+    bit_offset: 2
+    bit_size: 1
+  - name: OLDIE
+    description: 'Out-of Limit interrupt enable Set and cleared by software. - 0: OLD event interrupt disabled - 1: OLD event interrupt enabled.'
+    bit_offset: 4
+    bit_size: 1
+  - name: SSOVRIE
+    description: 'Snapshot overrun interrupt enable Set and cleared by software. - 0: Snapshot overrun interrupt disabled - 1: Snapshot overrun interrupt enabled.'
+    bit_offset: 7
+    bit_size: 1
+  - name: SCDIE
+    description: 'Short-Circuit Detector interrupt enable Set and cleared by software. - 0: SCD interrupt disabled - 1: SCD interrupt enabled.'
+    bit_offset: 8
+    bit_size: 1
+  - name: SATIE
+    description: 'Saturation detection interrupt enable Set and cleared by software. - 0: Saturation interrupt disabled - 1: Saturation interrupt enabled.'
+    bit_offset: 9
+    bit_size: 1
+  - name: CKABIE
+    description: 'Clock absence detection interrupt enable Set and cleared by software. - 0: Clock absence interrupt disabled - 1: Clock absence interrupt enabled.'
+    bit_offset: 10
+    bit_size: 1
+  - name: RFOVRIE
+    description: 'Reshape Filter Overrun interrupt enable Set and cleared by software. - 0: Reshape filter overrun interrupt disabled - 1: Reshape filter overrun interrupt enabled.'
+    bit_offset: 11
+    bit_size: 1
+fieldset/DFLTINTR:
+  description: This register is used to the integrator (INT) settings.
+  fields:
+  - name: INTDIV
+    description: 'Integrator output division Set and cleared by software. This bit is used to rescale the signal at the integrator output in order keep the data width lower than 24 bits. - 00: The integrator data outputs are divided by 128 (Default value) - 01: The integrator data outputs are divided by 32 - 10: The integrator data outputs are divided by 4 - 11: The integrator data outputs are not divided This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 0
+    bit_size: 2
+    enum: INTDIV
+  - name: INTVAL
+    description: 'Integration value selection Set and cleared by software. This field is used to select the integration value. - 0: The integration value is 1, meaning bypass mode (default after reset) - 1: The integration value is 2 - 2: The integration value is 3 ... - 127: The integration value is 128 This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 4
+    bit_size: 7
+fieldset/DFLTISR:
+  description: MDF DFLT0 interrupt status register 0.
+  fields:
+  - name: FTHF
+    description: FTHF.
+    bit_offset: 0
+    bit_size: 1
+  - name: DOVRF
+    description: 'Data overflow flag Set by hardware, and cleared by software by writing this bit to 1 . - 0: Reading 0 means that no overflow is detected, writing 0 has no effect. - 1: Reading 1 means that an overflow is detected, writing 1 clears this flag.'
+    bit_offset: 1
+    bit_size: 1
+  - name: SSDRF
+    description: 'Snapshot data ready flag Set by hardware, and cleared by software by writing this bit to 1 . - 0: Reading 0 means that no data is available on , writing 0 has no effect. - 1: Reading 1 means that a new data is available on , writing 1 clears this flag.'
+    bit_offset: 2
+    bit_size: 1
+  - name: RXNEF
+    description: 'RXFIFO Not Empty flag Set and cleared by hardware according to the RXFIFO level. - 0: Reading 0 means that the RXFIFO is empty. - 1: Reading 1 means that the RXFIFO is not empty.'
+    bit_offset: 3
+    bit_size: 1
+  - name: OLDF
+    description: 'Out-of Limit Detector flag Set by hardware, and cleared by software by writing this bit to 1 . - 0: Reading 0 means that no OLD event is detected, writing 0 has no effect. - 1: Reading 1 means that an OLD event is detected, writing 1 clears THHF, THLF and OLDF flags.'
+    bit_offset: 4
+    bit_size: 1
+  - name: THLF
+    description: 'Low threshold status flag Set by hardware, and cleared by software by writing this bit to 1 . This flag indicates the status of the low threshold comparator when the last OLD event occurred. This bit gives additional information on the conditions triggering the last OLD event. It can be cleared by writing OLDF flag to a 1. - 0: The signal was higher than OLDTHL when the last OLD event occurred. - 1: The signal was lower than OLDTHL when the last OLD event occurred.'
+    bit_offset: 5
+    bit_size: 1
+  - name: THHF
+    description: 'High threshold status flag Set by hardware, and cleared by software by writing this bit to 1 . This flag indicates the status of the high threshold comparator when the last OLD event occurred. This bit gives additional information on the conditions triggering the last OLD event. It can be cleared by writing OLDF flag to a 1. - 0: The signal was lower than OLDTHH when the last OLD event occurred. - 1: The signal was higher than OLDTHH when the last OLD event occurred.'
+    bit_offset: 6
+    bit_size: 1
+  - name: SSOVRF
+    description: 'Snapshot overrun flag Set by hardware, and cleared by software by writing this bit to 1 . - 0: Reading 0 means that no snapshot overrun event is detected, writing 0 has no effect. - 1: Reading 1 means that a snapshot overrun event is detected, writing 1 clears this flag.'
+    bit_offset: 7
+    bit_size: 1
+  - name: SCDF
+    description: 'Short-Circuit Detector flag Set by hardware, and cleared by software by writing this bit to 1 . - 0: Reading 0 means that no SCD event is detected, writing 0 has no effect. - 1: Reading 1 means that a SCD event is detected, writing 1 clears this flag.'
+    bit_offset: 8
+    bit_size: 1
+  - name: SATF
+    description: 'Saturation detection flag Set by hardware, and cleared by software by writing this bit to 1 . - 0: Reading 0 means that no saturation is detected, writing 0 has no effect. - 1: Reading 1 means that a saturation is detected, writing 1 clears this flag.'
+    bit_offset: 9
+    bit_size: 1
+  - name: CKABF
+    description: 'Clock absence detection flag Set by hardware, and cleared by software by writing this bit to 1 . - 0: Reading 0 means that no clock absence is detected, writing 0 has no effect. - 1: Reading 1 means that a clock absence is detected, writing 1 clears this flag.'
+    bit_offset: 10
+    bit_size: 1
+  - name: RFOVRF
+    description: 'Reshape Filter Overrun detection flag Set by hardware, and cleared by software by writing this bit to 1 . - 0: Reading 0 means that no reshape filter overrun is detected, writing 0 has no effect. - 1: Reading 1 means that reshape filter overrun is detected, writing 1 clears this flag.'
+    bit_offset: 11
+    bit_size: 1
+fieldset/DFLTRSFR:
+  description: This register is used to control the reshape and HPF filters.
+  fields:
+  - name: RSFLTBYP
+    description: 'Reshaper filter bypass Set and cleared by software. This bit is used to bypass the reshape filter and its decimation block. - 0: The reshape filter is not bypassed (Default value) - 1: The reshape filter is bypassed This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 0
+    bit_size: 1
+  - name: RSFLTD
+    description: 'Reshaper filter decimation ratio Set and cleared by software. This bit is used to select the decimation ratio for the reshape filter - 0: Decimation ratio is 4 (Default value) - 1: Decimation ratio is 1 This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 4
+    bit_size: 1
+    enum: RSFLTD
+  - name: HPFBYP
+    description: 'High-Pass Filter bypass Set and cleared by software. This bit is used to bypass the high-pass filter. - 0: The high pass filter is not bypassed (Default value) - 1: The high pass filter is bypassed This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 7
+    bit_size: 1
+  - name: HPFC
+    description: 'High-pass filter cut-off frequency Set and cleared by software. This field is used to select the cut-off frequency of the high-pass filter. FPCM represents the sampling frequency at HPF input. - 00: Cut-off frequency = 0.000625 x FPCM - 01: Cut-off frequency = 0.00125 x FPCM - 10: Cut-off frequency = 0.00250 x FPCM - 11: Cut-off frequency = 0.00950 x FPCM This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 8
+    bit_size: 2
+    enum: HPFC
+fieldset/DLYCR:
+  description: This register is used for the adjustment stream delays.
+  fields:
+  - name: SKPDLY
+    description: 'Delay to apply to a bitstream Set and cleared by software. Defines the number of input samples that will be skipped. Skipping is applied immediately after writing to this field, if SKPBF = 0 , and the corresponding bit DFLTEN = 1 . If SKPBF = 1 the value written into the register is ignored by the delay state machine. - 0: No input sample skipped, - 1: 1 input sample skipped, ... - 127: 127 input sample skipped,.'
+    bit_offset: 0
+    bit_size: 7
+  - name: SKPBF
+    description: 'Skip Busy flag Set and cleared by hardware. Shall be used in order to control if the delay sequence is completed. - 0: Reading 0 means that the MDF is ready to accept a new value into SKPDLY[6:0]. - 1: Reading 1 means that last valid SKPDLY[6:0] is still under precessing.'
+    bit_offset: 31
+    bit_size: 1
+fieldset/GCR:
+  description: MDF global control register.
+  fields:
+  - name: TRGO
+    description: TRGO.
+    bit_offset: 0
+    bit_size: 1
+  - name: ILVNB
+    description: ILVNB.
+    bit_offset: 4
+    bit_size: 4
+fieldset/OECCR:
+  description: This register contains the offset compensation value.
+  fields:
+  - name: OFFSET
+    description: Offset error compensation Set and cleared by software. If the application attempts to write a new offset value while the previous one is not yet applied, this new offset value is ignored. Reading back the OFFSET[25:0] field will inform the application on the current offset value. OFFSET[25:0] represents the value to be subtracted to the signal before going to the SCALE.
+    bit_offset: 0
+    bit_size: 26
+fieldset/OLDCR:
+  description: This register is used to configure the Out-of Limit Detector function.
+  fields:
+  - name: OLDEN
+    description: 'Over-Current Detector Enable Set and cleared by software. - 0: The OLD is disabled (Default value) - 1: The OLD is enabled, including the ACIC filter working in continuous mode.'
+    bit_offset: 0
+    bit_size: 1
+  - name: THINB
+    description: 'Threshold In band Set and cleared by software. - 0: The OLD generates an event if the signal is lower than OLDTHL OR higher than OLDTHH (Default value) - 1: The OLD generates an event if the signal is lower than OLDTHH AND higher than OLDTHL This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 1
+    bit_size: 1
+    enum: THINB
+  - name: BKOLD
+    description: 'Break signal assignment for out-of limit detector Set and cleared by software. BKOLD[i] = 0: Break signal (mdf_break[i]) is not assigned to threshold event BKOLD[i] = 1: Break signal (mdf_break[i]) is assigned to threshold event This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 4
+    bit_size: 4
+  - name: ACICN
+    description: 'OLD CIC order selection Set and cleared by software. This field allows the application to select the type, and the order of the ACIC. This field is only taken into account by the MDF when CICMOD[2:0] = 0xx . - 00: FastSinc filter type - 01: Sinc1 filter type - 10: Sinc2 filter type - 11: Sinc3 filter type This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 12
+    bit_size: 2
+    enum: ACICN
+  - name: ACICD
+    description: 'OLD CIC decimation ratio selection Set and cleared by software. This field is used to allow the application to select the decimation ratio of the ACIC. This field is only taken into account by the MDF when CICMOD[2:0] = 0xx . The decimation ratio is given by (ACICD+1). - 0: Decimation ratio is 1 - 1: Decimation ratio is 2 - 2: Decimation ratio is 3 - 3: Decimation ratio is 4 ... - 31: Decimation ratio is 32 This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 17
+    bit_size: 5
+  - name: OLDACTIVE
+    description: 'OLD Active flag Set and cleared by hardware. This flag must be used by the application in order to check if the OLD is effectively enabled (active) or not. The protected fields and registers of this function can only be updated when the OLDACTIVE is set to , please refer to Section 1.4.15: Register protection for details. The delay between a transition on OLDEN and a transition on OLDACTIVE is 2 periods of AHB clock and 2 periods of mdf_proc_ck. - 0: The OLD is not active, and can be configured if needed - 1: The OLD is active, and protected fields cannot be configured.'
+    bit_offset: 31
+    bit_size: 1
+fieldset/OLDTHHR:
+  description: This register is used for the adjustment of the Out-off Limit high threshold.
+  fields:
+  - name: OLDTHH
+    description: 'OLD High Threshold Value Set and cleared by software. OLDTHH represents a 26-bit signed value. The real threshold compared to the signal provided by the filter is OLDTHH. This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 0
+    bit_size: 26
+fieldset/OLDTHLR:
+  description: This register is used for the adjustment of the Out-off Limit low threshold.
+  fields:
+  - name: OLDTHL
+    description: 'OLD Low Threshold Value Set and cleared by software. OLDTHL represents a 26-bit signed value. The real threshold compared to the signal provided by the filter is OLDTHL. This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 0
+    bit_size: 26
+fieldset/SCDCR:
+  description: This register is used for the adjustment stream delays.
+  fields:
+  - name: SCDEN
+    description: 'Short circuit detector enable Set and cleared by software. - 0: The short circuit detector is disabled, - 1: The short circuit detector is enabled,.'
+    bit_offset: 0
+    bit_size: 1
+  - name: BKSCD
+    description: 'Break signal assignment for short circuit detector Set and cleared by software. BKSCD[i] = 0: Break signal (mdf_break[i]) is not assigned to this SCD event BKSCD[i] = 1: Break signal (mdf_break[i]) is assigned to this SCD event This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 4
+    bit_size: 4
+  - name: SCDT
+    description: 'Short-circuit detector threshold Set and cleared by software. These bits are written by software to define the threshold counter for the short-circuit detector. If this value is reached, then a short-circuit detector event occurs on a given input stream. - 0: 2 consecutive 1 s or 0 s will generate an event, - 1: 2 consecutive 1 s or 0 s will generate an event - 2: 3 consecutive 1 s or 0 s will generate an event, ... - 255: 256 consecutive 1 s or 0 s will generate an event, This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 12
+    bit_size: 8
+  - name: SCDACTIVE
+    description: 'SCD Active flag Set and cleared by hardware. This flag must be used by the application in order to check if the SCD is effectively enabled (active) or not. The protected fields of this function can only be updated when the SCDACTIVE is set to a , please refer to Section 1.4.15: Register protection for details. The delay between a transition on SCDEN and a transition on SCDACTIVE is 2 periods of AHB clock and 2 periods of mdf_proc_ck. - 0: The SCD is not active, and can be configured if needed - 1: The SCD is active, and protected fields cannot be configured.'
+    bit_offset: 31
+    bit_size: 1
+fieldset/SITFCR:
+  description: This register is used to control the serial interfaces (SITFx).
+  fields:
+  - name: SITFEN
+    description: 'Serial interface enable Set and cleared by software. This bit is used to enable/disable the serial interface. - 0: Serial interface disabled - 1: Serial interface enabled.'
+    bit_offset: 0
+    bit_size: 1
+  - name: SCKSRC
+    description: 'Serial clock source Set and cleared by software. This bit is used to select the clock source of the serial interface. - 00: Serial clock source is MDF_CCK0 - 01: Serial clock source is MDF_CCK1 1x: Serial clock source is MDF_CKIx, not allowed in LF_MASTER SPI mode This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 1
+    bit_size: 2
+    enum: SCKSRC
+  - name: SITFMOD
+    description: 'Serial interface type Set and cleared by software. This field is used to defined the serial interface type. - 00: LF_MASTER (Low-Frequency MASTER) SPI mode - 01: Normal SPI mode - 10: Manchester mode: rising edge = logic 0, falling edge = logic 1 - 11: Manchester mode: rising edge = logic 1, falling edge = logic 0 This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 4
+    bit_size: 2
+    enum: SITFMOD
+  - name: STH
+    description: 'Manchester Symbol threshold / SPI threshold Set and cleared by software. This field is used for Manchester mode, in order to define the expected symbol threshold levels. Please refer to Section : Manchester mode for details on computation. In addition this field is used to define the timeout value for the clock absence detection in Normal SPI mode. Values of STH[4:0] lower than 4 are invalid. This field can be write-protected, please refer to Section 1.4.15: Register protection for details.'
+    bit_offset: 8
+    bit_size: 5
+  - name: SITFACTIVE
+    description: 'Serial interface Active flag Set and cleared by hardware. This flag must be used by the application in order to check if the serial interface is effectively enabled (active) or not. The protected fields of this function can only be updated when the SITFACTIVE is set , please refer to Section 1.4.15: Register protection for details. The delay between a transition on SITFEN and a transition on SITFACTIVE is 2 periods of AHB clock and 2 periods of mdf_proc_ck. - 0: The serial interface is not active, and can be configured if needed - 1: The serial interface is active, and protected fields cannot be configured.'
+    bit_offset: 31
+    bit_size: 1
+fieldset/SNPSDR:
+  description: This register is used to read the data processed by each digital filter in snapshot mode.
+  fields:
+  - name: MCICDC
+    description: Contains the MCIC decimation counter value at the moment of the last trigger event occurs (MCIC_CNT).
+    bit_offset: 0
+    bit_size: 9
+  - name: EXTSDR
+    description: Extended data size If SNPSFMT = 0 , EXTSDR[6:0] contains the bit 7 to 1 of the last valid data processed by the digital filter, If SNPSFMT = 1 , this field contains the INT accumulator counter value at the moment of the last trigger event occurs (INT_CNT).
+    bit_offset: 9
+    bit_size: 7
+  - name: SDR
+    description: Contains the 16 MSB of the last valid data processed by the digital filter.
+    bit_offset: 16
+    bit_size: 16
+enum/ACICN:
+  description: Auxiliary CIC order selection.
+  bit_size: 2
+  variants:
+  - name: FastSinc
+    description: FastSinc filter type.
+    value: 0
+  - name: Sinc1
+    description: Sinc1 filter type.
+    value: 1
+  - name: Sinc2
+    description: Sinc2 filter type.
+    value: 2
+  - name: Sinc3
+    description: Sinc3 filter type.
+    value: 3
+enum/ACQMOD:
+  description: Digital filter trigger mode.
+  bit_size: 3
+  variants:
+  - name: AsynchronousContinuous
+    description: Asynchronous continuous acquisition mode.
+    value: 0
+  - name: AsynchronousSingleShot
+    description: Asynchronous single-shot acquisition mode.
+    value: 1
+  - name: SynchronousContinuous
+    description: Synchronous continuous acquisition mode.
+    value: 2
+  - name: SynchronousSingleShot
+    description: Synchronous single-shot acquisition mode.
+    value: 3
+  - name: WindowContinuous
+    description: Window continuous acquisition mode.
+    value: 4
+  - name: SynchronousSnapshot
+    description: Synchronous snapshot acquisition mode.
+    value: 5
+enum/BSSEL:
+  description: Bitstream selection. This bitfield is set and cleared by software. It is used to select the bitstream to be used by the DFLT0.
+  bit_size: 5
+  variants:
+  - name: BS0_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 0
+  - name: BS0_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 1
+  - name: BS1_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 2
+  - name: BS1_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 3
+  - name: BS2_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 4
+  - name: BS2_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 5
+  - name: BS3_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 6
+  - name: BS3_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 7
+  - name: BS4_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 8
+  - name: BS4_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 9
+  - name: BS5_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 10
+  - name: BS5_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 11
+  - name: BS6_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 12
+  - name: BS6_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 13
+  - name: BS7_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 14
+  - name: BS7_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 15
+  - name: BS8_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 16
+  - name: BS8_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 17
+  - name: BS9_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 18
+  - name: BS9_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 19
+  - name: BS10_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 20
+  - name: BS10_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 21
+  - name: BS11_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 22
+  - name: BS11_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 23
+  - name: BS12_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 24
+  - name: BS12_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 25
+  - name: BS13_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 26
+  - name: BS13_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 27
+  - name: BS14_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 28
+  - name: BS14_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 29
+  - name: BS15_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 30
+  - name: BS15_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 31
+enum/CCKDIR:
+  description: CCK1 direction. This bit is set and reset by software. It is used to control the direction of the ADF_CCK1 pin.
+  bit_size: 1
+  variants:
+  - name: Input
+    description: CCK is an input.
+    value: 0
+  - name: Output
+    description: CCK is an output.
+    value: 1
+enum/CCKDIV:
+  description: Divider to control the CCK clock. This bit is set and reset by software. It is used to control the frequency of the bitstream clock on the CCK pin.
+  bit_size: 4
+  variants:
+  - name: DIV1
+    description: The ADF_CCK clock is adf_proc_ck.
+    value: 0
+  - name: DIV2
+    description: The ADF_CCK clock is adf_proc_ck divided by 2.
+    value: 1
+  - name: DIV3
+    description: The ADF_CCK clock is adf_proc_ck divided by 3.
+    value: 2
+  - name: DIV4
+    description: The ADF_CCK clock is adf_proc_ck divided by 4.
+    value: 3
+  - name: DIV5
+    description: The ADF_CCK clock is adf_proc_ck divided by 5.
+    value: 4
+  - name: DIV6
+    description: The ADF_CCK clock is adf_proc_ck divided by 6.
+    value: 5
+  - name: DIV7
+    description: The ADF_CCK clock is adf_proc_ck divided by 7.
+    value: 6
+  - name: DIV8
+    description: The ADF_CCK clock is adf_proc_ck divided by 8.
+    value: 7
+  - name: DIV9
+    description: The ADF_CCK clock is adf_proc_ck divided by 9.
+    value: 8
+  - name: DIV10
+    description: The ADF_CCK clock is adf_proc_ck divided by 10.
+    value: 9
+  - name: DIV11
+    description: The ADF_CCK clock is adf_proc_ck divided by 11.
+    value: 10
+  - name: DIV12
+    description: The ADF_CCK clock is adf_proc_ck divided by 12.
+    value: 11
+  - name: DIV13
+    description: The ADF_CCK clock is adf_proc_ck divided by 13.
+    value: 12
+  - name: DIV14
+    description: The ADF_CCK clock is adf_proc_ck divided by 14.
+    value: 13
+  - name: DIV15
+    description: The ADF_CCK clock is adf_proc_ck divided by 15.
+    value: 14
+  - name: DIV16
+    description: The ADF_CCK clock is adf_proc_ck divided by 16.
+    value: 15
+enum/CICMOD:
+  description: CIC filter mode selection.
+  bit_size: 3
+  variants:
+  - name: FastSincSplit
+    description: Split filters with main CIC in FastSinc mode.
+    value: 0
+  - name: Sinc1Split
+    description: Split filters with main CIC in Sinc1 mode.
+    value: 1
+  - name: Sinc2Split
+    description: Split filters with main CIC in Sinc2 mode.
+    value: 2
+  - name: Sinc3Split
+    description: Split filters with main CIC in Sinc3 mode.
+    value: 3
+  - name: Sinc4Single
+    description: Single Sinc4 filter.
+    value: 4
+  - name: Sinc5Single
+    description: Single Sinc5 filter.
+    value: 5
+enum/CKGMOD:
+  description: Clock generator mode. This bit is set and reset by software. It is used to define the way the clock generator is enabled. This bit must not be changed if the filter is enabled (DFTEN = 1).
+  bit_size: 1
+  variants:
+  - name: Immediate
+    description: The kernel clock is provided to the dividers as soon as CKGDEN is set to 1.
+    value: 0
+  - name: Trigger
+    description: The kernel clock is provided to the dividers when CKGDEN is set to 1 and the trigger condition met.
+    value: 1
+enum/DATSRC:
+  description: Source data for the digital filter.
+  bit_size: 2
+  variants:
+  - name: BSMX
+    description: Stream coming from the BSMX selected
+    value: 0
+  - name: ADCITF1
+    description: Stream coming from the ADCITF1 selected
+    value: 2
+  - name: ADCITF2
+    description: Stream coming from the ADCITF2 selected
+    value: 3
+enum/HPFC:
+  description: High-pass filter cut-off frequency. This bitfield is set and cleared by software. it is used to select the cut-off frequency of the high-pass filter. F PCM represents the sampling frequency at HPF input.
+  bit_size: 2
+  variants:
+  - name: Low
+    description: Cut-off frequency = 0.000625 x FPCM.
+    value: 0
+  - name: Medium
+    description: Cut-off frequency = 0.00125 x FPCM.
+    value: 1
+  - name: High
+    description: Cut-off frequency = 0.00250 x FPCM
+    value: 2
+  - name: Maximum
+    description: Cut-off frequency = 0.00950 x FPCM
+    value: 3
+enum/INTDIV:
+  description: Integrator output division.
+  bit_size: 2
+  variants:
+  - name: Div128
+    description: Integrator output divided by 128.
+    value: 0
+  - name: Div32
+    description: Integrator output divided by 32.
+    value: 1
+  - name: Div4
+    description: Integrator output divided by 4.
+    value: 2
+  - name: None
+    description: Integrator output not divided.
+    value: 3
+enum/RSFLTD:
+  description: Reshaper filter decimation ratio. This bitfield is set and cleared by software. It is used to select the decimation ratio of the reshaper filter.
+  bit_size: 1
+  variants:
+  - name: Decimation4
+    description: Decimation ratio is 4 (default value).
+    value: 0
+  - name: Decimation1
+    description: Decimation ratio is 1.
+    value: 1
+enum/RXFIFO:
+  description: RXFIFO threshold selection. This bitfield is set and cleared by software. It is used to select the RXFIFO threshold.
+  bit_size: 1
+  variants:
+  - name: NotEmpty
+    description: RXFIFO threshold event generated when the RXFIFO is not empty
+    value: 0
+  - name: HalfFull
+    description: RXFIFO threshold event generated when the RXFIFO is half-full
+    value: 1
+enum/SCKSRC:
+  description: Serial clock source. This bitfield is set and cleared by software. It is used to select the clock source of the serial interface.
+  bit_size: 2
+  variants:
+  - name: CCK0
+    description: Serial clock source is CCK0.
+    value: 0
+  - name: CCK1
+    description: Serial clock source is CCK1.
+    value: 1
+  - name: CKI0
+    description: Serial clock source is CCI0.
+    value: 2
+  - name: CKI1
+    description: Serial clock source is CCI1.
+    value: 3
+enum/SITFMOD:
+  description: Serial interface mode. This bitfield is set and cleared by software. It is used to select the serial interface mode.
+  bit_size: 2
+  variants:
+  - name: MasterSPI
+    description: LF_MASTER SPI mode.
+    value: 0
+  - name: NormalSPI
+    description: Normal SPI mode.
+    value: 1
+  - name: ManchesterFalling
+    description: Manchester mode rising edge = logic 0, falling edge = logic 1.
+    value: 2
+  - name: ManchesterRising
+    description: Manchester mode rising edge = logic 1, falling edge = logic 0.
+    value: 3
+enum/SNPSFMT:
+  description: Snapshot data format.
+  bit_size: 1
+  variants:
+  - name: Resolution23Bit
+    description: 23-bit data resolution without integrator counter.
+    value: 0
+  - name: Resolution16Bit
+    description: 16-bit data resolution with integrator counter.
+    value: 1
+enum/THINB:
+  description: Out-of-limit threshold band mode.
+  bit_size: 1
+  variants:
+  - name: OutsideBand
+    description: Event when signal is below low or above high threshold.
+    value: 0
+  - name: InsideBand
+    description: Event when signal is between low and high thresholds.
+    value: 1
+enum/TRGSENS:
+  description: CKGEN trigger sensitivity selection. This bit is set and cleared by software. It is used to select the trigger sensitivity of the trigger signals. This bit is not significant if the CKGMOD = 0.
+  bit_size: 1
+  variants:
+  - name: RisingEdge
+    description: A rising edge event triggers the activation of CKGEN dividers.
+    value: 0
+  - name: FallingEdge
+    description: A falling edge even triggers the activation of CKGEN dividers.
+    value: 1
+enum/TRGSRC:
+  description: Digital filter trigger signal selection.
+  bit_size: 4
+  variants:
+  - name: TRGO
+    description: TRGO is selected.
+    value: 0
+  - name: OLDX
+    description: OLDx event is selected.
+    value: 1
+  - name: MdfTrg0
+    description: mdf_trg[0] is selected.
+    value: 2
+  - name: MdfTrg1
+    description: mdf_trg[1] is selected.
+    value: 3
+  - name: MdfTrg2
+    description: mdf_trg[2] is selected.
+    value: 4
+  - name: MdfTrg3
+    description: mdf_trg[3] is selected.
+    value: 5
+  - name: MdfTrg4
+    description: mdf_trg[4] is selected.
+    value: 6
+  - name: MdfTrg5
+    description: mdf_trg[5] is selected.
+    value: 7
+  - name: MdfTrg6
+    description: mdf_trg[6] is selected.
+    value: 8
+  - name: MdfTrg7
+    description: mdf_trg[7] is selected.
+    value: 9
+  - name: MdfTrg8
+    description: mdf_trg[8] is selected.
+    value: 10
+  - name: MdfTrg9
+    description: mdf_trg[9] is selected.
+    value: 11
+  - name: MdfTrg10
+    description: mdf_trg[10] is selected.
+    value: 12
+  - name: MdfTrg11
+    description: mdf_trg[11] is selected.
+    value: 13
+  - name: MdfTrg12
+    description: mdf_trg[12] is selected.
+    value: 14
+  - name: MdfTrg13
+    description: mdf_trg[13] is selected.
+    value: 15

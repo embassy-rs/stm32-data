@@ -1,0 +1,644 @@
+block/HSPI:
+  description: HSPI.
+  items:
+  - name: CR
+    description: HSPI control register.
+    byte_offset: 0
+    fieldset: CR
+  - name: DCR1
+    description: HSPI device configuration register 1.
+    byte_offset: 8
+    fieldset: DCR1
+  - name: DCR2
+    description: HSPI device configuration register 2.
+    byte_offset: 12
+    fieldset: DCR2
+  - name: DCR3
+    description: HSPI device configuration register 3.
+    byte_offset: 16
+    fieldset: DCR3
+  - name: DCR4
+    description: HSPI device configuration register 4.
+    byte_offset: 20
+    fieldset: DCR4
+  - name: SR
+    byte_offset: 32
+    fieldset: SR
+  - name: FCR
+    byte_offset: 36
+    fieldset: FCR
+  - name: DLR
+    description: HSPI data length register.
+    byte_offset: 64
+    fieldset: DLR
+  - name: AR
+    byte_offset: 72
+    fieldset: AR
+  - name: DR
+    byte_offset: 80
+    fieldset: DR
+  - name: PSMKR
+    description: HSPI polling status mask register.
+    byte_offset: 128
+    fieldset: PSMKR
+  - name: PSMAR
+    description: HSPI polling status match register.
+    byte_offset: 136
+    fieldset: PSMAR
+  - name: PIR
+    description: HSPI polling interval register.
+    byte_offset: 144
+    fieldset: PIR
+  - name: CCR
+    description: HSPI communication configuration register.
+    byte_offset: 256
+    fieldset: CCR
+  - name: TCR
+    description: HSPI timing configuration register.
+    byte_offset: 264
+    fieldset: TCR
+  - name: IR
+    description: HSPI instruction register.
+    byte_offset: 272
+    fieldset: IR
+  - name: ABR
+    description: HSPI alternate bytes register.
+    byte_offset: 288
+    fieldset: ABR
+  - name: LPTR
+    description: HSPI low-power timeout register.
+    byte_offset: 304
+    fieldset: LPTR
+  - name: WPCCR
+    description: HSPI wrap communication configuration register.
+    byte_offset: 320
+    fieldset: WPCCR
+  - name: WPTCR
+    description: HSPI wrap timing configuration register.
+    byte_offset: 328
+    fieldset: WPTCR
+  - name: WPIR
+    description: HSPI wrap instruction register.
+    byte_offset: 336
+    fieldset: WPIR
+  - name: WPABR
+    description: HSPI wrap alternate bytes register.
+    byte_offset: 352
+    fieldset: WPABR
+  - name: WCCR
+    description: HSPI write communication configuration register.
+    byte_offset: 384
+    fieldset: WCCR
+  - name: WTCR
+    description: HSPI write timing configuration register.
+    byte_offset: 392
+    fieldset: WTCR
+  - name: WIR
+    description: HSPI write instruction register.
+    byte_offset: 400
+    fieldset: WIR
+  - name: WABR
+    description: HSPI write alternate bytes register.
+    byte_offset: 416
+    fieldset: WABR
+  - name: HLCR
+    description: HSPI HyperBus latency configuration register.
+    byte_offset: 512
+    fieldset: HLCR
+  - name: CALFCR
+    description: HSPI full-cycle calibration configuration.
+    byte_offset: 528
+    fieldset: CALFCR
+  - name: CALMR
+    description: HSPI DLL master calibration configuration.
+    byte_offset: 536
+    fieldset: CALMR
+  - name: CALSOR
+    description: HSPI DLL slave output calibration configuration.
+    byte_offset: 544
+    fieldset: CALSOR
+  - name: CALSIR
+    description: HSPI DLL slave input calibration configuration.
+    byte_offset: 552
+    fieldset: CALSIR
+fieldset/ABR:
+  description: HSPI alternate bytes register.
+  fields:
+  - name: ALTERNATE
+    description: '[31: 0]: Alternate bytes Optional data to be send to the external SPI device right after the address.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/AR:
+  fields:
+  - name: ADDRESS
+    description: Address Address to be sent to the external device. In HyperBus mode, this field must be even as this protocol is 16-bit word oriented. In dual-memory mode, AR[0] is forced to 1. Writes to this field are ignored when BUSY├é┬á=├é┬á1 or when FMODE = 11 (Memory-mapped mode).
+    bit_offset: 0
+    bit_size: 32
+fieldset/CALFCR:
+  description: HSPI full-cycle calibration configuration.
+  fields:
+  - name: FINE
+    description: '[6: 0]: Fine calibration The unitary value of delay for this field depends on product technology (refer to the product datasheet).'
+    bit_offset: 0
+    bit_size: 7
+  - name: COARSE
+    description: '[4: 0]: Coarse calibration The unitary value of delay for this field depends on product technology (refer to the product datasheet).'
+    bit_offset: 16
+    bit_size: 5
+  - name: CALMAX
+    description: Max value This bit gets set when the memory-clock period is outside the range of DLLM, in which case CALFCR and CALSR are updated with the values for the maximum delay.
+    bit_offset: 31
+    bit_size: 1
+fieldset/CALMR:
+  description: HSPI DLL master calibration configuration.
+  fields:
+  - name: FINE
+    description: '[6: 0]: Fine calibration The unitary value of delay for this field depends on product technology (refer to the product datasheet).'
+    bit_offset: 0
+    bit_size: 7
+  - name: COARSE
+    description: '[4: 0]: Coarse calibration The unitary value of delay for this field depends on product technology (refer to the product datasheet).'
+    bit_offset: 16
+    bit_size: 5
+fieldset/CALSIR:
+  description: HSPI DLL slave input calibration configuration.
+  fields:
+  - name: FINE
+    description: '[6: 0]: Fine calibration The unitary value of delay for this field depends on product technology (refer to the product datasheet).'
+    bit_offset: 0
+    bit_size: 7
+  - name: COARSE
+    description: '[4: 0]: Coarse calibration The unitary value of delay for this field depends on product technology (refer to the product datasheet).'
+    bit_offset: 16
+    bit_size: 5
+fieldset/CALSOR:
+  description: HSPI DLL slave output calibration configuration.
+  fields:
+  - name: FINE
+    description: '[6: 0]: Fine calibration The unitary value of delay for this field depends on product technology (refer to the product datasheet).'
+    bit_offset: 0
+    bit_size: 7
+  - name: COARSE
+    description: '[4: 0]: Coarse calibration The unitary value of delay for this field depends on product technology (refer to the product datasheet).'
+    bit_offset: 16
+    bit_size: 5
+fieldset/CCR:
+  description: HSPI communication configuration register.
+  fields:
+  - name: IMODE
+    description: 'Instruction mode This field defines the instruction phase mode of operation. 101-111: Reserved.'
+    bit_offset: 0
+    bit_size: 3
+  - name: IDTR
+    description: Instruction double transfer rate This bit sets the DTR mode for the instruction phase.
+    bit_offset: 3
+    bit_size: 1
+  - name: ISIZE
+    description: Instruction size This bit defines instruction size.
+    bit_offset: 4
+    bit_size: 2
+  - name: ADMODE
+    description: 'Address mode This field defines the address phase mode of operation. 101-111: Reserved.'
+    bit_offset: 8
+    bit_size: 3
+  - name: ADDTR
+    description: Address double transfer rate This bit sets the DTR mode for the address phase.
+    bit_offset: 11
+    bit_size: 1
+  - name: ADSIZE
+    description: Address size This field defines address size.
+    bit_offset: 12
+    bit_size: 2
+  - name: ABMODE
+    description: 'Alternate-byte mode This field defines the alternate byte phase mode of operation. 100-111: Reserved.'
+    bit_offset: 16
+    bit_size: 3
+  - name: ABDTR
+    description: Alternate bytes double transfer rate This bit sets the DTR mode for the alternate bytes phase. This field can be written only when BUSY├é┬á=├é┬á0.
+    bit_offset: 19
+    bit_size: 1
+  - name: ABSIZE
+    description: Alternate bytes size This bit defines alternate bytes size.
+    bit_offset: 20
+    bit_size: 2
+  - name: DMODE
+    description: 'Data mode This field defines the data phase mode of operation. 110-111: Reserved.'
+    bit_offset: 24
+    bit_size: 3
+  - name: DDTR
+    description: Data double transfer rate This bit sets the DTR mode for the data phase.
+    bit_offset: 27
+    bit_size: 1
+  - name: DQSE
+    description: DQS enable This bit enables the data strobe management.
+    bit_offset: 29
+    bit_size: 1
+  - name: SIOO
+    description: Send instruction only once mode This bit has no effect when IMODE├é┬á=├é┬á00 (see ).
+    bit_offset: 31
+    bit_size: 1
+fieldset/CR:
+  description: HSPI control register.
+  fields:
+  - name: EN
+    description: 'Enable This bit enables the HSPI. Note: The DMA request can be aborted without having received the ACK in case this EN bit is cleared during the operation. In case this bit is set to 0 during a DMA transfer, the REQ signal to DMA returns to inactive state without waiting for the ACK signal from DMA to be active.'
+    bit_offset: 0
+    bit_size: 1
+  - name: ABORT
+    description: 'Abort request This bit aborts the on-going command sequence. It is automatically reset once the abort is completed. This bit stops the current transfer. Note: This bit is always read as 0.'
+    bit_offset: 1
+    bit_size: 1
+  - name: DMAEN
+    description: 'DMA enable In Indirect mode, the DMA can be used to input or output data via DR. DMA transfers are initiated when FTF is set. Note: Resetting the DMAEN bit while a DMA transfer is ongoing, breaks the handshake with the DMA. Do not write this bit during DMA operation.'
+    bit_offset: 2
+    bit_size: 1
+  - name: TCEN
+    description: Timeout counter enable This bit is valid only when the Memory-mapped mode (FMODE[1:0]├é┬á=├é┬á11) is selected. This bit enables the timeout counter.
+    bit_offset: 3
+    bit_size: 1
+  - name: DMM
+    description: Dual-memory mode This bit activates the Dual-memory mode, where two external devices are used simultaneously to double the throughput and the capacity.
+    bit_offset: 6
+    bit_size: 1
+  - name: FSEL
+    description: Memory select This bit is the mirror of bit 30. Refer to the description of MSEL[1:0] above. This bit is set when 1 is written in bit 30 or bit 7. When this bit is set, both b30 and b7 are read as 1. This bit is reset when bit 30 and bit7 are set to 0. When this bit is reset, both bit 30 and bit7 are read as 0.
+    bit_offset: 7
+    bit_size: 1
+  - name: FTHRES
+    description: 'FIFO threshold level This field defines, in Indirect mode, the threshold number of bytes in the FIFO that causes the FIFO threshold flag FTF in SR, to be set. ... Note: If DMAEN├é┬á=├é┬á1, the DMA controller for the corresponding channel must be disabled before changing the FTHRES[5:0] value.'
+    bit_offset: 8
+    bit_size: 6
+  - name: TEIE
+    description: Transfer error interrupt enable This bit enables the transfer error interrupt.
+    bit_offset: 16
+    bit_size: 1
+  - name: TCIE
+    description: Transfer complete interrupt enable This bit enables the transfer complete interrupt.
+    bit_offset: 17
+    bit_size: 1
+  - name: FTIE
+    description: FIFO threshold interrupt enable This bit enables the FIFO threshold interrupt.
+    bit_offset: 18
+    bit_size: 1
+  - name: SMIE
+    description: Status match interrupt enable This bit enables the status match interrupt.
+    bit_offset: 19
+    bit_size: 1
+  - name: TOIE
+    description: Timeout interrupt enable This bit enables the timeout interrupt.
+    bit_offset: 20
+    bit_size: 1
+  - name: APMS
+    description: Automatic-polling mode stop This bit determines if the automatic polling is stopped after a match.
+    bit_offset: 22
+    bit_size: 1
+  - name: PMM
+    description: Polling match mode This bit indicates which method must be used to determine a match during the Automatic-polling mode.
+    bit_offset: 23
+    bit_size: 1
+  - name: FMODE
+    description: Functional mode This field defines the HSPI functional mode of operation. If DMAEN├é┬á=├é┬á1 already, then the DMA controller for the corresponding channel must be disabled before changing the FMODE[1:0] value. If FMODE[1:0] and FTHRES[4:0] are wrongly updated while DMAEN├é┬á=├é┬á1, the DMA request signal automatically goes to inactive state.
+    bit_offset: 28
+    bit_size: 2
+  - name: MSEL
+    description: "Flash select These bits select the memory to be addressed in Single, Dual, Quad or Octal mode in single├ó\x80\x91memory configuration (when DMM = 0). - when in Quad mode: - when in Octal mode or Dual-quad mode: 0x: data exchanged over IO[7:0] 1x: data exchanged over IO[15:8] These bits are ignored when in dual-octal configuration (data on 8 bits and DMM├é┬á=├é┬á1) or 16├ó\x80\x91bit configuration (data exchanged over IO[15:0])."
+    bit_offset: 30
+    bit_size: 2
+fieldset/DCR1:
+  description: HSPI device configuration register 1.
+  fields:
+  - name: CKMODE
+    description: Mode 0/Mode 3 This bit indicates the level taken by the CLK between commands (when nCS├é┬á=├é┬á1).
+    bit_offset: 0
+    bit_size: 1
+  - name: FRCK
+    description: Free running clock This bit configures the free running clock.
+    bit_offset: 1
+    bit_size: 1
+  - name: DLYBYP
+    description: Delay block bypass.
+    bit_offset: 3
+    bit_size: 1
+  - name: CSHT
+    description: 'Chip-select high time CSHT├é┬á+├é┬á1 defines the minimum number of CLK cycles where the chip-select (nCS) must remain high between commands issued to the external device. ... 63: nCS stays high for at least 64 cycles between external device commands. Note: When the extended CSHT timeout feature is not supported, CSHT[5:3] are reserved and the number of cycles is limited to eight (refer to implementation).'
+    bit_offset: 8
+    bit_size: 6
+  - name: DEVSIZE
+    description: 'Device size This field defines the size of the external device using the following formula: Number of bytes in device = 2[DEVSIZE+1]. DEVSIZE+1 is effectively the number of address bits required to address the external device. The device capacity can be up to 4├é┬áGbytes (addressed using 32-bits) in Indirect mode, but the addressable space in Memory-mapped mode is limited to 256├é┬áMbytes. In Regular-command mode, if DMM├é┬á=├é┬á1, DEVSIZE[4:0] indicates the total capacity of the two devices together.'
+    bit_offset: 16
+    bit_size: 5
+  - name: MTYP
+    description: 'Memory type This bit indicates the type of memory to be supported. Note: In this mode, DQS signal polarity is inverted with respect to the memory clock signal. This is the default value and care must be taken to change MTYP[2:0] for memories different from Micron. Others: Reserved.'
+    bit_offset: 24
+    bit_size: 3
+fieldset/DCR2:
+  description: HSPI device configuration register 2.
+  fields:
+  - name: PRESCALER
+    description: 'Clock prescaler This field defines the scaler factor for generating the CLK based on the kernel clock (value├é┬á+├é┬á1). 2: FCLK = FKERNEL/3 ... 255: FCLK = FKERNEL/256 For odd clock division factors, the CLK duty cycle is not 50├é┬á%. The clock signal remains low one cycle longer than it stays high. Writing this field automatically starts a new calibration of high-speed interface DLL at the start of next transfer, except in case CALOSR or CALISR have been written in the meantime. BUSY stays high during the whole calibration execution.'
+    bit_offset: 0
+    bit_size: 8
+  - name: WRAPSIZE
+    description: 'Wrap size This field indicates the wrap size to which the memory is configured. For memories which have a separate command for wrapped instructions, this field indicates the wrap-size associated with the command held in the WPIR register. 110-111: Reserved.'
+    bit_offset: 16
+    bit_size: 3
+fieldset/DCR3:
+  description: HSPI device configuration register 3.
+  fields:
+  - name: MAXTRAN
+    description: 'Maximum transfer This field enables the communication regulation feature. The nCS is released every MAXTRAN+1 clock cycles when the other HSPI request the access to the bus. others: Maximum communication is set to MAXTRAN+1 bytes.'
+    bit_offset: 0
+    bit_size: 8
+  - name: CSBOUND
+    description: 'CS boundary This field enables the transaction boundary feature. When active, a minimum value of 3 is recommended. The nCS is released on each boundary of 2CSBOUND bytes. others: CS boundary set to 2CSBOUND bytes.'
+    bit_offset: 16
+    bit_size: 5
+fieldset/DCR4:
+  description: HSPI device configuration register 4.
+  fields:
+  - name: REFRESH
+    description: 'Refresh rate This field enables the refresh rate feature. The nCS is released every REFRESH+1 clock cycles for writes, and REFRESH+4 clock cycles for reads. Note: These two values can be extended with few clock cycles when refresh occurs during a byte transmission in single, dual or quad mode, because the byte transmission must be completed. others: Maximum communication length is set to REFRESH+1 clock cycles.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/DLR:
+  description: HSPI data length register.
+  fields:
+  - name: DL
+    description: '[31: 0]: Data length Number of data to be retrieved (value+1) in Indirect and Status-polling modes. A value not greater than three (indicating 4 bytes) must be used for status polling-mode. All 1''s in Indirect mode means undefined length, where HSPI continues until the end of the memory, as defined by DEVSIZE. 0x0000_0000: 1 byte is to be transferred. 0x0000_0001: 2 bytes are to be transferred. 0x0000_0002: 3 bytes are to be transferred. 0x0000_0003: 4 bytes are to be transferred. ... 0xFFFF_FFFD: 4,294,967,294 (4G-2) bytes are to be transferred. 0xFFFF_FFFE: 4,294,967,295 (4G-1) bytes are to be transferred. 0xFFFF_FFFF: undefined length; all bytes, until the end of the external device, (as defined by DEVSIZE) are to be transferred. Continue reading indefinitely if DEVSIZE├é┬á=├é┬á0x1F. DL[0] is stuck at 1 in Dual-memory mode (DMM├é┬á=├é┬á1) even when 0 is written to this bit, thus assuring that each access transfers an even number of bytes. This field has no effect when in Memory-mapped mode.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/DR:
+  fields:
+  - name: DATA
+    description: '[31: 0]: Data Data to be sent/received to/from the external SPI device In Indirect-write mode, data written to this register is stored on the FIFO before it is sent to the external device during the data phase. If the FIFO is too full, a write operation is stalled until the FIFO has enough space to accept the amount of data being written. In Indirect-read mode, reading this register gives (via the FIFO) the data that was received from the external device. If the FIFO does not have as many bytes as requested by the read operation and if BUSY├é┬á=├é┬á1, the read operation is stalled until enough data is present or until the transfer is complete, whichever happens first. In Automatic-polling mode, this register contains the last data read from the external device (without masking). Word, half-word, and byte accesses to this register are supported. In Indirect-write mode, a byte write adds 1 byte to the FIFO, a half-word write 2 bytes, and a word write 4 bytes. Similarly, in Indirect-read mode, a byte read removes 1 byte from the FIFO, a halfword read 2├é┬ábytes, and a word read 4├é┬ábytes. Accesses in Indirect mode must be aligned to the bottom of this register: A byte read must read DATA[7:0] and a half-word read must read DATA[15:0].'
+    bit_offset: 0
+    bit_size: 32
+fieldset/FCR:
+  fields:
+  - name: CTEF
+    description: Clear transfer error flag Writing 1 clears the TEF flag in the SR register.
+    bit_offset: 0
+    bit_size: 1
+  - name: CTCF
+    description: Clear transfer complete flag Writing 1 clears the TCF flag in the SR register.
+    bit_offset: 1
+    bit_size: 1
+  - name: CSMF
+    description: Clear status match flag Writing 1 clears the SMF flag in the SR register.
+    bit_offset: 3
+    bit_size: 1
+  - name: CTOF
+    description: Clear timeout flag Writing 1 clears the TOF flag in the SR register.
+    bit_offset: 4
+    bit_size: 1
+fieldset/HLCR:
+  description: HSPI HyperBus latency configuration register.
+  fields:
+  - name: LM
+    description: Latency mode This bit selects the Latency mode.
+    bit_offset: 0
+    bit_size: 1
+  - name: WZL
+    description: Write zero latency This bit enables zero latency on write operations.
+    bit_offset: 1
+    bit_size: 1
+  - name: TACC
+    description: '[7: 0]: Access time Device access time expressed in number of communication clock cycles.'
+    bit_offset: 8
+    bit_size: 8
+  - name: TRWR
+    description: Read write recovery time Device read write recovery time expressed in number of communication clock cycles.
+    bit_offset: 16
+    bit_size: 8
+fieldset/IR:
+  description: HSPI instruction register.
+  fields:
+  - name: INSTRUCTION
+    description: Instruction Instruction to be sent to the external SPI device.
+    bit_offset: 0
+    bit_size: 32
+fieldset/LPTR:
+  description: HSPI low-power timeout register.
+  fields:
+  - name: TIMEOUT
+    description: '[15: 0]: Timeout period After each access in Memory-mapped mode, the HSPI prefetches the subsequent bytes and hold them in the FIFO. This field indicates how many CLK cycles the HSPI waits after the clock becomes inactive and until it raises the nCS, putting the external device in a lower-consumption state.'
+    bit_offset: 0
+    bit_size: 16
+fieldset/PIR:
+  description: HSPI polling interval register.
+  fields:
+  - name: INTERVAL
+    description: '[15: 0]: Polling interval Number of CLK cycle between a read during the automatic-polling phases.'
+    bit_offset: 0
+    bit_size: 16
+fieldset/PSMAR:
+  description: HSPI polling status match register.
+  fields:
+  - name: MATCH
+    description: '[31: 0]: Status match Value to be compared with the masked status register to get a match.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/PSMKR:
+  description: HSPI polling status mask register.
+  fields:
+  - name: MASK
+    description: Status mask Mask to be applied to the status bytes received in Polling mode For bit n:.
+    bit_offset: 0
+    bit_size: 32
+fieldset/SR:
+  fields:
+  - name: TEF
+    description: Transfer error flag This bit is set in Indirect mode when an invalid address is being accessed in Indirect mode. It is cleared by writing 1 to CTEF.
+    bit_offset: 0
+    bit_size: 1
+  - name: TCF
+    description: Transfer complete flag This bit is set in Indirect mode when the programmed number of data has been transferred or in any mode when the transfer has been aborted.It is cleared by writing 1 to CTCF.
+    bit_offset: 1
+    bit_size: 1
+  - name: FTF
+    description: FIFO threshold flag In Indirect mode, this bit is set when the FIFO threshold has been reached, or if there is any data left in the FIFO after the reads from the external device are complete. It is cleared automatically as soon as the threshold condition is no longer true. In Automatic-polling mode this bit is set every time the status register is read, and the bit is cleared when the data register is read.
+    bit_offset: 2
+    bit_size: 1
+  - name: SMF
+    description: Status match flag This bit is set in Automatic-polling mode when the unmasked received data matches the corresponding bits in the match register (PSMAR). It is cleared by writing 1 to CSMF.
+    bit_offset: 3
+    bit_size: 1
+  - name: TOF
+    description: Timeout flag This bit is set when timeout occurs. It is cleared by writing 1 to CTOF.
+    bit_offset: 4
+    bit_size: 1
+  - name: BUSY
+    description: Busy This bit is set when an operation is ongoing. It is cleared automatically when the operation with the external device is finished and the FIFO is empty.
+    bit_offset: 5
+    bit_size: 1
+  - name: FLEVEL
+    description: FIFO level This field gives the number of valid bytes that are being held in the FIFO. FLEVEL├é┬á=├é┬á0 when the FIFO is empty, and 64 when it is full. In Automatic-status polling mode, FLEVEL is zero.
+    bit_offset: 8
+    bit_size: 7
+fieldset/TCR:
+  description: HSPI timing configuration register.
+  fields:
+  - name: DCYC
+    description: Number of dummy cycles This field defines the duration of the dummy phase. In both SDR and DTR modes, it specifies a number of CLK cycles (0-31).
+    bit_offset: 0
+    bit_size: 5
+  - name: DHQC
+    description: Delay hold quarter cycle.
+    bit_offset: 28
+    bit_size: 1
+  - name: SSHIFT
+    description: Sample shift By default, the HSPI samples data 1/2 of a CLK cycle after the data is driven by the external device. This bit allows the data to be sampled later in order to consider the external signal delays. The software must ensure that SSHIFT├é┬á=├é┬á0 when the data phase is configured in DTR mode (when DDTR├é┬á=├é┬á1.).
+    bit_offset: 30
+    bit_size: 1
+fieldset/WABR:
+  description: HSPI write alternate bytes register.
+  fields:
+  - name: ALTERNATE
+    description: '[31: 0]: Alternate bytes Optional data to be sent to the external SPI device right after the address.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/WCCR:
+  description: HSPI write communication configuration register.
+  fields:
+  - name: IMODE
+    description: 'Instruction mode This field defines the instruction phase mode of operation. 101-111: Reserved.'
+    bit_offset: 0
+    bit_size: 3
+  - name: IDTR
+    description: Instruction double transfer rate This bit sets the DTR mode for the instruction phase.
+    bit_offset: 3
+    bit_size: 1
+  - name: ISIZE
+    description: Instruction size This bit defines instruction size:.
+    bit_offset: 4
+    bit_size: 2
+  - name: ADMODE
+    description: 'Address mode This field defines the address phase mode of operation. 101-111: Reserved.'
+    bit_offset: 8
+    bit_size: 3
+  - name: ADDTR
+    description: Address double transfer rate This bit sets the DTR mode for the address phase.
+    bit_offset: 11
+    bit_size: 1
+  - name: ADSIZE
+    description: Address size This field defines address size.
+    bit_offset: 12
+    bit_size: 2
+  - name: ABMODE
+    description: 'Alternate-byte mode This field defines the alternate-byte phase mode of operation. 101-111: Reserved.'
+    bit_offset: 16
+    bit_size: 3
+  - name: ABDTR
+    description: Alternate bytes double-transfer rate This bit sets the DTR mode for the alternate-bytes phase.
+    bit_offset: 19
+    bit_size: 1
+  - name: ABSIZE
+    description: Alternate bytes size This field defines alternate bytes size:.
+    bit_offset: 20
+    bit_size: 2
+  - name: DMODE
+    description: Data mode This field defines the data phase mode of operation.
+    bit_offset: 24
+    bit_size: 3
+  - name: DDTR
+    description: data double transfer rate This bit sets the DTR mode for the data phase.
+    bit_offset: 27
+    bit_size: 1
+  - name: DQSE
+    description: DQS enable This bit enables the data strobe management.
+    bit_offset: 29
+    bit_size: 1
+fieldset/WIR:
+  description: HSPI write instruction register.
+  fields:
+  - name: INSTRUCTION
+    description: Instruction Instruction to be sent to the external SPI device.
+    bit_offset: 0
+    bit_size: 32
+fieldset/WPABR:
+  description: HSPI wrap alternate bytes register.
+  fields:
+  - name: ALTERNATE
+    description: '[31: 0]: Alternate bytes Optional data to be sent to the external SPI device right after the address.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/WPCCR:
+  description: HSPI wrap communication configuration register.
+  fields:
+  - name: IMODE
+    description: 'Instruction mode This field defines the instruction phase mode of operation. 101-111: Reserved.'
+    bit_offset: 0
+    bit_size: 3
+  - name: IDTR
+    description: Instruction double transfer rate This bit sets the DTR mode for the instruction phase.
+    bit_offset: 3
+    bit_size: 1
+  - name: ISIZE
+    description: Instruction size This field defines instruction size.
+    bit_offset: 4
+    bit_size: 2
+  - name: ADMODE
+    description: 'Address mode This field defines the address phase mode of operation. 101-111: Reserved.'
+    bit_offset: 8
+    bit_size: 3
+  - name: ADDTR
+    description: Address double transfer rate This bit sets the DTR mode for the address phase.
+    bit_offset: 11
+    bit_size: 1
+  - name: ADSIZE
+    description: Address size This field defines address size.
+    bit_offset: 12
+    bit_size: 2
+  - name: ABMODE
+    description: Alternate-byte mode This field defines the alternate byte phase mode of operation.
+    bit_offset: 16
+    bit_size: 3
+  - name: ABDTR
+    description: Alternate bytes double transfer rate This bit sets the DTR mode for the alternate bytes phase.
+    bit_offset: 19
+    bit_size: 1
+  - name: ABSIZE
+    description: Alternate bytes size This bit defines alternate bytes size.
+    bit_offset: 20
+    bit_size: 2
+  - name: DMODE
+    description: 'Data mode This field defines the data phase mode of operation. 101; Data on 16 lines 110-111: Reserved.'
+    bit_offset: 24
+    bit_size: 3
+  - name: DDTR
+    description: Data double transfer rate This bit sets the DTR mode for the data phase.
+    bit_offset: 27
+    bit_size: 1
+  - name: DQSE
+    description: DQS enable This bit enables the data strobe management.
+    bit_offset: 29
+    bit_size: 1
+fieldset/WPIR:
+  description: HSPI wrap instruction register.
+  fields:
+  - name: INSTRUCTION
+    description: '[31: 0]: Instruction Instruction to be sent to the external SPI device.'
+    bit_offset: 0
+    bit_size: 32
+fieldset/WPTCR:
+  description: HSPI wrap timing configuration register.
+  fields:
+  - name: DCYC
+    description: Number of dummy cycles This field defines the duration of the dummy phase. In both SDR and DTR modes, it specifies a number of CLK cycles (0-31). It is recommended to have at least 5 dummy cycles when using memories with DQS activated.
+    bit_offset: 0
+    bit_size: 5
+  - name: DHQC
+    description: Delay hold quarter cycle Add a quarter cycle delay on the outputs in DTR communication to match hold requirement.
+    bit_offset: 28
+    bit_size: 1
+  - name: SSHIFT
+    description: Sample shift By default, the HSPI samples data 1/2 of a CLK cycle after the data is driven by the external device. This bit allows the data to be sampled later in order to consider the external signal delays. The firmware must assure that SSHIFT=0 when the data phase is configured in DTR mode (when DDTR├é┬á=├é┬á1).
+    bit_offset: 30
+    bit_size: 1
+fieldset/WTCR:
+  description: HSPI write timing configuration register.
+  fields:
+  - name: DCYC
+    description: Number of dummy cycles This field defines the duration of the dummy phase. In both SDR and DTR modes, it specifies a number of CLK cycles (0-31). It is recommended to have at least 5 dummy cycles when using memories with DQS activated.
+    bit_offset: 0
+    bit_size: 5

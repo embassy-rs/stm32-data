@@ -1,0 +1,426 @@
+# NOTE: `access: Read` tags cannot be produced by this transform (the N6 SVD
+# only carries per-field access, which chiptool extraction discards, and no
+# transform sets register access). They were added manually after extraction:
+# registers whose SVD fields are all read-only, plus the status/counter
+# registers marked Read in eth_v2 that the N6 SVD mislabels as read-write
+# (MACISR, MACRxTxSR, MACTSSR, MACTxTSSNR, MMC_RX/TX_INTERRUPT, MTLTxQUR,
+# MTLRxQMPOCR, DMACMFCR).
+transforms:
+  # ETH register yamls have no enums by convention (see eth_v2)
+  - !DeleteEnums
+    from: .*
+
+  # strip the useless ETH_ prefix everywhere
+  - !Rename
+    from: ETH_(.*)
+    to: $1
+  - !RenameRegisters
+    block: .*
+    from: ETH_(.*)
+    to: $1
+
+  # MACVIR_alternate is a subset duplicate of MACVIR at the same offset
+  - !DeleteRegisters
+    block: .*
+    from: MACVIR_alternate
+  - !DeleteFieldsets
+    from: MACVIR_alternate
+
+  # MACPPSCR_alternate is the full-featured variant (both PPS channels), keep it
+  - !DeleteRegisters
+    block: .*
+    from: MACPPSCR
+  - !DeleteFieldsets
+    from: MACPPSCR
+  - !RenameRegisters
+    block: .*
+    from: MACPPSCR_alternate
+    to: MACPPSCR
+  - !Rename
+    from: MACPPSCR_alternate
+    to: MACPPSCR
+
+  # merge Hash Table 0/1 registers
+  - !RenameFields
+    fieldset: MACHT\dR
+    from: HT.+
+    to: HT
+  - !MergeFieldsets
+    from: MACHT\dR
+    to: MACHTR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MACHT\dR
+    to: MACHTR
+
+  # merge MAC Address 1/2/3 high/low registers (MACA0 is special: no MBC/SA)
+  - !MergeFieldsets
+    from: MACA[1-3]HR
+    to: MACAHR
+  - !MergeFieldsets
+    from: MACA[1-3]LR
+    to: MACALR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MACA[1-3]HR
+    to: MACAHR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MACA[1-3]LR
+    to: MACALR
+
+  # merge PPS output 0/1 register banks
+  - !MergeFieldsets
+    from: MACPPSTTS\dR
+    to: MACPPSTTSR
+  - !MergeFieldsets
+    from: MACPPSTTN\dR
+    to: MACPPSTTNR
+  - !MergeFieldsets
+    from: MACPPSI\dR
+    to: MACPPSIR
+  - !MergeFieldsets
+    from: MACPPSW\dR
+    to: MACPPSWR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MACPPSTTS\dR
+    to: MACPPSTTSR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MACPPSTTN\dR
+    to: MACPPSTTNR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MACPPSI\dR
+    to: MACPPSIR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MACPPSW\dR
+    to: MACPPSWR
+
+  # per-PPS-channel fields in MACPPSCR (channel 0 PPSCMD has no index in the SVD)
+  - !RenameFields
+    fieldset: ^MACPPSCR$
+    from: PPSCMD
+    to: PPSCMD0
+  - !MakeFieldArray
+    fieldsets: ^MACPPSCR$
+    from: PPSCMD\d
+    to: PPSCMD
+  - !MakeFieldArray
+    fieldsets: ^MACPPSCR$
+    from: TRGTMODSEL\d
+    to: TRGTMODSEL
+  - !MakeFieldArray
+    fieldsets: ^MACPPSCR$
+    from: MCGREN\d
+    to: MCGREN
+
+  # per-PPS-channel fields elsewhere
+  - !MakeFieldArray
+    fieldsets: ^MACACR$
+    from: ATSEN\d
+    to: ATSEN
+  - !MakeFieldArray
+    fieldsets: ^MACTSSR$
+    from: TSTARGT\d
+    to: TSTARGT
+  - !MakeFieldArray
+    fieldsets: ^MACTSSR$
+    from: TSTRGTERR\d
+    to: TSTRGTERR
+
+  # match eth_v2 naming for the (single) queue 0 flow control register
+  - !RenameRegisters
+    block: .*
+    from: MACQ0TXFCR
+    to: MACQTxFCR
+  - !Rename
+    from: MACQ0TXFCR
+    to: MACQTxFCR
+
+  # match eth_v2 Tx/Rx capitalization on shared registers
+  - !RenameRegisters
+    block: .*
+    from: MACRXFCR
+    to: MACRxFCR
+  - !RenameRegisters
+    block: .*
+    from: MACRXTXSR
+    to: MACRxTxSR
+  - !RenameRegisters
+    block: .*
+    from: MACTXTSS(NR|SR)
+    to: MACTxTSS$1
+  - !Rename
+    from: MACRXFCR
+    to: MACRxFCR
+  - !Rename
+    from: MACRXTXSR
+    to: MACRxTxSR
+  - !Rename
+    from: MACTXTSS(NR|SR)
+    to: MACTxTSS$1
+
+  # merge MTL TX/RX queue 0/1 register banks (stride 0x40).
+  # ISCQW in MTLTXQ0QWR is documented 7 bits vs 14 bits in MTLTXQ1QWR;
+  # take the wider queue 1 layout.
+  - !MergeFieldsets
+    from: MTLTXQ\dOMR
+    to: MTLTxQOMR
+  - !MergeFieldsets
+    from: MTLTXQ\dUR
+    to: MTLTxQUR
+  - !MergeFieldsets
+    from: MTLTXQ\dDR
+    to: MTLTxQDR
+  - !MergeFieldsets
+    from: MTLTXQ\dESR
+    to: MTLTxQESR
+  - !MergeFieldsets
+    from: MTLTXQ\dQWR
+    to: MTLTxQQWR
+    main: MTLTXQ1QWR
+    check: NoCheck
+  - !MergeFieldsets
+    from: MTLQ\dICSR
+    to: MTLQICSR
+  - !MergeFieldsets
+    from: MTLRXQ\dOMR
+    to: MTLRxQOMR
+  - !MergeFieldsets
+    from: MTLRXQ\dMPOCR
+    to: MTLRxQMPOCR
+  - !MergeFieldsets
+    from: MTLRXQ\dDR
+    to: MTLRxQDR
+  - !MergeFieldsets
+    from: MTLRXQ\dCR
+    to: MTLRxQCR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLTXQ\dOMR
+    to: MTLTxQOMR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLTXQ\dUR
+    to: MTLTxQUR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLTXQ\dDR
+    to: MTLTxQDR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLTXQ\dESR
+    to: MTLTxQESR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLTXQ\dQWR
+    to: MTLTxQQWR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLQ\dICSR
+    to: MTLQICSR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLRXQ\dOMR
+    to: MTLRxQOMR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLRXQ\dMPOCR
+    to: MTLRxQMPOCR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLRXQ\dDR
+    to: MTLRxQDR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: MTLRXQ\dCR
+    to: MTLRxQCR
+
+  # CBS registers only exist on queue 1; keep scalar but match queue naming style
+  - !RenameRegisters
+    block: .*
+    from: MTLTXQ1(ECR|SSCR|HCR|LCR)
+    to: MTLTxQ1$1
+  - !Rename
+    from: MTLTXQ1(ECR|SSCR|HCR|LCR)
+    to: MTLTxQ1$1
+  - !MakeFieldArray
+    fieldsets: ^MTLISR$
+    from: Q\dIS
+    to: QIS
+
+  # merge DMA channel 0/1 register banks (stride 0x80)
+  - !MergeFieldsets
+    from: DMAC\dCR
+    to: DMACCR
+  - !MergeFieldsets
+    from: DMAC\dTXCR
+    to: DMACTxCR
+  - !MergeFieldsets
+    from: DMAC\dRXCR
+    to: DMACRxCR
+  - !MergeFieldsets
+    from: DMAC\dTXDLAR
+    to: DMACTxDLAR
+  - !MergeFieldsets
+    from: DMAC\dRXDLAR
+    to: DMACRxDLAR
+  - !MergeFieldsets
+    from: DMAC\dTXDTPR
+    to: DMACTxDTPR
+  - !MergeFieldsets
+    from: DMAC\dRXDTPR
+    to: DMACRxDTPR
+  - !MergeFieldsets
+    from: DMAC\dTXRLR
+    to: DMACTxRLR
+  - !MergeFieldsets
+    from: DMAC\dRXRLR
+    to: DMACRxRLR
+  - !MergeFieldsets
+    from: DMAC\dIER
+    to: DMACIER
+  - !MergeFieldsets
+    from: DMAC\dRXIWTR
+    to: DMACRxIWTR
+  - !MergeFieldsets
+    from: DMAC\dSFCSR
+    to: DMACSFCSR
+  - !MergeFieldsets
+    from: DMAC\dCATXDR
+    to: DMACCATxDR
+  - !MergeFieldsets
+    from: DMAC\dCARXDR
+    to: DMACCARxDR
+  - !MergeFieldsets
+    from: DMAC\dCATXBR
+    to: DMACCATxBR
+  - !MergeFieldsets
+    from: DMAC\dCARXBR
+    to: DMACCARxBR
+  - !MergeFieldsets
+    from: DMAC\dSR
+    to: DMACSR
+  - !MergeFieldsets
+    from: DMAC\dMFCR
+    to: DMACMFCR
+  # DMAC1RXDLAR is missing from the SVD (present in RM0486); add it so the
+  # channel banks array up cleanly
+  - !AddRegisters
+    block: ^ETH$
+    registers:
+      - name: DMAC1RXDLAR
+        description: Channel 1 Rx descriptor list address register.
+        byte_offset: 4508
+        fieldset: DMACRxDLAR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dCR
+    to: DMACCR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dTXCR
+    to: DMACTxCR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dRXCR
+    to: DMACRxCR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dTXDLAR
+    to: DMACTxDLAR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dRXDLAR
+    to: DMACRxDLAR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dTXDTPR
+    to: DMACTxDTPR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dRXDTPR
+    to: DMACRxDTPR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dTXRLR
+    to: DMACTxRLR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dRXRLR
+    to: DMACRxRLR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dIER
+    to: DMACIER
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dRXIWTR
+    to: DMACRxIWTR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dSFCSR
+    to: DMACSFCSR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dCATXDR
+    to: DMACCATxDR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dCARXDR
+    to: DMACCARxDR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dCATXBR
+    to: DMACCATxBR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dCARXBR
+    to: DMACCARxBR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dSR
+    to: DMACSR
+  - !MakeRegisterArray
+    blocks: ^ETH$
+    from: DMAC\dMFCR
+    to: DMACMFCR
+
+  # per-channel fields
+  - !MakeFieldArray
+    fieldsets: ^DMAISR$
+    from: DC\dIS
+    to: DCIS
+  - !MakeFieldArray
+    fieldsets: ^DMADSR$
+    from: RPS\d
+    to: RPS
+  - !MakeFieldArray
+    fieldsets: ^DMADSR$
+    from: TPS\d
+    to: TPS
+
+  # split into MAC/MTL/DMA sub-blocks like eth_v2
+  - !MakeBlock
+    blocks: ^ETH$
+    from: (MTL.*)
+    to_outer: ETHERNET_MTL
+    to_block: ETHERNET_MTL
+    to_inner: $1
+  - !MakeBlock
+    blocks: ^ETH$
+    from: (DMA.*)
+    to_outer: ETHERNET_DMA
+    to_block: ETHERNET_DMA
+    to_inner: $1
+  - !MakeBlock
+    blocks: ^ETH$
+    from: (MAC.*|MMC.*|TX_.*|RX_.*)
+    to_outer: ETHERNET_MAC
+    to_block: ETHERNET_MAC
+    to_inner: $1
+
+  - !Sort

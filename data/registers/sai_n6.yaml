@@ -1,0 +1,337 @@
+block/CH:
+  items:
+  - name: CR1
+    description: SAI configuration register 1.
+    byte_offset: 0
+    fieldset: CR1
+  - name: CR2
+    description: SAI configuration register 2.
+    byte_offset: 4
+    fieldset: CR2
+  - name: FRCR
+    description: SAI frame configuration register.
+    byte_offset: 8
+    fieldset: FRCR
+  - name: SLOTR
+    description: SAI slot register.
+    byte_offset: 12
+    fieldset: SLOTR
+  - name: IM
+    description: SAI interrupt mask register.
+    byte_offset: 16
+    fieldset: IM
+  - name: SR
+    description: SAI status register.
+    byte_offset: 20
+    fieldset: SR
+  - name: CLRFR
+    description: SAI clear flag register.
+    byte_offset: 24
+    fieldset: CLRFR
+  - name: DR
+    description: SAI data register.
+    byte_offset: 28
+    fieldset: DR
+block/SAI:
+  description: Serial audio interface.
+  items:
+  - name: GCR
+    description: SAI global configuration register.
+    byte_offset: 0
+    fieldset: GCR
+  - name: CH
+    array:
+      len: 2
+      stride: 32
+    byte_offset: 4
+    block: CH
+  - name: PDMCR
+    description: SAI PDM control register.
+    byte_offset: 68
+    fieldset: PDMCR
+  - name: PDMDLY
+    description: SAI PDM delay register.
+    byte_offset: 72
+    fieldset: PDMDLY
+fieldset/CLRFR:
+  description: SAI clear flag register.
+  fields:
+  - name: COVRUDR
+    description: Clear overrun / underrun.
+    bit_offset: 0
+    bit_size: 1
+  - name: CMUTEDET
+    description: Mute detection flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: CWCKCFG
+    description: Clear wrong clock configuration flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: CCNRDY
+    description: Clear Codec not ready flag.
+    bit_offset: 4
+    bit_size: 1
+  - name: CAFSDET
+    description: Clear anticipated frame synchronization detection flag.
+    bit_offset: 5
+    bit_size: 1
+  - name: CLFSDET
+    description: Clear late frame synchronization detection flag.
+    bit_offset: 6
+    bit_size: 1
+fieldset/CR1:
+  description: SAI configuration register 1.
+  fields:
+  - name: MODE
+    description: SAIx audio block mode.
+    bit_offset: 0
+    bit_size: 2
+  - name: PRTCFG
+    description: Protocol configuration.
+    bit_offset: 2
+    bit_size: 2
+  - name: DS
+    description: Data size.
+    bit_offset: 5
+    bit_size: 3
+  - name: LSBFIRST
+    description: Least significant bit first.
+    bit_offset: 8
+    bit_size: 1
+  - name: CKSTR
+    description: Clock strobing edge.
+    bit_offset: 9
+    bit_size: 1
+  - name: SYNCEN
+    description: Synchronization enable.
+    bit_offset: 10
+    bit_size: 2
+  - name: MONO
+    description: Mono mode.
+    bit_offset: 12
+    bit_size: 1
+  - name: OUTDRIV
+    description: Output drive.
+    bit_offset: 13
+    bit_size: 1
+  - name: SAIEN
+    description: Audio block enable.
+    bit_offset: 16
+    bit_size: 1
+  - name: DMAEN
+    description: DMA enable.
+    bit_offset: 17
+    bit_size: 1
+  - name: NODIV
+    description: No divider.
+    bit_offset: 19
+    bit_size: 1
+  - name: MCKDIV
+    description: Master clock divider.
+    bit_offset: 20
+    bit_size: 6
+  - name: OSR
+    description: Oversampling ratio for master clock.
+    bit_offset: 26
+    bit_size: 1
+  - name: MCKEN
+    description: Master clock generation enable.
+    bit_offset: 27
+    bit_size: 1
+fieldset/CR2:
+  description: SAI configuration register 2.
+  fields:
+  - name: FTH
+    description: FIFO threshold.
+    bit_offset: 0
+    bit_size: 3
+  - name: FFLUSH
+    description: FIFO flush.
+    bit_offset: 3
+    bit_size: 1
+  - name: TRIS
+    description: Tristate management on data line.
+    bit_offset: 4
+    bit_size: 1
+  - name: MUTE
+    description: Mute.
+    bit_offset: 5
+    bit_size: 1
+  - name: MUTEVAL
+    description: Mute value.
+    bit_offset: 6
+    bit_size: 1
+  - name: MUTECNT
+    description: Mute counter.
+    bit_offset: 7
+    bit_size: 6
+  - name: CPL
+    description: Complement bit.
+    bit_offset: 13
+    bit_size: 1
+  - name: COMP
+    description: Companding mode.
+    bit_offset: 14
+    bit_size: 2
+fieldset/DR:
+  description: SAI data register.
+  fields:
+  - name: DATA
+    description: Data.
+    bit_offset: 0
+    bit_size: 32
+fieldset/FRCR:
+  description: SAI frame configuration register.
+  fields:
+  - name: FRL
+    description: Frame length.
+    bit_offset: 0
+    bit_size: 8
+  - name: FSALL
+    description: Frame synchronization active level length.
+    bit_offset: 8
+    bit_size: 7
+  - name: FSDEF
+    description: Frame synchronization definition.
+    bit_offset: 16
+    bit_size: 1
+  - name: FSPOL
+    description: Frame synchronization polarity.
+    bit_offset: 17
+    bit_size: 1
+  - name: FSOFF
+    description: Frame synchronization offset.
+    bit_offset: 18
+    bit_size: 1
+fieldset/GCR:
+  description: SAI global configuration register.
+  fields:
+  - name: SYNCIN
+    description: Synchronization outputs.
+    bit_offset: 0
+    bit_size: 2
+  - name: SYNCOUT
+    description: Synchronization outputs.
+    bit_offset: 4
+    bit_size: 2
+fieldset/IM:
+  description: SAI interrupt mask register.
+  fields:
+  - name: OVRUDRIE
+    description: Overrun/underrun interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: MUTEDETIE
+    description: Mute detection interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: WCKCFGIE
+    description: Wrong clock configuration interrupt enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: FREQIE
+    description: FIFO request interrupt enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: CNRDYIE
+    description: Codec not ready interrupt enable (AC'97).
+    bit_offset: 4
+    bit_size: 1
+  - name: AFSDETIE
+    description: Anticipated frame synchronization detection interrupt enable.
+    bit_offset: 5
+    bit_size: 1
+  - name: LFSDETIE
+    description: Late frame synchronization detection interrupt enable.
+    bit_offset: 6
+    bit_size: 1
+fieldset/PDMCR:
+  description: SAI PDM control register.
+  fields:
+  - name: PDMEN
+    description: PDM enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: MICNBR
+    description: Number of microphones.
+    bit_offset: 4
+    bit_size: 2
+  - name: CKEN
+    description: Clock enable of bitstream clock number 1.
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+fieldset/PDMDLY:
+  description: SAI PDM delay register.
+  fields:
+  - name: DLYML
+    description: Delay line adjust for first microphone of pair 1.
+    bit_offset: 0
+    bit_size: 3
+    array:
+      len: 4
+      stride: 8
+  - name: DLYMR
+    description: Delay line adjust for second microphone of pair 1.
+    bit_offset: 4
+    bit_size: 3
+    array:
+      len: 4
+      stride: 8
+fieldset/SLOTR:
+  description: SAI slot register.
+  fields:
+  - name: FBOFF
+    description: First bit offset.
+    bit_offset: 0
+    bit_size: 5
+  - name: SLOTSZ
+    description: Slot size.
+    bit_offset: 6
+    bit_size: 2
+  - name: NBSLOT
+    description: Number of slots in an audio frame.
+    bit_offset: 8
+    bit_size: 4
+  - name: SLOTEN
+    description: Slot enable.
+    bit_offset: 16
+    bit_size: 16
+fieldset/SR:
+  description: SAI status register.
+  fields:
+  - name: OVRUDR
+    description: Overrun / underrun.
+    bit_offset: 0
+    bit_size: 1
+  - name: MUTEDET
+    description: Mute detection.
+    bit_offset: 1
+    bit_size: 1
+  - name: WCKCFG
+    description: Wrong clock configuration flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: FREQ
+    description: FIFO request.
+    bit_offset: 3
+    bit_size: 1
+  - name: CNRDY
+    description: Codec not ready.
+    bit_offset: 4
+    bit_size: 1
+  - name: AFSDET
+    description: Anticipated frame synchronization detection.
+    bit_offset: 5
+    bit_size: 1
+  - name: LFSDET
+    description: Late frame synchronization detection.
+    bit_offset: 6
+    bit_size: 1
+  - name: FLVL
+    description: FIFO level threshold.
+    bit_offset: 16
+    bit_size: 3

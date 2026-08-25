@@ -1,0 +1,237 @@
+block/OPAMP:
+  description: Operational amplifier
+  items:
+  - name: CSR
+    description: Control/status register
+    byte_offset: 0
+    fieldset: CSR
+  - name: TCMR
+    description: Control/status register
+    byte_offset: 24
+    fieldset: TCMR
+fieldset/CSR:
+  description: Control/status register
+  fields:
+  - name: OPAMPEN
+    description: Enable
+    bit_offset: 0
+    bit_size: 1
+  - name: FORCE_VP
+    description: Force internal reference on VP (reserved for test)
+    bit_offset: 1
+    bit_size: 1
+  - name: VP_SEL
+    description: Non-inverting input selection
+    bit_offset: 2
+    bit_size: 2
+    enum: VP_SEL
+  - name: USERTRIM
+    description: User trimming enable
+    bit_offset: 4
+    bit_size: 1
+  - name: VM_SEL
+    description: Inverting input selection
+    bit_offset: 5
+    bit_size: 2
+    enum: VM_SEL
+  - name: OPAHSM
+    description: High-speed mode enable
+    bit_offset: 7
+    bit_size: 1
+  - name: OPAINTOEN
+    description: Internal output enable
+    bit_offset: 8
+    bit_size: 1
+  - name: CALON
+    description: Calibration mode enable
+    bit_offset: 11
+    bit_size: 1
+  - name: CALSEL
+    description: Calibration selection
+    bit_offset: 12
+    bit_size: 2
+    enum: CALSEL
+  - name: PGA_GAIN
+    description: Gain in PGA mode
+    bit_offset: 14
+    bit_size: 5
+    enum: PGA_GAIN
+  - name: TRIMOFFSETP
+    description: Offset trimming value (PMOS)
+    bit_offset: 19
+    bit_size: 5
+  - name: TRIMOFFSETN
+    description: Offset trimming value (NMOS)
+    bit_offset: 24
+    bit_size: 5
+  - name: CALOUT
+    description: OPAMP ouput status flag
+    bit_offset: 30
+    bit_size: 1
+  - name: LOCK
+    description: LOCK
+    bit_offset: 31
+    bit_size: 1
+fieldset/TCMR:
+  description: OPAMP timer controlled mode register
+  fields:
+  - name: VMS_SEL
+    description: Inverting input secondary selection
+    bit_offset: 0
+    bit_size: 1
+  - name: VPS_SEL
+    description: Non-inverting input secondary selection
+    bit_offset: 1
+    bit_size: 2
+    enum: VPS_SEL
+  - name: T1CM_EN
+    description: TIM1 controlled mux mode enable
+    bit_offset: 3
+    bit_size: 1
+  - name: T8CM_EN
+    description: TIM8 controlled mux mode enable
+    bit_offset: 4
+    bit_size: 1
+  - name: T20CM_EN
+    description: TIM20 controlled mux mode enable
+    bit_offset: 5
+    bit_size: 1
+  - name: LOCK
+    description: Configure this register as read-only
+    bit_offset: 31
+    bit_size: 1
+enum/CALSEL:
+  bit_size: 2
+  variants:
+  - name: Percent3_3
+    description: VREFOPAMP = 3.3% VDDA
+    value: 0
+  - name: Percent10
+    description: VREFOPAMP = 10% VDDA
+    value: 1
+  - name: Percent50
+    description: VREFOPAMP = 50% VDDA
+    value: 2
+  - name: Percent90
+    description: VREFOPAMP = 90% VDDA
+    value: 3
+enum/PGA_GAIN:
+  bit_size: 5
+  variants:
+  - name: Gain2
+    description: Gain 2
+    value: 0
+  - name: Gain4
+    description: Gain 4
+    value: 1
+  - name: Gain8
+    description: Gain 8
+    value: 2
+  - name: Gain16
+    description: Gain 16
+    value: 3
+  - name: Gain32
+    description: Gain 32
+    value: 4
+  - name: Gain64
+    description: Gain 64
+    value: 5
+  - name: Gain2_InputVINM0
+    description: Gain 2, input/bias connected to VINM0 or inverting gain
+    value: 8
+  - name: Gain4_InputVINM0
+    description: Gain 4, input/bias connected to VINM0 or inverting gain
+    value: 9
+  - name: Gain8_InputVINM0
+    description: Gain 8, input/bias connected to VINM0 or inverting gain
+    value: 10
+  - name: Gain16_InputVINM0
+    description: Gain 16, input/bias connected to VINM0 or inverting gain
+    value: 11
+  - name: Gain32_InputVINM0
+    description: Gain 32, input/bias connected to VINM0 or inverting gain
+    value: 12
+  - name: Gain64_InputVINM0
+    description: Gain 64, input/bias connected to VINM0 or inverting gain
+    value: 13
+  - name: Gain2_FilteringVINM0
+    description: Gain 2, with filtering on VINM0
+    value: 16
+  - name: Gain4_FilteringVINM0
+    description: Gain 4, with filtering on VINM0
+    value: 17
+  - name: Gain8_FilteringVINM0
+    description: Gain 8, with filtering on VINM0
+    value: 18
+  - name: Gain16_FilteringVINM0
+    description: Gain 16, with filtering on VINM0
+    value: 19
+  - name: Gain32_FilteringVINM0
+    description: Gain 32, with filtering on VINM0
+    value: 20
+  - name: Gain64_FilteringVINM0
+    description: Gain 64, with filtering on VINM0
+    value: 21
+  - name: Gain2_InputVINM0FilteringVINM1
+    description: Gain 2, input/bias connected to VINM0 with filtering on VINM1 or inverting gain
+    value: 24
+  - name: Gain4_InputVINM0FilteringVINM1
+    description: Gain 4, input/bias connected to VINM0 with filtering on VINM1 or inverting gain
+    value: 25
+  - name: Gain8_InputVINM0FilteringVINM1
+    description: Gain 8, input/bias connected to VINM0 with filtering on VINM1 or inverting gain
+    value: 26
+  - name: Gain16_InputVINM0FilteringVINM1
+    description: Gain 16, input/bias connected to VINM0 with filtering on VINM1 or inverting gain
+    value: 27
+  - name: Gain32_InputVINM0FilteringVINM1
+    description: Gain 32, input/bias connected to VINM0 with filtering on VINM1 or inverting gain
+    value: 28
+  - name: Gain64_InputVINM0FilteringVINM1
+    description: Gain 64, input/bias connected to VINM0 with filtering on VINM1 or inverting gain
+    value: 29
+enum/VM_SEL:
+  bit_size: 2
+  variants:
+  - name: VINM0
+    description: VINM0 connected to VINM input
+    value: 0
+  - name: VINM1
+    description: VINM1 connected to VINM input
+    value: 1
+  - name: PGA
+    description: Feedback resistor connected to VINM (PGA mode)
+    value: 2
+  - name: Output
+    description: OpAmp output connected to VINM (Follower mode)
+    value: 3
+enum/VPS_SEL:
+  bit_size: 2
+  variants:
+  - name: VINP0
+    description: VINP0 connected to VINP input
+    value: 0
+  - name: VINP1
+    description: VINP1 connected to VINP input
+    value: 1
+  - name: VINP2
+    description: VINP2 connected to VINP input
+    value: 2
+  - name: DAC3_CH1
+    description: DAC3_CH1 connected to VINP input
+    value: 3
+enum/VP_SEL:
+  bit_size: 2
+  variants:
+  - name: VINP0
+    description: VINP0 connected to VINP input
+    value: 0
+  - name: VINP1
+    description: VINP1 connected to VINP input
+    value: 1
+  - name: VINP2
+    description: VINP2 connected to VINP input
+    value: 2
+  - name: DAC3_CH1
+    description: DAC3_CH1 connected to VINP input
+    value: 3

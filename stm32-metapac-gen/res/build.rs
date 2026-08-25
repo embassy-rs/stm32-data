@@ -1,5 +1,5 @@
 use std::env;
-#[cfg(any(feature = "rt", feature = "memory-x"))]
+#[cfg(feature = "rt")]
 use std::path::PathBuf;
 
 enum GetOneError {
@@ -24,7 +24,7 @@ impl<T: Iterator> IteratorExt for T {
 }
 
 fn main() {
-    #[cfg(any(feature = "rt", feature = "memory-x"))]
+    #[cfg(feature = "rt")]
     let crate_dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
 
     let chip_core_name = match env::vars()
@@ -48,12 +48,6 @@ fn main() {
         chip_core_name,
     );
 
-    #[cfg(feature = "memory-x")]
-    println!(
-        "cargo:rustc-link-search={}/src/chips/{}/memory_x/",
-        crate_dir.display(),
-        chip_core_name
-    );
     println!("cargo:rustc-env=STM32_METAPAC_PAC_PATH=chips/{}/pac.rs", chip_core_name);
     println!(
         "cargo:rustc-env=STM32_METAPAC_METADATA_PATH=chips/{}/metadata.rs",

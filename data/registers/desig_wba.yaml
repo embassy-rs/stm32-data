@@ -1,0 +1,207 @@
+block/DESIG:
+  description: Factory programmed device identification registers
+  items:
+    - name: PKGR
+      description: package data register
+      byte_offset: 0
+      access: Read
+      fieldset: PKGR
+    - name: TSCAL1R
+      description: temperature calibration 1 register
+      byte_offset: 0x210
+      access: Read
+      fieldset: TSCAL1R
+    - name: TSCAL2R
+      description: temperature calibration 2 register
+      byte_offset: 0x240
+      access: Read
+      fieldset: TSCAL2R
+    - name: FLASHSIZER
+      description: FLASH size data register
+      byte_offset: 0x2A0
+      access: Read
+      fieldset: FLASHSIZER
+    - name: VREFBUFCALR
+      description: voltage reference buffer calibration register
+      byte_offset: 0x2A8
+      access: Read
+      fieldset: VREFBUFCALR
+    - name: RCALR
+      description: resistor calibration register
+      byte_offset: 0x2F0
+      access: Read
+      fieldset: RCALR
+    - name: RFGAINCALR
+      description: radio gain calibration register
+      byte_offset: 0x2F4
+      access: Read
+      fieldset: RFGAINCALR
+    - name: UID64R1
+      description: IEEE 64-bit unique device ID register 1
+      byte_offset: 0x500
+      access: Read
+      fieldset: UID64R1
+    - name: UID64R2
+      description: IEEE 64-bit unique device ID register 2
+      byte_offset: 0x504
+      access: Read
+      fieldset: UID64R2
+
+fieldset/PKGR:
+  description: package data register
+  fields:
+    - name: PKG
+      description: Package type
+      bit_offset: 0
+      bit_size: 5
+      enum: PKG
+    - name: RESERVED
+      description: Reserved, must be kept at reset value
+      bit_offset: 5
+      bit_size: 27
+
+fieldset/TSCAL1R:
+  description: temperature calibration 1 register
+  fields:
+    - name: TS_CAL1
+      description: Factory temperature sensor calibration 1 value for ADC4
+      bit_offset: 0
+      bit_size: 12
+
+fieldset/TSCAL2R:
+  description: temperature calibration 2 register
+  fields:
+    - name: TS_CAL2
+      description: Factory temperature sensor calibration 2 value for ADC4
+      bit_offset: 16
+      bit_size: 12
+
+fieldset/FLASHSIZER:
+  description: FLASH size data register
+  fields:
+    - name: FLASH_SIZE
+      description: Flash memory size in Kbytes
+      bit_offset: 0
+      bit_size: 16
+    - name: RAM_SIZE
+      description: RAM memory size in Kbytes
+      bit_offset: 16
+      bit_size: 16
+
+fieldset/VREFBUFCALR:
+  description: voltage reference buffer calibration register
+  fields:
+    - name: VREFBUF0_TRIM
+      description: VREFBUF0 factory voltage reference buffer calibration value
+      bit_offset: 0
+      bit_size: 6
+    - name: VREFBUF1_TRIM
+      description: VREFBUF1 factory voltage reference buffer calibration value
+      bit_offset: 8
+      bit_size: 6
+    - name: VREFBUF2_TRIM
+      description: VREFBUF2 factory voltage reference buffer calibration value
+      bit_offset: 16
+      bit_size: 6
+    - name: VREFBUF3_TRIM
+      description: VREFBUF3 factory voltage reference buffer calibration value
+      bit_offset: 24
+      bit_size: 6
+
+fieldset/RCALR:
+  description: resistor calibration register
+  fields:
+    - name: R_CAL
+      description: Resistor calibration value
+      bit_offset: 0
+      bit_size: 8
+
+fieldset/RFGAINCALR:
+  description: radio gain calibration register
+  fields:
+    - name: GAIN1_CAL
+      description: Radio gain 1 calibration value
+      bit_offset: 0
+      bit_size: 8
+    - name: GAIN2_CAL
+      description: Radio gain 2 calibration value
+      bit_offset: 8
+      bit_size: 8
+    - name: GAIN3_CAL
+      description: Radio gain 3 calibration value
+      bit_offset: 16
+      bit_size: 8
+    - name: GAIN4_CAL
+      description: Radio gain 4 calibration value
+      bit_offset: 24
+      bit_size: 8
+
+fieldset/UID64R1:
+  description: IEEE 64-bit unique device ID register 1
+  fields:
+    - name: DEVNUM
+      description: Device number
+      bit_offset: 0
+      bit_size: 32
+
+fieldset/UID64R2:
+  description: IEEE 64-bit unique device ID register 2
+  fields:
+    - name: DEVID
+      description: Device ID
+      bit_offset: 0
+      bit_size: 8
+      enum: DEVID
+    - name: STID
+      description: Company ID
+      bit_offset: 8
+      bit_size: 24
+      enum: STID
+
+enum/PKG:
+  description: Package encoding for STM32WBA devices
+  bit_size: 5
+  variants:
+    - name: UFQFPN48_USB
+      description: UFQFPN48 USB
+      value: 3
+    - name: WLSCP88_USB
+      description: WLSCP88 USB
+      value: 5
+    - name: UFBGA121_USB
+      description: UFBGA121 USB
+      value: 7
+    - name: UFQFPN48_SMPS
+      description: UFQFPN48 SMPS
+      value: 10
+    - name: UFQFPN48_SMPS_USB
+      description: UFQFPN48 SMPS USB
+      value: 11
+    - name: VFQFPN68_SMPS_USB
+      description: VFQFPN68 SMPS USB
+      value: 12
+    - name: WLSCP88_SMPS_USB
+      description: WLSCP88 SMPS USB
+      value: 13
+    - name: UFBGA121_SMPS_USB
+      description: UFBGA121 SMPS USB
+      value: 15
+
+enum/DEVID:
+  description: IEEE device ID encoding for STM32WBA devices
+  bit_size: 8
+  variants:
+    - name: STM32WBA5
+      description: STM32WBA5xxx
+      value: 0x2A
+    - name: STM32WBA6
+      description: STM32WBA6xxx
+      value: 0x2C
+
+enum/STID:
+  description: IEEE company ID assignment
+  bit_size: 24
+  variants:
+    - name: STMICROELECTRONICS
+      description: STMicroelectronics
+      value: 0x0080E1

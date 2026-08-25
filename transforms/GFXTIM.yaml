@@ -1,0 +1,13 @@
+transforms:
+  - !RenameRegisters
+    block: .*
+    from: ^GFXTIM_(.*)$
+    to: $1
+  - !Rename
+    from: ^GFXTIM_(.*)$
+    to: $1
+    type: Fieldset
+  # Drop single-bit boolean enums (SVD uses unhelpful B_0x0/B_0x1 names).
+  - !DeleteEnums
+    from: .*
+    bit_size: 1

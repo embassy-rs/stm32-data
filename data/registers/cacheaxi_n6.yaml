@@ -1,0 +1,272 @@
+block/CACHEAXI:
+  description: AXI cache.
+  items:
+  - name: CR1
+    description: CACHEAXI control register 1.
+    byte_offset: 0
+    fieldset: CR1
+  - name: SR
+    description: CACHEAXI status register.
+    byte_offset: 4
+    fieldset: SR
+  - name: IER
+    description: CACHEAXI interrupt enable register.
+    byte_offset: 8
+    fieldset: IER
+  - name: FCR
+    description: CACHEAXI flag clear register.
+    byte_offset: 12
+    fieldset: FCR
+  - name: RHMONR
+    description: CACHEAXI read-hit monitor register.
+    byte_offset: 16
+    fieldset: RHMONR
+  - name: RMMONR
+    description: CACHEAXI read-miss monitor register.
+    byte_offset: 20
+    fieldset: RMMONR
+  - name: RAMMONR
+    description: CACHEAXI read-allocate miss monitor register.
+    byte_offset: 24
+    fieldset: RAMMONR
+  - name: EVIMONR
+    description: CACHEAXI eviction monitor register.
+    byte_offset: 28
+    fieldset: EVIMONR
+  - name: WHMONR
+    description: CACHEAXI write-hit monitor register.
+    byte_offset: 32
+    fieldset: WHMONR
+  - name: WMMONR
+    description: CACHEAXI write-miss monitor register.
+    byte_offset: 36
+    fieldset: WMMONR
+  - name: WAMMONR
+    description: CACHEAXI write-allocate miss monitor register.
+    byte_offset: 40
+    fieldset: WAMMONR
+  - name: WTMONR
+    description: CACHEAXI write-through monitor register.
+    byte_offset: 44
+    fieldset: WTMONR
+  - name: CR2
+    description: CACHEAXI control register 2.
+    byte_offset: 256
+    fieldset: CR2
+  - name: CMDRSADDRR
+    description: CACHEAXI command range start address register.
+    byte_offset: 260
+    fieldset: CMDRSADDRR
+  - name: CMDREADDRR
+    description: CACHEAXI command range end address register.
+    byte_offset: 264
+    fieldset: CMDREADDRR
+fieldset/CMDREADDRR:
+  description: CACHEAXI command range end address register.
+  fields:
+  - name: CMDENDADDR
+    description: end address of range to which the cache maintenance command specified in CACHEAXI_CR2.CACHECMD field applies.
+    bit_offset: 6
+    bit_size: 26
+fieldset/CMDRSADDRR:
+  description: CACHEAXI command range start address register.
+  fields:
+  - name: CMDSTARTADDR
+    description: start address of range to which the cache maintenance command specified in CACHEAXI_CR2.CACHECMD field applies.
+    bit_offset: 6
+    bit_size: 26
+fieldset/CR1:
+  description: CACHEAXI control register 1.
+  fields:
+  - name: EN
+    description: enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: CACHEINV
+    description: full cache invalidation.
+    bit_offset: 1
+    bit_size: 1
+  - name: RHITMEN
+    description: read-hit monitor enable.
+    bit_offset: 16
+    bit_size: 1
+  - name: RMISSMEN
+    description: read-miss monitor enable.
+    bit_offset: 17
+    bit_size: 1
+  - name: RHITMRST
+    description: read-hit monitor reset.
+    bit_offset: 18
+    bit_size: 1
+  - name: RMISSMRST
+    description: read-miss monitor reset.
+    bit_offset: 19
+    bit_size: 1
+  - name: WHITMEN
+    description: write-hit monitor enable.
+    bit_offset: 20
+    bit_size: 1
+  - name: WMISSMEN
+    description: write-miss monitor enable.
+    bit_offset: 21
+    bit_size: 1
+  - name: WHITMRST
+    description: write-hit monitor reset.
+    bit_offset: 22
+    bit_size: 1
+  - name: WMISSMRST
+    description: write-miss monitor reset.
+    bit_offset: 23
+    bit_size: 1
+  - name: RAMMEN
+    description: read-allocate miss monitor enable.
+    bit_offset: 24
+    bit_size: 1
+  - name: WAMMEN
+    description: write-allocate miss monitor enable.
+    bit_offset: 25
+    bit_size: 1
+  - name: RAMMRST
+    description: read-allocate miss monitor reset.
+    bit_offset: 26
+    bit_size: 1
+  - name: WAMMRST
+    description: write-allocate miss monitor reset.
+    bit_offset: 27
+    bit_size: 1
+  - name: WTMEN
+    description: write-through monitor enable.
+    bit_offset: 28
+    bit_size: 1
+  - name: EVIMEN
+    description: eviction monitor enable.
+    bit_offset: 29
+    bit_size: 1
+  - name: WTMRST
+    description: write-through monitor reset.
+    bit_offset: 30
+    bit_size: 1
+  - name: EVIMRST
+    description: eviction monitor reset.
+    bit_offset: 31
+    bit_size: 1
+fieldset/CR2:
+  description: CACHEAXI control register 2.
+  fields:
+  - name: STARTCMD
+    description: starts maintenance range command (maintenance operation defined in CACHECMD).
+    bit_offset: 0
+    bit_size: 1
+  - name: CACHECMD
+    description: cache command maintenance operation (clean or clean-and-invalidate an address range).
+    bit_offset: 1
+    bit_size: 2
+fieldset/EVIMONR:
+  description: CACHEAXI eviction monitor register.
+  fields:
+  - name: EVIMON
+    description: cache eviction monitor counter.
+    bit_offset: 0
+    bit_size: 32
+fieldset/FCR:
+  description: CACHEAXI flag clear register.
+  fields:
+  - name: CBSYENDF
+    description: clear full invalidate busy end flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: CERRF
+    description: clear cache error flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: CCMDENDF
+    description: clear command end flag.
+    bit_offset: 4
+    bit_size: 1
+fieldset/IER:
+  description: CACHEAXI interrupt enable register.
+  fields:
+  - name: BSYENDIE
+    description: interrupt enable on busy end.
+    bit_offset: 1
+    bit_size: 1
+  - name: ERRIE
+    description: interrupt enable on cache error.
+    bit_offset: 2
+    bit_size: 1
+  - name: CMDENDIE
+    description: interrupt enable on command end.
+    bit_offset: 4
+    bit_size: 1
+fieldset/RAMMONR:
+  description: CACHEAXI read-allocate miss monitor register.
+  fields:
+  - name: RAMMON
+    description: cache read-allocate miss monitor counter.
+    bit_offset: 0
+    bit_size: 32
+fieldset/RHMONR:
+  description: CACHEAXI read-hit monitor register.
+  fields:
+  - name: RHITMON
+    description: cache read-hit monitor counter.
+    bit_offset: 0
+    bit_size: 32
+fieldset/RMMONR:
+  description: CACHEAXI read-miss monitor register.
+  fields:
+  - name: RMISSMON
+    description: cache read-miss monitor counter.
+    bit_offset: 0
+    bit_size: 32
+fieldset/SR:
+  description: CACHEAXI status register.
+  fields:
+  - name: BUSYF
+    description: full invalidate busy flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: BSYENDF
+    description: full invalidate busy end flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: ERRF
+    description: cache error flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: BUSYCMDF
+    description: command busy flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: CMDENDF
+    description: command end flag.
+    bit_offset: 4
+    bit_size: 1
+fieldset/WAMMONR:
+  description: CACHEAXI write-allocate miss monitor register.
+  fields:
+  - name: WAMMON
+    description: cache write-allocate miss monitor counter.
+    bit_offset: 0
+    bit_size: 32
+fieldset/WHMONR:
+  description: CACHEAXI write-hit monitor register.
+  fields:
+  - name: WHITMON
+    description: cache write-hit monitor counter.
+    bit_offset: 0
+    bit_size: 32
+fieldset/WMMONR:
+  description: CACHEAXI write-miss monitor register.
+  fields:
+  - name: WMISSMON
+    description: cache write-miss monitor counter.
+    bit_offset: 0
+    bit_size: 32
+fieldset/WTMONR:
+  description: CACHEAXI write-through monitor register.
+  fields:
+  - name: WTMON
+    description: cache write-through monitor counter.
+    bit_offset: 0
+    bit_size: 32

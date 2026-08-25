@@ -1,4 +1,5 @@
 use std::env::args;
+use std::fs;
 use std::path::PathBuf;
 
 use stm32_metapac_gen::*;
@@ -6,6 +7,8 @@ use stm32_metapac_gen::*;
 fn main() {
     let out_dir = PathBuf::from("build/stm32-metapac");
     let data_dir = PathBuf::from("build/data");
+
+    let _ = fs::remove_dir_all(&out_dir);
 
     let args: Vec<String> = args().collect();
 
@@ -29,5 +32,5 @@ fn main() {
         data_dir,
         chips,
     };
-    Gen::new(opts).gen();
+    Gen::new(opts).run_gen();
 }

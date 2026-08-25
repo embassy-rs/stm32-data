@@ -1,0 +1,31 @@
+transforms:
+  - !RenameRegisters
+    block: .*
+    from: GFXMMU_(.+)
+    to: $1
+  - !RenameFields
+    fieldset: .*
+    from: GFXMMU_(.+)
+    to: $1
+  - !Rename
+    from: GFXMMU_(.+)
+    to: $1
+    type: All
+  - !DeleteEnums
+    from: .*(IE|_EN|FI|FF|PD|OC|OB|FC|CL|CE)$
+    bit_size: 1
+  # Drop single-bit placeholder enums (SVD uses unhelpful B_0x0/B_0x1 names).
+  - !DeleteEnums
+    from: .*
+    bit_size: 1
+  - !MakeFieldArray
+    fieldsets: .*
+    from: ([A-Z]+)\d+([A-Z]*)
+    to: $1$2
+  - !MergeFieldsets
+    from: ([A-Z]+)\d+([A-Z]*)
+    to: $1$2
+  - !MakeRegisterArray
+    blocks: .*
+    from: ([A-Z]+)\d+([A-Z]*)
+    to: $1$2

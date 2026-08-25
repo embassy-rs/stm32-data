@@ -126,11 +126,12 @@ pub struct Metadata {
     pub name: &'static str,
     pub family: &'static str,
     pub line: &'static str,
-    pub memory: &'static [MemoryRegion],
+    pub memory: &'static [&'static [MemoryRegion]],
     pub peripherals: &'static [Peripheral],
     pub nvic_priority_bits: Option<u8>,
     pub interrupts: &'static [Interrupt],
     pub dma_channels: &'static [DmaChannel],
+    pub pins: &'static [Pin],
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -153,6 +154,7 @@ pub struct FlashSettings {
 pub enum MemoryRegionKind {
     Flash,
     Ram,
+    Eeprom,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -175,7 +177,9 @@ pub struct Peripheral {
     pub rcc: Option<PeripheralRcc>,
     pub pins: &'static [PeripheralPin],
     pub dma_channels: &'static [PeripheralDmaChannel],
+    pub triggers: &'static [PeripheralTrigger],
     pub interrupts: &'static [PeripheralInterrupt],
+    pub afio: Option<PeripheralAfio>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -190,6 +194,19 @@ pub struct PeripheralRegisters {
 pub struct PeripheralInterrupt {
     pub signal: &'static str,
     pub interrupt: &'static str,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralAfio {
+    pub register: &'static str,
+    pub field: &'static str,
+    pub values: &'static [PeripheralAfioValue],
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralAfioValue {
+    pub value: u8,
+    pub pins: &'static [&'static str],
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -229,12 +246,18 @@ pub struct PeripheralPin {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
+pub struct Pin {
+    pub name: &'static str,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct DmaChannel {
     pub name: &'static str,
     pub dma: &'static str,
     pub channel: u32,
     pub dmamux: Option<&'static str>,
     pub dmamux_channel: Option<u32>,
+    pub supports_2d: Option<bool>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -243,5 +266,19 @@ pub struct PeripheralDmaChannel {
     pub channel: Option<&'static str>,
     pub dmamux: Option<&'static str>,
     pub dma: Option<&'static str>,
+    pub remap: &'static [RemapInfo],
     pub request: Option<u32>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralTrigger {
+    pub signal: &'static str,
+    pub source: &'static str,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct RemapInfo {
+    pub register: &'static str,
+    pub field: &'static str,
+    pub value: u8,
 }

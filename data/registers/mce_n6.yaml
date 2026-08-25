@@ -1,0 +1,287 @@
+block/MCE:
+  description: Memory cipher engine.
+  items:
+  - name: CR
+    description: MCE configuration register.
+    byte_offset: 0
+    fieldset: CR
+  - name: SR
+    description: MCE status register.
+    byte_offset: 4
+    fieldset: SR
+  - name: IASR
+    description: MCE illegal access status register.
+    byte_offset: 8
+    fieldset: IASR
+  - name: IACR
+    description: MCE illegal access clear register.
+    byte_offset: 12
+    fieldset: IACR
+  - name: IAIER
+    description: MCE illegal access interrupt enable register.
+    byte_offset: 16
+    fieldset: IAIER
+  - name: IADDR
+    description: MCE illegal address register.
+    byte_offset: 36
+    fieldset: IADDR
+  - name: REGCR
+    description: MCE region 1 configuration register.
+    array:
+      len: 4
+      stride: 16
+    byte_offset: 64
+    fieldset: REGCR
+  - name: SADDR
+    description: MCE start address for region 1 register.
+    array:
+      len: 4
+      stride: 16
+    byte_offset: 68
+    fieldset: SADDR
+  - name: EADDR
+    description: MCE end address for region 1 register.
+    array:
+      len: 4
+      stride: 16
+    byte_offset: 72
+    fieldset: EADDR
+  - name: MKEYR
+    description: .MCE master key 0.
+    array:
+      len: 8
+      stride: 4
+    byte_offset: 512
+    fieldset: MKEYR
+  - name: FMKEYR
+    description: MCE fast master key 0.
+    array:
+      len: 8
+      stride: 4
+    byte_offset: 544
+    fieldset: FMKEYR
+  - name: CC1CFGR
+    description: MCE cipher context 1 configuration register.
+    byte_offset: 576
+    fieldset: CC1CFGR
+  - name: CC1NR
+    description: MCE cipher context 1 nonce register 0.
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 580
+    fieldset: CC1NR
+  - name: CC1KEYR
+    description: MCE cipher context 1 key register 0.
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 588
+    fieldset: CC1KEYR
+  - name: CC2CFGR
+    description: MCE cipher context 2 configuration register.
+    byte_offset: 624
+    fieldset: CC2CFGR
+  - name: CC2NR
+    description: MCE cipher context 2 nonce register 0.
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 628
+    fieldset: CC2NR
+  - name: CC2KEYR
+    description: MCE cipher context 2 key register 0.
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 636
+    fieldset: CC2KEYR
+fieldset/CC1CFGR:
+  description: MCE cipher context 1 configuration register.
+  fields:
+  - name: CCEN
+    description: Cipher context enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: CCLOCK
+    description: Cipher context lock.
+    bit_offset: 1
+    bit_size: 1
+  - name: KEYLOCK
+    description: Key lock.
+    bit_offset: 2
+    bit_size: 1
+  - name: MODE
+    description: Authorized cipher mode.
+    bit_offset: 4
+    bit_size: 2
+  - name: KEYCRC
+    description: Key CRC.
+    bit_offset: 8
+    bit_size: 8
+  - name: VERSION
+    description: Version.
+    bit_offset: 16
+    bit_size: 16
+fieldset/CC1KEYR:
+  description: MCE cipher context 1 key register 0.
+  fields:
+  - name: KEY
+    description: cipher key, bits [31:0].
+    bit_offset: 0
+    bit_size: 32
+fieldset/CC1NR:
+  description: MCE cipher context 1 nonce register 0.
+  fields:
+  - name: SCNONCE
+    description: Stream cipher nonce, bits [31:0].
+    bit_offset: 0
+    bit_size: 32
+fieldset/CC2CFGR:
+  description: MCE cipher context 2 configuration register.
+  fields:
+  - name: CCEN
+    description: Cipher context enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: CCLOCK
+    description: Cipher context lock.
+    bit_offset: 1
+    bit_size: 1
+  - name: KEYLOCK
+    description: Key lock.
+    bit_offset: 2
+    bit_size: 1
+  - name: MODE
+    description: Authorized cipher mode.
+    bit_offset: 4
+    bit_size: 2
+  - name: KEYCRC
+    description: Key CRC.
+    bit_offset: 8
+    bit_size: 8
+  - name: VERSION
+    description: Version.
+    bit_offset: 16
+    bit_size: 16
+fieldset/CC2KEYR:
+  description: MCE cipher context 2 key register 0.
+  fields:
+  - name: KEY
+    description: cipher key, bits [31:0].
+    bit_offset: 0
+    bit_size: 32
+fieldset/CC2NR:
+  description: MCE cipher context 2 nonce register 0.
+  fields:
+  - name: SCNONCE
+    description: Stream cipher nonce, bits [31:0].
+    bit_offset: 0
+    bit_size: 32
+fieldset/CR:
+  description: MCE configuration register.
+  fields:
+  - name: GLOCK
+    description: Global lock.
+    bit_offset: 0
+    bit_size: 1
+  - name: MKLOCK
+    description: Master keys lock.
+    bit_offset: 1
+    bit_size: 1
+  - name: CIPHERSEL
+    description: Cipher selection.
+    bit_offset: 4
+    bit_size: 2
+fieldset/EADDR:
+  description: MCE end address for region 1 register.
+  fields:
+  - name: BADDEND
+    description: Region address end.
+    bit_offset: 12
+    bit_size: 20
+fieldset/FMKEYR:
+  description: MCE fast master key 0.
+  fields:
+  - name: FMKEY
+    description: Fast master key bit 0 (i = 31 to 0).
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+fieldset/IACR:
+  description: MCE illegal access clear register.
+  fields:
+  - name: IAEF
+    description: Illegal access error flag clear.
+    bit_offset: 1
+    bit_size: 1
+fieldset/IADDR:
+  description: MCE illegal address register.
+  fields:
+  - name: IADD
+    description: Illegal address.
+    bit_offset: 0
+    bit_size: 32
+fieldset/IAIER:
+  description: MCE illegal access interrupt enable register.
+  fields:
+  - name: IAEIE
+    description: Illegal access error interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+fieldset/IASR:
+  description: MCE illegal access status register.
+  fields:
+  - name: IAEF
+    description: Illegal access error flag.
+    bit_offset: 1
+    bit_size: 1
+fieldset/MKEYR:
+  description: .MCE master key 0.
+  fields:
+  - name: MKEY
+    description: Master key bit 0 (i = 31 to 0).
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 32
+      stride: 1
+fieldset/REGCR:
+  description: MCE region 1 configuration register.
+  fields:
+  - name: BREN
+    description: Base region enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: CTXID
+    description: Context ID.
+    bit_offset: 9
+    bit_size: 2
+  - name: ENC
+    description: Encrypted region.
+    bit_offset: 14
+    bit_size: 2
+fieldset/SADDR:
+  description: MCE start address for region 1 register.
+  fields:
+  - name: BADDSTART
+    description: Region address start.
+    bit_offset: 12
+    bit_size: 20
+fieldset/SR:
+  description: MCE status register.
+  fields:
+  - name: MKVALID
+    description: Master key valid.
+    bit_offset: 0
+    bit_size: 1
+  - name: FMKVALID
+    description: Fast master key valid.
+    bit_offset: 2
+    bit_size: 1
+  - name: ENCDIS
+    description: encryption disabled.
+    bit_offset: 4
+    bit_size: 1

@@ -49,10 +49,30 @@ block/FLASH:
     description: Flash Bank 1 WRP area B address register
     byte_offset: 48
     fieldset: WRP1BR
+  - name: PCROP2SR
+    description: Flash Bank 2 PCROP Start address register
+    byte_offset: 68
+    fieldset: PCROP2SR
+  - name: PCROP2ER
+    description: Flash Bank 2 PCROP End address register
+    byte_offset: 72
+    fieldset: PCROP2ER
+  - name: WRP2AR
+    description: Flash Bank 2 WRP area A address register
+    byte_offset: 76
+    fieldset: WRP2AR
+  - name: WRP2BR
+    description: Flash Bank 2 WRP area B address register
+    byte_offset: 80
+    fieldset: WRP2BR
   - name: SEC1R
     description: securable area bank1 register
     byte_offset: 112
     fieldset: SEC1R
+  - name: SEC2R
+    description: securable area bank2 register
+    byte_offset: 116
+    fieldset: SEC2R
 fieldset/ACR:
   description: Access control register
   fields:
@@ -112,6 +132,10 @@ fieldset/CR:
     description: Page number
     bit_offset: 3
     bit_size: 7
+  - name: BKER
+    description: Bank erase
+    bit_offset: 11
+    bit_size: 1
   - name: MER2
     description: Bank 2 Mass erase
     bit_offset: 15
@@ -145,8 +169,12 @@ fieldset/CR:
     bit_offset: 27
     bit_size: 1
   - name: SEC_PROT1
-    description: Securable memory area protection enable
+    description: Securable memory area protection bit for bank 1
     bit_offset: 28
+    bit_size: 1
+  - name: SEC_PROT2
+    description: Securable memory area protection bit for bank 2
+    bit_offset: 29
     bit_size: 1
   - name: OPTLOCK
     description: Options Lock
@@ -243,16 +271,16 @@ fieldset/OPTR:
     description: Boot configuration
     bit_offset: 23
     bit_size: 1
-  - name: SRAM2_PE
-    description: SRAM2 parity check enable
+  - name: SRAM_PE
+    description: SRAM1 and CCM SRAM parity check enable
     bit_offset: 24
     bit_size: 1
-  - name: SRAM2_RST
-    description: SRAM2 Erase when system reset
+  - name: CCMSRAM_RST
+    description: CCM SRAM Erase when system reset
     bit_offset: 25
     bit_size: 1
   - name: nSWBOOT0
-    description: nSWBOOT0
+    description: Software BOOT0
     bit_offset: 26
     bit_size: 1
   - name: nBOOT0
@@ -297,6 +325,13 @@ fieldset/SEC1R:
     description: used to force boot from user area
     bit_offset: 16
     bit_size: 1
+fieldset/SEC2R:
+  description: securable area bank2 register
+  fields:
+  - name: SEC_SIZE2
+    description: SEC_SIZE2
+    bit_offset: 0
+    bit_size: 8
 fieldset/SR:
   description: Status register
   fields:
@@ -368,6 +403,42 @@ fieldset/WRP1BR:
     bit_size: 7
   - name: WRP1B_END
     description: Bank 1 WRP second area B start offset
+    bit_offset: 16
+    bit_size: 7
+fieldset/PCROP2SR:
+  description: Flash Bank 2 PCROP Start address register
+  fields:
+  - name: PCROP2_STRT
+    description: Bank 2 PCROP area start offset
+    bit_offset: 0
+    bit_size: 15
+fieldset/PCROP2ER:
+  description: Flash Bank 2 PCROP End address register
+  fields:
+  - name: PCROP2_END
+    description: Bank 2 PCROP area end offset
+    bit_offset: 0
+    bit_size: 15
+fieldset/WRP2AR:
+  description: Flash Bank 2 WRP area A address register
+  fields:
+  - name: WRP2A_STRT
+    description: Bank 2 WRP first area “A” start offset
+    bit_offset: 0
+    bit_size: 7
+  - name: WRP2A_END
+    description: Bank 2 WRP first area “A” end offset
+    bit_offset: 16
+    bit_size: 7
+fieldset/WRP2BR:
+  description: Flash Bank 2 WRP area B address register
+  fields:
+  - name: WRP2B_STRT
+    description: Bank 2 WRP second area “B” start offset
+    bit_offset: 0
+    bit_size: 7
+  - name: WRP2B_END
+    description: Bank 2 WRP second area “B” end offset
     bit_offset: 16
     bit_size: 7
 enum/LATENCY:

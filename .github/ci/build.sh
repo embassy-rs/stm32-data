@@ -20,31 +20,63 @@ cargo fmt -- --check
 # so the diff will show this PR's effect
 git remote add upstream https://github.com/embassy-rs/stm32-data
 git fetch --depth 15 upstream main
+
+attempt=0
+while [ -z "$(git merge-base HEAD upstream/main)" ] && [ $attempt -lt 10 ]; do
+  git fetch --deepen=100 upstream main
+  attempt=$((attempt + 1))
+done
+
+git merge upstream/main
+MERGE_BASE=$(git merge-base HEAD upstream/main)
+
 set +e
-git clone --depth 1 --branch stm32-data-$(git merge-base HEAD upstream/main) https://github.com/embassy-rs/stm32-data-generated/ build -q
+git clone --depth 1 --branch stm32-data-$MERGE_BASE https://github.com/embassy-rs/stm32-data-generated/ build -q
 DIFF_OK=$?
 set -e
 
 # move the sources directory out of the cache if it exists
 mv /ci/cache/sources ./sources || true
 
+# in the event that the CI has not yet generated this, we need to build it ourselves
+if [ $DIFF_OK -ne 0 ]; then
+    echo "rebuilding merge base"
+    # rm build dir
+    rm -rf build
+    # save the current commit
+    COMMIT=$(git rev-parse HEAD)
+    # checkout the merge base
+    git checkout $MERGE_BASE
+    # build
+    ./d ci
+    # add build dir to git
+    cd build
+    rm -rf .git
+    git init -q
+    git add .
+    git commit -m 'generated'
+    cd ..
+    # checkout saved commit
+    git checkout $COMMIT
+fi
+
 ./d ci
+./d check
 
 # move the sources directory into the cache
 mv ./sources /ci/cache/sources
 
-if [ $DIFF_OK -eq 0 ]; then
-    # upload diff
-    (
-        cd build
-        git add .
-        git diff --staged --color data | aha --black > /ci/artifacts/diff.html
-    )
+# upload diff
+(
+    cd build
+    git add .
+    git diff --staged --color data | aha --black > /ci/artifacts/diff.html
+)
 
-    cat > /ci/comment.md <<EOF
+cat > /ci/comment.md <<EOF
 diff: https://ci.embassy.dev/jobs/$(jq -r .id < /ci/job.json)/artifacts/diff.html
+git: https://ci.embassy.dev/jobs/$(jq -r .id < /ci/job.json)/artifacts/generated.git
 EOF
-fi
 
 # upload generated data to a fake git repo at
 # https://ci.embassy.dev/jobs/$ID/artifacts/generated.git

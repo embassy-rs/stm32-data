@@ -1,0 +1,933 @@
+block/MDF:
+  description: MDF register block.
+  items:
+  - name: GCR
+    description: MDF global control register.
+    byte_offset: 0
+    fieldset: GCR
+  - name: CKGCR
+    description: MDF clock generator control register.
+    byte_offset: 4
+    fieldset: CKGCR
+  - name: SITFCR
+    description: MDF serial interface control register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 128
+    fieldset: SITFCR
+  - name: BSMXCR
+    description: MDF bitstream matrix control register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 132
+    fieldset: BSMXCR
+  - name: DFLTCR
+    description: MDF digital filter control register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 136
+    fieldset: DFLTCR
+  - name: DFLTCICR
+    description: MDF digital filter configuration register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 140
+    fieldset: DFLTCICR
+  - name: DFLTRSFR
+    description: MDF reshape filter configuration register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 144
+    fieldset: DFLTRSFR
+  - name: DFLTINTR
+    description: MDF integrator configuration register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 148
+    fieldset: DFLTINTR
+  - name: OLDCR
+    description: MDF out-of limit detector control register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 152
+    fieldset: OLDCR
+  - name: OLDTHLR
+    description: MDF OLD0 low threshold register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 156
+    fieldset: OLDTHLR
+  - name: OLDTHHR
+    description: MDF OLD0 high threshold register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 160
+    fieldset: OLDTHHR
+  - name: DLYCR
+    description: MDF delay control register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 164
+    fieldset: DLYCR
+  - name: SCDCR
+    description: MDF short circuit detector control register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 168
+    fieldset: SCDCR
+  - name: DFLTIER
+    description: MDF DFLT0 interrupt enable register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 172
+    fieldset: DFLTIER
+  - name: DFLTISR
+    description: MDF DFLT0 interrupt status register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 176
+    fieldset: DFLTISR
+  - name: OECCR
+    description: MDF offset error compensation control register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 180
+    fieldset: OECCR
+  - name: SNPSDR
+    description: MDF snapshot data register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 236
+    fieldset: SNPSDR
+  - name: DFLTDR
+    description: MDF digital filter data register 0.
+    array:
+      len: 6
+      stride: 128
+    byte_offset: 240
+    fieldset: DFLTDR
+fieldset/BSMXCR:
+  description: MDF bitstream matrix control register 0.
+  fields:
+  - name: BSSEL
+    description: Bitstream Selection.
+    bit_offset: 0
+    bit_size: 5
+    enum: BSSEL
+  - name: BSMXACTIVE
+    description: BSMX active flag.
+    bit_offset: 31
+    bit_size: 1
+fieldset/CKGCR:
+  description: MDF clock generator control register.
+  fields:
+  - name: CKGDEN
+    description: CKGEN dividers enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: CCK0EN
+    description: MDF_CCK0 clock enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: CCK1EN
+    description: MDF_CCK1 clock enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: CKGMOD
+    description: Clock generator mode.
+    bit_offset: 4
+    bit_size: 1
+    enum: CKGMOD
+  - name: CCK0DIR
+    description: MDF_CCK0 direction.
+    bit_offset: 5
+    bit_size: 1
+    enum: CCKDIR
+  - name: CCK1DIR
+    description: MDF_CCK1 direction.
+    bit_offset: 6
+    bit_size: 1
+    enum: CCKDIR
+  - name: TRGSENS
+    description: CKGEN trigger sensitivity selection.
+    bit_offset: 8
+    bit_size: 1
+    enum: TRGSENS
+  - name: TRGSRC
+    description: Digital filter trigger signal selection.
+    bit_offset: 12
+    bit_size: 4
+    enum: TRGSRC
+  - name: CCKDIV
+    description: Divider to control the MDF_CCK clock.
+    bit_offset: 16
+    bit_size: 4
+    enum: CCKDIV
+  - name: PROCDIV
+    description: Divider to control the serial interface clock.
+    bit_offset: 24
+    bit_size: 7
+  - name: CKGACTIVE
+    description: Clock generator active flag.
+    bit_offset: 31
+    bit_size: 1
+fieldset/DFLTCICR:
+  description: MDF digital filter configuration register 0.
+  fields:
+  - name: DATSRC
+    description: Source data for the digital filter.
+    bit_offset: 0
+    bit_size: 2
+    enum: DATSRC
+  - name: CICMOD
+    description: Select the CIC mode.
+    bit_offset: 4
+    bit_size: 3
+    enum: CICMOD
+  - name: MCICD
+    description: CIC decimation ratio selection.
+    bit_offset: 8
+    bit_size: 8
+  - name: MCICD8
+    description: CIC decimation ratio selection.
+    bit_offset: 16
+    bit_size: 1
+  - name: SCALE
+    description: Scaling factor selection.
+    bit_offset: 20
+    bit_size: 6
+fieldset/DFLTCR:
+  description: MDF digital filter control register 0.
+  fields:
+  - name: DFLTEN
+    description: Digital filter enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: DMAEN
+    description: DMA requests enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: FTH
+    description: RXFIFO Threshold selection.
+    bit_offset: 2
+    bit_size: 1
+    enum: RXFIFO
+  - name: ACQMOD
+    description: Digital filter trigger mode.
+    bit_offset: 4
+    bit_size: 3
+    enum: ACQMOD
+  - name: TRGSENS
+    description: Digital filter trigger sensitivity selection.
+    bit_offset: 8
+    bit_size: 1
+    enum: TRGSENS
+  - name: TRGSRC
+    description: Digital filter trigger signal selection.
+    bit_offset: 12
+    bit_size: 4
+    enum: TRGSRC
+  - name: SNPSFMT
+    description: Snapshot data format.
+    bit_offset: 16
+    bit_size: 1
+    enum: SNPSFMT
+  - name: NBDIS
+    description: Number of samples to be discarded.
+    bit_offset: 20
+    bit_size: 8
+  - name: DFLTRUN
+    description: Digital filter run status flag.
+    bit_offset: 30
+    bit_size: 1
+  - name: DFLTACTIVE
+    description: Digital filter active flag.
+    bit_offset: 31
+    bit_size: 1
+fieldset/DFLTDR:
+  description: MDF digital filter data register 0.
+  fields:
+  - name: DR
+    description: Data processed by digital filter.
+    bit_offset: 8
+    bit_size: 24
+fieldset/DFLTIER:
+  description: MDF DFLT0 interrupt enable register 0.
+  fields:
+  - name: FTHIE
+    description: RXFIFO threshold interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: DOVRIE
+    description: Data overflow interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: SSDRIE
+    description: Snapshot data ready interrupt enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: OLDIE
+    description: OLD0 interrupt enable.
+    bit_offset: 4
+    bit_size: 1
+  - name: SSOVRIE
+    description: Snapshot overrun interrupt enable.
+    bit_offset: 7
+    bit_size: 1
+  - name: SCDIE
+    description: SCD0 interrupt enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: SATIE
+    description: Saturation detection interrupt enable.
+    bit_offset: 9
+    bit_size: 1
+  - name: CKABIE
+    description: Clock absence detection interrupt enable.
+    bit_offset: 10
+    bit_size: 1
+  - name: RFOVRIE
+    description: Reshape filter overrun interrupt enable.
+    bit_offset: 11
+    bit_size: 1
+fieldset/DFLTINTR:
+  description: MDF integrator configuration register 0.
+  fields:
+  - name: INTDIV
+    description: Integrator output division.
+    bit_offset: 0
+    bit_size: 2
+    enum: INTDIV
+  - name: INTVAL
+    description: Integration value selection.
+    bit_offset: 4
+    bit_size: 7
+fieldset/DFLTISR:
+  description: MDF DFLT0 interrupt status register 0.
+  fields:
+  - name: FTHF
+    description: RXFIFO threshold flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: DOVRF
+    description: Data overflow flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: SSDRF
+    description: Snapshot data ready flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: RXNEF
+    description: RXFIFO not-empty flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: OLDF
+    description: OLD0 flag.
+    bit_offset: 4
+    bit_size: 1
+  - name: THLF
+    description: Low-threshold status flag.
+    bit_offset: 5
+    bit_size: 1
+  - name: THHF
+    description: High-threshold status flag.
+    bit_offset: 6
+    bit_size: 1
+  - name: SSOVRF
+    description: Snapshot overrun flag.
+    bit_offset: 7
+    bit_size: 1
+  - name: SCDF
+    description: Short-circuit detector flag.
+    bit_offset: 8
+    bit_size: 1
+  - name: SATF
+    description: Saturation detection flag.
+    bit_offset: 9
+    bit_size: 1
+  - name: CKABF
+    description: Clock absence detection flag.
+    bit_offset: 10
+    bit_size: 1
+  - name: RFOVRF
+    description: Reshape filter overrun detection flag.
+    bit_offset: 11
+    bit_size: 1
+fieldset/DFLTRSFR:
+  description: MDF reshape filter configuration register 0.
+  fields:
+  - name: RSFLTBYP
+    description: Reshaper filter bypass.
+    bit_offset: 0
+    bit_size: 1
+  - name: RSFLTD
+    description: Reshaper filter decimation ratio.
+    bit_offset: 4
+    bit_size: 1
+    enum: RSFLTD
+  - name: HPFBYP
+    description: High-pass filter bypass.
+    bit_offset: 7
+    bit_size: 1
+  - name: HPFC
+    description: High-pass filter cut-off frequency.
+    bit_offset: 8
+    bit_size: 2
+    enum: HPFC
+fieldset/DLYCR:
+  description: MDF delay control register 0.
+  fields:
+  - name: SKPDLY
+    description: Delay to apply to a bitstream.
+    bit_offset: 0
+    bit_size: 7
+  - name: SKPBF
+    description: Skip busy flag.
+    bit_offset: 31
+    bit_size: 1
+fieldset/GCR:
+  description: MDF global control register.
+  fields:
+  - name: TRGO
+    description: Trigger output control.
+    bit_offset: 0
+    bit_size: 1
+  - name: ILVNB
+    description: Interleaved number.
+    bit_offset: 4
+    bit_size: 4
+fieldset/OECCR:
+  description: MDF offset error compensation control register 0.
+  fields:
+  - name: OFFSET
+    description: Offset error compensation.
+    bit_offset: 0
+    bit_size: 26
+fieldset/OLDCR:
+  description: MDF out-of limit detector control register 0.
+  fields:
+  - name: OLDEN
+    description: OLDx enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: THINB
+    description: Threshold In band.
+    bit_offset: 1
+    bit_size: 1
+    enum: THINB
+  - name: BKOLD
+    description: Break signal assignment for out-of limit detector.
+    bit_offset: 4
+    bit_size: 4
+  - name: ACICN
+    description: OLDx CIC order selection.
+    bit_offset: 12
+    bit_size: 2
+    enum: ACICN
+  - name: ACICD
+    description: OLDx CIC decimation ratio selection.
+    bit_offset: 17
+    bit_size: 5
+  - name: OLDACTIVE
+    description: OLDx active flag.
+    bit_offset: 31
+    bit_size: 1
+fieldset/OLDTHHR:
+  description: MDF OLD0 high threshold register 0.
+  fields:
+  - name: OLDTHH
+    description: OLDx high threshold value.
+    bit_offset: 0
+    bit_size: 26
+fieldset/OLDTHLR:
+  description: MDF OLD0 low threshold register 0.
+  fields:
+  - name: OLDTHL
+    description: OLD low threshold value.
+    bit_offset: 0
+    bit_size: 26
+fieldset/SCDCR:
+  description: MDF short circuit detector control register 0.
+  fields:
+  - name: SCDEN
+    description: SCDx enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: BKSCD
+    description: Break signal assignment for short circuit detector.
+    bit_offset: 4
+    bit_size: 4
+  - name: SCDT
+    description: SCDx threshold.
+    bit_offset: 12
+    bit_size: 8
+  - name: SCDACTIVE
+    description: SCDx active flag.
+    bit_offset: 31
+    bit_size: 1
+fieldset/SITFCR:
+  description: MDF serial interface control register 0.
+  fields:
+  - name: SITFEN
+    description: Serial interface enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: SCKSRC
+    description: Serial clock source.
+    bit_offset: 1
+    bit_size: 2
+    enum: SCKSRC
+  - name: SITFMOD
+    description: Serial interface type.
+    bit_offset: 4
+    bit_size: 2
+    enum: SITFMOD
+  - name: STH
+    description: Manchester symbol threshold/SPI threshold.
+    bit_offset: 8
+    bit_size: 5
+  - name: SITFACTIVE
+    description: Serial interface active flag.
+    bit_offset: 31
+    bit_size: 1
+fieldset/SNPSDR:
+  description: MDF snapshot data register 0.
+  fields:
+  - name: MCICDC
+    description: Contains the MCIC decimation counter value when the last trigger event occurs (MCIC_CNT).
+    bit_offset: 0
+    bit_size: 9
+  - name: EXTSDR
+    description: Extended data size.
+    bit_offset: 9
+    bit_size: 7
+  - name: SDR
+    description: Contains the 16 MSB of the last valid data processed by the digital filter.
+    bit_offset: 16
+    bit_size: 16
+enum/ACICN:
+  description: Auxiliary CIC order selection.
+  bit_size: 2
+  variants:
+  - name: FastSinc
+    description: FastSinc filter type.
+    value: 0
+  - name: Sinc1
+    description: Sinc1 filter type.
+    value: 1
+  - name: Sinc2
+    description: Sinc2 filter type.
+    value: 2
+  - name: Sinc3
+    description: Sinc3 filter type.
+    value: 3
+enum/ACQMOD:
+  description: Digital filter trigger mode.
+  bit_size: 3
+  variants:
+  - name: AsynchronousContinuous
+    description: Asynchronous continuous acquisition mode.
+    value: 0
+  - name: AsynchronousSingleShot
+    description: Asynchronous single-shot acquisition mode.
+    value: 1
+  - name: SynchronousContinuous
+    description: Synchronous continuous acquisition mode.
+    value: 2
+  - name: SynchronousSingleShot
+    description: Synchronous single-shot acquisition mode.
+    value: 3
+  - name: WindowContinuous
+    description: Window continuous acquisition mode.
+    value: 4
+  - name: SynchronousSnapshot
+    description: Synchronous snapshot acquisition mode.
+    value: 5
+enum/BSSEL:
+  description: Bitstream selection. This bitfield is set and cleared by software. It is used to select the bitstream to be used by the DFLT0.
+  bit_size: 5
+  variants:
+  - name: BS0_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 0
+  - name: BS0_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 1
+  - name: BS1_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 2
+  - name: BS1_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 3
+  - name: BS2_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 4
+  - name: BS2_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 5
+  - name: BS3_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 6
+  - name: BS3_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 7
+  - name: BS4_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 8
+  - name: BS4_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 9
+  - name: BS5_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 10
+  - name: BS5_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 11
+  - name: BS6_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 12
+  - name: BS6_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 13
+  - name: BS7_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 14
+  - name: BS7_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 15
+  - name: BS8_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 16
+  - name: BS8_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 17
+  - name: BS9_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 18
+  - name: BS9_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 19
+  - name: BS10_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 20
+  - name: BS10_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 21
+  - name: BS11_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 22
+  - name: BS11_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 23
+  - name: BS12_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 24
+  - name: BS12_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 25
+  - name: BS13_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 26
+  - name: BS13_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 27
+  - name: BS14_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 28
+  - name: BS14_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 29
+  - name: BS15_R
+    description: bsx_r provided to DFLTy (and SCDy).
+    value: 30
+  - name: BS15_F
+    description: bsx_f provided to DFLTy (and SCDy).
+    value: 31
+enum/CCKDIR:
+  description: CCK1 direction. This bit is set and reset by software. It is used to control the direction of the ADF_CCK1 pin.
+  bit_size: 1
+  variants:
+  - name: Input
+    description: CCK is an input.
+    value: 0
+  - name: Output
+    description: CCK is an output.
+    value: 1
+enum/CCKDIV:
+  description: Divider to control the CCK clock. This bit is set and reset by software. It is used to control the frequency of the bitstream clock on the CCK pin.
+  bit_size: 4
+  variants:
+  - name: DIV1
+    description: The ADF_CCK clock is adf_proc_ck.
+    value: 0
+  - name: DIV2
+    description: The ADF_CCK clock is adf_proc_ck divided by 2.
+    value: 1
+  - name: DIV3
+    description: The ADF_CCK clock is adf_proc_ck divided by 3.
+    value: 2
+  - name: DIV4
+    description: The ADF_CCK clock is adf_proc_ck divided by 4.
+    value: 3
+  - name: DIV5
+    description: The ADF_CCK clock is adf_proc_ck divided by 5.
+    value: 4
+  - name: DIV6
+    description: The ADF_CCK clock is adf_proc_ck divided by 6.
+    value: 5
+  - name: DIV7
+    description: The ADF_CCK clock is adf_proc_ck divided by 7.
+    value: 6
+  - name: DIV8
+    description: The ADF_CCK clock is adf_proc_ck divided by 8.
+    value: 7
+  - name: DIV9
+    description: The ADF_CCK clock is adf_proc_ck divided by 9.
+    value: 8
+  - name: DIV10
+    description: The ADF_CCK clock is adf_proc_ck divided by 10.
+    value: 9
+  - name: DIV11
+    description: The ADF_CCK clock is adf_proc_ck divided by 11.
+    value: 10
+  - name: DIV12
+    description: The ADF_CCK clock is adf_proc_ck divided by 12.
+    value: 11
+  - name: DIV13
+    description: The ADF_CCK clock is adf_proc_ck divided by 13.
+    value: 12
+  - name: DIV14
+    description: The ADF_CCK clock is adf_proc_ck divided by 14.
+    value: 13
+  - name: DIV15
+    description: The ADF_CCK clock is adf_proc_ck divided by 15.
+    value: 14
+  - name: DIV16
+    description: The ADF_CCK clock is adf_proc_ck divided by 16.
+    value: 15
+enum/CICMOD:
+  description: CIC filter mode selection.
+  bit_size: 3
+  variants:
+  - name: FastSincSplit
+    description: Split filters with main CIC in FastSinc mode.
+    value: 0
+  - name: Sinc1Split
+    description: Split filters with main CIC in Sinc1 mode.
+    value: 1
+  - name: Sinc2Split
+    description: Split filters with main CIC in Sinc2 mode.
+    value: 2
+  - name: Sinc3Split
+    description: Split filters with main CIC in Sinc3 mode.
+    value: 3
+  - name: Sinc4Single
+    description: Single Sinc4 filter.
+    value: 4
+  - name: Sinc5Single
+    description: Single Sinc5 filter.
+    value: 5
+enum/CKGMOD:
+  description: Clock generator mode. This bit is set and reset by software. It is used to define the way the clock generator is enabled. This bit must not be changed if the filter is enabled (DFTEN = 1).
+  bit_size: 1
+  variants:
+  - name: Immediate
+    description: The kernel clock is provided to the dividers as soon as CKGDEN is set to 1.
+    value: 0
+  - name: Trigger
+    description: The kernel clock is provided to the dividers when CKGDEN is set to 1 and the trigger condition met.
+    value: 1
+enum/DATSRC:
+  description: Source data for the digital filter.
+  bit_size: 2
+  variants:
+  - name: BSMX
+    description: Stream coming from the BSMX selected
+    value: 0
+  - name: ADCITF1
+    description: Stream coming from the ADCITF1 selected
+    value: 2
+  - name: ADCITF2
+    description: Stream coming from the ADCITF2 selected
+    value: 3
+enum/HPFC:
+  description: High-pass filter cut-off frequency. This bitfield is set and cleared by software. it is used to select the cut-off frequency of the high-pass filter. F PCM represents the sampling frequency at HPF input.
+  bit_size: 2
+  variants:
+  - name: Low
+    description: Cut-off frequency = 0.000625 x FPCM.
+    value: 0
+  - name: Medium
+    description: Cut-off frequency = 0.00125 x FPCM.
+    value: 1
+  - name: High
+    description: Cut-off frequency = 0.00250 x FPCM
+    value: 2
+  - name: Maximum
+    description: Cut-off frequency = 0.00950 x FPCM
+    value: 3
+enum/INTDIV:
+  description: Integrator output division.
+  bit_size: 2
+  variants:
+  - name: Div128
+    description: Integrator output divided by 128.
+    value: 0
+  - name: Div32
+    description: Integrator output divided by 32.
+    value: 1
+  - name: Div4
+    description: Integrator output divided by 4.
+    value: 2
+  - name: None
+    description: Integrator output not divided.
+    value: 3
+enum/RSFLTD:
+  description: Reshaper filter decimation ratio. This bitfield is set and cleared by software. It is used to select the decimation ratio of the reshaper filter.
+  bit_size: 1
+  variants:
+  - name: Decimation4
+    description: Decimation ratio is 4 (default value).
+    value: 0
+  - name: Decimation1
+    description: Decimation ratio is 1.
+    value: 1
+enum/RXFIFO:
+  description: RXFIFO threshold selection. This bitfield is set and cleared by software. It is used to select the RXFIFO threshold.
+  bit_size: 1
+  variants:
+  - name: NotEmpty
+    description: RXFIFO threshold event generated when the RXFIFO is not empty
+    value: 0
+  - name: HalfFull
+    description: RXFIFO threshold event generated when the RXFIFO is half-full
+    value: 1
+enum/SCKSRC:
+  description: Serial clock source. This bitfield is set and cleared by software. It is used to select the clock source of the serial interface.
+  bit_size: 2
+  variants:
+  - name: CCK0
+    description: Serial clock source is CCK0.
+    value: 0
+  - name: CCK1
+    description: Serial clock source is CCK1.
+    value: 1
+  - name: CKI0
+    description: Serial clock source is CCI0.
+    value: 2
+  - name: CKI1
+    description: Serial clock source is CCI1.
+    value: 3
+enum/SITFMOD:
+  description: Serial interface mode. This bitfield is set and cleared by software. It is used to select the serial interface mode.
+  bit_size: 2
+  variants:
+  - name: MasterSPI
+    description: LF_MASTER SPI mode.
+    value: 0
+  - name: NormalSPI
+    description: Normal SPI mode.
+    value: 1
+  - name: ManchesterFalling
+    description: Manchester mode rising edge = logic 0, falling edge = logic 1.
+    value: 2
+  - name: ManchesterRising
+    description: Manchester mode rising edge = logic 1, falling edge = logic 0.
+    value: 3
+enum/SNPSFMT:
+  description: Snapshot data format.
+  bit_size: 1
+  variants:
+  - name: Resolution23Bit
+    description: 23-bit data resolution without integrator counter.
+    value: 0
+  - name: Resolution16Bit
+    description: 16-bit data resolution with integrator counter.
+    value: 1
+enum/THINB:
+  description: Out-of-limit threshold band mode.
+  bit_size: 1
+  variants:
+  - name: OutsideBand
+    description: Event when signal is below low or above high threshold.
+    value: 0
+  - name: InsideBand
+    description: Event when signal is between low and high thresholds.
+    value: 1
+enum/TRGSENS:
+  description: CKGEN trigger sensitivity selection. This bit is set and cleared by software. It is used to select the trigger sensitivity of the trigger signals. This bit is not significant if the CKGMOD = 0.
+  bit_size: 1
+  variants:
+  - name: RisingEdge
+    description: A rising edge event triggers the activation of CKGEN dividers.
+    value: 0
+  - name: FallingEdge
+    description: A falling edge even triggers the activation of CKGEN dividers.
+    value: 1
+enum/TRGSRC:
+  description: Digital filter trigger signal selection.
+  bit_size: 4
+  variants:
+  - name: TRGO
+    description: TRGO is selected.
+    value: 0
+  - name: OLDX
+    description: OLDx event is selected.
+    value: 1
+  - name: MdfTrg0
+    description: mdf_trg[0] is selected.
+    value: 2
+  - name: MdfTrg1
+    description: mdf_trg[1] is selected.
+    value: 3
+  - name: MdfTrg2
+    description: mdf_trg[2] is selected.
+    value: 4
+  - name: MdfTrg3
+    description: mdf_trg[3] is selected.
+    value: 5
+  - name: MdfTrg4
+    description: mdf_trg[4] is selected.
+    value: 6
+  - name: MdfTrg5
+    description: mdf_trg[5] is selected.
+    value: 7
+  - name: MdfTrg6
+    description: mdf_trg[6] is selected.
+    value: 8
+  - name: MdfTrg7
+    description: mdf_trg[7] is selected.
+    value: 9
+  - name: MdfTrg8
+    description: mdf_trg[8] is selected.
+    value: 10
+  - name: MdfTrg9
+    description: mdf_trg[9] is selected.
+    value: 11
+  - name: MdfTrg10
+    description: mdf_trg[10] is selected.
+    value: 12
+  - name: MdfTrg11
+    description: mdf_trg[11] is selected.
+    value: 13
+  - name: MdfTrg12
+    description: mdf_trg[12] is selected.
+    value: 14
+  - name: MdfTrg13
+    description: mdf_trg[13] is selected.
+    value: 15

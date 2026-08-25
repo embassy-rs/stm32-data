@@ -1,27 +1,42 @@
 use std::collections::HashMap;
 
-use crate::regex;
+use anyhow::{Context, anyhow};
+use lazy_regex::regex;
+use regex_map::RegexMap;
 
 pub struct Headers {
     map: HeaderMap,
     parsed: HeadersParsed,
-    regexes: Vec<(regex::Regex, String)>,
+    regexes: RegexMap<String>,
 }
 
 impl Headers {
-    pub fn parse() -> anyhow::Result<Self> {
+    pub fn parse(filter: &Option<String>) -> anyhow::Result<Self> {
         let map = HeaderMap::parse()?;
-        let parsed = HeadersParsed::parse()?;
-        let regexes = parsed
-            .0
-            .keys()
-            .map(|h| {
-                let pattern = h.replace('x', ".");
-                let regex = regex::Regex::new(&format!("^{pattern}$")).unwrap();
-                (regex, h.clone())
-            })
-            .collect();
+        let parsed = HeadersParsed::parse(filter)?;
+        let regexes = RegexMap::new(parsed.0.keys().map(|h| {
+            let pattern = h.replace('x', ".");
+
+            (format!("^{pattern}$"), h.clone())
+        }));
+
+        for v in map.0.values() {
+            if let Some(filter) = filter
+                && !v.starts_with(filter)
+            {
+                continue;
+            } else if parsed.0.get(v).is_none() {
+                return Err(anyhow!(
+                    "parsed headers do not contain {v}, specified in the header map",
+                ));
+            }
+        }
+
         Ok(Self { map, parsed, regexes })
+    }
+
+    pub fn get(&self, header: &str) -> Option<&ParsedHeader> {
+        self.parsed.0.get(header)
     }
 
     pub fn get_for_chip(&self, model: &str) -> Option<&ParsedHeader> {
@@ -31,10 +46,7 @@ impl Headers {
             Some(name) => Some(self.parsed.0.get(name).unwrap()),
             // if not, find it by regex, taking `x` meaning `anything`
             None => {
-                let mut results = self
-                    .regexes
-                    .iter()
-                    .filter_map(|(r, name)| if r.is_match(&model) { Some(name) } else { None });
+                let mut results = self.regexes.get(&model);
                 let res = results.next();
                 assert_eq!(results.next(), None, "found more than one match");
                 res.map(|name| self.parsed.0.get(name).unwrap())
@@ -49,14 +61,16 @@ pub struct HeaderMap(pub HashMap<String, String>);
 impl HeaderMap {
     pub fn parse() -> anyhow::Result<Self> {
         let mut res = HashMap::new();
-        for (mut header, chips) in
-            serde_yaml::from_str::<HashMap<String, String>>(&std::fs::read_to_string("data/header_map.yaml")?)?
-        {
+        let path = "data/header_map.yaml";
+        let header = std::fs::read_to_string(path).with_context(|| format!("Failed to read {}", path))?;
+        let header = serde_yaml::from_str::<HashMap<String, String>>(&header)
+            .with_context(|| format!("Failed to parse {}", path))?;
+        for (mut header, chips) in header {
             header.make_ascii_lowercase();
             for chip in chips.split(',') {
                 let chip = chip.trim().to_ascii_lowercase();
                 if let Some(old) = res.insert(chip.clone(), header.clone()) {
-                    panic!("Duplicate {chip} found! Overwriting {old} with {header}");
+                    panic!("Duplicate {chip} found in {path}! Overwriting {old} with {header}");
                 }
             }
         }
@@ -69,8 +83,20 @@ impl HeaderMap {
 pub struct HeadersParsed(pub HashMap<String, ParsedHeader>);
 
 impl HeadersParsed {
-    pub fn parse() -> anyhow::Result<Self> {
-        let files = glob::glob("sources/headers/*.h").unwrap().map(Result::unwrap);
+    pub fn parse(filter: &Option<String>) -> anyhow::Result<Self> {
+        let files = glob::glob("sources/headers/*.h")
+            .unwrap()
+            .map(Result::unwrap)
+            .filter(|f| {
+                if let Some(filter) = filter
+                    && let Some(filename) = f.file_name()
+                    && !filename.to_ascii_lowercase().to_string_lossy().starts_with(filter)
+                {
+                    false
+                } else {
+                    true
+                }
+            });
 
         let for_each_file = |f: std::path::PathBuf| {
             let ff = f.file_name().unwrap().to_string_lossy();
@@ -113,21 +139,24 @@ pub struct Defines(pub HashMap<String, i64>);
 
 impl Defines {
     // warning: horrible abomination ahead
-    fn parse_value(&self, val: &str) -> i64 {
+    fn parse_value(&self, val: &str) -> anyhow::Result<i64> {
         let val = val.trim();
         if val.is_empty() {
-            0
+            Ok(0)
         } else if let Some(m) = regex!(r"^(0([1-9][0-9]*)(U))").captures(val) {
-            m.get(2).unwrap().as_str().parse().unwrap()
+            m.get(2)
+                .unwrap()
+                .as_str()
+                .parse()
+                .map_err(|e| anyhow::anyhow!("Failed to parse {val}: {e}"))
         } else if let Some(m) = regex!(r"^((0x[0-9a-fA-F]+|\d+))(|u|ul|U|UL)$").captures(val) {
             let x = m.get(1).unwrap().as_str();
             match x.strip_prefix("0x") {
-                Some(x) => i64::from_str_radix(x, 16),
-                None => x.parse(),
+                Some(x) => i64::from_str_radix(x, 16).map_err(|e| anyhow::anyhow!("Failed to parse {val}: {e}")),
+                None => x.parse().map_err(|e| anyhow::anyhow!("Failed to parse {val}: {e}")),
             }
-            .unwrap()
         } else if let Some(m) = regex!(r"^([0-9A-Za-z_]+)$").captures(val) {
-            self.0.get(m.get(1).unwrap().as_str()).copied().unwrap_or(0)
+            Ok(self.0.get(m.get(1).unwrap().as_str()).copied().unwrap_or(0))
         } else if let Some(x) = regex!(r"^\((.*)\)$")
             .captures(val)
             .map(|m| m.get(1).unwrap().as_str())
@@ -136,31 +165,45 @@ impl Defines {
             self.parse_value(x)
         } else if let Some(m) = regex!(r"^\*?\([0-9A-Za-z_]+ *\*?\)(.*)$").captures(val) {
             self.parse_value(m.get(1).unwrap().as_str())
+        } else if let Some(m) = regex!(r"^(.*)\*(.*)$").captures(val) {
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? * self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)/(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) / self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? / self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)<<(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) << self.parse_value(m.get(2).unwrap().as_str()) & 0xFFFFFFFF
+            Ok(
+                self.parse_value(m.get(1).unwrap().as_str())? << self.parse_value(m.get(2).unwrap().as_str())?
+                    & 0xFFFFFFFF,
+            )
         } else if let Some(m) = regex!(r"^(.*)>>(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) >> self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? >> self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)\|(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) | self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? | self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)&(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) & self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? & self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^~(.*)$").captures(val) {
-            !self.parse_value(m.get(1).unwrap().as_str()) & 0xFFFFFFFF
+            Ok(!self.parse_value(m.get(1).unwrap().as_str())? & 0xFFFFFFFF)
         } else if let Some(m) = regex!(r"^(.*)\+(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) + self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? + self.parse_value(m.get(2).unwrap().as_str())?)
         } else if let Some(m) = regex!(r"^(.*)-(.*)$").captures(val) {
-            self.parse_value(m.get(1).unwrap().as_str()) - self.parse_value(m.get(2).unwrap().as_str())
+            Ok(self.parse_value(m.get(1).unwrap().as_str())? - self.parse_value(m.get(2).unwrap().as_str())?)
         } else {
-            panic!("can't parse: {val:?}")
+            Err(anyhow::anyhow!("Cant parse {val}"))
         }
     }
 
     pub fn get_peri_addr(&self, pname: &str) -> Option<u32> {
         const ALT_PERI_DEFINES: &[(&str, &[&str])] = &[
             ("DBGMCU", &["DBGMCU_BASE", "DBG_BASE"]),
-            ("QUADSPI", &["QUADSPI_BASE", "QSPI_R", "QSPI_R_BASE", "QSPI_REG_BASE"]),
+            (
+                "QUADSPI",
+                &[
+                    "QUADSPI_R_BASE",
+                    "QUADSPI_BASE",
+                    "QSPI_R",
+                    "QSPI_R_BASE",
+                    "QSPI_REG_BASE",
+                ],
+            ),
             ("QUADSPI1", &["QUADSPI1_BASE", "QSPI_R", "QSPI_R_BASE", "QSPI_REG_BASE"]),
             (
                 "OCTOSPI",
@@ -174,6 +217,7 @@ impl Defines {
                 "OCTOSPI2",
                 &["OCTOSPI2_R_BASE", "OCTOSPI2_R_BASE_NS", "OCTOSPI2_REG_BASE"],
             ),
+            ("HSPI1", &["HSPI1_R_BASE", "HSPI1_R_BASE_NS"]),
             ("SPDIFRX1", &["SPDIFRX_BASE"]),
             ("FLASH", &["FLASH_R_BASE", "FLASH_REG_BASE"]),
             ("DAC", &["DAC1_BASE", "DAC_BASE"]),
@@ -185,17 +229,95 @@ impl Defines {
                 &["ADC1_COMMON_BASE", "ADC_COMMON_BASE", "ADC1_COMMON", "ADC_COMMON"],
             ),
             ("CAN", &["CAN_BASE", "CAN1_BASE"]),
-            ("FMC", &["FMC_BASE", "FMC_R_BASE"]),
+            ("FMC", &["FMC_R_BASE", "FMC_R_BASE_NS"]),
             ("FSMC", &["FSMC_R_BASE"]),
-            ("USB", &["USB_BASE", "USB_DRD_BASE", "USB_BASE_NS", "USB_DRD_BASE_NS"]),
+            (
+                "USB",
+                &[
+                    "USB_BASE",
+                    "USB_DRD_BASE",
+                    "USB_DRD_FS_BASE",
+                    "USB_BASE_NS",
+                    "USB_DRD_BASE_NS",
+                ],
+            ),
             (
                 "USBRAM",
                 &["USB_PMAADDR", "USB_DRD_PMAADDR", "USB_PMAADDR_NS", "USB_DRD_PMAADDR_NS"],
             ),
             ("FDCANRAM", &["SRAMCAN_BASE", "SRAMCAN_BASE_NS"]),
             ("VREFINTCAL", &["VREFINT_CAL_ADDR_CMSIS"]),
+            ("DESIG", &["PACKAGE_BASE"]),
             ("DSIHOST", &["DSI_BASE"]),
             ("SYSCFG", &["SYSCFG_BASE", "SBS_BASE"]),
+            ("XSPI1", &["XSPI1_R_BASE", "XSPI1_BASE_NS"]),
+            ("XSPI2", &["XSPI2_R_BASE", "XSPI2_BASE_NS"]),
+            ("XSPI3", &["XSPI3_R_BASE", "XSPI3_BASE_NS"]),
+            ("RAMCFG", &["RAMCFG_BASE", "RAMCFG_BASE_NS", "RAMCFG_BASE_S"]),
+            (
+                "GTZC",
+                &[
+                    "GTZC_BASE",
+                    "GTZC_TZSC_BASE",
+                    "GTZC_TZSC_BASE_NS",
+                    "GTZC_TZSC_BASE_S",
+                    "GTZC_TZSC1_BASE_NS",
+                    "GTZC_TZSC1_BASE_S",
+                ],
+            ),
+            ("GTZC1", &["GTZC1_BASE", "GTZC1_BASE_NS", "GTZC1_BASE_S"]),
+            (
+                "GTZC_TZSC",
+                &[
+                    "GTZC_TZSC_BASE",
+                    "GTZC_TZSC_BASE_NS",
+                    "GTZC_TZSC_BASE_S",
+                    "GTZC_TZSC1_BASE_NS",
+                    "GTZC_TZSC1_BASE_S",
+                ],
+            ),
+            (
+                "GTZC_TZIC",
+                &[
+                    "GTZC_TZIC_BASE",
+                    "GTZC_TZIC_BASE_S",
+                    "GTZC_TZIC1_BASE_NS",
+                    "GTZC_TZIC1_BASE_S",
+                ],
+            ),
+            (
+                "GTZC_MPCBB1",
+                &["GTZC_MPCBB1_BASE", "GTZC_MPCBB1_BASE_NS", "GTZC_MPCBB1_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB2",
+                &["GTZC_MPCBB2_BASE", "GTZC_MPCBB2_BASE_NS", "GTZC_MPCBB2_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB3",
+                &["GTZC_MPCBB3_BASE", "GTZC_MPCBB3_BASE_NS", "GTZC_MPCBB3_BASE_S"],
+            ),
+            (
+                "GTZC_MPCBB6",
+                &["GTZC_MPCBB6_BASE", "GTZC_MPCBB6_BASE_NS", "GTZC_MPCBB6_BASE_S"],
+            ),
+            ("RISAF1", &["RISAF1_BASE_NS", "RISAF1_BASE_S"]),
+            ("RISAF2", &["RISAF2_BASE_NS", "RISAF2_BASE_S"]),
+            ("RISAF3", &["RISAF3_BASE_NS", "RISAF3_BASE_S"]),
+            ("RISAF4", &["RISAF4_BASE_NS", "RISAF4_BASE_S"]),
+            ("RISAF5", &["RISAF5_BASE_NS", "RISAF5_BASE_S"]),
+            ("RISAF6", &["RISAF6_BASE_NS", "RISAF6_BASE_S"]),
+            ("RISAF7", &["RISAF7_BASE_NS", "RISAF7_BASE_S"]),
+            ("RISAF8", &["RISAF8_BASE_NS", "RISAF8_BASE_S"]),
+            ("RISAF9", &["RISAF9_BASE_NS", "RISAF9_BASE_S"]),
+            ("RISAF11", &["RISAF11_BASE_NS", "RISAF11_BASE_S"]),
+            ("RISAF12", &["RISAF12_BASE_NS", "RISAF12_BASE_S"]),
+            ("RISAF13", &["RISAF13_BASE_NS", "RISAF13_BASE_S"]),
+            ("RISAF14", &["RISAF14_BASE_NS", "RISAF14_BASE_S"]),
+            ("RISAF15", &["RISAF15_BASE_NS", "RISAF15_BASE_S"]),
+            ("RISAF21", &["RISAF21_BASE_NS", "RISAF21_BASE_S"]),
+            ("RISAF22", &["RISAF22_BASE_NS", "RISAF22_BASE_S"]),
+            ("RISAF23", &["RISAF23_BASE_NS", "RISAF23_BASE_S"]),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 
@@ -238,14 +360,14 @@ impl ParsedHeader {
         self.interrupts.get(core_name).unwrap()
     }
 
-    fn parse(f: impl AsRef<std::path::Path>) -> anyhow::Result<Self> {
+    fn parse(path: impl AsRef<std::path::Path>) -> anyhow::Result<Self> {
         let mut irqs = HashMap::<String, HashMap<String, u8>>::new();
         let mut defines = HashMap::<String, Defines>::new();
         let mut cores = Vec::<String>::new();
         let mut cur_core = "all".to_string();
 
         let mut accum = String::new();
-        let f = std::fs::read(f)?;
+        let f = std::fs::read(&path)?;
         for l in f.split(|b| b == &b'\n') {
             let l = String::from_utf8_lossy(l);
             let l = l.trim();
@@ -305,7 +427,9 @@ impl ParsedHeader {
                 }
                 let val = m.get(2).unwrap().as_str();
                 let val = val.split("/*").next().unwrap().trim();
-                let val = defines_entry.parse_value(val);
+                let val = defines_entry
+                    .parse_value(val)
+                    .with_context(|| format!("Failed to process {:?}", path.as_ref()))?;
 
                 defines_entry.0.insert(name.to_string(), val);
             }

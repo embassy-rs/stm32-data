@@ -1,0 +1,14 @@
+transforms:
+  # Strip the "DLYBSD_" prefix from register and fieldset names.
+  - !RenameRegisters
+    block: .*
+    from: ^DLYBSD_(.*)$
+    to: $1
+  - !Rename
+    from: ^DLYBSD_(.*)$
+    to: $1
+    type: Fieldset
+
+  # Drop the SVD's generic B_0x0/B_0x1 placeholder enums.
+  - !DeleteEnums
+    from: .*

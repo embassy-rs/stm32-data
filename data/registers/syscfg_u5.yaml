@@ -50,6 +50,14 @@ block/SYSCFG:
     description: USB Type C and Power Delivery register
     byte_offset: 112
     fieldset: UCPDR
+  - name: OTGHSPHYCR
+    description: OTG_HS PHY register
+    byte_offset: 116
+    fieldset: OTGHSPHYCR
+  - name: OTGHSPHYTUNER2
+    description: OTG_HS PHY tune register 2
+    byte_offset: 124
+    fieldset: OTGHSPHYTUNER2
 fieldset/CCCR:
   description: compensation cell code register
   fields:
@@ -238,3 +246,55 @@ fieldset/UCPDR:
     description: CC2ENRXFILTER
     bit_offset: 1
     bit_size: 1
+fieldset/OTGHSPHYCR:
+  description: OTG_HS PHY register
+  fields:
+  - name: EN
+    description: PHY Enable
+    bit_offset: 0
+    bit_size: 1
+  - name: PDCTRL
+    description: Common block power-down control
+    bit_offset: 1
+    bit_size: 1
+  - name: CLKSEL
+    description: Reference clock frequency selection
+    bit_offset: 2
+    bit_size: 4
+    enum: USBREFCKSEL
+fieldset/OTGHSPHYTUNER2:
+  description: OTG_HS tune register 2
+  fields:
+  - name: COMPDISTUNE
+    description: Disconnect threshold adjustment
+    bit_offset: 0
+    bit_size: 3
+  - name: SQRXTUNE
+    description: Squelch threshold adjustment
+    bit_offset: 4
+    bit_size: 3
+  - name: TXPREEMPAMPTUNE
+    description: HS transmitter preemphasis current control
+    bit_offset: 13
+    bit_size: 2
+enum/USBREFCKSEL:
+  bit_size: 4
+  variants:
+  - name: Mhz16
+    description: The kernel clock frequency provided to the OTG_HS PHY is 16 MHz.
+    value: 3
+  - name: Mhz19_2
+    description: The kernel clock frequency provided to the OTG_HS PHY is 19.2 MHz.
+    value: 8
+  - name: Mhz20
+    description: The kernel clock frequency provided to the OTG_HS PHY is 20MHz.
+    value: 9
+  - name: Mhz24
+    description: The kernel clock frequency provided to the OTG_HS PHY is 24 MHz (default after reset).
+    value: 10
+  - name: Mhz32
+    description: The kernel clock frequency provided to the OTG_HS PHY is 32 MHz.
+    value: 11
+  - name: Mhz26
+    description: The kernel clock frequency provided to the OTG_HS PHY is 26 MHz.
+    value: 14

@@ -1,11 +1,11 @@
 use std::collections::{HashMap, HashSet};
 
-use anyhow::{anyhow, bail, Ok};
+use anyhow::{Ok, anyhow, bail};
 use chiptool::ir::IR;
+use lazy_regex::regex;
 use stm32_data_serde::chip::core::peripheral::rcc::{Field, StopMode};
 use stm32_data_serde::chip::core::peripheral::{self, rcc};
 
-use crate::regex;
 use crate::registers::Registers;
 
 #[derive(Debug)]
@@ -28,7 +28,7 @@ struct MuxInfo {
     variants: Vec<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct EnRst {
     enable: rcc::Field,
     reset: Option<rcc::Field>,
@@ -37,6 +37,7 @@ struct EnRst {
 }
 
 impl ParsedRccs {
+    /// Parse the RCC information from the `rcc_xx` yaml files in `data/registers`
     pub fn parse(registers: &Registers) -> anyhow::Result<Self> {
         let mut rccs = HashMap::new();
 
@@ -49,6 +50,8 @@ impl ParsedRccs {
         Ok(Self { rccs })
     }
 
+    /// Parse mcu specific RCC information from the IR object
+    /// - Clock source muxes of peripherals
     fn parse_rcc(rcc_version: &str, ir: &IR) -> anyhow::Result<ParsedRcc> {
         let allowed_variants = HashSet::from([
             "DISABLE",
@@ -62,6 +65,7 @@ impl ParsedRccs {
             "PCLK5",
             "PCLK6",
             "PCLK7",
+            "HCLK",
             "HCLK1",
             "HCLK2",
             "HCLK3",
@@ -82,7 +86,6 @@ impl ParsedRccs {
             "PLLSAI2_Q",
             "PLLSAI2_R",
             "PLL1_P",
-            "PLL1_P_MUL_2",
             "PLL1_Q",
             "PLL1_R",
             "PLL1_S",
@@ -99,6 +102,11 @@ impl ParsedRccs {
             "PLL3_S",
             "PLL3_T",
             "HSI",
+            "HSIDIV3",
+            "HSIK",
+            "PSI",
+            "PSIDIV3",
+            "PSIK",
             "SHSI",
             "HSI48",
             "HSIKER",
@@ -116,40 +124,69 @@ impl ParsedRccs {
             // TODO: variants to cleanup
             "AFIF",
             "HSI_HSE",
-            "HSI_Div488",
             "SAI1_EXTCLK",
             "SAI2_EXTCLK",
-            "B_0x0",
-            "B_0x1",
             "I2S_CKIN",
             "DAC_HOLD",
             "DAC_HOLD_2",
-            "RTCCLK",
-            "RTC_WKUP",
             "ICLK",
             "DCLK",
             "I2S1",
             "I2S2",
             "SAI1",
             "SAI2",
-            "HSI256_MSIS1024_MSIS4",
-            "HSI256_MSIS1024_MSIK4",
-            "HSI256_MSIK1024_MSIS4",
-            "HSI256_MSIK1024_MSIK4",
             "SPDIFRX_SYMB",
             "ETH_RMII_REF",
+            "ETH_CLK_FB",
             "ETH",
             "CLK48MOHCI",
+            "DIV_RTCPRE",
+            "HSE_DIV_RTCPRE",
+            // N6 extra
+            "IC1",
+            "IC2",
+            "IC3",
+            "IC4",
+            "IC5",
+            "IC6",
+            "IC7",
+            "IC8",
+            "IC9",
+            "IC10",
+            "IC11",
+            "IC12",
+            "IC13",
+            "IC14",
+            "IC15",
+            "IC16",
+            "IC17",
+            "IC18",
+            "IC19",
+            "IC20",
+            "HSI_DIV",
+            "HSE_RTC",
+            "HSE_DIV2_OSC", // TODO: remove this
+            "TIMG",
+            "HCLKE", // ethernet clock
+            "MII",
+            "RGMII",
+            "JTAG_TCK",
+            "SYSA",
+            "SYSB",
+            "SPDIF_SYMB",
+            "HCLKU",
         ]);
 
         let mux_regexes = &[
             regex!(r"^DCKCFGR\d?/(.+)SEL$"),
-            regex!(r"^CCIPR\d?/(.+)SEL$"),
+            regex!(r"^CCIPR\d*/(.+)SEL$"),
+            regex!(r"^BDCR\d?/(.+)SEL$"),
             regex!(r"^D\dCCIP\d?R/(.+)SEL$"),
             regex!(r"^CFGR\d/(.+)SW$"),
             regex!(r"^.+PERCKSELR/(.+)SEL$"),
+            regex!(r"^CSR/(.+)SEL$"),
         ];
-        let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$")];
+        let mux_nopelist = &[regex!(r"^.+PERCKSELR/USBREFCKSEL$"), regex!(r"^.+/TIMICSEL$")];
 
         let mut mux = HashMap::new();
         for (reg, body) in &ir.fieldsets {
@@ -176,6 +213,9 @@ impl ParsedRccs {
                     for v in &enumm.variants {
                         let mut vname = v.name.as_str();
                         if let Some(captures) = regex!(r"^([A-Z0-9_]+)_DIV_\d+?$").captures(v.name.as_str()) {
+                            vname = captures.get(1).unwrap().as_str();
+                        }
+                        if let Some(captures) = regex!(r"^([A-Z0-9_]+)_MUL_\d+?$").captures(v.name.as_str()) {
                             vname = captures.get(1).unwrap().as_str();
                         }
 
@@ -229,14 +269,6 @@ impl ParsedRccs {
                             }
                         }
 
-                        let stop_mode = if peri == "RTC" {
-                            StopMode::Standby
-                        } else if peri.starts_with("LP") {
-                            StopMode::Stop2
-                        } else {
-                            StopMode::Stop1
-                        };
-
                         let clock = clock.replace("AHB", "HCLK").replace("APB", "PCLK");
 
                         let val = EnRst {
@@ -246,7 +278,8 @@ impl ParsedRccs {
                             },
                             reset,
                             bus_clock: clock,
-                            stop_mode,
+                            // The stop mode info is set in `low_power.rs`
+                            stop_mode: StopMode::default(),
                         };
 
                         if en_rst.insert(peri.to_string(), val).is_some() {
@@ -266,10 +299,11 @@ impl ParsedRccs {
         peri_name: &str,
     ) -> Option<stm32_data_serde::chip::core::peripheral::Rcc> {
         const FALLBACKS: &[(&str, &[&str])] = &[
-            ("DCMI", &["DCMI_PSSI"]),
-            ("PSSI", &["DCMI_PSSI"]),
+            ("DCMI", &["DCMI_PSSI", "PSSI"]),
+            ("PSSI", &["DCMI_PSSI", "DCMI"]),
+            ("FMC", &["FSMC"]),
             ("FDCAN1", &["FDCAN12"]),
-            ("FDCAN2", &["FDCAN12"]),
+            ("FDCAN2", &["FDCAN12", "FDCAN1", "FDCAN"]),
             ("ADC", &["ADC1", "ADCDAC"]),
             ("ADC1", &["ADC12", "ADCDAC"]),
             ("ADC2", &["ADC12", "ADCDAC"]),
@@ -281,9 +315,10 @@ impl ParsedRccs {
             ("DAC2", &["DAC12", "ADCDAC"]),
             ("DSIHOST", &["DSI"]),
             ("ETH", &["ETHMAC", "ETH1MAC"]),
+            ("ETH1", &["ETH1CLK"]),
             ("SPI1", &["SPI12", "SPI123"]),
-            ("SPI2", &["SPI12", "SPI123"]),
-            ("SPI3", &["SPI123"]),
+            ("SPI2", &["SPI12", "SPI123", "SPI23"]),
+            ("SPI3", &["SPI123", "SPI23"]),
             ("SPI4", &["SPI145", "SPI45"]),
             ("SPI5", &["SPI145", "SPI45"]),
             ("SAI1", &["SAI12"]),
@@ -300,12 +335,18 @@ impl ParsedRccs {
             ("USART10", &["USART16910"]),
             ("UART9", &["USART16910"]),
             ("I2C1", &["I2C1235", "I2C1_I3C1"]),
+            ("I3C1", &["I2C1_I3C1"]),
             ("I2C2", &["I2C1235"]),
             ("I2C3", &["I2C1235"]),
             ("I2C5", &["I2C1235"]),
             ("USB", &["USB", "CLK48", "ICLK"]),
             ("USB_OTG_FS", &["USB", "CLK48", "ICLK"]),
-            ("USB_OTG_HS", &["USB", "USBPHYC", "CLK48", "ICLK"]),
+            ("USB_OTG_HS", &["USB", "USBPHYC", "OTGHS", "CLK48", "ICLK"]),
+            ("DTS", &["TMPSENS"]),
+            ("SDMMC1", &["SDMMC1", "CLK48"]),
+            ("SYSCFG", &["SBS"]),
+            ("RNG", &["CLK48"]),
+            ("IPCC", &["RFWKP"]),
         ];
 
         let rcc = self.rccs.get(rcc_version)?;
@@ -321,13 +362,30 @@ impl ParsedRccs {
             maybe_kernel_clock.push_str("_TIM");
         }
 
+        const RCC_PERI_MUX_EXCEPTIONS: &[(&str, &str)] = &[
+            // These peripherals have a different mux name than the bus clock
+            // Format: rcc_version, peripheral_name
+            ("u3", "ADC"),
+            ("u3", "DAC"),
+            ("u5", "ADC"),
+            ("n6", "I2C4"),
+            ("n6", "SDMMC1"), // HCLK2 is corrext per Cube and Docs so no mux check
+            ("n6", "SDMMC2"), // HCLKU is corrext per Cube and Docs so no mux check
+            ("n6", "ETH1"),   // HCLKE is corrext per RM0486 Figure "Core and bus clock generation" so no mux check
+        ];
+
         let kernel_clock = match mux {
             Some(mux) => {
                 // check for mismatch between mux and bus clock.
                 //
                 // U5 has one ADCDACSEL for multiple ADCs which may be on
                 // different HCLKs, so we skip the check in that case
-                if !(rcc_version == "u5" && peri_name.starts_with("ADC")) && phclk.is_match(&en_rst.bus_clock) {
+                if !(RCC_PERI_MUX_EXCEPTIONS
+                    .iter()
+                    .any(|x| rcc_version == x.0 && peri_name.starts_with(x.1)))
+                    && phclk.is_match(&en_rst.bus_clock)
+                    && rcc_version != "c5"
+                {
                     for v in &mux.variants {
                         if phclk.is_match(v) && v != &maybe_kernel_clock {
                             panic!(
@@ -346,11 +404,16 @@ impl ParsedRccs {
                     } else if rcc_version.starts_with("f2") {
                         maybe_kernel_clock = "PLL1_Q".to_string();
                     } else if rcc_version.starts_with("l1") {
-                        maybe_kernel_clock = "PLL1_VCO_DIV_2".to_string();
+                        maybe_kernel_clock = "PLL1_VCO_DIV2".to_string();
                     } else if rcc_version.starts_with("h7rs") {
                         maybe_kernel_clock = "USB".to_string();
                     } else {
                         panic!("rcc_{}: peripheral {} missing mux", rcc_version, peri_name)
+                    }
+                }
+                if rcc_version.starts_with("h7") {
+                    if peri_name.starts_with("LTDC") {
+                        maybe_kernel_clock = "PLL3_R".to_string();
                     }
                 }
                 rcc::KernelClock::Clock(maybe_kernel_clock)

@@ -34,7 +34,7 @@ block/PWR:
     byte_offset: 28
     fieldset: WUCR3
   - name: DBPCR
-    description: disable Backup domain register
+    description: disable Backup domain register.
     byte_offset: 40
     fieldset: DBPCR
   - name: SECCFGR
@@ -68,7 +68,7 @@ block/PWR:
       stride: 8
     byte_offset: 80
     fieldset: IORETENR
-  - name: IORETRA
+  - name: IORETR
     description: port Standby IO retention status register
     array:
       len: 8
@@ -79,8 +79,12 @@ block/PWR:
     description: 2.4 GHz RADIO status and control register
     byte_offset: 256
     fieldset: RADIOSCR
+  - name: S2RETR
+    description: Stop 2 peripheral IOs retention register
+    byte_offset: 260
+    fieldset: S2RETR
 fieldset/CR1:
-  description: control register 1
+  description: control register 1.
   fields:
   - name: LPMS
     description: "Low-power mode selection\r These bits select the low-power mode entered when the CPU enters the SleepDeep mode.\r 10x: Standby mode\r others reserved"
@@ -99,45 +103,87 @@ fieldset/CR1:
     description: "2.4 GHz RADIO SRAMs (RXTXRAM and Sequence RAM) and Sleep clock retention in Standby mode.\r This bit is used to keep the 2.4 GHz RADIO SRAMs content in Standby retention mode and the 2.4 GHz RADIO sleep timer counter operational."
     bit_offset: 9
     bit_size: 1
-  - name: R1RSB1
-    description: "SRAM1 retention in Standby mode\r This bit is used to keep the SRAM1 content in Standby retention mode."
+  - name: R1RSB567
+    description: "SRAM1 192 KB page 5 to 7 retention in Standby mode\r Used to keep SRAM1 page 5 to 7 content in Standby retention mode."
+    bit_offset: 11
+    bit_size: 1
+  - name: R1RSB
+    description: "SRAM1 page X retention in Standby mode\r This bit is used to keep the SRAM1 content in Standby retention mode."
     bit_offset: 12
     bit_size: 1
+    array:
+      len: 4
+      stride: 1
 fieldset/CR2:
-  description: control register 2
+  description: control register 2.
   fields:
-  - name: SRAM1PDS1
-    description: "SRAM1 power-down in Stop modes (Stop 0, 1)\r Note: The SRAM1 retention in Standby mode is controlled by R1RSB1 bit in CR1."
+  - name: SRAM1PDS
+    description: "SRAM1 page X power-down in Stop modes (Stop 0, 1)\r Note: The SRAM1 retention in Standby mode is controlled by R1RSBX bit in CR1."
     bit_offset: 0
     bit_size: 1
+    array:
+      len: 4
+      stride: 1
     enum: SRAMPDS
   - name: SRAM2PDS1
     description: "SRAM2 power-down in Stop modes (Stop 0, 1)\r Note: The SRAM2 retention in Standby mode is controlled by R2RSB1 bit in CR1."
     bit_offset: 4
     bit_size: 1
     enum: SRAMPDS
+  - name: SRAM1PDS567
+    description: SRAM1 192KB, page 5 to 7 power-down in Stop modes
+    bit_offset: 6
+    bit_size: 1
+    enum: SRAM1PDS567
   - name: ICRAMPDS
     description: ICACHE SRAM power-down in Stop modes (Stop 0, 1)
     bit_offset: 8
     bit_size: 1
     enum: ICRAMPDS
+  - name: PRAMPDS
+    description: OTG SRAM power-down in Stop modes.
+    bit_offset: 11
+    bit_size: 1
+    enum: SRAMPDS
+  - name: PKARAMPDS
+    description: PKA SRAM power-down in Stop modes.
+    bit_offset: 12
+    bit_size: 1
+    enum: SRAMPDS
   - name: FLASHFWU
     description: "Flash memory fast wakeup from Stop modes (Stop 0, 1)\r This bit is used to obtain the best trade-off between low-power consumption and wakeup time when exiting the Stop 0 or Stop 1 modes.\r When this bit is set, the Flash memory remains in normal mode in Stop 0 and Stop 1 modes, which offers a faster startup time with higher consumption."
     bit_offset: 14
     bit_size: 1
     enum: FLASHFWU
 fieldset/CR3:
-  description: control register 3
+  description: control register 3.
   fields:
+  - name: REGSEL
+    description: Regulator selection.
+    bit_offset: 1
+    bit_size: 1
+    enum: REGSEL
   - name: FSTEN
     description: Fast soft start
     bit_offset: 2
     bit_size: 1
+  - name: DIVCLP
+    description: "Low power mode regulator clock division.\r 000: Low power regulator clock not divided\r Others: Low power regulator clock divided by 2^DIVCLP"
+    bit_offset: 4
+    bit_size: 3
+  - name: SELREP
+    description: Low power mode regulator replica selection.
+    bit_offset: 8
+    bit_size: 6
+  - name: V11FBSW
+    description: V11 feedback switch enable (non user bit).
+    bit_offset: 15
+    bit_size: 1
 fieldset/DBPCR:
-  description: disable Backup domain register
+  description: disable Backup domain register.
   fields:
   - name: DBP
-    description: "Disable Backup domain write protection\r In reset state, all registers and SRAM in Backup domain are protected against parasitic write access. This bit must be set to enable the write access to these registers."
+    description: Disable Backup domain write protection In reset state, all registers and SRAM in Backup domain are protected against parasitic write access. This bit must be set to enable the write access to these registers.
     bit_offset: 0
     bit_size: 1
 fieldset/IORETENR:
@@ -161,7 +207,7 @@ fieldset/IORETR:
       len: 16
       stride: 1
 fieldset/PRIVCFGR:
-  description: privilege control register
+  description: privilege control register.
   fields:
   - name: SPRIV
     description: "secure functions privilege configuration\r This bit is set and reset by software.\r It can be written only by a secure privileged access."
@@ -172,7 +218,7 @@ fieldset/PRIVCFGR:
     bit_offset: 1
     bit_size: 1
 fieldset/RADIOSCR:
-  description: 2.4 GHz RADIO status and control register
+  description: '2.'
   fields:
   - name: MODE
     description: "2.4 GHz RADIO operating mode.\r 1x: 2.4 GHz RADIO active mode"
@@ -183,6 +229,7 @@ fieldset/RADIOSCR:
     description: 2.4 GHz RADIO PHY operating mode
     bit_offset: 2
     bit_size: 1
+    enum: PHYMODE
   - name: ENCMODE
     description: 2.4 GHz RADIO encryption function operating mode
     bit_offset: 3
@@ -191,12 +238,36 @@ fieldset/RADIOSCR:
     description: "2.4 GHz RADIO VDDHPA control word.\r Bits [3:0] see Table 81: PA output power table format for definition.\r Bit [4] rf_event."
     bit_offset: 8
     bit_size: 5
+  - name: REGPARDYV11
+    description: Ready bit for Vless thansub DDHPAless than/sub voltage level when selecting VDD11 input.
+    bit_offset: 14
+    bit_size: 1
   - name: REGPARDYVDDRFPA
     description: "Ready bit for V<sub>DDHPA</sub> voltage level when selecting VDDRFPA input.\r Note: REGPARDYVDDRFPA does not allow to detect correct V<sub>DDHPA</sub> voltage level when request to lower the level."
     bit_offset: 15
     bit_size: 1
+  - name: REGPASEL
+    description: regulator REG_VDDHPA input supply selection.
+    bit_offset: 23
+    bit_size: 1
+    enum: REGPASEL
+  - name: REGPABYPEN
+    description: regulator REG_VDDHPA bypass enable.
+    bit_offset: 24
+    bit_size: 1
+fieldset/S2RETR:
+  description: Stop 2 peripheral IOs retention register.
+  fields:
+  - name: PTASREN
+    description: "PTA output signals Stop 2 mode retention enable\r Access can be secured by GTZC_TZSC PTACONVSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
+    bit_offset: 0
+    bit_size: 1
+  - name: PTASR
+    description: "PTA interface output signals state retention in Stop 2 mode active\r Access can be secured by GTZC_TZSC PTACONVSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
+    bit_offset: 16
+    bit_size: 1
 fieldset/SECCFGR:
-  description: security configuration register
+  description: security configuration register.
   fields:
   - name: WUP1SEC
     description: WUP1 secure protection
@@ -218,7 +289,7 @@ fieldset/SECCFGR:
     bit_offset: 14
     bit_size: 1
 fieldset/SR:
-  description: status register
+  description: status register.
   fields:
   - name: CSSF
     description: "Clear Stop and Standby flags\r Access can be secured by LPMSEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV.\r Writing 1 to this bit clears the STOPF and SBF flags."
@@ -232,8 +303,12 @@ fieldset/SR:
     description: "Standby flag\r This bit is set by hardware when the device enters the Standby mode and the CPU restart from its reset vector. It’s cleared by writing 1 to the CSSF bit, or by a power-on reset. It is not cleared by the system reset."
     bit_offset: 2
     bit_size: 1
+  - name: STOP2F
+    description: Stop 2 mode peripherals power down flag.
+    bit_offset: 3
+    bit_size: 1
 fieldset/SVMCR:
-  description: supply voltage monitoring control register
+  description: supply voltage monitoring control register.
   fields:
   - name: PVDE
     description: Programmable voltage detector enable
@@ -244,9 +319,22 @@ fieldset/SVMCR:
     bit_offset: 5
     bit_size: 3
     enum: PVDLS
+  - name: USV
+    description: VDDUSB supply valid.
+    bit_offset: 28
+    bit_size: 1
+  - name: IO2SV
+    description: VDDIO2 supply valid.
+    bit_offset: 29
+    bit_size: 1
 fieldset/SVMSR:
-  description: supply voltage monitoring status register
+  description: supply voltage monitoring status register.
   fields:
+  - name: REGS
+    description: Regulator selection.
+    bit_offset: 1
+    bit_size: 1
+    enum: REGSEL
   - name: PVDO
     description: Programmable voltage detector output
     bit_offset: 4
@@ -262,8 +350,16 @@ fieldset/SVMSR:
     bit_size: 1
     enum: ACTVOS
 fieldset/VOSR:
-  description: voltage scaling register
+  description: voltage scaling register.
   fields:
+  - name: VDD11USBRDY
+    description: USB OTG VDD11USB ready.
+    bit_offset: 12
+    bit_size: 1
+  - name: USBBOOSTRDY
+    description: USB OTG booster ready.
+    bit_offset: 13
+    bit_size: 1
   - name: VOSRDY
     description: "Ready bit for V<sub>CORE</sub> voltage scaling output selection\r Set and cleared by hardware. When decreasing the voltage scaling range, VOSRDY must be one before increasing the SYSCLK frequency."
     bit_offset: 15
@@ -273,8 +369,24 @@ fieldset/VOSR:
     bit_offset: 16
     bit_size: 1
     enum: VOS
+  - name: USBPWREN
+    description: USB OTG power enable.
+    bit_offset: 19
+    bit_size: 1
+  - name: USBBOOSTEN
+    description: USB OTG booster enable.
+    bit_offset: 20
+    bit_size: 1
+  - name: VDD11USBDIS
+    description: USB OTG VDD11USB disable.
+    bit_offset: 21
+    bit_size: 1
+  - name: VDD11USBSWDLY
+    description: USB OTG VDD11USB switch delay.
+    bit_offset: 22
+    bit_size: 10
 fieldset/WUCR1:
-  description: wakeup control register 1
+  description: wake-up control register 1.
   fields:
   - name: WUPEN
     description: "Wakeup and interrupt pin WKUP1 enable\r Access can be secured by WUP1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
@@ -284,7 +396,7 @@ fieldset/WUCR1:
       len: 8
       stride: 1
 fieldset/WUCR2:
-  description: wakeup control register 2
+  description: wake-up control register 2.
   fields:
   - name: WUPP
     description: "Wakeup pin WKUP1 polarity.\r This bit must be configured when WUPEN1 = 0.\r Access can be secured by WUP1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
@@ -295,50 +407,50 @@ fieldset/WUCR2:
       stride: 1
     enum: WUPP
 fieldset/WUCR3:
-  description: wakeup control register 3
+  description: wake-up control register 3.
   fields:
   - name: WUSEL1
     description: "Wakeup and interrupt pin WKUP1 selection\r This field must be configured when WUPEN1 = 0.\r Access can be secured by WUP1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 0
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL1
   - name: WUSEL2
     description: "Wakeup and interrupt pin WKUP2 selection\r This field must be configured when WUPEN2 = 0.\r Access can be secured by WUP2SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 2
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL2
   - name: WUSEL3
     description: "Wakeup and interrupt pin WKUP3 selection\r This field must be configured when WUPEN3 = 0.\r Access can be secured by WUP3SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 4
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL3
   - name: WUSEL4
     description: "Wakeup and interrupt pin WKUP4 selection\r This field must be configured when WUPEN4 = 0.\r Access can be secured by WUP4SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 6
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL4
   - name: WUSEL5
     description: "Wakeup and interrupt pin WKUP5 selection\r This field must be configured when WUPEN5 = 0.\r Access can be secured by WUP5SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 8
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL5
   - name: WUSEL6
     description: "Wakeup and interrupt pin WKUP6 selection\r This field must be configured when WUPEN6 = 0.\r Access can be secured by WUP6SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 10
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL6
   - name: WUSEL7
     description: "Wakeup and interrupt pin WKUP7 selection\r This field must be configured when WUPEN7 = 0.\r Access can be secured by WUP7SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 12
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL7
   - name: WUSEL8
     description: "Wakeup and interrupt pin WKUP8 selection\r This field must be configured when WUPEN8 = 0.\r Access can be secured by WUP8SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV."
     bit_offset: 14
     bit_size: 2
-    enum: WUSEL
+    enum: WUSEL8
 fieldset/WUSCR:
-  description: wakeup status clear register
+  description: wake-up status clear register.
   fields:
   - name: CWUF
     description: "Clear wakeup flag 1\r Access can be secured by WUP1SEC. When secure, a non-secure read/write access is RAZ/WI. It does not generate an illegal access interrupt. This bit can be protected against unprivileged access when secure with SPRIV or when non-secure with NSPRIV.\r Writing 1 to this bit clears the WUF1 flag in WUSR."
@@ -348,7 +460,7 @@ fieldset/WUSCR:
       len: 8
       stride: 1
 fieldset/WUSR:
-  description: wakeup status register
+  description: wake-up status register.
   fields:
   - name: WUF
     description: "Wakeup and interrupt pending flag 1\r This bit is set when a wakeup event is detected on WKUP1 pin. This bit is cleared by writing 1 in the CWUF1 bit of WUSCR or by hardware when WUPEN1 = 0."
@@ -393,6 +505,15 @@ enum/LPMS:
   - name: Stop1
     description: Stop 1 mode
     value: 1
+  - name: Stop2
+    description: Stop 2 mode
+    value: 2
+  - name: Standby0
+    description: Standby mode
+    value: 4
+  - name: Standby1
+    description: Standby mode
+    value: 5
 enum/MODE:
   bit_size: 2
   variants:
@@ -401,6 +522,21 @@ enum/MODE:
     value: 0
   - name: Sleep
     description: 2.4 GHz RADIO sleep mode
+    value: 1
+  - name: Active0
+    description: 2.4 GHz RADIO active mode
+    value: 2
+  - name: Active1
+    description: 2.4 GHz RADIO active mode
+    value: 3
+enum/PHYMODE:
+  bit_size: 1
+  variants:
+  - name: Sleep
+    description: 2.4 GHz RADIO Sleep mode.
+    value: 0
+  - name: Standby
+    description: 2.4 GHz RADIO Standby mode.
     value: 1
 enum/PVDLS:
   bit_size: 3
@@ -438,6 +574,33 @@ enum/PVDO:
   - name: Below
     description: VDD is below the PVD threshold selected by PVDLS[2:0].
     value: 1
+enum/REGPASEL:
+  bit_size: 1
+  variants:
+  - name: Fixed
+    description: VDDRFPA pin selected as regulator REG_VDDHPA input supply.
+    value: 0
+  - name: Auto
+    description: regulator REG_VDDHPA input supply selection between VDDRFPA and VDD11, dependent on requested regulated output voltage.
+    value: 1
+enum/REGSEL:
+  bit_size: 1
+  variants:
+  - name: LDO
+    description: LDO selected.
+    value: 0
+  - name: SMPS
+    description: SMPS selected.
+    value: 1
+enum/SRAM1PDS567:
+  bit_size: 1
+  variants:
+  - name: PoweredOn
+    description: SRAM1 192KB, page 5 to 7 content retained in Stop modes
+    value: 0
+  - name: PoweredOff
+    description: SRAM1 192KB, page 5 to 7 content lost in Stop modes
+    value: 1
 enum/SRAMPDS:
   bit_size: 1
   variants:
@@ -465,18 +628,84 @@ enum/WUPP:
   - name: Low
     description: Detection on low level (falling edge)
     value: 1
-enum/WUSEL:
+enum/WUSEL1:
   bit_size: 2
   variants:
-  - name: B_0x0
-    description: reserved
+  - name: WKUP1_0
+    description: WKUP1_0
     value: 0
-  - name: B_0x1
+  - name: WKUP1_1
+    description: WKUP1_1
+    value: 1
+enum/WUSEL2:
+  bit_size: 2
+  variants:
+  - name: WKUP2_0
+    description: WKUP2_0
+    value: 0
+  - name: WKUP2_1
+    description: WKUP2_1
+    value: 1
+enum/WUSEL3:
+  bit_size: 2
+  variants:
+  - name: WKUP3_1
     description: WKUP3_1
     value: 1
-  - name: B_0x2
+  - name: WKUP3_2
     description: WKUP3_2
     value: 2
-  - name: B_0x3
-    description: reserved
+enum/WUSEL4:
+  bit_size: 2
+  variants:
+  - name: WKUP4_0
+    description: WKUP4_0
+    value: 0
+  - name: WKUP4_1
+    description: WKUP4_1
+    value: 1
+enum/WUSEL5:
+  bit_size: 2
+  variants:
+  - name: WKUP5_1
+    description: WKUP5_1
+    value: 1
+  - name: WKUP5_2
+    description: WKUP5_2
+    value: 2
+enum/WUSEL6:
+  bit_size: 2
+  variants:
+  - name: WKUP6_0
+    description: WKUP6_0
+    value: 0
+  - name: WKUP6_1
+    description: WKUP6_1
+    value: 1
+  - name: WKUP6_3
+    description: WKUP6_3 (internal source, does not generate a WKUP interrupt)
+    value: 3
+enum/WUSEL7:
+  bit_size: 2
+  variants:
+  - name: WKUP7_0
+    description: WKUP7_0
+    value: 0
+  - name: WKUP7_1
+    description: WKUP7_1
+    value: 1
+  - name: WKUP7_3
+    description: WKUP7_3 (internal source, does not generate a WKUP interrupt)
+    value: 3
+enum/WUSEL8:
+  bit_size: 2
+  variants:
+  - name: WKUP8_1
+    description: WKUP8_1
+    value: 1
+  - name: WKUP8_2
+    description: WKUP8_2
+    value: 2
+  - name: WKUP8_3
+    description: WKUP8_3 (internal source, does not generate a WKUP interrupt)
     value: 3

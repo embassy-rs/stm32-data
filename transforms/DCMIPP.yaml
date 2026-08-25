@@ -1,0 +1,15 @@
+transforms:
+  # Strip useless "DCMIPP_" prefix from register and fieldset names.
+  - !RenameRegisters
+    block: .*
+    from: ^DCMIPP_(.*)$
+    to: $1
+  - !Rename
+    from: ^DCMIPP_(.*)$
+    to: $1
+    type: Fieldset
+
+  # The SVD uses "B_0x0" / "B_0x1" variant names which don't generate
+  # useful Rust enums. Drop them all and let the driver work with raw ints.
+  - !DeleteEnums
+    from: .*

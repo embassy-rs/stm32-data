@@ -1,0 +1,219 @@
+block/RRM:
+  items:
+  - name: UDRA_CTRL0
+    description: UDRA_CTRL0 register.
+    byte_offset: 16
+    fieldset: UDRA_CTRL0
+  - name: UDRA_IRQ_ENABLE
+    description: UDRA_IRQ_ENABLE register.
+    byte_offset: 20
+    fieldset: UDRA_IRQ_ENABLE
+  - name: UDRA_IRQ_STATUS
+    description: UDRA_IRQ_STATUS register.
+    byte_offset: 24
+    fieldset: UDRA_IRQ_STATUS
+  - name: UDRA_RADIO_CFG_PTR
+    description: UDRA_RADIO_CFG_PTR register.
+    byte_offset: 28
+    access: Read
+    fieldset: UDRA_RADIO_CFG_PTR
+  - name: SEMA_IRQ_ENABLE
+    description: SEMA_IRQ_ENABLE register.
+    byte_offset: 32
+    fieldset: SEMA_IRQ_ENABLE
+  - name: SEMA_IRQ_STATUS
+    description: SEMA_IRQ_STATUS register.
+    byte_offset: 36
+    fieldset: SEMA_IRQ_STATUS
+  - name: BLE_IRQ_ENABLE
+    description: BLE_IRQ_ENABLE register.
+    byte_offset: 40
+    fieldset: BLE_IRQ_ENABLE
+  - name: BLE_IRQ_STATUS
+    description: BLE_IRQ_STATUS register.
+    byte_offset: 44
+    fieldset: BLE_IRQ_STATUS
+  - name: VP_CPU_CMD_BUS
+    description: VP_CPU_CMD_BUS register.
+    byte_offset: 96
+    fieldset: VP_CPU_CMD_BUS
+  - name: VP_CPU_SEMA_BUS
+    description: VP_CPU_SEMA_BUS register.
+    byte_offset: 100
+    fieldset: VP_CPU_SEMA_BUS
+  - name: VP_CPU_IRQ_ENABLE
+    description: VP_CPU_IRQ_ENABLE register.
+    byte_offset: 104
+    fieldset: VP_CPU_IRQ_ENABLE
+  - name: VP_CPU_IRQ_STATUS
+    description: VP_CPU_IRQ_STATUS register.
+    byte_offset: 108
+    fieldset: VP_CPU_IRQ_STATUS
+fieldset/BLE_IRQ_ENABLE:
+  description: BLE_IRQ_ENABLE register.
+  fields:
+  - name: PORT_GRANT
+    description: IP_BLE Port grant interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: PORT_RELEASE
+    description: IP_BLE Port release interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: PORT_CMD_START
+    description: IP_BLE Port command start interrup enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: PORT_CMD_END
+    description: IP_BLE Port command end interrup enable.
+    bit_offset: 4
+    bit_size: 1
+fieldset/BLE_IRQ_STATUS:
+  description: BLE_IRQ_STATUS register.
+  fields:
+  - name: PORT_GRANT
+    description: IP_BLE hardware port granted interrupt status:.
+    bit_offset: 0
+    bit_size: 1
+  - name: PORT_RELEASE
+    description: IP_BLE hardware port released interrupt status.
+    bit_offset: 1
+    bit_size: 1
+  - name: CMD_START
+    description: IP_BLE hardware port command start interrupt status.
+    bit_offset: 3
+    bit_size: 1
+  - name: CMD_END
+    description: IP_BLE hardware port command end interrupt status.
+    bit_offset: 4
+    bit_size: 1
+fieldset/SEMA_IRQ_ENABLE:
+  description: SEMA_IRQ_ENABLE register.
+  fields:
+  - name: LOCK
+    description: semaphore locked (= one port granted) interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: UNLOCK
+    description: semaphore unlocked (=no port selected) interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+fieldset/SEMA_IRQ_STATUS:
+  description: SEMA_IRQ_STATUS register.
+  fields:
+  - name: LOCK
+    description: On read, returns the semaphore locked interrupt status.
+    bit_offset: 0
+    bit_size: 1
+  - name: UNLOCK
+    description: On read, returns the semaphore unlocked interrupt status.
+    bit_offset: 1
+    bit_size: 1
+fieldset/UDRA_CTRL0:
+  description: UDRA_CTRL0 register.
+  fields:
+  - name: RELOAD_RDCFGPTR
+    description: reload the radio configuration pointer from RAM.
+    bit_offset: 0
+    bit_size: 1
+fieldset/UDRA_IRQ_ENABLE:
+  description: UDRA_IRQ_ENABLE register.
+  fields:
+  - name: RADIO_CFG_PTR_RELOADED
+    description: UDRA interrupt enable (reload radio config pointer).
+    bit_offset: 0
+    bit_size: 1
+  - name: CMD_START
+    description: UDRA interrupt enable (command start).
+    bit_offset: 1
+    bit_size: 1
+  - name: CMD_END
+    description: UDRA interrupt enable (command end).
+    bit_offset: 2
+    bit_size: 1
+fieldset/UDRA_IRQ_STATUS:
+  description: UDRA_IRQ_STATUS register.
+  fields:
+  - name: RADIO_CFG_PTR_RELOADED
+    description: On read, returns the UDRA reload radio configuration pointer interrupt status.
+    bit_offset: 0
+    bit_size: 1
+  - name: CMD_STARD
+    description: On read, returns the UDRA command start interrupt status.
+    bit_offset: 1
+    bit_size: 1
+  - name: CMD_END
+    description: On read, returns the UDRA command end interrupt status.
+    bit_offset: 2
+    bit_size: 1
+fieldset/UDRA_RADIO_CFG_PTR:
+  description: UDRA_RADIO_CFG_PTR register.
+  fields:
+  - name: RADIO_CONFIG_ADDRESS
+    description: UDRA radio configuration address.
+    bit_offset: 0
+    bit_size: 32
+fieldset/VP_CPU_CMD_BUS:
+  description: VP_CPU_CMD_BUS register.
+  fields:
+  - name: COMMAND
+    description: command number.
+    bit_offset: 0
+    bit_size: 3
+  - name: COMMAND_REQ
+    description: CPU Virtual port command request:.
+    bit_offset: 3
+    bit_size: 1
+fieldset/VP_CPU_IRQ_ENABLE:
+  description: VP_CPU_IRQ_ENABLE register.
+  fields:
+  - name: PORT_GRANT
+    description: CPU virtual port grant interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: PORT_RELEASE
+    description: CPU virtual port release interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: PORT_CMD_START
+    description: CPU virtual port command start interrup enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: PORT_CMD_END
+    description: CPU virtual port command end interrup enable.
+    bit_offset: 4
+    bit_size: 1
+fieldset/VP_CPU_IRQ_STATUS:
+  description: VP_CPU_IRQ_STATUS register.
+  fields:
+  - name: PORT_GRANT
+    description: CPU virtual port granted interrupt status.
+    bit_offset: 0
+    bit_size: 1
+  - name: PORT_RELEASE
+    description: virtual port released interrupt status.
+    bit_offset: 1
+    bit_size: 1
+  - name: PORT_PREEMPT
+    description: CPU virtual port preemption (at semaphore level) interrupt status.
+    bit_offset: 2
+    bit_size: 1
+  - name: CMD_START
+    description: CPU virtual port command start interrupt status.
+    bit_offset: 3
+    bit_size: 1
+  - name: CMD_END
+    description: CPU virtual port command end interrupt status.
+    bit_offset: 4
+    bit_size: 1
+fieldset/VP_CPU_SEMA_BUS:
+  description: VP_CPU_SEMA_BUS register.
+  fields:
+  - name: TAKE_PRIO
+    description: 'semaphore priority: priority value (between 0 and 7) of the take request.'
+    bit_offset: 0
+    bit_size: 3
+  - name: TAKE_REQ
+    description: semaphore token request:.
+    bit_offset: 3
+    bit_size: 1

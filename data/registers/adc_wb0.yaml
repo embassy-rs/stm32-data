@@ -1,0 +1,635 @@
+block/ADC:
+  items:
+  - name: VERSION_ID
+    description: VERSION_ID register.
+    byte_offset: 0
+    access: Read
+    fieldset: VERSION_ID
+  - name: CONF
+    description: CONF register.
+    byte_offset: 4
+    fieldset: CONF
+  - name: CTRL
+    description: CTRL register.
+    byte_offset: 8
+    fieldset: CTRL
+  - name: OCM_CTRL
+    description: Occasionnal mode control register.
+    byte_offset: 12
+    fieldset: OCM_CTRL
+  - name: PGA_CONF
+    description: PGA configuration register.
+    byte_offset: 16
+    fieldset: PGA_CONF
+  - name: SWITCH
+    description: SWITCH register.
+    byte_offset: 20
+    fieldset: SWITCH
+  - name: DF_CONF
+    description: Decimation filter configuration register.
+    byte_offset: 24
+    fieldset: DF_CONF
+  - name: DS_CONF
+    description: DS_CONF register.
+    byte_offset: 28
+    fieldset: DS_CONF
+  - name: SEQ_1
+    description: SEQ_1 register.
+    byte_offset: 32
+    fieldset: SEQ_1
+  - name: SEQ_2
+    description: SEQ_2 register.
+    byte_offset: 36
+    fieldset: SEQ_2
+  - name: COMP_1
+    description: COMP_1 register.
+    byte_offset: 40
+    fieldset: COMP_1
+  - name: COMP_2
+    description: COMP_2 register.
+    byte_offset: 44
+    fieldset: COMP_2
+  - name: COMP_3
+    description: COMP_3 register.
+    byte_offset: 48
+    fieldset: COMP_3
+  - name: COMP_4
+    description: COMP_4 register.
+    byte_offset: 52
+    fieldset: COMP_4
+  - name: COMP_SEL
+    description: COMP_SEL register.
+    byte_offset: 56
+    fieldset: COMP_SEL
+  - name: WD_TH
+    description: WD_TH register.
+    byte_offset: 60
+    fieldset: WD_TH
+  - name: WD_CONF
+    description: WD_CONF register.
+    byte_offset: 64
+    fieldset: WD_CONF
+  - name: DS_DATAOUT
+    description: DS_DATAOUT register.
+    byte_offset: 68
+    access: Read
+    fieldset: DS_DATAOUT
+  - name: DF_DATAOUT
+    description: Decimation filter Data output register.
+    byte_offset: 72
+    access: Read
+    fieldset: DF_DATAOUT
+  - name: IRQ_STATUS
+    description: IRQ_STATUS register.
+    byte_offset: 76
+    fieldset: IRQ_STATUS
+  - name: IRQ_ENABLE
+    description: IRQ_ENABLE register.
+    byte_offset: 80
+    fieldset: IRQ_ENABLE
+  - name: TIMER_CONF
+    description: Time to add after an LDO Enable or ADC Enable to let the HW to be stable before using it.
+    byte_offset: 84
+    fieldset: TIMER_CONF
+  description: ADC address block description.
+fieldset/COMP_1:
+  description: COMP_1 register.
+  fields:
+  - name: GAIN1
+    description: 'GAIN1[11:0]: first calibration point: gain AUXADC_GAIN_1V2[11:0].'
+    bit_offset: 0
+    bit_size: 12
+  - name: OFFSET1
+    description: 'OFFSET1[7:0]: first calibration point: offset compensation[7:0] with sign.'
+    bit_offset: 12
+    bit_size: 8
+fieldset/COMP_2:
+  description: COMP_2 register.
+  fields:
+  - name: GAIN2
+    description: 'GAIN2[11:0]: second calibration point: gain AUXADC_GAIN_1V2[11:0].'
+    bit_offset: 0
+    bit_size: 12
+  - name: OFFSET2
+    description: 'OFFSET2[7:0]: second calibration point: offset compensation[7:0] with sign.'
+    bit_offset: 12
+    bit_size: 8
+fieldset/COMP_3:
+  description: COMP_3 register.
+  fields:
+  - name: GAIN3
+    description: 'GAIN3[11:0]: third calibration point: gain AUXADC_GAIN_1V2[11:0].'
+    bit_offset: 0
+    bit_size: 12
+  - name: OFFSET3
+    description: 'OFFSET3[7:0]: third calibration point: offset compensation[7:0] with sign.'
+    bit_offset: 12
+    bit_size: 8
+fieldset/COMP_4:
+  description: COMP_4 register.
+  fields:
+  - name: GAIN4
+    description: 'GAIN4[11:0]: fourth calibration point: gain AUXADC_GAIN_1V2[11:0].'
+    bit_offset: 0
+    bit_size: 12
+  - name: OFFSET4
+    description: 'OFFSET4[7:0]: fourth calibration point: offset compensation[7:0] with sign.'
+    bit_offset: 12
+    bit_size: 8
+fieldset/COMP_SEL:
+  description: COMP_SEL register.
+  fields:
+  - name: OFFSET_GAIN0
+    description: 'OFFSET_GAIN0[1:0]: gain / offset used in ADC single negative mode with Vinput range = 1.2V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 0
+    bit_size: 2
+  - name: GAIN_OFFSET0
+    description: gain / offset used in ADC single negative mode with Vinput range = 1.2V.
+    bit_offset: 0
+    bit_size: 2
+  - name: OFFSET_GAIN1
+    description: 'OFFSET_GAIN1[1:0]: gain / offset used in ADC single positive mode with Vinput range = 1.2V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 2
+    bit_size: 2
+  - name: GAIN_OFFSET1
+    description: gain / offset used in ADC single positive mode with Vinput range = 1.2V.
+    bit_offset: 2
+    bit_size: 2
+  - name: OFFSET_GAIN2
+    description: 'OFFSET_GAIN2[1:0]: gain / offset used in ADC differential mode with Vinput range = 1.2V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 4
+    bit_size: 2
+  - name: GAIN_OFFSET2
+    description: gain / offset used in ADC differential mode with Vinput range = 1.2V.
+    bit_offset: 4
+    bit_size: 2
+  - name: OFFSET_GAIN3
+    description: 'OFFSET_GAIN3[1:0]: gain / offset used in ADC single negative mode with Vinput range = 2.4V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 6
+    bit_size: 2
+  - name: GAIN_OFFSET3
+    description: gain / offset used in ADC single negative mode with Vinput range = 2.4V.
+    bit_offset: 6
+    bit_size: 2
+  - name: OFFSET_GAIN4
+    description: 'OFFSET_GAIN4[1:0]: gain / offset used in ADC single positive mode with Vinput range = 2.4V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 8
+    bit_size: 2
+  - name: GAIN_OFFSET4
+    description: gain / offset used in ADC single positive mode with Vinput range = 2.4V.
+    bit_offset: 8
+    bit_size: 2
+  - name: OFFSET_GAIN5
+    description: 'OFFSET_GAIN5[1:0]: gain / offset used in ADC differential mode with Vinput range = 2.4V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 10
+    bit_size: 2
+  - name: GAIN_OFFSET5
+    description: gain / offset used in ADC differential mode with Vinput range = 2.4V.
+    bit_offset: 10
+    bit_size: 2
+  - name: OFFSET_GAIN6
+    description: 'OFFSET_GAIN6[1:0]: gain / offset used in ADC single negative mode with Vinput range = 3.6V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 12
+    bit_size: 2
+  - name: GAIN_OFFSET6
+    description: gain / offset used in ADC single negative mode with Vinput range = 3.6V.
+    bit_offset: 12
+    bit_size: 2
+  - name: OFFSET_GAIN7
+    description: 'OFFSET_GAIN7[1:0]: gain / offset used in ADC single positive mode with Vinput range = 3.6V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 14
+    bit_size: 2
+  - name: GAIN_OFFSET7
+    description: gain / offset used in ADC single positive mode with Vinput range = 3.6V.
+    bit_offset: 14
+    bit_size: 2
+  - name: OFFSET_GAIN8
+    description: 'OFFSET_GAIN8[1:0]: gain / offset used in ADC differential mode with Vinput range = 3.6V: 00: OFFSET1 and GAIN1 from COMP_1 01: OFFSET2 and GAIN2 from COMP_2 10: OFFSET3 and GAIN3 from COMP_3 11: OFFSET4 and GAIN4 from COMP_4.'
+    bit_offset: 16
+    bit_size: 2
+  - name: GAIN_OFFSET8
+    description: gain / offset used in ADC differential mode with Vinput range = 3.6V.
+    bit_offset: 16
+    bit_size: 2
+fieldset/CONF:
+  description: CONF register.
+  fields:
+  - name: CONT
+    description: 'CONT: regular sequence runs continuously when ADC mode is enabled: 0: enable the single conversion: when the sequence is over, the conversion stops 1: enable the continuous conversion: when the sequence is over, the sequence starts again until the software sets the CTRL.STOP_OP_MODE bit.'
+    bit_offset: 0
+    bit_size: 1
+  - name: SEQUENCE
+    description: 'SEQUENCE: enable the sequence mode (active by default): 0: sequence mode is disabled, only SEQ0 is selected 1: sequence mode is enabled, conversions from SEQ0 to SEQx with x=SEQ_LEN Note: clearing this bit is equivalent to SEQUENCE=1 and SEQ_LEN=0000. Ideally, this bit can be kept high as redundant with keeping high and setting SEQ_LEN=0000.'
+    bit_offset: 1
+    bit_size: 1
+  - name: SEQ_LEN
+    description: 'SEQ_LEN[3:0]: number of conversions in a regular sequence: 0000: 1 conversion, starting from SEQ0 0001: 2 conversions, starting from SEQ0 ... 1111: 16 conversions, starting from SEQ0.'
+    bit_offset: 2
+    bit_size: 4
+  - name: SMPS_SYNCHRO_ENA
+    description: 'SMPS_SYNCHRO_ENA: synchronize the ADC start conversion with a pulse generated by the SMPS: 0: SMPS synchronization is disabled for all ADC clock frequencies 1: SMPS synchronization is enabled (only when ADC clock is 8 MHz or 16 MHz) Note: SMPS_SYNCHRO_ENA must be 0 when the ADC analog clock is 32 MHz or when PWRC_CR5.NOSMPS = 1.'
+    bit_offset: 6
+    bit_size: 1
+  - name: OP_MODE
+    description: ADC mode selection (= data path selection).
+    bit_offset: 7
+    bit_size: 2
+  - name: SAMPLE_RATE_LSB
+    description: 'SAMPLE_RATE_LSB: Sample Rate LSB This field is an extension of SAMPLE_RATE definition in bits 12,11 of CONF register. It impacts the conversion rate of ADC (F_ADC). See SAMPLE_RATE bits for the full description. When this field is set to a value different than 0, SMPS synchronization is not feasible. This value is hidden to the user.'
+    bit_offset: 9
+    bit_size: 2
+  - name: SAMPLE_RATE
+    description: 'SAMPLE_RATE[1:0]: conversion rate of ADC (F_ADC): F_ADC = F_ADC_CLK/(16 + 16*SAMPLE_RATE_MSB + 4*SAMPLE_RATE + SAMPLE_RATE_LSB),where F_ADC_CLK is the analog ADC clock frequency. By default F_ADC_CLK is 16MHz frequency.'
+    bit_offset: 11
+    bit_size: 2
+  - name: DMA_DS_ENA
+    description: 'DMA_DS_EN: enable the DMA mode for the Down Sampler data path: 0: DMA mode is disabled 1: DMA mode is enabled.'
+    bit_offset: 13
+    bit_size: 1
+  - name: DMA_DF_ENA
+    description: enable DMA mode for Decimation Filter data path.
+    bit_offset: 14
+    bit_size: 1
+  - name: OVR_DS_CFG
+    description: 'OVR_DS_CFG: Down Sampler overrun configuration: 0: the previous data is kept, the new one is lost 1: the previous data is lost, the new one is kept.'
+    bit_offset: 15
+    bit_size: 1
+  - name: OVR_DF_CFG
+    description: decimation overrun configuration.
+    bit_offset: 16
+    bit_size: 1
+  - name: BIT_INVERT_SN
+    description: 'BIT_INVERT_SN: invert bit to bit the ADC data output (1''s complement) when a single negative input is connected to the ADC: 0: no inversion (default) 1: enable the inversion.'
+    bit_offset: 17
+    bit_size: 1
+  - name: BIT_INVERT_DIFF
+    description: 'BIT_INVERT_DIFF: invert bit to bit the ADC data output (1''s complement) when a differential input is connected to the ADC: 0: no inversion (default) 1: enable the inversion.'
+    bit_offset: 18
+    bit_size: 1
+  - name: ADC_CONT_1V2
+    description: 'ADC_CONT_1V2: select the input sampling method: 0: sampling only at conversion start (default) 1: sampling starts at the end of conversion.'
+    bit_offset: 19
+    bit_size: 1
+  - name: VBIAS_PRECH_FORCE
+    description: possibility to keep the VBIAS_PRECH enabled to deactivate the filter.
+    bit_offset: 20
+    bit_size: 1
+  - name: SAMPLE_RATE_MSB
+    description: 'SAMPLE_RATE_MSB: Sample Rate MSB This field is an extension of SAMPLE_RATE definition in bits 12,11 of CONF register. It impacts the conversion rate of ADC (F_ADC). See SAMPLE_RATE bits for the full description.'
+    bit_offset: 21
+    bit_size: 3
+fieldset/CTRL:
+  description: CTRL register.
+  fields:
+  - name: ADC_ON_OFF
+    description: 'ADC_ON_OFF: 0: power off the ADC 1: power on the ADC.'
+    bit_offset: 0
+    bit_size: 1
+  - name: START_CONV
+    description: 'START_CONV (1): generate a start pulse to initiate an ADC conversion: 0: no effect 1: start the ADC conversion Note: this bit is set by software and cleared by hardware.'
+    bit_offset: 1
+    bit_size: 1
+  - name: START_CON
+    description: generate a start pulse to initiate an ADC conversion.
+    bit_offset: 1
+    bit_size: 1
+  - name: STOP_OP_MODE
+    description: 'STOP_OP_MODE (1): stop the on-going OP_MODE (ADC mode, Analog audio mode, Full mode): 0: no effect 1: stop on-going ADC mode Note: this bit is set by software and cleared by hardware. When setting the STOP_MODE_OP, the user has to wait around 10 us before to start a new ADC conversion by setting the START_CONV bit.'
+    bit_offset: 2
+    bit_size: 1
+  - name: STOP_OP_MOD
+    description: stop the on-going OP_MODE (ADC mode, Analog audio mode, Full.
+    bit_offset: 2
+    bit_size: 1
+  - name: DIG_AUD_MODE
+    description: enable the digital audio mode (the data path uses. the decimation filter).
+    bit_offset: 3
+    bit_size: 1
+  - name: TEST_MODE
+    description: 'TEST_MODE: select the functional or the test mode of the ADC: 0: functional mode (one of the four main functional modes is used) 1: test mode (for debug, test, calibration).'
+    bit_offset: 4
+    bit_size: 1
+  - name: ADC_LDO_ENA
+    description: 'ADC_LDO_ENA: enable the LDO associated to the ADC block: 0: disable the ADC LDO 1: enable the ADC LDO.'
+    bit_offset: 5
+    bit_size: 1
+fieldset/DS_CONF:
+  description: DS_CONF register.
+  fields:
+  - name: DS_RATIO
+    description: 'DS_RATIO[2:0]: program the Down Sampler ratio (N factor) 000: ratio = 1, no down sampling (default) 001: ratio = 2 010: ratio = 4 011: ratio = 8 100: ratio = 16 101: ratio = 32 110: ratio = 64 111: ratio = 128.'
+    bit_offset: 0
+    bit_size: 3
+  - name: DS_WIDTH
+    description: 'DS_WIDTH[2:0]: program the Down Sampler width of data output (DSDTATA) 000: DS_DATA output on 12-bit (default) 001: DS_DATA output on 13-bit 010: DS_DATA output on 14-bit 011: DS_DATA output on 15-bit 100: DS_DATA output on 16-bit 1xx: reserved.'
+    bit_offset: 3
+    bit_size: 3
+fieldset/DS_DATAOUT:
+  description: DS_DATAOUT register.
+  fields:
+  - name: DS_DATA
+    description: 'DS_DATA[15:0]: contain the converted data at the output of the Down Sampler.'
+    bit_offset: 0
+    bit_size: 16
+fieldset/IRQ_ENABLE:
+  description: IRQ_ENABLE register.
+  fields:
+  - name: EOC_IRQ
+    description: 'EOC_IRQ (Used in test mode only): set when the ADC conversion is completed. When read, provide the status of the interrupt: 0: ADC conversion is not completed 1: ADC conversion is completed Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 0
+    bit_size: 1
+  - name: EOC_IRQ_ENA
+    description: '(Used in test mode only): End of ADC conversion interrupt enable.'
+    bit_offset: 0
+    bit_size: 1
+  - name: EODS_IRQ
+    description: 'EODS_IRQ: set when the Down Sampler conversion is completed. When read, provide the status of the interrupt: 0: Down Sampler conversion is not completed 1: Down Sampler conversion is completed Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 1
+    bit_size: 1
+  - name: EODS_IRQ_ENA
+    description: End of conversion interrupt enable for the Down Sampler output.
+    bit_offset: 1
+    bit_size: 1
+  - name: EODF_IRQ_ENA
+    description: End of conversion interrupt enable for the decimation filter output.
+    bit_offset: 2
+    bit_size: 1
+  - name: EOS_IRQ
+    description: 'EOS_IRQ: set when a sequence of conversion is completed. When read, provide the status of the interrupt: 0: sequence of conversion is not completed 1: sequence of conversion is completed Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 3
+    bit_size: 1
+  - name: EOS_IRQ_ENA
+    description: End of regular sequence interrupt enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: AWD_IRQ
+    description: 'AWD_IRQ: set when an analog watchdog event occurs. When read, provide the status of the interrupt: 0: no analog watchdog event occurred 1: analog watchdog event has occurred Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 4
+    bit_size: 1
+  - name: AWD_IRQ_ENA
+    description: analog watchdog interrupt enable.
+    bit_offset: 4
+    bit_size: 1
+  - name: OVR_DS_IRQ
+    description: 'OVR_DS_IRQ: set to indicate a Down Sampler overrun (at least one data is lost) When read, provide the status of the interrupt: 0: no overrun occurred 1: overrun occurred Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 5
+    bit_size: 1
+  - name: OVR_DS_IRQ_ENA
+    description: Down Sampler overrun interrupt enable.
+    bit_offset: 5
+    bit_size: 1
+  - name: OVR_DF_IRQ_ENA
+    description: decimation filter overrun interrupt enable.
+    bit_offset: 6
+    bit_size: 1
+  - name: DF_OVRFL_IRQ_ENA
+    description: decimation filter saturation interrupt enable.
+    bit_offset: 7
+    bit_size: 1
+fieldset/IRQ_STATUS:
+  description: IRQ_STATUS register.
+  fields:
+  - name: EOC_IRQ
+    description: 'EOC_IRQ (Used in test mode only): set when the ADC conversion is completed. When read, provide the status of the interrupt: 0: ADC conversion is not completed 1: ADC conversion is completed Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 0
+    bit_size: 1
+  - name: EODS_IRQ
+    description: 'EODS_IRQ: set when the Down Sampler conversion is completed. When read, provide the status of the interrupt: 0: Down Sampler conversion is not completed 1: Down Sampler conversion is completed Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 1
+    bit_size: 1
+  - name: EODF_IRQ
+    description: set when the decimation filter conversion is completed.
+    bit_offset: 2
+    bit_size: 1
+  - name: EOS_IRQ
+    description: 'EOS_IRQ: set when a sequence of conversion is completed. When read, provide the status of the interrupt: 0: sequence of conversion is not completed 1: sequence of conversion is completed Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 3
+    bit_size: 1
+  - name: AWD_IRQ
+    description: 'AWD_IRQ: set when an analog watchdog event occurs. When read, provide the status of the interrupt: 0: no analog watchdog event occurred 1: analog watchdog event has occurred Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 4
+    bit_size: 1
+  - name: OVR_DS_IRQ
+    description: 'OVR_DS_IRQ: set to indicate a Down Sampler overrun (at least one data is lost) When read, provide the status of the interrupt: 0: no overrun occurred 1: overrun occurred Writing this bit clears the status of the interrupt: 0: no effect 1: clear the interrupt.'
+    bit_offset: 5
+    bit_size: 1
+  - name: OVR_DF_IRQ
+    description: set to indicate a decimation filter overrun (a data is lost).
+    bit_offset: 6
+    bit_size: 1
+  - name: DF_OVRFL_IRQ
+    description: set to indicate the decimation filter is saturated.
+    bit_offset: 7
+    bit_size: 1
+fieldset/SEQ_1:
+  description: SEQ_1 register.
+  fields:
+  - name: SEQ0
+    description: 'SEQ0[3:0]: channel number code for first conversion of the sequence 0000: VINM[0] to ADC single negative input 0001: VINM[1] to ADC single negative input 0010: VINM[2] to ADC single negative input 0011: VINM[3] to ADC single negative input 0100: VINP[0] to ADC single positive input 0101: VINP[1] to ADC single positive input 0110: VINP[2] to ADC single positive input 0111: VINP[3] to ADC single positive input 1000: VINP[0]-VINM[0] to ADC differential input 1001: VINP[1]-VINM[1] to ADC differential input 1010: VINP[2]-VINM[2] to ADC differential input 1011: VINP[3]-VINM[3] to ADC differential input 1100: VBAT - Battery level detector 1101: Temperature sensor 111x: reserved.'
+    bit_offset: 0
+    bit_size: 4
+  - name: SEQ1
+    description: 'SEQ1[3:0]: channel number code for second conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 4
+    bit_size: 4
+  - name: SEQ2
+    description: 'SEQ2[3:0]: channel number code for 3rd conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 8
+    bit_size: 4
+  - name: SEQ3
+    description: 'SEQ3[3:0]: channel number code for 4th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 12
+    bit_size: 4
+  - name: SEQ4
+    description: 'SEQ4[3:0]: channel number code for 5th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 16
+    bit_size: 4
+  - name: SEQ5
+    description: 'SEQ5[3:0]: channel number code for 6th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 20
+    bit_size: 4
+  - name: SEQ6
+    description: 'SEQ6[3:0]: channel number code for 7th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 24
+    bit_size: 4
+  - name: SEQ7
+    description: 'SEQ7[3:0]: channel number code for 8th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 28
+    bit_size: 4
+fieldset/SEQ_2:
+  description: SEQ_2 register.
+  fields:
+  - name: SEQ8
+    description: 'SEQ8[3:0]: channel number code for 9th conversion of the sequence 0000: VINM[0] to ADC single negative input 0001: VINM[1] to ADC single negative input 0010: VINM[2] to ADC single negative input 0011: VINM[3] to ADC single negative input 0100: VINP[0] to ADC single positive input 0101: VINP[1] to ADC single positive input 0110: VINP[2] to ADC single positive input 0111: VINP[3] to ADC single positive input 1000: VINP[0]-VINM[0] to ADC differential input 1001: VINP[1]-VINM[1] to ADC differential input 1010: VINP[2]-VINM[2] to ADC differential input 1011: VINP[3]-VINM[3] to ADC differential input 1100: VBAT - Battery level detector 1101: Temperature sensor 111x: reserved.'
+    bit_offset: 0
+    bit_size: 4
+  - name: SEQ9
+    description: 'SEQ9[3:0]: channel number code for 10th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 4
+    bit_size: 4
+  - name: SEQ10
+    description: 'SEQ10[3:0]: channel number code for 11th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 8
+    bit_size: 4
+  - name: SEQ11
+    description: 'SEQ11[3:0]: channel number code for 12th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 12
+    bit_size: 4
+  - name: SEQ12
+    description: 'SEQ12[3:0]: channel number code for 13th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 16
+    bit_size: 4
+  - name: SEQ13
+    description: 'SEQ13[3:0]: channel number code for 14th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 20
+    bit_size: 4
+  - name: SEQ14
+    description: 'SEQ14[3:0]: channel number code for 15th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 24
+    bit_size: 4
+  - name: SEQ15
+    description: 'SEQ15[3:0]: channel number code for 16th conversion of the sequence. See SEQ0 for code detail.'
+    bit_offset: 28
+    bit_size: 4
+fieldset/SWITCH:
+  description: SWITCH register.
+  fields:
+  - name: SE_VIN_0
+    description: 'SE_VIN_0[1:0]: input voltage for VINM[0] / VINP[0]-VINM[0] 00: Vinput = 1.2V 01: reserved (not used for this cut) 10: Vinput = 2.4V 11: Vinput = 3.6V.'
+    bit_offset: 0
+    bit_size: 2
+  - name: SE_VIN_1
+    description: 'SE_VIN_1[1:0]: input voltage for VINM[1] / VINP[1]-VINM[1] 00: Vinput = 1.2V 01: reserved (not used for this cut) 10: Vinput = 2.4V 11: Vinput = 3.6V.'
+    bit_offset: 2
+    bit_size: 2
+  - name: SE_VIN_2
+    description: 'SE_VIN_2[1:0]: input voltage for VINM[2] / VINP[2]-VINM[2] 00: Vinput = 1.2V 01: reserved (not used for this cut) 10: Vinput = 2.4V 11: Vinput = 3.6V.'
+    bit_offset: 4
+    bit_size: 2
+  - name: SE_VIN_3
+    description: 'SE_VIN_3[1:0]: input voltage for VINM[3] / VINP[3]-VINM[3] 00: Vinput = 1.2V 01: reserved (not used for this cut) 10: Vinput = 2.4V 11: Vinput = 3.6V.'
+    bit_offset: 6
+    bit_size: 2
+  - name: SE_VIN_4
+    description: 'SE_VIN_4[1:0]: input voltage for VINP[0] 00: Vinput = 1.2V 01: reserved (not used for this cut) 10: Vinput = 2.4V 11: Vinput = 3.6V.'
+    bit_offset: 8
+    bit_size: 2
+  - name: SE_VIN_5
+    description: 'SE_VIN_5[1:0]: input voltage for VINP[1] 00: Vinput = 1.2V 01: reserved (not used for this cut) 10: Vinput = 2.4V 11: Vinput = 3.6V.'
+    bit_offset: 10
+    bit_size: 2
+  - name: SE_VIN_6
+    description: 'SE_VIN_6[1:0]: input voltage for VINP[2] 00: Vinput = 1.2V 01: reserved (not used for this cut) 10: Vinput = 2.4V 11: Vinput = 3.6V.'
+    bit_offset: 12
+    bit_size: 2
+  - name: SE_VIN_7
+    description: 'SE_VIN_7[1:0]: input voltage for VINP[3] 00: Vinput = 1.2V 01: reserved (not used for this cut) 10: Vinput = 2.4V 11: Vinput = 3.6V.'
+    bit_offset: 14
+    bit_size: 2
+fieldset/VERSION_ID:
+  description: VERSION_ID register.
+  fields:
+  - name: VERSION_ID
+    description: 'VERSION_ID[7:0]: version of the embedded IP.'
+    bit_offset: 0
+    bit_size: 8
+fieldset/WD_CONF:
+  description: WD_CONF register.
+  fields:
+  - name: AWD_CHX
+    description: 'AWD_CHX[15:0]: analog watchdog channel selection to define which input channel(s) need to be guarded by the watchdog. Bit0: VINM[0] to ADC negative input Bit1: VINM[1] to ADC negative input Bit2: VINM[2] to ADC negative input Bit3: VINM[3] to ADC negative input Bit4: Not used Bit5: VBAT to ADC negative input Bit6: GND to ADC negative input Bit7: VDDA to ADC negative input Bit8: VINP[0] to ADC positive input Bit9: VINP[1] to ADC positive input Bit10: VINP[2] to ADC positive input Bit11: VINP[3] to ADC positive input Bit12: Not used Bit13: TEMP to ADC positive input Bit14: GND to ADC positive input Bit15: VDDA to ADC positive input.'
+    bit_offset: 0
+    bit_size: 16
+fieldset/WD_TH:
+  description: WD_TH register.
+  fields:
+  - name: WD_LT
+    description: 'WD_LT[11:0]: analog watchdog low level threshold.'
+    bit_offset: 0
+    bit_size: 12
+  - name: WD_HT
+    description: 'WD_HT[11:0]: analog watchdog high level threshold.'
+    bit_offset: 16
+    bit_size: 12
+fieldset/DF_CONF:
+  description: Decimation filter configuration register.
+  fields:
+  - name: DF_CIC_DEC_FACTOR
+    bit_offset: 0
+    bit_size: 7
+  - name: DF_CIC_DHF
+    description: CIC filter decimator half factor.
+    bit_offset: 7
+    bit_size: 1
+  - name: DF_ITP1P2
+    description: 1.2 fractional interpolator enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: DF_I_U2S
+    description: select signed/unsigned format for input.
+    bit_offset: 9
+    bit_size: 1
+  - name: DF_O_S2U
+    description: select signed/unsigned format for data output.
+    bit_offset: 10
+    bit_size: 1
+  - name: PDM_RATE
+    description: select the PDM clock rate.
+    bit_offset: 11
+    bit_size: 4
+  - name: DF_MICROL_RN
+    description: left/right channel selection on digital microphone.
+    bit_offset: 15
+    bit_size: 1
+  - name: DF_HPF_EN
+    description: high pass filter enable.
+    bit_offset: 16
+    bit_size: 1
+  - name: DF_HALF_D_EN
+    description: half dynamic enable.
+    bit_offset: 17
+    bit_size: 1
+fieldset/DF_DATAOUT:
+  description: Decimation filter Data output register.
+  fields:
+  - name: DF_DATA
+    description: contain the converted data at the output of the. decimation filter.
+    bit_offset: 0
+    bit_size: 16
+fieldset/OCM_CTRL:
+  description: Occasionnal mode control register.
+  fields:
+  - name: OCM_SRC
+    description: select the occasional conversion source.
+    bit_offset: 0
+    bit_size: 1
+  - name: OCM_ENA
+    description: start occasional conversion in analog audio and full. modes.
+    bit_offset: 1
+    bit_size: 1
+fieldset/PGA_CONF:
+  description: PGA configuration register.
+  fields:
+  - name: PGA_GAIN
+    description: from 6 to 30 dB.
+    bit_offset: 0
+    bit_size: 4
+  - name: PGA_BIAS
+    description: set the microphone bias voltage.
+    bit_offset: 4
+    bit_size: 3
+fieldset/TIMER_CONF:
+  description: Time to add after an LDO Enable or ADC Enable to let the HW to be stable before using it.
+  fields:
+  - name: ADC_LDO_DELAY
+    description: define the duration of a waiting time to be inserted between the ADC_LDO enable and the ADC ON to let time to the LDO to stabilize before starting a conversion.
+    bit_offset: 0
+    bit_size: 8
+  - name: VBIAS_PRECH_DELAY
+    description: define the duration of a waiting time starting at rising edge of PGA_EN signal and corresponding to the VBIAS precharge duration.
+    bit_offset: 8
+    bit_size: 8
+  - name: PRECH_DELAY_SEL
+    description: Select the time step PD_STEP for the VBIAS_PRECH_DELAY timer.
+    bit_offset: 16
+    bit_size: 1

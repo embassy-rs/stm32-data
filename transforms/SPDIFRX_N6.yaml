@@ -1,0 +1,25 @@
+transforms:
+  - !RenameRegisters
+    block: .*
+    from: ^SPDIFRX_(.+)$
+    to: $1
+  - !Rename
+    from: ^SPDIFRX_(.+)$
+    to: $1
+    type: Fieldset
+  - !DeleteRegisters
+    block: .*
+    from: FMT[12]_DR
+  - !DeleteFieldsets
+    from: FMT[12]_DR
+  - !RenameRegisters
+    block: .*
+    from: FMT0_DR
+    to: DR
+  - !Rename
+    from: FMT0_DR
+    to: DR
+    type: Fieldset
+  # Drop placeholder enums (SVD uses unhelpful B_0x variant names).
+  - !DeleteEnums
+    from: .*
