@@ -166,6 +166,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:I2C:i2c1_v1_0H7RS", ("i2c", "v3", "I2C")),
     (".*:I2C:i2c1_v1_0N6", ("i2c", "v3", "I2C")),
     (".*:FMPI2C:i2c2_v1_1", ("fmpi2c", "v2", "FMPI2C")),
+    ("STM32C5.*:DAC:.*", ("dac", "v8", "DAC")),
     ("STM32F10[1357].*:DAC:dacif_v1_1F1", ("dac", "v1", "DAC")), // Original F1 are v1
     (".*:DAC:dacif_v1_1F1", ("dac", "v2", "DAC")),
     (".*:DAC:F0dacif_v1_1", ("dac", "v2", "DAC")),
