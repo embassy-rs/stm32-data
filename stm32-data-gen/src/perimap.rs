@@ -166,6 +166,8 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:I2C:i2c1_v1_0H7RS", ("i2c", "v3", "I2C")),
     (".*:I2C:i2c1_v1_0N6", ("i2c", "v3", "I2C")),
     (".*:FMPI2C:i2c2_v1_1", ("fmpi2c", "v2", "FMPI2C")),
+    ("STM32C5(31|32|42).*:DAC:.*", ("dac", "v8", "DAC")),
+    ("STM32C5(51|52|62|91|93|A3).*:DAC:.*", ("dac", "v9", "DAC")),
     ("STM32F10[1357].*:DAC:dacif_v1_1F1", ("dac", "v1", "DAC")), // Original F1 are v1
     (".*:DAC:dacif_v1_1F1", ("dac", "v2", "DAC")),
     (".*:DAC:F0dacif_v1_1", ("dac", "v2", "DAC")),
@@ -757,6 +759,11 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32L4.*:GFXMMU:.*", ("gfxmmu", "v1", "GFXMMU")),
     ("STM32U5.*:GFXMMU:.*", ("gfxmmu", "v2", "GFXMMU")),
     ("STM32N6.*:GFXMMU:.*", ("gfxmmu", "n6", "GFXMMU")),
+    (
+        "STM32C5(31|32|42|51|52|62).*:ICACHE:.*",
+        ("icache", "v1_4crr_nomstsel", "ICACHE"),
+    ),
+    ("STM32C5(91|93|A3).*:ICACHE:.*", ("icache", "v1_4crr", "ICACHE")),
     ("STM32U5.*:ICACHE:.*", ("icache", "v1_3crr", "ICACHE")),
     ("STM32U3.*:ICACHE:.*", ("icache", "v1_3crr", "ICACHE")),
     ("STM32H50.*:ICACHE:.*", ("icache", "v1_0crr", "ICACHE")),
@@ -794,6 +801,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
     ("STM32U5.*:HASH:.*", ("hash", "v4", "HASH")),
     ("STM32WBA.*:HASH:.*", ("hash", "v4", "HASH")),
+    ("STM32C5.*:HASH:.*", ("hash", "c5", "HASH")),
     (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
     (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
     (".*:HASH:hash1_v4_0_N6", ("hash", "v3", "HASH")),
@@ -844,6 +852,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32(L5|WL|WB|WB0).*:PKA:.*", ("pka", "v1c", "PKA")),
     ("STM32(L4Q|L5|WL|WB).*:PKA:.*", ("pka", "v1c", "PKA")),
     ("STM32U3.*:CCB:.*", ("ccb", "v1", "CCB")),
+    ("STM32C5A3.*:CCB:.*", ("ccb", "v2", "CCB")),
     ("STM32U3.*:HSP1:.*", ("hsp", "v1", "HSP")),
     (".*:OTFDEC:.*", ("otfdec", "v1", "OTFDEC")),
     // N6 XSPI support
