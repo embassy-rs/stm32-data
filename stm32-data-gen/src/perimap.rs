@@ -871,11 +871,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
         ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG5_ADC"),
     ),
     (
-        r"STM32H7[7].*:dfsdm1_v1_0_H7.*",
-        ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG5_ADC"),
-    ),
-    (
-        r"STM32H7[8].*:dfsdm1_v1_0_H7.*",
+        r"STM32H7(23|25|30|33|35).*:dfsdm1_v1_0_H7.*",
         ("dfsdm", "v1", "DFSDM_8CH_4FLT_DLY_TRG5_ADC"),
     ),
     (
@@ -884,7 +880,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ),
     (
         r"STM32H7[AB].*:dfsdm1_v1_0_H7A_2ch.*",
-        ("dfsdm", "v1", "DFSDM_2CH_1FLT_TRG3_ADC"),
+        ("dfsdm", "v1", "DFSDM_2CH_1FLT_TRG5"),
     ),
     // --- STM32L4 ---
     (

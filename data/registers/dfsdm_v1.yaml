@@ -1,5 +1,5 @@
 # TOP LEVEL BLOCKS
-
+      
 # RM0432 (STM32L412/L422 newer): Upgraded sized-down core hosting 2
 # transceiver channels, 1 filter channel, 5-bit trigger, parallel
 # ADC routing, and active channel delay tuning registers (DLY)
@@ -22,10 +22,7 @@ block/DFSDM_2CH_1FLT_DLY_TRG5_ADC:
       byte_offset: 0x100
       block: FLT
 
-# RM0394 (STM32L412/L422): Sized-down baseline with 2 transceiver
-# channels (CH0-CH1), 1 filter channel (FLT0), 3-bit trigger, and
-# parallel ADC routing, lacking active DLY or HWID registers.
-block/DFSDM_2CH_1FLT_TRG3_ADC:
+block/DFSDM_2CH_1FLT_TRG5:
   description: Digital filter for sigma delta modulators.
   items:
     - name: CH
@@ -42,6 +39,14 @@ block/DFSDM_2CH_1FLT_TRG3_ADC:
         stride: 0x80
       byte_offset: 0x100
       block: FLT
+
+# RM0394 (STM32L412/L422): Sized-down baseline with 2 transceiver
+# channels (CH0-CH1), 1 filter channel (FLT0), 3-bit trigger, and
+# parallel ADC routing, lacking active DLY or HWID registers.
+block/DFSDM_2CH_1FLT_TRG3_ADC:
+  description: Digital filter for sigma delta modulators.
+  extends: DFSDM_2CH_1FLT_TRG5
+  items: []
 
 # RM0402 (STM32F412): Baseline configuration featuring 4 transceiver
 # channels (CH0–CH3), 2 filter channels (FLT0–FLT1), 3-bit Regular
