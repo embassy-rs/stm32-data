@@ -286,6 +286,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:QUADSPI:.*", ("quadspi", "v1", "QUADSPI")),
     ("STM32F1.*:BKP.*", ("bkp", "v1", "BKP")),
     (".*:RTC:rtc1_v1_1", ("rtc", "v1", "RTC")),
+    ("STM32C5.*:RTC:.*", ("rtc", "v3_c5", "RTC")),
     ("STM32C0.*:RTC:rtc3_.*", ("rtc", "v3_c0", "RTC")),
     ("STM32F0.*:RTC:rtc2_.*", ("rtc", "v2_f0", "RTC")),
     ("STM32F2.*:RTC:rtc2_.*", ("rtc", "v2_f2", "RTC")),
