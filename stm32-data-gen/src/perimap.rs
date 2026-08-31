@@ -377,6 +377,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32H7[RS].*:RCC:.*", ("rcc", "h7rs", "RCC")),
     ("STM32H7[AB].*:RCC:.*", ("rcc", "h7ab", "RCC")),
     ("STM32H7(42|43|53|50).*:RCC:.*", ("rcc", "h7rm0433", "RCC")),
+    ("STM32H7(23|25|30|33|35).*:RCC:.*", ("rcc", "h7rm0468", "RCC")),
     ("STM32H7.*:RCC:.*", ("rcc", "h7", "RCC")),
     ("STM32L0.[23].*:RCC:.*", ("rcc", "l0_v2", "RCC")),
     ("STM32L0.*:RCC:.*", ("rcc", "l0", "RCC")),
@@ -863,6 +864,74 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:XSPI[12]:XSPI:xspi_v2_1H7RS*", ("xspi", "v1", "XSPI")),
     (".*:XSPIM:XSPIM:xspi_v2_1H7RS*", ("xspim", "v1", "XSPIM")),
     ("STM32H7.*:MDMA:.*", ("mdma", "v1", "MDMA")),
+    // --- STM32F4 ---
+    (r"STM32F412.*:dfsdm1_v1_0_4ch.*", ("dfsdm", "v1", "DFSDM_4CH_2FLT_TRG3")),
+    (
+        r"STM32F4(1|2)3.*:dfsdm1_v1_0_4ch_F413.*",
+        ("dfsdm", "v1", "DFSDM_4CH_2FLT_TRG3"),
+    ),
+    (
+        r"STM32F4(1|2)3.*:dfsdm1_F413_v1_0.*",
+        ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG3"),
+    ),
+    // --- STM32F7 ---
+    (r"STM32F7[6].*:dfsdm1_F7_v1_0.*", ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG5")),
+    // --- STM32H7 ---
+    (
+        r"STM32H7(42|43|45|50|53|55|47|57).*:dfsdm1_v1_0_H7.*",
+        ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG5_ADC"),
+    ),
+    (
+        r"STM32H7(23|25|30|33|35).*:dfsdm1_v1_0_H7.*",
+        ("dfsdm", "v1", "DFSDM_8CH_4FLT_DLY_TRG5_ADC"),
+    ),
+    (
+        r"STM32H7[AB].*:dfsdm1_v1_0_H7A_8ch8f.*",
+        ("dfsdm", "v1", "DFSDM_8CH_8FLT_DLY_TRG5_ADC"),
+    ),
+    (
+        r"STM32H7[AB].*:dfsdm1_v1_0_H7A_2ch.*",
+        ("dfsdm", "v1", "DFSDM_2CH_1FLT_TRG5"),
+    ),
+    // --- STM32L4 ---
+    (
+        r"STM32L4[9]2.*:dfsdm1_v1_0_4ch_L4x1.*",
+        ("dfsdm", "v1", "DFSDM_2CH_1FLT_TRG3_ADC"),
+    ),
+    (
+        r"STM32L4[10].*:dfsdm1_v1_0_4ch_L4x1.*",
+        ("dfsdm", "v1", "DFSDM_4CH_2FLT_TRG3_ADC"),
+    ),
+    (
+        r"STM32L4[11].*:dfsdm1_v1_0.*",
+        ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG3_ADC"),
+    ),
+    (
+        r"STM32L4[9A].*:dfsdm1_v1_0_L49.*",
+        ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG3_ADC"),
+    ),
+    (
+        r"STM32L4[PQ].*:dfsdm1_v1_0_4ch_L4PQx.*",
+        ("dfsdm", "v1", "DFSDM_4CH_2FLT_DLY_TRG5_ADC"),
+    ),
+    (
+        r"STM32L4[RS].*:dfsdm1_v1_0_L4R.*",
+        ("dfsdm", "v1", "DFSDM_8CH_4FLT_DLY_TRG5_ADC"),
+    ),
+    // --- STM32L5 ---
+    (
+        r"STM32L5.*:dfsdm1_v2_1_L5.*",
+        ("dfsdm", "v1", "DFSDM_4CH_4FLT_DLY_TRG5_ADC"),
+    ),
+    // --- STM32MP1 ---
+    (
+        r"STM32MP13.*:dfsdm1_v1_0_4ch_MP13.*",
+        ("dfsdm", "v1", "DFSDM_4CH_2FLT_DLY_TRG5_ADC_HWID"),
+    ),
+    (
+        r"STM32MP15.*:STM32MP_dfsdm1_v2_1.*",
+        ("dfsdm", "v1", "DFSDM_8CH_6FLT_DLY_TRG5_ADC_HWID"),
+    ),
 ];
 
 pub struct Perimap {
