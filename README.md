@@ -221,9 +221,27 @@ When parsing a chip, for each peripheral a "key" string is constructed using thi
 - `CHIP`: full chip name, for example `STM32L443CC`
 - `PERIPHERAL_NAME`: peripheral name, for example `SPI3`. Corresponds to `IP.InstanceName` in the [MCU XML](https://github.com/embassy-rs/stm32-data-sources/blob/949842b4b8742e6bc70ae29a0ede14b4066db819/cubedb/mcu/STM32L443CCYx.xml#L38).
 - `IP_NAME`: IP name, for example `SPI`. Corresponds to `IP.Name` in the [MCU XML](https://github.com/embassy-rs/stm32-data-sources/blob/949842b4b8742e6bc70ae29a0ede14b4066db819/cubedb/mcu/STM32L443CCYx.xml#L38).
-- `IP_VERSION`: IP version, for example `spi2s1_v3_3_Cube`, Corresponds to `IP.Version` in the [MCU XML](https://github.com/embassy-rs/stm32-data-sources/blob/949842b4b8742e6bc70ae29a0ede14b4066db819/cubedb/mcu/STM32L443CCYx.xml#L38).
+- `IP_VERSION`: IP version, for example `spi2s1_v3_3`. Corresponds to `IP.Version` in the [MCU XML](https://github.com/embassy-rs/stm32-data-sources/blob/949842b4b8742e6bc70ae29a0ede14b4066db819/cubedb/mcu/STM32L443CCYx.xml#L38), with a trailing `_Cube` removed.
 
 `perimap` entries are regexes matching on the above "key" string. First regex that matches wins.
+
+#### Looking up perimap keys
+
+Use the `perimap-keys` tool to inspect the keys available for a chip or chip-family prefix:
+
+```bash
+cargo run --bin perimap-keys -- --chip STM32C5 --peripheral RTC
+```
+
+This prints:
+
+```text
+STM32C5:RTC:RTC:c7amba_rtc3
+```
+
+`--chip` accepts either a full chip name, such as `STM32C531KC`, or a family prefix, such as `STM32C5`. `--peripheral` accepts either an instance name, such as `ADC1`, or an IP name, such as `ADC`. When multiple source records match, the tool prints the unique keys in sorted order.
+
+The tool reads STM32C5 metadata from the CubeProgrammer DB2 JSON files and metadata for other families from the legacy CubeDB MCU XML files.
 
 The IP version is particularly useful. It is an ST-internal "IP version" that's incremented every time changes are made to the peripheral, so it
 correlates very well to changes in the peripheral's register interface.
