@@ -268,6 +268,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32H50.*:SYSCFG:.*", ("syscfg", "h50", "SYSCFG")),
     ("STM32H5.*:SYSCFG:.*", ("syscfg", "h5", "SYSCFG")),
     ("STM32N6.*:SYSCFG:.*", ("syscfg", "n6", "SYSCFG")),
+    ("STM32C5.*:IWDG:.*", ("iwdg", "c5", "IWDG")),
     (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
     (".*:IWDG:iwdg1_v2_0", ("iwdg", "v2", "IWDG")),
     (".*:IWDG:iwdg1_v3_0", ("iwdg", "v3", "IWDG")),
