@@ -211,6 +211,15 @@ fn process_core(
 
     apply_extras(chip_name, group, extras, &mut peripherals);
 
+    for p in peripherals.values_mut().filter(|p| p.rcc.is_none()) {
+        if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &p.name) {
+            if let Some(stop_mode_info) = stop_modes.peripheral_stop_mode_info(chip_name, &p.name) {
+                rcc_info.stop_mode = stop_mode_info;
+            }
+            p.rcc = Some(rcc_info);
+        }
+    }
+
     for p in peripherals.values_mut() {
         // sort and dedup pins, put the ones with AF number first, so we keep them
         p.pins
