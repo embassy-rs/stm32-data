@@ -624,6 +624,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32WB0[67].*:TIM1:.*", ("timer", "v3", "TIM_GP32")),
     ("STM32[CGHUW].*:HRTIM1?:.*", ("hrtim", "v1", "HRTIM")),
     // LPTIM for STM32Gx/Hx/Ux/Wx (and Cx) serials
+    ("STM32C5.*:LPTIM1:.*", ("lptim", "v2a", "LPTIM")),
     ("STM32U0.*:LPTIM.*:.*", ("lptim", "v2b", "LPTIM")),
     ("STM32(H5|U3|U5|WBA).*:LPTIM[12356]:.*", ("lptim", "v2a", "LPTIM")),
     ("STM32N6.*:LPTIM.*:.*", ("lptim", "n6", "LPTIM")),
