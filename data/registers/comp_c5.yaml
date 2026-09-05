@@ -1,0 +1,217 @@
+block/COMP:
+  description: Comparator with one channel.
+  items:
+  - name: SR
+    description: Comparator status register.
+    byte_offset: 0
+    access: Read
+    fieldset: SR_SINGLE
+  - name: ICFR
+    description: Comparator interrupt clear flag register.
+    byte_offset: 4
+    fieldset: ICFR_SINGLE
+  - name: CFGR
+    description: Comparator configuration register.
+    byte_offset: 12
+    fieldset: CFGR_SINGLE
+block/COMP_CHANNEL:
+  description: Comparator channel.
+  items:
+  - name: CFGR
+    description: Comparator configuration register.
+    byte_offset: 0
+    fieldset: CFGR_DUAL
+block/COMP_COMMON:
+  description: Common register block for a pair of comparators.
+  items:
+  - name: SR
+    description: Comparator status register.
+    byte_offset: 0
+    access: Read
+    fieldset: SR_DUAL
+  - name: ICFR
+    description: Comparator interrupt clear flag register.
+    byte_offset: 4
+    fieldset: ICFR_DUAL
+  - name: CFGR
+    description: Comparator configuration register.
+    array:
+      len: 2
+      stride: 4
+    byte_offset: 12
+    fieldset: CFGR_DUAL
+fieldset/CFGR_DUAL:
+  description: Comparator configuration register.
+  fields:
+  - name: EN
+    description: Comparator channel enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: BRGEN
+    description: Scaler bridge enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: SCALEN
+    description: Voltage scaler enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: POLARITY
+    description: Comparator channel polarity selection.
+    bit_offset: 3
+    bit_size: 1
+  - name: WINMODE
+    description: Comparator non-inverting input selector for window mode.
+    bit_offset: 4
+    bit_size: 1
+  - name: ITEN
+    description: Comparator channel interrupt enable.
+    bit_offset: 6
+    bit_size: 1
+  - name: HYST
+    description: Comparator channel hysteresis selection.
+    bit_offset: 8
+    bit_size: 2
+    enum: HYST
+  - name: PWRMODE
+    description: Power mode of the comparator channel.
+    bit_offset: 12
+    bit_size: 2
+    enum: PWRMODE
+  - name: WINOUT
+    description: Comparator output selector for window mode.
+    bit_offset: 14
+    bit_size: 1
+  - name: INMSEL
+    description: Comparator channel inverting input selection.
+    bit_offset: 16
+    bit_size: 4
+  - name: INPSEL
+    description: Comparator channel non-inverting input selection.
+    bit_offset:
+    - start: 20
+      end: 20
+    - start: 22
+      end: 22
+    bit_size: 2
+  - name: BLANKING
+    description: Comparator channel blanking source selection.
+    bit_offset: 24
+    bit_size: 4
+  - name: LOCK
+    description: Comparator configuration register lock.
+    bit_offset: 31
+    bit_size: 1
+fieldset/CFGR_SINGLE:
+  description: Comparator configuration register.
+  fields:
+  - name: EN
+    description: Comparator channel enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: BRGEN
+    description: Scaler bridge enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: SCALEN
+    description: Voltage scaler enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: POLARITY
+    description: Comparator channel polarity selection.
+    bit_offset: 3
+    bit_size: 1
+  - name: ITEN
+    description: Comparator channel interrupt enable.
+    bit_offset: 6
+    bit_size: 1
+  - name: HYST
+    description: Comparator channel hysteresis selection.
+    bit_offset: 8
+    bit_size: 2
+    enum: HYST
+  - name: PWRMODE
+    description: Power mode of the comparator channel.
+    bit_offset: 12
+    bit_size: 2
+    enum: PWRMODE
+  - name: INMSEL
+    description: Comparator channel inverting input selection.
+    bit_offset: 16
+    bit_size: 4
+  - name: INPSEL
+    description: Comparator channel non-inverting input selection.
+    bit_offset: 20
+    bit_size: 2
+  - name: BLANKING
+    description: Comparator channel blanking source selection.
+    bit_offset: 24
+    bit_size: 4
+  - name: LOCK
+    description: Comparator configuration register lock.
+    bit_offset: 31
+    bit_size: 1
+fieldset/ICFR_DUAL:
+  description: Comparator interrupt clear flag register.
+  fields:
+  - name: CCIF
+    description: Clear comparator channel interrupt flag.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+fieldset/ICFR_SINGLE:
+  description: Comparator interrupt clear flag register.
+  fields:
+  - name: CCIF
+    description: Clear comparator channel interrupt flag.
+    bit_offset: 16
+    bit_size: 1
+fieldset/SR_DUAL:
+  description: Comparator status register.
+  fields:
+  - name: CVAL
+    description: Comparator channel output status.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+  - name: CIF
+    description: Comparator channel interrupt flag.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 2
+      stride: 1
+fieldset/SR_SINGLE:
+  description: Comparator status register.
+  fields:
+  - name: CVAL
+    description: Comparator channel output status.
+    bit_offset: 0
+    bit_size: 1
+  - name: CIF
+    description: Comparator channel interrupt flag.
+    bit_offset: 16
+    bit_size: 1
+enum/HYST:
+  bit_size: 2
+  variants:
+  - name: None
+    value: 0
+  - name: Low
+    value: 1
+  - name: Medium
+    value: 2
+  - name: High
+    value: 3
+enum/PWRMODE:
+  bit_size: 2
+  variants:
+  - name: HighSpeed
+    description: High speed and high power.
+    value: 0
+  - name: MediumSpeed
+    description: Medium speed and medium power.
+    value: 1
