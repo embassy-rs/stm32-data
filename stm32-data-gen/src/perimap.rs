@@ -469,6 +469,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32H7(A3|B3|B0).*:FLASH:.*", ("flash", "h7ab", "FLASH")),
     ("STM32H7.*:FLASH:.*", ("flash", "h7", "FLASH")),
     ("STM32F0.*:FLASH:.*", ("flash", "f0", "FLASH")),
+    ("STM32F10[13].[FG].*:FLASH:.*", ("flash", "f1_xl", "FLASH")),
     ("STM32F1.*:FLASH:.*", ("flash", "f1", "FLASH")),
     ("STM32F2.*:FLASH:.*", ("flash", "f2", "FLASH")),
     ("STM32F3.*:FLASH:.*", ("flash", "f3", "FLASH")),
