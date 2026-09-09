@@ -55,7 +55,9 @@ generated chip JSONs. Companion file on the HAL side:
   `r"STM32F7[6].*:dfsdm1_F7_v1_0.*"` — char class `[6]` never matches F77x.
   STM32F777NI.json has DFSDM1 (cubedb) but no registers block. 11+ chip
   groups affected. Fix: `STM32F7[67].*` (covers F765/767/768/769 and
-  F777/778/779 — F768/778's distinguishing digit is the 4th).
+  F777/778/779 — F768/778's distinguishing digit is the 4th). Config name is
+  shared (`dfsdm1_F7_v1_0_Cube`) across all F7xx — F77x get the same block,
+  no new block needed.
 
 - [ ] **SD3 — perimap.rs: L4 regexes dead/wrong (L451/452/462 + L471/475/476/
   485/486 missing).**
@@ -71,7 +73,7 @@ generated chip JSONs. Companion file on the HAL side:
     rm0351's footnote puts ADC input only on L49x/L4Ax). rm0351 (L47x/48x) =
     8ch/4flt/no ADC → **`DFSDM_8CH_4FLT_TRG3`**.
   - Fix (patterns are anchored `^$` by util::new_regex_map, so config-distinct
-    patterns are safe):
+    patterns are safe): **replace the three dead L4 patterns above** with
     `(r"STM32L4(5|6)(1|2).*:dfsdm1_v1_0_4ch_L4x1.*", ("dfsdm","v1","DFSDM_4CH_2FLT_TRG3"))`
     `(r"STM32L4(7|8).*:dfsdm1_v1_0_Cube.*", ("dfsdm","v1","DFSDM_8CH_4FLT_TRG3"))`
 
@@ -96,6 +98,11 @@ generated chip JSONs. Companion file on the HAL side:
     TIM6_TRGO, jtrg8 TIM7_TRGO, jtrg9 EXTI11, jtrg10 EXTI15.
   Footnote semantics unknown — if ST ever clarifies (e.g. F423-only
   sources), revisit.
+  - DFSDM1 jtrg4/jtrg6/jtrg8 stay **reserved** (currently commented out in
+    trigger.rs) — do not add sources.
+  - F413 break mapping (both `DFSDM1_BREAK0` *and* `DFSDM2_BREAK0` → TIM1;
+    same for TIM8) is a reasonable reading of rm0430 Table 90 (single
+    unlabeled table) but re-confirm during execution.
 
 - [ ] **SD6 (dormant) — LPTIM3_ETR ← DFSDM2_BREAK0 (H7A/B).**
   Row commented out in trigger.rs (commit 20055b8, "crashes the build.rs").
@@ -131,6 +138,8 @@ generated chip JSONs. Companion file on the HAL side:
 - [ ] Expected blocks after fixes: L451/452/462 → `DFSDM_4CH_2FLT_TRG3`;
   L471-486 → `DFSDM_8CH_4FLT_TRG3`; F777-779 → `DFSDM_8CH_4FLT_TRG5`;
   L552/562 → `DFSDM_4CH_4FLT_DLY_TRG5_ADC` (existing regex, currently
-  unreachable).
+  unreachable). Side effect: `DFSDM_2CH_1FLT_TRG3_ADC` and
+  `DFSDM_4CH_2FLT_TRG3_ADC` become fully chip-less (already reflected on the
+  embassy side in HOUSEKEEPING).
 - [ ] Embassy-side check matrix tracked in
   `embassy-stm32/src/dfsdm/TODO-v2.md` → VERIFY.
