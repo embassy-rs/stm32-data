@@ -42,6 +42,19 @@ generated chip JSONs. Companion file on the HAL side:
 
 ## TODO
 
+- [ ] **SD10 — trigger.rs signal naming for 3-bit-JEXTSEL chips (PRIORITY 1).**
+  The signal suffix is written verbatim as JEXTSEL (build.rs
+  `trigger_trait_impl!` → `InjectedTrigger::signal()` → `set_jextsel`). 5-bit
+  chips are global-indexed (JEXTSEL 0x00-0x1F → jtrg0-31, gaps = reserved
+  encodings) → suffix == encoding, correct. 3-bit chips (F412, F413,
+  L451/452/462, L471-486, L496/A6) are COMPACTED (rm0430/rm0402/rm0351:
+  0x00-0x07 → jtrg{0,1,2,3,5,7,9,10}, skipping N/A jtrg4/6/8) → suffix !=
+  encoding, wrong trigger selected (e.g. JTRG5 → 0x05 → hardware jtrg7). Fix:
+  renumber those suffixes to compact 0-7; verify each chip's encoding from the
+  PDF — especially F413 DFSDM2, whose 4-column table pdftotext garbles (confirm
+  which 8 of its 11 sources are selectable). Pure data rename; no embassy
+  driver change.
+
 - [ ] **SD1 — header.rs: DFSDM1 `_NS` alias (unlocks L552/L562).**
   Root cause: L5 is TrustZone-attributed (RM0438 `DFSDM1SEC`); its Cube
   headers define only `DFSDM1_BASE_NS` (zero plain `DFSDM1_BASE`), so
@@ -131,10 +144,11 @@ generated chip JSONs. Companion file on the HAL side:
 
 ## REGENERATE + VERIFY
 
-- [ ] Re-run the data + metapac generation after SD1-SD5.
+- [ ] Re-run the data + metapac generation after SD1-SD5, SD10.
 - [ ] Expected newly-enabled DFSDM chips: F777/F778/F779, L451/L452/L462,
   L471/L475/L476/L485/L486, L552/L562 (SD1), H7B0 trigger signals (SD4);
-  F413 trigger names corrected (SD5).
+  F413 trigger names corrected (SD5); 3-bit chips' trigger suffixes
+  renumbered to compact 0-7 (SD10).
 - [ ] Expected blocks after fixes: L451/452/462 → `DFSDM_4CH_2FLT_TRG3`;
   L471-486 → `DFSDM_8CH_4FLT_TRG3`; F777-779 → `DFSDM_8CH_4FLT_TRG5`;
   L552/562 → `DFSDM_4CH_4FLT_DLY_TRG5_ADC` (existing regex, currently
