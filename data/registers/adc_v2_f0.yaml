@@ -2,51 +2,54 @@ block/ADC:
   description: Analog-to-digital converter
   items:
   - name: ISR
-    description: interrupt and status register
+    description: Interrupt and status register
     byte_offset: 0
     fieldset: ISR
   - name: IER
-    description: interrupt enable register
+    description: Interrupt enable register
     byte_offset: 4
     fieldset: IER
   - name: CR
-    description: control register
+    description: Control register
     byte_offset: 8
     fieldset: CR
   - name: CFGR1
-    description: configuration register 1
+    description: Configuration register 1
     byte_offset: 12
     fieldset: CFGR1
   - name: CFGR2
-    description: configuration register 2
+    description: Configuration register 2
     byte_offset: 16
     fieldset: CFGR2
   - name: SMPR
-    description: sampling time register
+    description: Sampling time register
     byte_offset: 20
     fieldset: SMPR
   - name: TR
-    description: watchdog threshold register
+    description: Analog watchdog threshold register
+    array:
+      len: 1
+      stride: 4
     byte_offset: 32
     fieldset: TR
   - name: CHSELR
-    description: channel selection register
+    description: 'Channel selection register (CHSELRMOD = 0: one bit per channel)'
     byte_offset: 40
     fieldset: CHSELR
   - name: DR
-    description: data register
+    description: Data register
     byte_offset: 64
     access: Read
     fieldset: DR
   - name: CCR
-    description: common configuration register
+    description: Common configuration register
     byte_offset: 776
     fieldset: CCR
 fieldset/CCR:
-  description: common configuration register
+  description: Common configuration register
   fields:
   - name: VREFEN
-    description: Temperature sensor and VREFINT enable
+    description: VREFINT enable
     bit_offset: 22
     bit_size: 1
   - name: TSEN
@@ -58,7 +61,7 @@ fieldset/CCR:
     bit_offset: 24
     bit_size: 1
 fieldset/CFGR1:
-  description: configuration register 1
+  description: Configuration register 1
   fields:
   - name: DMAEN
     description: Direct memory access enable
@@ -94,12 +97,11 @@ fieldset/CFGR1:
     bit_size: 2
     enum: EXTEN
   - name: OVRMOD
-    description: Overrun management mode
+    description: 'Overrun management mode (0: ADC_DR is preserved when an overrun is detected, 1: ADC_DR is overwritten with the last conversion result)'
     bit_offset: 12
     bit_size: 1
-    enum: OVRMOD
   - name: CONT
-    description: Continuous conversion
+    description: Continuous conversion mode
     bit_offset: 13
     bit_size: 1
   - name: WAIT
@@ -114,21 +116,20 @@ fieldset/CFGR1:
     description: Discontinuous mode
     bit_offset: 16
     bit_size: 1
-  - name: AWDSGL
-    description: Enable the watchdog on a single channel or on all channels
+  - name: AWD1SGL
+    description: Enable the analog watchdog 1 on a single channel (1) or on all channels (0)
     bit_offset: 22
     bit_size: 1
-    enum: AWDSGL
-  - name: AWDEN
-    description: Analog watchdog enable
+  - name: AWD1EN
+    description: Analog watchdog 1 enable
     bit_offset: 23
     bit_size: 1
-  - name: AWDCH
-    description: Analog watchdog channel selection
+  - name: AWD1CH
+    description: Analog watchdog 1 channel selection
     bit_offset: 26
     bit_size: 5
 fieldset/CFGR2:
-  description: configuration register 2
+  description: Configuration register 2
   fields:
   - name: CKMODE
     description: ADC clock mode
@@ -136,9 +137,9 @@ fieldset/CFGR2:
     bit_size: 2
     enum: CKMODE
 fieldset/CHSELR:
-  description: channel selection register
+  description: Channel selection register (CHSELRMOD = 0)
   fields:
-  - name: CHSEL x
+  - name: CHSEL
     description: Channel-x selection
     bit_offset: 0
     bit_size: 1
@@ -146,7 +147,7 @@ fieldset/CHSELR:
       len: 19
       stride: 1
 fieldset/CR:
-  description: control register
+  description: Control register
   fields:
   - name: ADEN
     description: ADC enable command
@@ -157,7 +158,7 @@ fieldset/CR:
     bit_offset: 1
     bit_size: 1
   - name: ADSTART
-    description: ADC start conversion command
+    description: ADC start of conversion
     bit_offset: 2
     bit_size: 1
   - name: ADSTP
@@ -169,29 +170,29 @@ fieldset/CR:
     bit_offset: 31
     bit_size: 1
 fieldset/DR:
-  description: data register
+  description: Data register
   fields:
   - name: DATA
     description: Converted data
     bit_offset: 0
     bit_size: 16
 fieldset/IER:
-  description: interrupt enable register
+  description: Interrupt enable register
   fields:
   - name: ADRDYIE
     description: ADC ready interrupt enable
     bit_offset: 0
     bit_size: 1
   - name: EOSMPIE
-    description: End of sampling flag interrupt enable
+    description: End of sampling interrupt enable
     bit_offset: 1
     bit_size: 1
   - name: EOCIE
     description: End of conversion interrupt enable
     bit_offset: 2
     bit_size: 1
-  - name: EOSEQIE
-    description: End of conversion sequence interrupt enable
+  - name: EOSIE
+    description: End of sequence interrupt enable
     bit_offset: 3
     bit_size: 1
   - name: OVRIE
@@ -202,11 +203,14 @@ fieldset/IER:
     description: Analog watchdog interrupt enable
     bit_offset: 7
     bit_size: 1
+    array:
+      len: 1
+      stride: 1
 fieldset/ISR:
-  description: interrupt and status register
+  description: Interrupt and status register
   fields:
   - name: ADRDY
-    description: ADC ready
+    description: ADC ready flag
     bit_offset: 0
     bit_size: 1
   - name: EOSMP
@@ -217,28 +221,34 @@ fieldset/ISR:
     description: End of conversion flag
     bit_offset: 2
     bit_size: 1
-  - name: EOSEQ
+  - name: EOS
     description: End of sequence flag
     bit_offset: 3
     bit_size: 1
   - name: OVR
-    description: ADC overrun
+    description: Overrun flag
     bit_offset: 4
     bit_size: 1
   - name: AWD
     description: Analog watchdog flag
     bit_offset: 7
     bit_size: 1
+    array:
+      len: 1
+      stride: 1
 fieldset/SMPR:
-  description: sampling time register
+  description: Sampling time register
   fields:
   - name: SMP
     description: Sampling time selection
     bit_offset: 0
     bit_size: 3
+    array:
+      len: 1
+      stride: 4
     enum: SAMPLE_TIME
 fieldset/TR:
-  description: watchdog threshold register
+  description: Analog watchdog threshold register
   fields:
   - name: LT
     description: Analog watchdog lower threshold
@@ -257,108 +267,90 @@ enum/ALIGN:
   - name: Left
     description: Left alignment
     value: 1
-enum/AWDSGL:
-  bit_size: 1
-  variants:
-  - name: AllChannels
-    description: Analog watchdog enabled on all channels
-    value: 0
-  - name: SingleChannel
-    description: Analog watchdog enabled on a single channel
-    value: 1
 enum/CKMODE:
   bit_size: 2
   variants:
-  - name: ADCCLK
-    description: Asynchronous clock mode
+  - name: Asynchronous
+    description: Asynchronous clock (adc_ker_ck)
     value: 0
-  - name: PCLK_Div2
-    description: Synchronous clock mode (PCLK/2)
+  - name: SyncDiv2
+    description: Synchronous clock (PCLK/2)
     value: 1
-  - name: PCLK_Div4
-    description: Sychronous clock mode (PCLK/4)
+  - name: SyncDiv4
+    description: Synchronous clock (PCLK/4)
     value: 2
 enum/DMACFG:
   bit_size: 1
   variants:
   - name: OneShot
-    description: DMA One Shot mode selected
+    description: DMA one shot mode selected
     value: 0
   - name: Circular
-    description: DMA Circular mode selected
+    description: DMA circular mode selected
     value: 1
 enum/EXTEN:
   bit_size: 2
   variants:
   - name: Disabled
-    description: Trigger detection disabled
+    description: Hardware trigger detection disabled (conversions can be launched by software)
     value: 0
   - name: RisingEdge
-    description: Trigger detection on the rising edge
+    description: Hardware trigger detection on the rising edge
     value: 1
   - name: FallingEdge
-    description: Trigger detection on the falling edge
+    description: Hardware trigger detection on the falling edge
     value: 2
   - name: BothEdges
-    description: Trigger detection on both the rising and falling edges
+    description: Hardware trigger detection on both the rising and falling edges
     value: 3
-enum/OVRMOD:
-  bit_size: 1
-  variants:
-  - name: Preserved
-    description: ADC_DR register is preserved with the old data when an overrun is detected
-    value: 0
-  - name: Overwritten
-    description: ADC_DR register is overwritten with the last conversion result when an overrun is detected
-    value: 1
 enum/RES:
   bit_size: 2
   variants:
   - name: Bits12
-    description: 12-bit (14 ADCCLK cycles)
+    description: 12-bit
     value: 0
   - name: Bits10
-    description: 10-bit (13 ADCCLK cycles)
+    description: 10-bit
     value: 1
   - name: Bits8
-    description: 8-bit (11 ADCCLK cycles)
+    description: 8-bit
     value: 2
   - name: Bits6
-    description: 6-bit (9 ADCCLK cycles)
+    description: 6-bit
     value: 3
 enum/SAMPLE_TIME:
   bit_size: 3
   variants:
   - name: Cycles1_5
-    description: 1.5 cycles
+    description: 1.5 ADC clock cycles
     value: 0
   - name: Cycles7_5
-    description: 7.5 cycles
+    description: 7.5 ADC clock cycles
     value: 1
   - name: Cycles13_5
-    description: 13.5 cycles
+    description: 13.5 ADC clock cycles
     value: 2
   - name: Cycles28_5
-    description: 28.5 cycles
+    description: 28.5 ADC clock cycles
     value: 3
   - name: Cycles41_5
-    description: 41.5 cycles
+    description: 41.5 ADC clock cycles
     value: 4
   - name: Cycles55_5
-    description: 55.5 cycles
+    description: 55.5 ADC clock cycles
     value: 5
   - name: Cycles71_5
-    description: 71.5 cycles
+    description: 71.5 ADC clock cycles
     value: 6
   - name: Cycles239_5
-    description: 239.5 cycles
+    description: 239.5 ADC clock cycles
     value: 7
 enum/SCANDIR:
   bit_size: 1
   variants:
   - name: Upward
-    description: Upward scan (from CHSEL0 to CHSEL18)
+    description: Upward scan (from channel 0 to the highest channel)
     value: 0
   - name: Backward
-    description: Backward scan (from CHSEL18 to CHSEL0)
+    description: Backward scan (from the highest channel to channel 0)
     value: 1

@@ -2,58 +2,58 @@ block/ADC:
   description: Analog-to-digital converter
   items:
   - name: SR
-    description: status register
+    description: Status register
     byte_offset: 0
     fieldset: SR
   - name: CR1
-    description: control register 1
+    description: Control register 1
     byte_offset: 4
     fieldset: CR1
   - name: CR2
-    description: control register 2
+    description: Control register 2
     byte_offset: 8
     fieldset: CR2
-  - name: SMPR1
-    description: sample time register 1
+  - name: SMPR
+    description: Sample time register. SMPR[i] holds the sample times of channels 10*i to 10*i+9 (SMPR[0] is what ST calls SMPR2, SMPR[1] SMPR1, ...).
+    array:
+      offsets:
+      - 4
+      - 0
     byte_offset: 12
-    fieldset: SMPR1
-  - name: SMPR2
-    description: sample time register 2
-    byte_offset: 16
-    fieldset: SMPR2
+    fieldset: SMPR
   - name: JOFR
-    description: injected channel data offset register x
+    description: Injected channel data offset register
     array:
       len: 4
       stride: 4
     byte_offset: 20
     fieldset: JOFR
   - name: HTR
-    description: watchdog higher threshold register
+    description: Watchdog higher threshold register
     byte_offset: 36
     fieldset: HTR
   - name: LTR
-    description: watchdog lower threshold register
+    description: Watchdog lower threshold register
     byte_offset: 40
     fieldset: LTR
   - name: SQR1
-    description: regular sequence register 1
+    description: Regular sequence register 1 (length and conversions 13 to 16)
     byte_offset: 44
     fieldset: SQR1
   - name: SQR2
-    description: regular sequence register 2
+    description: Regular sequence register 2 (conversions 7 to 12)
     byte_offset: 48
     fieldset: SQR2
   - name: SQR3
-    description: regular sequence register 3
+    description: Regular sequence register 3 (conversions 1 to 6)
     byte_offset: 52
     fieldset: SQR3
   - name: JSQR
-    description: injected sequence register
+    description: Injected sequence register
     byte_offset: 56
     fieldset: JSQR
   - name: JDR
-    description: injected data register x
+    description: Injected data register
     array:
       len: 4
       stride: 4
@@ -61,12 +61,12 @@ block/ADC:
     access: Read
     fieldset: JDR
   - name: DR
-    description: regular data register
+    description: Regular data register
     byte_offset: 76
     access: Read
     fieldset: DR
 fieldset/CR1:
-  description: control register 1
+  description: Control register 1
   fields:
   - name: AWDCH
     description: Analog watchdog channel select bits
@@ -92,7 +92,6 @@ fieldset/CR1:
     description: Enable the watchdog on a single channel in scan mode
     bit_offset: 9
     bit_size: 1
-    enum: AWDSGL
   - name: JAUTO
     description: Automatic injected group conversion
     bit_offset: 10
@@ -127,10 +126,10 @@ fieldset/CR1:
     bit_offset: 26
     bit_size: 1
 fieldset/CR2:
-  description: control register 2
+  description: Control register 2
   fields:
   - name: ADON
-    description: A/D Converter ON / OFF
+    description: A/D converter ON / OFF
     bit_offset: 0
     bit_size: 1
   - name: CONT
@@ -138,19 +137,17 @@ fieldset/CR2:
     bit_offset: 1
     bit_size: 1
   - name: DMA
-    description: Direct memory access mode (for single ADC mode)
+    description: Direct memory access mode
     bit_offset: 8
     bit_size: 1
   - name: DDS
-    description: DMA disable selection (for single ADC mode)
+    description: 'DMA disable selection (0: no new DMA request after the last transfer, 1: DMA requests are issued as long as data are converted and DMA=1)'
     bit_offset: 9
     bit_size: 1
-    enum: DDS
   - name: EOCS
-    description: End of conversion selection
+    description: 'End of conversion selection (0: EOC is set at the end of each sequence, 1: at the end of each conversion)'
     bit_offset: 10
     bit_size: 1
-    enum: EOCS
   - name: ALIGN
     description: Data alignment
     bit_offset: 11
@@ -183,38 +180,38 @@ fieldset/CR2:
     bit_offset: 30
     bit_size: 1
 fieldset/DR:
-  description: regular data register
+  description: Regular data register
   fields:
   - name: DATA
     description: Regular data
     bit_offset: 0
     bit_size: 16
 fieldset/HTR:
-  description: watchdog higher threshold register
+  description: Watchdog higher threshold register
   fields:
   - name: HT
     description: Analog watchdog higher threshold
     bit_offset: 0
     bit_size: 12
 fieldset/JDR:
-  description: injected data register x
+  description: Injected data register
   fields:
   - name: JDATA
     description: Injected data
     bit_offset: 0
     bit_size: 16
 fieldset/JOFR:
-  description: injected channel data offset register x
+  description: Injected channel data offset register
   fields:
   - name: JOFFSET
     description: Data offset for injected channel x
     bit_offset: 0
     bit_size: 12
 fieldset/JSQR:
-  description: injected sequence register
+  description: Injected sequence register
   fields:
   - name: JSQ
-    description: 1st conversion in injected sequence
+    description: Conversion in injected sequence
     bit_offset: 0
     bit_size: 5
     array:
@@ -225,49 +222,28 @@ fieldset/JSQR:
     bit_offset: 20
     bit_size: 2
 fieldset/LTR:
-  description: watchdog lower threshold register
+  description: Watchdog lower threshold register
   fields:
   - name: LT
     description: Analog watchdog lower threshold
     bit_offset: 0
     bit_size: 12
-fieldset/SMPR1:
-  description: sample time register 1
+fieldset/SMPR:
+  description: Sample time register
   fields:
   - name: SMP
-    description: Channel 10 sampling time selection
-    bit_offset: 0
-    bit_size: 3
-    array:
-      len: 9
-      stride: 3
-    enum: SAMPLE_TIME
-  - name: SMPx_x
-    description: Sample time bits
-    bit_offset: 0
-    bit_size: 32
-    enum: SMPR_SMPx_x
-fieldset/SMPR2:
-  description: sample time register 2
-  fields:
-  - name: SMP
-    description: Channel 0 sampling time selection
+    description: Channel x sample time selection
     bit_offset: 0
     bit_size: 3
     array:
       len: 10
       stride: 3
     enum: SAMPLE_TIME
-  - name: SMPx_x
-    description: Sample time bits
-    bit_offset: 0
-    bit_size: 32
-    enum: SMPR_SMPx_x
 fieldset/SQR1:
-  description: regular sequence register 1
+  description: Regular sequence register 1
   fields:
   - name: SQ
-    description: 13th conversion in regular sequence
+    description: Conversion in regular sequence
     bit_offset: 0
     bit_size: 5
     array:
@@ -278,30 +254,30 @@ fieldset/SQR1:
     bit_offset: 20
     bit_size: 4
 fieldset/SQR2:
-  description: regular sequence register 2
+  description: Regular sequence register
   fields:
   - name: SQ
-    description: 7th conversion in regular sequence
+    description: Conversion in regular sequence
     bit_offset: 0
     bit_size: 5
     array:
       len: 6
       stride: 5
 fieldset/SQR3:
-  description: regular sequence register 3
+  description: Regular sequence register
   fields:
   - name: SQ
-    description: 1st conversion in regular sequence
+    description: Conversion in regular sequence
     bit_offset: 0
     bit_size: 5
     array:
       len: 6
       stride: 5
 fieldset/SR:
-  description: status register
+  description: Status register
   fields:
   - name: AWD
-    description: Analog watchdog event occurred
+    description: Analog watchdog flag
     bit_offset: 0
     bit_size: 1
   - name: EOC
@@ -313,15 +289,15 @@ fieldset/SR:
     bit_offset: 2
     bit_size: 1
   - name: JSTRT
-    description: Injected channel conversion has started
+    description: Injected channel start flag
     bit_offset: 3
     bit_size: 1
   - name: STRT
-    description: Regular channel conversion has started
+    description: Regular channel start flag
     bit_offset: 4
     bit_size: 1
   - name: OVR
-    description: Overrun occurred
+    description: Overrun
     bit_offset: 5
     bit_size: 1
 enum/ALIGN:
@@ -333,114 +309,60 @@ enum/ALIGN:
   - name: Left
     description: Left alignment
     value: 1
-enum/AWDSGL:
-  bit_size: 1
-  variants:
-  - name: AllChannels
-    description: Analog watchdog enabled on all channels
-    value: 0
-  - name: SingleChannel
-    description: Analog watchdog enabled on a single channel
-    value: 1
-enum/DDS:
-  bit_size: 1
-  variants:
-  - name: Single
-    description: No new DMA request is issued after the last transfer
-    value: 0
-  - name: Continuous
-    description: DMA requests are issued as long as data are converted and DMA=1
-    value: 1
-enum/EOCS:
-  bit_size: 1
-  variants:
-  - name: EachSequence
-    description: The EOC bit is set at the end of each sequence of regular conversions
-    value: 0
-  - name: EachConversion
-    description: The EOC bit is set at the end of each regular conversion
-    value: 1
 enum/EXTEN:
   bit_size: 2
   variants:
   - name: Disabled
-    description: Trigger detection disabled
+    description: Hardware trigger detection disabled (conversions can be launched by software)
     value: 0
   - name: RisingEdge
-    description: Trigger detection on the rising edge
+    description: Hardware trigger detection on the rising edge
     value: 1
   - name: FallingEdge
-    description: Trigger detection on the falling edge
+    description: Hardware trigger detection on the falling edge
     value: 2
   - name: BothEdges
-    description: Trigger detection on both the rising and falling edges
+    description: Hardware trigger detection on both the rising and falling edges
     value: 3
 enum/RES:
   bit_size: 2
   variants:
   - name: Bits12
-    description: 12-bit (15 ADCCLK cycles)
+    description: 12-bit
     value: 0
   - name: Bits10
-    description: 10-bit (13 ADCCLK cycles)
+    description: 10-bit
     value: 1
   - name: Bits8
-    description: 8-bit (11 ADCCLK cycles)
+    description: 8-bit
     value: 2
   - name: Bits6
-    description: 6-bit (9 ADCCLK cycles)
+    description: 6-bit
     value: 3
 enum/SAMPLE_TIME:
   bit_size: 3
   variants:
   - name: Cycles3
-    description: 3 cycles
+    description: 3 ADC clock cycles
     value: 0
   - name: Cycles15
-    description: 15 cycles
+    description: 15 ADC clock cycles
     value: 1
   - name: Cycles28
-    description: 28 cycles
+    description: 28 ADC clock cycles
     value: 2
   - name: Cycles56
-    description: 56 cycles
+    description: 56 ADC clock cycles
     value: 3
   - name: Cycles84
-    description: 84 cycles
+    description: 84 ADC clock cycles
     value: 4
   - name: Cycles112
-    description: 112 cycles
+    description: 112 ADC clock cycles
     value: 5
   - name: Cycles144
-    description: 144 cycles
+    description: 144 ADC clock cycles
     value: 6
   - name: Cycles480
-    description: 480 cycles
-    value: 7
-enum/SMPR_SMPx_x:
-  bit_size: 32
-  variants:
-  - name: Cycles3
-    description: 3 cycles
-    value: 0
-  - name: Cycles15
-    description: 15 cycles
-    value: 1
-  - name: Cycles28
-    description: 28 cycles
-    value: 2
-  - name: Cycles56
-    description: 56 cycles
-    value: 3
-  - name: Cycles84
-    description: 84 cycles
-    value: 4
-  - name: Cycles112
-    description: 112 cycles
-    value: 5
-  - name: Cycles144
-    description: 144 cycles
-    value: 6
-  - name: Cycles480
-    description: 480 cycles
+    description: 480 ADC clock cycles
     value: 7

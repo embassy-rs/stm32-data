@@ -1,58 +1,66 @@
 block/ADC_COMMON:
-  description: Analog-to-Digital Converter
+  description: Common ADC registers
   items:
   - name: CSR
-    description: ADC Common status register
+    description: Common status register
     byte_offset: 0
     access: Read
     fieldset: CSR
   - name: CCR
-    description: ADC common control register
+    description: Common control register
     byte_offset: 8
     fieldset: CCR
   - name: CDR
-    description: ADC common regular data register for dual and triple modes
+    description: Common regular data register for dual mode
     byte_offset: 12
     access: Read
     fieldset: CDR
 fieldset/CCR:
-  description: ADC common control register
+  description: Common control register
   fields:
-  - name: MULT
-    description: Multi ADC mode selection
+  - name: DUAL
+    description: Dual ADC mode selection
     bit_offset: 0
     bit_size: 5
+    enum: DUAL
   - name: DELAY
     description: Delay between 2 sampling phases
     bit_offset: 8
     bit_size: 4
   - name: DMACFG
-    description: Direct memory access configuration
+    description: Direct memory access configuration for dual ADC mode
     bit_offset: 13
     bit_size: 1
     enum: DMACFG
   - name: MDMA
-    description: Direct memory access mode for multi ADC mode
+    description: Direct memory access mode for dual ADC mode
     bit_offset: 14
     bit_size: 2
+    enum: MDMA
   - name: CKMODE
     description: ADC clock mode
     bit_offset: 16
     bit_size: 2
+    enum: CKMODE
+  - name: PRESC
+    description: ADC prescaler (asynchronous clock only)
+    bit_offset: 18
+    bit_size: 4
+    enum: PRESC
   - name: VREFEN
     description: VREFINT enable
     bit_offset: 22
     bit_size: 1
-  - name: CH18SEL
-    description: CH18 selection (Vbat)
+  - name: TSEN
+    description: Temperature sensor enable
     bit_offset: 23
     bit_size: 1
-  - name: CH17SEL
-    description: CH17 selection (temperature)
+  - name: VBATEN
+    description: VBAT enable
     bit_offset: 24
     bit_size: 1
 fieldset/CDR:
-  description: ADC common regular data register for dual and triple modes
+  description: Common regular data register
   fields:
   - name: RDATA_MST
     description: Regular data of the master ADC
@@ -63,34 +71,34 @@ fieldset/CDR:
     bit_offset: 16
     bit_size: 16
 fieldset/CSR:
-  description: ADC Common status register
+  description: Common status register
   fields:
-  - name: ADDRDY_MST
-    description: ADDRDY_MST
+  - name: ADRDY_MST
+    description: ADC ready flag of the master ADC
     bit_offset: 0
     bit_size: 1
   - name: EOSMP_MST
-    description: EOSMP_MST
+    description: End of sampling flag of the master ADC
     bit_offset: 1
     bit_size: 1
   - name: EOC_MST
-    description: EOC_MST
+    description: End of regular conversion flag of the master ADC
     bit_offset: 2
     bit_size: 1
   - name: EOS_MST
-    description: EOS_MST
+    description: End of regular sequence flag of the master ADC
     bit_offset: 3
     bit_size: 1
   - name: OVR_MST
-    description: OVR_MST
+    description: Overrun flag of the master ADC
     bit_offset: 4
     bit_size: 1
   - name: JEOC_MST
-    description: JEOC_MST
+    description: End of injected conversion flag of the master ADC
     bit_offset: 5
     bit_size: 1
   - name: JEOS_MST
-    description: JEOS_MST
+    description: End of injected sequence flag of the master ADC
     bit_offset: 6
     bit_size: 1
   - name: AWD_MST
@@ -101,19 +109,19 @@ fieldset/CSR:
       len: 3
       stride: 1
   - name: JQOVF_MST
-    description: JQOVF_MST
+    description: Injected context queue overflow flag of the master ADC
     bit_offset: 10
     bit_size: 1
   - name: ADRDY_SLV
-    description: ADRDY_SLV
+    description: ADC ready flag of the slave ADC
     bit_offset: 16
     bit_size: 1
   - name: EOSMP_SLV
-    description: EOSMP_SLV
+    description: End of sampling flag of the slave ADC
     bit_offset: 17
     bit_size: 1
   - name: EOC_SLV
-    description: End of regular conversion of the slave ADC
+    description: End of regular conversion flag of the slave ADC
     bit_offset: 18
     bit_size: 1
   - name: EOS_SLV
@@ -133,22 +141,115 @@ fieldset/CSR:
     bit_offset: 22
     bit_size: 1
   - name: AWD_SLV
-    description: Analog watchdog 1 flag of the slave ADC
+    description: Analog watchdog flag of the slave ADC
     bit_offset: 23
     bit_size: 1
     array:
       len: 3
       stride: 1
   - name: JQOVF_SLV
-    description: Injected Context Queue Overflow flag of the slave ADC
+    description: Injected context queue overflow flag of the slave ADC
     bit_offset: 26
     bit_size: 1
+enum/CKMODE:
+  bit_size: 2
+  variants:
+  - name: Asynchronous
+    description: Asynchronous clock (adc_ker_ck)
+    value: 0
+  - name: SyncDiv1
+    description: Synchronous clock (HCLK/1)
+    value: 1
+  - name: SyncDiv2
+    description: Synchronous clock (HCLK/2)
+    value: 2
+  - name: SyncDiv4
+    description: Synchronous clock (HCLK/4)
+    value: 3
 enum/DMACFG:
   bit_size: 1
   variants:
   - name: OneShot
-    description: DMA One Shot mode selected
+    description: DMA one shot mode selected
     value: 0
   - name: Circular
-    description: DMA Circular mode selected
+    description: DMA circular mode selected
     value: 1
+enum/DUAL:
+  bit_size: 5
+  variants:
+  - name: Independent
+    description: Independent mode
+    value: 0
+  - name: DualRJ
+    description: Dual, combined regular simultaneous + injected simultaneous mode
+    value: 1
+  - name: DualRA
+    description: Dual, combined regular simultaneous + alternate trigger mode
+    value: 2
+  - name: DualIJ
+    description: Dual, combined interleaved mode + injected simultaneous mode
+    value: 3
+  - name: DualJ
+    description: Dual, injected simultaneous mode only
+    value: 5
+  - name: DualR
+    description: Dual, regular simultaneous mode only
+    value: 6
+  - name: DualI
+    description: Dual, interleaved mode only
+    value: 7
+  - name: DualA
+    description: Dual, alternate trigger mode only
+    value: 9
+enum/MDMA:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: MDMA mode disabled
+    value: 0
+  - name: Bits12_10
+    description: MDMA mode enabled for 12 and 10-bit resolution
+    value: 2
+  - name: Bits8_6
+    description: MDMA mode enabled for 8 and 6-bit resolution
+    value: 3
+enum/PRESC:
+  bit_size: 4
+  variants:
+  - name: Div1
+    description: Input ADC clock not divided
+    value: 0
+  - name: Div2
+    description: Input ADC clock divided by 2
+    value: 1
+  - name: Div4
+    description: Input ADC clock divided by 4
+    value: 2
+  - name: Div6
+    description: Input ADC clock divided by 6
+    value: 3
+  - name: Div8
+    description: Input ADC clock divided by 8
+    value: 4
+  - name: Div10
+    description: Input ADC clock divided by 10
+    value: 5
+  - name: Div12
+    description: Input ADC clock divided by 12
+    value: 6
+  - name: Div16
+    description: Input ADC clock divided by 16
+    value: 7
+  - name: Div32
+    description: Input ADC clock divided by 32
+    value: 8
+  - name: Div64
+    description: Input ADC clock divided by 64
+    value: 9
+  - name: Div128
+    description: Input ADC clock divided by 128
+    value: 10
+  - name: Div256
+    description: Input ADC clock divided by 256
+    value: 11
