@@ -1,26 +1,5 @@
 # TOP LEVEL BLOCKS
-      
-# RM0432 (STM32L412/L422 newer): Upgraded sized-down core hosting 2
-# transceiver channels, 1 filter channel, 5-bit trigger, parallel
-# ADC routing, and active channel delay tuning registers (DLY)
-# exposing Pulse Skip (PLSSKP[5:0]) at offset 0x14.
-block/DFSDM_2CH_1FLT_DLY_TRG5_ADC:
-  description: Digital filter for sigma delta modulators.
-  items:
-    - name: CH
-      description: Cluster CH%s, containing CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR, CH?DATINR, CH?DLYR.
-      array:
-        len: 2
-        stride: 0x20
-      byte_offset: 0x00
-      block: CH_DLY
-    - name: FLT
-      description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
-      array:
-        len: 1
-        stride: 0x80
-      byte_offset: 0x100
-      block: FLT
+
 
 block/DFSDM_2CH_1FLT_TRG5:
   description: Digital filter for sigma delta modulators.
@@ -40,15 +19,7 @@ block/DFSDM_2CH_1FLT_TRG5:
       byte_offset: 0x100
       block: FLT
 
-# RM0394 (STM32L412/L422): Sized-down baseline with 2 transceiver
-# channels (CH0-CH1), 1 filter channel (FLT0), 3-bit trigger, and
-# parallel ADC routing, lacking active DLY or HWID registers.
-block/DFSDM_2CH_1FLT_TRG3_ADC:
-  description: Digital filter for sigma delta modulators.
-  extends: DFSDM_2CH_1FLT_TRG5
-  items: []
-
-# RM0402 (STM32F412): Baseline configuration featuring 4 transceiver
+# RM0394 (STM32L41x–L46x): + RM0402 (STM32F412): Baseline configuration featuring 4 transceiver
 # channels (CH0–CH3), 2 filter channels (FLT0–FLT1), 3-bit Regular
 # trigger width (JEXTSEL[2:0]), parallel input restricted to CPU/DMA
 # writes (no internal ADC path), no delay (DLY) registers, and no
@@ -71,15 +42,27 @@ block/DFSDM_4CH_2FLT_TRG3:
       byte_offset: 0x100
       block: FLT
 
-# RM0394 (STM32L43x–L46x): Standard configuration featuring 4
-# transceiver channels, 2 filter channels, 3-bit trigger, and
-# parallel ADC routing, lacking active DLY or HWID registers.
-block/DFSDM_4CH_2FLT_TRG3_ADC:
+# RM0430 DFSDM 1
+block/DFSDM_4CH_2FLT_DLY_TRG3:
   description: Digital filter for sigma delta modulators.
-  extends: DFSDM_4CH_2FLT_TRG3
-  items: []
+  items:
+    - name: CH
+      description: Cluster CH%s, containing CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR, CH?DATINR, CH?DLYR.
+      array:
+        len: 4
+        stride: 0x20
+      byte_offset: 0x00
+      block: CH_DLY
+    - name: FLT
+      description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
+      array:
+        len: 2
+        stride: 0x80
+      byte_offset: 0x100
+      block: FLT
 
-# RM0432 (STM32L43x–L46x newer): Upgraded standard core hosting 4
+
+# RM0432 (STM32L4Px–L4Qx newer): Upgraded standard core hosting 4
 # transceiver channels, 2 filter channels, 5-bit trigger, parallel
 # ADC routing, and active channel delay tuning registers (DLY).
 block/DFSDM_4CH_2FLT_DLY_TRG5_ADC:
@@ -134,12 +117,51 @@ block/DFSDM_4CH_4FLT_DLY_TRG5_ADC:
         stride: 0x80
       byte_offset: 0x100
       block: FLT
+      
+# RM0430 DFSDM 2
+block/DFSDM_8CH_4FLT_DLY_TRG3:
+  description: Digital filter for sigma delta modulators.
+  items:
+    - name: CH
+      description: Cluster CH%s, containing CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR, CH?DATINR, CH?DLYR.
+      array:
+        len: 8
+        stride: 0x20
+      byte_offset: 0x00
+      block: CH_DLY
+    - name: FLT
+      description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
+      array:
+        len: 4
+        stride: 0x80
+      byte_offset: 0x100
+      block: FLT
 
-# RM0430 (STM32F413/423): Extended baseline featuring 8 transceiver
-# channels (CH0–CH7) and 4 filter channels (FLT0–FLT3) with 3-bit
-# Regular triggers, lacking an internal ADC path, DLY registers,
-# or HWID registers.
-block/DFSDM_8CH_4FLT_TRG3:
+# RM0410 (STM32F76xxx/F77xxx): High-performance baseline containing
+# 8 transceiver channels, 4 filter channels, and an upgraded 5-bit
+# Regular trigger block (JEXTSEL[4:0]), but lacking parallel ADC
+# routing, DLY registers, or HWID blocks.
+block/DFSDM_8CH_4FLT_TRG5:
+  description: Digital filter for sigma delta modulators.
+  items:
+    - name: CH
+      description: Cluster CH%s, containing CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR, CH?DATINR, CH?DLYR.
+      array:
+        len: 8
+        stride: 0x20
+      byte_offset: 0x00
+      block: CH
+    - name: FLT
+      description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
+      array:
+        len: 4
+        stride: 0x80
+      byte_offset: 0x100
+      block: FLT
+# RM0351 (STM32L47xxx–4axxx): Symmetrical 8-channel, 4-filter layout
+# with 3-bit trigger routing and parallel internal ADC routing,
+# lacking active DLY registers or HWID registers.
+block/DFSDM_8CH_4FLT_TRG3_ADC:
   description: Digital filter for sigma delta modulators.
   items:
     - name: CH
@@ -157,31 +179,27 @@ block/DFSDM_8CH_4FLT_TRG3:
       byte_offset: 0x100
       block: FLT
 
-# RM0410 (STM32F76xxx/F77xxx): High-performance baseline containing
-# 8 transceiver channels, 4 filter channels, and an upgraded 5-bit
-# Regular trigger block (JEXTSEL[4:0]), but lacking parallel ADC
-# routing, DLY registers, or HWID blocks.
-block/DFSDM_8CH_4FLT_TRG5:
-  description: Digital filter for sigma delta modulators.
-  extends: DFSDM_8CH_4FLT_TRG3
-  items: []
-
-# RM0351 (STM32L47xxx–4axxx): Symmetrical 8-channel, 4-filter layout
-# with 3-bit trigger routing and parallel internal ADC routing,
-# lacking active DLY registers or HWID registers.
-block/DFSDM_8CH_4FLT_TRG3_ADC:
-  description: Digital filter for sigma delta modulators.
-  extends: DFSDM_8CH_4FLT_TRG3
-  items: []
-
 # RM0399 (STM32H745-757) and RM0433 (STM32H742-750): Standard
 # high-performance configuration consisting of 8 transceiver channels,
 # 4 filter channels, 5-bit trigger selection, and parallel ADC
 # routing, without active DLY or HWID registers.
 block/DFSDM_8CH_4FLT_TRG5_ADC:
   description: Digital filter for sigma delta modulators.
-  extends: DFSDM_8CH_4FLT_TRG3_ADC
-  items: []
+  items:
+    - name: CH
+      description: Cluster CH%s, containing CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR, CH?DATINR, CH?DLYR.
+      array:
+        len: 8
+        stride: 0x20
+      byte_offset: 0x00
+      block: CH
+    - name: FLT
+      description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
+      array:
+        len: 4
+        stride: 0x80
+      byte_offset: 0x100
+      block: FLT
 
 # RM0432 (STM32L4R/S) and RM0468 (STM32H72x-73x): Upgraded high-
 # performance block hosting 8 transceiver channels, 4 filter channels,
