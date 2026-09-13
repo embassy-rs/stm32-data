@@ -127,6 +127,13 @@ impl ChipInterrupts {
             }
         }
 
+        // U375 has PKA but the CubeDB XML and CMSIS header omit it. The peripheral is
+        // added in data/extra/STM32U3.yaml. Add its core vector, taken from the U385
+        // (same die with PKA present).
+        if chip_name.starts_with("STM32U375") {
+            header_irqs.entry("PKA".to_string()).or_insert(97);
+        }
+
         core.interrupts = header_irqs
             .iter()
             .map(|(k, v)| stm32_data_serde::chip::core::Interrupt {

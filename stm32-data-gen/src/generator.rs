@@ -211,6 +211,15 @@ fn process_core(
 
     apply_extras(chip_name, group, extras, &mut peripherals);
 
+    for p in peripherals.values_mut().filter(|p| p.rcc.is_none()) {
+        if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &p.name) {
+            if let Some(stop_mode_info) = stop_modes.peripheral_stop_mode_info(chip_name, &p.name) {
+                rcc_info.stop_mode = stop_mode_info;
+            }
+            p.rcc = Some(rcc_info);
+        }
+    }
+
     for p in peripherals.values_mut() {
         // sort and dedup pins, put the ones with AF number first, so we keep them
         p.pins
@@ -840,9 +849,10 @@ fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) ->
     }
 
     if pname == "ADC12_COMMON" && chip_name.starts_with("STM32U5") {
-        // The ADC12_COMMON address is incorrect in the headers for STM32U5.
-        // It is defined as 0x42048308 but should be 0x42048300 according to RM0456.
-        return Some(0x42048300);
+        // The headers define ADC12_COMMON_BASE as the address of the CCR register (ADC1 + 0x308),
+        // because the header's ADC_Common_TypeDef only models the ADC4 common block. The ADC12
+        // common block starts at ADC1 + 0x300 (RM0456: 0x4202 8000 - 0x4202 83FF ADC12).
+        return Some(0x42028300);
     }
 
     if let Some(cap) = regex!(r"^FDCANRAM(?P<idx>[0-9]+)$").captures(pname) {

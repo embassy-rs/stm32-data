@@ -1,0 +1,463 @@
+block/ADC:
+  description: Analog-to-digital converter
+  items:
+  - name: ISR
+    description: Interrupt and status register
+    byte_offset: 0
+    fieldset: ISR
+  - name: IER
+    description: Interrupt enable register
+    byte_offset: 4
+    fieldset: IER
+  - name: CR
+    description: Control register
+    byte_offset: 8
+    fieldset: CR
+  - name: CFGR1
+    description: Configuration register 1
+    byte_offset: 12
+    fieldset: CFGR1
+  - name: CFGR2
+    description: Configuration register 2
+    byte_offset: 16
+    fieldset: CFGR2
+  - name: SMPR
+    description: Sampling time register
+    byte_offset: 20
+    fieldset: SMPR
+  - name: TR
+    description: Analog watchdog threshold register
+    array:
+      len: 1
+      stride: 4
+    byte_offset: 32
+    fieldset: TR
+  - name: CHSELR
+    description: 'Channel selection register (CHSELRMOD = 0: one bit per channel)'
+    byte_offset: 40
+    fieldset: CHSELR
+  - name: CHSELR_SQ
+    description: 'Channel selection register (CHSELRMOD = 1: fully configurable 8-conversion sequencer)'
+    byte_offset: 40
+    fieldset: CHSELR_SQ
+  - name: DR
+    description: Data register
+    byte_offset: 64
+    access: Read
+    fieldset: DR
+  - name: CALFACT
+    description: Calibration factor register
+    byte_offset: 180
+    fieldset: CALFACT
+  - name: CCR
+    description: Common configuration register
+    byte_offset: 776
+    fieldset: CCR
+fieldset/CALFACT:
+  description: Calibration factor register
+  fields:
+  - name: CALFACT
+    description: Calibration factor
+    bit_offset: 0
+    bit_size: 7
+fieldset/CCR:
+  description: Common configuration register
+  fields:
+  - name: PRESC
+    description: ADC prescaler (asynchronous clock only)
+    bit_offset: 18
+    bit_size: 4
+    enum: PRESC
+  - name: VREFEN
+    description: VREFINT enable
+    bit_offset: 22
+    bit_size: 1
+  - name: TSEN
+    description: Temperature sensor enable
+    bit_offset: 23
+    bit_size: 1
+  - name: VBATEN
+    description: VBAT enable
+    bit_offset: 24
+    bit_size: 1
+fieldset/CFGR1:
+  description: Configuration register 1
+  fields:
+  - name: DMAEN
+    description: Direct memory access enable
+    bit_offset: 0
+    bit_size: 1
+  - name: DMACFG
+    description: Direct memory access configuration
+    bit_offset: 1
+    bit_size: 1
+    enum: DMACFG
+  - name: SCANDIR
+    description: Scan sequence direction
+    bit_offset: 2
+    bit_size: 1
+    enum: SCANDIR
+  - name: RES
+    description: Data resolution
+    bit_offset: 3
+    bit_size: 2
+    enum: RES
+  - name: ALIGN
+    description: Data alignment
+    bit_offset: 5
+    bit_size: 1
+    enum: ALIGN
+  - name: EXTSEL
+    description: External trigger selection
+    bit_offset: 6
+    bit_size: 3
+  - name: EXTEN
+    description: External trigger enable and polarity selection
+    bit_offset: 10
+    bit_size: 2
+    enum: EXTEN
+  - name: OVRMOD
+    description: 'Overrun management mode (0: ADC_DR is preserved when an overrun is detected, 1: ADC_DR is overwritten with the last conversion result)'
+    bit_offset: 12
+    bit_size: 1
+  - name: CONT
+    description: Continuous conversion mode
+    bit_offset: 13
+    bit_size: 1
+  - name: WAIT
+    description: Wait conversion mode
+    bit_offset: 14
+    bit_size: 1
+  - name: AUTOFF
+    description: Auto-off mode
+    bit_offset: 15
+    bit_size: 1
+  - name: DISCEN
+    description: Discontinuous mode
+    bit_offset: 16
+    bit_size: 1
+  - name: CHSELRMOD
+    description: 'Mode selection of the ADC_CHSELR register (0: one bit per channel, 1: fully configurable sequencer)'
+    bit_offset: 21
+    bit_size: 1
+  - name: AWD1SGL
+    description: Enable the analog watchdog 1 on a single channel (1) or on all channels (0)
+    bit_offset: 22
+    bit_size: 1
+  - name: AWD1EN
+    description: Analog watchdog 1 enable
+    bit_offset: 23
+    bit_size: 1
+  - name: AWD1CH
+    description: Analog watchdog 1 channel selection
+    bit_offset: 26
+    bit_size: 5
+fieldset/CFGR2:
+  description: Configuration register 2
+  fields:
+  - name: LFTRIG
+    description: Low frequency trigger mode enable
+    bit_offset: 29
+    bit_size: 1
+  - name: CKMODE
+    description: ADC clock mode
+    bit_offset: 30
+    bit_size: 2
+    enum: CKMODE
+fieldset/CHSELR:
+  description: Channel selection register (CHSELRMOD = 0)
+  fields:
+  - name: CHSEL
+    description: Channel-x selection
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 19
+      stride: 1
+fieldset/CHSELR_SQ:
+  description: Channel selection register (CHSELRMOD = 1)
+  fields:
+  - name: SQ
+    description: 'Channel number of the x-th conversion in the sequence (0b1111: end of sequence)'
+    bit_offset: 0
+    bit_size: 4
+    array:
+      len: 8
+      stride: 4
+fieldset/CR:
+  description: Control register
+  fields:
+  - name: ADEN
+    description: ADC enable command
+    bit_offset: 0
+    bit_size: 1
+  - name: ADDIS
+    description: ADC disable command
+    bit_offset: 1
+    bit_size: 1
+  - name: ADSTART
+    description: ADC start of conversion
+    bit_offset: 2
+    bit_size: 1
+  - name: ADSTP
+    description: ADC stop conversion command
+    bit_offset: 4
+    bit_size: 1
+  - name: ADVREGEN
+    description: ADC voltage regulator enable
+    bit_offset: 28
+    bit_size: 1
+  - name: ADCAL
+    description: ADC calibration
+    bit_offset: 31
+    bit_size: 1
+fieldset/DR:
+  description: Data register
+  fields:
+  - name: DATA
+    description: Converted data
+    bit_offset: 0
+    bit_size: 16
+fieldset/IER:
+  description: Interrupt enable register
+  fields:
+  - name: ADRDYIE
+    description: ADC ready interrupt enable
+    bit_offset: 0
+    bit_size: 1
+  - name: EOSMPIE
+    description: End of sampling interrupt enable
+    bit_offset: 1
+    bit_size: 1
+  - name: EOCIE
+    description: End of conversion interrupt enable
+    bit_offset: 2
+    bit_size: 1
+  - name: EOSIE
+    description: End of sequence interrupt enable
+    bit_offset: 3
+    bit_size: 1
+  - name: OVRIE
+    description: Overrun interrupt enable
+    bit_offset: 4
+    bit_size: 1
+  - name: AWDIE
+    description: Analog watchdog interrupt enable
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 1
+      stride: 1
+  - name: EOCALIE
+    description: End of calibration interrupt enable
+    bit_offset: 11
+    bit_size: 1
+  - name: CCRDYIE
+    description: Channel configuration ready interrupt enable
+    bit_offset: 13
+    bit_size: 1
+fieldset/ISR:
+  description: Interrupt and status register
+  fields:
+  - name: ADRDY
+    description: ADC ready flag
+    bit_offset: 0
+    bit_size: 1
+  - name: EOSMP
+    description: End of sampling flag
+    bit_offset: 1
+    bit_size: 1
+  - name: EOC
+    description: End of conversion flag
+    bit_offset: 2
+    bit_size: 1
+  - name: EOS
+    description: End of sequence flag
+    bit_offset: 3
+    bit_size: 1
+  - name: OVR
+    description: Overrun flag
+    bit_offset: 4
+    bit_size: 1
+  - name: AWD
+    description: Analog watchdog flag
+    bit_offset: 7
+    bit_size: 1
+    array:
+      len: 1
+      stride: 1
+  - name: EOCAL
+    description: End of calibration flag
+    bit_offset: 11
+    bit_size: 1
+  - name: CCRDY
+    description: Channel configuration ready flag
+    bit_offset: 13
+    bit_size: 1
+fieldset/SMPR:
+  description: Sampling time register
+  fields:
+  - name: SMP
+    description: Sampling time selection (SMP[1] is only available when SMPSEL is present)
+    bit_offset: 0
+    bit_size: 3
+    array:
+      len: 2
+      stride: 4
+    enum: SAMPLE_TIME
+  - name: SMPSEL
+    description: 'Channel-x sampling time selection (0: SMP[0], 1: SMP[1])'
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 19
+      stride: 1
+fieldset/TR:
+  description: Analog watchdog threshold register
+  fields:
+  - name: LT
+    description: Analog watchdog lower threshold
+    bit_offset: 0
+    bit_size: 12
+  - name: HT
+    description: Analog watchdog higher threshold
+    bit_offset: 16
+    bit_size: 12
+enum/ALIGN:
+  bit_size: 1
+  variants:
+  - name: Right
+    description: Right alignment
+    value: 0
+  - name: Left
+    description: Left alignment
+    value: 1
+enum/CKMODE:
+  bit_size: 2
+  variants:
+  - name: Asynchronous
+    description: Asynchronous clock (adc_ker_ck)
+    value: 0
+  - name: SyncDiv2
+    description: Synchronous clock (PCLK/2)
+    value: 1
+  - name: SyncDiv4
+    description: Synchronous clock (PCLK/4)
+    value: 2
+  - name: SyncDiv1
+    description: Synchronous clock (PCLK)
+    value: 3
+enum/DMACFG:
+  bit_size: 1
+  variants:
+  - name: OneShot
+    description: DMA one shot mode selected
+    value: 0
+  - name: Circular
+    description: DMA circular mode selected
+    value: 1
+enum/EXTEN:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: Hardware trigger detection disabled (conversions can be launched by software)
+    value: 0
+  - name: RisingEdge
+    description: Hardware trigger detection on the rising edge
+    value: 1
+  - name: FallingEdge
+    description: Hardware trigger detection on the falling edge
+    value: 2
+  - name: BothEdges
+    description: Hardware trigger detection on both the rising and falling edges
+    value: 3
+enum/PRESC:
+  bit_size: 4
+  variants:
+  - name: Div1
+    description: Input ADC clock not divided
+    value: 0
+  - name: Div2
+    description: Input ADC clock divided by 2
+    value: 1
+  - name: Div4
+    description: Input ADC clock divided by 4
+    value: 2
+  - name: Div6
+    description: Input ADC clock divided by 6
+    value: 3
+  - name: Div8
+    description: Input ADC clock divided by 8
+    value: 4
+  - name: Div10
+    description: Input ADC clock divided by 10
+    value: 5
+  - name: Div12
+    description: Input ADC clock divided by 12
+    value: 6
+  - name: Div16
+    description: Input ADC clock divided by 16
+    value: 7
+  - name: Div32
+    description: Input ADC clock divided by 32
+    value: 8
+  - name: Div64
+    description: Input ADC clock divided by 64
+    value: 9
+  - name: Div128
+    description: Input ADC clock divided by 128
+    value: 10
+  - name: Div256
+    description: Input ADC clock divided by 256
+    value: 11
+enum/RES:
+  bit_size: 2
+  variants:
+  - name: Bits12
+    description: 12-bit
+    value: 0
+  - name: Bits10
+    description: 10-bit
+    value: 1
+  - name: Bits8
+    description: 8-bit
+    value: 2
+  - name: Bits6
+    description: 6-bit
+    value: 3
+enum/SAMPLE_TIME:
+  bit_size: 3
+  variants:
+  - name: Cycles1_5
+    description: 1.5 ADC clock cycles
+    value: 0
+  - name: Cycles3_5
+    description: 3.5 ADC clock cycles
+    value: 1
+  - name: Cycles7_5
+    description: 7.5 ADC clock cycles
+    value: 2
+  - name: Cycles12_5
+    description: 12.5 ADC clock cycles
+    value: 3
+  - name: Cycles19_5
+    description: 19.5 ADC clock cycles
+    value: 4
+  - name: Cycles39_5
+    description: 39.5 ADC clock cycles
+    value: 5
+  - name: Cycles79_5
+    description: 79.5 ADC clock cycles
+    value: 6
+  - name: Cycles160_5
+    description: 160.5 ADC clock cycles
+    value: 7
+enum/SCANDIR:
+  bit_size: 1
+  variants:
+  - name: Upward
+    description: Upward scan (from channel 0 to the highest channel)
+    value: 0
+  - name: Backward
+    description: Backward scan (from the highest channel to channel 0)
+    value: 1

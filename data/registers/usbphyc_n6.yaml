@@ -1,0 +1,117 @@
+block/USBPHYC:
+  description: USB high-speed PHY controller
+  items:
+  - name: CR
+    description: USB PHY control register
+    byte_offset: 0
+    fieldset: CR
+  - name: TRIM1CR
+    description: USB PHY trimming control register 1
+    byte_offset: 4
+    fieldset: TRIM1CR
+  - name: TRIM2CR
+    description: USB PHY trimming control register 2
+    byte_offset: 8
+    fieldset: TRIM2CR
+fieldset/CR:
+  description: USB PHY control register
+  fields:
+  - name: RETENABLEN1
+    description: Retention mode enable (active low)
+    bit_offset: 0
+    bit_size: 1
+  - name: AUTORSMENB1
+    description: Automatic resume mode enable
+    bit_offset: 1
+    bit_size: 1
+  - name: CMN
+    description: Power-down control for analog blocks during suspend and sleep modes
+    bit_offset: 2
+    bit_size: 1
+  - name: FSEL
+    description: PHY reference clock frequency selection
+    bit_offset: 4
+    bit_size: 3
+    enum: FSEL
+  - name: OTGDISABLE0
+    description: OTG disable control
+    bit_offset: 16
+    bit_size: 1
+  - name: DRVVBUS0
+    description: VBUS drive control
+    bit_offset: 17
+    bit_size: 1
+  - name: SELOTGDBG
+    description: High-speed PHY debug port selection. Only available in USBPHYC2.
+    bit_offset: 31
+    bit_size: 1
+fieldset/TRIM1CR:
+  description: USB PHY trimming control register 1
+  fields:
+  - name: PLLITUNE
+    description: PHY PLL integral tuning
+    bit_offset: 0
+    bit_size: 2
+  - name: PLLPTUNE
+    description: PHY PLL proportional tuning
+    bit_offset: 2
+    bit_size: 4
+  - name: COMPDISTUNE
+    description: Disconnect threshold adjustment
+    bit_offset: 6
+    bit_size: 3
+  - name: SQRXTUNE
+    description: Squelch threshold adjustment
+    bit_offset: 9
+    bit_size: 3
+  - name: VDATREFTUNE
+    description: Data voltage reference tuning
+    bit_offset: 12
+    bit_size: 2
+  - name: OTGTUNE
+    description: VBUS valid threshold adjustment
+    bit_offset: 14
+    bit_size: 3
+  - name: TXHSXVTUNE
+    description: High-speed transmitter crossover adjustment
+    bit_offset: 17
+    bit_size: 2
+  - name: TXFSLSTUNE
+    description: Full-speed and low-speed transmitter tuning
+    bit_offset: 19
+    bit_size: 4
+  - name: TXVREFTUNE
+    description: Transmitter voltage reference tuning
+    bit_offset: 23
+    bit_size: 4
+  - name: TXRISETUNE
+    description: Transmitter rise-time tuning
+    bit_offset: 27
+    bit_size: 2
+  - name: TXRESTUNE
+    description: Transmitter resistance tuning
+    bit_offset: 29
+    bit_size: 2
+fieldset/TRIM2CR:
+  description: USB PHY trimming control register 2
+  fields:
+  - name: TXPREEMPAMPTUNE
+    description: High-speed transmitter pre-emphasis current control
+    bit_offset: 0
+    bit_size: 2
+  - name: TXPREEMPPULSETUNE
+    description: High-speed transmitter pre-emphasis pulse control
+    bit_offset: 2
+    bit_size: 1
+enum/FSEL:
+  bit_size: 3
+  variants:
+  - name: Mhz19_2
+    description: 19.2 MHz PHY reference clock
+    value: 0
+  - name: Mhz20
+    description: 20 MHz PHY reference clock (default after reset)
+    value: 1
+  - name: Mhz24
+    description: 24 MHz PHY reference clock
+    value: 2

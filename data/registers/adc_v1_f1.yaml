@@ -2,58 +2,58 @@ block/ADC:
   description: Analog-to-digital converter
   items:
   - name: SR
-    description: status register
+    description: Status register
     byte_offset: 0
     fieldset: SR
   - name: CR1
-    description: control register 1
+    description: Control register 1
     byte_offset: 4
     fieldset: CR1
   - name: CR2
-    description: control register 2
+    description: Control register 2
     byte_offset: 8
     fieldset: CR2
-  - name: SMPR1
-    description: sample time register 1
+  - name: SMPR
+    description: Sample time register. SMPR[i] holds the sample times of channels 10*i to 10*i+9 (SMPR[0] is what ST calls SMPR2, SMPR[1] SMPR1, ...).
+    array:
+      offsets:
+      - 4
+      - 0
     byte_offset: 12
-    fieldset: SMPR1
-  - name: SMPR2
-    description: sample time register 2
-    byte_offset: 16
-    fieldset: SMPR2
+    fieldset: SMPR
   - name: JOFR
-    description: injected channel data offset register x
+    description: Injected channel data offset register
     array:
       len: 4
       stride: 4
     byte_offset: 20
     fieldset: JOFR
   - name: HTR
-    description: watchdog higher threshold register
+    description: Watchdog higher threshold register
     byte_offset: 36
     fieldset: HTR
   - name: LTR
-    description: watchdog lower threshold register
+    description: Watchdog lower threshold register
     byte_offset: 40
     fieldset: LTR
   - name: SQR1
-    description: regular sequence register 1
+    description: Regular sequence register 1 (length and conversions 13 to 16)
     byte_offset: 44
     fieldset: SQR1
   - name: SQR2
-    description: regular sequence register 2
+    description: Regular sequence register 2 (conversions 7 to 12)
     byte_offset: 48
     fieldset: SQR2
   - name: SQR3
-    description: regular sequence register 3
+    description: Regular sequence register 3 (conversions 1 to 6)
     byte_offset: 52
     fieldset: SQR3
   - name: JSQR
-    description: injected sequence register
+    description: Injected sequence register
     byte_offset: 56
     fieldset: JSQR
   - name: JDR
-    description: injected data register x
+    description: Injected data register
     array:
       len: 4
       stride: 4
@@ -61,12 +61,12 @@ block/ADC:
     access: Read
     fieldset: JDR
   - name: DR
-    description: regular data register
+    description: Regular data register
     byte_offset: 76
     access: Read
     fieldset: DR
 fieldset/CR1:
-  description: control register 1
+  description: Control register 1
   fields:
   - name: AWDCH
     description: Analog watchdog channel select bits
@@ -109,7 +109,7 @@ fieldset/CR1:
     bit_offset: 13
     bit_size: 3
   - name: DUALMOD
-    description: Dual mode selection
+    description: Dual mode selection (ADC1 only)
     bit_offset: 16
     bit_size: 4
     enum: DUALMOD
@@ -122,10 +122,10 @@ fieldset/CR1:
     bit_offset: 23
     bit_size: 1
 fieldset/CR2:
-  description: control register 2
+  description: Control register 2
   fields:
   - name: ADON
-    description: A/D Converter ON / OFF
+    description: A/D converter ON / OFF
     bit_offset: 0
     bit_size: 1
   - name: CONT
@@ -133,7 +133,7 @@ fieldset/CR2:
     bit_offset: 1
     bit_size: 1
   - name: CAL
-    description: A/D Calibration
+    description: A/D calibration
     bit_offset: 2
     bit_size: 1
   - name: RSTCAL
@@ -141,13 +141,14 @@ fieldset/CR2:
     bit_offset: 3
     bit_size: 1
   - name: DMA
-    description: Direct memory access mode (for single ADC mode)
+    description: Direct memory access mode
     bit_offset: 8
     bit_size: 1
   - name: ALIGN
     description: Data alignment
     bit_offset: 11
     bit_size: 1
+    enum: ALIGN
   - name: JEXTSEL
     description: External event select for injected group
     bit_offset: 12
@@ -173,46 +174,46 @@ fieldset/CR2:
     bit_offset: 22
     bit_size: 1
   - name: TSVREFE
-    description: Temperature sensor and VREFINT enable
+    description: Temperature sensor and VREFINT enable (ADC1 only)
     bit_offset: 23
     bit_size: 1
 fieldset/DR:
-  description: regular data register
+  description: Regular data register
   fields:
   - name: DATA
     description: Regular data
     bit_offset: 0
     bit_size: 16
   - name: ADC2DATA
-    description: ADC2 data
+    description: ADC2 data (ADC1 in dual mode only)
     bit_offset: 16
     bit_size: 16
 fieldset/HTR:
-  description: watchdog higher threshold register
+  description: Watchdog higher threshold register
   fields:
   - name: HT
     description: Analog watchdog higher threshold
     bit_offset: 0
     bit_size: 12
 fieldset/JDR:
-  description: injected data register x
+  description: Injected data register
   fields:
   - name: JDATA
     description: Injected data
     bit_offset: 0
     bit_size: 16
 fieldset/JOFR:
-  description: injected channel data offset register x
+  description: Injected channel data offset register
   fields:
   - name: JOFFSET
     description: Data offset for injected channel x
     bit_offset: 0
     bit_size: 12
 fieldset/JSQR:
-  description: injected sequence register
+  description: Injected sequence register
   fields:
   - name: JSQ
-    description: 1st conversion in injected sequence
+    description: Conversion in injected sequence
     bit_offset: 0
     bit_size: 5
     array:
@@ -223,28 +224,17 @@ fieldset/JSQR:
     bit_offset: 20
     bit_size: 2
 fieldset/LTR:
-  description: watchdog lower threshold register
+  description: Watchdog lower threshold register
   fields:
   - name: LT
     description: Analog watchdog lower threshold
     bit_offset: 0
     bit_size: 12
-fieldset/SMPR1:
-  description: sample time register 1
+fieldset/SMPR:
+  description: Sample time register
   fields:
   - name: SMP
     description: Channel x sample time selection
-    bit_offset: 0
-    bit_size: 3
-    array:
-      len: 8
-      stride: 3
-    enum: SAMPLE_TIME
-fieldset/SMPR2:
-  description: sample time register 2
-  fields:
-  - name: SMP
-    description: Channel 0 sampling time selection
     bit_offset: 0
     bit_size: 3
     array:
@@ -252,10 +242,10 @@ fieldset/SMPR2:
       stride: 3
     enum: SAMPLE_TIME
 fieldset/SQR1:
-  description: regular sequence register 1
+  description: Regular sequence register 1
   fields:
   - name: SQ
-    description: 13th to 16th conversion in regular sequence
+    description: Conversion in regular sequence
     bit_offset: 0
     bit_size: 5
     array:
@@ -266,27 +256,27 @@ fieldset/SQR1:
     bit_offset: 20
     bit_size: 4
 fieldset/SQR2:
-  description: regular sequence register 2
+  description: Regular sequence register
   fields:
   - name: SQ
-    description: 7th to 12th conversion in regular sequence
+    description: Conversion in regular sequence
     bit_offset: 0
     bit_size: 5
     array:
       len: 6
       stride: 5
 fieldset/SQR3:
-  description: regular sequence register 3
+  description: Regular sequence register
   fields:
   - name: SQ
-    description: 1st to 6th conversion in regular sequence
+    description: Conversion in regular sequence
     bit_offset: 0
     bit_size: 5
     array:
       len: 6
       stride: 5
 fieldset/SR:
-  description: status register
+  description: Status register
   fields:
   - name: AWD
     description: Analog watchdog flag
@@ -308,11 +298,20 @@ fieldset/SR:
     description: Regular channel start flag
     bit_offset: 4
     bit_size: 1
+enum/ALIGN:
+  bit_size: 1
+  variants:
+  - name: Right
+    description: Right alignment
+    value: 0
+  - name: Left
+    description: Left alignment
+    value: 1
 enum/DUALMOD:
   bit_size: 4
   variants:
   - name: Independent
-    description: Independent mode.
+    description: Independent mode
     value: 0
   - name: RegularInjected
     description: Combined regular simultaneous + injected simultaneous mode
@@ -324,7 +323,7 @@ enum/DUALMOD:
     description: Combined injected simultaneous + fast interleaved mode
     value: 3
   - name: InjectedSlowInterleaved
-    description: Combined injected simultaneous + slow Interleaved mode
+    description: Combined injected simultaneous + slow interleaved mode
     value: 4
   - name: Injected
     description: Injected simultaneous mode only
@@ -345,26 +344,26 @@ enum/SAMPLE_TIME:
   bit_size: 3
   variants:
   - name: Cycles1_5
-    description: 1.5 cycles
+    description: 1.5 ADC clock cycles
     value: 0
   - name: Cycles7_5
-    description: 7.5 cycles
+    description: 7.5 ADC clock cycles
     value: 1
   - name: Cycles13_5
-    description: 13.5 cycles
+    description: 13.5 ADC clock cycles
     value: 2
   - name: Cycles28_5
-    description: 28.5 cycles
+    description: 28.5 ADC clock cycles
     value: 3
   - name: Cycles41_5
-    description: 41.5 cycles
+    description: 41.5 ADC clock cycles
     value: 4
   - name: Cycles55_5
-    description: 55.5 cycles
+    description: 55.5 ADC clock cycles
     value: 5
   - name: Cycles71_5
-    description: 71.5 cycles
+    description: 71.5 ADC clock cycles
     value: 6
   - name: Cycles239_5
-    description: 239.5 cycles
+    description: 239.5 ADC clock cycles
     value: 7

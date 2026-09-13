@@ -30,3 +30,15 @@ peripherals:
       kind: dlyb
       version: v1
       block: DLYB
+  # U375 has PKA but the CubeDB XML and CMSIS header omit it. Values are taken
+  # from the U385, which is the same die with PKA present.
+  # RCC attaches by name from rcc_u3.yaml. The core vector is added in interrupts.rs.
+  - name: PKA
+    address: 0x420C2000
+    registers:
+      kind: pka
+      version: v1b
+      block: PKA
+    interrupts:
+      - signal: GLOBAL
+        interrupt: PKA
