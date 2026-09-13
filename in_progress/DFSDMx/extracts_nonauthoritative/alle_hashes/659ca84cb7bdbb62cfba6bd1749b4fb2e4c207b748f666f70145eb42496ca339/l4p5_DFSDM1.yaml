@@ -1,0 +1,991 @@
+block/CH:
+  description: 'DFSDM Channel cluster: contains CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR and CH?DATINR registers.'
+  items:
+  - name: CFGR1
+    description: channel configuration y register.
+    byte_offset: 0
+    fieldset: CFGR1
+  - name: CFGR2
+    description: channel configuration y register.
+    byte_offset: 4
+    fieldset: CFGR2
+  - name: AWSCDR
+    description: analog watchdog and short-circuit detector register.
+    byte_offset: 8
+    fieldset: AWSCDR
+  - name: WDATR
+    description: channel watchdog filter data register.
+    byte_offset: 12
+    fieldset: WDATR
+  - name: DATINR
+    description: channel data input register.
+    byte_offset: 16
+    fieldset: DATINR
+  - name: DLYR
+    description: channel y delay register.
+    byte_offset: 20
+    fieldset: DLYR
+block/DFSDM1:
+  description: Digital filter for sigma delta modulators.
+  items:
+  - name: CH
+    description: 'DFSDM Channel cluster: contains CH?CFGR1, CH?CFGR2, CH?AWSCDR, CH?WDATR and CH?DATINR registers.'
+    array:
+      len: 8
+      stride: 32
+    byte_offset: 0
+    block: CH
+  - name: FLT
+    description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
+    array:
+      len: 4
+      stride: 128
+    byte_offset: 256
+    block: FLT
+block/FLT:
+  description: Cluster FLT%s, containing FLT?CR1, FLT?CR2, FLT?ISR, FLT?ICR, FLT?JCHGR, FLT?FCR, FLT?JDATAR, FLT?RDATAR, FLT?AWHTR, FLT?AWLTR, FLT?AWSR, FLT?AWCFR, FLT?EXMAX, FLT?EXMIN, FLT?CNVTIMR.
+  items:
+  - name: CR1
+    description: control register 1.
+    byte_offset: 0
+    fieldset: CR1
+  - name: CR2
+    description: control register 2.
+    byte_offset: 4
+    fieldset: CR2
+  - name: ISR
+    description: interrupt and status register.
+    byte_offset: 8
+    access: Read
+    fieldset: ISR
+  - name: ICR
+    description: interrupt flag clear register.
+    byte_offset: 12
+    fieldset: ICR
+  - name: JCHGR
+    description: injected channel group selection register.
+    byte_offset: 16
+    fieldset: JCHGR
+  - name: FCR
+    description: filter control register.
+    byte_offset: 20
+    fieldset: FCR
+  - name: JDATAR
+    description: data register for injected group.
+    byte_offset: 24
+    access: Read
+    fieldset: JDATAR
+  - name: RDATAR
+    description: data register for the regular channel.
+    byte_offset: 28
+    access: Read
+    fieldset: RDATAR
+  - name: AWHTR
+    description: analog watchdog high threshold register.
+    byte_offset: 32
+    fieldset: AWHTR
+  - name: AWLTR
+    description: analog watchdog low threshold register.
+    byte_offset: 36
+    fieldset: AWLTR
+  - name: AWSR
+    description: analog watchdog status register.
+    byte_offset: 40
+    access: Read
+    fieldset: AWSR
+  - name: AWCFR
+    description: analog watchdog clear flag register.
+    byte_offset: 44
+    fieldset: AWCFR
+  - name: EXMAX
+    description: Extremes detector maximum register.
+    byte_offset: 48
+    access: Read
+    fieldset: EXMAX
+  - name: EXMIN
+    description: Extremes detector minimum register.
+    byte_offset: 52
+    access: Read
+    fieldset: EXMIN
+  - name: CNVTIMR
+    description: conversion timer register.
+    byte_offset: 56
+    access: Read
+    fieldset: CNVTIMR
+fieldset/AWCFR:
+  description: analog watchdog clear flag register.
+  fields:
+  - name: CLRAWLTF
+    description: Clear the analog watchdog low threshold flag.
+    bit_offset: 0
+    bit_size: 8
+  - name: CLRAWHTF
+    description: Clear the analog watchdog high threshold flag.
+    bit_offset: 8
+    bit_size: 8
+fieldset/AWHTR:
+  description: analog watchdog high threshold register.
+  fields:
+  - name: BKAWH
+    description: Break signal assignment to analog watchdog high threshold event.
+    bit_offset: 0
+    bit_size: 4
+  - name: AWHT
+    description: Analog watchdog high threshold.
+    bit_offset: 8
+    bit_size: 24
+fieldset/AWLTR:
+  description: analog watchdog low threshold register.
+  fields:
+  - name: BKAWL
+    description: Break signal assignment to analog watchdog low threshold event.
+    bit_offset: 0
+    bit_size: 4
+  - name: AWLT
+    description: Analog watchdog low threshold.
+    bit_offset: 8
+    bit_size: 24
+fieldset/AWSCDR:
+  description: analog watchdog and short-circuit detector register.
+  fields:
+  - name: SCDT
+    description: SCDT.
+    bit_offset: 0
+    bit_size: 8
+  - name: BKSCD
+    description: BKSCD.
+    bit_offset: 12
+    bit_size: 4
+  - name: AWFOSR
+    description: AWFOSR.
+    bit_offset: 16
+    bit_size: 5
+  - name: AWFORD
+    description: AWFORD.
+    bit_offset: 22
+    bit_size: 2
+    enum: AWFORD
+fieldset/AWSR:
+  description: analog watchdog status register.
+  fields:
+  - name: AWLTF
+    description: Analog watchdog low threshold flag.
+    bit_offset: 0
+    bit_size: 8
+  - name: AWHTF
+    description: Analog watchdog high threshold flag.
+    bit_offset: 8
+    bit_size: 8
+fieldset/CFGR1:
+  description: channel configuration y register.
+  fields:
+  - name: SITP
+    description: SITP.
+    bit_offset: 0
+    bit_size: 2
+    enum: SITP
+  - name: SPICKSEL
+    description: SPICKSEL.
+    bit_offset: 2
+    bit_size: 2
+    enum: SPICKSEL
+  - name: SCDEN
+    description: SCDEN.
+    bit_offset: 5
+    bit_size: 1
+    enum: SCDEN
+  - name: CKABEN
+    description: CKABEN.
+    bit_offset: 6
+    bit_size: 1
+    enum: CKABEN
+  - name: CHEN
+    description: CHEN.
+    bit_offset: 7
+    bit_size: 1
+    enum: CHEN
+  - name: CHINSEL
+    description: CHINSEL.
+    bit_offset: 8
+    bit_size: 1
+    enum: CHINSEL
+  - name: DATMPX
+    description: DATMPX.
+    bit_offset: 12
+    bit_size: 2
+    enum: DATMPX
+  - name: DATPACK
+    description: DATPACK.
+    bit_offset: 14
+    bit_size: 2
+    enum: DATPACK
+  - name: CKOUTDIV
+    description: CKOUTDIV.
+    bit_offset: 16
+    bit_size: 8
+  - name: CKOUTSRC
+    description: CKOUTSRC.
+    bit_offset: 30
+    bit_size: 1
+    enum: CKOUTSRC
+  - name: DFSDMEN
+    description: DFSDMEN.
+    bit_offset: 31
+    bit_size: 1
+    enum: DFSDMEN
+fieldset/CFGR2:
+  description: channel configuration y register.
+  fields:
+  - name: DTRBS
+    description: DTRBS.
+    bit_offset: 3
+    bit_size: 5
+  - name: OFFSET
+    description: OFFSET.
+    bit_offset: 8
+    bit_size: 24
+fieldset/CNVTIMR:
+  description: conversion timer register.
+  fields:
+  - name: CNVCNT
+    description: 28-bit timer counting conversion time t = CNVCNT[27:0] / fDFSDM_CKIN.
+    bit_offset: 4
+    bit_size: 28
+fieldset/CR1:
+  description: control register 1.
+  fields:
+  - name: DFEN
+    description: DFSDM enable.
+    bit_offset: 0
+    bit_size: 1
+    enum: DFEN
+  - name: JSWSTART
+    description: Start a conversion of the injected group of channels.
+    bit_offset: 1
+    bit_size: 1
+    enum: JSWSTART
+  - name: JSYNC
+    description: Launch an injected conversion synchronously with the DFSDM0 JSWSTART trigger.
+    bit_offset: 3
+    bit_size: 1
+    enum: JSYNC
+  - name: JSCAN
+    description: Scanning conversion mode for injected conversions.
+    bit_offset: 4
+    bit_size: 1
+    enum: JSCAN
+  - name: JDMAEN
+    description: DMA channel enabled to read data for the injected channel group.
+    bit_offset: 5
+    bit_size: 1
+    enum: JDMAEN
+  - name: JEXTSEL
+    description: Trigger signal selection for launching injected conversions.
+    bit_offset: 8
+    bit_size: 3
+  - name: JEXTEN
+    description: Trigger enable and trigger edge selection for injected conversions.
+    bit_offset: 13
+    bit_size: 2
+    enum: JEXTEN
+  - name: RSWSTART
+    description: Software start of a conversion on the regular channel.
+    bit_offset: 17
+    bit_size: 1
+    enum: RSWSTART
+  - name: RCONT
+    description: Continuous mode selection for regular conversions.
+    bit_offset: 18
+    bit_size: 1
+    enum: RCONT
+  - name: RSYNC
+    description: Launch regular conversion synchronously with DFSDM0.
+    bit_offset: 19
+    bit_size: 1
+    enum: RSYNC
+  - name: RDMAEN
+    description: DMA channel enabled to read data for the regular conversion.
+    bit_offset: 21
+    bit_size: 1
+    enum: RDMAEN
+  - name: RCH
+    description: Regular channel selection.
+    bit_offset: 24
+    bit_size: 3
+    enum: RCH
+  - name: FAST
+    description: Fast conversion mode selection for regular conversions.
+    bit_offset: 29
+    bit_size: 1
+    enum: FAST
+  - name: AWFSEL
+    description: Analog watchdog fast mode select.
+    bit_offset: 30
+    bit_size: 1
+    enum: AWFSEL
+fieldset/CR2:
+  description: control register 2.
+  fields:
+  - name: JEOCIE
+    description: Injected end of conversion interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+    enum: JEOCIE
+  - name: REOCIE
+    description: Regular end of conversion interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+    enum: REOCIE
+  - name: JOVRIE
+    description: Injected data overrun interrupt enable.
+    bit_offset: 2
+    bit_size: 1
+    enum: JOVRIE
+  - name: ROVRIE
+    description: Regular data overrun interrupt enable.
+    bit_offset: 3
+    bit_size: 1
+    enum: ROVRIE
+  - name: AWDIE
+    description: Analog watchdog interrupt enable.
+    bit_offset: 4
+    bit_size: 1
+    enum: AWDIE
+  - name: SCDIE
+    description: Short-circuit detector interrupt enable.
+    bit_offset: 5
+    bit_size: 1
+    enum: SCDIE
+  - name: CKABIE
+    description: Clock absence interrupt enable.
+    bit_offset: 6
+    bit_size: 1
+    enum: CKABIE
+  - name: EXCH
+    description: Extremes detector channel selection.
+    bit_offset: 8
+    bit_size: 8
+    enum: EXCH
+  - name: AWDCH
+    description: Analog watchdog channel selection.
+    bit_offset: 16
+    bit_size: 8
+    enum: AWDCH
+fieldset/DATINR:
+  description: channel data input register.
+  fields:
+  - name: INDAT0
+    description: INDAT0.
+    bit_offset: 0
+    bit_size: 16
+  - name: INDAT1
+    description: INDAT1.
+    bit_offset: 16
+    bit_size: 16
+fieldset/DLYR:
+  description: channel y delay register.
+  fields:
+  - name: PLSSKP
+    description: PLSSKP.
+    bit_offset: 0
+    bit_size: 6
+fieldset/EXMAX:
+  description: Extremes detector maximum register.
+  fields:
+  - name: EXMAXCH
+    description: Extremes detector maximum data channel.
+    bit_offset: 0
+    bit_size: 3
+  - name: EXMAX
+    description: Extremes detector maximum value.
+    bit_offset: 8
+    bit_size: 24
+fieldset/EXMIN:
+  description: Extremes detector minimum register.
+  fields:
+  - name: EXMINCH
+    description: Extremes detector minimum data channel.
+    bit_offset: 0
+    bit_size: 3
+  - name: EXMIN
+    description: EXMIN.
+    bit_offset: 8
+    bit_size: 24
+fieldset/FCR:
+  description: filter control register.
+  fields:
+  - name: IOSR
+    description: Integrator oversampling ratio (averaging length).
+    bit_offset: 0
+    bit_size: 8
+  - name: FOSR
+    description: Sinc filter oversampling ratio (decimation rate).
+    bit_offset: 16
+    bit_size: 10
+  - name: FORD
+    description: Sinc filter order.
+    bit_offset: 29
+    bit_size: 3
+    enum: FORD
+fieldset/ICR:
+  description: interrupt flag clear register.
+  fields:
+  - name: CLRJOVRF
+    description: Clear the injected conversion overrun flag.
+    bit_offset: 2
+    bit_size: 1
+    enum: CLRJOVRF
+  - name: CLRROVRF
+    description: Clear the regular conversion overrun flag.
+    bit_offset: 3
+    bit_size: 1
+    enum: CLRROVRF
+  - name: CLRCKABF
+    description: Clear the clock absence flag.
+    bit_offset: 16
+    bit_size: 8
+  - name: CLRSCDF
+    description: Clear the short-circuit detector flag.
+    bit_offset: 24
+    bit_size: 8
+fieldset/ISR:
+  description: interrupt and status register.
+  fields:
+  - name: JEOCF
+    description: End of injected conversion flag.
+    bit_offset: 0
+    bit_size: 1
+    enum: JEOCF
+  - name: REOCF
+    description: End of regular conversion flag.
+    bit_offset: 1
+    bit_size: 1
+    enum: REOCF
+  - name: JOVRF
+    description: Injected conversion overrun flag.
+    bit_offset: 2
+    bit_size: 1
+    enum: JOVRF
+  - name: ROVRF
+    description: Regular conversion overrun flag.
+    bit_offset: 3
+    bit_size: 1
+    enum: ROVRF
+  - name: AWDF
+    description: Analog watchdog.
+    bit_offset: 4
+    bit_size: 1
+    enum: AWDF
+  - name: JCIP
+    description: Injected conversion in progress status.
+    bit_offset: 13
+    bit_size: 1
+    enum: JCIP
+  - name: RCIP
+    description: Regular conversion in progress status.
+    bit_offset: 14
+    bit_size: 1
+    enum: RCIP
+  - name: CKABF
+    description: Clock absence flag.
+    bit_offset: 16
+    bit_size: 8
+    enum: CKABF
+  - name: SCDF
+    description: short-circuit detector flag.
+    bit_offset: 24
+    bit_size: 8
+    enum: SCDF
+fieldset/JCHGR:
+  description: injected channel group selection register.
+  fields:
+  - name: JCHG
+    description: Injected channel group selection.
+    bit_offset: 0
+    bit_size: 8
+fieldset/JDATAR:
+  description: data register for injected group.
+  fields:
+  - name: JDATACH
+    description: Injected channel most recently converted.
+    bit_offset: 0
+    bit_size: 3
+  - name: JDATA
+    description: Injected group conversion data.
+    bit_offset: 8
+    bit_size: 24
+fieldset/RDATAR:
+  description: data register for the regular channel.
+  fields:
+  - name: RDATACH
+    description: Regular channel most recently converted.
+    bit_offset: 0
+    bit_size: 3
+  - name: RPEND
+    description: Regular channel pending data.
+    bit_offset: 4
+    bit_size: 1
+  - name: RDATA
+    description: Regular channel conversion data.
+    bit_offset: 8
+    bit_size: 24
+fieldset/WDATR:
+  description: channel watchdog filter data register.
+  fields:
+  - name: WDATA
+    description: WDATA.
+    bit_offset: 0
+    bit_size: 16
+enum/AWDCH:
+  bit_size: 8
+  variants:
+  - name: Disabled
+    description: Analog watchdog is disabled on channel y.
+    value: 0
+  - name: Enabled
+    description: Analog watchdog is enabled on channel y.
+    value: 1
+enum/AWDF:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: No Analog watchdog event occurred.
+    value: 0
+  - name: Set
+    description: The analog watchdog block detected voltage which crosses the value programmed in the DFSDM_FLTxAWLTR or DFSDM_FLTxAWHTR registers.
+    value: 1
+enum/AWDIE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Analog watchdog interrupt is disabled.
+    value: 0
+  - name: Enabled
+    description: Analog watchdog interrupt is enabled.
+    value: 1
+enum/AWFORD:
+  bit_size: 2
+  variants:
+  - name: FastSinc
+    description: FastSinc filter type.
+    value: 0
+  - name: Sinc1
+    description: Sinc1 filter type.
+    value: 1
+  - name: Sinc2
+    description: Sinc2 filter type.
+    value: 2
+  - name: Sinc3
+    description: Sinc3 filter type.
+    value: 3
+enum/AWFSEL:
+  bit_size: 1
+  variants:
+  - name: Output
+    description: Analog watchdog on data output value (after the digital filter). The comparison is done after offset correction and shift.
+    value: 0
+  - name: Transceiver
+    description: Analog watchdog on channel transceivers value (after watchdog filter).
+    value: 1
+enum/CHEN:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Channel y disabled.
+    value: 0
+  - name: Enabled
+    description: Channel y enabled.
+    value: 1
+enum/CHINSEL:
+  bit_size: 1
+  variants:
+  - name: SameChannel
+    description: Channel inputs are taken from pins of the same channel y.
+    value: 0
+  - name: FollowingChannel
+    description: Channel inputs are taken from pins of the following channel (channel (y+1) modulo 8).
+    value: 1
+enum/CKABEN:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Clock absence detector disabled on channel y.
+    value: 0
+  - name: Enabled
+    description: Clock absence detector enabled on channel y.
+    value: 1
+enum/CKABF:
+  bit_size: 8
+  variants:
+  - name: Clear
+    description: Clock signal on channel y is present.
+    value: 0
+  - name: Set
+    description: Clock signal on channel y is not present.
+    value: 1
+enum/CKABIE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Detection of channel input clock absence interrupt is disabled.
+    value: 0
+  - name: Enabled
+    description: Detection of channel input clock absence interrupt is enabled.
+    value: 1
+enum/CKOUTSRC:
+  bit_size: 1
+  variants:
+  - name: SYSCLK
+    description: Source for output clock is from system clock.
+    value: 0
+  - name: AUDCLK
+    description: Source for output clock is from audio clock.
+    value: 1
+enum/CLRJOVRF:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: Writing ‘1’ clears the JOVRF bit in the DFSDM_FLTxISR register.
+    value: 1
+enum/CLRROVRF:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: Writing ‘1’ clears the ROVRF bit in the DFSDM_FLTxISR register.
+    value: 1
+enum/DATMPX:
+  bit_size: 2
+  variants:
+  - name: External
+    description: Data to channel y are taken from external serial inputs as 1-bit values. DFSDM_CHyDATINR register is write protected.
+    value: 0
+  - name: ADC
+    description: Data to channel y are taken from internal analog to digital converter ADCy+1 output register update as 16-bit values (if ADCy+1 is available). Data from ADCs are written into INDAT0[15:0] part of DFSDM_CHyDATINR register.
+    value: 1
+  - name: Internal
+    description: Data to channel y are taken from internal DFSDM_CHyDATINR register by direct CPU/DMA write. There can be written one or two 16-bit data samples according DATPACK[1:0] bit field setting.
+    value: 2
+enum/DATPACK:
+  bit_size: 2
+  variants:
+  - name: Standard
+    description: 'Standard: input data in DFSDM_CHyDATINR register are stored only in INDAT0[15:0]. To empty DFSDM_CHyDATINR register one sample must be read by the DFSDM filter from channel y.'
+    value: 0
+  - name: Interleaved
+    description: ': Interleaved: input data in DFSDM_CHyDATINR register are stored as two samples: –first sample in INDAT0[15:0] (assigned to channel y) –second sample INDAT1[15:0] (assigned to channel y).'
+    value: 1
+  - name: Dual
+    description: 'Dual: input data in DFSDM_CHyDATINR register are stored as two samples: –first sample INDAT0[15:0] (assigned to channel y) –second sample INDAT1[15:0] (assigned to channel y+1).'
+    value: 2
+enum/DFEN:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: DFSDM_FLTx is disabled. All conversions of given DFSDM_FLTx are stopped immediately and all DFSDM_FLTx functions are stopped.
+    value: 0
+  - name: Enabled
+    description: DFSDM_FLTx is enabled. If DFSDM_FLTx is enabled, then DFSDM_FLTx starts operating according to its setting.
+    value: 1
+enum/DFSDMEN:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: DFSDM interface disabled.
+    value: 0
+  - name: Enabled
+    description: DFSDM interface enabled.
+    value: 1
+enum/EXCH:
+  bit_size: 8
+  variants:
+  - name: Disabled
+    description: Extremes detector does not accept data from channel y.
+    value: 0
+  - name: Enabled
+    description: Extremes detector accepts data from channel y.
+    value: 1
+enum/FAST:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Fast conversion mode disabled.
+    value: 0
+  - name: Enabled
+    description: Fast conversion mode enabled.
+    value: 1
+enum/FORD:
+  bit_size: 3
+  variants:
+  - name: FastSinc
+    description: FastSinc filter type.
+    value: 0
+  - name: Sinc1
+    description: Sinc1 filter type.
+    value: 1
+  - name: Sinc2
+    description: Sinc2 filter type.
+    value: 2
+  - name: Sinc3
+    description: Sinc3 filter type.
+    value: 3
+  - name: Sinc4
+    description: Sinc4 filter type.
+    value: 4
+  - name: Sinc5
+    description: Sinc5 filter type.
+    value: 5
+enum/JCIP:
+  bit_size: 1
+  variants:
+  - name: NotInProgress
+    description: No request to convert the injected channel group (neither by software nor by trigger) has been issued.
+    value: 0
+  - name: InProgress
+    description: The conversion of the injected channel group is in progress or a request for a injected conversion is pending, due either to ‘1’ being written to JSWSTART or to a trigger detection.
+    value: 1
+enum/JDMAEN:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: The DMA channel is not enabled to read injected data.
+    value: 0
+  - name: Enabled
+    description: The DMA channel is enabled to read injected data.
+    value: 1
+enum/JEOCF:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: No injected conversion has completed.
+    value: 0
+  - name: Set
+    description: An injected conversion has completed and its data may be read.
+    value: 1
+enum/JEOCIE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Injected end of conversion interrupt is disabled.
+    value: 0
+  - name: Enabled
+    description: Injected end of conversion interrupt is enabled.
+    value: 1
+enum/JEXTEN:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: Trigger detection is disabled.
+    value: 0
+  - name: RisingEdge
+    description: Each rising edge on the selected trigger makes a request to launch an injected conversion.
+    value: 1
+  - name: FallingEdge
+    description: Each falling edge on the selected trigger makes a request to launch an injected conversion.
+    value: 2
+  - name: BothEdges
+    description: Both rising edges and falling edges on the selected trigger make requests to launch injected conversions.
+    value: 3
+enum/JOVRF:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: No injected conversion overrun has occurred.
+    value: 0
+  - name: Set
+    description: An injected conversion overrun has occurred, which means that an injected conversion finished while JEOCF was already ‘1’. JDATAR is not affected by overruns.
+    value: 1
+enum/JOVRIE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Injected data overrun interrupt is disabled.
+    value: 0
+  - name: Enabled
+    description: Injected data overrun interrupt is enabled.
+    value: 1
+enum/JSCAN:
+  bit_size: 1
+  variants:
+  - name: Single
+    description: One channel conversion is performed from the injected channel group and next the selected channel from this group is selected.
+    value: 0
+  - name: Series
+    description: The series of conversions for the injected group channels is executed, starting over with the lowest selected channel.
+    value: 1
+enum/JSWSTART:
+  bit_size: 1
+  variants:
+  - name: Start
+    description: Writing ‘1’ makes a request to convert the channels in the injected conversion group, causing JCIP to become ‘1’ at the same time. If JCIP=1 already, then writing to JSWSTART has no effect. Writing ‘1’ has no effect if JSYNC=1.
+    value: 1
+enum/JSYNC:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Do not launch an injected conversion synchronously with DFSDM_FLT0.
+    value: 0
+  - name: Enabled
+    description: Launch an injected conversion in this DFSDM_FLTx at the very moment when an injected conversion is launched in DFSDM_FLT0 by its JSWSTART trigger.
+    value: 1
+enum/RCH:
+  bit_size: 3
+  variants:
+  - name: Channel0
+    description: Channel 0 is selected as regular channel.
+    value: 0
+  - name: Channel1
+    description: Channel 1 is selected as regular channel.
+    value: 1
+  - name: Channel2
+    description: Channel 2 is selected as regular channel.
+    value: 2
+  - name: Channel3
+    description: Channel 3 is selected as regular channel.
+    value: 3
+  - name: Channel4
+    description: Channel 4 is selected as regular channel.
+    value: 4
+  - name: Channel5
+    description: Channel 5 is selected as regular channel.
+    value: 5
+  - name: Channel6
+    description: Channel 6 is selected as regular channel.
+    value: 6
+  - name: Channel7
+    description: Channel 7 is selected as regular channel.
+    value: 7
+enum/RCIP:
+  bit_size: 1
+  variants:
+  - name: NotInProgress
+    description: No request to convert the regular channel has been issued.
+    value: 0
+  - name: InProgress
+    description: The conversion of the regular channel is in progress or a request for a regular conversion is pending.
+    value: 1
+enum/RCONT:
+  bit_size: 1
+  variants:
+  - name: Once
+    description: The regular channel is converted just once for each conversion request.
+    value: 0
+  - name: Continuous
+    description: The regular channel is converted repeatedly after each conversion request.
+    value: 1
+enum/RDMAEN:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: The DMA channel is not enabled to read regular data.
+    value: 0
+  - name: Enabled
+    description: The DMA channel is enabled to read regular data.
+    value: 1
+enum/REOCF:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: No regular conversion has completed.
+    value: 0
+  - name: Set
+    description: A regular conversion has completed and its data may be read.
+    value: 1
+enum/REOCIE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Regular end of conversion interrupt is disabled.
+    value: 0
+  - name: Enabled
+    description: Regular end of conversion interrupt is enabled.
+    value: 1
+enum/ROVRF:
+  bit_size: 1
+  variants:
+  - name: Clear
+    description: No regular conversion overrun has occurred.
+    value: 0
+  - name: Set
+    description: A regular conversion overrun has occurred, which means that a regular conversion finished while REOCF was already ‘1’. RDATAR is not affected by overruns.
+    value: 1
+enum/ROVRIE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Regular data overrun interrupt is disabled.
+    value: 0
+  - name: Enabled
+    description: Regular data overrun interrupt is enabled.
+    value: 1
+enum/RSWSTART:
+  bit_size: 1
+  variants:
+  - name: Start
+    description: Writing ‘1’ makes a request to start a conversion on the regular channel and causes RCIP to become ‘1’. If RCIP=1 already, writing to RSWSTART has no effect. Writing ‘1’ has no effect if RSYNC=1.
+    value: 1
+enum/RSYNC:
+  bit_size: 1
+  variants:
+  - name: NoLaunch
+    description: Do not launch a regular conversion synchronously with DFSDM_FLT0.
+    value: 0
+  - name: Launch
+    description: Launch a regular conversion in this DFSDM_FLTx at the very moment when a regular conversion is launched in DFSDM_FLT0.
+    value: 1
+enum/SCDEN:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Input channel y will not be guarded by the short-circuit detector.
+    value: 0
+  - name: Enabled
+    description: Input channel y will be continuously guarded by the short-circuit detector.
+    value: 1
+enum/SCDF:
+  bit_size: 8
+  variants:
+  - name: Clear
+    description: No short-circuit detector event occurred on channel y.
+    value: 0
+  - name: Set
+    description: The short-circuit detector counter reaches, on channel y, the value programmed in the DFSDM_CHyAWSCDR registers.
+    value: 1
+enum/SCDIE:
+  bit_size: 1
+  variants:
+  - name: Disabled
+    description: Short-circuit detector interrupt is disabled.
+    value: 0
+  - name: Enabled
+    description: Short-circuit detector interrupt is enabled.
+    value: 1
+enum/SITP:
+  bit_size: 2
+  variants:
+  - name: SPIRisingEdge
+    description: SPI with rising edge to strobe data.
+    value: 0
+  - name: SPIFallingEdge
+    description: SPI with falling edge to strobe data.
+    value: 1
+  - name: Manchester
+    description: 'Manchester coded input on DATINy pin: rising edge = logic 0, falling edge = logic 1.'
+    value: 2
+  - name: ManchesterInverted
+    description: 'Manchester coded input on DATINy pin: rising edge = logic 1, falling edge = logic 0.'
+    value: 3
+enum/SPICKSEL:
+  bit_size: 2
+  variants:
+  - name: CKIN
+    description: Clock coming from external CKINy input - sampling point according SITP[1:0].
+    value: 0
+  - name: CKOUT
+    description: Clock coming from internal CKOUT output - sampling point according SITP[1:0].
+    value: 1
+  - name: CKOUTSecondFalling
+    description: Clock coming from internal CKOUT - sampling point on each second CKOUT falling edge. For connection to external Σ∆ modulator which divides its clock input (from CKOUT) by 2 to generate its output serial communication clock (and this output clock change is active on each clock input rising edge).
+    value: 2
+  - name: CKOUTSecondRising
+    description: Clock coming from internal CKOUT output - sampling point on each second CKOUT rising edge. For connection to external Σ∆ modulator which divides its clock input (from CKOUT) by 2 to generate its output serial communication clock (and this output clock change is active on each clock input falling edge).
+    value: 3
