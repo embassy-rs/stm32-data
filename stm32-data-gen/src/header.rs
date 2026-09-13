@@ -318,6 +318,7 @@ impl Defines {
             ("RISAF21", &["RISAF21_BASE_NS", "RISAF21_BASE_S"]),
             ("RISAF22", &["RISAF22_BASE_NS", "RISAF22_BASE_S"]),
             ("RISAF23", &["RISAF23_BASE_NS", "RISAF23_BASE_S"]),
+            ("DFSDM1", &["DFSDM1_BASE", "DFSDM1_BASE_NS", "DFSDM1_BASE_S"]),
         ];
         let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
 
