@@ -1025,6 +1025,10 @@ mod tests {
         // ADC4 on WBA5/WBA6 has no injected channels, so its regular-trigger signal
         // must be named ADC_EXT_TRG (not ADC_TRG) to match the embassy-stm32 build.rs
         // mapping that generates `RegularTrigger<ADC4>` impls.
-        assert!(adc4_triggers.iter().any(|t| t.signal == "ADC_EXT_TRG0" && t.source == "TIM1_TRGO2"));
+        assert!(
+            adc4_triggers
+                .iter()
+                .any(|t| t.signal == "ADC_EXT_TRG0" && t.source == "TIM1_TRGO2")
+        );
     }
 }
