@@ -960,11 +960,11 @@ impl Triggers {
                 Trigger {signal: "I2C_TRG11", source: "RTC_WUT_TRG"},
             ]),
             (r"^STM32WBA[56].*:ADC4", &[
-                Trigger {signal: "ADC_TRG0", source: "TIM1_TRGO2"},
-                Trigger {signal: "ADC_TRG1", source: "TIM1_OC4"},
-                Trigger {signal: "ADC_TRG2", source: "TIM2_TRGO"},
-                Trigger {signal: "ADC_TRG5", source: "LPTIM1_CH1"},
-                Trigger {signal: "ADC_TRG7", source: "EXTI15_TRG"},
+                Trigger {signal: "ADC_EXT_TRG0", source: "TIM1_TRGO2"},
+                Trigger {signal: "ADC_EXT_TRG1", source: "TIM1_OC4"},
+                Trigger {signal: "ADC_EXT_TRG2", source: "TIM2_TRGO"},
+                Trigger {signal: "ADC_EXT_TRG5", source: "LPTIM1_CH1"},
+                Trigger {signal: "ADC_EXT_TRG7", source: "EXTI15_TRG"},
             ]),
             (r"^STM32WL.*:DAC.*", &[
                 Trigger {signal: "DAC_CHX_TRG1", source: "TIM1_TRGO"},
@@ -1007,5 +1007,28 @@ impl Triggers {
     /// - peripheral: the name of the peripheral (e.g., "USART1")
     pub fn peripheral_trigger_info(&self, mcu_name: &str, peripheral: &str) -> Option<&[Trigger]> {
         self.map.get(&format!("{mcu_name}:{peripheral}")).next().map(|v| &**v)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_wba_adc4_regular_triggers() {
+        let triggers = Triggers::new();
+
+        let adc4_triggers = triggers
+            .peripheral_trigger_info("STM32WBA65RI", "ADC4")
+            .expect("STM32WBA65RI:ADC4 should have trigger info");
+
+        // ADC4 on WBA5/WBA6 has no injected channels, so its regular-trigger signal
+        // must be named ADC_EXT_TRG (not ADC_TRG) to match the embassy-stm32 build.rs
+        // mapping that generates `RegularTrigger<ADC4>` impls.
+        assert!(
+            adc4_triggers
+                .iter()
+                .any(|t| t.signal == "ADC_EXT_TRG0" && t.source == "TIM1_TRGO2")
+        );
     }
 }
