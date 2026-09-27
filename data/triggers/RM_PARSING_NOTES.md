@@ -13,9 +13,6 @@ never emit sources for peripherals the chips don't have.
 
 ## Notes per RM
 
-(filled in by subagents; keep most-recent-at-bottom or alphabetical — pick one
-and stay consistent: ALPHABETICAL by RM folder name)
-
 ### RM0351-STM32L47-48-49-4A
 
 - Full chapters on disk (ADC 18, DAC 19, DFSDM 24, TIM1/8 30). RM title
