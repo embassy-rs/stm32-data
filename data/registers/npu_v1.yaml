@@ -1,0 +1,261 @@
+block/BUSIF:
+  description: ATON AXI bus interface unit.
+  items:
+  - name: CTRL
+    description: Bus interface control register.
+    byte_offset: 0
+    fieldset: BUSIF_CTRL
+  - name: ERR
+    description: Bus interface error status register.
+    byte_offset: 16
+    fieldset: BUSIF_ERR
+block/CLKCTRL:
+  description: ATON internal clock controller.
+  items:
+  - name: CTRL
+    description: Clock controller control register.
+    byte_offset: 0
+    fieldset: CLKCTRL_CTRL
+  - name: AGATES0
+    description: Group-A infrastructure clock gates (lower 32).
+    byte_offset: 8
+    fieldset: AGATES
+  - name: AGATES1
+    description: Group-A infrastructure clock gates (upper 32).
+    byte_offset: 12
+    fieldset: AGATES
+  - name: BGATES
+    description: Group-B accelerator unit clock gates.
+    byte_offset: 16
+    fieldset: BGATES
+block/EPOCHCTRL:
+  description: ATON Epoch Controller execution engine.
+  items:
+  - name: CTRL
+    description: Epoch controller control and status register.
+    byte_offset: 0
+    fieldset: EPOCHCTRL_CTRL
+  - name: ADDR
+    description: Blob start address register (8-byte aligned).
+    byte_offset: 8
+    fieldset: EPOCHCTRL_ADDR
+  - name: IRQ
+    description: Epoch controller interrupt status/acknowledge register.
+    byte_offset: 12
+    fieldset: EPOCHCTRL_IRQ
+  - name: LABEL
+    description: Current/last executed blob section label (debug).
+    byte_offset: 28
+    fieldset: EPOCHCTRL_LABEL
+  - name: BC
+    description: Opcode/byte counter (debug).
+    byte_offset: 32
+    fieldset: EPOCHCTRL_BC
+block/INTCTRL:
+  description: ATON interrupt controller.
+  items:
+  - name: CTRL
+    description: Interrupt controller control register.
+    byte_offset: 0
+    fieldset: INTCTRL_CTRL
+  - name: INTREG
+    description: Latched interrupt status register.
+    byte_offset: 8
+    fieldset: INTSTATUS
+  - name: INTSET
+    description: Software interrupt set register.
+    byte_offset: 12
+    fieldset: INTSTATUS
+  - name: INTCLR
+    description: Interrupt clear register (write 1 to clear).
+    byte_offset: 16
+    fieldset: INTSTATUS
+  - name: INTORMSK
+    description: OR-mask registers for interrupt lines 0..3.
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 20
+    fieldset: INTSTATUS
+  - name: INTANDMSK
+    description: AND-mask registers for interrupt lines 0..3.
+    array:
+      len: 4
+      stride: 4
+    byte_offset: 36
+    fieldset: INTSTATUS
+block/NPU:
+  description: ST Neural-ART accelerator (ATON) host interface.
+  items:
+  - name: CLKCTRL
+    description: Clock controller.
+    byte_offset: 0
+    block: CLKCTRL
+  - name: INTCTRL
+    description: Interrupt controller.
+    byte_offset: 4096
+    block: INTCTRL
+  - name: BUSIF
+    description: Bus interface units.
+    array:
+      len: 2
+      stride: 4096
+    byte_offset: 8192
+    block: BUSIF
+  - name: STRENG
+    description: Streaming engines.
+    array:
+      len: 10
+      stride: 4096
+    byte_offset: 20480
+    block: STRENG
+  - name: EPOCHCTRL
+    description: Epoch controller.
+    byte_offset: 122880
+    block: EPOCHCTRL
+block/STRENG:
+  description: ATON streaming engine host interface.
+  items:
+  - name: IRQ
+    description: Streaming engine interrupt status/acknowledge register.
+    byte_offset: 60
+    fieldset: STRENG_IRQ
+fieldset/AGATES:
+  description: Group-A clock gating register.
+  fields:
+  - name: GATES
+    description: Clock enable mask.
+    bit_offset: 0
+    bit_size: 32
+fieldset/BGATES:
+  description: Group-B unit clock gating register.
+  fields:
+  - name: GATES
+    description: Unit clock enable mask.
+    bit_offset: 0
+    bit_size: 32
+fieldset/BUSIF_CTRL:
+  description: Bus interface control register.
+  fields:
+  - name: EN
+    description: Bus interface enable.
+    bit_offset: 0
+    bit_size: 1
+fieldset/BUSIF_ERR:
+  description: Bus interface error status register.
+  fields:
+  - name: ERR
+    description: Bus error flags.
+    bit_offset: 0
+    bit_size: 32
+fieldset/CLKCTRL_CTRL:
+  description: Clock controller control register.
+  fields:
+  - name: EN
+    description: Clock controller enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: CLR
+    description: Clock controller synchronous clear.
+    bit_offset: 1
+    bit_size: 1
+fieldset/EPOCHCTRL_ADDR:
+  description: Blob base address register.
+  fields:
+  - name: ADDR
+    description: 32-bit physical address of blob start.
+    bit_offset: 0
+    bit_size: 32
+fieldset/EPOCHCTRL_BC:
+  description: Byte/opcode counter register.
+  fields:
+  - name: COUNT
+    description: Executed instruction counter.
+    bit_offset: 0
+    bit_size: 32
+fieldset/EPOCHCTRL_CTRL:
+  description: Epoch controller control register.
+  fields:
+  - name: EN
+    description: Start epoch controller execution.
+    bit_offset: 0
+    bit_size: 1
+  - name: CLR
+    description: Clear controller state.
+    bit_offset: 1
+    bit_size: 1
+  - name: SM
+    description: Single-step mode enable.
+    bit_offset: 3
+    bit_size: 1
+  - name: CONFCLR
+    description: Configuration clear.
+    bit_offset: 30
+    bit_size: 1
+  - name: RUNNING
+    description: Controller execution status.
+    bit_offset: 31
+    bit_size: 1
+fieldset/EPOCHCTRL_IRQ:
+  description: Epoch controller IRQ acknowledge register.
+  fields:
+  - name: IRQ
+    description: IRQ flag (write back read value to ack).
+    bit_offset: 0
+    bit_size: 32
+fieldset/EPOCHCTRL_LABEL:
+  description: Blob label debug register.
+  fields:
+  - name: LABEL
+    description: Current blob section label.
+    bit_offset: 0
+    bit_size: 32
+fieldset/INTCTRL_CTRL:
+  description: Interrupt controller control register.
+  fields:
+  - name: EN
+    description: Interrupt controller enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: CLR
+    description: Synchronous clear.
+    bit_offset: 1
+    bit_size: 1
+  - name: CONFCLR
+    description: Configuration clear.
+    bit_offset: 30
+    bit_size: 1
+fieldset/INTSTATUS:
+  description: Interrupt status and mask register.
+  fields:
+  - name: STRENG_EVT
+    description: Streaming engine completion events (engines 0..9).
+    bit_offset: 0
+    bit_size: 10
+  - name: STRENG_ERR
+    description: Streaming engine errors (engines 0..9).
+    bit_offset: 10
+    bit_size: 10
+  - name: BUSIF_ERR
+    description: Bus interface error flags (BUSIF 0..1).
+    bit_offset: 25
+    bit_size: 2
+  - name: ECTRL_EVT
+    description: Epoch controller end of epoch / IRQ event.
+    bit_offset: 28
+    bit_size: 1
+  - name: ECTRL_NOACK
+    description: Epoch controller missing-acknowledge error.
+    bit_offset: 29
+    bit_size: 1
+  - name: ECTRL_ERR
+    description: Epoch controller execution error.
+    bit_offset: 30
+    bit_size: 1
+fieldset/STRENG_IRQ:
+  description: Streaming engine IRQ status/acknowledge register.
+  fields:
+  - name: IRQ
+    description: Interrupt pending flag (write 1 to acknowledge).
+    bit_offset: 0
+    bit_size: 32
