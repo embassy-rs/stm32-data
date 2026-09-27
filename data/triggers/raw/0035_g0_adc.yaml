@@ -1,0 +1,37 @@
+# G0 ADC regular trigger inputs (EXTSEL[2:0], 3-bit mux, TRG0-TRG7).
+# Sources:
+# - RM0454 (STM32G0x0) ch. 14, Table 57 "External triggers" (full table
+#   on disk): TRG0 TIM1_TRGO2, TRG1 TIM1_CC4, TRG2 Reserved (G0x0 has
+#   no TIM2), TRG3 TIM3_TRGO, TRG4 TIM15_TRGO, TRG5 TIM6_TRGO,
+#   TRG6 TIM4_TRGO, TRG7 EXTI11 ("EXTI11" normalized to EXTI11_TRG).
+# - RM0444 (STM32G0x1) ch. 15 Table 73 is NOT on disk (truncated
+#   extraction, stops at ch. 13), but its interconnect matrix §9.3.2
+#   lists TIM1, TIM2, TIM3, TIM4, TIM6, TIM15 and EXTI as ADC sources
+#   and points at Table 73 — i.e. G0x1 bonds TIM2_TRGO at TRG2 where
+#   G0x0 leaves it Reserved; all other rows match the old hand rule.
+# ARBITRATION: the stm32g0* SVD EXTSEL enums (TIM1_TRGO@0, TIM2_CC4@3,
+# TIM2_CC3@5, TRG4/TRG6 missing) are copy-paste errors from another
+# family — RM wins. The old hand rule below is confirmed by the RM.
+# NOTE: the rule as written covers G0x0 chips too, for which TRG2
+# (TIM2_TRGO) is Reserved — it should be split by sub-family (reported,
+# not done). See tmp/rm_parsing_notes.md.
+# match: ^STM32G0.*:ADC.*
+
+- match: '^STM32G0.*:ADC.*'
+  triggers:
+    - signal: ADC_EXT_TRG0
+      source: TIM1_TRGO2
+    - signal: ADC_EXT_TRG1
+      source: TIM1_CC4
+    - signal: ADC_EXT_TRG2
+      source: TIM2_TRGO
+    - signal: ADC_EXT_TRG3
+      source: TIM3_TRGO
+    - signal: ADC_EXT_TRG4
+      source: TIM15_TRGO
+    - signal: ADC_EXT_TRG5
+      source: TIM6_TRGO
+    - signal: ADC_EXT_TRG6
+      source: TIM4_TRGO
+    - signal: ADC_EXT_TRG7
+      source: EXTI11_TRG

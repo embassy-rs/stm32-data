@@ -1,0 +1,36 @@
+# Rule 32 of the original hand-maintained PERIPHERAL_TRIGGER_RULES table
+# (stm32-data-gen/src/trigger.rs @ HEAD before the data-driven rewrite).
+# DEFERRED — no RM available on disk: the RM0481 extraction is truncated at
+# chapter 15; the DAC chapter (ch. 28, Table 281 "DAC interconnection") is not
+# on disk, so the per-index TSEL values could not be re-verified. Content kept
+# from the hand rules.
+# Partially corroborated by RM0481 ch. 15 §15.3.4 (triggers to DAC): source set
+# for the family is TIM1/2/4/5/6/7/8/15, LPTIM1/2 (ch1) and EXTI9 — matches
+# this rule's 13 entries. TIM4@3, TIM5@4, TIM8@7, TIM15@8 vs H503's TIM3@3
+# implies the H56x/57x tables shift indices relative to H503; unverifiable.
+# match: ^STM32H5(6|7).*:DAC.*
+
+- match: '^STM32H5(6|7).*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG3
+      source: TIM4_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM5_TRGO
+    - signal: DAC_CHX_TRG7
+      source: TIM8_TRGO
+    - signal: DAC_CHX_TRG8
+      source: TIM15_TRGO
+    - signal: DAC_CHX_TRG1
+      source: TIM1_TRGO
+    - signal: DAC_CHX_TRG2
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG6
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG11
+      source: LPTIM1_TRGO
+    - signal: DAC_CHX_TRG12
+      source: LPTIM2_TRGO
+    - signal: DAC_CHX_TRG13
+      source: EXTI9_TRG

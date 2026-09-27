@@ -1,0 +1,19 @@
+# Extracted from ST reference manuals (RM wins over SVD per CONVENTIONS.md).
+# RM0366 (STM32F301x6-8/318x8) Table 46 "External triggers (DAC1)":
+#   TIM6@000, TIM15@011, TIM2@100, EXTI9@110; TSEL 001/010/101 Reserved
+#   (F301/F318 have no TIM3, TIM7, or TIM4 — the SVD enum's TIM3@1/TIM7@2 are
+#   copy-paste errors).
+# RM0365 (STM32F302) Table 100 additionally has TIM3@001 (DAC_TRIG_RMP in
+#   SYSCFG_CFGR1) and TIM4@101; F302's full list is in tmp/proposals/f302_dac.yaml
+#   (separate rule, to be ordered before this one in the manifest).
+
+- match: '^STM32F3(01|02|18).*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG0
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG3
+      source: TIM15_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG6
+      source: EXTI9_TRG

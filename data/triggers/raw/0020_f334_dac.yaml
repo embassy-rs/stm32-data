@@ -1,0 +1,27 @@
+# Extracted from RM0364 (STM32F334), DAC chapter 14.5.4,
+# Table 53 "External triggers (DAC1)".
+# HRTIM sources appear in the RM as HRTIM1_DACTRGn; named HRTIM_DAC_TRGn per
+# CONVENTIONS.md (n matches the RM's DACTRGn numbering).
+# TRG1: TIM3_TRGO requires DAC_TRIG_RMP=1 in SYSCFG_CFGR1.
+# TRG3: TIM15_TRGO default; HRTIM_DAC_TRG1 when DAC1_TRIG3_RMP=1 in SYSCFG_CFGR3.
+# TRG5: HRTIM_DAC_TRG2 when DAC1_TRIG5_RMP=1 in SYSCFG_CFGR3 (no default source).
+# DAC2's table (Table 54, HRTIM_DAC_TRG3@TRG5) is a separate rule: 0020a.
+
+- match: '^STM32F334.*:DAC1'
+  triggers:
+    - signal: DAC_CHX_TRG0
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG1
+      source: TIM3_TRGO # Requires DAC_TRIG_RMP=1 in SYSCFG_CFGR1.
+    - signal: DAC_CHX_TRG2
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG3
+      source: TIM15_TRGO # Default when DAC1_TRIG3_RMP=0 (SYSCFG_CFGR3).
+    - signal: DAC_CHX_TRG3
+      source: HRTIM_DAC_TRG1 # When DAC1_TRIG3_RMP=1 (SYSCFG_CFGR3).
+    - signal: DAC_CHX_TRG4
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: HRTIM_DAC_TRG2 # When DAC1_TRIG5_RMP=1 (SYSCFG_CFGR3).
+    - signal: DAC_CHX_TRG6
+      source: EXTI9_TRG

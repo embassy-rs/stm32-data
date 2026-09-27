@@ -1,0 +1,78 @@
+# Derived from the reference manual (provenance in the notes below).
+# Sub-families genuinely differ; three rules needed. ORDERING: the specific
+# rules must be placed BEFORE the general rule in manifest.txt (first match
+# wins). All chips/signals verified against the RMs; SVD EXTSEL enums agree
+# (except L0x0, where the SVD still lists TIM6_TRGO/TIM3_TRGO at TRG0/TRG6
+# while the RM marks them Reserved — those parts have no TIM6/TIM3 on the
+# die, so the entries are omitted).
+#
+#   RM0451 (L0x0: STM32L010/L011/L021) Table 54 "External triggers":
+#     TRG0 Reserved, TRG1 TIM21_CH2, TRG2 TIM2_TRGO, TRG3 TIM2_CH4,
+#     TRG4 TIM22_TRGO, TRG5 TIM2_CH3, TRG6 Reserved, TRG7 EXTI11
+#   RM0377 (L0x1: STM32L031/L041) Table 58 "External triggers":
+#     TRG0 TIM6_TRGO, TRG1 TIM21_CH2, TRG2 TIM2_TRGO, TRG3 TIM2_CH4,
+#     TRG4 "TIM22_TRGO, TIM21_TRGO (1)" (combined cell -> two entries;
+#     footnote (1): TIM21_TRGO available only in category 1 devices, which
+#     the L0x1 parts are), TRG5 TIM2_CH3, TRG6 TIM3_TRGO, TRG7 EXTI11
+#   RM0376 (L0x2: STM32L051/052/053/062/063) Table 60 and
+#   RM0367 (L0x3: STM32L071/072/073/081/082/083) Table 60 "External triggers":
+#     TRG0 TIM6_TRGO, TRG1 TIM21_CH2, TRG2 TIM2_TRGO, TRG3 TIM2_CH4,
+#     TRG4 TIM22_TRGO, TRG5 TIM2_CH3, TRG6 TIM3_TRGO, TRG7 EXTI11
+#
+# Timer capture/compare sources use TIM{n}_CC{m} naming. EXTI11 -> EXTI11_TRG.
+# Software trigger (SWSTART) omitted per conventions.
+
+- match: '^STM32L0(10|11|21).*:ADC.*'
+  triggers:
+    - signal: ADC_EXT_TRG1
+      source: TIM21_CC2
+    - signal: ADC_EXT_TRG2
+      source: TIM2_TRGO
+    - signal: ADC_EXT_TRG3
+      source: TIM2_CC4
+    - signal: ADC_EXT_TRG4
+      source: TIM22_TRGO
+    - signal: ADC_EXT_TRG5
+      source: TIM2_CC3
+    - signal: ADC_EXT_TRG7
+      source: EXTI11_TRG
+
+- match: '^STM32L0(31|41).*:ADC.*'
+  triggers:
+    - signal: ADC_EXT_TRG0
+      source: TIM6_TRGO
+    - signal: ADC_EXT_TRG1
+      source: TIM21_CC2
+    - signal: ADC_EXT_TRG2
+      source: TIM2_TRGO
+    - signal: ADC_EXT_TRG3
+      source: TIM2_CC4
+    - signal: ADC_EXT_TRG4
+      source: TIM22_TRGO
+    - signal: ADC_EXT_TRG4
+      source: TIM21_TRGO
+    - signal: ADC_EXT_TRG5
+      source: TIM2_CC3
+    - signal: ADC_EXT_TRG6
+      source: TIM3_TRGO
+    - signal: ADC_EXT_TRG7
+      source: EXTI11_TRG
+
+- match: '^STM32L0.*:ADC.*'
+  triggers:
+    - signal: ADC_EXT_TRG0
+      source: TIM6_TRGO
+    - signal: ADC_EXT_TRG1
+      source: TIM21_CC2
+    - signal: ADC_EXT_TRG2
+      source: TIM2_TRGO
+    - signal: ADC_EXT_TRG3
+      source: TIM2_CC4
+    - signal: ADC_EXT_TRG4
+      source: TIM22_TRGO
+    - signal: ADC_EXT_TRG5
+      source: TIM2_CC3
+    - signal: ADC_EXT_TRG6
+      source: TIM3_TRGO
+    - signal: ADC_EXT_TRG7
+      source: EXTI11_TRG

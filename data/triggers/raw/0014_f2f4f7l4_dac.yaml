@@ -1,0 +1,30 @@
+# Derived from CMSIS-SVD enumerated values (see provenance per rule).
+# Source: sources/svd/<file>.svd, extracted by `trigger-svd-extract`.
+# Regenerate: re-run the extractor and this script after updating SVDs.
+# SVD: stm32f{215,217,405,407,410,413,427,429,446,469,730,745,750,765,7x2,7x3,
+# 7x6,7x7,7x9}.svd, field DAC_CR.TSEL2. All agree.
+# NOTE: this rule used to also match L4 chips, which shadowed the L4+/L5 v2
+# DAC table of rule 0030 (0030 sat later in the manifest and its regex
+# ^STM32(L4|L5).*:DAC.* matched L4+ chips first here). Fixed 2026: L4 DAC
+# routing is now: L45x/46x -> rule 0013, other L4 (L41x-44x, L47x-4Ax) ->
+# this rule (RM0351 Table 125 v1 table), L4+ (L4P/Q/R/S) and L5 -> rule 0030
+# (v2 4-bit table). See 0030's header for the L4+ v2 evidence.
+# SVD: stm32f{215,217,405,407,410,413,427,429,446,469,730,745,750,765,7x2,7x3,
+# 7x6,7x7,7x9}.svd, field DAC_CR.TSEL2. All agree.
+
+- match: '^STM32(F2|F4|F7|L4).*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG0
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG1
+      source: TIM8_TRGO
+    - signal: DAC_CHX_TRG2
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG3
+      source: TIM5_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM4_TRGO
+    - signal: DAC_CHX_TRG6
+      source: EXTI9_TRG

@@ -1,0 +1,24 @@
+# Derived from the reference manual (provenance in the notes below).
+# whose regex also matches F302 and which now only carries the F301/F318-safe
+# subset).
+# Extracted from RM0365 (STM32F302xB-C-D-E/302x6-8) Table 100
+# "External triggers (DAC1)", DAC chapter 16.5.4:
+#   TIM6@000, TIM3@001 (requires DAC_TRIG_RMP=1 in SYSCFG_CFGR1), TIM15@011,
+#   TIM2@100, TIM4@101, EXTI9@110; TSEL 010 Reserved, 111 SWTRIG.
+# F302 has no TIM7/TIM8/TIM5, so this list differs from the F301/F318 subset
+# (adds TIM3@1, TIM4@5) and from F303 (no TIM7/TIM8/TIM4... TIM4 yes, TIM7/TIM8 no).
+
+- match: '^STM32F302.*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG0
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG1
+      source: TIM3_TRGO # Requires DAC_TRIG_RMP=1 in SYSCFG_CFGR1.
+    - signal: DAC_CHX_TRG3
+      source: TIM15_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM4_TRGO
+    - signal: DAC_CHX_TRG6
+      source: EXTI9_TRG

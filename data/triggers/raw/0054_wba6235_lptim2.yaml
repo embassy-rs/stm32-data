@@ -1,0 +1,44 @@
+# STM32WBA62/63/65 LPTIM2 inputs.
+# Provenance: RM0515 (STM32WBA6) ch.33 (LPTIM): Table 325 (LPTIM1/2 external
+# trigger connections), Table 326 (input 1), Table 327 (input 2), Table 328
+# (input capture 1), Table 329 (input capture 2). Verified against the RM;
+# identical to the old hand rule. LPTIM2 EXT_TRG4/5 = gpdma_ch0_tc /
+# gpdma_ch4_tc and IC2_MUX1 = HSI16/256 (vs LSI on LPTIM1), per the tables.
+# match: ^STM32WBA6[235].*:LPTIM2
+
+- match: '^STM32WBA6[235].*:LPTIM2'
+  triggers:
+    - signal: LPTIM_EXT_TRG0
+      source: LPTIM2_ETR
+    - signal: LPTIM_EXT_TRG1
+      source: RTC_ALRA_TRG
+    - signal: LPTIM_EXT_TRG2
+      source: RTC_ALRB_TRG
+    - signal: LPTIM_EXT_TRG3
+      source: TAMP_TRG1
+    - signal: LPTIM_EXT_TRG4
+      source: GPDMA_CH0_TC
+    - signal: LPTIM_EXT_TRG5
+      source: GPDMA_CH1_TC
+    - signal: LPTIM_EXT_TRG6
+      source: COMP1_OUT
+    - signal: LPTIM_EXT_TRG7
+      source: COMP2_OUT
+    - signal: LPTIM_IN1_MUX0
+      source: LPTIM2_IN1
+    - signal: LPTIM_IN1_MUX1
+      source: COMP1_OUT
+    - signal: LPTIM_IN2_MUX0
+      source: LPTIM2_IN2
+    - signal: LPTIM_IN2_MUX1
+      source: COMP2_OUT
+    - signal: LPTIM_IC1_MUX0
+      source: LPTIM2_CH1
+    - signal: LPTIM_IC1_MUX1
+      source: COMP1_OUT
+    - signal: LPTIM_IC1_MUX2
+      source: COMP2_OUT
+    - signal: LPTIM_IC2_MUX0
+      source: LPTIM2_CH2
+    - signal: LPTIM_IC2_MUX1
+      source: HSI16_DIV256

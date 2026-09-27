@@ -1,0 +1,16 @@
+# Rule 78 of the original hand-maintained PERIPHERAL_TRIGGER_RULES table
+# (stm32-data-gen/src/trigger.rs @ HEAD before the data-driven rewrite).
+# Provenance: hand-written from the family reference manual.
+# REVIEWED 2026: RM0432 DFSDM tables not on disk (truncated extraction);
+# wiring matches the L5 analog RM0438 Table 210 (break0 -> TIM1/TIM15 BRK,
+# break1 -> TIM1 BRK2 / TIM16 BRK, break2 -> TIM8/TIM17 BRK, break3 -> TIM8
+# BRK2) and RM0432 00-index §10.3.6 (DFSDM to TIM1/TIM8/TIM15/TIM16/TIM17).
+# Hand content kept.
+# match: ^STM32L4(P|Q|R|S).*:TIM1.*
+
+- match: '^STM32L4(P|Q|R|S).*:TIM1.*'
+  triggers:
+    - signal: TIMX_BRK_IN1
+      source: DFSDM1_BREAK0
+    - signal: TIMX_BRK_IN2
+      source: DFSDM1_BREAK1

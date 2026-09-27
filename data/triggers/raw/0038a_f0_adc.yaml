@@ -1,0 +1,36 @@
+# Derived from the reference manual (provenance in the notes below).
+# Verified against:
+#   RM0091 (F0x1/0x2/0x8) Table 43 "External triggers" (ADC chapter)
+#     TRG0 TIM1_TRGO, TRG1 TIM1_CC4, TRG2 TIM2_TRGO, TRG3 TIM3_TRGO, TRG4 TIM15_TRGO
+#     (TRG5-TRG7 Reserved). Matches SVD stm32f0x1/f0x2/f0x8 ADC_CFGR1 EXTSEL.
+#   RM0360 (F0x0: STM32F030/F070) Table 35 "External triggers" (ADC chapter)
+#     lists the same table, but F0x0 has NO TIM2 on the die — the SVD for
+#     stm32f0x0 omits the TIM2_TRGO enum (value 010). RM table is generic;
+#     SVD/die wins, so the F0x0 split rule below drops ADC_EXT_TRG2.
+# ORDERING: the F0x0-specific rule must be placed BEFORE the general rule
+# in manifest.txt (first match wins).
+# Software trigger (SWSTART) and Reserved rows omitted per conventions.
+
+- match: '^STM32F0[37]0.*:ADC.*'
+  triggers:
+    - signal: ADC_EXT_TRG0
+      source: TIM1_TRGO
+    - signal: ADC_EXT_TRG1
+      source: TIM1_CC4
+    - signal: ADC_EXT_TRG3
+      source: TIM3_TRGO
+    - signal: ADC_EXT_TRG4
+      source: TIM15_TRGO
+
+- match: '^STM32F0.*:ADC.*'
+  triggers:
+    - signal: ADC_EXT_TRG0
+      source: TIM1_TRGO
+    - signal: ADC_EXT_TRG1
+      source: TIM1_CC4
+    - signal: ADC_EXT_TRG2
+      source: TIM2_TRGO
+    - signal: ADC_EXT_TRG3
+      source: TIM3_TRGO
+    - signal: ADC_EXT_TRG4
+      source: TIM15_TRGO

@@ -1,0 +1,25 @@
+# DAC external triggers for STM32L45x/L46x (3-bit TSELx).
+# Provenance: RM0351 (STM32L47x/48x/49x/4Ax) Table 125 "DAC trigger
+# selection" — the same v1 3-bit table applies to the whole non-plus L4 line;
+# all non-plus L4 SVDs (stm32l4x1..l4x6) carry the identical TSEL1 enum.
+# NOTE: the stm32l4p5 SVD also carries this v1 enum, but that is a stale
+# copy — the L4+ DAC is the v2 4-bit IP (rule 0030, see its header).
+# TRG7 is SWTRIG (software) and is omitted per conventions.
+# match: ^STM32L4(5|6).*:DAC.*
+
+- match: '^STM32L4(5|6).*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG0
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG1
+      source: TIM8_TRGO
+    - signal: DAC_CHX_TRG2
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG3
+      source: TIM5_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM4_TRGO
+    - signal: DAC_CHX_TRG6
+      source: EXTI9_TRG

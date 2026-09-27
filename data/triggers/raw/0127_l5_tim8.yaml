@@ -1,0 +1,14 @@
+# DFSDM1 analog-watchdog break outputs driving the TIM8 break / break2 inputs.
+# RM0438 (STM32L5xx) Table 210 "DFSDM break connection" (DFSDM chapter, 26):
+# dfsdm_break[0] -> TIM1/TIM15 break; [1] -> TIM1 break2 / TIM16 break;
+# [2] -> TIM8/TIM17 break; [3] -> TIM8 break2.
+# Corroborated by the TIMx_BDTR BKDF1BKxE / BK2DF1BKxE bit descriptions in
+# RM0438 ch. 33.
+# match: ^STM32L5.*:TIM8.*
+
+- match: '^STM32L5.*:TIM8.*'
+  triggers:
+    - signal: TIMX_BRK_IN1
+      source: DFSDM1_BREAK2
+    - signal: TIMX_BRK_IN2
+      source: DFSDM1_BREAK3

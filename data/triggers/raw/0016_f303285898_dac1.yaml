@@ -1,0 +1,26 @@
+# Extracted from RM0316 (STM32F303xB-C-D-E/303x6-8/328x8/358xC/398xE),
+# DAC chapter 16.5.4, Table 105 "External triggers (DAC1)".
+# TSEL=001 selects TIM8_TRGO by default; TIM3_TRGO when DAC_TRIG_RMP=1 in
+# SYSCFG_CFGR1 (both listed on TRG1 per CONVENTIONS.md).
+# The SVD enum additionally listed TIM5_TRGO@TSEL=011 — the RM shows TIM15_TRGO
+# only at 011 and TIM5 does not exist on any F3(03|28|58|98); SVD copy-paste
+# error, dropped (RM wins per CONVENTIONS.md).
+
+- match: '^STM32F3(03|28|58|98).*:DAC1'
+  triggers:
+    - signal: DAC_CHX_TRG0
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG1
+      source: TIM8_TRGO # Default when DAC_TRIG_RMP=0 in SYSCFG_CFGR1.
+    - signal: DAC_CHX_TRG1
+      source: TIM3_TRGO # When DAC_TRIG_RMP=1 in SYSCFG_CFGR1.
+    - signal: DAC_CHX_TRG2
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG3
+      source: TIM15_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM4_TRGO
+    - signal: DAC_CHX_TRG6
+      source: EXTI9_TRG

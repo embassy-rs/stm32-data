@@ -1,0 +1,23 @@
+# DAC external triggers for STM32WL (WL5x + WLE5).
+# RM0453 (STM32WL5x) ch. 19 "Digital-to-analog converter", Table 114
+# "DAC interconnection" (split into a "(continued)" part — rows concatenated).
+# The RM names the LPTIM sources lptim1_out/lptim2_out/lptim3_out; per
+# CONVENTIONS.md and the L4/H7 DAC precedent (lptim{n}_out signal ->
+# LPTIM{n}_TRGO) they are reported as LPTIM{n}_TRGO. The SVD TSEL enums
+# (LPTIM1_OUT/2/3) match the RM signal names; no naming conflict remains.
+# 6 entries, unchanged from the original hand rule (indices verified).
+
+- match: '^STM32WL.*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG1
+      source: TIM1_TRGO
+    - signal: DAC_CHX_TRG2
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG11
+      source: LPTIM1_TRGO
+    - signal: DAC_CHX_TRG12
+      source: LPTIM2_TRGO
+    - signal: DAC_CHX_TRG13
+      source: LPTIM3_TRGO
+    - signal: DAC_CHX_TRG14
+      source: EXTI9_TRG

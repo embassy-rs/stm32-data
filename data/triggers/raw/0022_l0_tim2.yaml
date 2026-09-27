@@ -1,0 +1,16 @@
+# TIM2 TI4 input sources from COMP outputs, STM32L0.
+# Verified against TIM2_OR TI4_RMP register field (no numbered table;
+# register bit description):
+#   RM0376 (L0x2) 20.4.x "TIM2 option register (TIM2_OR)": TI4_RMP 01=COMP2_OUT, 10=COMP1_OUT
+#   RM0367 (L0x3) 21.4.x "TIM2 option register (TIM2_OR)": TI4_RMP 01=COMP2_OUT, 10=COMP1_OUT
+# NOTE: L0x0 (RM0451) has no comparators; its TIM2_OR TI4_RMP values 01/10
+# are "Reserved" — COMP1/COMP2 sources do not exist on STM32L010/011/021.
+# Signal index order follows the original hand rule (IN1=COMP1, IN2=COMP2).
+# match: ^STM32L0.*:TIM2
+
+- match: '^STM32L0.*:TIM2'
+  triggers:
+    - signal: TIMX_TI4_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI4_IN2
+      source: COMP2_OUT
