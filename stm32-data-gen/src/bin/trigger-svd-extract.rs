@@ -341,7 +341,11 @@ fn normalize_one(text: &str, style: CcStyle, is_desc: bool) -> Vec<String> {
     }
 
     // unknown but canonical-looking all-caps token
-    if is_desc && s.contains('_') && s.chars().all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_') {
+    if is_desc
+        && s.contains('_')
+        && s.chars()
+            .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+    {
         return vec![s];
     }
     Vec::new()

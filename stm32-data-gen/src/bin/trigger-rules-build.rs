@@ -19,8 +19,8 @@ const RAW_DIR: &str = "data/triggers/raw";
 
 fn main() {
     let manifest_path = Path::new(RAW_DIR).join("manifest.txt");
-    let manifest = std::fs::read_to_string(&manifest_path)
-        .unwrap_or_else(|e| panic!("failed to read {manifest_path:?}: {e}"));
+    let manifest =
+        std::fs::read_to_string(&manifest_path).unwrap_or_else(|e| panic!("failed to read {manifest_path:?}: {e}"));
 
     let mut rules: Vec<TriggerRule> = Vec::new();
     let mut seen = std::collections::HashSet::new();
@@ -30,14 +30,11 @@ fn main() {
         if file.is_empty() || file.starts_with('#') {
             continue;
         }
-        assert!(
-            seen.insert(file.to_string()),
-            "manifest lists {file} twice"
-        );
+        assert!(seen.insert(file.to_string()), "manifest lists {file} twice");
         let path = Path::new(RAW_DIR).join(file);
         let data = std::fs::read(&path).unwrap_or_else(|e| panic!("failed to read {path:?}: {e}"));
-        let mut fragment: Vec<TriggerRule> = serde_yaml::from_slice(&data)
-            .unwrap_or_else(|e| panic!("failed to parse {path:?}: {e}"));
+        let mut fragment: Vec<TriggerRule> =
+            serde_yaml::from_slice(&data).unwrap_or_else(|e| panic!("failed to parse {path:?}: {e}"));
         rules.append(&mut fragment);
     }
 
