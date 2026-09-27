@@ -61,7 +61,16 @@ impl Triggers {
     /// - mcu_name: the full name of the MCU (e.g., "STM32WB55RG")
     /// - peripheral: the name of the peripheral (e.g., "USART1")
     pub fn peripheral_trigger_info(&self, mcu_name: &str, peripheral: &str) -> Option<&[Trigger]> {
-        self.map.get(&format!("{mcu_name}:{peripheral}")).next().map(|v| &**v)
+        if let Some(trigger) = self.map.get(&format!("{mcu_name}:{peripheral}")).next().map(|v| &**v) {
+            assert!(
+                !peripheral.contains("COMMON"),
+                "rule applied trigger to a common peripheral"
+            );
+
+            Some(trigger)
+        } else {
+            None
+        }
     }
 }
 
