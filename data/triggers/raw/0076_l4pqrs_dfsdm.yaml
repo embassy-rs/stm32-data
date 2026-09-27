@@ -1,0 +1,38 @@
+# Rule 76 of the original hand-maintained PERIPHERAL_TRIGGER_RULES table
+# (stm32-data-gen/src/trigger.rs @ HEAD before the data-driven rewrite).
+# Provenance: hand-written from the family reference manual.
+# REVIEWED 2026: RM0432 (STM32L4+) extraction on disk is TRUNCATED
+# (chapters 0-5 only) — the DFSDM tables are not on disk, so the jtrg24-26
+# indices keep their hand content. Corroborated: CMSIS headers define
+# DFSDM_FLTCR1_JEXTSEL[4:0] (32 inputs) on L4P5/L4R5 vs [2:0] on L431/L476;
+# RM0432 00-index §10.3.5 lists the DFSDM source set TIM1/TIM3/TIM4/TIM6/
+# TIM7/TIM8/TIM16/LPTIM1/LPTIM2 + EXTI — matches this rule's sources.
+# EXTI stays plain per DFSDM convention.
+# match: ^STM32L4(P|Q|R|S).*:DFSDM.*
+
+- match: '^STM32L4(P|Q|R|S).*:DFSDM.*'
+  triggers:
+    - signal: DFSDM1_JTRG0
+      source: TIM1_TRGO
+    - signal: DFSDM1_JTRG1
+      source: TIM1_TRGO2
+    - signal: DFSDM1_JTRG2
+      source: TIM8_TRGO
+    - signal: DFSDM1_JTRG3
+      source: TIM8_TRGO2
+    - signal: DFSDM1_JTRG4
+      source: TIM3_TRGO
+    - signal: DFSDM1_JTRG5
+      source: TIM4_TRGO
+    - signal: DFSDM1_JTRG6
+      source: TIM16_OC1
+    - signal: DFSDM1_JTRG7
+      source: TIM6_TRGO
+    - signal: DFSDM1_JTRG8
+      source: TIM7_TRGO
+    - signal: DFSDM1_JTRG24
+      source: EXTI11
+    - signal: DFSDM1_JTRG25
+      source: EXTI15
+    - signal: DFSDM1_JTRG26
+      source: LPTIM1_TRGO

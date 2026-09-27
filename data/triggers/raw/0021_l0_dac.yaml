@@ -1,0 +1,26 @@
+# DAC external triggers, STM32L0 (only L0x2/L0x3 have a DAC; L0x0/L0x1
+# have no DAC peripheral so the rule never matches them).
+# RM0376 (STM32L0x2) Table 70 "External triggers" (DAC chapter);
+# RM0367 (STM32L0x3) Table 70 "External triggers" (DAC chapter).
+# The SVD DAC_CR TSEL enums for stm32l0x2/l0x3 (TIM7@010, TIM15@011) are a
+# known copy-paste error — RM wins (L0 has no TIM15; TIM7 is TSEL=101).
+# TIM3 CH3 event is emitted as TIM3_CC3 per source naming conventions
+# (replaces the old hand-written TIM3CH3_TRGO fused name).
+# match: ^STM32L0.*:DAC.*
+
+- match: '^STM32L0.*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG0
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG1
+      source: TIM3_TRGO
+    - signal: DAC_CHX_TRG2
+      source: TIM3_CC3
+    - signal: DAC_CHX_TRG3
+      source: TIM21_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG6
+      source: EXTI9_TRG

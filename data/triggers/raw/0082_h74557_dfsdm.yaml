@@ -1,0 +1,44 @@
+# DFSDM1 injected trigger inputs, STM32H745/755/757.
+# Verified against RM0433 (H742/743/753/750) Table 250 "DFSDM triggers
+# connection". NOTE: the H745/755/757 line has no DFSDM chapter in tmp/rm
+# (RM0399 extraction truncated at ch. 30); the DFSDM IP is identical to H743,
+# and the H743 table is used as reference. HRTIM1_ADCTRG1/3 at jtrg9/10 (H7
+# DFSDM convention, HRTIM1_ADCTRG not HRTIM_ADC_TRG). dfsdm_jtrg[23:11] and
+# [31:29] are Reserved (omitted). EXTI sources are plain EXTI{n} (DFSDM
+# convention); "LPTIMER{n}" in the RM maps to LPTIM{n}_TRGO.
+# match: ^STM32H7(4|5)(5|7).*:DFSDM.*
+
+- match: '^STM32H7(4|5)(5|7).*:DFSDM.*'
+  triggers:
+    - signal: DFSDM1_JTRG0
+      source: TIM1_TRGO
+    - signal: DFSDM1_JTRG1
+      source: TIM1_TRGO2
+    - signal: DFSDM1_JTRG2
+      source: TIM8_TRGO
+    - signal: DFSDM1_JTRG3
+      source: TIM8_TRGO2
+    - signal: DFSDM1_JTRG4
+      source: TIM3_TRGO
+    - signal: DFSDM1_JTRG5
+      source: TIM4_TRGO
+    - signal: DFSDM1_JTRG6
+      source: TIM16_OC1
+    - signal: DFSDM1_JTRG7
+      source: TIM6_TRGO
+    - signal: DFSDM1_JTRG8
+      source: TIM7_TRGO
+    - signal: DFSDM1_JTRG9
+      source: HRTIM1_ADCTRG1
+    - signal: DFSDM1_JTRG10
+      source: HRTIM1_ADCTRG3
+    - signal: DFSDM1_JTRG24
+      source: EXTI11
+    - signal: DFSDM1_JTRG25
+      source: EXTI15
+    - signal: DFSDM1_JTRG26
+      source: LPTIM1_TRGO
+    - signal: DFSDM1_JTRG27
+      source: LPTIM2_TRGO
+    - signal: DFSDM1_JTRG28
+      source: LPTIM3_TRGO

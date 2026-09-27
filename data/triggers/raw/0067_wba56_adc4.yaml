@@ -1,0 +1,22 @@
+# STM32WBA5x/WBA6x ADC4 regular external triggers (EXTSEL).
+# Provenance: RM0493 (STM32WBA5) ch.21 (ADC4), Table 150 "ADC
+# interconnection", and RM0515 (STM32WBA6) ch.21 (ADC4), Table 154 "ADC
+# interconnection" — the two tables are byte-for-byte identical: adc_trg0
+# tim1_trgo2, trg1 tim1_oc4, trg2 tim2_trgo, trg5 lptim1_ch1, trg7 exti15;
+# trg3/trg4/trg6 Reserved. Verified against both RMs; identical to the old
+# hand rule (5 entries — the assignment's "7 entries" appears to count the
+# two Reserved rows, which are skipped per conventions).
+# match: ^STM32WBA[56].*:ADC4
+
+- match: '^STM32WBA[56].*:ADC4'
+  triggers:
+    - signal: ADC_EXT_TRG0
+      source: TIM1_TRGO2
+    - signal: ADC_EXT_TRG1
+      source: TIM1_OC4
+    - signal: ADC_EXT_TRG2
+      source: TIM2_TRGO
+    - signal: ADC_EXT_TRG5
+      source: LPTIM1_CH1
+    - signal: ADC_EXT_TRG7
+      source: EXTI15_TRG

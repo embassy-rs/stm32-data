@@ -1,0 +1,13 @@
+# DFSDM1 watchdog-break inputs of STM32H745/755/757 TIM1.
+# Verified against RM0433 (H742/743/753/750) Table 251 "DFSDM break connection"
+# (break[0] -> TIM1 break, break[1] -> TIM1 break2). NOTE: the H745/755/757 line has no DFSDM chapter in tmp/rm (RM0399
+# extraction truncated at ch. 30); the DFSDM IP is identical to H743, and the
+# H743 table is used as reference.
+# match: ^STM32H7(4|5)(5|7).*:TIM1.*
+
+- match: '^STM32H7(4|5)(5|7).*:TIM1.*'
+  triggers:
+    - signal: TIMX_BRK_IN1
+      source: DFSDM1_BREAK0
+    - signal: TIMX_BRK_IN2
+      source: DFSDM1_BREAK1

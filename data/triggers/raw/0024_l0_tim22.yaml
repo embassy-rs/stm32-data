@@ -1,0 +1,16 @@
+# TIM22 TI1 input sources from COMP outputs, STM32L0.
+# Verified against TIM22_OR TI1_RMP register field (no numbered table;
+# register bit description):
+#   RM0377 (L0x1) 17.4.x "TIM22 option register (TIM22_OR)": TI1_RMP 01=COMP2_OUT, 10=COMP1_OUT
+#   RM0367 (L0x3) 22.4.x "TIM22 option register (TIM22_OR)": TI1_RMP 01=COMP2_OUT, 10=COMP1_OUT
+# NOTE: L0x0 (RM0451) has no comparators; TIM22_OR TI1_RMP there only offers
+# GPIO — COMP1/COMP2 sources do not exist on STM32L010/011/021.
+# Signal index order follows the original hand rule (IN1=COMP1, IN2=COMP2).
+# match: ^STM32L0.*:TIM22
+
+- match: '^STM32L0.*:TIM22'
+  triggers:
+    - signal: TIMX_TI1_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI1_IN2
+      source: COMP2_OUT

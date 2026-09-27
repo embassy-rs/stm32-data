@@ -1,0 +1,14 @@
+# TIM2 comparator input mux for STM32WL (WL5x + WLE5).
+# RM0453 (STM32WL5x) ch. 26 "General-purpose timer (TIM2)", TIM2_OR1
+# register bits 3:2 "TI4_RMP[1:0]: Timer input 4 remap"
+# (00: GPIO; 01: COMP1_OUT; 10: COMP2_OUT; 11: COMP1_OUT OR COMP2_OUT).
+# 3 entries, unchanged from the original hand rule.
+
+- match: '^STM32WL.*:TIM2'
+  triggers:
+    - signal: TIMX_TI4_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI4_IN2
+      source: COMP2_OUT
+    - signal: TIMX_TI4_IN3
+      source: COMP1_OUT_OR_COMP2_OUT

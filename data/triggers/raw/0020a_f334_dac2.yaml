@@ -1,0 +1,24 @@
+# Extracted from RM0364 (STM32F334), DAC chapter 14.5.4,
+# Table 54 "External triggers (DAC2)".
+# HRTIM sources appear in the RM as HRTIM1_DACTRGn; named HRTIM_DAC_TRGn per
+# CONVENTIONS.md.
+# TRG1: TIM3_TRGO requires DAC_TRIG_RMP=1 in SYSCFG_CFGR1 (same remap as DAC1).
+# TRG3: TIM15_TRGO only — no HRTIM remap on DAC2 (unlike DAC1's Table 53).
+# TRG5: HRTIM_DAC_TRG3, no remap bit involved.
+
+- match: '^STM32F334.*:DAC2'
+  triggers:
+    - signal: DAC_CHX_TRG0
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG1
+      source: TIM3_TRGO # Requires DAC_TRIG_RMP=1 in SYSCFG_CFGR1.
+    - signal: DAC_CHX_TRG2
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG3
+      source: TIM15_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: HRTIM_DAC_TRG3
+    - signal: DAC_CHX_TRG6
+      source: EXTI9_TRG

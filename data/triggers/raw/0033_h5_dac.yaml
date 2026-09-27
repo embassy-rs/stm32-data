@@ -1,0 +1,27 @@
+# Rule 33 of the original hand-maintained PERIPHERAL_TRIGGER_RULES table
+# (stm32-data-gen/src/trigger.rs @ HEAD before the data-driven rewrite).
+# DEFERRED — no RM available on disk: the RM0481 extraction is truncated at
+# chapter 15; the DAC chapter (ch. 28, Table 281 "DAC interconnection") is not
+# on disk, so the per-index TSEL values could not be re-verified. Content kept
+# from the hand rules (9-entry subset used for H5 lines other than H503 and
+# H56x/H57x, e.g. H523/533/562/563/573 — none of which have TIM3 but lack
+# TIM4/5/8/15 per this rule's partitioning).
+# Partially corroborated by RM0481 ch. 15 §15.3.4 (triggers to DAC).
+# match: ^STM32H5.*:DAC.*
+
+- match: '^STM32H5.*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG1
+      source: TIM1_TRGO
+    - signal: DAC_CHX_TRG2
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG6
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG11
+      source: LPTIM1_TRGO
+    - signal: DAC_CHX_TRG12
+      source: LPTIM2_TRGO
+    - signal: DAC_CHX_TRG13
+      source: EXTI9_TRG

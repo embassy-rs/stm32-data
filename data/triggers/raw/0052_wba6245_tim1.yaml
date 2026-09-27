@@ -1,0 +1,24 @@
+# STM32WBA6 TIM1 additional internal triggers (TIM4/TIM16/TIM17).
+# Provenance: RM0515 (STM32WBA6) ch.30 (TIM1) Table 273 (tim_itr, incl.
+# (continued)) and its footnote: tim_itr3 = tim4_trgo is "Only available on
+# STM32WBA62/64/65xx devices". ITR_IN7/8 are listed unconditionally. Verified
+# against the RM.
+# Effective chip set: rule 0051 (^STM32WBA6[235]) matches first and claims
+# WBA622/623/625(/65x), so this rule effectively applies only to WBA624/644
+# — NONEMPTY. WBA64 has TIM4/TIM16/TIM17 (cubedb + stm32wba64.svd), and no
+# COMP2, so all three entries are valid for it.
+# ANOMALY (inherited from the old hand rules, left as-is to preserve the
+# match regexes and manifest order): WBA622 and WBA65x also have TIM4 but are
+# claimed by rule 0051, which deliberately lacks ITR_IN3 (its set includes
+# TIM4-less WBA623) — TIM4_TRGO is unreachable as a TIM1 ITR3 source on
+# WBA622/625.
+# match: ^STM32WBA6[245].*:TIM1
+
+- match: '^STM32WBA6[245].*:TIM1'
+  triggers:
+    - signal: TIMX_ITR_IN3
+      source: TIM4_TRGO
+    - signal: TIMX_ITR_IN7
+      source: TIM16_OC1
+    - signal: TIMX_ITR_IN8
+      source: TIM17_OC1

@@ -1,0 +1,41 @@
+# Rule 30 of the original hand-maintained PERIPHERAL_TRIGGER_RULES table
+# (stm32-data-gen/src/trigger.rs @ HEAD before the data-driven rewrite).
+# Provenance: hand-written from the family reference manual (RM0432
+# §22.4.6 / Table 147 "DAC trigger selection" for STM32L4+, RM0438 for L5).
+# The L4+ DAC is the v2 IP with 4-bit TSELx: CMSIS device headers define
+# DAC_CR_TSEL1[3:0] for STM32L4P5/L4R5 (vs TSEL1[2:0] on L431/L476), and
+# Cube's dacif_v2_0 parameter set is TIM1/2/4/5/6/7/8/15 + LPTIM1/2 + EXTI9.
+# WARNING: RM0432 is truncated on disk (chapters 0-5 only), so the per-index
+# rows below could not be re-verified against the RM; the stm32l4p5 SVD
+# TSEL1 enum is a stale v1 3-bit copy (its desc even references L45x/L46x)
+# and was NOT followed. L5 rows likewise keep the original hand content.
+# Ordering: this fragment MUST precede 0014 in manifest.txt — 0014's regex
+# ^STM32(F2|F4|F7|L4).*:DAC.* also matches L4+ chips and would shadow this
+# rule (the pre-fix bug).
+# TRG0 is the software trigger and is omitted per conventions.
+# match: ^STM32(L4[PQRS]|L5).*:DAC.*
+
+- match: '^STM32(L4[PQRS]|L5).*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG1
+      source: TIM1_TRGO
+    - signal: DAC_CHX_TRG2
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG3
+      source: TIM4_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM5_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG6
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG7
+      source: TIM8_TRGO
+    - signal: DAC_CHX_TRG8
+      source: TIM15_TRGO
+    - signal: DAC_CHX_TRG11
+      source: LPTIM1_TRGO
+    - signal: DAC_CHX_TRG12
+      source: LPTIM2_TRGO
+    - signal: DAC_CHX_TRG13
+      source: EXTI9_TRG

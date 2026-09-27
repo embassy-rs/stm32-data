@@ -1,0 +1,60 @@
+# STM32WBA62/63/65 TIM1 interconnection inputs.
+# Provenance: RM0515 (STM32WBA6) ch.30 (TIM1): Table 269 (tim_ti1 inputs),
+# Table 273 (tim_itr), Table 274 (tim_etr), Tables 275/276 (tim_brk /
+# tim_brk2), Table 277 (tim_sys_brk), Table 278 (tim_ocref_clr). Verified
+# against the RM. COMP2 rows are footnoted "only available on
+# STM32WBA62/63/65xx" — consistent with the stm32wba62/63/65 SVDs, which all
+# have COMP2 (the cubedb XML for WBA62/65 omits it; cubedb gap). tim_itr3 =
+# tim4_trgo is footnoted "only available on STM32WBA62/64/65xx" and is kept
+# in rule 0052 because WBA63 (matched here) has no TIM4.
+# ADDED vs old hand rule: ITR_IN7/ITR_IN8 (tim16_oc1/tim17_oc1) — Table 273
+# lists them with no availability footnote and all dies matched here have
+# TIM16/TIM17.
+# match: ^STM32WBA6[235].*:TIM1
+
+- match: '^STM32WBA6[235].*:TIM1'
+  triggers:
+    - signal: TIMX_TI1_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI1_IN2
+      source: COMP2_OUT
+    - signal: TIMX_ITR_IN1
+      source: TIM2_TRGO
+    - signal: TIMX_ITR_IN2
+      source: TIM3_TRGO
+    - signal: TIMX_ITR_IN7
+      source: TIM16_OC1
+    - signal: TIMX_ITR_IN8
+      source: TIM17_OC1
+    - signal: TIMX_ETR_IN1
+      source: COMP1_OUT
+    - signal: TIMX_ETR_IN2
+      source: COMP2_OUT
+    - signal: TIMX_ETR_IN11
+      source: ADC4_AWD1
+    - signal: TIMX_ETR_IN12
+      source: ADC4_AWD2
+    - signal: TIMX_ETR_IN13
+      source: ADC4_AWD3
+    - signal: TIMX_BRK_IN1
+      source: COMP1_OUT
+    - signal: TIMX_BRK_IN2
+      source: COMP2_OUT
+    - signal: TIMX_BRK2_IN1
+      source: COMP1_OUT
+    - signal: TIMX_BRK2_IN2
+      source: COMP2_OUT
+    - signal: TIMX_SYS_BRK_IN0
+      source: CORTEX_M33_LOCKUP
+    - signal: TIMX_SYS_BRK_IN1
+      source: PVD
+    - signal: TIMX_SYS_BRK_IN2
+      source: SRAM_PARITY_ERROR
+    - signal: TIMX_SYS_BRK_IN3
+      source: FLASH_ECC_ERROR
+    - signal: TIMX_SYS_BRK_IN4
+      source: HSE32_HSECSS
+    - signal: TIMX_OCREF_CLR_IN0
+      source: COMP1_OUT
+    - signal: TIMX_OCREF_CLR_IN1
+      source: COMP2_OUT

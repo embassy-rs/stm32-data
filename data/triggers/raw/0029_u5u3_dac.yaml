@@ -1,0 +1,40 @@
+# Rule 29 of the original hand-maintained PERIPHERAL_TRIGGER_RULES table
+# (stm32-data-gen/src/trigger.rs @ HEAD before the data-driven rewrite).
+# Provenance: RM0456 (STM32U5) Table 342 "DAC interconnection" (ch. 35,
+# section 35.4.2). Refreshed 2025: added dac_chx_trg4 (TIM5_TRGO) and
+# dac_chx_trg7 (TIM8_TRGO) missing from the old hand rule; corrected the
+# LPTIM sources to the ch1 signals actually bonded (lptim1_ch1, lptim3_ch1
+# per Table 342, not the TRGO outputs).
+# DEFERRED (no RM on disk): RM0487 (STM32U3) ch. 24 DAC chapter is not
+# extracted in tmp/rm/RM0487-STM32U3/ (truncated at ch. 15), so the U3
+# TSEL indices in Table 226 could not be verified. U3 peripheral
+# interconnect matrix (ch. 14 §14.3.4) confirms U3 DAC sources as
+# TIM1/2/4/6/7/8/12/15 + LPTIM1_CH1/LPTIM3_CH1 + EXTI — note U3 has TIM12
+# (absent on U5) and no TIM5; whether U3 remaps any TSEL index is unknown.
+# The U5 indices are kept for U3 until RM0487 ch. 24 is available.
+# match: ^STM32(U5|U3).*:DAC.*
+
+- match: '^STM32(U5|U3).*:DAC.*'
+  triggers:
+    - signal: DAC_CHX_TRG1
+      source: TIM1_TRGO
+    - signal: DAC_CHX_TRG2
+      source: TIM2_TRGO
+    - signal: DAC_CHX_TRG3
+      source: TIM4_TRGO
+    - signal: DAC_CHX_TRG4
+      source: TIM5_TRGO
+    - signal: DAC_CHX_TRG5
+      source: TIM6_TRGO
+    - signal: DAC_CHX_TRG6
+      source: TIM7_TRGO
+    - signal: DAC_CHX_TRG7
+      source: TIM8_TRGO
+    - signal: DAC_CHX_TRG8
+      source: TIM15_TRGO
+    - signal: DAC_CHX_TRG11
+      source: LPTIM1_CH1
+    - signal: DAC_CHX_TRG12
+      source: LPTIM3_CH1
+    - signal: DAC_CHX_TRG13
+      source: EXTI9_TRG
