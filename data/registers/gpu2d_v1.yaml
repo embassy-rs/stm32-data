@@ -14,9 +14,13 @@ block/GPU2D:
     byte_offset: 328
     fieldset: CLID
   - name: SYS_INTERRUPT
-    description: System interrupt register.
+    description: System interrupt status register.
     byte_offset: 4088
     fieldset: SYS_INTERRUPT
+  - name: SYS_INTERRUPT_ENABLE
+    description: System interrupt enable register.
+    byte_offset: 4092
+    fieldset: SYS_INTERRUPT_ENABLE
 fieldset/BREAKPOINT:
   description: Breakpoint register.
   fields:
@@ -39,9 +43,36 @@ fieldset/ITCTRL:
     bit_offset: 0
     bit_size: 1
 fieldset/SYS_INTERRUPT:
-  description: System interrupt register.
+  description: System interrupt status register.
   fields:
   - name: ER
     description: Error interrupt status.
     bit_offset: 0
+    bit_size: 1
+  - name: HOLD_DISABLE_CACHE
+    description: Cache hold request - disable cache.
+    bit_offset: 2
+    bit_size: 1
+  - name: HOLD_INVALIDATE_CACHE
+    description: Cache hold request - invalidate cache.
+    bit_offset: 3
+    bit_size: 1
+fieldset/SYS_INTERRUPT_ENABLE:
+  description: System interrupt enable register.
+  fields:
+  - name: ER
+    description: Error interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: BUS_ERROR
+    description: Bus error interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: HOLD_DISABLE_CACHE
+    description: Cache hold disable interrupt enable.
+    bit_offset: 2
+    bit_size: 1
+  - name: HOLD_INVALIDATE_CACHE
+    description: Cache hold invalidate interrupt enable.
+    bit_offset: 3
     bit_size: 1
