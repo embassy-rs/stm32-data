@@ -25,7 +25,9 @@ groups (RM0364/0365/0366/0313/0316), F0 DAC + F0 ADC (RM0091/RM0360),
 L0 DAC + L0 ADC + L0 COMP→TIM (RM0367/0376/0377/0451), L1 DAC (RM0038),
 L4(5|6) DAC (RM0351 T125), L4(7-A) DFSDM (RM0351), L5 DFSDM + breaks
 (RM0438 T209/210), H7 DAC + H7 DFSDM H743/745 groups (RM0399/RM0433),
-G4 ADC + DAC incl. sawtooth muxes + TIM1 COMP (RM0440), G0 ADC (RM0454
+G4 ADC + DAC incl. sawtooth muxes + TIM1 COMP inputs (RM0440 — see
+"Pending work": the rest of RM0440's timer interconnect tables are NOT
+extracted), G0 ADC (RM0454
 T57; RM0444 truncated but interconnect matrix agrees), C0 ADC (RM0490 T68),
 U5 DAC + U5 ADC (RM0456 T342/T307/T308), WL DAC + WL ADC + WL COMP→TIM
 (RM0453), WB ADC (RM0434 T92/93), WBA5 all + WBA6 TIM1/LPTIM/ADC4
@@ -58,7 +60,35 @@ header). Re-verify when the missing chapters are added to `tmp/rm/`:
 - **MP1** (out of scope by decision): 0104-0109 kept from original hand
   rules, unverified.
 
+## Pending work — RM tables never extracted (no rule exists)
+
+The rewrite pass was **rule-driven**: work items were derived from the
+existing rule set, and verification was scoped to rules that exist. RM
+tables that never had a corresponding hand rule were never examined, so
+"RM-verified" above means "the existing rules check out", not "everything
+in the RM is captured". Confirmed instance:
+
+- **G4 timer interconnects (RM0440) — DONE (2026-09 follow-up).** All ten
+  G4 timers now have interconnect rules (`0047`-`0047i`): TIM1/8/20 full
+  sets (TI1/ITR/ETR/BRK/BRK2/SYS_BRK/OCREF_CLR), TIM2-5 ITR/ETR/OCREF_CLR,
+  TIM15-17 TI1/TI2/ITR/BRK/SYS_BRK/OCREF_CLR. Remaining G4 follow-ups:
+  (a) TIM2-5 TI1-TI4 mux tables (T287-290) not extracted (out of that
+  task's scope); (b) per-die trimming not done — rules emit the full RM
+  column for all G4, so e.g. HRTIM sources appear on G431/G471/G491/G4A1
+  dies that lack HRTIM1 (same precedent as ADC/DAC rules 0042-0046);
+  split by subfamily regex if that matters.
+
+The same blind spot likely exists for other families whose RMs contain
+interconnect matrices that were never transcribed into hand rules
+(candidates to audit: U5/U3 (RM0456/RM0487 interconnect chapters), H5
+(RM0481 §15.3), L4/L4+/L5 (RM0351/RM0432/RM0438 — note RM0432 is
+truncated on disk), H7 (RM0399/RM0433), F3 (RM0316)). G4 was confirmed
+and extracted in the 2026-09 follow-up. Before extracting more, decide
+per family whether embassy-stm32 actually consumes `TIMX_*` signals
+there (it does for WBA and G4, which is why those rules exist).
+
 ## Known structural anomalies
+
 
 - `0052` (`^STM32WBA6[245].*:TIM1`) effectively covers only WBA624/644
   (first-match-wins with `0051`); TIM4_TRGO is unreachable on WBA622/625.
@@ -67,9 +97,9 @@ header). Re-verify when the missing chapters are added to `tmp/rm/`:
 - Rule `0035` (G0 ADC) also matches G0x0 chips, but G0x0 has no TIM2 —
   TIM2_TRGO@ADC_EXT_TRG2 should be excluded for G030/G050/G070 (needs an
   `^STM32G0[357]0.*`-style split rule; deferred).
-- ADC common blocks (`ADC123_COMMON` on F4/F7, `ADC_COMMON` elsewhere) match
-  `*:ADC.*` rules and carry trigger lists — pre-existing behavior from the
-  hand rules.
+- ADC common blocks (`ADC123_COMMON`, `ADC12_COMMON`, `ADC1_COMMON`, ...)
+  no longer receive triggers: all loose `:ADC.*` peripheral patterns were
+  narrowed to `:ADC(\d+)?` (2026-09 follow-up).
 - cubedb omits COMP2 on WBA62/65 (the SVDs and RM0515 have it); the COMP2
   rows are kept.
 

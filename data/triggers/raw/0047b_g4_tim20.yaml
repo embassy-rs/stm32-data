@@ -1,28 +1,21 @@
-# TIM1 interconnection inputs for STM32G4.
-# Provenance: RM0440 (STM32G4) chapter 29 (TIM1/8/20): Table 263
-# "Interconnect to the tim_ti1 input multiplexer", Table 264 (tim_ti2),
-# Table 265 (tim_ti3), Table 266 (tim_ti4), Table 267 "Internal trigger
-# connection", Table 268 "Interconnect to the tim_etr input multiplexer",
-# Table 269 "Timer break interconnect", Table 270 "Timer break2
-# interconnect", Table 271 "System break interconnect", Table 272
-# "Interconnect to the ocref_clr input multiplexer" (the TIM1 column of
-# each table). ti1_in0/in0 rows are the timer's own CHx/ETR/BKIN pins
-# (skipped); Reserved/unconnected rows skipped. The pre-existing TI1
-# entries (comp1..comp4_out at tim_ti1_in1..4, previously verified against
-# Table 263) are preserved unchanged.
-# Cross-check against ch. 11 Table 63/75/76 (peripherals interconnect
-# matrix): no conflicts for the TIM1 column except Table 63 writes
-# itr10 as "hrtim_out_scout2" (typo for hrtim_out_sync2; all three timer
-# chapters agree on sync2, and ch. 11 Table 75 row itr10 confirms
-# hrtim_out_sync2 for TIM1).
-# Device restrictions (cubedb): COMP1-4 exist on all G4; COMP5-7 only on
-# G414/G473/G474/G483/G484. ADC4 exists on G414 and category 3 dies;
-# HRTIM (source of HRTIM_OUT_SYNC2) only on G414/G474/G484. The RM tables
-# carry no per-die footnotes, so the full TIM1 column is emitted and the
-# restrictions are noted here (same precedent as rules 0042-0046).
-# match: ^STM32G4.*:TIM1
+# TIM20 interconnection inputs for STM32G4.
+# Provenance: RM0440 (STM32G4) chapter 29 (TIM1/8/20): Tables 263-272 —
+# the TIM20 column of each table. TIM20 differs from TIM1 at tim_itr9
+# (= Reserved, its own TRGO; TIM1's itr9 is tim20_trgo); itr0..8 and
+# itr10 are identical to TIM8. in0 rows are the timer's own pins
+# (skipped); Reserved rows skipped.
+# Cross-check ch. 11 Table 63/75: TIM20 column agrees (itr10 typo
+# "hrtim_out_scout2" -> hrtim_out_sync2, see 0047_g4_tim1.yaml header).
+# Device restrictions: TIM20 exists on G411/G414/G471/G473/G474/G483/
+# G484/G491/G4A1 only (the match regex only fires where the peripheral
+# exists). Per cubedb: COMP5-7 only on G414/G473/G474/G483/G484; HRTIM
+# (HRTIM_OUT_SYNC2) only on G414/G474/G484 — G471/G491/G4A1 have no
+# HRTIM; ADC3 exists on all TIM20 dies except G411/G414; ADC5 only on
+# G473/G474/G483/G484. The RM tables carry no per-die footnotes, so the
+# full TIM20 column is emitted and the restrictions noted here.
+# match: ^STM32G4.*:TIM20
 
-- match: '^STM32G4.*:TIM1'
+- match: '^STM32G4.*:TIM20'
   triggers:
     - signal: TIMX_TI1_IN1
       source: COMP1_OUT
@@ -32,6 +25,8 @@
       source: COMP3_OUT
     - signal: TIMX_TI1_IN4
       source: COMP4_OUT
+    - signal: TIMX_ITR_IN0
+      source: TIM1_TRGO
     - signal: TIMX_ITR_IN1
       source: TIM2_TRGO
     - signal: TIMX_ITR_IN2
@@ -48,8 +43,6 @@
       source: TIM16_OC1
     - signal: TIMX_ITR_IN8
       source: TIM17_OC1
-    - signal: TIMX_ITR_IN9
-      source: TIM20_TRGO
     - signal: TIMX_ITR_IN10
       source: HRTIM_OUT_SYNC2
     - signal: TIMX_ETR_IN1
@@ -67,17 +60,17 @@
     - signal: TIMX_ETR_IN7
       source: COMP7_OUT
     - signal: TIMX_ETR_IN8
-      source: ADC1_AWD1
+      source: ADC3_AWD1
     - signal: TIMX_ETR_IN9
-      source: ADC1_AWD2
+      source: ADC3_AWD2
     - signal: TIMX_ETR_IN10
-      source: ADC1_AWD3
+      source: ADC3_AWD3
     - signal: TIMX_ETR_IN11
-      source: ADC4_AWD1
+      source: ADC5_AWD1
     - signal: TIMX_ETR_IN12
-      source: ADC4_AWD2
+      source: ADC5_AWD2
     - signal: TIMX_ETR_IN13
-      source: ADC4_AWD3
+      source: ADC5_AWD3
     - signal: TIMX_BRK_IN1
       source: COMP1_OUT
     - signal: TIMX_BRK_IN2

@@ -1,0 +1,55 @@
+# TIM5 interconnection inputs for STM32G4.
+# Provenance: RM0440 (STM32G4) chapter 30 (TIM2/3/4/5): Table 291
+# "TIMx internal trigger connection" (+continued), Table 292
+# "Interconnect to the tim_etr input multiplexer", Table 293
+# "Interconnect to the tim_ocref_clr input multiplexer" — the TIM5
+# column. tim_itr4 is Reserved (a timer cannot trigger itself). tim_etr0
+# is the TIM5_ETR pin (skipped); etr10 is Reserved; the etr11..13 cells
+# are empty in Table 292 and ch. 11 Table 75 marks them "-" (not
+# connected) — no entries emitted. Table 293 marks all tim_ocref_clr
+# rows Reserved/empty for TIM5 — TIM5 has no ocref_clr sources.
+# Cross-check ch. 11 Table 63/75: TIM5 column agrees throughout.
+# Device restrictions: see 0047_g4_tim1.yaml header (COMP5-7 not on
+# every G4 die; full TIM5 column emitted, restrictions noted).
+# match: ^STM32G4.*:TIM5
+
+- match: '^STM32G4.*:TIM5'
+  triggers:
+    - signal: TIMX_ITR_IN0
+      source: TIM1_TRGO
+    - signal: TIMX_ITR_IN1
+      source: TIM2_TRGO
+    - signal: TIMX_ITR_IN2
+      source: TIM3_TRGO
+    - signal: TIMX_ITR_IN3
+      source: TIM4_TRGO
+    - signal: TIMX_ITR_IN5
+      source: TIM8_TRGO
+    - signal: TIMX_ITR_IN6
+      source: TIM15_TRGO
+    - signal: TIMX_ITR_IN7
+      source: TIM16_OC1
+    - signal: TIMX_ITR_IN8
+      source: TIM17_OC1
+    - signal: TIMX_ITR_IN9
+      source: TIM20_TRGO
+    - signal: TIMX_ITR_IN10
+      source: HRTIM_OUT_SYNC2
+    - signal: TIMX_ETR_IN1
+      source: COMP1_OUT
+    - signal: TIMX_ETR_IN2
+      source: COMP2_OUT
+    - signal: TIMX_ETR_IN3
+      source: COMP3_OUT
+    - signal: TIMX_ETR_IN4
+      source: COMP4_OUT
+    - signal: TIMX_ETR_IN5
+      source: COMP5_OUT
+    - signal: TIMX_ETR_IN6
+      source: COMP6_OUT
+    - signal: TIMX_ETR_IN7
+      source: COMP7_OUT
+    - signal: TIMX_ETR_IN8
+      source: TIM2_ETR
+    - signal: TIMX_ETR_IN9
+      source: TIM3_ETR

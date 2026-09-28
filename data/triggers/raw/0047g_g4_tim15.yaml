@@ -1,0 +1,94 @@
+# TIM15 interconnection inputs for STM32G4.
+# Provenance: RM0440 (STM32G4) chapter 31 (TIM15/16/17): Table 305
+# "Interconnect to the tim_ti1 input multiplexer" (+continued), Table 306
+# "Interconnect to the tim_ti2 input multiplexer", Table 307 "TIMx
+# internal trigger connection", Table 308 "Timer break interconnect",
+# Table 309 "System break interconnect", Table 310 "Interconnect to the
+# ocref_clr input multiplexer" — the TIM15 column. tim_ti1_in0 /
+# tim_ti2_in0 are the TIM15_CH1/CH2 pins and TIM_BKIN is the TIM15_BKIN
+# pin (skipped); Reserved rows skipped (ti1_in6, brk_cmp8, ocref_clr7).
+# Cross-check ch. 11 Table 63/76/77: TIM15 column agrees; Table 77
+# spells ti1_in1 "lse_css_out" where Table 305 writes "LSE" — per-chapter
+# table wins, source named LSE (CONVENTIONS.md).
+# Device restrictions: see 0047_g4_tim1.yaml header (COMP5-7, HRTIM not
+# on every G4 die; full TIM15 column emitted, restrictions noted).
+# match: ^STM32G4.*:TIM15
+
+- match: '^STM32G4.*:TIM15'
+  triggers:
+    - signal: TIMX_TI1_IN1
+      source: LSE
+    - signal: TIMX_TI1_IN2
+      source: COMP1_OUT
+    - signal: TIMX_TI1_IN3
+      source: COMP2_OUT
+    - signal: TIMX_TI1_IN4
+      source: COMP5_OUT
+    - signal: TIMX_TI1_IN5
+      source: COMP7_OUT
+    - signal: TIMX_TI2_IN1
+      source: COMP2_OUT
+    - signal: TIMX_TI2_IN2
+      source: COMP3_OUT
+    - signal: TIMX_TI2_IN3
+      source: COMP6_OUT
+    - signal: TIMX_TI2_IN4
+      source: COMP7_OUT
+    - signal: TIMX_ITR_IN0
+      source: TIM1_TRGO
+    - signal: TIMX_ITR_IN1
+      source: TIM2_TRGO
+    - signal: TIMX_ITR_IN2
+      source: TIM3_TRGO
+    - signal: TIMX_ITR_IN3
+      source: TIM4_TRGO
+    - signal: TIMX_ITR_IN4
+      source: TIM5_TRGO
+    - signal: TIMX_ITR_IN5
+      source: TIM8_TRGO
+    - signal: TIMX_ITR_IN7
+      source: TIM16_OC1
+    - signal: TIMX_ITR_IN8
+      source: TIM17_OC1
+    - signal: TIMX_ITR_IN9
+      source: TIM20_TRGO
+    - signal: TIMX_ITR_IN10
+      source: HRTIM_OUT_SYNC2
+    - signal: TIMX_BRK_IN1
+      source: COMP1_OUT
+    - signal: TIMX_BRK_IN2
+      source: COMP2_OUT
+    - signal: TIMX_BRK_IN3
+      source: COMP3_OUT
+    - signal: TIMX_BRK_IN4
+      source: COMP4_OUT
+    - signal: TIMX_BRK_IN5
+      source: COMP5_OUT
+    - signal: TIMX_BRK_IN6
+      source: COMP6_OUT
+    - signal: TIMX_BRK_IN7
+      source: COMP7_OUT
+    - signal: TIMX_SYS_BRK_IN0
+      source: CORTEX_M4_LOCKUP
+    - signal: TIMX_SYS_BRK_IN1
+      source: PVD
+    - signal: TIMX_SYS_BRK_IN2
+      source: SRAM_PARITY_ERROR
+    - signal: TIMX_SYS_BRK_IN3
+      source: FLASH_ECC_ERROR
+    - signal: TIMX_SYS_BRK_IN4
+      source: CSS
+    - signal: TIMX_OCREF_CLR_IN0
+      source: COMP1_OUT
+    - signal: TIMX_OCREF_CLR_IN1
+      source: COMP2_OUT
+    - signal: TIMX_OCREF_CLR_IN2
+      source: COMP3_OUT
+    - signal: TIMX_OCREF_CLR_IN3
+      source: COMP4_OUT
+    - signal: TIMX_OCREF_CLR_IN4
+      source: COMP5_OUT
+    - signal: TIMX_OCREF_CLR_IN5
+      source: COMP6_OUT
+    - signal: TIMX_OCREF_CLR_IN6
+      source: COMP7_OUT
