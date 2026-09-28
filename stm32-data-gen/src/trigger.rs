@@ -32,7 +32,12 @@ impl Triggers {
         let rules: Vec<TriggerRule> =
             serde_yaml::from_slice(&data).unwrap_or_else(|e| panic!("failed to parse data/triggers/rules.yaml: {e}"));
 
-        let trigger_expr = Regex::new(r"(?m)(.+?)(\d+)").unwrap();
+        // Group signals per mux table: strip a trailing input index ("ADC_EXT_TRG12" ->
+        // "ADC_EXT_TRG", "TIMX_TI1_IN2" -> "TIMX_TI1", "TIMX_ITR_IN2" -> "TIMX_ITR").
+        // A source may legitimately feed several different muxes of one peripheral
+        // (e.g. COMP2_OUT into both TI1 and TI2), so only duplicates within one
+        // table are rejected.
+        let trigger_expr = Regex::new(r"^(.+?)(?:_IN)?(\d+)$").unwrap();
 
         for rule in &rules {
             let mut trigger_sets: HashMap<String, HashSet<&str>> = HashMap::new();
