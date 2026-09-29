@@ -1,20 +1,68 @@
 # TIM5 interconnection inputs for STM32G4.
-# Provenance: RM0440 (STM32G4) chapter 30 (TIM2/3/4/5): Table 291
+# Provenance: RM0440 (STM32G4) chapter 30 (TIM2/3/4/5): Table 287
+# "Interconnect to the tim_ti1 input multiplexer", Table 288 (tim_ti2),
+# Table 289 (tim_ti3), Table 290 (tim_ti4), Table 291
 # "TIMx internal trigger connection" (+continued), Table 292
 # "Interconnect to the tim_etr input multiplexer", Table 293
 # "Interconnect to the tim_ocref_clr input multiplexer" — the TIM5
-# column. tim_itr4 is Reserved (a timer cannot trigger itself). tim_etr0
-# is the TIM5_ETR pin (skipped); etr10 is Reserved; the etr11..13 cells
-# are empty in Table 292 and ch. 11 Table 75 marks them "-" (not
-# connected) — no entries emitted. Table 293 marks all tim_ocref_clr
-# rows Reserved/empty for TIM5 — TIM5 has no ocref_clr sources.
-# Cross-check ch. 11 Table 63/75: TIM5 column agrees throughout.
-# Device restrictions: see 0047_g4_tim1.yaml header (COMP5-7 not on
-# every G4 die; full TIM5 column emitted, restrictions noted).
+# column of each table. tim_ti1_in0 / ti2/3/4_in0 are the TIM5_CH1..CH4
+# pins and tim_etr0 is the TIM5_ETR pin (skipped); Reserved/unconnected
+# rows skipped (no TI3/TI4 sources for TIM5; the etr11..13 cells are
+# empty in Table 292 and ch. 11 Table 75 marks them "-" — no entries).
+# Table 293 marks all tim_ocref_clr rows Reserved/empty for TIM5 — TIM5
+# has no ocref_clr sources.
+# RENDERING ARTIFACT: in Table 287/288 as rendered on disk the TIM5
+# cells of the ti1_in7..in10 / ti2_in7 rows are EMPTY (dropped), while
+# ch. 11 Table 77/78 shows comp4_out..comp7_out / comp7_out there —
+# consistent with the rows above (TIM5 ti1 in4..in6 = comp1..comp3,
+# ti2 in1..in6 = comp1..comp6), so the Table 77/78 values are taken.
+# TIM5 ti1 = LSI / LSE / RTC wake-up (named RTC_WAKEUP) at in1..in3,
+# then comp1_out..comp7_out at in4..in10; ti2 = comp1..comp5 at
+# in1..in5, comp6 at in6, comp7 at in7.
+# tim_itr4 is Reserved (a timer cannot trigger itself).
+# Cross-check ch. 11 Table 63/75/77/78: TIM5 column otherwise agrees.
+# Device restrictions (not trimmed here; per CONVENTIONS.md per-die
+# trimming belongs in stm32-data-gen): COMP1-4 exist on all G4; COMP5-7
+# only on G414/G473/G474/G483/G484; HRTIM (HRTIM_OUT_SYNC2) only on
+# G414/G474/G484. See also 0047_g4_tim1.yaml header.
 # match: ^STM32G4.*:TIM5
 
 - match: '^STM32G4.*:TIM5'
   triggers:
+    - signal: TIMX_TI1_IN1
+      source: LSI
+    - signal: TIMX_TI1_IN2
+      source: LSE
+    - signal: TIMX_TI1_IN3
+      source: RTC_WAKEUP
+    - signal: TIMX_TI1_IN4
+      source: COMP1_OUT
+    - signal: TIMX_TI1_IN5
+      source: COMP2_OUT
+    - signal: TIMX_TI1_IN6
+      source: COMP3_OUT
+    - signal: TIMX_TI1_IN7
+      source: COMP4_OUT
+    - signal: TIMX_TI1_IN8
+      source: COMP5_OUT
+    - signal: TIMX_TI1_IN9
+      source: COMP6_OUT
+    - signal: TIMX_TI1_IN10
+      source: COMP7_OUT
+    - signal: TIMX_TI2_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI2_IN2
+      source: COMP2_OUT
+    - signal: TIMX_TI2_IN3
+      source: COMP3_OUT
+    - signal: TIMX_TI2_IN4
+      source: COMP4_OUT
+    - signal: TIMX_TI2_IN5
+      source: COMP5_OUT
+    - signal: TIMX_TI2_IN6
+      source: COMP6_OUT
+    - signal: TIMX_TI2_IN7
+      source: COMP7_OUT
     - signal: TIMX_ITR_IN0
       source: TIM1_TRGO
     - signal: TIMX_ITR_IN1

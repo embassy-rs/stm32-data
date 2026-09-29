@@ -65,6 +65,15 @@ embassy-stm32's build.rs expects):
   same signal index.
 - Only emit sources for peripherals that exist on the chips the rule
   matches (e.g. never emit `TIM8_*` for F100/F101, which have no TIM8).
+- **No per-die trimming in the data.** When a source exists on the die
+  family but is not bonded on *some* dies the rule matches (e.g. HRTIM
+  sources in rules covering G431, which has no HRTIM1), emit the full RM
+  column anyway and record the restriction in the fragment's header
+  comments. Filtering sources against each chip's actual peripheral list
+  is the job of the consumer generator (`stm32-data-gen`) — it is
+  currently NOT implemented there, so downstream data may list sources
+  for peripherals absent on a given chip. Do not encode per-die
+  exceptions into `match` regexes or fragment contents.
 - If a mux input exists in the register field but the RM shows no source
   bonded for the family, omit it (e.g. F410 DAC keeps only its two bonded
   sources).

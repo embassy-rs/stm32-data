@@ -1,20 +1,59 @@
 # TIM3 interconnection inputs for STM32G4.
-# Provenance: RM0440 (STM32G4) chapter 30 (TIM2/3/4/5): Table 291
+# Provenance: RM0440 (STM32G4) chapter 30 (TIM2/3/4/5): Table 287
+# "Interconnect to the tim_ti1 input multiplexer", Table 288 (tim_ti2),
+# Table 289 (tim_ti3), Table 290 (tim_ti4), Table 291
 # "TIMx internal trigger connection" (+continued), Table 292
 # "Interconnect to the tim_etr input multiplexer", Table 293
 # "Interconnect to the tim_ocref_clr input multiplexer" — the TIM3
-# column. tim_itr2 is Reserved (a timer cannot trigger itself); itr11 is
-# "USB SOF SYNC" on TIM2 only (Reserved here). tim_etr0 is the TIM3_ETR
-# pin (skipped); etr10 is Reserved; etr11..13 are adc2_awd1..3 (the
-# Table 292 cells read "adc2_awa1/2" — a typo for awd, confirmed by
-# ch. 11 Table 75). TIM3/4/5 have no LSE row at etr11 (TIM2 only).
-# Cross-check ch. 11 Table 63/75: TIM3 column agrees throughout.
-# Device restrictions: see 0047_g4_tim1.yaml header (COMP5-7 not on
-# every G4 die; full TIM3 column emitted, restrictions noted).
+# column of each table. tim_ti1_in0 / ti2/3/4_in0 are the TIM3_CH1..CH4
+# pins and tim_etr0 is the TIM3_ETR pin (skipped); Reserved/unconnected
+# rows skipped (ti1_in8 Reserved, no TI4 sources for TIM3). TIM3 ti1 =
+# comp1_out..comp7_out at in1..in7 and ti2 = comp1_out..comp7_out at
+# in1..in7, confirmed by BOTH Table 287/288 and ch. 11 Table 77/78.
+# tim_itr2 is Reserved (a timer cannot trigger itself); itr11 is
+# "USB SOF SYNC" on TIM2 only (Reserved here). etr10 is Reserved;
+# etr11..13 are adc2_awd1..3 (the Table 292 cells read "adc2_awa1/2" —
+# a typo for awd, confirmed by ch. 11 Table 75). TIM3/4/5 have no LSE
+# row at etr11 (TIM2 only).
+# Cross-check ch. 11 Table 63/75/77/78: TIM3 column agrees throughout.
+# Device restrictions (not trimmed here; per CONVENTIONS.md per-die
+# trimming belongs in stm32-data-gen): COMP1-4 exist on all G4; COMP5-7
+# only on G414/G473/G474/G483/G484; HRTIM (HRTIM_OUT_SYNC2) only on
+# G414/G474/G484. See also 0047_g4_tim1.yaml header.
 # match: ^STM32G4.*:TIM3
 
 - match: '^STM32G4.*:TIM3'
   triggers:
+    - signal: TIMX_TI1_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI1_IN2
+      source: COMP2_OUT
+    - signal: TIMX_TI1_IN3
+      source: COMP3_OUT
+    - signal: TIMX_TI1_IN4
+      source: COMP4_OUT
+    - signal: TIMX_TI1_IN5
+      source: COMP5_OUT
+    - signal: TIMX_TI1_IN6
+      source: COMP6_OUT
+    - signal: TIMX_TI1_IN7
+      source: COMP7_OUT
+    - signal: TIMX_TI2_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI2_IN2
+      source: COMP2_OUT
+    - signal: TIMX_TI2_IN3
+      source: COMP3_OUT
+    - signal: TIMX_TI2_IN4
+      source: COMP4_OUT
+    - signal: TIMX_TI2_IN5
+      source: COMP5_OUT
+    - signal: TIMX_TI2_IN6
+      source: COMP6_OUT
+    - signal: TIMX_TI2_IN7
+      source: COMP7_OUT
+    - signal: TIMX_TI3_IN1
+      source: COMP3_OUT
     - signal: TIMX_ITR_IN0
       source: TIM1_TRGO
     - signal: TIMX_ITR_IN1

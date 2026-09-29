@@ -1,23 +1,67 @@
 # TIM2 interconnection inputs for STM32G4.
-# Provenance: RM0440 (STM32G4) chapter 30 (TIM2/3/4/5): Table 291
+# Provenance: RM0440 (STM32G4) chapter 30 (TIM2/3/4/5): Table 287
+# "Interconnect to the tim_ti1 input multiplexer", Table 288 (tim_ti2),
+# Table 289 (tim_ti3), Table 290 (tim_ti4), Table 291
 # "TIMx internal trigger connection" (+continued), Table 292
 # "Interconnect to the tim_etr input multiplexer", Table 293
 # "Interconnect to the tim_ocref_clr input multiplexer" — the TIM2
-# column. tim_itr1 is Reserved (a timer cannot trigger itself); itr11 is
+# column of each table. tim_ti1_in0 / ti2/3/4_in0 are the TIM2_CH1..CH4
+# pins and tim_etr0 is the TIM2_ETR pin (skipped); Reserved/unconnected
+# rows skipped.
+# RENDERING ARTIFACT: in Table 287 as rendered on disk, rows whose first
+# columns are empty have been left-shifted (e.g. the TIM2 cell of row
+# ti1_in7 reads comp7_out, but ch. 11 Table 77 shows the same row as
+# "-, comp7, comp7, comp4" — the markdown dropped the leading "-" and
+# shifted the remaining cells). The TI1/TI2 columns below are reconciled
+# against Table 77/78: TIM2 ti1_in7..in10 (comp7/reserved/comp6/comp7 in
+# the shifted render — would also duplicate COMP7 within the mux) are
+# unconnected per Table 77 and omitted; ti1_in5 = comp5_out is kept
+# (Table 287's row is fully populated there and per-chapter wins over
+# Table 77's "-"). TIM2 ti2_in5 = comp6_out is confirmed by BOTH Table
+# 288 and Table 78; ti2_in6 Reserved, ti2_in7 unconnected (Table 78).
+# tim_itr1 is Reserved (a timer cannot trigger itself); itr11 is
 # "USB SOF SYNC" (TIM2 only; Reserved on TIM3/4/5) -> USB_SOF_SYNC.
-# tim_etr0 is the TIM2_ETR pin (skipped); etr8..10 route the other
-# general-purpose timers' ETR pins internally; etr12 is Reserved.
+# etr8..10 route the other general-purpose timers' ETR pins internally;
+# etr12 is Reserved.
 # Cross-check ch. 11 Table 63/75 (interconnect matrix): ITR column
 # agrees; ETR agrees EXCEPT Table 75 writes tim2_etr11 as "lse_css_out"
 # while Table 292 writes "LSE" — per-chapter table wins, source named
 # LSE (CONVENTIONS.md). Table 292 also has a typo "adc2_awa1/2" for
 # adc2_awd1/2 (Table 75 confirms awd).
-# Device restrictions: see 0047_g4_tim1.yaml header (COMP5-7 not on
-# every G4 die; full TIM2 column emitted, restrictions noted).
+# Device restrictions (not trimmed here; per CONVENTIONS.md per-die
+# trimming belongs in stm32-data-gen): COMP1-4 exist on all G4; COMP5-7
+# only on G414/G473/G474/G483/G484; HRTIM (HRTIM_OUT_SYNC2) only on
+# G414/G474/G484. See also 0047_g4_tim1.yaml header.
 # match: ^STM32G4.*:TIM2
 
 - match: '^STM32G4.*:TIM2'
   triggers:
+    - signal: TIMX_TI1_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI1_IN2
+      source: COMP2_OUT
+    - signal: TIMX_TI1_IN3
+      source: COMP3_OUT
+    - signal: TIMX_TI1_IN4
+      source: COMP4_OUT
+    - signal: TIMX_TI1_IN5
+      source: COMP5_OUT
+    - signal: TIMX_TI2_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI2_IN2
+      source: COMP2_OUT
+    - signal: TIMX_TI2_IN3
+      source: COMP3_OUT
+    - signal: TIMX_TI2_IN4
+      source: COMP4_OUT
+    - signal: TIMX_TI2_IN5
+      source: COMP6_OUT
+    - signal: TIMX_TI3_IN1
+      source: COMP4_OUT
+    - signal: TIMX_TI4_IN1
+      source: COMP1_OUT
+    - signal: TIMX_TI4_IN2
+      source: COMP2_OUT
     - signal: TIMX_ITR_IN0
       source: TIM1_TRGO
     - signal: TIMX_ITR_IN2
