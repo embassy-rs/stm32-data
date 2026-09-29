@@ -70,13 +70,13 @@ in the RM is captured". Confirmed instance:
 
 - **G4 timer interconnects (RM0440) — DONE (2026-09 follow-up).** All ten
   G4 timers now have interconnect rules (`0047`-`0047i`): TIM1/8/20 full
-  sets (TI1/ITR/ETR/BRK/BRK2/SYS_BRK/OCREF_CLR), TIM2-5 ITR/ETR/OCREF_CLR,
-  TIM15-17 TI1/TI2/ITR/BRK/SYS_BRK/OCREF_CLR. Remaining G4 follow-ups:
-  (a) TIM2-5 TI1-TI4 mux tables (T287-290) not extracted (out of that
-  task's scope); (b) per-die trimming not done — rules emit the full RM
-  column for all G4, so e.g. HRTIM sources appear on G431/G471/G491/G4A1
-  dies that lack HRTIM1 (same precedent as ADC/DAC rules 0042-0046);
-  split by subfamily regex if that matters.
+  sets (TI1/ITR/ETR/BRK/BRK2/SYS_BRK/OCREF_CLR), TIM2-5 TI1-TI4/ITR/ETR/
+  OCREF_CLR, TIM15-17 TI1/TI2/ITR/BRK/SYS_BRK/OCREF_CLR. TIM2-5 TI tables
+  (T287-290) needed reconciliation against the ch. 11 matrix (Tables 77-80)
+  due to a column-collapse artifact in the markdown — see the 0047c-f file
+  headers. Per-die trimming (e.g. HRTIM sources on G431-class dies without
+  HRTIM1) is intentionally not done in the data: per CONVENTIONS.md it
+  belongs in stm32-data-gen, which does not implement it yet.
 
 The same blind spot likely exists for other families whose RMs contain
 interconnect matrices that were never transcribed into hand rules
@@ -88,7 +88,6 @@ per family whether embassy-stm32 actually consumes `TIMX_*` signals
 there (it does for WBA and G4, which is why those rules exist).
 
 ## Known structural anomalies
-
 
 - `0052` (`^STM32WBA6[245].*:TIM1`) effectively covers only WBA624/644
   (first-match-wins with `0051`); TIM4_TRGO is unreachable on WBA622/625.
