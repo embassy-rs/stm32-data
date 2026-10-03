@@ -231,6 +231,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32F373.*:SDADC:.*", ("sdadc", "v1", "SDADC")),
     ("STM32F301.*:SDADC:.*", ("sdadc", "v1", "SDADC")),
     ("STM32G4.*:OPAMP:.*", ("opamp", "v5", "OPAMP")),
+    ("STM32C5(31|32|42).*:OPAMP1:.*", ("opamp", "c5", "OPAMP")),
     ("STM32F3.*:OPAMP:.*", ("opamp", "v2", "OPAMP")),
     ("STM32H[57].*:OPAMP:.*", ("opamp", "v4", "OPAMP")),
     ("STM32L[45].*:OPAMP:.*", ("opamp", "v3", "OPAMP")),
