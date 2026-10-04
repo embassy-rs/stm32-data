@@ -1,0 +1,406 @@
+block/OPAMP:
+  description: OPAMP register block.
+  items:
+  - name: OPAMP_CSR
+    description: OPAMP control/status register.
+    byte_offset: 0
+    fieldset: OPAMP_CSR
+  - name: OPAMP_TCMR
+    description: OPAMP timer-controlled mode register.
+    byte_offset: 4
+    fieldset: OPAMP_TCMR
+fieldset/OPAMP_CSR:
+  description: OPAMP control/status register.
+  fields:
+  - name: OPAEN
+    description: Operational amplifier enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: FORCE_VP
+    description: Force internal reference on noninverting input.
+    bit_offset: 1
+    bit_size: 1
+    enum: FORCE_VP
+  - name: VP_SEL
+    description: Noninverting input primary selection.
+    bit_offset: 2
+    bit_size: 2
+    enum: VP_SEL
+  - name: USERTRIM
+    description: User trimming enable.
+    bit_offset: 4
+    bit_size: 1
+    enum: USERTRIM
+  - name: VM_SEL
+    description: Inverting input primary selection.
+    bit_offset: 5
+    bit_size: 2
+    enum: VM_SEL
+  - name: OPAHSM
+    description: Operational amplifier high-speed mode.
+    bit_offset: 7
+    bit_size: 1
+    enum: OPAHSM
+  - name: OPAINTOEN
+    description: Operational amplifier internal output enable.
+    bit_offset: 8
+    bit_size: 1
+    enum: OPAINTOEN
+  - name: CALON
+    description: Calibration mode enable.
+    bit_offset: 11
+    bit_size: 1
+  - name: CALSEL
+    description: Calibration selection.
+    bit_offset: 12
+    bit_size: 2
+    enum: CALSEL
+  - name: PGA_GAIN
+    description: Operational amplifier programmable gain and PGA flavor primary control.
+    bit_offset: 14
+    bit_size: 5
+    enum: PGA_GAIN
+  - name: TRIMOFFSETP
+    description: Trim for PMOS differential pairs.
+    bit_offset: 19
+    bit_size: 5
+  - name: TRIMOFFSETN
+    description: Trim for NMOS differential pairs.
+    bit_offset: 24
+    bit_size: 5
+  - name: TSTREF
+    description: OPAMP calibration reference voltage output control.
+    bit_offset: 29
+    bit_size: 1
+    enum: TSTREF
+  - name: CALOUT
+    description: Operational amplifier calibration output.
+    bit_offset: 30
+    bit_size: 1
+  - name: LOCK
+    description: OPAMP_CSR register lock.
+    bit_offset: 31
+    bit_size: 1
+    enum: OPAMP_CSR_LOCK
+fieldset/OPAMP_TCMR:
+  description: OPAMP timer-controlled mode register.
+  fields:
+  - name: VMS_SEL
+    description: OPAMP inverting input secondary selection.
+    bit_offset: 0
+    bit_size: 1
+    enum: VMS_SEL
+  - name: VPS_SEL
+    description: OPAMP noninverting input secondary selection.
+    bit_offset: 1
+    bit_size: 2
+    enum: VPS_SEL
+  - name: TIMCM_SEL
+    description: Timer toggle signal selection for operational amplifier input control.
+    bit_offset: 3
+    bit_size: 3
+    enum: TIMCM_SEL
+  - name: PGAS_GAIN
+    description: Operational amplifier programmable gain and PGA flavor secondary control.
+    bit_offset: 8
+    bit_size: 5
+    enum: PGAS_GAIN
+  - name: TIMPGA_SEL
+    description: Timer toggle signal selection for programmable gain control.
+    bit_offset: 13
+    bit_size: 3
+    enum: TIMPGA_SEL
+  - name: LOCK
+    description: OPAMP_TCMR register lock.
+    bit_offset: 31
+    bit_size: 1
+    enum: OPAMP_TCMR_LOCK
+enum/CALSEL:
+  bit_size: 2
+  variants:
+  - name: B_0x0
+    description: '0.'
+    value: 0
+  - name: B_0x1
+    description: '0.'
+    value: 1
+  - name: B_0x2
+    description: '0.'
+    value: 2
+  - name: B_0x3
+    description: '0.'
+    value: 3
+enum/FORCE_VP:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Do not force (normal operation).
+    value: 0
+  - name: B_0x1
+    description: Force.
+    value: 1
+enum/OPAHSM:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Normal speed.
+    value: 0
+  - name: B_0x1
+    description: High speed.
+    value: 1
+enum/OPAINTOEN:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: OPAMP_VOUT pin.
+    value: 0
+  - name: B_0x1
+    description: ADC/COMP channel.
+    value: 1
+enum/OPAMP_CSR_LOCK:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: OPAMP_CSR is read-write.
+    value: 0
+  - name: B_0x1
+    description: OPAMP_CSR is read-only.
+    value: 1
+enum/OPAMP_TCMR_LOCK:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Read-write.
+    value: 0
+  - name: B_0x1
+    description: Read-only (OPAMP_TCMR locked).
+    value: 1
+enum/PGAS_GAIN:
+  bit_size: 5
+  variants:
+  - name: B_0x0
+    description: gain 2.
+    value: 0
+  - name: B_0x1
+    description: gain 4.
+    value: 1
+  - name: B_0x2
+    description: gain 8.
+    value: 2
+  - name: B_0x3
+    description: gain 16.
+    value: 3
+  - name: B_0x8
+    description: gain -1 / gain 2 with bias on OPAMP_VINM0.
+    value: 8
+  - name: B_0x9
+    description: gain -3 / gain 4 with bias on OPAMP_VINM0.
+    value: 9
+  - name: B_0xA
+    description: gain -7 / gain 8 with bias on OPAMP_VINM0.
+    value: 10
+  - name: B_0xB
+    description: gain -15 / gain 16 with bias on OPAMP_VINM0.
+    value: 11
+  - name: B_0x10
+    description: gain 2 with filtering on OPAMP_VINM0.
+    value: 16
+  - name: B_0x11
+    description: gain 4 with filtering on OPAMP_VINM0.
+    value: 17
+  - name: B_0x12
+    description: gain 8 with filtering on OPAMP_VINM0.
+    value: 18
+  - name: B_0x13
+    description: gain 16 with filtering on OPAMP_VINM0.
+    value: 19
+  - name: B_0x18
+    description: gain -1 / gain 2 with bias on OPAMP_VINM0 and filtering on OPAMP_VINM1.
+    value: 24
+  - name: B_0x19
+    description: gain -3 / gain 4 with bias on OPAMP_VINM0 and filtering on OPAMP_VINM1.
+    value: 25
+  - name: B_0x1A
+    description: gain -7 / gain 8 with bias on OPAMP_VINM0 and filtering on OPAMP_VINM1.
+    value: 26
+  - name: B_0x1B
+    description: gain -15 / gain of 16 with bias on OPAMP_VINM0 and filtering on OPAMP_VINM1.
+    value: 27
+enum/PGA_GAIN:
+  bit_size: 5
+  variants:
+  - name: B_0x0
+    description: gain 2.
+    value: 0
+  - name: B_0x1
+    description: gain 4.
+    value: 1
+  - name: B_0x2
+    description: gain 8.
+    value: 2
+  - name: B_0x3
+    description: gain 16.
+    value: 3
+  - name: B_0x8
+    description: gain -1 / gain 2 with bias on OPAMP_VINM0.
+    value: 8
+  - name: B_0x9
+    description: gain -3 / gain 4 with bias on OPAMP_VINM0.
+    value: 9
+  - name: B_0xA
+    description: gain -7 / gain 8 with bias on OPAMP_VINM0.
+    value: 10
+  - name: B_0xB
+    description: gain -15 / gain 16 with bias on OPAMP_VINM0.
+    value: 11
+  - name: B_0x10
+    description: gain 2 with filtering on OPAMP_VINM0.
+    value: 16
+  - name: B_0x11
+    description: gain 4 with filtering on OPAMP_VINM0.
+    value: 17
+  - name: B_0x12
+    description: gain 8 with filtering on OPAMP_VINM0.
+    value: 18
+  - name: B_0x13
+    description: gain 16 with filtering on OPAMP_VINM0.
+    value: 19
+  - name: B_0x18
+    description: gain -1 / gain 2 with bias on OPAMP_VINM0 and filtering on OPAMP_VINM1.
+    value: 24
+  - name: B_0x19
+    description: gain -3 / gain 4 with bias on OPAMP_VINM0 and filtering on OPAMP_VINM1.
+    value: 25
+  - name: B_0x1A
+    description: gain -7 / gain 8 with bias on OPAMP_VINM0 and filtering on OPAMP_VINM1.
+    value: 26
+  - name: B_0x1B
+    description: gain -15 / gain 16 with bias on OPAMP_VINM0 and filtering on OPAMP_VINM1.
+    value: 27
+enum/TIMCM_SEL:
+  bit_size: 3
+  variants:
+  - name: B_0x0
+    description: None (input configuration permanently controlled through VP_SEL[1:0] and VM_SEL).
+    value: 0
+  - name: B_0x1
+    description: opamp_tc1.
+    value: 1
+  - name: B_0x2
+    description: opamp_tc2.
+    value: 2
+  - name: B_0x3
+    description: opamp_tc3.
+    value: 3
+  - name: B_0x4
+    description: opamp_tc4.
+    value: 4
+  - name: B_0x5
+    description: opamp_tc5.
+    value: 5
+  - name: B_0x6
+    description: opamp_tc6.
+    value: 6
+  - name: B_0x7
+    description: opamp_tc7.
+    value: 7
+enum/TIMPGA_SEL:
+  bit_size: 3
+  variants:
+  - name: B_0x0
+    description: None (gain permanently controlled through PGA_GAIN[4:0] and VM_SEL[1:0]).
+    value: 0
+  - name: B_0x1
+    description: opamp_tp1.
+    value: 1
+  - name: B_0x2
+    description: opamp_tp2.
+    value: 2
+  - name: B_0x3
+    description: opamp_tp3.
+    value: 3
+  - name: B_0x4
+    description: opamp_tp4.
+    value: 4
+  - name: B_0x5
+    description: opamp_tp5.
+    value: 5
+  - name: B_0x6
+    description: opamp_tp6.
+    value: 6
+  - name: B_0x7
+    description: opamp_tp7.
+    value: 7
+enum/TSTREF:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Does not output calibration reference voltage.
+    value: 0
+  - name: B_0x1
+    description: Outputs calibration reference voltage.
+    value: 1
+enum/USERTRIM:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Disable (trimming by user not possible).
+    value: 0
+  - name: B_0x1
+    description: Enable (trimming by user possible).
+    value: 1
+enum/VMS_SEL:
+  bit_size: 1
+  variants:
+  - name: B_0x0
+    description: Internal resistor divider middle point (operation as PGA).
+    value: 0
+  - name: B_0x1
+    description: Operational amplifier output (operation as follower).
+    value: 1
+enum/VM_SEL:
+  bit_size: 2
+  variants:
+  - name: B_0x0
+    description: OPAMP_VINM0 pin.
+    value: 0
+  - name: B_0x1
+    description: OPAMP_VINM1 pin.
+    value: 1
+  - name: B_0x2
+    description: Internal resistor divider middle point.
+    value: 2
+  - name: B_0x3
+    description: Operational amplifier output.
+    value: 3
+enum/VPS_SEL:
+  bit_size: 2
+  variants:
+  - name: B_0x0
+    description: OPAMP_VINP0.
+    value: 0
+  - name: B_0x1
+    description: OPAMP_VINP1.
+    value: 1
+  - name: B_0x2
+    description: OPAMP_VINP2.
+    value: 2
+  - name: B_0x3
+    description: OPAMP_VINP3 pin or DAC output channel.
+    value: 3
+enum/VP_SEL:
+  bit_size: 2
+  variants:
+  - name: B_0x0
+    description: OPAMP_VINP0 pin.
+    value: 0
+  - name: B_0x1
+    description: OPAMP_VINP1 pin.
+    value: 1
+  - name: B_0x2
+    description: OPAMP_VINP2 pin.
+    value: 2
+  - name: B_0x3
+    description: OPAMP_VINP3 pin or DAC output channel.
+    value: 3
+
