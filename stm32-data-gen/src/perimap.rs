@@ -342,7 +342,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32F30[23].[68DE].*:USB:.*", ("usb", "v2", "USB")),
     ("STM32F30[23].[68DE].*:USBRAM:.*", ("usbram", "16x2_1024", "USBRAM")),
     ("STM32F373.*:USB:.*", ("usb", "v1", "USB")),
-    ("STM32F373.*:USBRAM:.*", ("usbram", "16x2_512", "USBRAM")),
+    ("STM32F373.*:USBRAM:.*", ("usbram", "16x1_512", "USBRAM")),
     ("STM32(F0|L[045]|G4|WB).*:USB:.*", ("usb", "v3", "USB")),
     ("STM32(F0|L[045]|G4|WB).*:USBRAM:.*", ("usbram", "16x2_1024", "USBRAM")),
     ("STM32(C07|C5|G0|H5|U[035]).*:USB:.*", ("usb", "v4", "USB")),
