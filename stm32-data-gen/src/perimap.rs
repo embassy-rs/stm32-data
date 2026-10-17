@@ -670,8 +670,8 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:GPIO.*", ("gpio", "v2", "GPIO")),
     (".*:IPCC:v1_0", ("ipcc", "v1", "IPCC")),
     ("STM32H7(4|5)(5|7).*:HSEM:.*", ("hsem", "v1", "HSEM")),
-    ("STM32WB15.*:HSEM:.*", ("hsem", "v1", "HSEM")),
-    ("STM32WB55.*:HSEM:.*", ("hsem", "v1", "HSEM")),
+    // Every dual-core STM32WB (WB1x/WB3x/WB5x, not WB0x/WBA) has the same HSEM (32 semaphores)
+    ("STM32WB[135].*:HSEM:.*", ("hsem", "v1", "HSEM")),
     ("STM32H735.*:HSEM:.*", ("hsem", "v2", "HSEM")),
     ("STM32H7B3.*:HSEM:.*", ("hsem", "v2", "HSEM")),
     ("STM32H753.*:HSEM:.*", ("hsem", "v2", "HSEM")),
