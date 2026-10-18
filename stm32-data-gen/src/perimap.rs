@@ -192,6 +192,8 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:ADC:aditf2_v1_1", ("adc", "v1_f4", "ADC")),
     (".*:ADC:aditf5_v2_0", ("adc", "v3_l4", "ADC")),
     (".*:ADC:aditf5_v2_2", ("adc", "v3_l4", "ADC")),
+    // RM0468: ADC3 of the H72x/H73x is a different, 12-bit, ADC. The ST data gives it the same IP version.
+    ("STM32H7(23|25|30|33|35).*:ADC3:.*", ("adc", "v3_h7", "ADC3")),
     (".*:ADC:aditf5_v3_0", ("adc", "v3_h7", "ADC")),
     (".*:ADC:aditf5_v3_0_H5", ("adc", "v3_g4", "ADC")),
     (".*:ADC:aditf512_v3_0_H5", ("adc", "v3_g4", "ADC")),
