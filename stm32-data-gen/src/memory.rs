@@ -410,29 +410,29 @@ const MEMS: &[(&str, &[&[Mem]])] = &[
     ("STM32U3[BC]5.I",               &[mem!(BANK_1 { 0x08000000 1024 },  BANK_2 { 0x08100000 1024 },  SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, SRAM3 { 0x20040000 320 }, SRAM4 { 0x20090000 64 }, OTP { 0x0bfa0000 512 bytes })]),
     // U5
     ("STM32U5[34]..B",               &[
-                                        mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes }),
-                                        mem!(BANK_1 { 0x08000000 64 }, BANK_2 { 0x08010000 64 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 128 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 64 }, BANK_2 { 0x08010000 64 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
                                       ]),
     ("STM32U5[34]..C",               &[
-                                        mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes }),
-                                        mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08020000 128 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 256 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 128 }, BANK_2 { 0x08020000 128 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
                                       ]),
-    ("STM32U5[43]..E",               &[mem!(BANK_1 { 0x08000000 256 },  BANK_2 { 0x08040000 256 },  SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, OTP { 0x0bfa0000 512 bytes })]),
+    ("STM32U5[43]..E",               &[mem!(BANK_1 { 0x08000000 256 },  BANK_2 { 0x08040000 256 },  SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes })]),
     ("STM32U5[78]..G",               &[
-                                        mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, SRAM3 { 0x20040000 512 }, OTP { 0x0bfa0000 512 bytes }),
-                                        mem!(BANK_1 { 0x08000000 512 }, BANK_2 { 0x08080000 512 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, SRAM3 { 0x20040000 512 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 1024 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, SRAM3 { 0x20040000 512 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 512 }, BANK_2 { 0x08080000 512 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, SRAM3 { 0x20040000 512 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
                                       ]),
-    ("STM32U5[78]..I",               &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, SRAM3 { 0x20040000 512 }, OTP { 0x0bfa0000 512 bytes })]),
+    ("STM32U5[78]..I",               &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 192 }, SRAM2 { 0x20030000 64 }, SRAM3 { 0x20040000 512 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes })]),
     ("STM32U5[9A]..I",               &[
-                                        mem!(BANK_1 { 0x08000000 2048 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, OTP { 0x0bfa0000 512 bytes }),
-                                        mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 2048 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
                                       ]),
-    ("STM32U5[9A]..J",               &[mem!(BANK_1 { 0x08000000 2048 }, BANK_2 { 0x08200000 2048 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, OTP { 0x0bfa0000 512 bytes })]),
+    ("STM32U5[9A]..J",               &[mem!(BANK_1 { 0x08000000 2048 }, BANK_2 { 0x08200000 2048 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes })]),
     ("STM32U5[FG]..I",               &[
-                                        mem!(BANK_1 { 0x08000000 2048 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, SRAM6 { 0x20270000 512 }, OTP { 0x0bfa0000 512 bytes }),
-                                        mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, SRAM6 { 0x20270000 512 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 2048 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, SRAM6 { 0x20270000 512 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
+                                        mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, SRAM6 { 0x20270000 512 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes }),
                                       ]),
-    ("STM32U5[FG]..J",               &[mem!(BANK_1 { 0x08000000 2048 }, BANK_2 { 0x08200000 2048 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, SRAM6 { 0x20270000 512 }, OTP { 0x0bfa0000 512 bytes })]),
+    ("STM32U5[FG]..J",               &[mem!(BANK_1 { 0x08000000 2048 }, BANK_2 { 0x08200000 2048 }, SRAM { 0x20000000 768 }, SRAM2 { 0x200c0000 64 }, SRAM3 { 0x200d0000 832 }, SRAM5 { 0x201a0000 832 }, SRAM6 { 0x20270000 512 }, BKPSRAM { 0x40036400 2 }, OTP { 0x0bfa0000 512 bytes })]),
     // WB
     ("STM32WB10CC",                  &[mem!(BANK_1 { 0x08000000 320 },  SRAM { 0x20000000 12 },  SRAM2A { 0x20030000 32 }, SRAM2B { 0x20038000 4 },  SRAM2A_ICODE { 0x10000000 32 }, SRAM2B_ICODE { 0x10008000 4 })]),
     ("STM32WB15CC",                  &[mem!(BANK_1 { 0x08000000 320 },  SRAM { 0x20000000 12 },  SRAM2A { 0x20030000 32 }, SRAM2B { 0x20038000 4 },  SRAM2A_ICODE { 0x10000000 32 }, SRAM2B_ICODE { 0x10008000 4 })]),
