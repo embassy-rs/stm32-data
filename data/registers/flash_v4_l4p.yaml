@@ -71,7 +71,7 @@ fieldset/ACR:
   - name: LATENCY
     description: Latency
     bit_offset: 0
-    bit_size: 3
+    bit_size: 4
   - name: PRFTEN
     description: Prefetch enable
     bit_offset: 8
@@ -111,13 +111,10 @@ fieldset/CR:
     description: Page erase
     bit_offset: 1
     bit_size: 1
-  - name: MER
-    description: Bank 1 Mass erase
+  - name: MER1
+    description: Bank 1 mass erase
     bit_offset: 2
     bit_size: 1
-    array:
-      len: 2
-      stride: 13
   - name: PNB
     description: Page number
     bit_offset: 3
@@ -126,7 +123,11 @@ fieldset/CR:
     description: Bank erase
     bit_offset: 11
     bit_size: 1
-  - name: START
+  - name: MER2
+    description: Bank 2 mass erase
+    bit_offset: 15
+    bit_size: 1
+  - name: STRT
     description: Start
     bit_offset: 16
     bit_size: 1
@@ -168,18 +169,26 @@ fieldset/ECCR:
   - name: ADDR_ECC
     description: ECC fail address
     bit_offset: 0
-    bit_size: 19
+    bit_size: 21
   - name: BK_ECC
     description: ECC fail bank
-    bit_offset: 19
+    bit_offset: 21
     bit_size: 1
   - name: SYSF_ECC
     description: System Flash ECC fail
-    bit_offset: 20
+    bit_offset: 22
     bit_size: 1
   - name: ECCIE
     description: ECC correction interrupt enable
     bit_offset: 24
+    bit_size: 1
+  - name: ECCC2
+    description: ECC correction on the upper 64 bits (single-bank mode)
+    bit_offset: 28
+    bit_size: 1
+  - name: ECCD2
+    description: ECC detection on the upper 64 bits (single-bank mode)
+    bit_offset: 29
     bit_size: 1
   - name: ECCC
     description: ECC correction
@@ -228,13 +237,17 @@ fieldset/OPTR:
     description: Window watchdog selection
     bit_offset: 19
     bit_size: 1
-  - name: BFB
+  - name: BFB2
     description: Dual-bank boot
     bit_offset: 20
     bit_size: 1
-  - name: DUALBANK
-    description: Dual-Bank on 512 KB or 256 KB Flash memory devices
+  - name: DB1M
+    description: Dual-bank on 1 MB (L4R/S) and 512 KB (L4P/Q) flash memory devices
     bit_offset: 21
+    bit_size: 1
+  - name: DBANK
+    description: Dual-bank on 2 MB (L4R/S) and 1 MB (L4P/Q) flash memory devices
+    bit_offset: 22
     bit_size: 1
   - name: nBOOT1
     description: Boot configuration

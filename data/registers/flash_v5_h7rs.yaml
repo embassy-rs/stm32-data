@@ -8,7 +8,7 @@ block/FLASH:
   - name: KEYR
     description: FLASH control key register.
     byte_offset: 4
-    fieldset: KEYR
+    access: Write
   - name: CR
     description: FLASH control register.
     byte_offset: 16
@@ -169,7 +169,7 @@ fieldset/CR:
     description: Internal buffer control bit Setting this bit enables internal buffer for write operations. This allows preparing program operations even if a sector or bank erase is ongoing. When PG is cleared, the internal buffer is disabled for write operations, and all the data stored in the buffer but not sent to the operation queue are lost.
     bit_offset: 1
     bit_size: 1
-  - name: SER
+  - name: PER
     description: 'Sector erase request Setting this bit requests a sector erase. Write protection error is triggered when a sector erase is required on at least one protected sector. BER has a higher priority than SER: if both bits are set, the embedded Flash memory executes a bank erase.'
     bit_offset: 2
     bit_size: 1
@@ -181,11 +181,11 @@ fieldset/CR:
     description: 'Force write This bit forces a write operation even if the write buffer is not full. In this case all bits not written are set by hardware. The embedded Flash memory resets FW when the corresponding operation has been acknowledged. Note: Using a force-write operation prevents the application from updating later the missing bits with something else than 1, because it is likely that it will lead to permanent ECC error. Write forcing is effective only if the write buffer is not empty (in particular, FW does not start several write operations when the force-write operations are performed consecutively).'
     bit_offset: 4
     bit_size: 1
-  - name: START
+  - name: STRT
     description: Erase start control bit This bit is used to start a sector erase or a bank erase operation. The embedded Flash memory resets START when the corresponding operation has been acknowledged. The user application cannot access any embedded Flash memory register until the operation is acknowledged.
     bit_offset: 5
     bit_size: 1
-  - name: SSN
+  - name: PNB
     description: Sector erase selection number These bits are used to select the target sector for an erase operation (they are unused otherwise). ...
     bit_offset: 6
     bit_size: 3
@@ -318,47 +318,47 @@ fieldset/HDPSRP:
 fieldset/ICR:
   description: FLASH interrupt clear register.
   fields:
-  - name: EOPF
+  - name: CLR_EOP
     description: End-of-program flag clear Setting this bit clears EOPF flag in FLASH_ISR register.
     bit_offset: 16
     bit_size: 1
-  - name: WRPERRF
+  - name: CLR_WRPERR
     description: Write protection error flag clear Setting this bit clears WRPERRF flag in FLASH_ISR register.
     bit_offset: 17
     bit_size: 1
-  - name: PGSERRF
+  - name: CLR_PGSERR
     description: Programming sequence error flag clear Setting this bit clears PGSERRF flag in FLASH_ISR register.
     bit_offset: 18
     bit_size: 1
-  - name: STRBERRF
+  - name: CLR_STRBERR
     description: Strobe error flag clear Setting this bit clears STRBERRF flag in FLASH_ISR register.
     bit_offset: 19
     bit_size: 1
-  - name: OBLERRF
+  - name: CLR_OBLERR
     description: Option byte loading error flag clear Setting this bit clears OBLERRF flag in FLASH_ISR register.
     bit_offset: 20
     bit_size: 1
-  - name: INCERRF
+  - name: CLR_INCERR
     description: Inconsistency error flag clear Setting this bit clears INCERRF flag in FLASH_ISR register.
     bit_offset: 21
     bit_size: 1
-  - name: RDSERRF
+  - name: CLR_RDSERR
     description: Read security error flag clear Setting this bit clears RDSERRF flag in FLASH_ISR register.
     bit_offset: 24
     bit_size: 1
-  - name: SNECCERRF
+  - name: CLR_SNECCERR
     description: ECC single error flag clear Setting this bit clears SNECCERRF flag in FLASH_ISR register. If the DBECCERRF flag of FLASH_ISR register is also cleared, FLASH_ECCFAR register is reset to zero as well.
     bit_offset: 25
     bit_size: 1
-  - name: DBECCERRF
+  - name: CLR_DBECCERR
     description: ECC double error flag clear Setting this bit clears DBECCERRF flag in FLASH_ISR register. If the SNECCERRF flag of FLASH_ISR register is also cleared, FLASH_ECCFAR register is reset to zero as well.
     bit_offset: 26
     bit_size: 1
-  - name: CRCENDF
+  - name: CLR_CRCEND
     description: CRC end flag clear Setting this bit clears CRCENDF flag in FLASH_ISR register.
     bit_offset: 27
     bit_size: 1
-  - name: CRCRDERRF
+  - name: CLR_CRCRDERR
     description: CRC error flag clear Setting this bit clears CRCRDERRF flag in FLASH_ISR register.
     bit_offset: 28
     bit_size: 1
@@ -412,57 +412,50 @@ fieldset/IER:
 fieldset/ISR:
   description: FLASH interrupt status register.
   fields:
-  - name: EOPF
+  - name: EOP
     description: End-of-program flag This bit is set when a programming operation completes. An interrupt is generated if the EOPIE is set. It is not necessary to reset EOPF before starting a new operation. Setting EOPF bit in FLASH_ICR register clears this bit.
     bit_offset: 16
     bit_size: 1
-  - name: WRPERRF
+  - name: WRPERR
     description: Write protection error flag This bit is set when a protection error occurs during a program operation. An interrupt is also generated if the WRPERRIE is set. Setting WRPERRF bit in FLASH_ICR register clears this bit.
     bit_offset: 17
     bit_size: 1
-  - name: PGSERRF
+  - name: PGSERR
     description: Programming sequence error flag This bit is set when a sequence error occurs. An interrupt is generated if the PGSERRIE bit is set. Setting PGSERRF bit in FLASH_ICR register clears this bit.
     bit_offset: 18
     bit_size: 1
-  - name: STRBERRF
+  - name: STRBERR
     description: Strobe error flag This bit is set when a strobe error occurs (when the master attempts to write several times the same byte in the write buffer). An interrupt is generated if the STRBERRIE bit is set. Setting STRBERRF bit in FLASH_ICR register clears this bit.
     bit_offset: 19
     bit_size: 1
-  - name: OBLERRF
+  - name: OBLERR
     description: Option byte loading error flag This bit is set when an error is found during the option byte loading sequence. An interrupt is generated if OBLERRIE is set. Setting OBLERRF bit in the FLASH_ICR register clears this bit.
     bit_offset: 20
     bit_size: 1
-  - name: INCERRF
+  - name: INCERR
     description: Inconsistency error flag This bit is set when a inconsistency error occurs. An interrupt is generated if INCERRIE is set. Setting INCERRF bit in the FLASH_ICR register clears this bit.
     bit_offset: 21
     bit_size: 1
-  - name: RDSERRF
+  - name: RDSERR
     description: Read security error flag This bit is set when a read security error occurs (read access to hide protected area with incorrect hide protection level). An interrupt is generated if RDSERRIE is set. Setting RDSERRF bit in FLASH_ICR register clears this bit.
     bit_offset: 24
     bit_size: 1
-  - name: SNECCERRF
+  - name: SNECCERR
     description: ECC single error flag This bit is set when an ECC single correction error occurs during a read operation. An interrupt is generated if SNECCERRIE is set. Setting SNECCERRF bit in FLASH_ICR register clears this bit.
     bit_offset: 25
     bit_size: 1
-  - name: DBECCERRF
+  - name: DBECCERR
     description: ECC double error flag This bit is set when an ECC double detection error occurs during a read operation. An interrupt is generated if DBECCERRIE is set. Setting DBECCERRF bit in FLASH_ICR register clears this bit.
     bit_offset: 26
     bit_size: 1
-  - name: CRCENDF
+  - name: CRCEND
     description: CRC end flag This bit is set when the CRC computation has completed. An interrupt is generated if CRCENDIE is set. It is not necessary to reset CRCEND before restarting CRC computation. Setting CRCENDF bit in FLASH_ICR register clears this bit.
     bit_offset: 27
     bit_size: 1
-  - name: CRCRDERRF
+  - name: CRCRDERR
     description: CRC read error flag This bit is set when a word is found read protected during a CRC operation. An interrupt is generated if CRCRDIE is set. Setting CRCRDERRF bit in FLASH_ICR register clears this bit. This flag is valid only when CRCEND bit is set.
     bit_offset: 28
     bit_size: 1
-fieldset/KEYR:
-  description: FLASH control key register.
-  fields:
-  - name: CUKEY
-    description: 'Control unlock key Following values must be written to FLASH_KEYR consecutively to unlock FLASH_CR register: 1st key = 0x4567 0123 2nd key = 0xCDEF 89AB Reads to this register returns zero. If above sequence is wrong or performed twice, the FLASH_CR register is locked until the next system reset, and access to it generates a bus error.'
-    bit_offset: 0
-    bit_size: 32
 fieldset/NVSR:
   description: FLASH non-volatile status register.
   fields:

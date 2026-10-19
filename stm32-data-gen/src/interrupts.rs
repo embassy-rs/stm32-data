@@ -324,7 +324,12 @@ impl ChipInterrupts {
                 for signal in parts[2].split(',') {
                     interrupt_signals.insert(("EXTI".to_string(), signal.to_string()));
                 }
-            } else if name == "FLASH" {
+            } else if name == "FLASH" || name == "FLASH_ECC" {
+                // STM32U0 names its FLASH global interrupt FLASH_ECC.
+                interrupt_signals.insert(("FLASH".to_string(), "GLOBAL".to_string()));
+            } else if name == "RCC_FLASH_C1SEV" {
+                // STM32WL CM0+: RCC, FLASH and the CPU1 SEV event share one line.
+                interrupt_signals.insert(("RCC".to_string(), "GLOBAL".to_string()));
                 interrupt_signals.insert(("FLASH".to_string(), "GLOBAL".to_string()));
             } else if name == "CRS" {
                 interrupt_signals.insert(("RCC".to_string(), "CRS".to_string()));

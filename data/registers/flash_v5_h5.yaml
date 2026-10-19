@@ -469,7 +469,7 @@ fieldset/NSCR:
     description: "programming control bit\r PG can be programmed only when LOCK is cleared to 0. \r PG allows programming in Bank1 and Bank2."
     bit_offset: 1
     bit_size: 1
-  - name: SER
+  - name: PER
     description: "sector erase request\r Setting SER bit to 1 requests a sector erase. SER can be programmed only when LOCK is cleared to 0. \r If MER and SER are also set, a PGSERR is raised."
     bit_offset: 2
     bit_size: 1
@@ -485,7 +485,7 @@ fieldset/NSCR:
     description: "erase start control bit\r STRT bit is used to start a sector erase or a bank erase operation. STRT can be programmed only when LOCK is cleared to 0. \r STRT is reset at the end of the operation or when an error occurs. It cannot be reseted by software."
     bit_offset: 5
     bit_size: 1
-  - name: SNB
+  - name: PNB
     description: "sector erase selection number\r These bits are used to select the target sector for an erase operation (they are unused otherwise). SNB can be programmed only when LOCK is cleared to 0.\r .."
     bit_offset: 6
     bit_size: 7
@@ -529,7 +529,7 @@ fieldset/NSCR:
     description: "Bank selector bit\r BKSEL can only be programmed when LOCK is cleared to 0. The bit selects physical bank, SWAP_BANK setting is ignored."
     bit_offset: 31
     bit_size: 1
-    enum: NSCR_BKSEL
+    enum: BKSEL
 fieldset/NSEPOCHR:
   description: FLASH non-secure EPOCH register
   fields:
@@ -650,7 +650,6 @@ fieldset/OPTCR:
     description: "Bank swapping option configuration bit\r SWAP_BANK controls whether Bank1 and Bank2 are swapped or not. This bit is loaded with the SWAP_BANK bit of FLASH_OPTSR_CUR register only after reset or POR."
     bit_offset: 31
     bit_size: 1
-    enum: OPTCR_SWAP_BANK
 fieldset/OPTSR:
   description: FLASH option status register
   fields:
@@ -716,7 +715,6 @@ fieldset/OPTSR:
     description: "Bank swapping option status bit\r SWAP_BANK reflects whether Bank1 and Bank2 are swapped or not. \r SWAP_BANK is loaded to SWAP_BANK of FLASH_OPTCR after a reset."
     bit_offset: 31
     bit_size: 1
-    enum: OPTSR_SWAP_BANK
 fieldset/OPTSR2:
   description: FLASH option status register 2
   fields:
@@ -842,7 +840,7 @@ fieldset/SECCR:
     description: "programming control bit\r PG can be programmed only when LOCK is cleared to 0. \r PG allows programming in Bank1 and Bank2."
     bit_offset: 1
     bit_size: 1
-  - name: SER
+  - name: PER
     description: "sector erase request\r Setting SER bit to 1 requests a sector erase. SER can be programmed only when LOCK is cleared to 0. \r If BER and MER are also set, a PGSERR is raised."
     bit_offset: 2
     bit_size: 1
@@ -858,7 +856,7 @@ fieldset/SECCR:
     description: "erase start control bit\r STRT bit is used to start a sector erase or a bank erase operation. STRT can be programmed only when LOCK is cleared to 0. \r STRT is reseted at the end of the operation or when an error occurs. It cannot be reset by software."
     bit_offset: 5
     bit_size: 1
-  - name: SNB
+  - name: PNB
     description: "sector erase selection number\r These bits are used to select the target sector for an erase operation (they are unused otherwise). SNB can be programmed only when LOCK is cleared to 0.\r .."
     bit_offset: 6
     bit_size: 7
@@ -902,7 +900,7 @@ fieldset/SECCR:
     description: "bank selector bit\r BKSEL can only be programmed when LOCK is cleared to 0. The bit selects physical bank, SWAP_BANK setting is ignored."
     bit_offset: 31
     bit_size: 1
-    enum: SECCR_BKSEL
+    enum: BKSEL
 fieldset/SECEPOCHR:
   description: FLASH secure EPOCH register
   fields:
@@ -994,6 +992,15 @@ fieldset/WRP:
     description: "Bank1 sector group protection option status byte\r Setting WRPSG1 bits to 0 write protects the corresponding group of four consecutive sectors in bank 1 (0: the group is write protected; 1: the group is not write protected)\r Bit 0: Group embedding sectors 0 to 3\r Bit 1: Group embedding sectors 4 to 7\r Bit N: Group embedding sectors 4 x N to 4 x N + 3\r Bit 31: Group embedding sectors 124 to 127"
     bit_offset: 0
     bit_size: 32
+enum/BKSEL:
+  bit_size: 1
+  variants:
+  - name: BANK1
+    description: Bank 1 is selected
+    value: 0
+  - name: BANK2
+    description: Bank 2 is selected
+    value: 1
 enum/BOOTR_SECBOOT_LOCK:
   bit_size: 8
   variants:
@@ -1039,15 +1046,6 @@ enum/NSBOOTR_NSBOOT_LOCK:
   - name: B_0xC3
     description: The SWAP_ BANK and NSBOOTADD can still be modified following their individual rules.
     value: 195
-enum/NSCR_BKSEL:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Bank1 is selected for Bank erase / sector erase / interrupt enable
-    value: 0
-  - name: B_0x1
-    description: Bank2 is selected for BER / SER
-    value: 1
 enum/NSPRIV:
   bit_size: 1
   variants:
@@ -1056,15 +1054,6 @@ enum/NSPRIV:
     value: 0
   - name: B_0x1
     description: access to non secure registers is denied in case of unprivileged access.
-    value: 1
-enum/OPTCR_SWAP_BANK:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Bank1 and Bank2 not swapped
-    value: 0
-  - name: B_0x1
-    description: Bank1 and Bank2 swapped
     value: 1
 enum/OPTSR_BKPRAM_ECC:
   bit_size: 1
@@ -1165,15 +1154,6 @@ enum/OPTSR_SRAM_ECC:
   - name: B_0x1
     description: SRAM2 ECC check disabled
     value: 1
-enum/OPTSR_SWAP_BANK:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Bank1 and Bank2 not swapped
-    value: 0
-  - name: B_0x1
-    description: Bank1 and Bank2 swapped
-    value: 1
 enum/OPTSR_TZEN:
   bit_size: 8
   variants:
@@ -1219,15 +1199,6 @@ enum/SECBOOTR_SECBOOT_LOCK:
   - name: B_0xC3
     description: The BOOT_UBE, SWAP_BANK and SECBOOTADD can still be modified following their individual rules.
     value: 195
-enum/SECCR_BKSEL:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Bank1 is selected for Bank erase / sector erase / interrupt enable
-    value: 0
-  - name: B_0x1
-    description: Bank2 is selected for BER / SER
-    value: 1
 enum/SPRIV:
   bit_size: 1
   variants:

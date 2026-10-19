@@ -13,7 +13,6 @@ block/FLASH:
     description: FLASH option key register.
     byte_offset: 12
     access: Write
-    fieldset: OPTKEYR
   - name: OPSR
     description: FLASH operation status register.
     byte_offset: 24
@@ -314,11 +313,11 @@ fieldset/ECCCORR:
     description: ECC error address.
     bit_offset: 0
     bit_size: 16
-  - name: EDATA_ECC
+  - name: DATA_ECC
     description: ECC fail for corrected ECC error in flash data area.
     bit_offset: 21
     bit_size: 1
-  - name: DATA_ECC
+  - name: EDATA_ECC
     description: ECC fail for corrected ECC error in flash data area.
     bit_offset: 21
     bit_size: 1
@@ -349,11 +348,11 @@ fieldset/ECCDETR:
     description: ECC error address.
     bit_offset: 0
     bit_size: 16
-  - name: EDATA_ECC
+  - name: DATA_ECC
     description: ECC fail for double ECC error in flash data area.
     bit_offset: 21
     bit_size: 1
-  - name: DATA_ECC
+  - name: EDATA_ECC
     description: ECC fail for double ECC error in flash data area.
     bit_offset: 21
     bit_size: 1
@@ -489,30 +488,6 @@ fieldset/OPTCR:
     description: Bank swapping option configuration bit.
     bit_offset: 31
     bit_size: 1
-    enum: OPTCR_SWAP_BANK
-fieldset/OPTKEYR:
-  description: FLASH option key register.
-  fields:
-  - name: OPTKEY
-    description: FLASH option-byte control access unlock key.
-    bit_offset: 0
-    bit_size: 32
-fieldset/OPTSR2:
-  description: FLASH option status register 2.
-  fields:
-  - name: SRAM1_RST
-    description: SRAM1 erase upon system reset.
-    bit_offset: 0
-    bit_size: 1
-  - name: SRAM2_RST
-    description: SRAM2 erase when system reset.
-    bit_offset: 1
-    bit_size: 1
-  - name: SRAM2_ECC
-    description: SRAM2 ECC detection and correction disable.
-    bit_offset: 4
-    bit_size: 1
-    enum: OPTSR2_SRAM2_ECC
 fieldset/OPTSR:
   description: FLASH option status register.
   fields:
@@ -565,20 +540,29 @@ fieldset/OPTSR:
     bit_offset: 29
     bit_size: 1
   - name: SINGLE_BANK
-    description: Dual bank selection option status bit.
+    description: Single-bank option (half-flash parts only). 1 = user flash in one bank, 0 = split between bank 1 and bank 2.
     bit_offset: 30
     bit_size: 1
-    enum: OPTSR_SINGLE_BANK
-  - name: DUAL_BANK
-    description: Dual bank selection option status bit.
-    bit_offset: 30
-    bit_size: 1
-    enum: OPTSR_DUAL_BANK
   - name: SWAP_BANK
     description: Bank swapping option status bit.
     bit_offset: 31
     bit_size: 1
-    enum: OPTSR_SWAP_BANK
+fieldset/OPTSR2:
+  description: FLASH option status register 2.
+  fields:
+  - name: SRAM1_RST
+    description: SRAM1 erase upon system reset.
+    bit_offset: 0
+    bit_size: 1
+  - name: SRAM2_RST
+    description: SRAM2 erase when system reset.
+    bit_offset: 1
+    bit_size: 1
+  - name: SRAM2_ECC
+    description: SRAM2 ECC detection and correction disable.
+    bit_offset: 4
+    bit_size: 1
+    enum: OPTSR2_SRAM2_ECC
 fieldset/OTPBLR:
   description: FLASH OTP block lock.
   fields:
@@ -605,7 +589,6 @@ fieldset/SR:
     description: write buffer not empty flag.
     bit_offset: 1
     bit_size: 1
-    enum: WBNE
   - name: DBNE
     description: data buffer not empty flag.
     bit_offset: 3
@@ -661,12 +644,21 @@ fieldset/WRP2R:
 enum/BKSEL:
   bit_size: 1
   variants:
-  - name: Bank1
-    description: Bank1 is selected for bank erase (BER)/page erase (PER)/interrupt enable.
+  - name: BANK1
+    description: Bank 1 is selected
     value: 0
-  - name: Bank2
-    description: Bank2 is selected for BER/PER.
+  - name: BANK2
+    description: Bank 2 is selected
     value: 1
+enum/BOOT_LOCK:
+  bit_size: 8
+  variants:
+  - name: Locked
+    description: The BOOT0, BOOT_SEL, SWAP_BANK and BOOTADD are frozen.
+    value: 180
+  - name: Unlocked
+    description: The BOOT0, BOOT_SEL, SWAP_BANK and BOOTADD can still be modified following their individual rules.
+    value: 195
 enum/CODE_OP:
   bit_size: 3
   variants:
@@ -712,29 +704,11 @@ enum/DATA_ADDR_ECC:
 enum/EDATASEL:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: MAIN
     description: Main flash page erase.
     value: 0
-  - name: B_0x1
+  - name: EDATA
     description: Flash data area EDATA page erase.
-    value: 1
-enum/BOOT_LOCK:
-  bit_size: 8
-  variants:
-  - name: Locked
-    description: The BOOT0, BOOT_SEL, SWAP_BANK and BOOTADD are frozen.
-    value: 180
-  - name: Unlocked
-    description: The BOOT0, BOOT_SEL, SWAP_BANK and BOOTADD can still be modified following their individual rules.
-    value: 195
-enum/OPTCR_SWAP_BANK:
-  bit_size: 1
-  variants:
-  - name: NotSwapped
-    description: Bank1 and bank2 not swapped.
-    value: 0
-  - name: Swapped
-    description: Bank1 and bank2 swapped.
     value: 1
 enum/OPTSR2_SRAM2_ECC:
   bit_size: 1
@@ -753,6 +727,15 @@ enum/OPTSR_BOOT0:
     value: 0
   - name: B_0x1
     description: BOOT0 = 1.
+    value: 1
+enum/OPTSR_BOOT_SEL:
+  bit_size: 1
+  variants:
+  - name: OptionBit
+    description: BOOT0 signal is defined by the BOOT0 option bit.
+    value: 0
+  - name: Pin
+    description: BOOT0 signal is defined by BOOT0 pin value (legacy mode).
     value: 1
 enum/OPTSR_IWDG_STDBY:
   bit_size: 1
@@ -799,24 +782,6 @@ enum/OPTSR_NRST_STOP:
   - name: B_0x1
     description: no reset generated when entering Stop mode on core domain.
     value: 1
-enum/OPTSR_SINGLE_BANK:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: 128 Kbytes of user flash split with 64 Kbytes in Bank 1 and 64 Kbytes in Bank 2.
-    value: 0
-  - name: B_0x1
-    description: 128 Kbytes of user flash located in one bank.
-    value: 1
-enum/OPTSR_SWAP_BANK:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Bank1 and bank2 not swapped.
-    value: 0
-  - name: B_0x1
-    description: Bank1 and bank2 swapped.
-    value: 1
 enum/OPTSR_WWDG_SW:
   bit_size: 1
   variants:
@@ -826,23 +791,14 @@ enum/OPTSR_WWDG_SW:
   - name: B_0x1
     description: WWDG watchdog is controlled by software.
     value: 1
-enum/OPTSR_BOOT_SEL:
+enum/PRIV:
   bit_size: 1
   variants:
-  - name: OptionBit
-    description: BOOT0 signal is defined by the BOOT0 option bit.
+  - name: B_0x0
+    description: Access to registers is always granted.
     value: 0
-  - name: Pin
-    description: BOOT0 signal is defined by BOOT0 pin value (legacy mode).
-    value: 1
-enum/OPTSR_DUAL_BANK:
-  bit_size: 1
-  variants:
-  - name: DualBank
-    description: x Kbytes of user flash split with x/2 Kbytes in Bank 1 and x/2 Kbytes in Bank 2.
-    value: 0
-  - name: SingleBank
-    description: x Kbytes of user flash located in one bank.
+  - name: B_0x1
+    description: Access to registers is denied in case of unprivileged access.
     value: 1
 enum/WRP1R_WRPSG1:
   bit_size: 32
@@ -861,22 +817,4 @@ enum/WRP2R_WRPSG2:
     value: 0
   - name: B_0x1
     description: not write protected.
-    value: 1
-enum/PRIV:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: Access to registers is always granted.
-    value: 0
-  - name: B_0x1
-    description: Access to registers is denied in case of unprivileged access.
-    value: 1
-enum/WBNE:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: write buffer empty or full.
-    value: 0
-  - name: B_0x1
-    description: write buffer waiting data to complete.
     value: 1

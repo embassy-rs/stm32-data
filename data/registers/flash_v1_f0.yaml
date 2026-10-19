@@ -1,5 +1,5 @@
 block/FLASH:
-  description: FLASH
+  description: Flash
   items:
   - name: ACR
     description: Flash access control register
@@ -14,11 +14,11 @@ block/FLASH:
     byte_offset: 8
     access: Write
   - name: SR
-    description: Status register
+    description: Flash status register
     byte_offset: 12
     fieldset: SR
   - name: CR
-    description: Control register
+    description: Flash control register
     byte_offset: 16
     fieldset: CR
   - name: AR
@@ -36,35 +36,14 @@ block/FLASH:
     byte_offset: 32
     access: Read
     fieldset: WRPR
-  - name: KEYR2
-    description: Bank 2 key register
-    byte_offset: 68
-    access: Write
-  - name: SR2
-    description: Bank 2 status register
-    byte_offset: 76
-    fieldset: SR
-  - name: CR2
-    description: Bank 2 control register
-    byte_offset: 80
-    fieldset: CR2
-  - name: AR2
-    description: Bank 2 address register
-    byte_offset: 84
-    access: Write
-    fieldset: AR
 fieldset/ACR:
   description: Flash access control register
   fields:
   - name: LATENCY
-    description: Latency
+    description: LATENCY
     bit_offset: 0
     bit_size: 3
     enum: LATENCY
-  - name: HLFCYA
-    description: Flash half cycle access enable
-    bit_offset: 3
-    bit_size: 1
   - name: PRFTBE
     description: Prefetch buffer enable
     bit_offset: 4
@@ -77,22 +56,22 @@ fieldset/AR:
   description: Flash address register
   fields:
   - name: FAR
-    description: Flash Address
+    description: Flash address
     bit_offset: 0
     bit_size: 32
 fieldset/CR:
-  description: Control register
+  description: Flash control register
   fields:
   - name: PG
     description: Programming
     bit_offset: 0
     bit_size: 1
   - name: PER
-    description: Page Erase
+    description: Page erase
     bit_offset: 1
     bit_size: 1
   - name: MER
-    description: Mass Erase
+    description: Mass erase
     bit_offset: 2
     bit_size: 1
   - name: OPTPG
@@ -123,36 +102,9 @@ fieldset/CR:
     description: End of operation interrupt enable
     bit_offset: 12
     bit_size: 1
-fieldset/CR2:
-  description: Bank 2 control register
-  fields:
-  - name: PG
-    description: Programming
-    bit_offset: 0
-    bit_size: 1
-  - name: PER
-    description: Page erase
-    bit_offset: 1
-    bit_size: 1
-  - name: MER
-    description: Bank 2 mass erase
-    bit_offset: 2
-    bit_size: 1
-  - name: STRT
-    description: Start erase
-    bit_offset: 6
-    bit_size: 1
-  - name: LOCK
-    description: Bank 2 lock
-    bit_offset: 7
-    bit_size: 1
-  - name: ERRIE
-    description: Error interrupt enable
-    bit_offset: 10
-    bit_size: 1
-  - name: EOPIE
-    description: End of operation interrupt enable
-    bit_offset: 12
+  - name: FORCE_OPTLOAD
+    description: Force option byte loading
+    bit_offset: 13
     bit_size: 1
 fieldset/OBR:
   description: Option byte register
@@ -162,50 +114,72 @@ fieldset/OBR:
     bit_offset: 0
     bit_size: 1
   - name: RDPRT
-    description: Read protection
+    description: Read protection level status
     bit_offset: 1
-    bit_size: 1
+    bit_size: 2
+    enum: RDPRT
   - name: WDG_SW
     description: WDG_SW
-    bit_offset: 2
+    bit_offset: 8
     bit_size: 1
+    enum: WDG_SW
   - name: nRST_STOP
     description: nRST_STOP
-    bit_offset: 3
+    bit_offset: 9
     bit_size: 1
+    enum: nRST_STOP
   - name: nRST_STDBY
     description: nRST_STDBY
-    bit_offset: 4
+    bit_offset: 10
     bit_size: 1
-  - name: BFB2
-    description: Boot from bank 1 when set; otherwise check bank 2 before bank 1
-    bit_offset: 5
+    enum: nRST_STDBY
+  - name: nBOOT0
+    description: nBOOT0
+    bit_offset: 11
     bit_size: 1
+  - name: nBOOT1
+    description: BOOT1
+    bit_offset: 12
+    bit_size: 1
+  - name: VDDA_MONITOR
+    description: VDDA power supply supervisor enabled
+    bit_offset: 13
+    bit_size: 1
+  - name: RAM_PARITY_CHECK
+    description: RAM_PARITY_CHECK
+    bit_offset: 14
+    bit_size: 1
+    enum: RAM_PARITY_CHECK
+  - name: BOOT_SEL
+    description: BOOT_SEL
+    bit_offset: 15
+    bit_size: 1
+    enum: BOOT_SEL
   - name: Data0
     description: Data0
-    bit_offset: 10
+    bit_offset: 16
     bit_size: 8
   - name: Data1
     description: Data1
-    bit_offset: 18
+    bit_offset: 24
     bit_size: 8
 fieldset/SR:
-  description: Status register
+  description: Flash status register
   fields:
   - name: BSY
     description: Busy
     bit_offset: 0
     bit_size: 1
   - name: PGERR
-    description: Programming error. Cleared by writing 1.
+    description: Programming error
     bit_offset: 2
     bit_size: 1
   - name: WRPRTERR
-    description: Write protection error. Cleared by writing 1.
+    description: Write protection error
     bit_offset: 4
     bit_size: 1
   - name: EOP
-    description: End of operation. Cleared by writing 1.
+    description: End of operation
     bit_offset: 5
     bit_size: 1
 fieldset/WRPR:
@@ -215,15 +189,69 @@ fieldset/WRPR:
     description: Write protect
     bit_offset: 0
     bit_size: 32
+enum/BOOT_SEL:
+  bit_size: 1
+  variants:
+  - name: nBOOT0
+    description: BOOT0 signal is defined by nBOOT0 option bit
+    value: 0
+  - name: BOOT0
+    description: BOOT0 signal is defined by BOOT0 pin value (legacy mode)
+    value: 1
 enum/LATENCY:
   bit_size: 3
   variants:
   - name: WS0
-    description: Zero wait state, if 0 < SYSCLK≤ 24 MHz
+    description: 0 wait states
     value: 0
   - name: WS1
-    description: One wait state, if 24 MHz < SYSCLK ≤ 48 MHz
+    description: 1 wait state
     value: 1
-  - name: WS2
-    description: Two wait states, if 48 MHz < SYSCLK ≤ 72 MHz
-    value: 2
+enum/RAM_PARITY_CHECK:
+  bit_size: 1
+  variants:
+  - name: Enabled
+    description: RAM parity check enabled
+    value: 0
+  - name: Disabled
+    description: RAM parity check disabled
+    value: 1
+enum/RDPRT:
+  bit_size: 2
+  variants:
+  - name: Level0
+    description: Level 0
+    value: 0
+  - name: Level1
+    description: Level 1
+    value: 1
+  - name: Level2
+    description: Level 2
+    value: 3
+enum/WDG_SW:
+  bit_size: 1
+  variants:
+  - name: Hardware
+    description: Hardware watchdog
+    value: 0
+  - name: Software
+    description: Software watchdog
+    value: 1
+enum/nRST_STDBY:
+  bit_size: 1
+  variants:
+  - name: Reset
+    description: Reset generated when entering Standby mode
+    value: 0
+  - name: NoReset
+    description: No reset generated
+    value: 1
+enum/nRST_STOP:
+  bit_size: 1
+  variants:
+  - name: Reset
+    description: Reset generated when entering Stop mode
+    value: 0
+  - name: NoReset
+    description: No reset generated
+    value: 1
