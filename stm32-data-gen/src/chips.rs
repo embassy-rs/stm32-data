@@ -25,7 +25,8 @@ pub mod xml {
         pub cores: Vec<String>,
         #[serde(rename = "Ram")]
         pub rams: Vec<u32>,
-        #[serde(rename = "Flash")]
+        // Absent in some CubeMX XMLs (e.g. STM32H5E/F 3 MB parts); flash layout comes from memory.rs.
+        #[serde(rename = "Flash", default)]
         pub flashs: Vec<u32>,
         #[serde(rename = "IP")]
         pub ips: Vec<Ip>,
@@ -97,7 +98,8 @@ fn chip_name_from_package_name(x: &str) -> String {
         (regex!("^(STM32WBA....).x$"), "$1"),
         (regex!("^(STM32MP15...).x$"), "$1"),
         (regex!("^(STM32......).x$"), "$1"),
-        (regex!("^(STM32N6....).xQ$"), "$1"),
+        // Secure variants use an xQG package suffix (e.g. STM32N645A0HxQG).
+        (regex!("^(STM32N6....).xQ?G?$"), "$1"),
     ];
 
     regexes
