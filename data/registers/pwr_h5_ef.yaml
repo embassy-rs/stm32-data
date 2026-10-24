@@ -1,0 +1,548 @@
+block/PWR:
+  description: Power control.
+  items:
+  - name: PMCR
+    description: PWR power mode control register.
+    byte_offset: 0
+    fieldset: PMCR
+  - name: PMSR
+    description: PWR status register.
+    byte_offset: 4
+    fieldset: PMSR
+  - name: VOSCR
+    description: PWR voltage scaling control register.
+    byte_offset: 16
+    fieldset: VOSCR
+  - name: VOSSR
+    description: PWR voltage scaling status register.
+    byte_offset: 20
+    fieldset: VOSSR
+  - name: BDCR
+    description: PWR Backup domain control register.
+    byte_offset: 32
+    fieldset: BDCR
+  - name: DBPCR
+    description: PWR Backup domain control register.
+    byte_offset: 36
+    fieldset: DBPCR
+  - name: BDSR
+    description: PWR Backup domain status register.
+    byte_offset: 40
+    fieldset: BDSR
+  - name: UCPDR
+    description: PWR USB Type-C power delivery register.
+    byte_offset: 44
+    fieldset: UCPDR
+  - name: SCCR
+    description: PWR supply configuration control register.
+    byte_offset: 48
+    fieldset: SCCR
+  - name: VMCR
+    description: PWR voltage monitor control register.
+    byte_offset: 52
+    fieldset: VMCR
+  - name: USBSCR
+    description: PWR USB supply control register.
+    byte_offset: 56
+    fieldset: USBSCR
+  - name: VMSR
+    description: PWR voltage monitor status register.
+    byte_offset: 60
+    fieldset: VMSR
+  - name: WUSCR
+    description: PWR wakeup status clear register.
+    byte_offset: 64
+    fieldset: WUSCR
+  - name: WUSR
+    description: PWR wakeup status register.
+    byte_offset: 68
+    fieldset: WUSR
+  - name: WUCR
+    description: PWR wakeup configuration register.
+    byte_offset: 72
+    fieldset: WUCR
+  - name: IORETR
+    description: PWR I/O retention register.
+    byte_offset: 80
+    fieldset: IORETR
+  - name: SECCFGR
+    description: PWR security configuration register.
+    byte_offset: 256
+    fieldset: SECCFGR
+  - name: PRIVCFGR
+    description: PWR privilege configuration register.
+    byte_offset: 260
+    fieldset: PRIVCFGR
+fieldset/BDCR:
+  description: PWR Backup domain control register.
+  fields:
+  - name: BREN
+    description: Backup RAM retention in Standby and V_BAT modes When this bit set, the backup regulator (used to maintain the backup RAM content in Standby and V_BAT modes) is enabled. If BREN is cleared, the backup regulator is switched off. The backup RAM can still be used in. Run and Stop modes. However its content is lost in Standby and V_BAT modes. If BREN is set, the application must wait till the backup regulator ready flag (BRRDY) is set to indicate that the data written into the SRAM is maintained in Standby and V_BAT modes.
+    bit_offset: 0
+    bit_size: 1
+    enum: Retention
+  - name: MONEN
+    description: Backup domain voltage and temperature monitoring enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: VBE
+    description: 'V_BAT charging enable Note: Reset only by POR,.'
+    bit_offset: 8
+    bit_size: 1
+  - name: VBRS
+    description: V_BAT charging resistor selection.
+    bit_offset: 9
+    bit_size: 1
+    enum: VBRS
+fieldset/BDSR:
+  description: PWR Backup domain status register.
+  fields:
+  - name: BRRDY
+    description: backup regulator ready This bit is set by hardware to indicate that the backup regulator is ready.
+    bit_offset: 16
+    bit_size: 1
+  - name: VBATL
+    description: V_BAT level monitoring versus low threshold.
+    bit_offset: 20
+    bit_size: 1
+  - name: VBATH
+    description: V_BAT level monitoring versus high threshold.
+    bit_offset: 21
+    bit_size: 1
+  - name: TEMPL
+    description: temperature level monitoring versus low threshold.
+    bit_offset: 22
+    bit_size: 1
+  - name: TEMPH
+    description: temperature level monitoring versus high threshold.
+    bit_offset: 23
+    bit_size: 1
+fieldset/DBPCR:
+  description: PWR Backup domain control register.
+  fields:
+  - name: DBP
+    description: Disable Backup domain write protection In reset state, all registers and SRAM in Backup domain are protected against parasitic write. access. This bit must be set to enable write access to these registers.
+    bit_offset: 0
+    bit_size: 1
+fieldset/IORETR:
+  description: PWR I/O retention register.
+  fields:
+  - name: IORETEN
+    description: 'IO retention enable: When entering into standby mode, the output is sampled, and apply to the output IO during the standby power mode. Note: the IO state is not retained if the DBG_STANDBY bit is set in DBGMCU_CR register.'
+    bit_offset: 0
+    bit_size: 1
+  - name: JTAGIORETEN
+    description: IO retention enable for JTAG IOs when entering into standby mode, the output is sampled, and apply to the output IO during the standby power mode.
+    bit_offset: 16
+    bit_size: 1
+fieldset/PMCR:
+  description: PWR power mode control register.
+  fields:
+  - name: LPMS
+    description: low-power mode selection This bit defines the Deepsleep mode.
+    bit_offset: 0
+    bit_size: 1
+    enum: LPMS
+  - name: SVOS
+    description: system Stop mode voltage scaling selection These bits control the V_CORE voltage level in system Stop mode, to obtain the best trade-off between power consumption and performance.
+    bit_offset: 2
+    bit_size: 2
+    enum: SVOS
+  - name: CSSF
+    description: clear Standby and Stop flags (always read as 0) This bit is cleared to 0 by hardware.
+    bit_offset: 7
+    bit_size: 1
+  - name: FLPS
+    description: 'Flash memory low-power mode in Stop mode This bit is used to obtain the best trade-off between low-power consumption and restart time when exiting from Stop mode. When it is set, the Flash memory enters low-power mode when the CPU domain is in Stop mode. Note: When system enters stop mode with SVOS5 enabled, Flash memory is automatically forced in low-power mode.'
+    bit_offset: 9
+    bit_size: 1
+    enum: PowerModeInStopMode
+  - name: BOOSTE
+    description: analog switch V_BOOST control This bit enables the booster to guarantee the analog switch AC performance when the V_DD supply voltage is below 2.7 V (reduction of the total harmonic distortion to have the same switch performance over the full supply voltage range) The V_DD supply voltage can be monitored through the PVD and the PLS bits.
+    bit_offset: 12
+    bit_size: 1
+  - name: AVD_READY
+    description: analog voltage ready This bit is only used when the analog switch boost needs to be enabled (see BOOSTE bit). It must be set by software when the expected V_DDA analog supply level is available. The correct analog supply level is indicated by the AVDO bit (PWR_VMSR register) after setting the AVDEN bit (PWR_VMCR register) and selecting the supply level to be monitored. (ALS bits).
+    bit_offset: 13
+    bit_size: 1
+  - name: ETHERNETSO
+    description: ETHERNET RAM shut-off in Stop mode.
+    bit_offset: 16
+    bit_size: 1
+    enum: ShutOff
+  - name: LTDCSO
+    description: LTDC FIFO RAM shut-off in Stop mode.
+    bit_offset: 17
+    bit_size: 1
+    enum: ShutOff
+  - name: SRAM5SO
+    description: AHB SRAM5 shut-off in Stop mode.
+    bit_offset: 24
+    bit_size: 1
+    enum: ShutOff
+  - name: SRAM4SO
+    description: AHB SRAM4 shut-off in Stop mode.
+    bit_offset: 25
+    bit_size: 1
+    enum: ShutOff
+  - name: SRAM3SO
+    description: AHB SRAM3 shut-off in Stop mode.
+    bit_offset: 26
+    bit_size: 1
+    enum: ShutOff
+  - name: SRAM2_16SOL
+    description: AHB SRAM2 16-Kbyte Low shut-off in Stop mode.
+    bit_offset: 27
+    bit_size: 1
+    enum: ShutOff
+  - name: SRAM2_16SOH
+    description: AHB SRAM2 16-Kbyte High shut-off in Stop mode.
+    bit_offset: 28
+    bit_size: 1
+    enum: ShutOff
+  - name: SRAM2_48SOL
+    description: AHB SRAM2 48-Kbyte Low shut-off in Stop mode.
+    bit_offset: 29
+    bit_size: 1
+    enum: ShutOff
+  - name: SRAM2_48SOH
+    description: AHB SRAM2 48-Kbyte High shut-off in Stop mode.
+    bit_offset: 30
+    bit_size: 1
+    enum: ShutOff
+  - name: SRAM1SO
+    description: AHB SRAM1 shut-off in Stop mode.
+    bit_offset: 31
+    bit_size: 1
+    enum: ShutOff
+fieldset/PMSR:
+  description: PWR status register.
+  fields:
+  - name: STOPF
+    description: Stop flag This bit is set by hardware and cleared only by any reset or by setting the CSSF bit.
+    bit_offset: 5
+    bit_size: 1
+  - name: SBF
+    description: System standby flag This bit is set by hardware and cleared only by a POR or by setting the CSSF bit.
+    bit_offset: 6
+    bit_size: 1
+fieldset/PRIVCFGR:
+  description: PWR privilege configuration register.
+  fields:
+  - name: SPRIV
+    description: PWR secure functions privilege configuration Set and reset by software. This bit can be written only by a secure privileged access.
+    bit_offset: 0
+    bit_size: 1
+  - name: NSPRIV
+    description: PWR non-secure functions privilege configuration Set and reset by software. This bit can be written only by privileged access, secure or non-secure.
+    bit_offset: 1
+    bit_size: 1
+fieldset/SCCR:
+  description: PWR supply configuration control register.
+  fields:
+  - name: BYPASS
+    description: power management unit bypass.
+    bit_offset: 0
+    bit_size: 1
+  - name: LDOEN
+    description: LDO enable The value is set by hardware when the package uses the LDO regulator.
+    bit_offset: 8
+    bit_size: 1
+  - name: SMPSEN
+    description: SMPS enable The value is set by hardware when the package uses the SMPS regulator.
+    bit_offset: 9
+    bit_size: 1
+fieldset/SECCFGR:
+  description: PWR security configuration register.
+  fields:
+  - name: WUPSEC
+    description: WUPx secure protection.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 8
+      stride: 1
+  - name: RETSEC
+    description: retention secure protection.
+    bit_offset: 11
+    bit_size: 1
+  - name: LPMSEC
+    description: low-power modes secure protection.
+    bit_offset: 12
+    bit_size: 1
+  - name: SCMSEC
+    description: supply configuration and monitoring secure protection.
+    bit_offset: 13
+    bit_size: 1
+  - name: VBSEC
+    description: backup domain secure protection.
+    bit_offset: 14
+    bit_size: 1
+  - name: VUSBSEC
+    description: voltage USB secure protection.
+    bit_offset: 15
+    bit_size: 1
+fieldset/UCPDR:
+  description: PWR USB Type-C power delivery register.
+  fields:
+  - name: UCPD_DBDIS
+    description: USB Type-C and power delivery dead battery disable After exiting reset, the USB Type-C “dead battery” behavior is enabled, which may have a pull-down effect on CC1 and CC2 pins. It is recommended to disable it in all case, either to stop this pull-down or to hand over control to the UCPD (which should therefore be initialized before doing the disable).
+    bit_offset: 0
+    bit_size: 1
+  - name: UCPD_STBY
+    description: USB Type-c and Power delivery Standby mode When set, this bit is used to memorize the UCPD configuration in Standby mode. This bit must be written to 1 just before entering Standby mode when using UCPD, and it must be written to 0 after exiting the standby mode and before writing any UCPD register.
+    bit_offset: 1
+    bit_size: 1
+fieldset/USBSCR:
+  description: PWR USB supply control register.
+  fields:
+  - name: USB33DEN
+    description: V_DDUSB voltage level detector enable.
+    bit_offset: 24
+    bit_size: 1
+  - name: USB33SV
+    description: independent USB supply valid This bit is used to validate the V_DDUSB supply for electrical and logical isolation purpose. Setting this bit is mandatory to use the USBFS peripheral. If V_DDUSB is not always present in the application, the V_DDUSB voltage monitor can be used to determine whether this supply is ready or not.
+    bit_offset: 25
+    bit_size: 1
+  - name: OTGHSEN
+    description: OTGHS PHY enable.
+    bit_offset: 27
+    bit_size: 1
+fieldset/VMCR:
+  description: PWR voltage monitor control register.
+  fields:
+  - name: PVDE
+    description: PVD enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: PLS
+    description: programmable voltage detector (PVD) level selection These bits select the voltage threshold detected by the PVD.
+    bit_offset: 1
+    bit_size: 3
+    enum: PLS
+  - name: AVDEN
+    description: peripheral voltage monitor on V_DDA enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: ALS
+    description: analog voltage detector (AVD) level selection These bits select the voltage threshold detected by the AVD.
+    bit_offset: 9
+    bit_size: 2
+    enum: ALS
+fieldset/VMSR:
+  description: PWR voltage monitor status register.
+  fields:
+  - name: AVDO
+    description: 'analog voltage detector output on V_DDA This bit is set and cleared by hardware. It is valid only if AVD on VDDA is enabled by the AVDEN bit. Note: Since the AVD is disabled in Standby mode, this bit is equal to 0 after standby or reset until the AVDEN bit is set.'
+    bit_offset: 19
+    bit_size: 1
+  - name: VDDIO2RDY
+    description: voltage detector output on V_DDIO2 This bit is set and cleared by hardware.
+    bit_offset: 20
+    bit_size: 1
+  - name: PVDO
+    description: 'programmable voltage detect output This bit is set and cleared by hardware. It is valid only if the PVD has been enabled by the PVDE bit. Note: Since the PVD is disabled in Standby mode, this bit is equal to 0 after Standby or reset until the PVDE bit is set.'
+    bit_offset: 22
+    bit_size: 1
+  - name: USB33RDY
+    description: V_DDUSB ready.
+    bit_offset: 24
+    bit_size: 1
+fieldset/VOSCR:
+  description: PWR voltage scaling control register.
+  fields:
+  - name: VOS
+    description: 'voltage scaling selection according to performance These bits control the V_CORE voltage level and allow to obtain the best trade-off between power consumption and performance: - In bypass mode, these bits must also be set according to the external provided core voltage level and related performance. - When increasing the performance, the voltage scaling must be changed before increasing the system frequency. - When decreasing performance, the system frequency must first be decreased before changing the voltage scaling.'
+    bit_offset: 4
+    bit_size: 2
+    enum: VOS
+fieldset/VOSSR:
+  description: PWR voltage scaling status register.
+  fields:
+  - name: VOSRDY
+    description: Ready bit for V_CORE voltage scaling output selection.
+    bit_offset: 3
+    bit_size: 1
+  - name: ACTVOSRDY
+    description: Voltage level ready for currently used VOS.
+    bit_offset: 13
+    bit_size: 1
+  - name: ACTVOS
+    description: voltage output scaling currently applied to V_CORE This field provides the last VOS value.
+    bit_offset: 14
+    bit_size: 2
+    enum: VOS
+fieldset/WUCR:
+  description: PWR wakeup configuration register.
+  fields:
+  - name: WUPEN
+    description: 'enable wakeup pin WUPx These bits are set and cleared by software. Note: an additional wakeup event is detected if WUPx pin is enabled (by setting the WUPENx bit) when WUPx pin level is already high when WUPPx selects rising edge, or low when WUPPx selects falling edge.'
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 8
+      stride: 1
+  - name: WUPP
+    description: wakeup pin polarity bit for WUPx These bits define the polarity used for event detection on WUPx external wakeup pin.
+    bit_offset: 8
+    bit_size: 1
+    array:
+      len: 8
+      stride: 1
+    enum: WUPP
+  - name: WUPPUPD
+    description: wakeup pin pull configuration for WKUPx These bits define the I/O pad pull configuration used when WUPENx = 1. The associated GPIO port pull configuration must be set to the same value or to 00. The wakeup pin pull configuration is kept in Standby mode.
+    bit_offset: 16
+    bit_size: 2
+    array:
+      len: 8
+      stride: 2
+    enum: WUPPUPD
+fieldset/WUSCR:
+  description: PWR wakeup status clear register.
+  fields:
+  - name: CWUF
+    description: clear wakeup pin flag for WUFx These bits are always read as 0.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 8
+      stride: 1
+fieldset/WUSR:
+  description: PWR wakeup status register.
+  fields:
+  - name: WUF
+    description: wakeup pin WUFx flag This bit is set by hardware and cleared only by a RESET pin or by setting the CWUFx bit in PWR_WUSCR register.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 8
+      stride: 1
+enum/ALS:
+  bit_size: 2
+  variants:
+  - name: Level0
+    description: AVD level0 (VAVD0 ~ 1.7 V)
+    value: 0
+  - name: Level1
+    description: AVD level1 (VAVD1 ~ 2.1 V)
+    value: 1
+  - name: Level2
+    description: AVD level2 (VAVD2 ~ 2.5 V)
+    value: 2
+  - name: Level3
+    description: AVD level3 (VAVD3 ~ 2.8 V)
+    value: 3
+enum/LPMS:
+  bit_size: 1
+  variants:
+  - name: Stop
+    description: Keeps Stop mode when entering DeepSleep.
+    value: 0
+  - name: Standby
+    description: Allows Standby mode when entering DeepSleep.
+    value: 1
+enum/PLS:
+  bit_size: 3
+  variants:
+  - name: Level0
+    description: PVD level0 (VPVD0 ~ 1.95 V)
+    value: 0
+  - name: Level1
+    description: PVD level1 (VPVD1 ~ 2.10 V)
+    value: 1
+  - name: Level2
+    description: PVD level2 (VPVD2 ~ 2.25 V)
+    value: 2
+  - name: Level3
+    description: PVD level3 (VPVD3 ~ 2.40 V)
+    value: 3
+  - name: Level4
+    description: PVD level4 (VPVD4 ~ 2.55 V)
+    value: 4
+  - name: Level5
+    description: PVD level5 (VPVD5 ~ 2.70 V)
+    value: 5
+  - name: Level6
+    description: PVD level6 (VPVD6 ~ 2.85 V)
+    value: 6
+  - name: PVDInPin
+    description: PVD_IN pin
+    value: 7
+enum/PowerModeInStopMode:
+  bit_size: 1
+  variants:
+  - name: Normal
+    description: Remains in normal mode when the system enters Stop mode (quick restart time).
+    value: 0
+  - name: LowPower
+    description: Enters low-power mode when the system enters Stop mode (low-power consumption).
+    value: 1
+enum/Retention:
+  bit_size: 1
+  variants:
+  - name: Lost
+    description: Content is lost.
+    value: 0
+  - name: Preserved
+    description: Content is preserved.
+    value: 1
+enum/SVOS:
+  bit_size: 2
+  variants:
+  - name: Scale5
+    description: SVOS5 scale 5
+    value: 1
+  - name: Scale4
+    description: SVOS4 scale 4
+    value: 2
+  - name: Scale3
+    description: SVOS3 scale 3 (default)
+    value: 3
+enum/ShutOff:
+  bit_size: 1
+  variants:
+  - name: Kept
+    description: Content is kept.
+    value: 0
+  - name: Lost
+    description: Content is lost.
+    value: 1
+enum/VBRS:
+  bit_size: 1
+  variants:
+  - name: R5kOhm
+    description: Charge VBAT through a 5 kΩ resistor.
+    value: 0
+  - name: R1_5kOhm
+    description: Charge VBAT through a 1.5 kΩ resistor.
+    value: 1
+enum/VOS:
+  bit_size: 2
+  variants:
+  - name: Scale3
+    value: 0
+  - name: Scale2
+    value: 1
+  - name: Scale1
+    value: 2
+  - name: Scale0
+    value: 3
+enum/WUPP:
+  bit_size: 1
+  variants:
+  - name: High
+    description: detection on high level (rising edge)
+    value: 0
+  - name: Low
+    description: detection on low level (falling edge)
+    value: 1
+enum/WUPPUPD:
+  bit_size: 2
+  variants:
+  - name: NoPullUp
+    value: 0
+  - name: PullUp
+    value: 1
+  - name: PullDown
+    value: 2

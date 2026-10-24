@@ -628,11 +628,20 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
         "GTZC_MPCBB2",
         "GTZC_MPCBB3",
         "GTZC_MPCBB4",
+        "GTZC_MPCBB5",
         "GTZC_MPCBB6",
     ];
     for pname in GHOST_PERIS {
         let normalized_pname = normalize_peri_name(pname);
         if normalized_pname == "DESIG" && !chip_name.starts_with("STM32WBA") {
+            continue;
+        }
+        // GTZC_MPCBB5 was added for the STM32H5E/F line. Some high-end U5 headers
+        // also define it; those chips are intentionally left unchanged here
+        // (adding it upstream would be a separate, independently-verified fix).
+        if normalized_pname == "GTZC_MPCBB5"
+            && !(chip_name.starts_with("STM32H5E") || chip_name.starts_with("STM32H5F"))
+        {
             continue;
         }
         if let Entry::Vacant(entry) = peri_kinds.entry(normalized_pname.to_string()) {
