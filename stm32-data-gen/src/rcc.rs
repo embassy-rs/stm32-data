@@ -26,6 +26,8 @@ struct ParsedRcc {
 struct MuxInfo {
     mux: Field,
     variants: Vec<String>,
+    /// Divider applied to the mux output, in the same register as the mux (if any).
+    prescaler: Option<Field>,
 }
 
 #[derive(Debug, Clone)]
@@ -233,12 +235,32 @@ impl ParsedRccs {
                         }
                     }
 
+                    // Some muxes are followed by a prescaler in the same register, which the
+                    // clock tree model has to account for (C5: CCIPR2/ADCDACSEL is followed by
+                    // CCIPR2/ADCDACPRE). The mux regexes above only match `*SEL` fields, so look
+                    // for the divider explicitly. Only accept fields whose enum is a divider so
+                    // that unrelated `*PRE` fields are not picked up.
+                    let prescaler =
+                        body.fields
+                            .iter()
+                            .find(|f| {
+                                (f.name == format!("{peri}PRE") || f.name == format!("{peri}PRESC"))
+                                    && f.enumm.as_deref().and_then(|e| ir.enums.get(e)).is_some_and(|e| {
+                                        e.variants.iter().all(|v| regex!(r"^(Div|Mul)").is_match(&v.name))
+                                    })
+                            })
+                            .map(|f| Field {
+                                register: reg.clone(),
+                                field: f.name.clone(),
+                            });
+
                     let val = MuxInfo {
                         mux: Field {
                             register: reg.clone(),
                             field: field.name.clone(),
                         },
                         variants: enumm.variants.iter().map(|v| v.name.clone()).collect(),
+                        prescaler,
                     };
 
                     if mux.insert(peri.to_string(), val).is_some() {
@@ -404,7 +426,14 @@ impl ParsedRccs {
                         }
                     }
                 }
-                rcc::KernelClock::Mux(mux.mux.clone())
+                match &mux.prescaler {
+                    Some(prescaler) => rcc::KernelClock::PrescaledMux(rcc::PrescaledMux {
+                        register: mux.mux.register.clone(),
+                        field: mux.mux.field.clone(),
+                        prescaler: prescaler.clone(),
+                    }),
+                    None => rcc::KernelClock::Mux(mux.mux.clone()),
+                }
             }
             None => {
                 if peri_name.starts_with("USB") {

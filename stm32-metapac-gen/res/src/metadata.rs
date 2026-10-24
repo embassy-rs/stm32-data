@@ -228,6 +228,14 @@ pub struct PeripheralRccRegister {
 pub enum PeripheralRccKernelClock {
     Clock(&'static str),
     Mux(PeripheralRccRegister),
+    PrescaledMux(PeripheralRccMux),
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralRccMux {
+    pub register: &'static str,
+    pub field: &'static str,
+    pub prescaler: PeripheralRccRegister,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Default)]

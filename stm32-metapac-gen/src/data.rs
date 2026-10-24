@@ -435,7 +435,17 @@ pub struct PeripheralRcc {
 #[serde(untagged)]
 pub enum PeripheralRccKernelClock {
     Clock(String),
+    // Must come before `Mux`, otherwise a prescaled clock also matches `Mux` and the divider
+    // is silently dropped.
+    PrescaledMux(PeripheralRccMux),
     Mux(PeripheralRccRegister),
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct PeripheralRccMux {
+    pub register: String,
+    pub field: String,
+    pub prescaler: PeripheralRccRegister,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
