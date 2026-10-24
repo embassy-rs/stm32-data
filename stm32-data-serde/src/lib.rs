@@ -159,7 +159,19 @@ pub mod chip {
                 #[serde(untagged)]
                 pub enum KernelClock {
                     Clock(String),
+                    // Must come before `Mux`: serde's untagged enums ignore unknown fields, so
+                    // `Mux` would also match a prescaled clock and silently drop the divider.
+                    PrescaledMux(PrescaledMux),
                     Mux(Field),
+                }
+
+                #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+                pub struct PrescaledMux {
+                    pub register: String,
+                    pub field: String,
+                    /// Divider applied to the mux output, stored in the same register as the
+                    /// mux (e.g. the C5 `CCIPR2/ADCDACPRE` divider after `CCIPR2/ADCDACSEL`).
+                    pub prescaler: Field,
                 }
 
                 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize, Default)]

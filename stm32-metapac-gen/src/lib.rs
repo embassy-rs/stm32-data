@@ -174,9 +174,21 @@ impl Gen {
             .collect::<Vec<_>>()
             .join(",");
 
+        // Only import the prescaled variant for chips that use it, so the metadata of all
+        // other chips stays byte-identical.
+        let kernel_clock_import = if core.peripherals.iter().any(|p| {
+            p.rcc
+                .as_ref()
+                .is_some_and(|rcc| matches!(&rcc.kernel_clock, PeripheralRccKernelClock::PrescaledMux(_)))
+        }) {
+            "use crate::metadata::PeripheralRccKernelClock::{Clock, Mux, PrescaledMux};"
+        } else {
+            "use crate::metadata::PeripheralRccKernelClock::{Clock, Mux};"
+        };
+
         let data = format!(
             "include!(\"../{}\");
-            use crate::metadata::PeripheralRccKernelClock::{{Clock, Mux}};
+            {}
             pub static METADATA: Metadata = Metadata {{
                 name: {:?},
                 family: {:?},
@@ -188,7 +200,7 @@ impl Gen {
                 dma_channels: DMA_CHANNELS,
                 pins: PINS,
             }};",
-            deduped_file, &chip.name, &chip.family, &chip.line, memories, &core.nvic_priority_bits,
+            deduped_file, kernel_clock_import, &chip.name, &chip.family, &chip.line, memories, &core.nvic_priority_bits,
         );
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();
