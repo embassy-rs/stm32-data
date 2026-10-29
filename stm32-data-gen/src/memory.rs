@@ -182,7 +182,7 @@ const MEMS: &[(&str, &[&[Mem]])] = &[
                                         mem!(BANK_1 { 0x08000000 1024 },                            SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes }),
                                         mem!(BANK_1 { 0x08000000 512  }, BANK_2 { 0x08080000 512 }, SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes }),
                                       ]),
-    ("STM32F4[23]..I",               &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes })]),
+    ("STM32F4[23]..I",               &[mem!(BANK_1 { 0x08000000 1024 }, BANK_2 { 0x08100000 1024 }, SRAM { 0x20000000 192 }, CCMRAM { 0x10000000 64 rw }, BKPSRAM { 0x40024000 4 }, OTP { 0x1fff7800 528 bytes })]),
     ("STM32F4[67]..G",               &[
                                         mem!(BANK_1 { 0x08000000 1024 },                             SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes }),
                                         mem!(BANK_1 { 0x08000000  512 }, BANK_2 { 0x08080000  512 }, SRAM { 0x20000000 320 }, CCMRAM { 0x10000000 64 rw }, OTP { 0x1fff7800 528 bytes }),
