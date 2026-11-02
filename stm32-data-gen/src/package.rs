@@ -82,8 +82,8 @@ pub struct Device {
     pub books: Vec<Book>,
     #[serde(default)]
     pub debug: Option<Debug>,
-    #[serde(default)]
-    pub flashinfo: Option<Flashinfo>,
+    #[serde(default, rename = "flashinfo")]
+    pub flashinfos: Vec<Flashinfo>,
     #[serde(default, rename = "feature")]
     pub features: Vec<Feature>,
     #[serde(default, rename = "environment")]
@@ -1037,7 +1037,10 @@ pub fn parse_packages(
 
     // This can be parallelized by parallelizing the dma map constructor and parallelizing the parsing of each package
 
-    let dma_map = DmaMap::new(&[("STM32C5.*:LPDMA.*:.*", "C5_LPDMA.yaml")])?;
+    let dma_map = DmaMap::new(&[
+        ("STM32C5.*:LPDMA.*:.*", "C5_LPDMA.yaml"),
+        ("STM32G5.*:GPDMA.*:.*", "G5_GPDMA.yaml"),
+    ])?;
 
     for f in files {
         if let Some(filter) = filter
