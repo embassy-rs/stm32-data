@@ -70,6 +70,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:USART:sci3_v2_1", ("usart", "v4", "USART")),
     (".*:USART:sci3_v3_0", ("usart", "v4", "USART")),
     ("STM32C5.*:USART:.*", ("usart", "v4", "USART")),
+    ("STM32G5.*:USART:.*", ("usart", "v4", "USART")),
     (".*:UART:sci2_v1_1", ("usart", "v1", "USART")),
     (".*:UART:sci2_v1_2_F4", ("usart", "v2", "USART")),
     (".*:UART:sci2_v2_1", ("usart", "v3", "USART")),
@@ -77,12 +78,14 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:UART:sci2_v3_1", ("usart", "v4", "USART")),
     (".*:UART:sci2_v3_3", ("usart", "v4", "USART")),
     ("STM32C5.*:UART:.*", ("usart", "v4", "USART")),
+    ("STM32G5.*:UART:.*", ("usart", "v4", "USART")),
     (".*:LPUART:sci3_v1_1", ("usart", "v3", "LPUART")),
     (".*:LPUART:sci3_v1_2", ("usart", "v4", "LPUART")),
     (".*:LPUART:sci3_v1_3", ("usart", "v4", "LPUART")),
     (".*:LPUART:sci3_v1_4", ("usart", "v4", "LPUART")),
     (".*:LPUART:sci3_v3_3", ("usart", "v4", "LPUART")),
     ("STM32C5.*:LPUART:.*", ("usart", "v4", "LPUART")),
+    ("STM32G5.*:LPUART:.*", ("usart", "v4", "LPUART")),
     ("STM32C5.*:RNG:.*", ("rng", "v4", "RNG")), // TODO: STM32H543/553xx also use v4, I think
     ("STM32H5[EF].*:RNG:.*", ("rng", "v3_h5_ef", "RNG")),
     ("STM32[HU]5.*:RNG:.*", ("rng", "v3", "RNG")),
@@ -156,6 +159,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32H5[EF].*:SPI:.*", ("spi", "v5_i2s_h5", "SPI")),
     ("STM32H5.*:SPI:.*", ("spi", "v5_i2s", "SPI")),
     ("STM32C5.*:SPI:.*", ("spi", "v5_i2s", "SPI")),
+    ("STM32G5.*:SPI:.*", ("spi", "v5_i2s", "SPI")),
     ("STM32N6.*:SPI:.*", ("spi", "v5", "SPI")),
     ("STM32U3.*:SPI:.*", ("spi", "v6", "SPI")),
     ("STM32U5.*:SPI:.*", ("spi", "v6", "SPI")),
@@ -396,6 +400,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32G0.0.*:RCC:.*", ("rcc", "g0x0", "RCC")),
     ("STM32G0.1.*:RCC:.*", ("rcc", "g0x1", "RCC")),
     ("STM32G4.*:RCC:.*", ("rcc", "g4", "RCC")),
+    ("STM32G5.*:RCC:.*", ("rcc", "g5", "RCC")),
     ("STM32H7[RS].*:RCC:.*", ("rcc", "h7rs", "RCC")),
     ("STM32H7[AB].*:RCC:.*", ("rcc", "h7ab", "RCC")),
     ("STM32H7(42|43|53|50).*:RCC:.*", ("rcc", "h7rm0433", "RCC")),
@@ -429,6 +434,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32L5.*:EXTI:.*", ("exti", "l5", "EXTI")),
     ("STM32C0.*:EXTI:.*", ("exti", "c0", "EXTI")),
     ("STM32C5.*:EXTI:.*", ("exti", "u5", "EXTI")),
+    ("STM32G5.*:EXTI:.*", ("exti", "u5", "EXTI")),
     ("STM32G0.*:EXTI:.*", ("exti", "g0", "EXTI")),
     ("STM32H7(45|47|55|57).*:EXTI:.*", ("exti", "h7rm0399", "EXTI")),
     ("STM32H7.*:EXTI:.*", ("exti", "h7", "EXTI")),
@@ -973,6 +979,13 @@ impl Perimap {
     }
 
     pub fn get(&self, pattern: &str) -> Option<&(&'static str, &'static str, &'static str)> {
+        // STM32G5's HRTIM1 register layout differs from the hrtim v1/v2 blocks
+        // (RM0514 places the common registers at 0x700+ instead of 0x380+), and
+        // no hrtim_g5.yaml exists yet. Leave it without registers rather than
+        // emitting wrong offsets.
+        if pattern.starts_with("STM32G5") && pattern.contains(":HRTIM") {
+            return None;
+        }
         self.map.get(pattern).next()
     }
 }

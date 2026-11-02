@@ -726,8 +726,13 @@ struct InterruptSignals {
 
 impl InterruptSignals {
     pub fn new() -> Self {
-        const EQ_SIGNALS: &[(&str, &[&str])] =
-            &[("UP", &["UPD"]), ("TRG", &["TRGI"]), ("ER", &["ERR", "TERR", "IERR"])];
+        const EQ_SIGNALS: &[(&str, &[&str])] = &[
+            ("UP", &["UPD"]),
+            ("TRG", &["TRGI"]),
+            ("ER", &["ERR", "TERR", "IERR"]),
+            // STM32G5 headers name the HRTIM master interrupt HRTIM1_M_IRQn.
+            ("MASTER", &["M"]),
+        ];
 
         // Special chip-specific signal mappings
         // Format: (peripheral_prefix, chip_pattern, signals)
@@ -742,6 +747,12 @@ impl InterruptSignals {
                 &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
             ),
             ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
+            // STM32G5 GPDMA has per-channel IRQs (GPDMA1_CH0..) but no global one.
+            (
+                "GPDMA",
+                "STM32G5",
+                &["CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7"],
+            ),
         ];
 
         // Fallback to the general signal map
@@ -875,7 +886,10 @@ fn pick_nvic(chip_name: &str, core_name: &str) -> String {
             ("STM32WL5.*:cm4", "NVIC1"),
             ("STM32WL5.*:cm0p", "NVIC2"),
             // Exception 2: TrustZone: NVIC1 is Secure mode, NVIC2 is NonSecure mode. For now, we pick the NonSecure one.
-            ("STM32(L5|U3|U5|H5[2-7EF]|WBA5[245]|WBA6[2345]).*", "NVIC2"),
+            (
+                "STM32(L5|U3|U5|H5[2-7EF]|WBA5[245]|WBA6[2345]|WBA6M|WBA2[35]).*",
+                "NVIC2",
+            ),
             // Exception 3: NVICs are split for "bootloader" and "application", not sure what that means?
             ("STM32H7[RS].*", "NVIC2"),
             // Exception 4: NVICS are split for bootloader NVIC, secure NVIC1 and non-secure NVIC2.

@@ -132,6 +132,8 @@ impl ParsedRccs {
             "DAC_HOLD",
             "DAC_HOLD_2",
             "ICLK",
+            // G5: DACSEL can select the ADC kernel clock (rcc_adc_ker_ck).
+            "ADC",
             "DCLK",
             "I2S1",
             "I2S2",
