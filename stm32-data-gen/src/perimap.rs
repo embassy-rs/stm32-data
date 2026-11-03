@@ -802,6 +802,27 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
         "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
         ("octospi", "v2", "OCTOSPI"),
     ),
+    // H543/H553 (octospi1_v6_3) and H5E/H5F (octospi_v6_2) use the same
+    // register layout as the v5_1 parts; the yaml is just missing the
+    // v6-only fields (ADOFF, BERR*, CSSEL, NOPREF, MSEL, EXTENDMEM, ...).
+    (
+        "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v6_3.*",
+        ("octospi", "v2", "OCTOSPI"),
+    ),
+    (
+        "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi_v6_2.*",
+        ("octospi", "v2", "OCTOSPI"),
+    ),
+    // G5 (DIE44A) and C5 (DIE45A) expose the same octospi IP as XSPI1;
+    // their pdsc digital_name is c7amba_octospi1.
+    (
+        "STM32(G5|C5).*:XSPI1:OSPI:c7amba_octospi1.*",
+        ("octospi", "v2", "OCTOSPI"),
+    ),
+    // WBA25 implements a reduced13-register subset of the same IP.
+    // Mapping to octospi_v2 covers those13 at identical offsets; the
+    // remaining block registers land in reserved gaps of the WBA25 XSPI.
+    ("STM32WBA.*:XSPI1:XSPI:xspi_v2_5.*", ("octospi", "v2", "OCTOSPI")),
     (
         "STM32U3.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
         ("octospi", "v2", "OCTOSPI"),
