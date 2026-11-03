@@ -637,6 +637,9 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
         ("timer", "v2", "TIM_1CH_CMP"),
     ),
     ("STM32G4.*:HRTIM1:.*", ("hrtim", "v2", "HRTIM")),
+    // RM0514's HRTIM differs from v1/v2: common registers at 0x700+, 6 timers on a
+    // 0x100 stride, 8 fault inputs, 5-bit event filters, crossbar override regs.
+    ("STM32G5.*:HRTIM1:.*", ("hrtim", "g5", "HRTIM")),
     // timer_v3 for STM32F7/G0/H7/WB0/WL (and Cx) serials (not "original series" AN4013 Rev 13, but not v2)
     (
         "STM32(F7|C|G0|H7|WB|WB06|WB07|WL).*:TIM(1|8|20):.*",
@@ -979,13 +982,6 @@ impl Perimap {
     }
 
     pub fn get(&self, pattern: &str) -> Option<&(&'static str, &'static str, &'static str)> {
-        // STM32G5's HRTIM1 register layout differs from the hrtim v1/v2 blocks
-        // (RM0514 places the common registers at 0x700+ instead of 0x380+), and
-        // no hrtim_g5.yaml exists yet. Leave it without registers rather than
-        // emitting wrong offsets.
-        if pattern.starts_with("STM32G5") && pattern.contains(":HRTIM") {
-            return None;
-        }
         self.map.get(pattern).next()
     }
 }
