@@ -876,8 +876,15 @@ fn build_dma(f: &dma::File, dma_map: &DmaMap, chip_name: &str) -> ChipDma {
                 signal_id.to_uppercase()
             };
 
+            // DB2 names DAC channel instances DAC1_CH1 / DAC1_CH2, but DMA
+            // requests must be associated with the DAC1 peripheral.
+            let peripheral_name = match interconnect.instance.rsplit_once('_') {
+                Some((name, "CH1" | "CH2")) if name.starts_with("DAC") => name,
+                _ => interconnect.instance.as_str(),
+            };
+
             peripherals
-                .entry(interconnect.instance.clone())
+                .entry(peripheral_name.to_string())
                 .or_default()
                 .push(peripheral::DmaChannel {
                     signal,
@@ -1056,6 +1063,81 @@ pub fn parse_packages(
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn c5_dma_map() -> DmaMap {
+        let requests = serde_yaml::from_str(include_str!("../../data/dmamux/C5_LPDMA.yaml")).unwrap();
+        DmaMap {
+            map: new_regex_map([("STM32C5.*:LPDMA.*:.*", requests)]),
+        }
+    }
+
+    #[test]
+    fn dac_dma_channels_belong_to_the_dac_peripheral() {
+        let dma_map = c5_dma_map();
+
+        // DB2 describes single- and dual-channel DACs using channel instances.
+        for channel_count in [1, 2] {
+            let mut file = dma::File::default();
+            for controller in ["LPDMA1", "LPDMA2"] {
+                file.instances.push(dma::Instance {
+                    name: controller.into(),
+                    ..Default::default()
+                });
+                for channel in 1..=channel_count {
+                    file.interconnect.push(dma::Interconnect {
+                        dma_instance: controller.into(),
+                        event: format!("dac1_ch{channel}_dma"),
+                        instance: format!("DAC1_CH{channel}"),
+                        signal_id: Some(format!("ch{channel}")),
+                        type_field: "request".into(),
+                    });
+                }
+            }
+
+            let result = build_dma(&file, &dma_map, "STM32C531RC");
+            let requests = result.peripherals.get("DAC1").expect("missing DAC1 DMA requests");
+            assert_eq!(result.peripherals.len(), 1);
+            assert_eq!(requests.len(), 2 * channel_count);
+            for controller in ["LPDMA1", "LPDMA2"] {
+                for channel in 1..=channel_count {
+                    let request = requests
+                        .iter()
+                        .find(|r| r.dma.as_deref() == Some(controller) && r.signal == format!("CH{channel}"))
+                        .unwrap();
+                    assert_eq!(request.request, Some(72 + channel as u8));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn dma_peripheral_instances_and_adc_signals_are_preserved() {
+        let file: dma::File = serde_json::from_value(serde_json::json!({
+            "instances": [{ "name": "LPDMA1" }],
+            "interconnect": [
+                { "dmaInstance": "LPDMA1", "event": "dac1_ch1_dma", "instance": "DAC1",
+                  "signal_id": "ch1", "type": "request" },
+                { "dmaInstance": "LPDMA1", "event": "adc1_dma", "instance": "ADC1",
+                  "signal_id": "global", "type": "request" },
+                { "dmaInstance": "LPDMA1", "event": "spi1_rx_dma", "instance": "SPI1",
+                  "signal_id": "rx", "type": "request" }
+            ]
+        }))
+        .unwrap();
+        let dma_map = c5_dma_map();
+        let result = build_dma(&file, &dma_map, "STM32C531RC");
+        for (peripheral, signal, request) in [("DAC1", "CH1", 73), ("ADC1", "ADC1", 0), ("SPI1", "RX", 4)] {
+            let requests = &result.peripherals[peripheral];
+            assert_eq!(requests.len(), 1);
+            assert_eq!(requests[0].signal, signal);
+            assert_eq!(requests[0].request, Some(request));
+        }
+    }
 }
 
 fn parse_package(
