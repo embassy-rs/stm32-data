@@ -84,6 +84,16 @@ mod tests {
     use super::*;
 
     #[test]
+    fn c5_dac_tim6_trigger_selection() {
+        let triggers = Triggers::new();
+        for chip in ["STM32C531RC", "STM32C5A3ZG"] {
+            let dac_triggers = triggers.peripheral_trigger_info(chip, "DAC1").unwrap();
+            let tim6 = dac_triggers.iter().find(|t| t.source == "TIM6_TRGO").unwrap();
+            assert_eq!(tim6.signal, "DAC_CHX_TRG6");
+        }
+    }
+
+    #[test]
     fn test_wba_adc4_regular_triggers() {
         let triggers = Triggers::new();
 
