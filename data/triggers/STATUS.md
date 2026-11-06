@@ -16,7 +16,9 @@ new reference-manual (RM) material becomes available. See also
   truth; re-extraction is a manual refresh step.
 
 Where SVD and RM disagree, the RM wins (known SVD copy-paste errors:
-e.g. F100 TIM8/TIM5, L0 TIM15, G0 TIM2_CCx, WL ADC TIM1_TRGO vs TRGO2).
+e.g. F100 TIM8/TIM5, L0 TIM15, G0 TIM2_CCx, WL ADC TIM1_TRGO vs TRGO2,
+and the H7 ADC EXTSEL enums — see 0130's header: every H7 SVD carries a
+byte-identical EXTSEL enum, even on dies with no HRTIM and no TIM23/24).
 
 ## Fully RM-verified in this pass
 
@@ -31,8 +33,14 @@ extracted), G0 ADC (RM0454
 T57; RM0444 truncated but interconnect matrix agrees), C0 ADC (RM0490 T68),
 U5 DAC + U5 ADC (RM0456 T342/T307/T308), WL DAC + WL ADC + WL COMP→TIM
 (RM0453), WB ADC (RM0434 T92/93), WBA5 all + WBA6 TIM1/LPTIM/ADC4
-(RM0493/RM0515), U0 DAC + TIM1 COMP (RM0503).
+(RM0493/RM0515), U0 DAC + TIM1 COMP (RM0503), **H7 ADC all five lines**
+(RM0399 T214/215 H745/747/755/757; RM0433 T210/211 H742/743/750/753;
+RM0468 T226/227 + T242 H723/733/725/735/730; RM0477 T229 H7R3/R7/S3/S7 —
+rules 0128-0130, 0132; added for embassy-rs/stm32-data#945).
 SVD-derived and RM-spot-checked: F4 ADC (+ F401/411/410 split), F7 ADC (new).
+SVD-derived only (RM ADC chapter not extracted): H7A3/B3/B0 ADC (0131, from
+stm32h7b3 — RM0455 folder truncated at ch. 6; enum spot-checked against the
+RM0433/RM0399 tables, HRTIM rows dropped as no die on that line has HRTIM).
 
 ## Not verified — truncated RM extractions on disk
 
@@ -53,10 +61,13 @@ header). Re-verify when the missing chapters are added to `tmp/rm/`:
 
 ## Not verified — RM not on disk at all
 
-- **H723/733/725/735/730 line** (RM0468 not in the archive): 0026 (DAC),
-  0116-0121 (DFSDM/TIM).
-- **H7A3/B3/B0** (RM0455 not in the archive): 0027 (DAC), 0110-0115
-  (DFSDM/TIM).
+- **H723/733/725/735/730 line** (RM0468 was not in the archive when 0026
+  and 0116-0121 were written; the folder has since been added and its ADC
+  chapters are extracted — its ADC rule 0130 IS RM-verified, the older DAC/
+  DFSDM/TIM rules have not been re-checked against it).
+- **H7A3/B3/B0** (RM0455 folder truncated at ch. 6 — no ADC/DAC/DFSDM/TIM
+  chapters on disk): 0027 (DAC), 0110-0115 (DFSDM/TIM), and 0131 (ADC) is
+  SVD-derived, see its header.
 - **MP1** (out of scope by decision): 0104-0109 kept from original hand
   rules, unverified.
 
@@ -68,6 +79,10 @@ tables that never had a corresponding hand rule were never examined, so
 "RM-verified" above means "the existing rules check out", not "everything
 in the RM is captured". Confirmed instance:
 
+- **H7 ADC trigger tables — DONE.** `rules.yaml` had **no** rule matching
+  any `STM32H7*:ADC*` key before this pass (embassy-rs/stm32-data#945:
+  H755 timers could not trigger its ADCs at all). All five H7 lines now have
+  rules 0128-0132; see "Fully RM-verified" above for provenance per line.
 - **G4 timer interconnects (RM0440) — DONE (2026-09 follow-up).** All ten
   G4 timers now have interconnect rules (`0047`-`0047i`): TIM1/8/20 full
   sets (TI1/ITR/ETR/BRK/BRK2/SYS_BRK/OCREF_CLR), TIM2-5 TI1-TI4/ITR/ETR/
