@@ -163,6 +163,9 @@ static NOPELIST: LazyLock<regex::RegexSet> = LazyLock::new(|| {
         "STM32G41[14].*",
         "STM32G4.*xZ",
         "STM32WL3.*",
+        // No CMSIS header in sources/headers yet, so generation would skip them
+        // anyway (see generator.rs). Revisit once stm32wl4x*.h is added there.
+        "STM32WL4.*",
         // Does not exist in ST website. No datasheet, no RM.
         "STM32GBK.*",
         "STM32L485.*",
