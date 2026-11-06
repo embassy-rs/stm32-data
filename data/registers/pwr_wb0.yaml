@@ -94,12 +94,10 @@ fieldset/CR1:
     description: APC Apply Pull-up and pull-down configuration from CPU.
     bit_offset: 4
     bit_size: 1
-    enum: APC
   - name: ENBORH
     description: 'ENBORH: enable BORH configuration.'
     bit_offset: 5
     bit_size: 1
-    enum: ENBORH
   - name: SELBORH
     description: 'SELBORH[1:0]: BORH selection of Vbor threshold.'
     bit_offset: 6
@@ -748,237 +746,219 @@ fieldset/SR3:
     description: PB15 I/O wake-up flag.
     bit_offset: 15
     bit_size: 1
-enum/APC:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: the PUCRx and PDCRx are not used to control the I/O pull-up and pull-down configuration of the product I/Os.
-    value: 0
-  - name: B_0x1
-    description: the I/O pull-up and pull-down configurations defined in the PUCRx and PDCRx registers is applied.
-    value: 1
 enum/DEEPSTOPF:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NotEntered
     description: System has not been in DEEPSTOP mode.
     value: 0
-  - name: B_0x1
+  - name: Entered
     description: System has been in DEEPSTOP mode.
-    value: 1
-enum/ENBORH:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: 'BORH off (VBOR0): threshold level for above 1.60V voltage operation.'
-    value: 0
-  - name: B_0x1
-    description: BORH is enabled, threshold level depends on SELBOR[1:0].
     value: 1
 enum/ENSDNBOR:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Set
     description: the PD_ALL_SHUTDOWN signal is set during SHUTDOWN mode.
     value: 0
-  - name: B_0x1
+  - name: NotSet
     description: the PD_ALL_SHUTDOWN signal is not set during SHUTDOWN mode.
     value: 1
 enum/LPMS:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: DeepStop
     description: Deep Stop mode (default).
     value: 0
-  - name: B_0x1
+  - name: Shutdown
     description: Shutdown mode.
     value: 1
 enum/PDA:
   bit_size: 16
   variants:
-  - name: B_0x0
+  - name: NoPullDown
     description: Pull-Down not activated on Port A[i].
     value: 0
-  - name: B_0x1
+  - name: PullDown
     description: Pull-Down activated on Port A[i] when APC bit of PWRC CR3 bit is set.
     value: 1
 enum/PDB:
   bit_size: 16
   variants:
-  - name: B_0x0
+  - name: NoPullDown
     description: Pull-Down not activated on Port B[i].
     value: 0
-  - name: B_0x1
+  - name: PullDown
     description: Pull-Down activated on Port B[i] when APC bit of PWRC CR3 bit is set.
     value: 1
 enum/PUA:
   bit_size: 16
   variants:
-  - name: B_0x0
+  - name: NoPullUp
     description: Pull-Up not activated on port A[i].
     value: 0
-  - name: B_0x1
+  - name: PullUp
     description: Pull-Up activated on port A[i] when APC bit of PWRC CR3 bit is set and PWR_PDCRA[x] is reset.
     value: 1
 enum/PUB:
   bit_size: 16
   variants:
-  - name: B_0x0
+  - name: NoPullUp
     description: Pull-Up not activated on port B[i].
     value: 0
-  - name: B_0x1
+  - name: PullUp
     description: Pull-Up activated on port B[i] when APC bit of PWRC CR3 bit is set and PWR_PDCRB[x] is reset.
     value: 1
 enum/PVDLS:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: V2_05
     description: 2.05 V - Lowest level.
     value: 0
-  - name: B_0x1
+  - name: V2_20
     description: 2.20 V.
     value: 1
-  - name: B_0x2
+  - name: V2_36
     description: 2.36 V.
     value: 2
-  - name: B_0x3
+  - name: V2_52
     description: 2.52 V.
     value: 3
-  - name: B_0x4
+  - name: V2_64
     description: 2.64 V.
     value: 4
-  - name: B_0x5
+  - name: V2_81
     description: 2.81 V.
     value: 5
-  - name: B_0x6
+  - name: V2_91
     description: 2.91 V - Highest level.
     value: 6
-  - name: B_0x7
+  - name: External
     description: External input analog voltage (compare internally to VBGP; When external input <VBGP.
     value: 7
 enum/REGLPS:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NotReady
     description: LP regulator is not ready.
     value: 0
-  - name: B_0x1
+  - name: Ready
     description: LP regulator is ready.
     value: 1
 enum/REGMS:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NotReady
     description: Main regulator is not ready.
     value: 0
-  - name: B_0x1
+  - name: Ready
     description: Main regulator is ready.
     value: 1
 enum/RFPHASEF:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NoAttention
     description: RF IP does not require attention.
     value: 0
-  - name: B_0x1
+  - name: Attention
     description: RF IP awake and requesting system attention.
     value: 1
 enum/SELBORH:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: Level1
     description: 'BORH Level 1 (VBOR1): threshold level for above 2.0V voltage operation.'
     value: 0
-  - name: B_0x1
+  - name: Level2
     description: 'BORH Level 2 (VBOR2): threshold level for above 2.21 V voltage operation.'
     value: 1
-  - name: B_0x2
+  - name: Level3
     description: 'BORH Level 3 (VBOR3): threshold level for above 2.52 V voltage operation.'
     value: 2
-  - name: B_0x3
+  - name: Level4
     description: 'BORH Level 4(VBOR4): threshold level for above 2.81 V voltage operation.'
     value: 3
 enum/SMPSBOMSEL:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: BOM1
     description: BOM1.
     value: 0
-  - name: B_0x1
+  - name: BOM2
     description: BOM2 (default).
     value: 1
-  - name: B_0x2
+  - name: BOM3
     description: BOM3.
     value: 2
-  - name: B_0x3
+  - name: NA
     description: n/a.
     value: 3
 enum/SMPSFBYP:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NoEffect
     description: no effect (by default).
     value: 0
-  - name: B_0x1
+  - name: Bypassed
     description: SMPS is disabled and bypassed (ENABLE_3V3=0 and PRECHARGE_3V3=1).
     value: 1
 enum/SMPSFRDY:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NoEffect
     description: no effect (by default).
     value: 0
-  - name: B_0x1
+  - name: Ready
     description: SMPS is considered READY.
     value: 1
 enum/SMPSLPOPEN:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Precharge
     description: in Low Power mode, SMPS is in PRECHARGE, output is connected to VDDIO.
     value: 0
-  - name: B_0x1
+  - name: Open
     description: in Low Power mode, SMPS is disabled, output is floating.
     value: 1
 enum/SMPSRDY:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NotReady
     description: SMPS regulator is not ready.
     value: 0
-  - name: B_0x1
+  - name: Ready
     description: SMPS regulator is ready.
     value: 1
 enum/SMPS_PRECH_CUR_SEL:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: Ma2_5
     description: 2.5mA.
     value: 0
-  - name: B_0x1
+  - name: Ma5
     description: 5mA.
     value: 1
-  - name: B_0x2
+  - name: Ma10
     description: 10mA.
     value: 2
-  - name: B_0x3
+  - name: Ma20
     description: 20mA (default).
     value: 3
 enum/WUF:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NoEffect
     description: no effect.
     value: 0
-  - name: B_0x1
+  - name: Clear
     description: clear the interrupt.
     value: 1
 enum/WUP:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: High
     description: Detection on high level (rising edge).
     value: 0
-  - name: B_0x1
+  - name: Low
     description: Detection on low level (falling edge).
     value: 1

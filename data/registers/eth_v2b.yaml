@@ -2251,7 +2251,6 @@ fieldset/MACTSCR:
     description: Enable PCS latencies.
     bit_offset: 25
     bit_size: 1
-    enum: EPCSL
   - name: ECPD
     description: Enable Timestamp Capturing in PTP Clock Domain.
     bit_offset: 26
@@ -2892,171 +2891,162 @@ fieldset/TX_SINGLE_COLLISION_GOOD_PACKETS:
 enum/DA:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: RoundRobin
     description: Weighted Round-Robin with Rx:Tx or Tx:Rx.
     value: 0
-  - name: B_0x1
+  - name: FixedPriority
     description: Fixed priority.
-    value: 1
-enum/EPCSL:
-  bit_size: 1
-  variants:
-  - name: B_0x0
-    description: The XPCS latencies are not considered in the captured timestamp.
-    value: 0
-  - name: B_0x1
-    description: Timestamp captured at the egress and ingress ports includes the ingress and egress latencies provided by XPCS.
     value: 1
 enum/ITCU:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: Units256
     description: '256.'
     value: 0
-  - name: B_0x1
+  - name: Units512
     description: '512.'
     value: 1
-  - name: B_0x2
+  - name: Units1024
     description: '1024.'
     value: 2
 enum/JTO:
   bit_size: 4
   variants:
-  - name: B_0x0
+  - name: Kbytes2
     description: 2 Kbytes.
     value: 0
-  - name: B_0x1
+  - name: Kbytes3
     description: 3 Kbytes.
     value: 1
-  - name: B_0x2
+  - name: Kbytes4
     description: 4 Kbytes.
     value: 2
-  - name: B_0x3
+  - name: Kbytes5
     description: 5 Kbytes.
     value: 3
-  - name: B_0xC
+  - name: Kbytes14
     description: 14 Kbytes.
     value: 12
-  - name: B_0xD
+  - name: Kbytes15
     description: 15 Kbytes.
     value: 13
-  - name: B_0xE
+  - name: Bytes16383
     description: 16383 Bytes.
     value: 14
 enum/LITA:
   bit_size: 1
   variants:
-  - name: B_0x1
+  - name: Disabled
     description: Toggle inputs and PCS latencies are computed by MAC.
     value: 1
 enum/PR:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: Ratio1_1
     description: The priority ratio is 1:1.
     value: 0
-  - name: B_0x1
+  - name: Ratio2_1
     description: The priority ratio is 2:1.
     value: 1
-  - name: B_0x2
+  - name: Ratio3_1
     description: The priority ratio is 3:1.
     value: 2
-  - name: B_0x3
+  - name: Ratio4_1
     description: The priority ratio is 4:1.
     value: 3
-  - name: B_0x4
+  - name: Ratio5_1
     description: The priority ratio is 5:1.
     value: 4
-  - name: B_0x5
+  - name: Ratio6_1
     description: The priority ratio is 6:1.
     value: 5
-  - name: B_0x6
+  - name: Ratio7_1
     description: The priority ratio is 7:1.
     value: 6
-  - name: B_0x7
+  - name: Ratio8_1
     description: The priority ratio is 8:1.
     value: 7
 enum/PSEL:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Bytes
     description: RBCT[9:0] is used to generate interrupt based on the number of bytes received.
     value: 0
-  - name: B_0x1
+  - name: Packets
     description: RBCT[9:0] is used to generate interrupt based on the number of packets received.
     value: 1
 enum/RPS:
   bit_size: 4
   variants:
-  - name: B_0x0
+  - name: Stopped
     description: Stopped (Reset or Stop Receive Command issued).
     value: 0
-  - name: B_0x1
+  - name: RunningFetching
     description: Running (Fetching Rx Transfer Descriptor).
     value: 1
-  - name: B_0x3
+  - name: RunningWaiting
     description: Running (Waiting for Rx packet).
     value: 3
-  - name: B_0x4
+  - name: Suspended
     description: Suspended (Rx Descriptor Unavailable).
     value: 4
-  - name: B_0x5
+  - name: RunningClosing
     description: Running (Closing the Rx Descriptor).
     value: 5
-  - name: B_0x6
+  - name: TimestampWriting
     description: Timestamp write state.
     value: 6
-  - name: B_0x7
+  - name: RunningWriting
     description: Running (Transferring the received packet data from the Rx buffer to the system memory).
     value: 7
 enum/RWTU:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: Units256
     description: '256.'
     value: 0
-  - name: B_0x1
+  - name: Units512
     description: '512.'
     value: 1
-  - name: B_0x2
+  - name: Units1024
     description: '1024.'
     value: 2
-  - name: B_0x3
+  - name: Units2048
     description: '2048.'
     value: 3
 enum/TPS:
   bit_size: 4
   variants:
-  - name: B_0x0
+  - name: Stopped
     description: Stopped (Reset or Stop Transmit Command issued).
     value: 0
-  - name: B_0x1
+  - name: RunningFetching
     description: Running (Fetching Tx Transfer Descriptor).
     value: 1
-  - name: B_0x2
+  - name: RunningWaiting
     description: Running (Waiting for status).
     value: 2
-  - name: B_0x3
+  - name: RunningReading
     description: Running (Reading Data from system memory buffer and queuing it to the Tx buffer (Tx FIFO)).
     value: 3
-  - name: B_0x4
+  - name: TimestampWriting
     description: Timestamp write state.
     value: 4
-  - name: B_0x6
+  - name: Suspended
     description: Suspended (Tx Descriptor Unavailable or Tx Buffer Underflow).
     value: 6
-  - name: B_0x7
+  - name: RunningClosing
     description: Running (Closing Tx Descriptor).
     value: 7
 enum/TSSTSSEL:
   bit_size: 2
   variants:
-  - name: B_0x1
+  - name: Internal
     description: Internal.
     value: 1
-  - name: B_0x2
+  - name: External
     description: External.
     value: 2
-  - name: B_0x3
+  - name: Both
     description: Both.
     value: 3
