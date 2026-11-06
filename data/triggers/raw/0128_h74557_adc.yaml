@@ -1,0 +1,98 @@
+# ADC external trigger inputs, STM32H745/747/755/757 (fixes embassy-rs/
+# stm32-data#945: no ADC trigger rules existed for any H7 line).
+# Provenance: RM0399 (STM32H745/755/747/757) chapter 26, Table 214 "ADC1,
+# ADC2 and ADC3 - External triggers for regular channels" (EXTSEL[4:0]) and
+# Table 215 "... for injected channels" (JEXTSEL[4:0]). Cross-checked against
+# the stm32h747cm7 SVD ADC3 CFGR/JSQR enumerated values (identical; the SVD
+# only carries enums for ADC3 on this line) — LPTIMx_OUT normalized to
+# LPTIMx_TRGO and HRTIM1_ADCTRGn to HRTIM_ADC_TRGn per CONVENTIONS.md and
+# the H7 DAC rule (0028) precedent. Reserved rows (EXTSEL/JEXTSEL 21..31)
+# omitted per conventions.
+# match: ^STM32H7(4|5)(5|7).*:ADC(\d+)?
+
+- match: '^STM32H7(4|5)(5|7).*:ADC(\d+)?'
+  triggers:
+    - signal: ADC_EXT_TRG0
+      source: TIM1_CC1
+    - signal: ADC_EXT_TRG1
+      source: TIM1_CC2
+    - signal: ADC_EXT_TRG2
+      source: TIM1_CC3
+    - signal: ADC_EXT_TRG3
+      source: TIM2_CC2
+    - signal: ADC_EXT_TRG4
+      source: TIM3_TRGO
+    - signal: ADC_EXT_TRG5
+      source: TIM4_CC4
+    - signal: ADC_EXT_TRG6
+      source: EXTI11_TRG
+    - signal: ADC_EXT_TRG7
+      source: TIM8_TRGO
+    - signal: ADC_EXT_TRG8
+      source: TIM8_TRGO2
+    - signal: ADC_EXT_TRG9
+      source: TIM1_TRGO
+    - signal: ADC_EXT_TRG10
+      source: TIM1_TRGO2
+    - signal: ADC_EXT_TRG11
+      source: TIM2_TRGO
+    - signal: ADC_EXT_TRG12
+      source: TIM4_TRGO
+    - signal: ADC_EXT_TRG13
+      source: TIM6_TRGO
+    - signal: ADC_EXT_TRG14
+      source: TIM15_TRGO
+    - signal: ADC_EXT_TRG15
+      source: TIM3_CC4
+    - signal: ADC_EXT_TRG16
+      source: HRTIM_ADC_TRG1
+    - signal: ADC_EXT_TRG17
+      source: HRTIM_ADC_TRG3
+    - signal: ADC_EXT_TRG18
+      source: LPTIM1_TRGO
+    - signal: ADC_EXT_TRG19
+      source: LPTIM2_TRGO
+    - signal: ADC_EXT_TRG20
+      source: LPTIM3_TRGO
+    - signal: ADC_JEXT_TRG0
+      source: TIM1_TRGO
+    - signal: ADC_JEXT_TRG1
+      source: TIM1_CC4
+    - signal: ADC_JEXT_TRG2
+      source: TIM2_TRGO
+    - signal: ADC_JEXT_TRG3
+      source: TIM2_CC1
+    - signal: ADC_JEXT_TRG4
+      source: TIM3_CC4
+    - signal: ADC_JEXT_TRG5
+      source: TIM4_TRGO
+    - signal: ADC_JEXT_TRG6
+      source: EXTI15_TRG
+    - signal: ADC_JEXT_TRG7
+      source: TIM8_CC4
+    - signal: ADC_JEXT_TRG8
+      source: TIM1_TRGO2
+    - signal: ADC_JEXT_TRG9
+      source: TIM8_TRGO
+    - signal: ADC_JEXT_TRG10
+      source: TIM8_TRGO2
+    - signal: ADC_JEXT_TRG11
+      source: TIM3_CC3
+    - signal: ADC_JEXT_TRG12
+      source: TIM3_TRGO
+    - signal: ADC_JEXT_TRG13
+      source: TIM3_CC1
+    - signal: ADC_JEXT_TRG14
+      source: TIM6_TRGO
+    - signal: ADC_JEXT_TRG15
+      source: TIM15_TRGO
+    - signal: ADC_JEXT_TRG16
+      source: HRTIM_ADC_TRG2
+    - signal: ADC_JEXT_TRG17
+      source: HRTIM_ADC_TRG4
+    - signal: ADC_JEXT_TRG18
+      source: LPTIM1_TRGO
+    - signal: ADC_JEXT_TRG19
+      source: LPTIM2_TRGO
+    - signal: ADC_JEXT_TRG20
+      source: LPTIM3_TRGO

@@ -3,13 +3,16 @@
 # Regenerate: re-run the extractor and this script after updating SVDs.
 # SVD: stm32f101.svd, field DAC_CR.TSEL2 (channel 2 table; identical to the
 # historical hand rule).
+# DIE PRUNING: the SVD TSEL2 enum also lists TIM8_TRGO, but F101 has no TIM8
+# on any density (RM0008 ch14 grants TIM8 only to high/XL-density F103;
+# stm32f101xb.h/stm32f101xe.h and cubedb agree), so that row is omitted per
+# CONVENTIONS ("only emit sources for peripherals that exist on the chips the
+# rule matches").
 
 - match: '^STM32F101.*:DAC.*'
   triggers:
     - signal: DAC_CHX_TRG0
       source: TIM6_TRGO
-    - signal: DAC_CHX_TRG1
-      source: TIM8_TRGO
     - signal: DAC_CHX_TRG2
       source: TIM7_TRGO
     - signal: DAC_CHX_TRG3

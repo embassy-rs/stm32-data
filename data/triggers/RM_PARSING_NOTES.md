@@ -151,6 +151,7 @@ never emit sources for peripherals the chips don't have.
 - WARNING: extraction TRUNCATED at chapter 30 (`30-operational-amplifiers-opamp.md`) — no DFSDM, TIM, HRTIM, LPTIM chapters on disk. DAC is chapter 27 and IS present.
 - DAC trigger table: **Table 231 "DAC interconnection"** (section 27.4.2). Identical 13-entry table to RM0433 Table 227 (tim1..tim15, hrtim1_dactrg1/2, lptim1/2_out, exti9). RM writes sources in lowercase (`tim1_trgo`, `exti9`, `lptim1_out`, `hrtim1_dactrg1`) — normalize per CONVENTIONS.md (`TIM1_TRGO`, `EXTI9_TRG`, `LPTIM1_TRGO`, `HRTIM_DAC_TRG1`).
 - Tables are plain `Table N.` captions (not always bold) inside section prose; raw-text grep works fine.
+- ADC chapter 26 IS present: **Table 214 "ADC1, ADC2 and ADC3 - External triggers for regular channels"** (EXTSEL[4:0]) and **Table 215 "... injected"** (JEXTSEL[4:0]) — 0..20 populated, 21..31 Reserved. Extracted as rule 0128; byte-identical to RM0433 Tables 210/211 (diffed all 64 rows) and cross-checked vs the stm32h747cm4/cm7 ADC3 SVD enums (identical). Normalize: `timX_ocN` → `TIMX_CCN`, `exti11` → `EXTI11_TRG` / `exti15` → `EXTI15_TRG`, `hrtim1_adctrig{1,3}` (regular) / `{2,4}` (injected) → `HRTIM_ADC_TRG{N}`, `lptim{n}_out` → `LPTIM{n}_TRGO`.
 
 ### RM0451-STM32L0x0
 
@@ -301,6 +302,17 @@ triggers`, unlike the bold `**Table N.**` style in newer RMs). The table is
 - DFSDM chapter is 30. **Table 250 "DFSDM triggers connection"** (split with a `(continued)` caption — concatenate): jtrg0 TIM1_TRGO, 1 TIM1_TRGO2, 2 TIM8_TRGO, 3 TIM8_TRGO2, 4 TIM3_TRGO, 5 TIM4_TRGO, 6 TIM16_OC1, 7 TIM6_TRGO, 8 TIM7_TRGO, 9 HRTIM1_ADCTRG1, 10 HRTIM1_ADCTRG3, [23:11] Reserved, 24 EXTI11, 25 EXTI15, 26 LPTIMER1, 27 LPTIMER2, 28 LPTIMER3, [31:29] Reserved. Normalize `LPTIMER{n}` → `LPTIM{n}_TRGO`; EXTI stays plain `EXTI{n}` (DFSDM convention); HRTIM DFSDM sources are `HRTIM1_ADCTRG{n}`, NOT `HRTIM_ADC_TRG{n}` (DAC is the HRTIM_DAC_TRG user). Old hand rules 0082/0098 matched exactly.
 - **Table 251 "DFSDM break connection"**: break0 → TIM1 BRK / TIM15 BRK; break1 → TIM1 BRK2 / TIM16 BRK; break2 → TIM8 BRK / TIM17 BRK; break3 → TIM8 BRK2. Old hand rules 0083-0087/0099-0103 matched exactly.
 - This RM does NOT document H723/733/725/735/730, H7A3/B3/B0, or H745/757 DFSDM; rules for those lines kept hand content (H745/757 DFSDM assumed identical IP to H743; RM0399 is truncated so it can't corroborate).
+- ADC chapter 25: **Table 210 regular / Table 211 injected** — byte-identical to RM0399 Tables 214/215 (all 64 rows diffed), cross-checked against stm32h743/h743v/h753/h753v ADC3 SVD enums (identical). Extracted as rule 0129.
+
+### RM0468-STM32H723-733-725-735-730
+
+- ADC chapter 28: **Table 226 "ADC1 and ADC2 - External triggers for regular"** (EXTSEL[4:0]) / **Table 227 "... injected"** (JEXTSEL[4:0]); chapter 29 has **Table 242 "ADC interconnection"** for ADC3, all 64 rows identical to the ADC1/2 tables (diffed). Rule 0130.
+- **SVD-vs-RM conflict (RM wins):** the stm32h735 SVD EXTSEL/JEXTSEL enums are byte-identical to the H743/H747 enums — they list `HRTIM1_ADCTRG1/3` at 16/17 and end at 20 — but this line has **no HRTIM** (no chapter in RM0468, no peripheral in cubedb/SVD) and **does** have TIM23/TIM24 (RM0468 puts `TIM23_TRGO`/`TIM24_TRGO` at 21/22, absent from the SVD enum). RM0468 was used: 16/17 omitted, 21/22 = TIM23/TIM24. Same copy-paste root cause as the H7A3 note in 0131 — all H7 SVD EXTSEL enums are one shared table.
+
+### RM0477-STM32H7Rx-7Sx
+
+- ADC chapter 27: **Table 229 "ADC interconnection"** carries both EXTSEL[4:0] and JEXTSEL[4:0] mappings as `adc_ext_trg{n}`/`adc_jext_trg{n}` rows (index = field value). Rule 0132.
+- This line's table differs from every other H7 line: dies have **no TIM8**, so regular 7/8 = `TIM12_TRGO`/`TIM9_TRGO` and injected 7/9/10 = `TIM9_OC1`/`TIM12_TRGO`/`TIM9_TRGO`; LPTIM sources are `lptim{n}_ch1`/`ch2` (→ `LPTIM{n}_CH{n}`), not `_out`; 16/17 and 21..31 Reserved (no HRTIM, no TIM23/24 on this line). Confirmed against cubedb STM32H7R3 (TIM9/TIM12/LPTIM1-3 present, no TIM8). The stm32h7r/stm32h7s SVD EXTSEL/JEXTSEL fields have no enumerated values (placeholder `B_0xN` names), so the RM is the only source.
 
 ### RM0434-STM32WB55-35
 

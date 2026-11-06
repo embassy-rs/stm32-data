@@ -5,21 +5,19 @@
 # NOTE: the stm32l4p5 SVD also carries this v1 enum, but that is a stale
 # copy — the L4+ DAC is the v2 4-bit IP (rule 0030, see its header).
 # TRG7 is SWTRIG (software) and is omitted per conventions.
+# DIE PRUNING: RM0394 Table 1 (L412..L462 product features) lists the timers
+# of L451/L452/L462 as TIM1/TIM2/TIM3/TIM6/TIM15/TIM16 only — RM0394 has no
+# TIM4/TIM5/TIM7/TIM8 chapters at all — matching stm32l451xx.h and cubedb
+# (TIM1/2/3/6/15/16), so the TIM8/TRG1, TIM7/TRG2, TIM5/TRG3 and TIM4/TRG5
+# rows are omitted here per CONVENTIONS ("only emit sources for peripherals
+# that exist on the chips the rule matches").
 # match: ^STM32L4(5|6).*:DAC.*
 
 - match: '^STM32L4(5|6).*:DAC.*'
   triggers:
     - signal: DAC_CHX_TRG0
       source: TIM6_TRGO
-    - signal: DAC_CHX_TRG1
-      source: TIM8_TRGO
-    - signal: DAC_CHX_TRG2
-      source: TIM7_TRGO
-    - signal: DAC_CHX_TRG3
-      source: TIM5_TRGO
     - signal: DAC_CHX_TRG4
       source: TIM2_TRGO
-    - signal: DAC_CHX_TRG5
-      source: TIM4_TRGO
     - signal: DAC_CHX_TRG6
       source: EXTI9_TRG
