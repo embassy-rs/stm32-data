@@ -527,7 +527,7 @@ fieldset/WCCR:
     description: "Instruction mode\r This field defines the instruction phase mode of operation.\r Others: reserved"
     bit_offset: 0
     bit_size: 3
-    enum: WCCR_IMODE
+    enum: CCR_IMODE
   - name: IDTR
     description: "Instruction double transfer rate\r This bit sets the DTR mode for the instruction phase."
     bit_offset: 3
@@ -536,12 +536,12 @@ fieldset/WCCR:
     description: "Instruction size\r This bit defines instruction size:"
     bit_offset: 4
     bit_size: 2
-    enum: WCCR_ISIZE
+    enum: CCR_ISIZE
   - name: ADMODE
     description: "Address mode\r This field defines the address phase mode of operation.\r Others: reserved"
     bit_offset: 8
     bit_size: 3
-    enum: WCCR_ADMODE
+    enum: CCR_ADMODE
   - name: ADDTR
     description: "Address double transfer rate\r This bit sets the DTR mode for the address phase."
     bit_offset: 11
@@ -550,7 +550,7 @@ fieldset/WCCR:
     description: "Address size\r This field defines address size."
     bit_offset: 12
     bit_size: 2
-    enum: WCCR_ADSIZE
+    enum: CCR_ADSIZE
   - name: ABMODE
     description: "Alternate-byte mode\r This field defines the alternate-byte phase mode of operation.\r Others: reserved"
     bit_offset: 16
@@ -564,7 +564,7 @@ fieldset/WCCR:
     description: "Alternate bytes size\r This field defines alternate bytes size:"
     bit_offset: 20
     bit_size: 2
-    enum: WCCR_ABSIZE
+    enum: CCR_ABSIZE
   - name: DMODE
     description: "Data mode\r This field defines the data phase mode of operation."
     bit_offset: 24
@@ -599,7 +599,7 @@ fieldset/WPCCR:
     description: "Instruction mode\r This field defines the instruction phase mode of operation.\r Others: reserved"
     bit_offset: 0
     bit_size: 3
-    enum: WPCCR_IMODE
+    enum: CCR_IMODE
   - name: IDTR
     description: "Instruction double transfer rate\r This bit sets the DTR mode for the instruction phase."
     bit_offset: 3
@@ -608,12 +608,12 @@ fieldset/WPCCR:
     description: "Instruction size\r This field defines instruction size."
     bit_offset: 4
     bit_size: 2
-    enum: WPCCR_ISIZE
+    enum: CCR_ISIZE
   - name: ADMODE
     description: "Address mode\r This field defines the address phase mode of operation.\r Others: reserved"
     bit_offset: 8
     bit_size: 3
-    enum: WPCCR_ADMODE
+    enum: CCR_ADMODE
   - name: ADDTR
     description: "Address double transfer rate\r This bit sets the DTR mode for the address phase."
     bit_offset: 11
@@ -622,7 +622,7 @@ fieldset/WPCCR:
     description: "Address size\r This field defines address size."
     bit_offset: 12
     bit_size: 2
-    enum: WPCCR_ADSIZE
+    enum: CCR_ADSIZE
   - name: ABMODE
     description: "Alternate-byte mode\r This field defines the alternate byte phase mode of operation."
     bit_offset: 16
@@ -636,7 +636,7 @@ fieldset/WPCCR:
     description: "Alternate bytes size\r This bit defines alternate bytes size."
     bit_offset: 20
     bit_size: 2
-    enum: WPCCR_ABSIZE
+    enum: CCR_ABSIZE
   - name: DMODE
     description: "Data mode\r This field defines the data phase mode of operation.\r 101; data on 16 lines\r Others: reserved"
     bit_offset: 24
@@ -682,537 +682,375 @@ fieldset/WTCR:
 enum/APMS:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Abort
     description: Automatic status-polling mode is stopped only by abort or by disabling the XSPI.
     value: 0
-  - name: B_0x1
+  - name: Match
     description: Automatic status-polling mode stops as soon as there is a match.
     value: 1
 enum/CCR_ABMODE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: None
     description: no alternate bytes
     value: 0
-  - name: B_0x1
+  - name: OneLine
     description: alternate bytes on a single line
     value: 1
-  - name: B_0x2
+  - name: TwoLines
     description: alternate bytes on two lines
     value: 2
-  - name: B_0x3
+  - name: FourLines
     description: alternate bytes on four lines
     value: 3
 enum/CCR_ABSIZE:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: 8Bit
     description: 8-bit alternate bytes
     value: 0
-  - name: B_0x1
+  - name: 16Bit
     description: 16-bit alternate bytes
     value: 1
-  - name: B_0x2
+  - name: 24Bit
     description: 24-bit alternate bytes
     value: 2
-  - name: B_0x3
+  - name: 32Bit
     description: 32-bit alternate bytes
     value: 3
 enum/CCR_ADMODE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: None
     description: no address
     value: 0
-  - name: B_0x1
+  - name: OneLine
     description: address on a single line
     value: 1
-  - name: B_0x2
+  - name: TwoLines
     description: address on two lines
     value: 2
-  - name: B_0x3
+  - name: FourLines
     description: address on four lines
     value: 3
-  - name: B_0x4
+  - name: EightLines
     description: address on eight lines
     value: 4
 enum/CCR_ADSIZE:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: 8Bit
     description: 8-bit address
     value: 0
-  - name: B_0x1
+  - name: 16Bit
     description: 16-bit address
     value: 1
-  - name: B_0x2
+  - name: 24Bit
     description: 24-bit address
     value: 2
-  - name: B_0x3
+  - name: 32Bit
     description: 32-bit address
     value: 3
 enum/CCR_DMODE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: None
     description: no data
     value: 0
-  - name: B_0x1
+  - name: OneLine
     description: data on a single line
     value: 1
-  - name: B_0x2
+  - name: TwoLines
     description: data on two lines
     value: 2
-  - name: B_0x3
+  - name: FourLines
     description: data on four lines
     value: 3
-  - name: B_0x4
+  - name: EightLines
     description: data on eight lines
     value: 4
-  - name: B_0x5
+  - name: SixteenLines
     description: data on 16 lines
     value: 5
 enum/CCR_IMODE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: None
     description: no instruction
     value: 0
-  - name: B_0x1
+  - name: OneLine
     description: instruction on a single line
     value: 1
-  - name: B_0x2
+  - name: TwoLines
     description: instruction on two lines
     value: 2
-  - name: B_0x3
+  - name: FourLines
     description: instruction on four lines
     value: 3
-  - name: B_0x4
+  - name: EightLines
     description: instruction on eight lines
     value: 4
 enum/CCR_ISIZE:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: 8Bit
     description: 8-bit instruction
     value: 0
-  - name: B_0x1
+  - name: 16Bit
     description: 16-bit instruction
     value: 1
-  - name: B_0x2
+  - name: 24Bit
     description: 24-bit instruction
     value: 2
-  - name: B_0x3
+  - name: 32Bit
     description: 32-bit instruction
     value: 3
 enum/CKMODE:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Mode0
     description: CLK must stay low while NCS is high (chip-select released), referred to as clock mode 0.
     value: 0
-  - name: B_0x1
+  - name: Mode3
     description: CLK must stay high while NCS is high (chip-select released), referred to as clock mode 3.
     value: 1
 enum/CSBOUND:
   bit_size: 5
   variants:
-  - name: B_0x0
+  - name: Disabled
     description: NCS boundary disabled
     value: 0
 enum/CSHT:
   bit_size: 6
   variants:
-  - name: B_0x0
+  - name: Cycles1
     description: NCS stays high for at least 1 cycle between external device commands.
     value: 0
-  - name: B_0x1
+  - name: Cycles2
     description: NCS stays high for at least 2 cycles between external device commands.
     value: 1
-  - name: B_0x3F
+  - name: Cycles64
     description: NCS stays high for at least 64 cycles between external device commands.
     value: 63
 enum/CSSEL:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: NCS1
     description: NCS1 active
     value: 0
-  - name: B_0x1
+  - name: NCS2
     description: NCS2 active
     value: 1
 enum/FMODE:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: IndirectWrite
     description: indirect-write mode
     value: 0
-  - name: B_0x1
+  - name: IndirectRead
     description: indirect-read mode
     value: 1
-  - name: B_0x2
+  - name: AutoStatusPolling
     description: automatic status-polling mode
     value: 2
-  - name: B_0x3
+  - name: MemoryMapped
     description: memory-mapped mode
     value: 3
 enum/FTHRES:
   bit_size: 6
   variants:
-  - name: B_0x0
+  - name: NeedOneByte
     description: FTF is set if there are one or more free bytes available to be written to in the FIFO
     value: 0
-  - name: B_0x1
+  - name: NeedTwoBytes
     description: FTF is set if there are two or more free bytes available to be written to in the FIFO
     value: 1
-  - name: B_0x3F
+  - name: NeedSixtyFourBytes
     description: FTF is set if there are 64 free bytes available to be written to in the FIFO
     value: 63
 enum/LM:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Variable
     description: Variable initial latency
     value: 0
-  - name: B_0x1
+  - name: Fixed
     description: Fixed latency
     value: 1
 enum/MASK:
   bit_size: 32
   variants:
-  - name: B_0x0
+  - name: Masked
     description: bit n of the data received in automatic status-polling mode is masked and its value is not considered in the matching logic.
     value: 0
-  - name: B_0x1
+  - name: Unmasked
     description: bit n of the data received in automatic status-polling mode is unmasked and its value is considered in the matching logic.
     value: 1
 enum/MAXTRAN:
   bit_size: 8
   variants:
-  - name: B_0x0
+  - name: Disabled
     description: maximum communication disabled
     value: 0
 enum/MSEL:
   bit_size: 2
   variants:
-  - name: B_0x0
+  - name: IO3_0
     description: data exchanged over IO[3:0]
     value: 0
-  - name: B_0x1
+  - name: IO7_4
     description: data exchanged over IO[7:4]
     value: 1
-  - name: B_0x2
+  - name: IO11_8
     description: data exchanged over IO[11:8]
     value: 2
-  - name: B_0x3
+  - name: IO15_12
     description: data exchanged over IO[15:12]
     value: 3
 enum/MTYP:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: Micron
     description: Micron mode, D0/D1 ordering in DTR 8-data-bit mode. Regular-command protocol in single-, dual-, quad-, and octal-SPI modes.
     value: 0
-  - name: B_0x1
+  - name: Macronix
     description: Macronix mode, D1/D0 ordering in DTR 8-data-bit mode. Regular-command protocol in single-, dual-, quad-, and octal-SPI modes.
     value: 1
-  - name: B_0x2
+  - name: Standard
     description: Standard mode
     value: 2
-  - name: B_0x3
+  - name: MacronixRam
     description: Macronix RAM mode, D1/D0 ordering in DTR 8-data-bit mode. Regular-command protocol in single-, dual-, quad-, and octal-SPI modes with dedicated address mapping.
     value: 3
-  - name: B_0x4
+  - name: HyperBusMemory
     description: HyperBus memory mode, the protocol follows the HyperBus<sup> </sup>specification. 8-data-bit DTR mode must be selected.
     value: 4
-  - name: B_0x5
+  - name: HyperBusRegister
     description: HyperBus register mode, addressing register space. The memory-mapped accesses in this mode must be non-cacheable, or indirect read/write modes must be used.
     value: 5
 enum/PMM:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: MatchAnd
     description: AND-match mode, SMF is set if all the unmasked bits received from the device match the corresponding bits in the match register.
     value: 0
-  - name: B_0x1
+  - name: MatchOr
     description: OR-match mode, SMF is set if any of the unmasked bits received from the device matches its corresponding bit in the match register.
     value: 1
 enum/REFRESH:
   bit_size: 32
   variants:
-  - name: B_0x0
+  - name: Disabled
     description: refresh disabled
     value: 0
 enum/WCCR_ABMODE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: None
     description: no alternate bytes
     value: 0
-  - name: B_0x1
+  - name: OneLine
     description: alternate bytes on a single line
     value: 1
-  - name: B_0x2
+  - name: TwoLines
     description: alternate bytes on two lines
     value: 2
-  - name: B_0x3
+  - name: FourLines
     description: alternate bytes on four lines
     value: 3
-  - name: B_0x4
+  - name: EightLines
     description: alternate bytes on eight lines
     value: 4
-enum/WCCR_ABSIZE:
-  bit_size: 2
-  variants:
-  - name: B_0x0
-    description: 8-bit alternate bytes
-    value: 0
-  - name: B_0x1
-    description: 16-bit alternate bytes
-    value: 1
-  - name: B_0x2
-    description: 24-bit alternate bytes
-    value: 2
-  - name: B_0x3
-    description: 32-bit alternate bytes
-    value: 3
-enum/WCCR_ADMODE:
-  bit_size: 3
-  variants:
-  - name: B_0x0
-    description: no address
-    value: 0
-  - name: B_0x1
-    description: address on a single line
-    value: 1
-  - name: B_0x2
-    description: address on two lines
-    value: 2
-  - name: B_0x3
-    description: address on four lines
-    value: 3
-  - name: B_0x4
-    description: address on eight lines
-    value: 4
-enum/WCCR_ADSIZE:
-  bit_size: 2
-  variants:
-  - name: B_0x0
-    description: 8-bit address
-    value: 0
-  - name: B_0x1
-    description: 16-bit address
-    value: 1
-  - name: B_0x2
-    description: 24-bit address
-    value: 2
-  - name: B_0x3
-    description: 32-bit address
-    value: 3
 enum/WCCR_DMODE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: None
     description: no data
     value: 0
-  - name: B_0x1
+  - name: OneLine
     description: data on a single line
     value: 1
-  - name: B_0x2
+  - name: TwoLines
     description: data on two lines
     value: 2
-  - name: B_0x3
+  - name: FourLines
     description: data on four lines
     value: 3
-  - name: B_0x4
+  - name: EightLines
     description: data on eight lines
     value: 4
-  - name: B_0x5
+  - name: SixteenLines
     description: Data on 16 lines
     value: 5
-  - name: B_0x7
+  - name: Reserved
     description: DATA reserved
     value: 7
-enum/WCCR_IMODE:
-  bit_size: 3
-  variants:
-  - name: B_0x0
-    description: no instruction
-    value: 0
-  - name: B_0x1
-    description: instruction on a single line
-    value: 1
-  - name: B_0x2
-    description: instruction on two lines
-    value: 2
-  - name: B_0x3
-    description: instruction on four lines
-    value: 3
-  - name: B_0x4
-    description: instruction on eight lines
-    value: 4
-enum/WCCR_ISIZE:
-  bit_size: 2
-  variants:
-  - name: B_0x0
-    description: 8-bit instruction
-    value: 0
-  - name: B_0x1
-    description: 16-bit instruction
-    value: 1
-  - name: B_0x2
-    description: 24-bit instruction
-    value: 2
-  - name: B_0x3
-    description: 32-bit instruction
-    value: 3
 enum/WPCCR_ABMODE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: None
     description: no alternate bytes
     value: 0
-  - name: B_0x1
+  - name: OneLine
     description: alternate bytes on a single line
     value: 1
-  - name: B_0x2
+  - name: TwoLines
     description: alternate bytes on two lines
     value: 2
-  - name: B_0x3
+  - name: FourLines
     description: alternate bytes on four lines
     value: 3
-  - name: B_0x4
+  - name: EightLines
     description: alternate bytes on eight lines
     value: 4
-  - name: B_0x5
+  - name: SixteenLines
     description: alternate bytes on 16 lines
     value: 5
-  - name: B_0x7
+  - name: Reserved
     description: DATA reserved
     value: 7
-enum/WPCCR_ABSIZE:
-  bit_size: 2
-  variants:
-  - name: B_0x0
-    description: 8-bit alternate bytes
-    value: 0
-  - name: B_0x1
-    description: 16-bit alternate bytes
-    value: 1
-  - name: B_0x2
-    description: 24-bit alternate bytes
-    value: 2
-  - name: B_0x3
-    description: 32-bit alternate bytes
-    value: 3
-enum/WPCCR_ADMODE:
-  bit_size: 3
-  variants:
-  - name: B_0x0
-    description: no address
-    value: 0
-  - name: B_0x1
-    description: address on a single line
-    value: 1
-  - name: B_0x2
-    description: address on two lines
-    value: 2
-  - name: B_0x3
-    description: address on four lines
-    value: 3
-  - name: B_0x4
-    description: address on eight lines
-    value: 4
-enum/WPCCR_ADSIZE:
-  bit_size: 2
-  variants:
-  - name: B_0x0
-    description: 8-bit address
-    value: 0
-  - name: B_0x1
-    description: 16-bit address
-    value: 1
-  - name: B_0x2
-    description: 24-bit address
-    value: 2
-  - name: B_0x3
-    description: 32-bit address
-    value: 3
 enum/WPCCR_DMODE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: None
     description: no data
     value: 0
-  - name: B_0x1
+  - name: OneLine
     description: data on a single line
     value: 1
-  - name: B_0x2
+  - name: TwoLines
     description: data on two lines
     value: 2
-  - name: B_0x3
+  - name: FourLines
     description: data on four lines
     value: 3
-  - name: B_0x4
+  - name: EightLines
     description: data on eight lines
     value: 4
-enum/WPCCR_IMODE:
-  bit_size: 3
-  variants:
-  - name: B_0x0
-    description: no instruction
-    value: 0
-  - name: B_0x1
-    description: instruction on a single line
-    value: 1
-  - name: B_0x2
-    description: instruction on two lines
-    value: 2
-  - name: B_0x3
-    description: instruction on four lines
-    value: 3
-  - name: B_0x4
-    description: instruction on eight lines
-    value: 4
-enum/WPCCR_ISIZE:
-  bit_size: 2
-  variants:
-  - name: B_0x0
-    description: 8-bit instruction
-    value: 0
-  - name: B_0x1
-    description: 16-bit instruction
-    value: 1
-  - name: B_0x2
-    description: 24-bit instruction
-    value: 2
-  - name: B_0x3
-    description: 32-bit instruction
-    value: 3
 enum/WRAPSIZE:
   bit_size: 3
   variants:
-  - name: B_0x0
+  - name: NotSupported
     description: wrapped reads are not supported by the memory.
     value: 0
-  - name: B_0x2
+  - name: Bytes16
     description: external memory supports wrap size of 16 bytes.
     value: 2
-  - name: B_0x3
+  - name: Bytes32
     description: external memory supports wrap size of 32 bytes.
     value: 3
-  - name: B_0x4
+  - name: Bytes64
     description: external memory supports wrap size of 64 bytes.
     value: 4
-  - name: B_0x5
+  - name: Bytes128
     description: external memory supports wrap size of 128 bytes.
     value: 5
 enum/WZL:
   bit_size: 1
   variants:
-  - name: B_0x0
+  - name: Latency
     description: latency on write accesses
     value: 0
-  - name: B_0x1
+  - name: NoLatency
     description: no latency on write accesses
     value: 1
