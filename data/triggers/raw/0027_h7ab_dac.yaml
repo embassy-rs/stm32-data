@@ -1,7 +1,12 @@
 # DAC channel trigger inputs, STM32H7A3/7B3/7B0.
-# NOT covered by any RM in tmp/rm (RM0433/RM0399 cover H743 and H745 only) —
-# content kept from the original hand rules. Adds LPTIM3_TRGO at index 14 on top
-# of the 13-entry H743 table (RM0433 Table 227).
+# Content kept from the original hand rules (RM0433/RM0399 cover H743/H745;
+# RM0455 is on disk but its extraction has no DAC chapter). Adds LPTIM3_TRGO
+# at index 14 on top of the 13-entry H743 table (RM0433 Table 227).
+# DIE PRUNING: the inherited HRTIM_DAC_TRG1/2 rows (index 9/10) are omitted —
+# H7A3/B0/B3 have no HRTIM (RM0455's table of contents has no HRTIM chapter,
+# stm32h7a3xx.h has no HRTIM1_BASE, cubedb defines no HRTIM Ip), per
+# CONVENTIONS ("only emit sources for peripherals that exist on the chips the
+# rule matches").
 # match: ^STM32H7(A|B).*:DAC.*
 
 - match: '^STM32H7(A|B).*:DAC.*'
@@ -22,10 +27,6 @@
       source: TIM8_TRGO
     - signal: DAC_CHX_TRG8
       source: TIM15_TRGO
-    - signal: DAC_CHX_TRG9
-      source: HRTIM_DAC_TRG1
-    - signal: DAC_CHX_TRG10
-      source: HRTIM_DAC_TRG2
     - signal: DAC_CHX_TRG11
       source: LPTIM1_TRGO
     - signal: DAC_CHX_TRG12

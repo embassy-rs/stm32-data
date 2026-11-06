@@ -211,6 +211,14 @@ fn process_core(
 
     apply_extras(chip_name, group, extras, &mut peripherals);
 
+    // Per-die trimming (data/triggers/CONVENTIONS.md): drop trigger sources
+    // whose originating peripheral is absent from this die, so the generated
+    // JSON never advertises a trigger that cannot fire.
+    let present: HashSet<String> = peripherals.keys().cloned().collect();
+    for p in peripherals.values_mut() {
+        p.triggers.retain(|t| trigger::source_available(&t.source, &present));
+    }
+
     for p in peripherals.values_mut().filter(|p| p.rcc.is_none()) {
         if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(rcc_block.1, &p.name) {
             if let Some(stop_mode_info) = stop_modes.peripheral_stop_mode_info(chip_name, &p.name) {

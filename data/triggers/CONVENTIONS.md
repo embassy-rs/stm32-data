@@ -70,10 +70,16 @@ embassy-stm32's build.rs expects):
   sources in rules covering G431, which has no HRTIM1), emit the full RM
   column anyway and record the restriction in the fragment's header
   comments. Filtering sources against each chip's actual peripheral list
-  is the job of the consumer generator (`stm32-data-gen`) — it is
-  currently NOT implemented there, so downstream data may list sources
-  for peripherals absent on a given chip. Do not encode per-die
-  exceptions into `match` regexes or fragment contents.
+  is the job of the consumer generator (`stm32-data-gen`), which
+  implements it: `trigger::source_origin()` classifies every source
+  (system-level event, exact peripheral name, peripheral-name prefix, or
+  a multi-candidate alternative) and `process_core` retains only the
+  triggers whose originating peripheral is present in the chip's final
+  peripheral map (after `apply_extras`), so the generated JSON never
+  advertises a trigger that cannot fire on that die. Source spellings
+  that are not classified fail `Triggers::new()` instead of silently
+  escaping the filter. Do not encode per-die exceptions into `match`
+  regexes or fragment contents.
 - If a mux input exists in the register field but the RM shows no source
   bonded for the family, omit it (e.g. F410 DAC keeps only its two bonded
   sources).

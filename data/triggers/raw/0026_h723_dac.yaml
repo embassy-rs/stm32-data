@@ -1,8 +1,14 @@
 # DAC channel trigger inputs, STM32H723/733/725/735/730.
-# NOT covered by any RM in tmp/rm (RM0433 covers H742/743/753/750, RM0399 covers
-# H745/755/747/757) — content kept from the original hand rules. Compared to the
-# H743 table (RM0433 Table 227) the H72x/73x DAC drops TIM4/TIM5, adds
-# HRTIM_DAC_TRG1/2 at index 9/10 and TIM23/24_TRGO at 14/15.
+# RM0468 (on disk) chapter 31 gives the trigger table: trg1 tim1_trgo,
+# trg2 tim2_trgo, trg3 tim4_trgo, trg4 tim5_trgo, trg5 tim6_trgo,
+# trg6 tim7_trgo, trg7 tim8_trgo, trg8 tim15_trgo, trg11 lptim1_out,
+# trg12 lptim2_out, trg13 exti9, trg14 tim23_trgo, trg15 tim24_trgo.
+# There is NO trg9/trg10: RM0468 has no HRTIM chapter and stm32h723xx.h /
+# cubedb define no HRTIM1 (HRTIM exists only on H742/743/750/753/745/755 —
+# RM0433 chapter 37 / RM0399), so the inherited HRTIM_DAC_TRG1/2 rows are
+# omitted per CONVENTIONS ("only emit sources for peripherals that exist on
+# the chips the rule matches"). PENDING: the RM's trg4 (tim5_trgo) and
+# trg7 (tim8_trgo) rows are not transcribed here yet.
 # match: ^STM32H7(2|3).*:DAC.*
 
 - match: '^STM32H7(2|3).*:DAC.*'
@@ -19,10 +25,6 @@
       source: TIM7_TRGO
     - signal: DAC_CHX_TRG8
       source: TIM15_TRGO
-    - signal: DAC_CHX_TRG9
-      source: HRTIM_DAC_TRG1
-    - signal: DAC_CHX_TRG10
-      source: HRTIM_DAC_TRG2
     - signal: DAC_CHX_TRG11
       source: LPTIM1_TRGO
     - signal: DAC_CHX_TRG12

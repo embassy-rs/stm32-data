@@ -25,7 +25,7 @@ byte-identical EXTSEL enum, even on dies with no HRTIM and no TIM23/24).
 F1 DAC (RM0008/RM0041/RM0401), F1 ADC (RM0008, matches SVD), F3 DAC all
 groups (RM0364/0365/0366/0313/0316), F0 DAC + F0 ADC (RM0091/RM0360),
 L0 DAC + L0 ADC + L0 COMP→TIM (RM0367/0376/0377/0451), L1 DAC (RM0038),
-L4(5|6) DAC (RM0351 T125), L4(7-A) DFSDM (RM0351), L5 DFSDM + breaks
+L4(5|6) DAC (RM0351 T125; die-pruned per RM0394 T1), L4(7-A) DFSDM (RM0351), L5 DFSDM + breaks
 (RM0438 T209/210), H7 DAC + H7 DFSDM H743/745 groups (RM0399/RM0433),
 G4 ADC + DAC incl. sawtooth muxes + TIM1 COMP inputs (RM0440 — see
 "Pending work": the rest of RM0440's timer interconnect tables are NOT
@@ -63,8 +63,11 @@ header). Re-verify when the missing chapters are added to `tmp/rm/`:
 
 - **H723/733/725/735/730 line** (RM0468 was not in the archive when 0026
   and 0116-0121 were written; the folder has since been added and its ADC
-  chapters are extracted — its ADC rule 0130 IS RM-verified, the older DAC/
-  DFSDM/TIM rules have not been re-checked against it).
+  chapters are extracted — its ADC rule 0130 IS RM-verified, and 0026 (DAC)
+  has since been re-checked against RM0468 ch. 31: the HRTIM rows were
+  dropped because the RM table has no trg9/trg10; trg4/trg7 are still
+  untranscribed, see Known structural anomalies. The DFSDM/TIM rules
+  0116-0121 have not been re-checked against it).
 - **H7A3/B3/B0** (RM0455 folder truncated at ch. 6 — no ADC/DAC/DFSDM/TIM
   chapters on disk): 0027 (DAC), 0110-0115 (DFSDM/TIM), and 0131 (ADC) is
   SVD-derived, see its header.
@@ -89,9 +92,10 @@ in the RM is captured". Confirmed instance:
   OCREF_CLR, TIM15-17 TI1/TI2/ITR/BRK/SYS_BRK/OCREF_CLR. TIM2-5 TI tables
   (T287-290) needed reconciliation against the ch. 11 matrix (Tables 77-80)
   due to a column-collapse artifact in the markdown — see the 0047c-f file
-  headers. Per-die trimming (e.g. HRTIM sources on G431-class dies without
-  HRTIM1) is intentionally not done in the data: per CONVENTIONS.md it
-  belongs in stm32-data-gen, which does not implement it yet.
+  headers. Per-die filtering (e.g. HRTIM sources on G431-class dies
+  without HRTIM1) is intentionally not done in the data: per CONVENTIONS.md
+  it belongs in stm32-data-gen, which now implements it (see "Per-die
+  trimming in generated data" below).
 
 The same blind spot likely exists for other families whose RMs contain
 interconnect matrices that were never transcribed into hand rules
@@ -102,20 +106,111 @@ and extracted in the 2026-09 follow-up. Before extracting more, decide
 per family whether embassy-stm32 actually consumes `TIMX_*` signals
 there (it does for WBA and G4, which is why those rules exist).
 
+## Per-die trimming in generated data
+
+`stm32-data-gen` implements the filtering that CONVENTIONS.md assigns to the
+consumer generator:
+
+- `trigger::source_origin()` classifies every source: system-level events
+  (`PVD`, `CORTEX_M4_LOCKUP`, ...), exact peripheral names (`TIM1_TRGO` ->
+  `TIM1`, `EXTI11_TRG` -> `EXTI`, `RTC_*` -> `RTC`), peripheral-name
+  prefixes for sources that omit the instance number (`HRTIM*` -> `HRTIM1`,
+  `TAMP*`, `GPDMA*`, `LPTIMOUT` -> any `LPTIM*`), and multi-candidate
+  sources (`COMP1_OUT_OR_COMP2_OUT`, `USB_SOF_SYNC` -> `USB`/`USB_OTG_FS`/
+  `USB_OTG_HS`). An unrecognized spelling makes `Triggers::new()` panic, so
+  a new fragment with a new source must be classified explicitly instead of
+  silently escaping the filter.
+- In `process_core`, after `apply_extras`, each peripheral's `triggers`
+  list is retained against the chip's final peripheral map — the emitted
+  JSON can therefore never advertise a trigger whose originating
+  peripheral is absent from the same JSON.
+
+Validation of the switch-on, against a full pre-switch dump of all
+`(chip, peripheral, signal, source)` tuples: the regeneration removed
+exactly **14,385** tuples across **498 chip variants** and added none; an
+exhaustive re-check found 0 over-trims (removed although the peripheral
+exists), 0 under-trims (kept although it is absent) and 0 dropped
+system-level sources; every hardcoded `triggers::X` reference in
+embassy-stm32's example directories still resolves on its target chip;
+`cargo test -p stm32-data-gen` passes. Largest groups, each cross-checked
+against the RM product tables cited above: G4 12,226 (HRTIM outside
+G474/G484, TIM20/TIM5/ADC4-5/COMP5-7 outside the dies RM0440 T2 grants
+them), L4 1,002 (DFSDM1 only on L45x/46x, and no TIM4/TIM8 anywhere in
+L41-46, per RM0394 T1), F1 288 (TIM1/TIM8 absent on F101, TIM4 absent on
+die sizes that lack it, per RM0008), then H7 286, G0 153, L0 149,
+U5/U3/U0 99, WBA 72, F0 44, H5 40, F3 26.
+
+A companion audit found **19 rows that are dead on every chip their rule
+matches** (CONVENTIONS rule 1) and removed them from six fragments;
+`trigger-rules-build` plus a full regeneration then produced byte-identical
+output (they had already been trimmed at generation): `TIM8_TRGO` in 0006
+(F101 — the CONVENTIONS example), TIM4/5/7/8 in 0013 (L45x/46x, RM0394 T1),
+TIM3/TIM6 in 0024a's `L0(31|41)` rule (RM0377 T2: Category 2 = L031/L041
+has neither timer), `HRTIM_DAC_TRG1/2` in 0026 (RM0468 ch. 31 has no
+trg9/trg10) and in 0027 (RM0455 has no HRTIM chapter), and TIM4/TIM8 in
+0081a's `L4(1-6)` rule (RM0394 T1).
+
 ## Known structural anomalies
 
 - `0052` (`^STM32WBA6[245].*:TIM1`) effectively covers only WBA624/644
   (first-match-wins with `0051`); TIM4_TRGO is unreachable on WBA622/625.
-- F101/F103 DAC rules carry TIM8/TIM5 sources because RM0008's table lists
-  them, although F101 has no TIM8/TIM5 peripherals.
-- Rule `0035` (G0 ADC) also matches G0x0 chips, but G0x0 has no TIM2 —
-  TIM2_TRGO@ADC_EXT_TRG2 should be excluded for G030/G050/G070 (needs an
-  `^STM32G0[357]0.*`-style split rule; deferred).
+- F101/F103 DAC rules inherited TIM8/TIM5 rows from RM0008's table. Split
+  by availability in the trim pass: F101 has no TIM8 at any density (RM0008
+  ch. 14 grants TIM8 only to high/XL-density F103; stm32f101xb.h/
+  stm32f101xe.h and cubedb agree), so 0006's `TIM8_TRGO` row was removed
+  outright; high-density F101 does have TIM5 (stm32f101xe.h), so 0006's
+  `TIM5_TRGO` row stays and survives trimming on the 15 F101 dies that have
+  a DAC1. 0007 (F103) is unchanged: only high-density F103 has DAC1 and
+  those dies have both TIM5 and TIM8.
+- Rule `0035` (G0 ADC) also matches G0x0 chips, but G0x0 has no TIM2
+  (stm32g030xx.h and cubedb). No split rule is needed anymore: per-die
+  trimming drops TIM2_TRGO@ADC_EXT_TRG2 for G030/G050/G070 at generation,
+  while the row stays in the data per the no-trimming-in-data rule.
 - ADC common blocks (`ADC123_COMMON`, `ADC12_COMMON`, `ADC1_COMMON`, ...)
   no longer receive triggers: all loose `:ADC.*` peripheral patterns were
   narrowed to `:ADC(\d+)?` (2026-09 follow-up).
 - cubedb omits COMP2 on WBA62/65 (the SVDs and RM0515 have it); the COMP2
-  rows are kept.
+  rows are kept in the data. Generation now trims `COMP2_OUT` on exactly
+  the four variants whose cubedb XMLs lack the Ip (WBA62CG/CI, WBA65CG/CI;
+  the other WBA62/65 variants have COMP2 and keep their rows), so the JSON
+  stays self-consistent — a cubedb fix upstream restores them with no rule
+  change.
+- **DFSDM-break rules: the trailing `.*` in the `:TIM1.*` match patterns
+  swallows `:TIM15/16/17` keys.** `new_regex_map` wraps every pattern in
+  `^...$`, yet `^STM32L5.*:TIM1.*$` still full-matches the lookup key
+  `STM32L5xx:TIM16`; with first-match-wins, all 14 `:TIM16.*`/`:TIM17.*`
+  DFSDM-break blocks plus `STM32L4(1|2|3|4|5|6).*:TIM15.*` (15 blocks in
+  total) serve no `(chip, peripheral)` pair at all — those TIM15/16/17
+  instead carry their family's TIM1 block (BREAK0+BREAK1). Where the dead
+  block is RM-verified the output is wrong: RM0438 T210 routes
+  break[0]->TIM1/TIM15, break[1]->TIM1 break2 + TIM16, break[2]->TIM8/TIM17,
+  so L5:TIM16 should carry BREAK1 only and L5:TIM17 BREAK2 (both currently
+  carry BREAK0+1, and TIM17 lacks BREAK2). Most families happen to order
+  their `:TIM15.*` block before `:TIM1.*`; every TIM16/TIM17 block comes
+  after it. L4(7-A), F412, F7(67) and F4(13|23) have no dedicated
+  TIM15/16/17 DFSDM blocks and live on the same spill (their break tables
+  are unverified — RM0394's DFSDM chapter is absent from `tmp/rm`, and
+  L4(1-6)'s own dead TIM15 block says BREAK2 where RM0438 routes break[0]
+  to TIM15). Fix = drop the trailing `.*` after `:TIM1` in the 12 TIM1
+  blocks — deliberately deferred out of the per-die-trimming change because
+  it *adds* tuples and deserves its own diff review. (`STM32F1.*:DAC.*`
+  also never matches — harmless: 0002/0006/0007/0008/0009 cover every F1
+  die with a DAC.)
+- **Per-package cubedb gaps surfaced by trimming.** Some cubedb package
+  XMLs omit peripherals that the family header defines for every package,
+  so generation trims exactly those sources on exactly those variants:
+  `STM32H7R3R8Vx.xml` lacks TIM3/TIM4/TIM16 (and LPTIM1) while
+  `STM32H7R3L8Hx.xml` has them and `stm32h7r3xx.h` defines the `*_BASE`
+  addresses (same pattern on H7S3R8/V8 and the H7R7/H7S7 A8/I8/Z8 variants
+  for LPTIM1/TIM4); `STM32H7A3R(G-I)Tx.xml`, `STM32H7B0RBTx.xml` and
+  `STM32H7B3RITx.xml` lack COMP2 although `stm32h7a3xx.h` defines
+  `COMP2_BASE` (their sibling packages of the same die have it). The JSON
+  stays self-consistent; fixing cubedb upstream restores the trigger rows
+  with no rule change.
+- **`0026` (H723-line DAC) is missing RM0468 ch. 31's trg4 (`tim5_trgo`)
+  and trg7 (`tim8_trgo`) rows** — the fragment predates RM0468 landing in
+  `tmp/rm/` (its old header claimed no RM existed on disk). A completeness
+  gap, not a trimming issue: pending transcription.
 
 ## Refresh checklist when a missing RM arrives
 
@@ -125,3 +220,7 @@ there (it does for WBA and G4, which is why those rules exist).
 3. `cargo run --release --bin trigger-rules-build`, then a full
    `cargo run --release --bin stm32-data-gen` (its validation catches
    duplicate/ill-formed entries).
+4. Dump the `(chip, peripheral, signal, source)` tuples from
+   `build/data/chips/*.json` before and after, and diff them: per-die
+   trimming may only REMOVE tuples, and only where the source's
+   peripheral is absent from that chip's JSON.

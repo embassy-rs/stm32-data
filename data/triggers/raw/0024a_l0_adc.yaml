@@ -14,6 +14,13 @@
 #     TRG4 "TIM22_TRGO, TIM21_TRGO (1)" (combined cell -> two entries;
 #     footnote (1): TIM21_TRGO available only in category 1 devices, which
 #     the L0x1 parts are), TRG5 TIM2_CH3, TRG6 TIM3_TRGO, TRG7 EXTI11
+#     NOTE: TRG0/TRG6 do not apply to L031/L041 — RM0377 Table 2 (features
+#     per category) gives Category 2 (= L031/L041) no TIM6 and no TIM3
+#     (only Category 3/5 have TIM6, only Category 5 has TIM3), matching
+#     stm32l031xx.h/stm32l041xx.h and cubedb (TIM2/TIM21/TIM22 only). The
+#     stm32l0x1.svd TIM3/TIM6 peripherals are a family-level overlist (same
+#     class as the known L0 TIM15 SVD error), so those two rows are omitted
+#     for the L0(31|41) rule below per CONVENTIONS.
 #   RM0376 (L0x2: STM32L051/052/053/062/063) Table 60 and
 #   RM0367 (L0x3: STM32L071/072/073/081/082/083) Table 60 "External triggers":
 #     TRG0 TIM6_TRGO, TRG1 TIM21_CH2, TRG2 TIM2_TRGO, TRG3 TIM2_CH4,
@@ -39,8 +46,6 @@
 
 - match: '^STM32L0(31|41).*:ADC(\d+)?'
   triggers:
-    - signal: ADC_EXT_TRG0
-      source: TIM6_TRGO
     - signal: ADC_EXT_TRG1
       source: TIM21_CC2
     - signal: ADC_EXT_TRG2
@@ -53,8 +58,6 @@
       source: TIM21_TRGO
     - signal: ADC_EXT_TRG5
       source: TIM2_CC3
-    - signal: ADC_EXT_TRG6
-      source: TIM3_TRGO
     - signal: ADC_EXT_TRG7
       source: EXTI11_TRG
 

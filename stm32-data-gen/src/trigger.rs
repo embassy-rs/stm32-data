@@ -52,6 +52,16 @@ impl Triggers {
                         rule.match_, trigger.source
                     );
                 }
+
+                // Every source must be classified for per-die trimming, so a
+                // new fragment with a new source spelling fails loudly here
+                // instead of silently never being trimmed.
+                if matches!(source_origin(&trigger.source), SourceOrigin::Unknown) {
+                    panic!(
+                        "trigger: unclassified source {} in rule {} — add it to source_origin() in stm32-data-gen/src/trigger.rs",
+                        trigger.source, rule.match_
+                    );
+                }
             }
         }
 
@@ -79,6 +89,109 @@ impl Triggers {
     }
 }
 
+/// Where a trigger `source` originates from, for per-die trimming
+/// (see `data/triggers/CONVENTIONS.md`: the rules keep the full RM column
+/// for the whole line; the generator drops sources whose originating
+/// peripheral is absent from the chip being generated).
+#[derive(Debug, PartialEq, Eq)]
+pub enum SourceOrigin<'a> {
+    /// Not tied to a chip peripheral instance (system-level event such as
+    /// `PVD` or `CORTEX_M4_LOCKUP`): never trimmed.
+    System,
+    /// Requires a peripheral whose name equals this (e.g. `TIM1_TRGO` -> `TIM1`).
+    Exact(&'a str),
+    /// Requires a peripheral whose name starts with this prefix (e.g.
+    /// `HRTIM_ADC_TRG1` -> `HRTIM1`, `GPDMA_CH0_TC` -> `GPDMA1`).
+    Prefix(&'a str),
+    /// Requires any one of these peripherals (`COMP1_OUT_OR_COMP2_OUT`).
+    AnyOf(&'a [&'a str]),
+    /// Not recognized: kept conservatively, but `Triggers::new` rejects
+    /// sources classified this way so every source in `rules.yaml` is
+    /// classified explicitly.
+    Unknown,
+}
+
+/// Classify a trigger `source` for per-die trimming.
+///
+/// `head` is the token before the first `_` (or the whole source); the
+/// numbered families (`TIM1_TRGO`, `LPTIM2_IN1`, `COMP3_OUT`,
+/// `DFSDM1_BREAK0`, `ADC4_AWD1`) map to an exact peripheral name, families
+/// whose sources omit the instance number (`HRTIM*`, `TAMP*`, `GPDMA*`,
+/// `LPTIMOUT`) map to a name prefix, and system-level events are never
+/// tied to a peripheral.
+pub fn source_origin(source: &str) -> SourceOrigin<'_> {
+    // System-level events: not produced by any peripheral instance.
+    const SYSTEM: &[&str] = &[
+        "PVD",
+        "LSI",
+        "LSE",
+        "MCO",
+        "CSS",
+        "HSE32_HSECSS",
+        "HSE_DIV32",
+        "HSI16_DIV256",
+        "SRAM_PARITY_ERROR",
+        "FLASH_ECC_ERROR",
+        "CORTEX_M4_LOCKUP",
+        "CORTEX_M33_LOCKUP",
+    ];
+    if SYSTEM.contains(&source) {
+        return SourceOrigin::System;
+    }
+
+    // Sources naming several alternative originating peripherals.
+    match source {
+        "COMP1_OUT_OR_COMP2_OUT" => return SourceOrigin::AnyOf(&["COMP1", "COMP2"]),
+        "USB_SOF_SYNC" => return SourceOrigin::AnyOf(&["USB", "USB_OTG_FS", "USB_OTG_HS"]),
+        "LPTIMOUT" => return SourceOrigin::Prefix("LPTIM"),
+        _ => {}
+    }
+
+    let head = source.split('_').next().unwrap_or(source);
+
+    // Families whose sources name the instance: `TIM1_TRGO` -> `TIM1`.
+    for family in ["TIM", "LPTIM", "COMP", "DFSDM", "ADC"] {
+        if let Some(rest) = head.strip_prefix(family) {
+            if !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit()) {
+                return SourceOrigin::Exact(head);
+            }
+        }
+    }
+
+    // Families whose sources omit the instance number.
+    if head.starts_with("HRTIM") {
+        return SourceOrigin::Prefix("HRTIM");
+    }
+    if head.starts_with("TAMP") {
+        return SourceOrigin::Prefix("TAMP");
+    }
+    if head.starts_with("GPDMA") {
+        return SourceOrigin::Prefix("GPDMA");
+    }
+    // EXTI lines are produced by the single EXTI block, not `EXTI11` etc.
+    if head.starts_with("EXTI") {
+        return SourceOrigin::Exact("EXTI");
+    }
+    if head == "RTC" {
+        return SourceOrigin::Exact("RTC");
+    }
+
+    SourceOrigin::Unknown
+}
+
+/// Per-die trimming: whether a trigger `source` is usable on a die whose
+/// peripheral set is `peripherals` (the names in the generated chip JSON).
+///
+/// System-level and unrecognized sources are kept; see `source_origin`.
+pub fn source_available(source: &str, peripherals: &HashSet<String>) -> bool {
+    match source_origin(source) {
+        SourceOrigin::System | SourceOrigin::Unknown => true,
+        SourceOrigin::Exact(name) => peripherals.contains(name),
+        SourceOrigin::Prefix(prefix) => peripherals.iter().any(|p| p.starts_with(prefix)),
+        SourceOrigin::AnyOf(names) => names.iter().any(|n| peripherals.contains(*n)),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -99,5 +212,55 @@ mod tests {
                 .iter()
                 .any(|t| t.signal == "ADC_EXT_TRG0" && t.source == "TIM1_TRGO2")
         );
+    }
+
+    #[test]
+    fn test_source_origin_classification() {
+        assert_eq!(source_origin("TIM1_TRGO"), SourceOrigin::Exact("TIM1"));
+        assert_eq!(source_origin("TIM16_OC1"), SourceOrigin::Exact("TIM16"));
+        assert_eq!(source_origin("TIM24_TRGO"), SourceOrigin::Exact("TIM24"));
+        assert_eq!(source_origin("LPTIM2_IN1"), SourceOrigin::Exact("LPTIM2"));
+        assert_eq!(source_origin("COMP7_OUT"), SourceOrigin::Exact("COMP7"));
+        assert_eq!(source_origin("DFSDM2_BREAK2"), SourceOrigin::Exact("DFSDM2"));
+        assert_eq!(source_origin("ADC4_AWD1"), SourceOrigin::Exact("ADC4"));
+        assert_eq!(source_origin("EXTI11_TRG"), SourceOrigin::Exact("EXTI"));
+        assert_eq!(source_origin("RTC_WAKEUP"), SourceOrigin::Exact("RTC"));
+        assert_eq!(source_origin("LPTIMOUT"), SourceOrigin::Prefix("LPTIM"));
+        assert_eq!(source_origin("HRTIM_ADC_TRG1"), SourceOrigin::Prefix("HRTIM"));
+        assert_eq!(source_origin("HRTIM1_ADCTRG1"), SourceOrigin::Prefix("HRTIM"));
+        assert_eq!(source_origin("TAMP_TRG1"), SourceOrigin::Prefix("TAMP"));
+        assert_eq!(source_origin("GPDMA_CH0_TC"), SourceOrigin::Prefix("GPDMA"));
+        assert_eq!(
+            source_origin("COMP1_OUT_OR_COMP2_OUT"),
+            SourceOrigin::AnyOf(&["COMP1", "COMP2"])
+        );
+        assert_eq!(
+            source_origin("USB_SOF_SYNC"),
+            SourceOrigin::AnyOf(&["USB", "USB_OTG_FS", "USB_OTG_HS"])
+        );
+        assert_eq!(source_origin("PVD"), SourceOrigin::System);
+        assert_eq!(source_origin("CORTEX_M4_LOCKUP"), SourceOrigin::System);
+        assert_eq!(source_origin("TIMX_BOGUS"), SourceOrigin::Unknown);
+    }
+
+    #[test]
+    fn test_source_available_trims_missing_peripherals() {
+        let peris: HashSet<String> = ["TIM1", "ADC1", "COMP1", "HRTIM1", "LPTIM1", "EXTI", "RTC"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+
+        assert!(source_available("TIM1_TRGO", &peris));
+        assert!(!source_available("TIM8_TRGO", &peris));
+        assert!(source_available("HRTIM_ADC_TRG1", &peris)); // prefix matches HRTIM1
+        assert!(source_available("COMP1_OUT", &peris));
+        assert!(!source_available("COMP2_OUT", &peris));
+        assert!(source_available("COMP1_OUT_OR_COMP2_OUT", &peris)); // either candidate
+        assert!(source_available("EXTI11_TRG", &peris));
+        assert!(source_available("PVD", &peris)); // system: always available
+
+        let empty = HashSet::new();
+        assert!(!source_available("TIM1_TRGO", &empty));
+        assert!(source_available("CORTEX_M33_LOCKUP", &empty));
     }
 }
