@@ -422,9 +422,9 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32WBA.*:RCC:.*", ("rcc", "wba", "RCC")),
     ("STM32WB.*:RCC:.*", ("rcc", "wb", "RCC")),
     ("STM32WL5.*:RCC:.*", ("rcc", "wl5", "RCC")),
-    // STM32WL4x chips have no CMSIS header in sources/headers yet, so they are skipped
-    // right after this lookup; map the RCC to the closest existing block so the lookup
-    // does not panic.
+    // STM32WL4x chips are in NOPELIST (no CMSIS header in sources/headers yet), so
+    // they are filtered out before parsing; this entry just keeps the lookup total.
+    // Map the RCC to the closest existing block so the lookup does not panic.
     ("STM32WL4.*:RCC:.*", ("rcc", "wl5", "RCC")),
     ("STM32WLE.*:RCC:.*", ("rcc", "wle", "RCC")),
     ("STM32N6.*:RCC:.*", ("rcc", "n6", "RCC")),
