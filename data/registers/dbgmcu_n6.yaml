@@ -77,7 +77,6 @@ fieldset/AHB5FZ1:
     description: NPU stop in debug mode.
     bit_offset: 16
     bit_size: 1
-    enum: NPU_DBG_FREEZE
 fieldset/APB1HFZ1:
   description: DBGMCU APB1H peripheral freeze register.
   fields:
@@ -248,12 +247,10 @@ fieldset/CR:
     description: Debug clock enable through software.
     bit_offset: 20
     bit_size: 1
-    enum: DBGCLKEN
   - name: TRACECLKEN
     description: TPIU export clock enable through software.
     bit_offset: 21
     bit_size: 1
-    enum: TRACECLKEN
   - name: DBTRGOEN
     description: DBTRGIO connection control.
     bit_offset: 28
@@ -263,7 +260,6 @@ fieldset/CR:
     description: TSGEN halt enable.
     bit_offset: 31
     bit_size: 1
-    enum: HLT_TSGEN_EN
 fieldset/DBG_AUTH_ACK:
   description: DBGMCU message read acknowledge authentication register.
   fields:
@@ -325,36 +321,17 @@ fieldset/SR:
     description: Access point 1 enable.
     bit_offset: 17
     bit_size: 1
-    enum: AP1_ENABLE
 enum/AP0_ENABLE:
   bit_size: 1
   variants:
   - name: Enabled
     description: Always enable.
     value: 1
-enum/AP1_ENABLE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: AP disabled (debug access locked).
-    value: 0
-  - name: Enabled
-    description: AP enabled (debug access open).
-    value: 1
 enum/AP_PRESENT:
   bit_size: 1
   variants:
   - name: Present
     description: AP present.
-    value: 1
-enum/DBGCLKEN:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Debug clock is off.
-    value: 0
-  - name: Enabled
-    description: Debug clock is on.
     value: 1
 enum/DBTRGOEN:
   bit_size: 1
@@ -380,15 +357,6 @@ enum/DEV_ID:
   - name: STM32N6xx
     description: STM32N6xx.
     value: 1158
-enum/HLT_TSGEN_EN:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: TSGEN keeps on counting when processor is in halt.
-    value: 0
-  - name: Enabled
-    description: TSGEN stops counting when processor is in halt.
-    value: 1
 enum/HOST_ACK:
   bit_size: 1
   variants:
@@ -397,22 +365,4 @@ enum/HOST_ACK:
     value: 0
   - name: DebuggerWritten
     description: Debugger has written DBG_AUTH_HOST.
-    value: 1
-enum/NPU_DBG_FREEZE:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: Normal operation. The NPU continues to operate while Cortex-M55 is in debug mode.
-    value: 0
-  - name: Enabled
-    description: Stop in debug. NPU is suspended while Cortex-M55 is in debug mode.
-    value: 1
-enum/TRACECLKEN:
-  bit_size: 1
-  variants:
-  - name: Disabled
-    description: TPIU clock is off.
-    value: 0
-  - name: Enabled
-    description: TPIU clock is on.
     value: 1
