@@ -616,6 +616,7 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
         "AFIO",
         "BKP",
         "USBRAM",
+        "RAMCFG",
         "VREFINTCAL",
         "TSCAL",
         "UID",
@@ -642,6 +643,12 @@ fn create_peripheral_map(chip_name: &str, group: &ChipGroup, defines: &header::D
     for pname in GHOST_PERIS {
         let normalized_pname = normalize_peri_name(pname);
         if normalized_pname == "DESIG" && !chip_name.starts_with("STM32WBA") {
+            continue;
+        }
+        // The STM32C5 xml files only list RAMCFG_SRAM1/RAMCFG_SRAM2 (and not RAMCFG at all on most
+        // lines), but the SVDs and headers define the RAMCFG block on every C5 chip. Other families
+        // already get RAMCFG from their xml files, so only ghost it for C5.
+        if normalized_pname == "RAMCFG" && !chip_name.starts_with("STM32C5") {
             continue;
         }
         // GTZC_MPCBB5 was added for the STM32H5E/F line. Some high-end U5 headers
