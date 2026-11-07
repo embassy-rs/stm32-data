@@ -55,10 +55,9 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32H7[RS].*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
     ("STM32N6.*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
     ("STM32U5.*:RAMCFG:.*", ("ramcfg", "u5", "RAMCFG")),
-    // C5: the SRAM2 write protection registers (WPR1..4) scale with the SRAM2 size (32/64/128 KB)
-    ("STM32C5(3|42).*:RAMCFG:.*", ("ramcfg", "c5_a", "RAMCFG")),
-    ("STM32C5(5|62).*:RAMCFG:.*", ("ramcfg", "c5_b", "RAMCFG")),
-    ("STM32C5(9|A3).*:RAMCFG:.*", ("ramcfg", "c5_c", "RAMCFG")),
+    // C5: superset of all lines. The SRAM2 write protection registers (WPR1..4) scale with the
+    // SRAM2 size (32/64/128 KB), so smaller parts only implement the first 1 or 2.
+    ("STM32C5.*:RAMCFG:.*", ("ramcfg", "c5", "RAMCFG")),
     ("STM32U3.*:RAMCFG:.*", ("ramcfg", "u5", "RAMCFG")),
     ("STM32WBA.*:RAMCFG:.*", ("ramcfg", "wba", "RAMCFG")),
     (".*:USART:sci2_v1_1", ("usart", "v1", "USART")),
