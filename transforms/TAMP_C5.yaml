@@ -1,0 +1,56 @@
+transforms:
+  - !RenameRegisters
+    block: .*
+    from: ^TAMP_(.+)$
+    to: $1
+  - !Rename
+    from: ^TAMP_(.+)$
+    to: $1
+    type: Fieldset
+
+  - !DeleteFieldsets
+    from: ^BKP\d+R$
+
+  - !MakeRegisterArray
+    blocks: ^TAMP$
+    from: ^BKP\d+R$
+    to: BKPR
+
+  - !MakeFieldArray
+    fieldsets: CR1
+    from: ^TAMP\dE$
+    to: TAMPE
+
+  - !RenameFields
+    fieldset: CR2
+    from: TAMP(\d)NOER
+    to: TAMP${1}POM
+
+  - !MakeFieldArray
+    fieldsets: CR2
+    from: ^TAMP\d(POM|MSK|TRG)$
+    to: TAMP${1}
+
+  - !MakeFieldArray
+    fieldsets: IER
+    from: ^TAMP\dIE$
+    to: TAMPIE
+
+  - !MakeFieldArray
+    fieldsets: MISR
+    from: ^TAMP\dMF$
+    to: TAMPMF
+
+  - !MakeFieldArray
+    fieldsets: SCR
+    from: ^CTAMP\dF$
+    to: CTAMPF
+
+  - !MakeFieldArray
+    fieldsets: SR
+    from: ^TAMP\dF$
+    to: TAMPF
+
+  # Drop placeholder enums (SVD uses unhelpful B_0x variant names).
+  - !DeleteEnums
+    from: .*

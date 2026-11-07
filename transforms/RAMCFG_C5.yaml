@@ -1,0 +1,19 @@
+transforms:
+  - !RenameRegisters
+    block: .*
+    from: ^RAMCFG_(.+)$
+    to: $1
+  - !Rename
+    from: ^RAMCFG_(.+)$
+    to: $1
+    type: Fieldset
+
+  # Convert PxxWP fields to arrays in the write protection registers
+  - !MakeFieldArray
+    fieldsets: ^M\dWPR\d$
+    from: ^P\d+WP$
+    to: PWP
+
+  # Drop placeholder enums (SVD uses unhelpful B_0x variant names).
+  - !DeleteEnums
+    from: .*
