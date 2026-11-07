@@ -1,18 +1,18 @@
 block/OPAMP:
   description: OPAMP register block.
   items:
-  - name: OPAMP_CSR
+  - name: CSR
     description: OPAMP control/status register.
     byte_offset: 0
-    fieldset: OPAMP_CSR
-  - name: OPAMP_TCMR
+    fieldset: CSR
+  - name: TCMR
     description: OPAMP timer-controlled mode register.
     byte_offset: 4
-    fieldset: OPAMP_TCMR
-fieldset/OPAMP_CSR:
+    fieldset: TCMR
+fieldset/CSR:
   description: OPAMP control/status register.
   fields:
-  - name: OPAEN
+  - name: OPAMPEN
     description: Operational amplifier enable.
     bit_offset: 0
     bit_size: 1
@@ -20,7 +20,6 @@ fieldset/OPAMP_CSR:
     description: Force internal reference on noninverting input.
     bit_offset: 1
     bit_size: 1
-    enum: FORCE_VP
   - name: VP_SEL
     description: Noninverting input primary selection.
     bit_offset: 2
@@ -39,12 +38,10 @@ fieldset/OPAMP_CSR:
     description: Operational amplifier high-speed mode.
     bit_offset: 7
     bit_size: 1
-    enum: OPAHSM
   - name: OPAINTOEN
     description: Operational amplifier internal output enable.
     bit_offset: 8
     bit_size: 1
-    enum: OPAINTOEN
   - name: CALON
     description: Calibration mode enable.
     bit_offset: 11
@@ -79,8 +76,7 @@ fieldset/OPAMP_CSR:
     description: OPAMP_CSR register lock.
     bit_offset: 31
     bit_size: 1
-    enum: OPAMP_CSR_LOCK
-fieldset/OPAMP_TCMR:
+fieldset/TCMR:
   description: OPAMP timer-controlled mode register.
   fields:
   - name: VMS_SEL
@@ -128,42 +124,6 @@ enum/CALSEL:
   - name: Percent90
     description: '0.'
     value: 3
-enum/FORCE_VP:
-  bit_size: 1
-  variants:
-  - name: DoNotForce
-    description: Do not force (normal operation).
-    value: 0
-  - name: Force
-    description: Force.
-    value: 1
-enum/OPAHSM:
-  bit_size: 1
-  variants:
-  - name: NormalSpeed
-    description: Normal speed.
-    value: 0
-  - name: HighSpeed
-    description: High speed.
-    value: 1
-enum/OPAINTOEN:
-  bit_size: 1
-  variants:
-  - name: OPAMP_VOUT
-    description: OPAMP_VOUT pin.
-    value: 0
-  - name: ADC_COMP
-    description: ADC/COMP channel.
-    value: 1
-enum/OPAMP_CSR_LOCK:
-  bit_size: 1
-  variants:
-  - name: ReadWrite
-    description: OPAMP_CSR is read-write.
-    value: 0
-  - name: ReadOnly
-    description: OPAMP_CSR is read-only.
-    value: 1
 enum/OPAMP_TCMR_LOCK:
   bit_size: 1
   variants:
@@ -350,7 +310,7 @@ enum/VM_SEL:
   - name: PGA
     description: Internal resistor divider middle point.
     value: 2
-  - name: Follower
+  - name: Output
     description: Operational amplifier output.
     value: 3
 enum/VPS_SEL:
