@@ -692,6 +692,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     ("STM32G4.*:DBGMCU:.*", ("dbgmcu", "g4", "DBGMCU")),
     ("STM32H5[EF].*:DBGMCU:.*", ("dbgmcu", "h5_ef", "DBGMCU")),
     ("STM32H5.*:DBGMCU:.*", ("dbgmcu", "h5", "DBGMCU")),
+    ("STM32H7(45|47|55|57).*:DBGMCU:.*", ("dbgmcu", "h7rm0399", "DBGMCU")),
     ("STM32H7.*:DBGMCU:.*", ("dbgmcu", "h7", "DBGMCU")),
     ("STM32L0.*:DBGMCU:.*", ("dbgmcu", "l0", "DBGMCU")),
     ("STM32L1.*:DBGMCU:.*", ("dbgmcu", "l1", "DBGMCU")),
