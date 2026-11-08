@@ -71,6 +71,8 @@ header). Re-verify when the missing chapters are added to `tmp/rm/`:
 - **H7A3/B3/B0** (RM0455 folder truncated at ch. 6 — no ADC/DAC/DFSDM/TIM
   chapters on disk): 0027 (DAC), 0110-0115 (DFSDM/TIM), and 0131 (ADC) is
   SVD-derived, see its header.
+- **U5 GPDMA1/LPDMA1** (0133, 0134): RM0456 Rev 7, Tables 139 and 150.
+  Open: whether `LPTIM4_OUT` (both tables) is the ADC4 table's `LPTIM4_TRGO`.
 - **MP1** (out of scope by decision): 0104-0109 kept from original hand
   rules, unverified.
 
