@@ -89,6 +89,7 @@ const PERIMAP: &[(&str, (&str, &str, &str))] = &[
     (".*:LPUART:sci3_v3_3", ("usart", "v4", "LPUART")),
     ("STM32C5.*:LPUART:.*", ("usart", "v4", "LPUART")),
     ("STM32G5.*:LPUART:.*", ("usart", "v4", "LPUART")),
+    ("STM32G5.*:PLAY1:.*", ("play", "v1", "PLAY")),
     ("STM32C5.*:RNG:.*", ("rng", "v4", "RNG")), // TODO: STM32H543/553xx also use v4, I think
     ("STM32H5[EF].*:RNG:.*", ("rng", "v3_h5_ef", "RNG")),
     ("STM32[HU]5.*:RNG:.*", ("rng", "v3", "RNG")),

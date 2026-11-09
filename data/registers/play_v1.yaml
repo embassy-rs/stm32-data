@@ -1,0 +1,375 @@
+block/PLAY:
+  description: PLAY register block.
+  items:
+  - name: CFGCR
+    description: PLAY configuration control register.
+    byte_offset: 0
+    fieldset: CFGCR
+  - name: SECCFGR
+    description: PLAY security attributes configuration register.
+    byte_offset: 4
+    fieldset: SECCFGR
+  - name: PRIVCFGR
+    description: PLAY privilege attributes configuration register.
+    byte_offset: 8
+    fieldset: PRIVCFGR
+  - name: FILTCFG
+    description: PLAY filter 0 configuration register.
+    byte_offset: 32
+    fieldset: FILTCFG
+    array:
+      len: 16
+      stride: 4
+  - name: LECFG1
+    description: PLAY logic element 0 configuration register 1.
+    byte_offset: 96
+    fieldset: LECFG1
+    array:
+      len: 16
+      stride: 4
+  - name: LECFG2
+    description: PLAY logic element x configuration register 2.
+    byte_offset: 160
+    fieldset: LECFG2
+    array:
+      len: 16
+      stride: 4
+  - name: OUTCFG
+    description: PLAY output 0 configuration register.
+    byte_offset: 256
+    fieldset: OUTCFG
+    array:
+      len: 16
+      stride: 4
+  - name: SWIN
+    description: PLAY software input status register.
+    byte_offset: 512
+    fieldset: SWIN
+  - name: SWINSET
+    description: PLAY software input set register.
+    byte_offset: 516
+    access: Write
+    fieldset: SWINSET
+  - name: SWINCLR
+    description: PLAY software input clear register.
+    byte_offset: 520
+    access: Write
+    fieldset: SWINCLR
+  - name: OSR
+    description: PLAY output status register.
+    byte_offset: 528
+    access: Read
+    fieldset: OSR
+  - name: FLSTAT
+    description: PLAY flag status register.
+    byte_offset: 544
+    access: Read
+    fieldset: FLSTAT
+  - name: FLSET
+    description: PLAY flag set register.
+    byte_offset: 548
+    access: Write
+    fieldset: FLSET
+  - name: FLCLR
+    description: PLAY flag clear register.
+    byte_offset: 552
+    access: Write
+    fieldset: FLCLR
+  - name: FLIER
+    description: PLAY flag interrupt enable register.
+    byte_offset: 556
+    fieldset: FLIER
+  - name: FLCTL
+    description: PLAY flag control register.
+    byte_offset: 560
+    fieldset: FLCTL
+  - name: MSR
+    description: PLAY miscellaneous status register.
+    byte_offset: 564
+    access: Read
+    fieldset: MSR
+  - name: ISR
+    description: PLAY interrupt status register.
+    byte_offset: 568
+    access: Read
+    fieldset: ISR
+  - name: ICR
+    description: PLAY interrupt clear register.
+    byte_offset: 572
+    access: Write
+    fieldset: ICR
+  - name: IER
+    description: PLAY interrupt enable register.
+    byte_offset: 576
+    fieldset: IER
+fieldset/CFGCR:
+  description: PLAY configuration control register.
+  fields:
+  - name: UNLOCK
+    description: Unlock configuration.
+    bit_offset: 0
+    bit_size: 1
+fieldset/FILTCFG:
+  description: PLAY filter n configuration register.
+  fields:
+  - name: WIDTH
+    description: Minimum pulse width.
+    bit_offset: 0
+    bit_size: 8
+  - name: EDGEDET
+    description: Edge detection mode.
+    bit_offset: 8
+    bit_size: 2
+    enum: FILTCFG_EDGEDET
+  - name: PREMUXSEL
+    description: Input pre-multiplexer select.
+    bit_offset: 16
+    bit_size: 3
+fieldset/FLCLR:
+  description: PLAY flag clear register.
+  fields:
+  - name: FLAGD_CLR
+    description: Flag clear for LEy direct output.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+  - name: FLAGR_CLR
+    description: Flag clear for LEy registered output.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/FLCTL:
+  description: PLAY flag control register.
+  fields:
+  - name: FLAGD_EDGE
+    description: Edge direction for LEy direct output.
+    bit_offset: 0
+    bit_size: 1
+    enum: FLAG_EDGE
+    array:
+      len: 16
+      stride: 1
+  - name: FLAGR_EDGE
+    description: Edge direction for LEy registered output.
+    bit_offset: 16
+    bit_size: 1
+    enum: FLAG_EDGE
+    array:
+      len: 16
+      stride: 1
+fieldset/FLIER:
+  description: PLAY flag interrupt enable register.
+  fields:
+  - name: FLAGD_IEN
+    description: Flag interrupt enable for LEy direct output.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+  - name: FLAGR_IEN
+    description: Flag interrupt enable for LEy registered output.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/FLSET:
+  description: PLAY flag set register.
+  fields:
+  - name: FLAGD_SET
+    description: Flag set for LEy direct output.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+  - name: FLAGR_SET
+    description: Flag set for LEy registered output.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/FLSTAT:
+  description: PLAY flag status register.
+  fields:
+  - name: FLAGD
+    description: Flag state for LEy direct output.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+  - name: FLAGR
+    description: Flag state for LEy registered output.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/ICR:
+  description: PLAY interrupt clear register.
+  fields:
+  - name: SWINWC_CLR
+    description: SWIN register write complete interrupt clear.
+    bit_offset: 0
+    bit_size: 1
+  - name: FLCTLWC_CLR
+    description: FLCTL register write complete interrupt clear.
+    bit_offset: 1
+    bit_size: 1
+fieldset/IER:
+  description: PLAY interrupt enable register.
+  fields:
+  - name: SWINWC_IEN
+    description: SWIN register write complete interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: FLCTLWC_IEN
+    description: FLCTL register write complete interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+fieldset/ISR:
+  description: PLAY interrupt status register.
+  fields:
+  - name: SWINWC
+    description: SWIN register write complete interrupt status.
+    bit_offset: 0
+    bit_size: 1
+  - name: FLCTLWC
+    description: FLCTL register write complete interrupt status.
+    bit_offset: 1
+    bit_size: 1
+  - name: FLAGS
+    description: Flag interrupts status.
+    bit_offset: 2
+    bit_size: 1
+fieldset/LECFG1:
+  description: PLAY logic element n configuration register 1.
+  fields:
+  - name: LUT
+    description: Look-up table contents.
+    bit_offset: 0
+    bit_size: 16
+fieldset/LECFG2:
+  description: PLAY logic element x configuration register 2.
+  fields:
+  - name: IN_SEL
+    description: Logic element input y selection.
+    bit_offset: 0
+    bit_size: 6
+    array:
+      len: 4
+      stride: 6
+  - name: CK_SEL
+    description: Clock enable selection.
+    bit_offset: 24
+    bit_size: 6
+fieldset/MSR:
+  description: PLAY miscellaneous status register.
+  fields:
+  - name: SWINWBFS
+    description: SWIN register write busy flag status.
+    bit_offset: 0
+    bit_size: 1
+  - name: FLCTLWBFS
+    description: FLCTL register write busy flag status.
+    bit_offset: 1
+    bit_size: 1
+fieldset/OSR:
+  description: PLAY output status register.
+  fields:
+  - name: LEOUTD
+    description: State of LE direct outputs leoutdy.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+  - name: LEOUTR
+    description: State of LE registered outputs leoutry.
+    bit_offset: 16
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/OUTCFG:
+  description: PLAY output x configuration register.
+  fields:
+  - name: SEL
+    description: Output source selection.
+    bit_offset: 0
+    bit_size: 5
+fieldset/PRIVCFGR:
+  description: PLAY privilege attributes configuration register.
+  fields:
+  - name: PRIV
+    description: Privilege access control.
+    bit_offset: 0
+    bit_size: 2
+fieldset/SECCFGR:
+  description: PLAY security attributes configuration register.
+  fields:
+  - name: SEC
+    description: Secure access control.
+    bit_offset: 0
+    bit_size: 2
+fieldset/SWIN:
+  description: PLAY software input status register.
+  fields:
+  - name: SWIN
+    description: Input swiny state.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/SWINCLR:
+  description: PLAY software input clear register.
+  fields:
+  - name: SWIN
+    description: Reset PLAY_SWIN.SWINy.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+fieldset/SWINSET:
+  description: PLAY software input set register.
+  fields:
+  - name: SWIN
+    description: Set PLAY_SWIN.SWINy.
+    bit_offset: 0
+    bit_size: 1
+    array:
+      len: 16
+      stride: 1
+enum/FLAG_EDGE:
+  bit_size: 1
+  variants:
+  - name: FALLING
+    description: Is set by a falling edge on leouty.
+    value: 0
+  - name: RISING
+    description: Is set by a rising edge on leouty.
+    value: 1
+enum/FILTCFG_EDGEDET:
+  bit_size: 2
+  variants:
+  - name: BYPASSED
+    description: Edge detection is bypassed.
+    value: 0
+  - name: RISING
+    description: A rising edge transition on the input is converted into a positive pulse of 1 play_clk cycle.
+    value: 1
+  - name: FALLING
+    description: A falling edge transition on the input is converted into a positive pulse of 1 play_clk cycle.
+    value: 2
+  - name: BOTH
+    description: A rising or falling edge transition on the input is converted into a positive pulse of 1 play_clk cycle.
+    value: 3
