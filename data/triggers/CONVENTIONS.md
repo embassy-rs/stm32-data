@@ -38,6 +38,7 @@ suffix is the register field value (e.g. `EXTSEL[4:0] = 16`).
 | LPTIM input muxes | `IN1/IN2/IC1/IC2` muxes | `LPTIM_{IN1,IN2,IC1,IC2}_MUX{n}` |
 | TIM interconnect | internal inputs | `TIMX_{TI1,TI2,TI4,ITR,ETR,BRK,BRK2,SYS_BRK,OCREF_CLR}_IN{n}` |
 | SPI/I2C/USART trigger inputs | — | `SPI_TRG{n}`, `I2C_TRG{n}`, `USART_TRG{n}` |
+| GPDMA/LPDMA channel trigger | `CxTR2.TRIGSEL` | `GPDMA_TRG{n}`, `LPDMA_TRG{n}` |
 
 ## Source names
 
@@ -52,7 +53,7 @@ embassy-stm32's build.rs expects):
 - EXTI: `EXTI{n}_TRG` (ADC/DAC), plain `EXTI{n}` (DFSDM, historical).
 - Low-power timers: `LPTIM{n}_TRGO`, `LPTIM{n}_CH{n}`, `LPTIM{n}_ETR`.
 - Comparators: `COMP{n}_OUT`.
-- GPDMA transfer complete: `GPDMA_CH{n}_TC`.
+- GPDMA/LPDMA transfer complete: `GPDMA_CH{n}_TC`, `LPDMA_CH{n}_TC`.
 - Misc as they appear in the tables: `RTC_ALRA_TRG`, `TAMP_TRG{n}`,
   `CORTEX_M33_LOCKUP`, `SRAM_PARITY_ERROR`, `FLASH_ECC_ERROR`, `PVD`,
   `LSI`, `LSE`, `HSI16_DIV256`, `ADC4_AWD{n}`, ...

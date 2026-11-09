@@ -168,6 +168,16 @@ pub fn source_origin(source: &str) -> SourceOrigin<'_> {
     if head.starts_with("GPDMA") {
         return SourceOrigin::Prefix("GPDMA");
     }
+    if head.starts_with("LPDMA") {
+        return SourceOrigin::Prefix("LPDMA");
+    }
+    // Single-instance peripherals named as they are in the chip data.
+    if ["LTDC", "DMA2D", "GPU2D", "GFXTIM", "JPEG"].contains(&head) {
+        return SourceOrigin::Exact(head);
+    }
+    if head == "DSI" {
+        return SourceOrigin::Exact("DSIHOST");
+    }
     // EXTI lines are produced by the single EXTI block, not `EXTI11` etc.
     if head.starts_with("EXTI") {
         return SourceOrigin::Exact("EXTI");
@@ -204,6 +214,28 @@ mod tests {
             let tim6 = dac_triggers.iter().find(|t| t.source == "TIM6_TRGO").unwrap();
             assert_eq!(tim6.signal, "DAC_CHX_TRG6");
         }
+    }
+
+    #[test]
+    fn u5_gpdma1_triggers() {
+        let triggers = Triggers::new();
+        let signal = |chip, source| {
+            triggers
+                .peripheral_trigger_info(chip, "GPDMA1")
+                .unwrap()
+                .iter()
+                .find(|t| t.source == source)
+                .map(|t| t.signal.as_str())
+        };
+
+        for chip in ["STM32U585CI", "STM32U5A5ZJ", "STM32U535CB"] {
+            assert_eq!(signal(chip, "EXTI6_TRG"), Some("GPDMA_TRG6"));
+        }
+        // TIM3/4/5_TRGO only on the U59x/5Ax and U5Fx/5Gx (RM0456 Table 139).
+        assert_eq!(signal("STM32U585CI", "TIM3_TRGO"), None);
+        assert_eq!(signal("STM32U535CB", "TIM3_TRGO"), None);
+        assert_eq!(signal("STM32U5A5ZJ", "TIM3_TRGO"), Some("GPDMA_TRG44"));
+        assert_eq!(signal("STM32U585CI", "DMA2D_TC"), Some("GPDMA_TRG50"));
     }
 
     #[test]
