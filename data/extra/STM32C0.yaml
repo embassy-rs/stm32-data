@@ -1,6 +1,14 @@
 matches:
   family: STM32C0
 peripherals:
+  # VREFINT_CAL sits two bytes after TS_CAL1 (RM0490 defers calibration
+  # addresses to the datasheet; address from stm32c0xx_ll_adc.h).
+  - name: VREFINTCAL
+    address: 0x1FFF756A
+    registers:
+      kind: vrefintcal
+      version: v1
+      block: VREFINTCAL
   # RM0490 only documents a single calibration point (TS_CAL1); there is no
   # TS_CAL2 on this family.
   - name: TS_CAL1

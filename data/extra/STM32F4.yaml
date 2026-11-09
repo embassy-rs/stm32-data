@@ -1,6 +1,14 @@
 matches:
   family: STM32F4
 peripherals:
+  # VREFINT_CAL sits two bytes before TS_CAL1. RM0090 does not document it;
+  # address taken from stm32f4xx_ll_adc.h (VREFINT_CAL_ADDR) and the datasheets.
+  - name: VREFINTCAL
+    address: 0x1FFF7A2A
+    registers:
+      kind: vrefintcal
+      version: v1
+      block: VREFINTCAL
   - name: TS_CAL1
     address: 0x1FFF7A2C
     registers:

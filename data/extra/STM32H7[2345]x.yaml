@@ -3,6 +3,15 @@ matches:
 peripherals:
   # H72x/73x/74x/75x share this electronic-signature layout (RM0433/RM0399/
   # RM0468); H7A/B/R/S use a different one (see STM32H7[ABRS]x.yaml).
+  # VREFINT_CAL is at TS_CAL2 + 0x20; RM0433/RM0399/RM0468 only give the
+  # formula, the address comes from stm32h7xx_ll_adc.h (ADC_VER_V5_V90/V5_X)
+  # and the datasheets (e.g. H747: 0x1FF1E860..0x1FF1E861).
+  - name: VREFINTCAL
+    address: 0x1FF1E860
+    registers:
+      kind: vrefintcal
+      version: v1
+      block: VREFINTCAL
   - name: TS_CAL1
     address: 0x1FF1E820
     registers:
