@@ -866,9 +866,10 @@ fn merge_periph_pins_info(
 fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) -> Option<u32> {
     if pname == "VREFINTCAL" && chip_name.starts_with("STM32WBA") {
         if let Some(package_base) = defines.get_peri_addr("DESIG") {
-            // The VREFINTCAL address is located at an offset of 0x2A4 from the DESIG base address
-            // on STM32WBA devices.
-            return package_base.checked_add(0x2A4);
+            // The VREFINTCAL address is located at an offset of 0x2A5 from the DESIG base address
+            // on STM32WBA devices (RM0493/RM0515/RM0521 give 0x0BF907A5/0x0BFA07A5/0x0BF8D7A5,
+            // matching stm32wbaxx_ll_adc.h VREFINT_CAL_ADDR; DESIG base is ...0500).
+            return package_base.checked_add(0x2A5);
         }
     }
 

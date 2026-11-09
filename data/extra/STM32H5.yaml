@@ -1,6 +1,15 @@
 matches:
   family: STM32H5
 peripherals:
+  # Same read-only factory-calibration layout as H7A/B/R/S and C5: VREFINT_CAL
+  # at 0x08FFF810, four bytes before TS_CAL1 (RM0481 leaves 0x08FFF810
+  # "Reserved information"; address from stm32h5xx_ll_adc.h).
+  - name: VREFINTCAL
+    address: 0x08FFF810
+    registers:
+      kind: vrefintcal
+      version: v1
+      block: VREFINTCAL
   - name: TS_CAL1
     address: 0x08FFF814
     registers:
