@@ -1,0 +1,2127 @@
+# Chip memory geometry used by stm32-data-gen.
+#
+# mems: memory regions per chip pattern, one `variants` list per memory
+#   configuration (most chips have exactly one variant). Regions use
+#   size_kb (kibibytes) or size_bytes, and an optional access ("rwx").
+# flash_info: flash geometry per chip pattern; `erase_size` is a list of
+#   [sector size in bytes, sector count] pairs, biggest sector type last.
+#
+# Entries are matched in order: the first pattern matching the chip name
+# wins (this is why this file is a list, not a map).
+mems:
+  # C0
+  - pattern: "STM32C01..4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 6}
+  - pattern: "STM32C01..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 6}
+  - pattern: "STM32C03..4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+  - pattern: "STM32C03..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+  - pattern: "STM32C05..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+  - pattern: "STM32C05..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+  - pattern: "STM32C07..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 24}
+  - pattern: "STM32C07..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 24}
+  - pattern: "STM32C091.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 36}
+  - pattern: "STM32C091.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 36}
+  - pattern: "STM32C092.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 30}
+  - pattern: "STM32C092.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 30}
+  # C5
+  - pattern: "STM32C53..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM1, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 32}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM1, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 32}
+  - pattern: "STM32C53..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM1, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 32}
+  - pattern: "STM32C542.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM1, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 32}
+  - pattern: "STM32C55..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM1, address: 0x20000000, size_kb: 64}
+        - {name: SRAM2, address: 0x20010000, size_kb: 64}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM1, address: 0x20000000, size_kb: 64}
+        - {name: SRAM2, address: 0x20010000, size_kb: 64}
+  - pattern: "STM32C55..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM1, address: 0x20000000, size_kb: 64}
+        - {name: SRAM2, address: 0x20010000, size_kb: 64}
+  - pattern: "STM32C562.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM1, address: 0x20000000, size_kb: 64}
+        - {name: SRAM2, address: 0x20010000, size_kb: 64}
+  - pattern: "STM32C59..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 128}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 128}
+  - pattern: "STM32C59..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 128}
+  - pattern: "STM32C5A3.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 128}
+  - pattern: "STM32MP1...[A]"
+    variants:
+      - - {name: SRAM, address: 0x10000000, size_kb: 256}
+  # F0
+  - pattern: "STM32F0...C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+  - pattern: "STM32F0[35]..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+  - pattern: "STM32F0[47]..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 6}
+  - pattern: "STM32F03..4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 4}
+  - pattern: "STM32F03..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 4}
+  - pattern: "STM32F04..4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 6}
+  - pattern: "STM32F05..4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+  - pattern: "STM32F05..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+  - pattern: "STM32F07..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+  - pattern: "STM32F07..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+  - pattern: "STM32F09..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+  # F1
+  - pattern: "STM32F1.[12].6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 6}
+  - pattern: "STM32F1.[12].8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 10}
+  - pattern: "STM32F1.[12].B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+  - pattern: "STM32F1.[57].B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+  - pattern: "STM32F1.[57].C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+  - pattern: "STM32F1.0.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 4}
+  - pattern: "STM32F1.0.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+  - pattern: "STM32F1.0.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+  - pattern: "STM32F1.0.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 24}
+  - pattern: "STM32F1.0.D"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 384}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+  - pattern: "STM32F1.0.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+  - pattern: "STM32F1.1.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+  - pattern: "STM32F1.1.D"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 384}
+        - {name: SRAM, address: 0x20000000, size_kb: 48}
+  - pattern: "STM32F1.1.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 48}
+  - pattern: "STM32F1.1.F"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 80}
+  - pattern: "STM32F1.1.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 80}
+  - pattern: "STM32F1.3.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 10}
+  - pattern: "STM32F1.3.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+  - pattern: "STM32F1.3.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+  - pattern: "STM32F1.3.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 48}
+  - pattern: "STM32F1.3.D"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 384}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+  - pattern: "STM32F1.3.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+  - pattern: "STM32F1.3.F"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+  - pattern: "STM32F1.3.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+  - pattern: "STM32F1.5.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+  - pattern: "STM32F10[012].4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 4}
+  - pattern: "STM32F103.4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 6}
+  # F2
+  - pattern: "STM32F2...B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 48}
+        - {name: SRAM2, address: 0x2001c000, size_kb: 16}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F2...E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 112}
+        - {name: SRAM2, address: 0x2001c000, size_kb: 16}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F2...F"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 768}
+        - {name: SRAM, address: 0x20000000, size_kb: 112}
+        - {name: SRAM2, address: 0x2001c000, size_kb: 16}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F2...G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 112}
+        - {name: SRAM2, address: 0x2001c000, size_kb: 16}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F2.5.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x2001c000, size_kb: 16}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F2.7.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 112}
+        - {name: SRAM2, address: 0x2001c000, size_kb: 16}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  # F3. TODO: CCM is in both buses.
+  - pattern: "STM32F3...4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 4}
+  - pattern: "STM32F3.[12].6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+  - pattern: "STM32F3.[34].6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 4}
+  - pattern: "STM32F3.[38].E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 16}
+  - pattern: "STM32F3.2.D"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 384}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+  - pattern: "STM32F3.2.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+  - pattern: "STM32F3.3.D"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 384}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 16}
+  - pattern: "STM32F3([23]..8|03.8)"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 4}
+  - pattern: "STM32F3(0[12].8|[17]..8)"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+  - pattern: "STM32F3(03|58).C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 40}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 8}
+  - pattern: "STM32F3(73|78).C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+  - pattern: "STM32F302.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+  - pattern: "STM32F302.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 40}
+  - pattern: "STM32F303.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 8}
+  - pattern: "STM32F373.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 24}
+  # F4
+  - pattern: "STM32F4...8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4...D"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 384}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4...H"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1536}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4(05|07).E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 112}
+        - {name: SRAM2, address: 0x2001c000, size_kb: 16}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4(11|46).E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4[14]..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4[23]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4[23]..I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: BKPSRAM, address: 0x40024000, size_kb: 4}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4[67]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F4[67]..I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F40..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F40..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F40..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 112}
+        - {name: SRAM2, address: 0x2001c000, size_kb: 16}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F401.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F41..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F41[57].G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F412.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F412.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F413.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F417.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F429.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  - pattern: "STM32F469.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+        - {name: CCMRAM, address: 0x10000000, size_kb: 64, access: "rw"}
+        - {name: OTP, address: 0x1fff7800, size_bytes: 528}
+  # F7
+  - pattern: "STM32F7...C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: DTCM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM, address: 0x20010000, size_kb: 192}
+        - {name: OTP, address: 0x1ff07800, size_bytes: 528}
+  - pattern: "STM32F7[67]..I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 2048}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM, address: 0x20020000, size_kb: 384}
+        - {name: OTP, address: 0x1ff0f000, size_bytes: 1056}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM, address: 0x20020000, size_kb: 384}
+        - {name: OTP, address: 0x1ff0f000, size_bytes: 1056}
+  - pattern: "STM32F7[23]..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: DTCM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM, address: 0x20010000, size_kb: 192}
+        - {name: OTP, address: 0x1ff07800, size_bytes: 528}
+  - pattern: "STM32F7[45]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: DTCM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM, address: 0x20010000, size_kb: 256}
+        - {name: OTP, address: 0x1ff0f000, size_bytes: 1056}
+  - pattern: "STM32F73..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM, address: 0x20010000, size_kb: 192}
+        - {name: OTP, address: 0x1ff07800, size_bytes: 528}
+  - pattern: "STM32F74..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: DTCM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM, address: 0x20010000, size_kb: 256}
+        - {name: OTP, address: 0x1ff0f000, size_bytes: 1056}
+  - pattern: "STM32F75..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM, address: 0x20010000, size_kb: 256}
+        - {name: OTP, address: 0x1ff0f000, size_bytes: 1056}
+  - pattern: "STM32F76..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM, address: 0x20020000, size_kb: 384}
+        - {name: OTP, address: 0x1ff0f000, size_bytes: 1056}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM, address: 0x20020000, size_kb: 384}
+        - {name: OTP, address: 0x1ff0f000, size_bytes: 1056}
+  # G0
+  - pattern: "STM32G0...4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+  - pattern: "STM32G0...C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 144}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 144}
+  - pattern: "STM32G0B0.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 144}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 144}
+  - pattern: "STM32G0...E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 144}
+  - pattern: "STM32G0[34]..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+  - pattern: "STM32G0[34]..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+  - pattern: "STM32G0[56]..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 18}
+  - pattern: "STM32G0[56]..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 18}
+  - pattern: "STM32G0[78]..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 36}
+  - pattern: "STM32G07..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 36}
+  - pattern: "STM32G07..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 36}
+  - pattern: "STM32G0B..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 144}
+  # G4
+  - pattern: "STM32G4...6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 10}
+        - {name: SRAM1, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20004000, size_kb: 6}
+        - {name: CCMRAM_DCODE, address: 0x20005800, size_kb: 10}
+  - pattern: "STM32G4...8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 10}
+        - {name: SRAM1, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20004000, size_kb: 6}
+        - {name: CCMRAM_DCODE, address: 0x20005800, size_kb: 10}
+  - pattern: "STM32G4[34]..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 10}
+        - {name: SRAM1, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20004000, size_kb: 6}
+        - {name: CCMRAM_DCODE, address: 0x20005800, size_kb: 10}
+  - pattern: "STM32G49..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 16}
+        - {name: SRAM1, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x20014000, size_kb: 16}
+        - {name: CCMRAM_DCODE, address: 0x20018000, size_kb: 16}
+  - pattern: "STM32G4[9A]..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 16}
+        - {name: SRAM1, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x20014000, size_kb: 16}
+        - {name: CCMRAM_DCODE, address: 0x20018000, size_kb: 16}
+  - pattern: "STM32G47..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM1, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x20014000, size_kb: 16}
+        - {name: CCMRAM_DCODE, address: 0x20018000, size_kb: 32}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08040000, size_kb: 64}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM1, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x20014000, size_kb: 16}
+        - {name: CCMRAM_DCODE, address: 0x20018000, size_kb: 32}
+  - pattern: "STM32G47..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM1, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x20014000, size_kb: 16}
+        - {name: CCMRAM_DCODE, address: 0x20018000, size_kb: 32}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08040000, size_kb: 128}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM1, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x20014000, size_kb: 16}
+        - {name: CCMRAM_DCODE, address: 0x20018000, size_kb: 32}
+  - pattern: "STM32G4[78]..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM1, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x20014000, size_kb: 16}
+        - {name: CCMRAM_DCODE, address: 0x20018000, size_kb: 32}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: CCMRAM_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM1, address: 0x20000000, size_kb: 80}
+        - {name: SRAM2, address: 0x20014000, size_kb: 16}
+        - {name: CCMRAM_DCODE, address: 0x20018000, size_kb: 32}
+  # G5
+  - pattern: "STM32G5[34]..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: BANK_2, address: 0x08008000, size_kb: 32}
+        - {name: SRAM1, address: 0x20000000, size_kb: 20}
+        - {name: SRAM2, address: 0x20005000, size_kb: 40}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+  - pattern: "STM32G5[34]..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM1, address: 0x20000000, size_kb: 20}
+        - {name: SRAM2, address: 0x20005000, size_kb: 40}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+  - pattern: "STM32G5[34]..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM1, address: 0x20000000, size_kb: 20}
+        - {name: SRAM2, address: 0x20005000, size_kb: 40}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+  - pattern: "STM32G5[56]..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM1, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 64}
+        - {name: SRAM3, address: 0x20018000, size_kb: 16}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+  - pattern: "STM32G5[56]..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM1, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 64}
+        - {name: SRAM3, address: 0x20018000, size_kb: 16}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+  - pattern: "STM32G5[56]..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM1, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 64}
+        - {name: SRAM3, address: 0x20018000, size_kb: 16}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+  # H5
+  - pattern: "STM32H543.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 80}
+        - {name: SRAM3, address: 0x20034000, size_kb: 96}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+  - pattern: "STM32H543.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 80}
+        - {name: SRAM3, address: 0x20034000, size_kb: 96}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+  - pattern: "STM32H553.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 80}
+        - {name: SRAM3, address: 0x20034000, size_kb: 96}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+  - pattern: "STM32H5...B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM1, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20004000, size_kb: 16}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+  - pattern: "STM32H5...C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 80}
+        - {name: SRAM3, address: 0x20034000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+  - pattern: "STM32H5...E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM1, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 80}
+        - {name: SRAM3, address: 0x20034000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+  - pattern: "STM32H5...G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM1, address: 0x20000000, size_kb: 256}
+        - {name: SRAM2, address: 0x20040000, size_kb: 64}
+        - {name: SRAM3, address: 0x20050000, size_kb: 320}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 4}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+        - {name: SDRAM_BANK_1, address: 0xc0000000, size_kb: 262144}
+        - {name: SDRAM_BANK_2, address: 0xd0000000, size_kb: 262144}
+  - pattern: "STM32H5...I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM1, address: 0x20000000, size_kb: 256}
+        - {name: SRAM2, address: 0x20040000, size_kb: 64}
+        - {name: SRAM3, address: 0x20050000, size_kb: 320}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 4}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+        - {name: SDRAM_BANK_1, address: 0xc0000000, size_kb: 262144}
+        - {name: SDRAM_BANK_2, address: 0xd0000000, size_kb: 262144}
+  - pattern: "STM32H5[EF]..J"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 2048}
+        - {name: BANK_2, address: 0x08200000, size_kb: 2048}
+        - {name: SRAM1, address: 0x20000000, size_kb: 256}
+        - {name: SRAM2, address: 0x20040000, size_kb: 128}
+        - {name: SRAM3, address: 0x20060000, size_kb: 384}
+        - {name: SRAM4, address: 0x200c0000, size_kb: 384}
+        - {name: SRAM5, address: 0x20120000, size_kb: 384}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 4}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_2, address: 0x70000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+        - {name: SDRAM_BANK_1, address: 0xc0000000, size_kb: 262144}
+        - {name: SDRAM_BANK_2, address: 0xd0000000, size_kb: 262144}
+  - pattern: "STM32H5[EF]..K"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1536}
+        - {name: BANK_2, address: 0x08180000, size_kb: 1536}
+        - {name: SRAM1, address: 0x20000000, size_kb: 256}
+        - {name: SRAM2, address: 0x20040000, size_kb: 128}
+        - {name: SRAM3, address: 0x20060000, size_kb: 384}
+        - {name: SRAM4, address: 0x200c0000, size_kb: 384}
+        - {name: SRAM5, address: 0x20120000, size_kb: 384}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 4}
+        - {name: OTP, address: 0x08fff000, size_kb: 2}
+        - {name: FMC_BANK_1, address: 0x60000000, size_kb: 262144}
+        - {name: FMC_BANK_3, address: 0x80000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_2, address: 0x70000000, size_kb: 262144}
+        - {name: OCTOSPI_BANK_1, address: 0x90000000, size_kb: 262144}
+        - {name: SDRAM_BANK_1, address: 0xc0000000, size_kb: 262144}
+        - {name: SDRAM_BANK_2, address: 0xd0000000, size_kb: 262144}
+  # H7RS. SRAM4 (72K @ 0x24060000) is not listed: it is only mapped if the ECC_ON_SRAM option bit is cleared (factory value is set).
+  - pattern: "STM32H7[RS].*"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM1, address: 0x24000000, size_kb: 128}
+        - {name: SRAM2, address: 0x24020000, size_kb: 128}
+        - {name: SRAM3, address: 0x24040000, size_kb: 128}
+        - {name: AHB_SRAM1, address: 0x30000000, size_kb: 16}
+        - {name: AHB_SRAM2, address: 0x30004000, size_kb: 16}
+  # --- RM0533 - H7P4/H7P5
+  # SRAM1..SRAM4 are the AXI SRAMs (SRAM1_AXI..SRAM4_AXI in the header). The
+  # first 32 KB of AHB_SRAM3 double as the HSP CRAM/DRAM, and HSP_DATA_BRAM
+  # (16 KB @ 0x30018000) sits right behind AHB_SRAM3; both are only used while
+  # the hardware signal processor runs, so they are not listed here.
+  - pattern: "STM32H7P[45].G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: ITCM, address: 0x00000000, size_kb: 192}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM1, address: 0x2FFB0000, size_kb: 128}
+        - {name: SRAM2, address: 0x2FFD0000, size_kb: 64}
+        - {name: SRAM3, address: 0x2FFE0000, size_kb: 64}
+        - {name: SRAM4, address: 0x2FFF0000, size_kb: 64}
+        - {name: AHB_SRAM1, address: 0x30000000, size_kb: 16}
+        - {name: AHB_SRAM2, address: 0x30004000, size_kb: 16}
+        - {name: AHB_SRAM3, address: 0x30008000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H7P[45].I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: ITCM, address: 0x00000000, size_kb: 192}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM1, address: 0x2FFB0000, size_kb: 128}
+        - {name: SRAM2, address: 0x2FFD0000, size_kb: 64}
+        - {name: SRAM3, address: 0x2FFE0000, size_kb: 64}
+        - {name: SRAM4, address: 0x2FFF0000, size_kb: 64}
+        - {name: AHB_SRAM1, address: 0x30000000, size_kb: 16}
+        - {name: AHB_SRAM2, address: 0x30004000, size_kb: 16}
+        - {name: AHB_SRAM3, address: 0x30008000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  # H7
+  # --- RM0468 - H7[23]
+  - pattern: "STM32H7[23]..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 320}
+        - {name: SRAM1, address: 0x30000000, size_kb: 16}
+        - {name: SRAM2, address: 0x30004000, size_kb: 16}
+        - {name: SRAM4, address: 0x38000000, size_kb: 16}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H7[23]..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 320}
+        - {name: SRAM1, address: 0x30000000, size_kb: 16}
+        - {name: SRAM2, address: 0x30004000, size_kb: 16}
+        - {name: SRAM4, address: 0x38000000, size_kb: 16}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H7[23]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 320}
+        - {name: SRAM1, address: 0x30000000, size_kb: 16}
+        - {name: SRAM2, address: 0x30004000, size_kb: 16}
+        - {name: SRAM4, address: 0x38000000, size_kb: 16}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  # --- RM0433 - H742/43/53/50
+  - pattern: "STM32H742.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08100000, size_kb: 512}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 384}
+        - {name: SRAM1, address: 0x30000000, size_kb: 32}
+        - {name: SRAM2, address: 0x30020000, size_kb: 16}
+        - {name: SRAM4, address: 0x38000000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H742.I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 384}
+        - {name: SRAM1, address: 0x30000000, size_kb: 32}
+        - {name: SRAM2, address: 0x30020000, size_kb: 16}
+        - {name: SRAM4, address: 0x38000000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H7[45]3.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08100000, size_kb: 512}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 512}
+        - {name: SRAM1, address: 0x30000000, size_kb: 128}
+        - {name: SRAM2, address: 0x30020000, size_kb: 128}
+        - {name: SRAM3, address: 0x30040000, size_kb: 32}
+        - {name: SRAM4, address: 0x38000000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H7[45]3.I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 512}
+        - {name: SRAM1, address: 0x30000000, size_kb: 128}
+        - {name: SRAM2, address: 0x30020000, size_kb: 128}
+        - {name: SRAM3, address: 0x30040000, size_kb: 32}
+        - {name: SRAM4, address: 0x38000000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H750.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 512}
+        - {name: SRAM1, address: 0x30000000, size_kb: 128}
+        - {name: SRAM2, address: 0x30020000, size_kb: 128}
+        - {name: SRAM3, address: 0x30040000, size_kb: 32}
+        - {name: SRAM4, address: 0x38000000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  # --- RM0399 - H745/55/47/57
+  - pattern: "STM32H7[45][57].G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08100000, size_kb: 512}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 512}
+        - {name: SRAM1, address: 0x30000000, size_kb: 128}
+        - {name: SRAM2, address: 0x30020000, size_kb: 128}
+        - {name: SRAM3, address: 0x30040000, size_kb: 32}
+        - {name: SRAM4, address: 0x38000000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H7[45][57].I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 512}
+        - {name: SRAM1, address: 0x30000000, size_kb: 128}
+        - {name: SRAM2, address: 0x30020000, size_kb: 128}
+        - {name: SRAM3, address: 0x30040000, size_kb: 32}
+        - {name: SRAM4, address: 0x38000000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  # --- RM0455 - H7[AB]
+  - pattern: "STM32H7[AB]3.I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 1024}
+        - {name: AHBSRAM, address: 0x30000000, size_kb: 128}
+        - {name: SRDSRAM, address: 0x38000000, size_kb: 32}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H7A..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08100000, size_kb: 512}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 1024}
+        - {name: AHBSRAM, address: 0x30000000, size_kb: 128}
+        - {name: SRDSRAM, address: 0x38000000, size_kb: 32}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  - pattern: "STM32H7B..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: ITCM, address: 0x00000000, size_kb: 64}
+        - {name: DTCM, address: 0x20000000, size_kb: 128}
+        - {name: AXISRAM, address: 0x24000000, size_kb: 1024}
+        - {name: AHBSRAM, address: 0x30000000, size_kb: 128}
+        - {name: SRDSRAM, address: 0x38000000, size_kb: 32}
+        - {name: BKPSRAM, address: 0x38800000, size_kb: 4}
+  # L0
+  # L0x0
+  - pattern: "STM32L010.4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 2}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 128, access: "rw"}
+    # STM32L010F4, K4
+  - pattern: "STM32L010.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 256, access: "rw"}
+    # STM32L010C6
+  - pattern: "STM32L010.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 256, access: "rw"}
+    # STM32L010K8, R8
+  - pattern: "STM32L010.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 512, access: "rw"}
+    # STM32L010RB
+  # L0x1 Category 1
+  - pattern: "STM32L011.3"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 8}
+        - {name: SRAM, address: 0x20000000, size_kb: 2}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 512, access: "rw"}
+    # STM32L011D3, E3, F3, G3, K3
+  - pattern: "STM32L011.4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 2}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 512, access: "rw"}
+    # STM32L011D4, E4, F4, G4, K4
+  - pattern: "STM32L021.4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 2}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 512, access: "rw"}
+    # STM32L021D4, F4, G4, K4
+  # L0x1 Category 2
+  - pattern: "STM32L031.4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 1024, access: "rw"}
+    # STM32L031C4, E4, F4, G4, K4
+  - pattern: "STM32L031.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 1024, access: "rw"}
+    # STM32L031C6, E6, F6, G6, K6
+  - pattern: "STM32L041.4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 1024, access: "rw"}
+    # STM32L041C4
+  - pattern: "STM32L041.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 1024, access: "rw"}
+    # STM32L041C6, E6, F6, G6, K6
+  # L0x1, L0x2, L0x3 Category 3
+  - pattern: "STM32L051.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # STM32L051C6, K6, R6, T6
+  - pattern: "STM32L051.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # STM32L051C8, K8, R8, T8
+  - pattern: "STM32L052.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # STM32L052C6, K6, R6, T6
+  - pattern: "STM32L052.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # STM32L052C8, K8, R8, T8
+  - pattern: "STM32L053.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # STM32L053C6, R6
+  - pattern: "STM32L053.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # STM32L053C8, R8
+  - pattern: "STM32L062.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # STM32L062C8, K8
+  - pattern: "STM32L063.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # STM32L063C8, R8
+  # L0x1, L0x2, L0x3 Category 5 (64KB Flash, only EEPROM bank 2)
+  - pattern: "STM32L071.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L071C8, K8, V8
+  - pattern: "STM32L072.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L072V8
+  - pattern: "STM32L073.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L073V8
+  - pattern: "STM32L083.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L083V8
+  # L0x1, L0x2, L0x3 Category 5 (128KB and 192KB Flash, dual EEPROM banks)
+  - pattern: "STM32L071.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L071CB, KB, RB, VB
+  - pattern: "STM32L071.Z"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 96}
+        - {name: BANK_2, address: 0x08018000, size_kb: 96}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L071CZ, KZ, RZ, VZ
+  - pattern: "STM32L072.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L072CB, KB, RB, VB
+  - pattern: "STM32L072.Z"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 96}
+        - {name: BANK_2, address: 0x08018000, size_kb: 96}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L072CZ, KZ, RZ, VZ
+  - pattern: "STM32L073.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L073CB, RB, VB
+  - pattern: "STM32L073.Z"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 96}
+        - {name: BANK_2, address: 0x08018000, size_kb: 96}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L073CZ, RZ, VZ
+  - pattern: "STM32L081.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L081CB
+  - pattern: "STM32L081.Z"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 96}
+        - {name: BANK_2, address: 0x08018000, size_kb: 96}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L081CZ, KZ
+  - pattern: "STM32L082.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L082KB
+  - pattern: "STM32L082.Z"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 96}
+        - {name: BANK_2, address: 0x08018000, size_kb: 96}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L082CZ, KZ
+  - pattern: "STM32L083.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L083CB, RB, VB
+  - pattern: "STM32L083.Z"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 96}
+        - {name: BANK_2, address: 0x08018000, size_kb: 96}
+        - {name: SRAM, address: 0x20000000, size_kb: 20}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 3072, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08080C00, size_bytes: 3072, access: "rw"}
+    # STM32L083CZ, RZ, VZ
+  # L1
+  - pattern: "STM32L1...C.."
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 8192, access: "rw"}
+    # Cat.3
+  - pattern: "STM32L1...D"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 192}
+        - {name: BANK_2, address: 0x08030000, size_kb: 192}
+        - {name: SRAM, address: 0x20000000, size_kb: 48}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 6144, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08081800, size_bytes: 6144, access: "rw"}
+    # Cat.4
+  - pattern: "STM32L1...D.."
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 192}
+        - {name: BANK_2, address: 0x08040000, size_kb: 192}
+        - {name: SRAM, address: 0x20000000, size_kb: 80}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 8192, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08082000, size_bytes: 8192, access: "rw"}
+    # Cat.6 (STM32L15xVD-X, STM32L162VD-X), on the 512K die
+  - pattern: "STM32L1...E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 80}
+        - {name: EEPROM_BANK_1, address: 0x08080000, size_bytes: 8192, access: "rw"}
+        - {name: EEPROM_BANK_2, address: 0x08082000, size_bytes: 8192, access: "rw"}
+    # Cat.5/6
+  - pattern: "STM32L10..6.."
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 4}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # Cat.1/2 (STM32L100C6-A)
+  - pattern: "STM32L10..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 4}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # Cat.1/2 (STM32L100C6)
+  - pattern: "STM32L10..8.."
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # Cat.1/2 (STM32L100R8-A)
+  - pattern: "STM32L10..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 8}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # Cat.1/2 (STM32L100R8)
+  - pattern: "STM32L10..B.."
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # Cat.1/2 (STM32L100RB-A)
+  - pattern: "STM32L10..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 10}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 2048, access: "rw"}
+    # Cat.1/2 (STM32L100RB)
+  - pattern: "STM32L10..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 4096, access: "rw"}
+    # Cat.3 (STM32L100RC)
+  - pattern: "STM32L15..6.."
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 4096, access: "rw"}
+    # Cat.1/2 (STM32L151C6-A, etc.)
+  - pattern: "STM32L15..6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 10}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 4096, access: "rw"}
+    # Cat.1/2 (STM32L151C6, etc.)
+  - pattern: "STM32L15..8.."
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 4096, access: "rw"}
+    # Cat.1/2 (STM32L151C8-A, etc.)
+  - pattern: "STM32L15..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 10}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 4096, access: "rw"}
+    # Cat.1/2 (STM32L151C8, etc.)
+  - pattern: "STM32L15..B.."
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 4096, access: "rw"}
+    # Cat.1/2 (STM32L151CB-A, etc.)
+  - pattern: "STM32L15..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 4096, access: "rw"}
+    # Cat.1/2 (STM32L151CB, etc.)
+  - pattern: "STM32L15..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 8192, access: "rw"}
+    # Cat.3
+  - pattern: "STM32L16..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: EEPROM, address: 0x08080000, size_bytes: 8192, access: "rw"}
+    # Cat.3
+  # L4
+  - pattern: "STM32L4...8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 8}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 8}
+  - pattern: "STM32L4[12]..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 8}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 8}
+  - pattern: "STM32L43..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 48}
+        - {name: SRAM2, address: 0x2000c000, size_kb: 16}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 16}
+  - pattern: "STM32L45..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 32}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 32}
+  - pattern: "STM32L4[34]..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 48}
+        - {name: SRAM2, address: 0x2000c000, size_kb: 16}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 16}
+  - pattern: "STM32L4[56]..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 32}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 32}
+  - pattern: "STM32L47..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 32}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 32}
+  - pattern: "STM32L47..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 32}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 32}
+  - pattern: "STM32L49..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+        - {name: SRAM2, address: 0x20040000, size_kb: 64}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 64}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+        - {name: SRAM2, address: 0x20040000, size_kb: 64}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 64}
+  - pattern: "STM32L4[78]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 96}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 32}
+  - pattern: "STM32L4[9A]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+        - {name: SRAM2, address: 0x20040000, size_kb: 64}
+        - {name: SRAM2_ICODE, address: 0x10000000, size_kb: 64}
+  # L4+
+  - pattern: "STM32L4P..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+  - pattern: "STM32L4[PQ]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 320}
+  - pattern: "STM32L4R..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 640}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 640}
+  - pattern: "STM32L4[RS]..I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 2048}
+        - {name: SRAM, address: 0x20000000, size_kb: 640}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 640}
+  # L5
+  - pattern: "STM32L5...C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+  - pattern: "STM32L5...E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 256}
+  # N6
+  - pattern: "STM32N6...0"
+    variants:
+      - - {name: FLEXRAM, address: 0x24000000, size_kb: 400}
+        - {name: AXISRAM, address: 0x24064000, size_kb: 624}
+        - {name: AXISRAM2, address: 0x24100000, size_kb: 1024}
+        - {name: AXISRAM3, address: 0x24200000, size_kb: 448}
+        - {name: AXISRAM4, address: 0x24270000, size_kb: 448}
+        - {name: AXISRAM5, address: 0x242E0000, size_kb: 448}
+        - {name: AXISRAM6, address: 0x24350000, size_kb: 448}
+        - {name: NPURAM, address: 0x243C0000, size_kb: 256}
+        - {name: VENCRAM, address: 0x24400000, size_kb: 128}
+  # U0
+  - pattern: "STM32U031.4"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 16}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+        - {name: OTP, address: 0x1fff6800, size_kb: 1}
+  - pattern: "STM32U031.6"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 32}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+        - {name: OTP, address: 0x1fff6800, size_kb: 1}
+  - pattern: "STM32U031.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+        - {name: OTP, address: 0x1fff6800, size_kb: 1}
+  - pattern: "STM32U0[78]3.8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 40}
+        - {name: OTP, address: 0x1fff6800, size_kb: 1}
+  - pattern: "STM32U0[78]3.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 40}
+        - {name: OTP, address: 0x1fff6800, size_kb: 1}
+  - pattern: "STM32U0[78]3.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 40}
+        - {name: OTP, address: 0x1fff6800, size_kb: 1}
+  # U3
+  - pattern: "STM32U3[78]..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U3[78]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U3B5.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: SRAM3, address: 0x20040000, size_kb: 320}
+        - {name: SRAM4, address: 0x20090000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: SRAM3, address: 0x20040000, size_kb: 320}
+        - {name: SRAM4, address: 0x20090000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U3[BC]5.I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: SRAM3, address: 0x20040000, size_kb: 320}
+        - {name: SRAM4, address: 0x20090000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U335.B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20004000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U335.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20004000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U345.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20004000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U356.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U356.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U366.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: SRAM2, address: 0x20020000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  # U5
+  - pattern: "STM32U5[34]..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: BANK_2, address: 0x08010000, size_kb: 64}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U5[34]..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: BANK_2, address: 0x08020000, size_kb: 128}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U5[43]..E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: BANK_2, address: 0x08040000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U5[78]..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: SRAM3, address: 0x20040000, size_kb: 512}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: SRAM3, address: 0x20040000, size_kb: 512}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U5[78]..I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20030000, size_kb: 64}
+        - {name: SRAM3, address: 0x20040000, size_kb: 512}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U5[9A]..I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 2048}
+        - {name: SRAM, address: 0x20000000, size_kb: 768}
+        - {name: SRAM2, address: 0x200c0000, size_kb: 64}
+        - {name: SRAM3, address: 0x200d0000, size_kb: 832}
+        - {name: SRAM5, address: 0x201a0000, size_kb: 832}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 768}
+        - {name: SRAM2, address: 0x200c0000, size_kb: 64}
+        - {name: SRAM3, address: 0x200d0000, size_kb: 832}
+        - {name: SRAM5, address: 0x201a0000, size_kb: 832}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U5[9A]..J"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 2048}
+        - {name: BANK_2, address: 0x08200000, size_kb: 2048}
+        - {name: SRAM, address: 0x20000000, size_kb: 768}
+        - {name: SRAM2, address: 0x200c0000, size_kb: 64}
+        - {name: SRAM3, address: 0x200d0000, size_kb: 832}
+        - {name: SRAM5, address: 0x201a0000, size_kb: 832}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U5[FG]..I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 2048}
+        - {name: SRAM, address: 0x20000000, size_kb: 768}
+        - {name: SRAM2, address: 0x200c0000, size_kb: 64}
+        - {name: SRAM3, address: 0x200d0000, size_kb: 832}
+        - {name: SRAM5, address: 0x201a0000, size_kb: 832}
+        - {name: SRAM6, address: 0x20270000, size_kb: 512}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 768}
+        - {name: SRAM2, address: 0x200c0000, size_kb: 64}
+        - {name: SRAM3, address: 0x200d0000, size_kb: 832}
+        - {name: SRAM5, address: 0x201a0000, size_kb: 832}
+        - {name: SRAM6, address: 0x20270000, size_kb: 512}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32U5[FG]..J"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 2048}
+        - {name: BANK_2, address: 0x08200000, size_kb: 2048}
+        - {name: SRAM, address: 0x20000000, size_kb: 768}
+        - {name: SRAM2, address: 0x200c0000, size_kb: 64}
+        - {name: SRAM3, address: 0x200d0000, size_kb: 832}
+        - {name: SRAM5, address: 0x201a0000, size_kb: 832}
+        - {name: SRAM6, address: 0x20270000, size_kb: 512}
+        - {name: BKPSRAM, address: 0x40036400, size_kb: 2}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  # WB
+  - pattern: "STM32WB10CC"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 320}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 4}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 4}
+  - pattern: "STM32WB15CC"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 320}
+        - {name: SRAM, address: 0x20000000, size_kb: 12}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 4}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 4}
+  - pattern: "STM32WB30CE"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 32}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 32}
+  - pattern: "STM32WB50CG"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 32}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 32}
+  - pattern: "STM32WB35.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 32}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 32}
+  - pattern: "STM32WB35.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 32}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 32}
+  - pattern: "STM32WB55.C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 32}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 32}
+  - pattern: "STM32WB55.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 32}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 32}
+  - pattern: "STM32WB55.Y"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 640}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 32}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 32}
+  - pattern: "STM32WB55.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2A, address: 0x20030000, size_kb: 32}
+        - {name: SRAM2B, address: 0x20038000, size_kb: 32}
+        - {name: SRAM2A_ICODE, address: 0x10000000, size_kb: 32}
+        - {name: SRAM2B_ICODE, address: 0x10008000, size_kb: 32}
+  # WB0
+  - pattern: "STM32WB05.Z"
+    variants:
+      - - {name: BANK_1, address: 0x10040000, size_kb: 192}
+        - {name: SRAM0, address: 0x20000018, size_bytes: 12264}
+        - {name: SRAM1, address: 0x20003000, size_kb: 12}
+        - {name: OTP, address: 0x10001800, size_kb: 1}
+  - pattern: "STM32WB06.C"
+    variants:
+      - - {name: BANK_1, address: 0x10040000, size_kb: 256}
+        - {name: SRAM0, address: 0x20000018, size_bytes: 16360}
+        - {name: SRAM1, address: 0x20004000, size_kb: 16}
+        - {name: OTP, address: 0x10001800, size_kb: 1}
+  - pattern: "STM32WB07.C"
+    variants:
+      - - {name: BANK_1, address: 0x10040000, size_kb: 256}
+        - {name: SRAM0, address: 0x20000018, size_bytes: 16360}
+        - {name: SRAM1, address: 0x20004000, size_kb: 16}
+        - {name: SRAM2, address: 0x20008000, size_kb: 16}
+        - {name: SRAM3, address: 0x2000C000, size_kb: 16}
+        - {name: OTP, address: 0x10001800, size_kb: 1}
+  - pattern: "STM32WB09.E"
+    variants:
+      - - {name: BANK_1, address: 0x10040000, size_kb: 512}
+        - {name: SRAM0, address: 0x20000018, size_bytes: 16360}
+        - {name: SRAM1, address: 0x20004000, size_kb: 16}
+        - {name: SRAM2, address: 0x20008000, size_kb: 16}
+        - {name: SRAM3, address: 0x2000C000, size_kb: 16}
+        - {name: OTP, address: 0x10001800, size_kb: 1}
+  # WBA
+  - pattern: "STM32WBA6..G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20070000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: BANK_2, address: 0x08080000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 192}
+        - {name: SRAM2, address: 0x20070000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32WBA6..I"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: BANK_2, address: 0x08100000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 448}
+        - {name: SRAM2, address: 0x20070000, size_kb: 64}
+        - {name: OTP, address: 0x0bfa0000, size_bytes: 512}
+  - pattern: "STM32WBA50.E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20010000, size_kb: 48}
+        - {name: OTP, address: 0x0bf90000, size_bytes: 512}
+  - pattern: "STM32WBA50.G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20010000, size_kb: 48}
+        - {name: OTP, address: 0x0bf90000, size_bytes: 512}
+  - pattern: "STM32WBA2[35].E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 64}
+        - {name: SRAM2, address: 0x20010000, size_kb: 32}
+        - {name: OTP, address: 0x0bf8d000, size_bytes: 512}
+  - pattern: "STM32WBA...E"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 512}
+        - {name: SRAM, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20010000, size_kb: 64}
+        - {name: OTP, address: 0x0bf90000, size_bytes: 512}
+  - pattern: "STM32WBA...G"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 1024}
+        - {name: SRAM, address: 0x20000000, size_kb: 128}
+        - {name: OTP, address: 0x0bf90000, size_bytes: 512}
+  # WL
+  - pattern: "STM32WL[5E]..8"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 64}
+        - {name: SRAM2, address: 0x20008000, size_kb: 20}
+  - pattern: "STM32WL[5E]..B"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 128}
+        - {name: SRAM1, address: 0x20000000, size_kb: 16}
+        - {name: SRAM2, address: 0x20008000, size_kb: 32}
+  - pattern: "STM32WL[5E]..C"
+    variants:
+      - - {name: BANK_1, address: 0x08000000, size_kb: 256}
+        - {name: SRAM1, address: 0x20000000, size_kb: 32}
+        - {name: SRAM2, address: 0x20008000, size_kb: 32}
+flash_info:
+  - pattern: "STM32C0.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32C5(3..B|5..C|9..E)"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32C5.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32F030.C"
+    variants:
+      - {erase_value: 0xFF, write_size: 2, erase_size: [[2048, 0]]}
+  - pattern: "STM32F070.6"
+    variants:
+      - {erase_value: 0xFF, write_size: 2, erase_size: [[1024, 0]]}
+  - pattern: "STM32F0[79].*"
+    variants:
+      - {erase_value: 0xFF, write_size: 2, erase_size: [[2048, 0]]}
+  - pattern: "STM32F0.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 2, erase_size: [[1024, 0]]}
+  - pattern: "STM32F10[0123].[468B]"
+    variants:
+      - {erase_value: 0xFF, write_size: 2, erase_size: [[1024, 0]]}
+  - pattern: "STM32F1.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 2, erase_size: [[2048, 0]]}
+  - pattern: "STM32F2.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[16384, 4], [65536, 1], [131072, 0]]}
+  - pattern: "STM32F3.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 2, erase_size: [[2048, 0]]}
+  - pattern: "STM32F4[23]..G"
+    variants:
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[16384, 4], [65536, 1], [131072, 0]]}
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[16384, 4], [65536, 1], [131072, 0]]}
+  - pattern: "STM32F4[67]..G"
+    variants:
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[16384, 4], [65536, 1], [131072, 0]]}
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[16384, 4], [65536, 1], [131072, 0]]}
+  - pattern: "STM32F4.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[16384, 4], [65536, 1], [131072, 0]]}
+  - pattern: "STM32F7[67]..[IG]"
+    variants:
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[32768, 4], [131072, 1], [262144, 0]]}
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[16384, 4], [65536, 1], [131072, 0]]}
+  - pattern: "STM32F7[4567].*"
+    variants:
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[32768, 4], [131072, 1], [262144, 0]]}
+  - pattern: "STM32F7.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[16384, 4], [65536, 1], [131072, 0]]}
+  - pattern: "STM32G0...C"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32G0B0.E"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32G0.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32G4[78].*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[4096, 0]]}
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32G4.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32G5.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32H5.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32H7[RS].*"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32H7[AB].*"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32H7.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 32, erase_size: [[131072, 0]]}
+  - pattern: "STM32L4[PQRS].*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[8192, 0]]}
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[4096, 0]]}
+  - pattern: "STM32L4[79]..[CE]"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32L4.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32L0.*"
+    variants:
+      - {erase_value: 0x00, write_size: 4, erase_size: [[128, 0]]}
+  - pattern: "STM32L1.*"
+    variants:
+      - {erase_value: 0x00, write_size: 4, erase_size: [[256, 0]]}
+  - pattern: "STM32L5...[CE]"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[4096, 0]]}
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32U0.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32U3([78]..E|B5.G)"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[4096, 0]]}
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[4096, 0]]}
+  - pattern: "STM32U3.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[4096, 0]]}
+  - pattern: "STM32U5([34]..[BC]|[78]..G|[9AFG]..I)"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32U5.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32WB0.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 4, erase_size: [[2048, 0]]}
+  - pattern: "STM32WBA6..G"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32WBA.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 16, erase_size: [[8192, 0]]}
+  - pattern: "STM32WB1.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32WB.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[4096, 0]]}
+  - pattern: "STM32WL.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
+  - pattern: "STM32.*"
+    variants:
+      - {erase_value: 0xFF, write_size: 8, erase_size: [[2048, 0]]}
