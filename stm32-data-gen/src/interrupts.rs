@@ -396,6 +396,14 @@ impl ChipInterrupts {
                 let name2 = {
                     if name == "USBWakeUp" || name == "USBWakeUp_RMP" {
                         "USB_WKUP"
+                    } else if name == "HSP1" {
+                        // STM32H7P has a bare HSP1 global IRQ next to HSP1_ERR/EVT/FWEVT.
+                        "HSP_GLOBAL"
+                    } else if name == "WKUP1_4" {
+                        // STM32H7P groups the eight wakeup pins into two PWR interrupts.
+                        "PWR_WKUP1_4"
+                    } else if name == "WKUP5_8" {
+                        "PWR_WKUP5_8"
                     } else if name == "LCD" && is_h5ef {
                         // STM32H5E/F name the LTDC IRQs LCD and LCD_GBL_ERROR
                         "LTDC_LO"
@@ -436,7 +444,10 @@ impl ChipInterrupts {
                         if !pp.is_empty() {
                             curr_peris = pp;
                         } else {
-                            assert!(!curr_peris.is_empty());
+                            assert!(
+                                !curr_peris.is_empty(),
+                                "token {part:?} of irq {name:?} matched no peripheral (chip {chip_name}, peri_names={peri_names:?})"
+                            );
                             for p in &curr_peris {
                                 peri_signals.entry(p.clone()).or_default().push(part.clone());
                             }
@@ -650,6 +661,9 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
         ("USB2_OTG_HS", &["USB2_OTG_HS"]), // Add this entry to handle USB2_OTG_HS
         ("UCPD1_2", &["UCPD1", "UCPD2"]),
         ("ADC1", &["ADC"]),
+        // STM32H7P names the Audio Digital Filter interrupt ADF1_FLT0_IRQn
+        // while the peripheral instance is called ADF.
+        ("ADF1", &["ADF"]),
         ("CEC", &["HDMI_CEC"]),
         ("SPDIF_RX", &["SPDIFRX1", "SPDIFRX"]),
         ("CAN1", &["CAN"]),
@@ -753,6 +767,24 @@ impl InterruptSignals {
                 "STM32G5",
                 &["CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7"],
             ),
+            // STM32H7P GPDMA1 has 16 channels, each with its own interrupt.
+            (
+                "GPDMA",
+                "STM32H7P",
+                &[
+                    "CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7", "CH8", "CH9", "CH10", "CH11", "CH12",
+                    "CH13", "CH14", "CH15",
+                ],
+            ),
+            // STM32H7P HPDMA1 has 16 channels, each with its own interrupt.
+            (
+                "HPDMA",
+                "STM32H7P",
+                &[
+                    "CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7", "CH8", "CH9", "CH10", "CH11", "CH12",
+                    "CH13", "CH14", "CH15",
+                ],
+            ),
         ];
 
         // Fallback to the general signal map
@@ -786,7 +818,10 @@ impl InterruptSignals {
                 &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"],
             ),
             ("MDF", &["FLT0", "FLT1", "FLT2", "FLT3", "FLT4", "FLT5", "FLT6", "FLT7"]),
-            ("PWR", &["S3WU", "WKUP", "PVD", "AVD", "WAKEUP", "PIN"]),
+            (
+                "PWR",
+                &["S3WU", "WKUP", "WKUP1_4", "WKUP5_8", "PVD", "AVD", "WAKEUP", "PIN"],
+            ),
             ("GTZC", &["GLOBAL", "ILA", "GTZC"]),
             ("GTZC_TZIC", &["GLOBAL", "ILA", "GTZC"]),
             ("GTZC_MPCBB", &["GLOBAL", "ILA", "GTZC"]),
@@ -799,6 +834,8 @@ impl InterruptSignals {
             ("GPU2D", &["GLOBAL", "ER"]),
             ("SAI", &["A", "B"]),
             ("ADF", &["FLT0"]),
+            ("HSP", &["GLOBAL", "ERR", "EVT", "FWEVT"]),
+            ("NPU", &["IT0", "IT1", "IT2"]),
             ("RAMECC", &["ECC"]),
             ("RAMCFG", &["BKP", "ECC"]),
             ("LTDC", &["ER", "LO"]),
