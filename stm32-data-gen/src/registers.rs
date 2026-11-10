@@ -52,6 +52,41 @@ impl Registers {
                     return Err(anyhow!(format!("\n{ff}:\n{err_string}")));
                 }
 
+                // chiptool names enum values whose SVD gives them no name
+                // `B_0x<n>` (the raw value). Refuse to propagate those
+                // placeholders into the generated data: rename or delete them
+                // in transforms/ before committing the extracted YAML.
+                let mut placeholders = Vec::new();
+                let mut check = |kind: &str, name: &str| {
+                    if name.starts_with("B_0x") {
+                        placeholders.push(format!("{kind} {name}"));
+                    }
+                };
+                for (bname, block) in &ir.blocks {
+                    check("block", bname);
+                    for r in &block.items {
+                        check("register", &r.name);
+                    }
+                }
+                for (fsname, fs) in &ir.fieldsets {
+                    check("fieldset", fsname);
+                    for f in &fs.fields {
+                        check("field", &f.name);
+                    }
+                }
+                for (ename, e) in &ir.enums {
+                    check("enum", ename);
+                    for v in &e.variants {
+                        check("enum variant", &v.name);
+                    }
+                }
+                if !placeholders.is_empty() {
+                    return Err(anyhow!(
+                        "\n{ff}: placeholder names from the SVD importer are not allowed: {}",
+                        placeholders.join(", ")
+                    ));
+                }
+
                 Ok((ff, ir))
             })
             .collect::<Result<_, _>>()?;
