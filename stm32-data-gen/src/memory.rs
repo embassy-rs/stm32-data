@@ -67,8 +67,10 @@ pub struct ChipMemories {
 
 impl ChipMemories {
     pub fn new() -> Self {
-        let yaml: MemoryYaml =
-            serde_yaml::from_str(include_str!("../../data/memory.yaml")).expect("invalid data/memory.yaml");
+        let yaml: MemoryYaml = serde_yaml::from_str(
+            &std::fs::read_to_string("data/memory.yaml").expect("failed to read data/memory.yaml"),
+        )
+        .expect("invalid data/memory.yaml");
         Self {
             mems: new_regex_map(yaml.mems.into_iter().map(|entry| {
                 let variants = entry
