@@ -171,6 +171,8 @@ impl ParsedRccs {
             "HSE_RTC",
             "HSE_DIV2_OSC", // TODO: remove this
             "TIMG",
+            // H7P: rcc_timx_ker_ck, ADC/DAC kernel clock source
+            "TIMX_KER",
             "HCLKE", // ethernet clock
             "MII",
             "RGMII",

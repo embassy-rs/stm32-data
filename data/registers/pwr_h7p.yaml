@@ -1,0 +1,769 @@
+block/PWR:
+  description: PWR register block.
+  items:
+  - name: CR1
+    description: PWR control register 1.
+    byte_offset: 0
+    fieldset: CR1
+  - name: SR1
+    description: PWR status register 1.
+    byte_offset: 4
+    access: Read
+    fieldset: SR1
+  - name: CSR1
+    description: PWR control status register 1.
+    byte_offset: 8
+    fieldset: CSR1
+  - name: CSR2
+    description: PWR control status register 2.
+    byte_offset: 12
+    fieldset: CSR2
+  - name: CSR3
+    description: PWR CPU control status register 3.
+    byte_offset: 16
+    fieldset: CSR3
+  - name: CSR4
+    description: PWR control status register 4.
+    byte_offset: 20
+    fieldset: CSR4
+  - name: WKUPCR
+    description: PWR wakeup clear register.
+    byte_offset: 32
+    fieldset: WKUPCR
+  - name: WKUPFR
+    description: PWR wakeup flag register.
+    byte_offset: 36
+    access: Read
+    fieldset: WKUPFR
+  - name: WKUPEPR
+    description: PWR wakeup enable and polarity register.
+    byte_offset: 40
+    fieldset: WKUPEPR
+  - name: UCPDR
+    description: PWR USB Type-C and power delivery register.
+    byte_offset: 44
+    fieldset: UCPDR
+  - name: APCR
+    description: PWR apply pull register.
+    byte_offset: 48
+    fieldset: APCR
+  - name: I3CPUCR
+    description: PWR I3C pull-up control register.
+    byte_offset: 52
+    fieldset: I3CPUCR
+  - name: XSPIPUCR
+    description: PWR XSPI pull-up control register.
+    byte_offset: 56
+    fieldset: XSPIPUCR
+  - name: XSPIPDCR
+    description: PWR XSPI pull-down control register.
+    byte_offset: 60
+    fieldset: XSPIPDCR
+fieldset/APCR:
+  description: PWR apply pull register.
+  fields:
+  - name: APC
+    description: Applypull-upandpull-downconfiguration.
+    bit_offset: 0
+    bit_size: 1
+fieldset/CR1:
+  description: PWR control register 1.
+  fields:
+  - name: SVOS
+    description: System Stop mode voltage scaling selection.
+    bit_offset: 0
+    bit_size: 1
+  - name: PVDE
+    description: Programmable voltage detector enable.
+    bit_offset: 4
+    bit_size: 1
+  - name: PLS
+    description: Programmable voltage detector level selection.
+    bit_offset: 5
+    bit_size: 3
+    enum: PLS
+  - name: DBP
+    description: Disable backup domain write protection.
+    bit_offset: 8
+    bit_size: 1
+  - name: FLPS
+    description: Flash low-power mode in Stop mode.
+    bit_offset: 9
+    bit_size: 1
+  - name: BOOSTE
+    description: Analog switch VBoost control.
+    bit_offset: 11
+    bit_size: 1
+  - name: AVDREADY
+    description: Analog voltage ready.
+    bit_offset: 12
+    bit_size: 1
+  - name: AVDEN
+    description: Peripheral voltage monitor on VDDA enable.
+    bit_offset: 13
+    bit_size: 1
+  - name: ALS
+    description: Analog voltage detector level selection.
+    bit_offset: 14
+    bit_size: 2
+    enum: ALS
+fieldset/CSR1:
+  description: PWR control status register 1.
+  fields:
+  - name: BREN
+    description: Backup regulator enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: MONEN
+    description: Vless thansub>BATless than/sub> and temperature monitoring enable.
+    bit_offset: 4
+    bit_size: 1
+  - name: BRRDY
+    description: Backup regulator ready.
+    bit_offset: 16
+    bit_size: 1
+  - name: VBATL
+    description: Vless thansub>BATless than/sub> level monitoring versus low threshold.
+    bit_offset: 20
+    bit_size: 1
+  - name: VBATH
+    description: Vless thansub>BATless than/sub> level monitoring versus high threshold.
+    bit_offset: 21
+    bit_size: 1
+  - name: TEMPL
+    description: Temperature level monitoring versus low threshold.
+    bit_offset: 22
+    bit_size: 1
+  - name: TEMPH
+    description: Temperature level monitoring versus high threshold.
+    bit_offset: 23
+    bit_size: 1
+fieldset/CSR2:
+  description: PWR control status register 2.
+  fields:
+  - name: BYPASS
+    description: Power management unit bypass.
+    bit_offset: 0
+    bit_size: 1
+  - name: LDOEN
+    description: Integrated low drop-out regulator enable (read only).
+    bit_offset: 1
+    bit_size: 1
+  - name: SMPSEN
+    description: Integrated SMPS step-down converter enable (read only).
+    bit_offset: 2
+    bit_size: 1
+  - name: VBE
+    description: VBAT charging enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: VBRS
+    description: VBAT charging resistor selection.
+    bit_offset: 9
+    bit_size: 1
+  - name: SDRDY
+    description: Integrated SMPS step-down converter supply ready.
+    bit_offset: 16
+    bit_size: 1
+fieldset/CSR3:
+  description: PWR CPU control status register 3.
+  fields:
+  - name: PDDS
+    description: Power-down Deepsleep.
+    bit_offset: 0
+    bit_size: 1
+  - name: CSSF
+    description: Clear Standby and Stop flags (always read as 0).
+    bit_offset: 1
+    bit_size: 1
+  - name: STOPF
+    description: Stop flag.
+    bit_offset: 8
+    bit_size: 1
+  - name: SBF
+    description: System Standby flag.
+    bit_offset: 9
+    bit_size: 1
+fieldset/CSR4:
+  description: PWR control status register 4.
+  fields:
+  - name: VOS
+    description: Voltage scaling selection according to performance.
+    bit_offset: 0
+    bit_size: 2
+    enum: VOS
+  - name: VOSRDY
+    description: VOS ready bit for Vless thansub>COREless than/sub> voltage scaling output selection.
+    bit_offset: 2
+    bit_size: 1
+fieldset/I3CPUCR:
+  description: PWR I3C pull-up control register.
+  fields:
+  - name: I3CPA15_PU
+    description: Port PA15 I3C pull-up bit.
+    bit_offset: 10
+    bit_size: 1
+  - name: I3CPB3_PU
+    description: Port PB3 I3C pull-up bit.
+    bit_offset: 11
+    bit_size: 1
+  - name: I3CPB4_PU
+    description: Port PB4 I3C pull-up bit.
+    bit_offset: 12
+    bit_size: 1
+  - name: I3CPB8_PU
+    description: Port PB8 I3C pull-up bit.
+    bit_offset: 13
+    bit_size: 1
+  - name: I3CPB9_PU
+    description: Port PB9 I3C pull-up bit.
+    bit_offset: 14
+    bit_size: 1
+  - name: I3CPC8_PU
+    description: Port PC8 I3C pull-up bit.
+    bit_offset: 15
+    bit_size: 1
+  - name: I3CPC9_PU
+    description: Port PC9 I3C pull-up bit.
+    bit_offset: 16
+    bit_size: 1
+  - name: I3CPD0_PU
+    description: Port PD0 I3C pull-up bit.
+    bit_offset: 17
+    bit_size: 1
+  - name: I3CPD1_PU
+    description: Port PD1 I3C pull-up bit.
+    bit_offset: 18
+    bit_size: 1
+  - name: I3CPD6_PU
+    description: Port PD6 I3C pull-up bit.
+    bit_offset: 19
+    bit_size: 1
+  - name: I3CPD7_PU
+    description: Port PD7 I3C pull-up bit.
+    bit_offset: 20
+    bit_size: 1
+  - name: I3CPE5_PU
+    description: Port PE5 I3C pull-up bit.
+    bit_offset: 21
+    bit_size: 1
+  - name: I3CPE6_PU
+    description: Port PE6 I3C pull-up bit.
+    bit_offset: 22
+    bit_size: 1
+  - name: I3CPG13_PU
+    description: Port PG13 I3C pull-up bit.
+    bit_offset: 25
+    bit_size: 1
+  - name: I3CPG14_PU
+    description: Port PG14 I3C pull-up bit.
+    bit_offset: 26
+    bit_size: 1
+  - name: I3CPH11_PU
+    description: Port PH11 I3C pull-up bit.
+    bit_offset: 27
+    bit_size: 1
+  - name: I3CPH12_PU
+    description: Port PH12 I3C pull-up bit.
+    bit_offset: 28
+    bit_size: 1
+  - name: I3CPI2_PU
+    description: Port PI2 I3C pull-up bit.
+    bit_offset: 29
+    bit_size: 1
+fieldset/SR1:
+  description: PWR status register 1.
+  fields:
+  - name: ACTVOS
+    description: VOS currently applied for Vless thansub>COREless than/sub> voltage scaling selection.
+    bit_offset: 0
+    bit_size: 2
+    enum: ACTVOS
+  - name: ACTVOSRDY
+    description: Voltage levels ready bit for currently used ACTVOS.
+    bit_offset: 2
+    bit_size: 1
+  - name: PVDO
+    description: Programmable voltage detect output.
+    bit_offset: 4
+    bit_size: 1
+  - name: AVDO
+    description: Analog voltage detector output on VDDA.
+    bit_offset: 13
+    bit_size: 1
+fieldset/UCPDR:
+  description: PWR USB Type-C and power delivery register.
+  fields:
+  - name: UCPD_DBDIS
+    description: UCPDdeadbatterydisable.
+    bit_offset: 0
+    bit_size: 1
+  - name: UCPD_STBY
+    description: UCPDStandbymode.
+    bit_offset: 1
+    bit_size: 1
+fieldset/WKUPCR:
+  description: PWR wakeup clear register.
+  fields:
+  - name: WKUPC1
+    description: Clear wakeup pin flag for WKUP1.
+    bit_offset: 0
+    bit_size: 1
+  - name: WKUPC2
+    description: Clear wakeup pin flag for WKUP2.
+    bit_offset: 1
+    bit_size: 1
+  - name: WKUPC3
+    description: Clear wakeup pin flag for WKUP3.
+    bit_offset: 2
+    bit_size: 1
+  - name: WKUPC4
+    description: Clear wakeup pin flag for WKUP4.
+    bit_offset: 3
+    bit_size: 1
+  - name: WKUPC5
+    description: Clear wakeup pin flag for WKUP5.
+    bit_offset: 4
+    bit_size: 1
+  - name: WKUPC6
+    description: Clear wakeup pin flag for WKUP6.
+    bit_offset: 5
+    bit_size: 1
+  - name: WKUPC7
+    description: Clear wakeup pin flag for WKUP7.
+    bit_offset: 6
+    bit_size: 1
+  - name: WKUPC8
+    description: Clear wakeup pin flag for WKUP8.
+    bit_offset: 7
+    bit_size: 1
+fieldset/WKUPEPR:
+  description: PWR wakeup enable and polarity register.
+  fields:
+  - name: WKUPEN1
+    description: Enable wakeup pin WKUPn.
+    bit_offset: 0
+    bit_size: 1
+  - name: WKUPEN2
+    description: Enable wakeup pin WKUPn.
+    bit_offset: 1
+    bit_size: 1
+  - name: WKUPEN3
+    description: Enable wakeup pin WKUPn.
+    bit_offset: 2
+    bit_size: 1
+  - name: WKUPEN4
+    description: Enable wakeup pin WKUPn.
+    bit_offset: 3
+    bit_size: 1
+  - name: WKUPEN5
+    description: Enable wakeup pin WKUPn.
+    bit_offset: 4
+    bit_size: 1
+  - name: WKUPEN6
+    description: Enable wakeup pin WKUPn.
+    bit_offset: 5
+    bit_size: 1
+  - name: WKUPEN7
+    description: Enable wakeup pin WKUPn.
+    bit_offset: 6
+    bit_size: 1
+  - name: WKUPEN8
+    description: Enable wakeup pin WKUPn.
+    bit_offset: 7
+    bit_size: 1
+  - name: WKUPP1
+    description: Wakeup pin polarity bit for WKUPn.
+    bit_offset: 8
+    bit_size: 1
+  - name: WKUPP2
+    description: Wakeup pin polarity bit for WKUPn.
+    bit_offset: 9
+    bit_size: 1
+  - name: WKUPP3
+    description: Wakeup pin polarity bit for WKUPn.
+    bit_offset: 10
+    bit_size: 1
+  - name: WKUPP4
+    description: Wakeup pin polarity bit for WKUPn.
+    bit_offset: 11
+    bit_size: 1
+  - name: WKUPP5
+    description: Wakeup pin polarity bit for WKUPn.
+    bit_offset: 12
+    bit_size: 1
+  - name: WKUPP6
+    description: Wakeup pin polarity bit for WKUPn.
+    bit_offset: 13
+    bit_size: 1
+  - name: WKUPP7
+    description: Wakeup pin polarity bit for WKUPn.
+    bit_offset: 14
+    bit_size: 1
+  - name: WKUPP8
+    description: Wakeup pin polarity bit for WKUPn.
+    bit_offset: 15
+    bit_size: 1
+  - name: WKUPPUPD1
+    description: Wakeup pin pull configuration for WKUPn.
+    bit_offset: 16
+    bit_size: 2
+    enum: WKUPPUPD1
+  - name: WKUPPUPD2
+    description: Wakeup pin pull configuration for WKUPn.
+    bit_offset: 18
+    bit_size: 2
+    enum: WKUPPUPD2
+  - name: WKUPPUPD3
+    description: Wakeup pin pull configuration for WKUPn.
+    bit_offset: 20
+    bit_size: 2
+    enum: WKUPPUPD3
+  - name: WKUPPUPD4
+    description: Wakeup pin pull configuration for WKUPn.
+    bit_offset: 22
+    bit_size: 2
+    enum: WKUPPUPD4
+  - name: WKUPPUPD5
+    description: Wakeup pin pull configuration for WKUPn.
+    bit_offset: 24
+    bit_size: 2
+    enum: WKUPPUPD5
+  - name: WKUPPUPD6
+    description: Wakeup pin pull configuration for WKUPn.
+    bit_offset: 26
+    bit_size: 2
+    enum: WKUPPUPD6
+  - name: WKUPPUPD7
+    description: Wakeup pin pull configuration for WKUPn.
+    bit_offset: 28
+    bit_size: 2
+    enum: WKUPPUPD7
+  - name: WKUPPUPD8
+    description: Wakeup pin pull configuration for WKUPn.
+    bit_offset: 30
+    bit_size: 2
+    enum: WKUPPUPD8
+fieldset/WKUPFR:
+  description: PWR wakeup flag register.
+  fields:
+  - name: WKUPF1
+    description: Wakeup pin WKUP1 flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: WKUPF2
+    description: Wakeup pin WKUP2 flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: WKUPF3
+    description: Wakeup pin WKUP3 flag.
+    bit_offset: 2
+    bit_size: 1
+  - name: WKUPF4
+    description: Wakeup pin WKUP4 flag.
+    bit_offset: 3
+    bit_size: 1
+  - name: WKUPF5
+    description: Wakeup pin WKUP5 flag.
+    bit_offset: 4
+    bit_size: 1
+  - name: WKUPF6
+    description: Wakeup pin WKUP6 flag.
+    bit_offset: 5
+    bit_size: 1
+  - name: WKUPF7
+    description: Wakeup pin WKUP7 flag.
+    bit_offset: 6
+    bit_size: 1
+  - name: WKUPF8
+    description: Wakeup pin WKUP8 flag.
+    bit_offset: 7
+    bit_size: 1
+fieldset/XSPIPDCR:
+  description: PWR XSPI pull-down control register.
+  fields:
+  - name: XSPIPG10_PD
+    description: Port PG10 XSPI pull-down bit.
+    bit_offset: 17
+    bit_size: 1
+  - name: XSPIPD3_PD
+    description: Port PD3 XSPI pull-down bit.
+    bit_offset: 18
+    bit_size: 1
+  - name: XSPIPD2_PD
+    description: Port PD2 XSPI pull-down bit.
+    bit_offset: 19
+    bit_size: 1
+  - name: XSPIPD1_PD
+    description: Port PD1 XSPI pull-down bit.
+    bit_offset: 20
+    bit_size: 1
+  - name: XSPIPD0_PD
+    description: Port PD0 XSPI pull-down bit.
+    bit_offset: 21
+    bit_size: 1
+  - name: XSPIPB2_PD
+    description: Port PB2 XSPI pull-down bit.
+    bit_offset: 22
+    bit_size: 1
+  - name: XSPIPB1_PD
+    description: Port PB1 XSPI pull-down bit.
+    bit_offset: 23
+    bit_size: 1
+  - name: XSPIPA5_PD
+    description: Port PA5 XSPI pull-down bit.
+    bit_offset: 24
+    bit_size: 1
+  - name: XSPIPA4_PD
+    description: Port PA4 XSPI pull-down bit.
+    bit_offset: 25
+    bit_size: 1
+  - name: XSPIPA3_PD
+    description: Port PA3 XSPI pull-down bit.
+    bit_offset: 26
+    bit_size: 1
+  - name: XSPIPA2_PD
+    description: Port PA2 XSPI pull-down bit.
+    bit_offset: 27
+    bit_size: 1
+  - name: XSPIPA0_PD
+    description: Port PA0 XSPI pull-down bit.
+    bit_offset: 28
+    bit_size: 1
+  - name: XSPIPF2_PD
+    description: Port PF2 XSPI pull-down bit.
+    bit_offset: 29
+    bit_size: 1
+  - name: XSPIPH1_PD
+    description: Port PH1 XSPI pull-down bit.
+    bit_offset: 30
+    bit_size: 1
+  - name: XSPIPH0_PD
+    description: Port PH0 XSPI pull-down bit.
+    bit_offset: 31
+    bit_size: 1
+fieldset/XSPIPUCR:
+  description: PWR XSPI pull-up control register.
+  fields:
+  - name: XSPIPG10_PU
+    description: Port PG10 XSPI pull-up bit.
+    bit_offset: 17
+    bit_size: 1
+  - name: XSPIPD3_PU
+    description: Port PD3 XSPI pull-up bit.
+    bit_offset: 18
+    bit_size: 1
+  - name: XSPIPD2_PU
+    description: Port PD2 XSPI pull-up bit.
+    bit_offset: 19
+    bit_size: 1
+  - name: XSPIPD1_PU
+    description: Port PD1 XSPI pull-up bit.
+    bit_offset: 20
+    bit_size: 1
+  - name: XSPIPD0_PU
+    description: Port PD0 XSPI pull-up bit.
+    bit_offset: 21
+    bit_size: 1
+  - name: XSPIPB2_PU
+    description: Port PB2 XSPI pull-up bit.
+    bit_offset: 22
+    bit_size: 1
+  - name: XSPIPB1_PU
+    description: Port PB1 XSPI pull-up bit.
+    bit_offset: 23
+    bit_size: 1
+  - name: XSPIPA5_PU
+    description: Port PA5 XSPI pull-up bit.
+    bit_offset: 24
+    bit_size: 1
+  - name: XSPIPA4_PU
+    description: Port PA4 XSPI pull-up bit.
+    bit_offset: 25
+    bit_size: 1
+  - name: XSPIPA3_PU
+    description: Port PA3 XSPI pull-up bit.
+    bit_offset: 26
+    bit_size: 1
+  - name: XSPIPA2_PU
+    description: Port PA2 XSPI pull-up bit.
+    bit_offset: 27
+    bit_size: 1
+  - name: XSPIPA0_PU
+    description: Port PA0 XSPI pull-up bit.
+    bit_offset: 28
+    bit_size: 1
+  - name: XSPIPF2_PU
+    description: Port PF2 XSPI pull-up bit.
+    bit_offset: 29
+    bit_size: 1
+  - name: XSPIPH1_PU
+    description: Port PH1 XSPI pull-up bit.
+    bit_offset: 30
+    bit_size: 1
+  - name: XSPIPH0_PU
+    description: Port PH0 XSPI pull-up bit.
+    bit_offset: 31
+    bit_size: 1
+enum/ACTVOS:
+  bit_size: 2
+  variants:
+  - name: VOS2
+    description: VOS2.
+    value: 1
+  - name: VOS1
+    description: VOS1.
+    value: 2
+  - name: VOS0
+    description: VOS0.
+    value: 3
+enum/ALS:
+  bit_size: 2
+  variants:
+  - name: LEVEL1
+    description: AVD level 1.
+    value: 0
+  - name: LEVEL2
+    description: AVD level 2.
+    value: 1
+  - name: LEVEL3
+    description: AVD level 3.
+    value: 2
+  - name: LEVEL4
+    description: AVD level 4.
+    value: 3
+enum/PLS:
+  bit_size: 3
+  variants:
+  - name: LEVEL1
+    description: VDD less than PVD level 1.
+    value: 0
+  - name: LEVEL2
+    description: VDD less than PVD level 2.
+    value: 1
+  - name: LEVEL3
+    description: VDD less than PVD level 3.
+    value: 2
+  - name: LEVEL4
+    description: VDD less than PVD level 4.
+    value: 3
+  - name: LEVEL5
+    description: VDD less than PVD level 5.
+    value: 4
+  - name: LEVEL6
+    description: VDD less than PVD level 6.
+    value: 5
+  - name: LEVEL7
+    description: VDD less than PVD level 7.
+    value: 6
+  - name: PVD_VREFINT
+    description: PVD_IN less than VREFINT.
+    value: 7
+enum/VOS:
+  bit_size: 2
+  variants:
+  - name: VOS2
+    description: VOS2 (lowest power).
+    value: 1
+  - name: VOS1
+    description: VOS1 (default).
+    value: 2
+  - name: VOS0
+    description: VOS0 (highest frequency).
+    value: 3
+enum/WKUPPUPD1:
+  bit_size: 2
+  variants:
+  - name: NONE
+    description: No pull.
+    value: 0
+  - name: PULLUP
+    description: Pull-up.
+    value: 1
+  - name: PULLDOWN
+    description: Pull-down.
+    value: 2
+enum/WKUPPUPD2:
+  bit_size: 2
+  variants:
+  - name: NONE
+    description: No pull.
+    value: 0
+  - name: PULLUP
+    description: Pull-up.
+    value: 1
+  - name: PULLDOWN
+    description: Pull-down.
+    value: 2
+enum/WKUPPUPD3:
+  bit_size: 2
+  variants:
+  - name: NONE
+    description: No pull.
+    value: 0
+  - name: PULLUP
+    description: Pull-up.
+    value: 1
+  - name: PULLDOWN
+    description: Pull-down.
+    value: 2
+enum/WKUPPUPD4:
+  bit_size: 2
+  variants:
+  - name: NONE
+    description: No pull.
+    value: 0
+  - name: PULLUP
+    description: Pull-up.
+    value: 1
+  - name: PULLDOWN
+    description: Pull-down.
+    value: 2
+enum/WKUPPUPD5:
+  bit_size: 2
+  variants:
+  - name: NONE
+    description: No pull.
+    value: 0
+  - name: PULLUP
+    description: Pull-up.
+    value: 1
+  - name: PULLDOWN
+    description: Pull-down.
+    value: 2
+enum/WKUPPUPD6:
+  bit_size: 2
+  variants:
+  - name: NONE
+    description: No pull.
+    value: 0
+  - name: PULLUP
+    description: Pull-up.
+    value: 1
+  - name: PULLDOWN
+    description: Pull-down.
+    value: 2
+enum/WKUPPUPD7:
+  bit_size: 2
+  variants:
+  - name: NONE
+    description: No pull.
+    value: 0
+  - name: PULLUP
+    description: Pull-up.
+    value: 1
+  - name: PULLDOWN
+    description: Pull-down.
+    value: 2
+enum/WKUPPUPD8:
+  bit_size: 2
+  variants:
+  - name: NONE
+    description: No pull.
+    value: 0
+  - name: PULLUP
+    description: Pull-up.
+    value: 1
+  - name: PULLDOWN
+    description: Pull-down.
+    value: 2
