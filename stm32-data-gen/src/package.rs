@@ -1388,8 +1388,7 @@ fn parse_package(f: PathBuf, d: &mut PackageDirectory, sink: PackageSink<'_>, dm
 
                     af.or_insert_with_mut(HashMap::new).extend(gpio_af.clone());
 
-                    irqs
-                        .entry(("NVIC".to_string(), chip_name.clone()))
+                    irqs.entry(("NVIC".to_string(), chip_name.clone()))
                         .or_insert_with(|| loaded.interrupts.iter().map(ToString::to_string).collect());
                 }
             }

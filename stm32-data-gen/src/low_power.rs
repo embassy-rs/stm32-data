@@ -60,10 +60,7 @@ mod tests {
         );
 
         // MCU independent rule for RTC. Must match RTC exactly
-        assert_eq!(
-            chip_stop_modes.peripheral_stop_mode_info("my-test-mcu", "RTC1"),
-            None
-        );
+        assert_eq!(chip_stop_modes.peripheral_stop_mode_info("my-test-mcu", "RTC1"), None);
 
         // Rule covering all STM32WB55 for LPTIM1
         assert_eq!(
