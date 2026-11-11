@@ -112,8 +112,8 @@ impl ChipMemories {
         );
 
         mems_variations
-            .into_iter()
-            .zip(flash_variations.into_iter())
+            .iter()
+            .zip(flash_variations)
             .map(|(mems, flash)| {
                 let mut res = Vec::new();
 

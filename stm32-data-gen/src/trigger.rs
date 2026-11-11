@@ -44,7 +44,7 @@ impl Triggers {
 
             for trigger in &rule.triggers {
                 let matches = trigger_expr.captures(&trigger.signal).unwrap();
-                let trigger_set = trigger_sets.entry((&matches[1]).to_string()).or_insert(HashSet::new());
+                let trigger_set = trigger_sets.entry(matches[1].to_string()).or_default();
 
                 if !trigger_set.insert(&trigger.source) || trigger.source != trigger.source.to_uppercase() {
                     panic!(
@@ -151,10 +151,11 @@ pub fn source_origin(source: &str) -> SourceOrigin<'_> {
 
     // Families whose sources name the instance: `TIM1_TRGO` -> `TIM1`.
     for family in ["TIM", "LPTIM", "COMP", "DFSDM", "ADC"] {
-        if let Some(rest) = head.strip_prefix(family) {
-            if !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit()) {
-                return SourceOrigin::Exact(head);
-            }
+        if let Some(rest) = head.strip_prefix(family)
+            && !rest.is_empty()
+            && rest.bytes().all(|b| b.is_ascii_digit())
+        {
+            return SourceOrigin::Exact(head);
         }
     }
 

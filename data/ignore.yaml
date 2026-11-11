@@ -1,0 +1,26 @@
+# Chip name patterns that are excluded from generation.
+#
+# Each entry is a regex matched against the full chip name (it is anchored with
+# `^...$`), e.g. the file name of a CubeMX MCU XML with the extension removed.
+# Matching chips are skipped entirely by `chips::parse_groups`.
+
+# Not supported, not planned unless someone wants to do it.
+- 'STM32MP13.*'
+- 'STM32MP2.*'
+# - 'STM32N6.*'
+- 'STM32G41[14].*'
+- 'STM32G4.*xZ'
+- 'STM32WL3.*'
+# No CMSIS header in sources/headers yet, so generation would skip them anyway
+# (see generator.rs). Revisit once stm32wl4x*.h is added there.
+- 'STM32WL4.*'
+# Does not exist in ST website. No datasheet, no RM.
+- 'STM32GBK.*'
+- 'STM32L485.*'
+# STM32WxM modules. These are based on a chip that is supported on its own, and
+# it is not clear we want a separate target for the module.
+- 'STM32WL5M.*'
+- 'STM32WB1M.*'
+- 'STM32WB3M.*'
+- 'STM32WB5M.*'
+- 'STM32WBA5M.*'

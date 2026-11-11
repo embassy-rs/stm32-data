@@ -3,7 +3,6 @@ use std::fs;
 use std::path::Path;
 
 use clap::Parser;
-use serde_json;
 use stm32_data_serde::Chip;
 
 fn extract_peripheral_kind_from_name(peripheral_name: &str) -> String {
@@ -24,13 +23,12 @@ fn extract_peripheral_kind_from_name(peripheral_name: &str) -> String {
     }
 
     // Default heuristic: take alphabetic prefix
-    let kind = name_lower
+
+    name_lower
         .chars()
         .take_while(|c| c.is_ascii_alphabetic())
         .collect::<String>()
-        .to_uppercase();
-
-    kind
+        .to_uppercase()
 }
 
 #[derive(Parser)]
@@ -137,18 +135,14 @@ fn main() {
                 if should_include {
                     if let Some(registers) = &peripheral.registers {
                         // Supported peripheral with registers
-                        let family_data = peripheral_data
-                            .entry(peripheral_kind.clone())
-                            .or_insert_with(BTreeMap::new);
+                        let family_data = peripheral_data.entry(peripheral_kind.clone()).or_default();
                         let entry = family_data
                             .entry(chip.family.clone())
                             .or_insert_with(|| (BTreeSet::new(), false));
                         entry.0.insert(registers.version.clone());
                     } else {
                         // Unsupported peripheral (no registers field)
-                        let family_data = peripheral_data
-                            .entry(peripheral_kind.clone())
-                            .or_insert_with(BTreeMap::new);
+                        let family_data = peripheral_data.entry(peripheral_kind.clone()).or_default();
                         let entry = family_data
                             .entry(chip.family.clone())
                             .or_insert_with(|| (BTreeSet::new(), false));
@@ -295,10 +289,7 @@ fn generate_peripheral_detail(
 
     for (family, (versions, _has_unsupported)) in family_peripheral_data {
         for version in versions {
-            version_map
-                .entry(version.clone())
-                .or_insert_with(BTreeSet::new)
-                .insert(family.clone());
+            version_map.entry(version.clone()).or_default().insert(family.clone());
         }
     }
 

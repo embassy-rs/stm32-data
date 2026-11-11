@@ -43,7 +43,9 @@ impl<'a, K: Eq + Hash + 'a, V: 'a> EntryFns<'a, K, V> for Entry<'a, K, V> {
                 None
             };
 
-            e.map(|e| ptr::write(self, e));
+            if let Some(e) = e {
+                ptr::write(self, e)
+            }
         }
 
         match self {

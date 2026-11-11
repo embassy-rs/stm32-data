@@ -290,13 +290,13 @@ impl ParsedRccs {
                         let peri = if peri == "RTCAPB" { "RTC" } else { peri };
 
                         let mut reset = None;
-                        if let Some(rstr) = ir.fieldsets.get(&reg.replace("ENR", "RSTR")) {
-                            if let Some(_field) = rstr.fields.iter().find(|field| field.name == format!("{peri}RST")) {
-                                reset = Some(rcc::Field {
-                                    register: reg.replace("ENR", "RSTR"),
-                                    field: format!("{peri}RST"),
-                                });
-                            }
+                        if let Some(rstr) = ir.fieldsets.get(&reg.replace("ENR", "RSTR"))
+                            && let Some(_field) = rstr.fields.iter().find(|field| field.name == format!("{peri}RST"))
+                        {
+                            reset = Some(rcc::Field {
+                                register: reg.replace("ENR", "RSTR"),
+                                field: format!("{peri}RST"),
+                            });
                         }
 
                         let clock = clock.replace("AHB", "HCLK").replace("APB", "PCLK");
@@ -457,10 +457,8 @@ impl ParsedRccs {
                         panic!("rcc_{}: peripheral {} missing mux", rcc_version, peri_name)
                     }
                 }
-                if rcc_version.starts_with("h7") {
-                    if peri_name.starts_with("LTDC") {
-                        maybe_kernel_clock = "PLL3_R".to_string();
-                    }
+                if rcc_version.starts_with("h7") && peri_name.starts_with("LTDC") {
+                    maybe_kernel_clock = "PLL3_R".to_string();
                 }
                 rcc::KernelClock::Clock(maybe_kernel_clock)
             }
@@ -489,10 +487,10 @@ fn get_with_fallback<'a, T>(key: &str, map: &'a HashMap<String, T>, fallbacks: &
         }
     }
 
-    if let Some(capture) = regex!("^([A-Z]+)\\d+$").captures(key) {
-        if let Some(res) = map.get(capture.get(1).unwrap().as_str()) {
-            return Some(res);
-        }
+    if let Some(capture) = regex!("^([A-Z]+)\\d+$").captures(key)
+        && let Some(res) = map.get(capture.get(1).unwrap().as_str())
+    {
+        return Some(res);
     }
 
     None

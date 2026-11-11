@@ -1,0 +1,100 @@
+# STM32F1 AFIO pin-remap tables.
+#
+# The STM32F1 line has no per-pin alternate-function selection. Instead the
+# `AFIO->MAPR` / `AFIO->MAPR2` remap field for a peripheral selects between
+# whole groups of pins. These tables describe those groups.
+#
+# `mapr` is consulted first (`{peripheral}_REMAP` in register `MAPR`); if a
+# peripheral has no `mapr` entry, `mapr2` is used (`MAPR2`) instead. The first
+# `mapr2` group whose `chips` regex matches the chip name wins. Each `chips`
+# value is matched against the whole chip name.
+
+mapr:
+  SPI3:
+    - { value: 0, pins: [PC7, PA15, PB3, PB4, PB5] }
+    - { value: 1, pins: [PC7, PA4, PC10, PC11, PC12] }
+  CAN2:
+    - { value: 0, pins: [PB12, PB13] }
+    - { value: 1, pins: [PB5, PB6] }
+  ETH:
+    - { value: 0, pins: [PA0, PA1, PA2, PA3, PC1, PC2, PC3, PB5, PB8, PB10, PB11, PB12, PB13, PA7, PC4, PC5, PB0, PB1] }
+    - { value: 1, pins: [PA0, PA1, PA2, PA3, PC1, PC2, PC3, PB5, PB8, PB10, PB11, PB12, PB13, PD8, PD9, PD10, PD11, PD12] }
+  CAN1:
+    - { value: 0, pins: [PA11, PA12] }
+    - { value: 2, pins: [PB8, PB9] }
+    - { value: 3, pins: [PD0, PD1] }
+  TIM4:
+    - { value: 0, pins: [PE0, PB6, PB7, PB8, PB9] }
+    - { value: 1, pins: [PE0, PD12, PD13, PD14, PD15] }
+  TIM3:
+    - { value: 0, pins: [PD2, PA6, PA7, PB0, PB1] }
+    - { value: 2, pins: [PD2, PB4, PB5, PB0, PB1] }
+    - { value: 3, pins: [PD2, PC6, PC7, PC8, PC9] }
+  TIM2:
+    - { value: 0, pins: [PA0, PA1, PA2, PA3] }
+    - { value: 1, pins: [PA15, PB3, PA2, PA3] }
+    - { value: 2, pins: [PA0, PA1, PB10, PB11] }
+    - { value: 3, pins: [PA15, PB3, PB10, PB11] }
+  TIM1:
+    - { value: 0, pins: [PA12, PA8, PA9, PA10, PA11, PB12, PB13, PB14, PB15] }
+    - { value: 1, pins: [PA12, PA8, PA9, PA10, PA11, PA6, PA7, PB0, PB1] }
+    - { value: 3, pins: [PE7, PE9, PE11, PE13, PE14, PE15, PE8, PE10, PE12] }
+  USART3:
+    - { value: 0, pins: [PB10, PB11, PB12, PB13, PB14] }
+    - { value: 1, pins: [PC10, PC11, PC12, PB13, PB14] }
+    - { value: 3, pins: [PD8, PD9, PD10, PD11, PD12] }
+  USART2:
+    - { value: 0, pins: [PA0, PA1, PA2, PA3, PA4] }
+    - { value: 1, pins: [PD3, PD4, PD5, PD6, PD7] }
+  USART1:
+    - { value: 0, pins: [PA11, PA12, PA8, PA9, PA10] }
+    - { value: 1, pins: [PA11, PA12, PA8, PB6, PB7] }
+  I2C1:
+    - { value: 0, pins: [PB6, PB7] }
+    - { value: 1, pins: [PB8, PB9] }
+  SPI1:
+    - { value: 0, pins: [PA4, PA5, PA6, PA7] }
+    - { value: 1, pins: [PA15, PB3, PB4, PB5] }
+
+mapr2:
+  - chips: 'STM32F100.*'
+    entries:
+      TIM12:
+        - { value: 0, pins: [PC4, PC5] }
+        - { value: 1, pins: [PB12, PB13] }
+      TIM14:
+        - { value: 0, pins: [PC9] }
+        - { value: 1, pins: [PB1] }
+      TIM13:
+        - { value: 0, pins: [PC8] }
+        - { value: 1, pins: [PB0] }
+      CEC:
+        - { value: 0, pins: [PB8] }
+        - { value: 1, pins: [PB10] }
+      TIM17:
+        - { value: 0, pins: [PA10, PB7, PB9] }
+        - { value: 1, pins: [PA10, PB7, PA7] }
+      TIM16:
+        - { value: 0, pins: [PB5, PB8] }
+        - { value: 1, pins: [PB5, PA6] }
+      TIM15:
+        - { value: 0, pins: [PA9, PA2, PA3] }
+        - { value: 1, pins: [PA9, PB14, PB15] }
+
+  - chips: '.*'
+    entries:
+      TIM14:
+        - { value: 0, pins: [PA7] }
+        - { value: 1, pins: [PF9] }
+      TIM13:
+        - { value: 0, pins: [PA6] }
+        - { value: 1, pins: [PF8] }
+      TIM11:
+        - { value: 0, pins: [PB9] }
+        - { value: 1, pins: [PF7] }
+      TIM10:
+        - { value: 0, pins: [PB8] }
+        - { value: 1, pins: [PF6] }
+      TIM9:
+        - { value: 0, pins: [PA2, PA3] }
+        - { value: 1, pins: [PE5, PE6] }

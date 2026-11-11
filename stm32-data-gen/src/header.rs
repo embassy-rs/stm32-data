@@ -4,6 +4,8 @@ use anyhow::{Context, anyhow};
 use lazy_regex::regex;
 use regex_map::RegexMap;
 
+use crate::config;
+
 pub struct Headers {
     map: HeaderMap,
     parsed: HeadersParsed,
@@ -25,7 +27,7 @@ impl Headers {
                 && !v.starts_with(filter)
             {
                 continue;
-            } else if parsed.0.get(v).is_none() {
+            } else if !parsed.0.contains_key(v) {
                 return Err(anyhow!(
                     "parsed headers do not contain {v}, specified in the header map",
                 ));
@@ -191,144 +193,24 @@ impl Defines {
         }
     }
 
+    /// Resolve a peripheral's register-block base address from the C header
+    /// defines.
+    ///
+    /// `data/peripheral_bases.yaml` lists the defines to try, in priority order,
+    /// for peripherals whose header name does not follow the `{NAME}_BASE`
+    /// convention. The first define that is present and non-zero wins.
     pub fn get_peri_addr(&self, pname: &str) -> Option<u32> {
-        const ALT_PERI_DEFINES: &[(&str, &[&str])] = &[
-            ("DBGMCU", &["DBGMCU_BASE", "DBG_BASE"]),
-            (
-                "QUADSPI",
-                &[
-                    "QUADSPI_R_BASE",
-                    "QUADSPI_BASE",
-                    "QSPI_R",
-                    "QSPI_R_BASE",
-                    "QSPI_REG_BASE",
-                ],
-            ),
-            ("QUADSPI1", &["QUADSPI1_BASE", "QSPI_R", "QSPI_R_BASE", "QSPI_REG_BASE"]),
-            (
-                "OCTOSPI",
-                &["OSPI_R", "OCTOSPI_R_BASE", "OCTOSPI_R_BASE_NS", "OCTOSPI_REG_BASE"],
-            ),
-            (
-                "OCTOSPI1",
-                &["OSPI_R", "OCTOSPI1_R_BASE", "OCTOSPI1_R_BASE_NS", "OCTOSPI1_REG_BASE"],
-            ),
-            (
-                "OCTOSPI2",
-                &["OCTOSPI2_R_BASE", "OCTOSPI2_R_BASE_NS", "OCTOSPI2_REG_BASE"],
-            ),
-            ("HSPI1", &["HSPI1_R_BASE", "HSPI1_R_BASE_NS"]),
-            ("SPDIFRX1", &["SPDIFRX_BASE"]),
-            ("FLASH", &["FLASH_R_BASE", "FLASH_REG_BASE"]),
-            ("DAC", &["DAC1_BASE", "DAC_BASE"]),
-            ("DAC1", &["DAC1_BASE", "DAC_BASE"]),
-            ("ADC", &["ADC1_BASE", "ADC_BASE"]),
-            ("ADC1", &["ADC1_BASE", "ADC_BASE"]),
-            (
-                "ADC1_COMMON",
-                &["ADC1_COMMON_BASE", "ADC_COMMON_BASE", "ADC1_COMMON", "ADC_COMMON"],
-            ),
-            ("CAN", &["CAN_BASE", "CAN1_BASE"]),
-            ("FMC", &["FMC_R_BASE", "FMC_R_BASE_NS"]),
-            ("FSMC", &["FSMC_R_BASE"]),
-            (
-                "USB",
-                &[
-                    "USB_BASE",
-                    "USB_DRD_BASE",
-                    "USB_DRD_FS_BASE",
-                    "USB_BASE_NS",
-                    "USB_DRD_BASE_NS",
-                ],
-            ),
-            (
-                "USBRAM",
-                &["USB_PMAADDR", "USB_DRD_PMAADDR", "USB_PMAADDR_NS", "USB_DRD_PMAADDR_NS"],
-            ),
-            ("FDCANRAM", &["SRAMCAN_BASE", "SRAMCAN_BASE_NS"]),
-            ("VREFINTCAL", &["VREFINT_CAL_ADDR_CMSIS"]),
-            ("DESIG", &["PACKAGE_BASE"]),
-            ("DSIHOST", &["DSI_BASE"]),
-            ("SYSCFG", &["SYSCFG_BASE", "SBS_BASE"]),
-            ("XSPI1", &["XSPI1_R_BASE", "XSPI1_BASE_NS"]),
-            ("XSPI2", &["XSPI2_R_BASE", "XSPI2_BASE_NS"]),
-            ("XSPI3", &["XSPI3_R_BASE", "XSPI3_BASE_NS"]),
-            ("RAMCFG", &["RAMCFG_BASE", "RAMCFG_BASE_NS", "RAMCFG_BASE_S"]),
-            (
-                "GTZC",
-                &[
-                    "GTZC_BASE",
-                    "GTZC_TZSC_BASE",
-                    "GTZC_TZSC_BASE_NS",
-                    "GTZC_TZSC_BASE_S",
-                    "GTZC_TZSC1_BASE_NS",
-                    "GTZC_TZSC1_BASE_S",
-                ],
-            ),
-            ("GTZC1", &["GTZC1_BASE", "GTZC1_BASE_NS", "GTZC1_BASE_S"]),
-            (
-                "GTZC_TZSC",
-                &[
-                    "GTZC_TZSC_BASE",
-                    "GTZC_TZSC_BASE_NS",
-                    "GTZC_TZSC_BASE_S",
-                    "GTZC_TZSC1_BASE_NS",
-                    "GTZC_TZSC1_BASE_S",
-                ],
-            ),
-            (
-                "GTZC_TZIC",
-                &[
-                    "GTZC_TZIC_BASE",
-                    "GTZC_TZIC_BASE_S",
-                    "GTZC_TZIC1_BASE_NS",
-                    "GTZC_TZIC1_BASE_S",
-                ],
-            ),
-            (
-                "GTZC_MPCBB1",
-                &["GTZC_MPCBB1_BASE", "GTZC_MPCBB1_BASE_NS", "GTZC_MPCBB1_BASE_S"],
-            ),
-            (
-                "GTZC_MPCBB2",
-                &["GTZC_MPCBB2_BASE", "GTZC_MPCBB2_BASE_NS", "GTZC_MPCBB2_BASE_S"],
-            ),
-            (
-                "GTZC_MPCBB3",
-                &["GTZC_MPCBB3_BASE", "GTZC_MPCBB3_BASE_NS", "GTZC_MPCBB3_BASE_S"],
-            ),
-            (
-                "GTZC_MPCBB6",
-                &["GTZC_MPCBB6_BASE", "GTZC_MPCBB6_BASE_NS", "GTZC_MPCBB6_BASE_S"],
-            ),
-            ("RISAF1", &["RISAF1_BASE_NS", "RISAF1_BASE_S"]),
-            ("RISAF2", &["RISAF2_BASE_NS", "RISAF2_BASE_S"]),
-            ("RISAF3", &["RISAF3_BASE_NS", "RISAF3_BASE_S"]),
-            ("RISAF4", &["RISAF4_BASE_NS", "RISAF4_BASE_S"]),
-            ("RISAF5", &["RISAF5_BASE_NS", "RISAF5_BASE_S"]),
-            ("RISAF6", &["RISAF6_BASE_NS", "RISAF6_BASE_S"]),
-            ("RISAF7", &["RISAF7_BASE_NS", "RISAF7_BASE_S"]),
-            ("RISAF8", &["RISAF8_BASE_NS", "RISAF8_BASE_S"]),
-            ("RISAF9", &["RISAF9_BASE_NS", "RISAF9_BASE_S"]),
-            ("RISAF11", &["RISAF11_BASE_NS", "RISAF11_BASE_S"]),
-            ("RISAF12", &["RISAF12_BASE_NS", "RISAF12_BASE_S"]),
-            ("RISAF13", &["RISAF13_BASE_NS", "RISAF13_BASE_S"]),
-            ("RISAF14", &["RISAF14_BASE_NS", "RISAF14_BASE_S"]),
-            ("RISAF15", &["RISAF15_BASE_NS", "RISAF15_BASE_S"]),
-            ("RISAF21", &["RISAF21_BASE_NS", "RISAF21_BASE_S"]),
-            ("RISAF22", &["RISAF22_BASE_NS", "RISAF22_BASE_S"]),
-            ("RISAF23", &["RISAF23_BASE_NS", "RISAF23_BASE_S"]),
-            ("DFSDM1", &["DFSDM1_BASE", "DFSDM1_BASE_NS", "DFSDM1_BASE_S"]),
-        ];
-        let alt_peri_defines: HashMap<_, _> = ALT_PERI_DEFINES.iter().copied().collect();
-
-        let possible_defines: Vec<String> = alt_peri_defines
-            .get(pname)
-            .map(|x| x.iter().map(ToString::to_string).collect())
-            .unwrap_or_else(|| vec![format!("{pname}_BASE"), pname.to_string()]);
-        possible_defines
-            .into_iter()
-            .find_map(|d| self.0.get(&d).filter(|&&addr| addr != 0))
+        let fallback;
+        let defines: &[String] = match config::PERIPHERAL_BASES.get(pname) {
+            Some(aliases) => aliases,
+            None => {
+                fallback = [format!("{pname}_BASE"), pname.to_string()];
+                &fallback
+            }
+        };
+        defines
+            .iter()
+            .find_map(|d| self.0.get(d.as_str()).filter(|&&addr| addr != 0))
             .map(|x| u32::try_from(*x).unwrap())
     }
 }
@@ -362,25 +244,33 @@ impl ParsedHeader {
     }
 
     fn parse(path: impl AsRef<std::path::Path>) -> anyhow::Result<Self> {
+        Self::parse_inner(path)
+    }
+
+    fn parse_inner(path: impl AsRef<std::path::Path>) -> anyhow::Result<Self> {
         let mut irqs = HashMap::<String, HashMap<String, u8>>::new();
         let mut defines = HashMap::<String, Defines>::new();
         let mut cores = Vec::<String>::new();
         let mut cur_core = "all".to_string();
 
-        let mut accum = String::new();
+        // Reused logical-line buffer. C headers wrap long lines with a trailing
+        // backslash, so one logical line can span several physical ones.
+        let mut line = String::new();
         let f = std::fs::read(&path)?;
-        for l in f.split(|b| b == &b'\n') {
-            let l = String::from_utf8_lossy(l);
-            let l = l.trim();
-            let l = accum.clone() + l;
-            if l.ends_with('\\') {
-                accum = l.strip_suffix('\\').unwrap().to_string();
+
+        for raw in f.split(|b| b == &b'\n') {
+            line.push_str(String::from_utf8_lossy(raw).trim());
+
+            if line.ends_with('\\') {
+                line.pop();
                 continue;
             }
-            accum = String::new();
 
-            // Scoped by a single core
-            if let Some(m) = regex!(r".*if defined.*CORE_CM(\d+)(PLUS)?.*").captures(&l) {
+            // Track which core's `#if defined(... CORE_CM<n> ...)` block we
+            // are inside of.
+            if line.contains("CORE_CM")
+                && let Some(m) = regex!(r"if defined.*CORE_CM(\d+)(PLUS)?").captures(&line)
+            {
                 cur_core = format!("cm{}", m.get(1).unwrap().as_str());
                 if m.get(2).is_some() {
                     cur_core += "p";
@@ -388,9 +278,9 @@ impl ParsedHeader {
                 if !cores.contains(&cur_core) {
                     cores.push(cur_core.clone())
                 }
-            } else if regex!(r".*else.*").is_match(&l) {
+            } else if line.contains("else") {
                 cur_core = "all".to_string();
-                if let Some(m) = regex!(".*else.*CORE_CM(\\d+)(PLUS)?.*").captures(&l) {
+                if let Some(m) = regex!(r"else.*CORE_CM(\d+)(PLUS)?").captures(&line) {
                     cur_core = format!("cm{}", m.get(1).unwrap().as_str());
                     if m.get(2).is_some() {
                         cur_core += "p";
@@ -403,41 +293,54 @@ impl ParsedHeader {
                 if !cores.contains(&cur_core) {
                     cores.push(cur_core.clone());
                 }
-            } else if regex!(r".*endif.*").is_match(&l) {
+            } else if line.contains("endif") {
                 cur_core = "all".to_string();
             }
 
-            let irq_entry = irqs.entry(cur_core.clone()).or_default();
-            let defines_entry = defines.entry(cur_core.clone()).or_default();
-
-            if let Some(m) = regex!(r"^([a-zA-Z0-9_]+)_IRQn[ \t]*=[ \t]*(\d+),?[ \t]").captures(&l) {
-                irq_entry.insert(
+            if let Some(m) = regex!(r"^([a-zA-Z0-9_]+)_IRQn[ \t]*=[ \t]*(\d+),?[ \t]").captures(&line) {
+                irqs.entry(cur_core.clone()).or_default().insert(
                     m.get(1).unwrap().as_str().to_string(),
                     m.get(2).unwrap().as_str().parse().unwrap(),
                 );
             }
 
-            if let Some(m) = regex!(r"^#define +([0-9A-Za-z_]+)\(").captures(&l) {
-                defines_entry.0.insert(m.get(1).unwrap().as_str().to_string(), -1);
+            if let Some(m) = regex!(r"^#define +([0-9A-Za-z_]+)\(").captures(&line) {
+                defines
+                    .entry(cur_core.clone())
+                    .or_default()
+                    .0
+                    .insert(m.get(1).unwrap().as_str().to_string(), -1);
             }
 
-            if let Some(m) = regex!(r"^#define +([0-9A-Za-z_]+) +(.*)").captures(&l) {
+            if let Some(m) = regex!(r"^#define +([0-9A-Za-z_]+) +(.*)").captures(&line) {
                 let name = m.get(1).unwrap().as_str().trim();
                 if name == "FLASH_SIZE" {
+                    line.clear();
                     continue;
                 }
                 let val = m.get(2).unwrap().as_str();
                 let val = val.split("/*").next().unwrap().trim();
+                let defines_entry = defines.entry(cur_core.clone()).or_default();
                 let val = defines_entry
                     .parse_value(val)
                     .with_context(|| format!("Failed to process {:?}", path.as_ref()))?;
 
                 defines_entry.0.insert(name.to_string(), val);
             }
+
+            line.clear();
         }
 
         if cores.is_empty() {
             cores = vec!["all".to_string()];
+        }
+
+        // Every core that was ever current gets an entry (possibly empty) in both
+        // maps. `get_defines` and `get_interrupts` use that to tell "unknown core"
+        // apart from "core with nothing defined in it".
+        for core in cores.iter().map(String::as_str).chain(std::iter::once("all")) {
+            irqs.entry(core.to_string()).or_default();
+            defines.entry(core.to_string()).or_default();
         }
 
         for core in &mut cores {

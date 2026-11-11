@@ -4,8 +4,12 @@ use clap::{Parser, ValueEnum};
 use env_logger::Env;
 use log::{LevelFilter, info};
 
+use crate::ctx::GenCtx;
+
 mod check;
 mod chips;
+mod config;
+mod ctx;
 mod dma;
 mod docs;
 mod generator;
@@ -76,15 +80,15 @@ pub enum LogLevel {
     Trace,
 }
 
-impl Into<LevelFilter> for LogLevel {
-    fn into(self) -> LevelFilter {
-        match self {
-            Self::Off => LevelFilter::Off,
-            Self::Error => LevelFilter::Error,
-            Self::Warn => LevelFilter::Warn,
-            Self::Info => LevelFilter::Info,
-            Self::Debug => LevelFilter::Debug,
-            Self::Trace => LevelFilter::Trace,
+impl From<LogLevel> for LevelFilter {
+    fn from(val: LogLevel) -> Self {
+        match val {
+            LogLevel::Off => LevelFilter::Off,
+            LogLevel::Error => LevelFilter::Error,
+            LogLevel::Warn => LevelFilter::Warn,
+            LogLevel::Info => LevelFilter::Info,
+            LogLevel::Debug => LevelFilter::Debug,
+            LogLevel::Trace => LevelFilter::Trace,
         }
     }
 }
@@ -159,6 +163,9 @@ fn main() -> anyhow::Result<()> {
     // stopwatch.section("Parsing GPIO AF");
     let mut af = gpio_af::Af::parse()?;
 
+    // stopwatch.section("Parsing extras");
+    let extras = generator::load_extras();
+
     stopwatch.section("Parsing chip groups");
     let (mut chips, mut chip_groups) = chips::parse_groups(&filter)?;
 
@@ -176,18 +183,21 @@ fn main() -> anyhow::Result<()> {
     stopwatch.section("Processing chips");
     generator::dump_all_chips(
         chip_groups,
-        headers,
-        af,
-        perimap,
-        stop_modes,
-        triggers,
-        chip_memories,
-        registers.blocks,
-        chip_interrupts,
-        peripheral_to_clock,
-        dma_channels,
-        chips,
-        docs,
+        GenCtx {
+            headers: &headers,
+            af: &af,
+            perimap: &perimap,
+            stop_modes: &stop_modes,
+            triggers: &triggers,
+            chip_memories: &chip_memories,
+            blocks: &registers.blocks,
+            chip_interrupts: &chip_interrupts,
+            peripheral_to_clock: &peripheral_to_clock,
+            dma_channels: &dma_channels,
+            chips: &chips,
+            docs: &docs,
+            extras: &extras,
+        },
     )?;
 
     stopwatch.stop();

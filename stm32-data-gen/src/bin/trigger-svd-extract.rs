@@ -118,26 +118,26 @@ fn extract_svd(stem: &str, text: &str) -> Vec<Fragment> {
             continue;
         }
 
-        if state == State::PeripheralName || state == State::RegisterName || state == State::FieldName {
-            if let Some(name) = t.strip_prefix("<name>") {
-                let name = name.strip_suffix("</name>").unwrap_or(name).trim().to_string();
-                match state {
-                    State::PeripheralName => {
-                        peripheral = name;
-                        state = State::Peripheral;
-                    }
-                    State::RegisterName => {
-                        register = name;
-                        state = State::Register;
-                    }
-                    State::FieldName => {
-                        field = name;
-                        state = State::Field;
-                    }
-                    _ => unreachable!(),
+        if (state == State::PeripheralName || state == State::RegisterName || state == State::FieldName)
+            && let Some(name) = t.strip_prefix("<name>")
+        {
+            let name = name.strip_suffix("</name>").unwrap_or(name).trim().to_string();
+            match state {
+                State::PeripheralName => {
+                    peripheral = name;
+                    state = State::Peripheral;
                 }
-                continue;
+                State::RegisterName => {
+                    register = name;
+                    state = State::Register;
+                }
+                State::FieldName => {
+                    field = name;
+                    state = State::Field;
+                }
+                _ => unreachable!(),
             }
+            continue;
         }
 
         if t.starts_with("<enumeratedValues") && !t.ends_with("/>") && field_signal_prefix(&field).is_some() {
