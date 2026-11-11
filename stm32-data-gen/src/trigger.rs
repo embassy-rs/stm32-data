@@ -125,6 +125,7 @@ pub fn source_origin(source: &str) -> SourceOrigin<'_> {
         "PVD",
         "LSI",
         "LSE",
+        "MSI",
         "MCO",
         "CSS",
         "HSE32_HSECSS",
@@ -282,6 +283,7 @@ mod tests {
             SourceOrigin::AnyOf(&["USB", "USB_OTG_FS", "USB_OTG_HS"])
         );
         assert_eq!(source_origin("PVD"), SourceOrigin::System);
+        assert_eq!(source_origin("MSI"), SourceOrigin::System);
         assert_eq!(source_origin("CORTEX_M4_LOCKUP"), SourceOrigin::System);
         assert_eq!(source_origin("TIMX_BOGUS"), SourceOrigin::Unknown);
     }
@@ -305,5 +307,113 @@ mod tests {
         let empty = HashSet::new();
         assert!(!source_available("TIM1_TRGO", &empty));
         assert!(source_available("CORTEX_M33_LOCKUP", &empty));
+    }
+
+    #[test]
+    fn test_wl_triggers() {
+        let triggers = Triggers::new();
+
+        // Check TIM1 on STM32WLE5
+        let tim1 = triggers
+            .peripheral_trigger_info("STM32WLE5CC", "TIM1")
+            .expect("TIM1 triggers on STM32WLE5CC");
+        assert!(
+            tim1.iter()
+                .any(|t| t.signal == "TIMX_ITR_IN1" && t.source == "TIM2_TRGO")
+        );
+        assert!(
+            tim1.iter()
+                .any(|t| t.signal == "TIMX_ITR_IN3" && t.source == "TIM17_OC1")
+        );
+        assert!(
+            tim1.iter()
+                .any(|t| t.signal == "TIMX_TI1_IN1" && t.source == "COMP1_OUT")
+        );
+        assert!(
+            tim1.iter()
+                .any(|t| t.signal == "TIMX_BRK_IN1" && t.source == "COMP1_OUT")
+        );
+        assert!(
+            tim1.iter()
+                .any(|t| t.signal == "TIMX_BRK_IN2" && t.source == "COMP2_OUT")
+        );
+
+        // Check TIM2 on STM32WLE5
+        let tim2 = triggers
+            .peripheral_trigger_info("STM32WLE5CC", "TIM2")
+            .expect("TIM2 triggers on STM32WLE5CC");
+        assert!(
+            tim2.iter()
+                .any(|t| t.signal == "TIMX_ITR_IN0" && t.source == "TIM1_TRGO")
+        );
+        assert!(
+            tim2.iter()
+                .any(|t| t.signal == "TIMX_TI4_IN1" && t.source == "COMP1_OUT")
+        );
+        assert!(
+            tim2.iter()
+                .any(|t| t.signal == "TIMX_TI4_IN2" && t.source == "COMP2_OUT")
+        );
+        assert!(
+            tim2.iter()
+                .any(|t| t.signal == "TIMX_TI4_IN3" && t.source == "COMP1_OUT_OR_COMP2_OUT")
+        );
+
+        // Check TIM16 and TIM17 on STM32WLE5
+        let tim16 = triggers
+            .peripheral_trigger_info("STM32WLE5CC", "TIM16")
+            .expect("TIM16 triggers on STM32WLE5CC");
+        assert!(tim16.iter().any(|t| t.signal == "TIMX_TI1_IN1" && t.source == "LSI"));
+        assert!(tim16.iter().any(|t| t.signal == "TIMX_TI1_IN2" && t.source == "LSE"));
+        assert!(
+            tim16
+                .iter()
+                .any(|t| t.signal == "TIMX_TI1_IN3" && t.source == "RTC_WAKEUP")
+        );
+
+        let tim17 = triggers
+            .peripheral_trigger_info("STM32WLE5CC", "TIM17")
+            .expect("TIM17 triggers on STM32WLE5CC");
+        assert!(tim17.iter().any(|t| t.signal == "TIMX_TI1_IN1" && t.source == "MSI"));
+        assert!(
+            tim17
+                .iter()
+                .any(|t| t.signal == "TIMX_TI1_IN2" && t.source == "HSE_DIV32")
+        );
+        assert!(tim17.iter().any(|t| t.signal == "TIMX_TI1_IN3" && t.source == "MCO"));
+
+        // Check LPTIM1, LPTIM2, LPTIM3
+        let lptim1 = triggers
+            .peripheral_trigger_info("STM32WLE5CC", "LPTIM1")
+            .expect("LPTIM1 triggers on STM32WLE5CC");
+        assert!(
+            lptim1
+                .iter()
+                .any(|t| t.signal == "LPTIM_EXT_TRG1" && t.source == "RTC_ALRA_TRG")
+        );
+        assert!(
+            lptim1
+                .iter()
+                .any(|t| t.signal == "LPTIM_EXT_TRG6" && t.source == "COMP1_OUT")
+        );
+        assert!(
+            lptim1
+                .iter()
+                .any(|t| t.signal == "LPTIM_IN1_MUX1" && t.source == "COMP1_OUT")
+        );
+
+        let lptim3 = triggers
+            .peripheral_trigger_info("STM32WLE5CC", "LPTIM3")
+            .expect("LPTIM3 triggers on STM32WLE5CC");
+        assert!(
+            lptim3
+                .iter()
+                .any(|t| t.signal == "LPTIM_EXT_TRG1" && t.source == "LPTIM1_TRGO")
+        );
+        assert!(
+            lptim3
+                .iter()
+                .any(|t| t.signal == "LPTIM_EXT_TRG2" && t.source == "LPTIM2_TRGO")
+        );
     }
 }

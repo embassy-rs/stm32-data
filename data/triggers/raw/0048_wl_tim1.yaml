@@ -1,10 +1,28 @@
-# TIM1 comparator input mux for STM32WL (WL5x + WLE5).
-# RM0453 (STM32WL5x) ch. 25 "Advanced-control timer (TIM1)", TIM1_OR1
-# register bit 4 "TI1_RMP: Input Capture 1 remap"
-# (0: TIM1 input capture 1 connected to I/O; 1: connected to COMP1 output).
-# 1 entry, unchanged from the original hand rule.
+# TIM1 interconnection inputs for STM32WL (WL5x + WLE5).
+# Provenance: RM0461 (STM32WLEx) ch. 23 / RM0453 (STM32WL5x) ch. 25:
+# - Table 168 "TIM1 internal trigger connection" (ITR1: TIM2_TRGO, ITR3: TIM17_OC1)
+# - TIM1_OR1 bit 4 "TI1_RMP" (1: COMP1_OUT)
+# - TIM1_AF1 bits 17:14 "ETRSEL" (0001: COMP1_OUT, 0010: COMP2_OUT)
+# - TIM1_AF1 bit 1 "BKCMP1E", bit 2 "BKCMP2E" (COMP1_OUT, COMP2_OUT to BRK)
+# - TIM1_AF2 bit 1 "BK2CMP1E", bit 2 "BK2CMP2E" (COMP1_OUT, COMP2_OUT to BRK2)
 
 - match: '^STM32WL.*:TIM1'
   triggers:
     - signal: TIMX_TI1_IN1
       source: COMP1_OUT
+    - signal: TIMX_ITR_IN1
+      source: TIM2_TRGO
+    - signal: TIMX_ITR_IN3
+      source: TIM17_OC1
+    - signal: TIMX_ETR_IN1
+      source: COMP1_OUT
+    - signal: TIMX_ETR_IN2
+      source: COMP2_OUT
+    - signal: TIMX_BRK_IN1
+      source: COMP1_OUT
+    - signal: TIMX_BRK_IN2
+      source: COMP2_OUT
+    - signal: TIMX_BRK2_IN1
+      source: COMP1_OUT
+    - signal: TIMX_BRK2_IN2
+      source: COMP2_OUT
