@@ -15,6 +15,7 @@ use std::sync::LazyLock;
 
 use regex::{Regex, RegexSet};
 use serde::Deserialize;
+use stm32_data_serde::chip::core::peripheral::rcc::StopMode;
 
 use crate::util::{new_regex_map, new_regex_set};
 
@@ -135,3 +136,16 @@ pub struct PerimapEntry {
 
 /// `data/perimap.yaml`, in priority order (first match wins).
 pub static PERIMAP: LazyLock<Vec<PerimapEntry>> = LazyLock::new(|| load_yaml("data/perimap.yaml"));
+
+/// One stop-mode limit rule from `data/low_power.yaml`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct StopModeRule {
+    /// Full-string regex matched against `{mcu}:{peripheral}`.
+    #[serde(rename = "match")]
+    pub pattern: String,
+    /// The stop mode the peripheral limits the chip to.
+    pub stop_mode: StopMode,
+}
+
+/// `data/low_power.yaml`, in priority order (first match wins).
+pub static STOP_MODE_RULES: LazyLock<Vec<StopModeRule>> = LazyLock::new(|| load_yaml("data/low_power.yaml"));
