@@ -1,0 +1,17 @@
+# TIM16 interconnection inputs for STM32WL (WL5x + WLE5).
+# Provenance: RM0461 (STM32WLEx) ch. 25 / RM0453 (STM32WL5x) ch. 27:
+# - TIM16_OR1 bits 1:0 "TI1_RMP" (01: LSI, 10: LSE, 11: RTC wakeup)
+# - TIM16_AF1 bit 1 "BKCMP1E", bit 2 "BKCMP2E" (COMP1_OUT, COMP2_OUT to BRK)
+
+- match: '^STM32WL.*:TIM16'
+  triggers:
+    - signal: TIMX_TI1_IN1
+      source: LSI
+    - signal: TIMX_TI1_IN2
+      source: LSE
+    - signal: TIMX_TI1_IN3
+      source: RTC_WAKEUP
+    - signal: TIMX_BRK_IN1
+      source: COMP1_OUT
+    - signal: TIMX_BRK_IN2
+      source: COMP2_OUT
