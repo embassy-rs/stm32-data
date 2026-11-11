@@ -164,10 +164,12 @@ fieldset/CFGR2:
     description: Oversampling shift (number of bits to right-shift the accumulated result)
     bit_offset: 5
     bit_size: 4
+    enum: OVSS
   - name: TOVS
     description: 'Triggered oversampling (0: all oversampled conversions are run after a single trigger, 1: each oversampled conversion needs a trigger)'
     bit_offset: 9
     bit_size: 1
+    enum: TOVS
   - name: CKMODE
     description: ADC clock mode
     bit_offset: 30
@@ -382,6 +384,36 @@ enum/OVSR:
   - name: Mul256
     description: 256x oversampling ratio
     value: 7
+enum/OVSS:
+  bit_size: 4
+  variants:
+  - name: Shift0
+    description: No shift
+    value: 0
+  - name: Shift1
+    description: Shift 1-bit
+    value: 1
+  - name: Shift2
+    description: Shift 2-bits
+    value: 2
+  - name: Shift3
+    description: Shift 3-bits
+    value: 3
+  - name: Shift4
+    description: Shift 4-bits
+    value: 4
+  - name: Shift5
+    description: Shift 5-bits
+    value: 5
+  - name: Shift6
+    description: Shift 6-bits
+    value: 6
+  - name: Shift7
+    description: Shift 7-bits
+    value: 7
+  - name: Shift8
+    description: Shift 8-bits
+    value: 8
 enum/PRESC:
   bit_size: 4
   variants:
@@ -471,4 +503,13 @@ enum/SCANDIR:
     value: 0
   - name: Backward
     description: Backward scan (from the highest channel to channel 0)
+    value: 1
+enum/TOVS:
+  bit_size: 1
+  variants:
+  - name: Automatic
+    description: All oversampled conversions for a channel are done consecutively following a trigger
+    value: 0
+  - name: Triggered
+    description: Each oversampled conversion for a channel needs a new trigger
     value: 1
