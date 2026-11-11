@@ -1101,36 +1101,54 @@ pub fn parse_packages(
 ) -> anyhow::Result<()> {
     let mut files: Vec<_> = glob::glob("sources/cubeprogdb2/**/*.pdsc")?.collect::<Result<_, _>>()?;
     files.sort();
-
-    // This can be parallelized by parallelizing the dma map constructor and parallelizing the parsing of each package
+    files.retain(|f| {
+        !matches!(
+            (filter, f.parent().and_then(|d| d.file_name())),
+            (Some(filter), Some(dir_name))
+                if !dir_name.to_ascii_lowercase().to_string_lossy().starts_with(filter)
+        )
+    });
 
     let dma_map = DmaMap::new(&[
         ("STM32C5.*:LPDMA.*:.*", "C5_LPDMA.yaml"),
         ("STM32G5.*:GPDMA.*:.*", "G5_GPDMA.yaml"),
     ])?;
 
-    for f in files {
-        if let Some(filter) = filter
-            && let Some(dir_name) = f.parent().unwrap().file_name()
-            && !dir_name.to_ascii_lowercase().to_string_lossy().starts_with(filter)
-        {
-            continue;
-        }
-
+    // Parsing the `.pdsc` XML and the JSON descriptors it points at dominates
+    // this phase; only the merge back into the accumulators has to be ordered,
+    // so parse the files in parallel and merge them in file order (the same
+    // split `chips::parse_groups` uses).
+    let parse_one = |f: &PathBuf| -> anyhow::Result<ParsedPackage> {
+        let mut parsed = ParsedPackage::new();
         let mut d = PackageDirectory::new(f.parent().unwrap().to_path_buf());
+        let sink = PackageSink {
+            chips: &mut parsed.chips,
+            chip_groups: &mut parsed.chip_groups,
+            af: &mut parsed.af,
+            dmas: &mut parsed.dmas,
+            irqs: &mut parsed.irqs,
+        };
+        parse_package(f.clone(), &mut d, sink, &dma_map)?;
+        Ok(parsed)
+    };
 
-        parse_package(
-            f,
-            &mut d,
-            PackageSink {
-                chips,
-                chip_groups,
-                af,
-                dmas,
-                irqs,
-            },
-            &dma_map,
-        )?;
+    #[cfg(feature = "rayon")]
+    let parsed = {
+        use rayon::prelude::*;
+        files.par_iter().map(parse_one).collect::<anyhow::Result<Vec<_>>>()?
+    };
+    #[cfg(not(feature = "rayon"))]
+    let parsed = files.iter().map(parse_one).collect::<anyhow::Result<Vec<_>>>()?;
+
+    let mut shared = PackageSink {
+        chips,
+        chip_groups,
+        af,
+        dmas,
+        irqs: &mut irqs.irqs,
+    };
+    for parsed in parsed {
+        parsed.merge(&mut shared);
     }
 
     Ok(())
@@ -1139,13 +1157,81 @@ pub fn parse_packages(
 /// Everything [`parse_package`] merges one package into.
 ///
 /// Bundling the accumulators keeps the parameter list from growing every time
-/// another cross-chip table is added.
+/// another cross-chip table is added. The same view is used twice: once over
+/// one file's fresh [`ParsedPackage`] while that file is parsed, and once over
+/// the shared accumulators when the parses are merged back in.
+///
+/// `irqs` is the raw map rather than a [`ChipInterrupts`] because a per-file
+/// parse only ever fills in entries; the interrupt signals table belongs to
+/// the shared accumulator alone.
 struct PackageSink<'a> {
     chips: &'a mut HashMap<String, Chip>,
     chip_groups: &'a mut Vec<ChipGroup>,
     af: &'a mut Af,
     dmas: &'a mut crate::dma::DmaChannels,
-    irqs: &'a mut ChipInterrupts,
+    irqs: &'a mut HashMap<(String, String), Vec<String>>,
+}
+
+/// The accumulators one `.pdsc` file produced.
+///
+/// Each file is parsed into its own bundle of owned data, which is what lets
+/// the parses run in parallel; [`ParsedPackage::merge`] folds them back into
+/// the shared accumulators in file order.
+struct ParsedPackage {
+    chips: HashMap<String, Chip>,
+    chip_groups: Vec<ChipGroup>,
+    af: Af,
+    dmas: crate::dma::DmaChannels,
+    irqs: HashMap<(String, String), Vec<String>>,
+}
+
+impl ParsedPackage {
+    fn new() -> Self {
+        Self {
+            chips: HashMap::new(),
+            chip_groups: Vec::new(),
+            af: Af(HashMap::new()),
+            dmas: crate::dma::DmaChannels(HashMap::new()),
+            irqs: HashMap::new(),
+        }
+    }
+
+    /// Folds this file's results into the shared accumulators, keeping the
+    /// semantics the serial loop had: packages and pins are appended to
+    /// whatever is already there, while a chip's DMA and IRQ entries are only
+    /// filled in when no earlier file provided them.
+    fn merge(self, shared: &mut PackageSink<'_>) {
+        let ParsedPackage {
+            chips,
+            chip_groups,
+            af,
+            dmas,
+            irqs,
+        } = self;
+
+        for (name, chip) in chips {
+            shared
+                .chips
+                .entry(name)
+                .or_insert_with(|| Chip { packages: Vec::new() })
+                .packages
+                .extend(chip.packages);
+        }
+
+        shared.chip_groups.extend(chip_groups);
+
+        for (name, gpio_af) in af.0 {
+            shared.af.0.entry(name).or_default().extend(gpio_af);
+        }
+
+        for (name, dma) in dmas.0 {
+            shared.dmas.0.entry(name).or_insert(dma);
+        }
+
+        for (key, irqs) in irqs {
+            shared.irqs.entry(key).or_insert(irqs);
+        }
+    }
 }
 
 /// One variant environment's answer to "does this describe a package, and
@@ -1302,7 +1388,7 @@ fn parse_package(f: PathBuf, d: &mut PackageDirectory, sink: PackageSink<'_>, dm
 
                     af.or_insert_with_mut(HashMap::new).extend(gpio_af.clone());
 
-                    irqs.irqs
+                    irqs
                         .entry(("NVIC".to_string(), chip_name.clone()))
                         .or_insert_with(|| loaded.interrupts.iter().map(ToString::to_string).collect());
                 }
