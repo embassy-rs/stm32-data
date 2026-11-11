@@ -309,20 +309,10 @@ mod tests {
         assert_eq!(literal_runs("pre{2,3}post"), [b"pr".to_vec(), b"post".to_vec()]);
     }
 
-    /// The generator resolves `data/`, `sources/` and `build/` relative to the
-    /// repository root, so tests need to run from there too.
-    fn chdir_repo_root() {
-        static ONCE: std::sync::Once = std::sync::Once::new();
-        ONCE.call_once(|| {
-            let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
-            std::env::set_current_dir(root).unwrap();
-        });
-    }
-
     /// The index must agree with scanning every pattern in order.
     #[test]
     fn indexed_lookup_matches_naive_scan() {
-        chdir_repo_root();
+        crate::util::chdir_repo_root();
         let entries: &[PerimapEntry] = &config::PERIMAP;
         let naive: Vec<Regex> = entries
             .iter()

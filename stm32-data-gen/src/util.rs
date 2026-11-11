@@ -70,3 +70,16 @@ where
 {
     regex::RegexSet::new(items.into_iter().map(|k| format!("^{}$", k.as_ref()))).unwrap()
 }
+
+/// Test helper: the generator resolves `data/`, `sources/` and `build/`
+/// relative to the repository root, while `cargo test` runs with the package
+/// root as the working directory, so tests reading those paths must chdir
+/// first. Idempotent — the directory only changes once per test process.
+#[cfg(test)]
+pub fn chdir_repo_root() {
+    static ONCE: std::sync::Once = std::sync::Once::new();
+    ONCE.call_once(|| {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+        std::env::set_current_dir(root).unwrap();
+    });
+}

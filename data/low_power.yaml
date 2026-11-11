@@ -1,0 +1,68 @@
+# Peripheral stop-mode limits, used by `low_power::ChipStopModes`.
+#
+#     - { match: <regex>, stop_mode: <Stop1|Stop2|Standby> }
+#
+# `match` is matched as a full-string regex against `{mcu}:{peripheral}`
+# (e.g. `STM32WB55RG:USART1`), and `stop_mode` is the limit the peripheral
+# puts on the chip while it is enabled (see `StopMode` in stm32-data-serde:
+# `Stop1` prevents entering Stop 1, `Stop2` prevents entering Stop 2,
+# `Standby` prevents nothing).
+#
+# The FIRST matching entry wins, so the order of this file is significant:
+# keep more specific entries above more general ones.
+
+# STM32WB55
+- { match: 'STM32WB55.*:LPTIM1', stop_mode: Standby }
+- { match: 'STM32WB55.*:USART1', stop_mode: Stop2 }
+- { match: 'STM32WB55.*:LPUART1', stop_mode: Standby }
+- { match: 'STM32WB55.*:I2C1', stop_mode: Stop2 }
+- { match: 'STM32WB55.*:I2C3', stop_mode: Standby }
+
+# STM32WLE5
+- { match: 'STM32WLE5.*:LPUART1', stop_mode: Standby }
+- { match: 'STM32WLE5.*:I2C1', stop_mode: Stop2 }
+- { match: 'STM32WLE5.*:I2C2', stop_mode: Stop2 }
+- { match: 'STM32WLE5.*:I2C3', stop_mode: Standby }
+- { match: 'STM32WLE5.*:LPTIM1', stop_mode: Standby }
+- { match: 'STM32WLE5.*:SUBGHZSPI', stop_mode: Stop2 }
+- { match: 'STM32WLE5.*:ADC1', stop_mode: Stop2 }
+
+# STM32WL55
+- { match: 'STM32WL55.*:LPUART1', stop_mode: Standby }
+- { match: 'STM32WL55.*:I2C1', stop_mode: Stop2 }
+- { match: 'STM32WL55.*:I2C2', stop_mode: Stop2 }
+- { match: 'STM32WL55.*:I2C3', stop_mode: Standby }
+- { match: 'STM32WL55.*:LPTIM1', stop_mode: Standby }
+- { match: 'STM32WL55.*:SUBGHZSPI', stop_mode: Stop2 }
+- { match: 'STM32WL55.*:ADC1', stop_mode: Stop2 }
+- { match: 'STM32WL55.*:IPCC', stop_mode: Standby }
+- { match: 'STM32WL55.*:HSEM', stop_mode: Stop2 }
+
+# STM32WBA series - from RM0515 Table 90
+# Stop2-capable (Standby in StopMode terms): overrides the generic .*:LP.* rule for LPUART1/LPTIM1
+- { match: 'STM32WBA.*:LPUART1', stop_mode: Standby }
+- { match: 'STM32WBA.*:LPTIM1', stop_mode: Standby }
+- { match: 'STM32WBA.*:I2C3', stop_mode: Standby }
+- { match: 'STM32WBA.*:SPI3', stop_mode: Standby }
+# Stop1-capable only: USART1/2/3, I2C1, SPI1, ADC4, COMP1/2
+- { match: 'STM32WBA.*:USART\d', stop_mode: Stop2 }
+- { match: 'STM32WBA.*:I2C\d', stop_mode: Stop2 }
+- { match: 'STM32WBA.*:SPI\d', stop_mode: Stop2 }
+- { match: 'STM32WBA.*:ADC4', stop_mode: Stop2 }
+- { match: 'STM32WBA.*:COMP\d', stop_mode: Stop2 }
+# GPDMA1 is Stop0-only (BAM wakeup) — default Stop1 is correct, no entry needed
+
+# STM32U3 / STM32U5 DMA
+- { match: 'STM32U3.*:GPDMA.*', stop_mode: Stop2 }
+- { match: 'STM32U3.*:LPDMA.*', stop_mode: Standby }
+- { match: 'STM32U5.*:GPDMA.*', stop_mode: Stop2 }
+- { match: 'STM32U5.*:LPDMA.*', stop_mode: Standby }
+
+# STM32U0 series - from RM0503 Table 22: all LPTIMs functional in Stop 2
+- { match: 'STM32U0.*:LPTIM\d', stop_mode: Standby }
+
+# __ATTENTION__: Keep these rules at the bottom to grant precedence to the more specific rules above
+# Every peripheral with LP prefix is assumed to be able enter up to Stop1 mode
+- { match: '.*:LP.*', stop_mode: Stop2 }
+# The RTC peripheral is assumed to be able to enter up to Stop2 mode
+- { match: '.*:RTC', stop_mode: Standby }

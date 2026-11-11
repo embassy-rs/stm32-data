@@ -308,7 +308,7 @@ impl ParsedRccs {
                             },
                             reset,
                             bus_clock: clock,
-                            // The stop mode info is set in `low_power.rs`
+                            // The stop mode info comes from `data/low_power.yaml`
                             stop_mode: StopMode::default(),
                         };
 
