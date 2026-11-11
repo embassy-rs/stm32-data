@@ -1,10 +1,9 @@
 use std::collections::HashMap;
-use std::sync::LazyLock;
 
 use lazy_regex::regex;
 
 use super::*;
-use crate::util::new_regex_set;
+use crate::config;
 
 pub mod xml {
     use serde::Deserialize;
@@ -114,6 +113,22 @@ fn chip_name_from_package_name(x: &str) -> String {
         .unwrap_or_else(|| panic!("bad name: {x}"))
 }
 
+/// A parsed CubeMX MCU XML, before it is folded into a [`ChipGroup`].
+struct ParsedMcu {
+    /// Chip name for each entry of `package_names`.
+    chip_names: Vec<String>,
+    /// `RefName` with its `(XYZ)` package suffix expanded into separate names.
+    package_names: Vec<String>,
+    package: String,
+    package_pins: Vec<stm32_data_serde::chip::PackagePin>,
+    cores: Vec<String>,
+    family: String,
+    line: String,
+    die: String,
+    ips: Vec<xml::Ip>,
+    pins: Vec<xml::Pin>,
+}
+
 pub fn parse_groups(filter: &Option<String>) -> Result<(HashMap<String, Chip>, Vec<ChipGroup>), anyhow::Error> {
     // XMLs group together chips that are identical except flash/ram size.
     // For example STM32L471Z(E-G)Jx.xml is STM32L471ZEJx, STM32L471ZGJx.
@@ -126,68 +141,60 @@ pub fn parse_groups(filter: &Option<String>) -> Result<(HashMap<String, Chip>, V
     // flash/ram sizes yet, we want to do it as late as possible to avoid duplicate
     // work so that generation is faster.
 
-    let mut chips = HashMap::<String, (Chip, usize)>::new();
-    let mut chip_groups = Vec::<(ChipGroup, xml::Mcu)>::new();
-
     let mut files: Vec<_> = glob::glob("sources/cubedb/mcu/STM32*.xml")?
         .map(Result::unwrap)
         .collect();
     files.sort();
+    files.retain(|f| {
+        !matches!(
+            (filter, f.file_name()),
+            (Some(filter), Some(file_name))
+                if !file_name.to_ascii_lowercase().to_string_lossy().starts_with(filter)
+        )
+    });
 
-    for f in files {
-        if let Some(filter) = filter
-            && let Some(file_name) = f.file_name()
-            && !file_name.to_ascii_lowercase().to_string_lossy().starts_with(filter)
-        {
-            continue;
-        }
+    // Parsing the XMLs dominates this phase; only the bookkeeping below needs to
+    // be ordered, so keep the parse parallel and the merge sequential.
+    #[cfg(feature = "rayon")]
+    let parsed = {
+        use rayon::prelude::*;
+        files
+            .par_iter()
+            .map(|f| parse_group(f))
+            .collect::<anyhow::Result<Vec<_>>>()?
+    };
+    #[cfg(not(feature = "rayon"))]
+    let parsed = files
+        .iter()
+        .map(|f| parse_group(f))
+        .collect::<anyhow::Result<Vec<_>>>()?;
 
-        parse_group(f, &mut chips, &mut chip_groups)?;
+    let mut chips = HashMap::<String, (Chip, usize)>::new();
+    let mut chip_groups = Vec::<ChipGroup>::new();
+    for parsed in parsed.into_iter().flatten() {
+        merge_group(parsed, &mut chips, &mut chip_groups);
     }
 
-    for (chip_name, (_, group_idx)) in &chips {
-        chip_groups[*group_idx].0.chip_names.push(chip_name.clone());
+    // `chip_names[0]` names the group, so sort instead of relying on `HashMap`
+    // iteration order to pick it.
+    let mut by_group: Vec<(usize, String)> = chips
+        .iter()
+        .map(|(name, (_, group_idx))| (*group_idx, name.clone()))
+        .collect();
+    by_group.sort();
+    for (group_idx, name) in by_group {
+        chip_groups[group_idx].chip_names.push(name);
     }
-    Ok((
-        chips.into_iter().map(|(k, (v, _))| (k, v)).collect(),
-        chip_groups.into_iter().map(|(group, _)| group).collect(),
-    ))
+
+    Ok((chips.into_iter().map(|(k, (v, _))| (k, v)).collect(), chip_groups))
 }
 
-static NOPELIST: LazyLock<regex::RegexSet> = LazyLock::new(|| {
-    new_regex_set([
-        // Not supported, not planned unless someone wants to do it.
-        "STM32MP13.*",
-        "STM32MP2.*",
-        // "STM32N6.*",
-        "STM32G41[14].*",
-        "STM32G4.*xZ",
-        "STM32WL3.*",
-        // No CMSIS header in sources/headers yet, so generation would skip them
-        // anyway (see generator.rs). Revisit once stm32wl4x*.h is added there.
-        "STM32WL4.*",
-        // Does not exist in ST website. No datasheet, no RM.
-        "STM32GBK.*",
-        "STM32L485.*",
-        // STM32WxM modules. These are based on a chip that's supported on its own,
-        // not sure why we want a separate target for it.
-        "STM32WL5M.*",
-        "STM32WB1M.*",
-        "STM32WB3M.*",
-        "STM32WB5M.*",
-        "STM32WBA5M.*",
-    ])
-});
-
-fn parse_group(
-    f: std::path::PathBuf,
-    chips: &mut HashMap<String, (Chip, usize)>,
-    chip_groups: &mut Vec<(ChipGroup, xml::Mcu)>,
-) -> anyhow::Result<()> {
+/// Parse one CubeMX MCU XML, or return `None` if the chip is on the ignore list.
+fn parse_group(f: &std::path::Path) -> anyhow::Result<Option<ParsedMcu>> {
     let ff = f.file_name().unwrap().to_string_lossy();
 
-    if NOPELIST.is_match(ff.split('.').next().unwrap()) {
-        return Ok(());
+    if config::IGNORE.is_match(ff.split('.').next().unwrap()) {
+        return Ok(None);
     }
 
     let parsed: xml::Mcu = quick_xml::de::from_str(&std::fs::read_to_string(f)?)?;
@@ -202,45 +209,10 @@ fn parse_group(
             letters.split('-').map(|x| format!("{prefix}{x}{suffix}")).collect()
         }
     };
-
-    let _package_rams = {
-        if parsed.rams.len() == 1 {
-            vec![parsed.rams[0]; package_names.len()]
-        } else {
-            parsed.rams.clone()
-        }
-    };
-    let _package_flashes = {
-        if parsed.flashs.len() == 1 {
-            vec![parsed.flashs[0]; package_names.len()]
-        } else {
-            parsed.flashs.clone()
-        }
-    };
-
-    let group_idx = package_names.iter().find_map(|package_name| {
-        let chip_name = chip_name_from_package_name(package_name);
-        chips.get(&chip_name).map(|(_, group_idx)| *group_idx)
-    });
-
-    let group_idx = group_idx.unwrap_or_else(|| {
-        let group_idx = chip_groups.len();
-        chip_groups.push((
-            ChipGroup {
-                chip_names: Vec::new(),
-                cores: parsed.cores.clone(),
-                headers: Vec::new(),
-                ips: HashMap::new(),
-                pins: HashMap::new(),
-                family: parsed.family.clone(),
-                line: parsed.line.clone(),
-                die: parsed.die.clone(),
-                gpio_af: None,
-            },
-            parsed.clone(),
-        ));
-        group_idx
-    });
+    let chip_names: Vec<String> = package_names
+        .iter()
+        .map(|name| chip_name_from_package_name(name))
+        .collect();
 
     let mut package_pins: HashMap<String, Vec<String>> = HashMap::new();
     for pin in &parsed.pins {
@@ -262,15 +234,63 @@ fn parse_group(
         Err(_) => (None, Some(p.position.clone())),
     });
 
-    for (_package_i, package_name) in package_names.iter().enumerate() {
+    Ok(Some(ParsedMcu {
+        chip_names,
+        package_names,
+        package: parsed.package,
+        package_pins,
+        cores: parsed.cores,
+        family: parsed.family,
+        line: parsed.line,
+        die: parsed.die,
+        ips: parsed.ips,
+        pins: parsed.pins,
+    }))
+}
+
+/// Fold one parsed XML into `chips` and `chip_groups`.
+fn merge_group(parsed: ParsedMcu, chips: &mut HashMap<String, (Chip, usize)>, chip_groups: &mut Vec<ChipGroup>) {
+    let ParsedMcu {
+        chip_names,
+        package_names,
+        package,
+        package_pins,
+        cores,
+        family,
+        line,
+        die,
+        ips,
+        pins,
+    } = parsed;
+
+    let group_idx = chip_names
+        .iter()
+        .find_map(|chip_name| chips.get(chip_name).map(|(_, group_idx)| *group_idx));
+
+    let group_idx = group_idx.unwrap_or_else(|| {
+        chip_groups.push(ChipGroup {
+            chip_names: Vec::new(),
+            cores,
+            headers: Vec::new(),
+            ips: HashMap::new(),
+            pins: HashMap::new(),
+            family,
+            line,
+            die,
+            gpio_af: None,
+        });
+        chip_groups.len() - 1
+    });
+
+    for (chip_name, package_name) in chip_names.iter().zip(&package_names) {
         chips
-            .entry(chip_name_from_package_name(package_name))
+            .entry(chip_name.clone())
             .or_insert_with(|| (Chip { packages: Vec::new() }, group_idx))
             .0
             .packages
             .push(stm32_data_serde::chip::Package {
                 name: package_name.clone(),
-                package: parsed.package.clone(),
+                package: package.clone(),
                 pins: package_pins.clone(),
             });
     }
@@ -278,13 +298,11 @@ fn parse_group(
     // Some packages have some peripherals removed because the package had to
     // remove GPIOs useful for that peripheral. So we merge all peripherals from all packages.
     let group = &mut chip_groups[group_idx];
-    for ip in parsed.ips {
-        group.0.ips.insert(ip.instance_name.clone(), ip);
+    for ip in ips {
+        group.ips.insert(ip.instance_name.clone(), ip);
     }
 
-    merge_pins(&mut group.0.pins, parsed.pins.into_iter());
-
-    Ok(())
+    merge_pins(&mut group.pins, pins.into_iter());
 }
 
 pub fn merge_pins(group_pins: &mut HashMap<String, xml::Pin>, pins: impl Iterator<Item = xml::Pin>) {

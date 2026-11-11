@@ -1,19 +1,11 @@
-#[rustfmt::skip]
-static NORMALIZE: &[(&str, &str)] = &[
-    ("ADC", "ADC1"),
-    ("DAC", "DAC1"),
-    ("HRTIM", "HRTIM1"),
-    ("HDMI_CEC", "CEC"),
-    ("SUBGHZ", "SUBGHZSPI"),
-    ("USB_DRD_FS", "USB"),
-    ("SBS", "SYSCFG"),
-    ("SPDIFRX", "SPDIFRX1"),
-    ("RIF", "RIFSC")
-];
+//! Normalizes CubeDB peripheral instance names to the canonical names used
+//! throughout the generated data.
+//!
+//! The table lives in `data/peripherals.yaml`.
 
+use crate::config;
+
+/// Map a CubeDB instance name to its canonical peripheral name.
 pub fn normalize_peri_name(name: &str) -> &str {
-    if let Some((_, res)) = NORMALIZE.iter().find(|(n, _)| *n == name) {
-        return res;
-    }
-    name
+    config::PERIPHERALS.normalize.get(name).map_or(name, String::as_str)
 }

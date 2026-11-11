@@ -1,0 +1,122 @@
+# Peripheral naming and presence rules.
+#
+# These control which peripherals end up in the generated chip data and under
+# what name. They are applied by `generator::create_peripherals_for_chip` and
+# `normalize_peris::normalize_peri_name`.
+
+# CubeDB instance name -> canonical peripheral name. Applied to every instance
+# name before it is used as a peripheral key.
+normalize:
+  ADC: ADC1
+  DAC: DAC1
+  HRTIM: HRTIM1
+  HDMI_CEC: CEC
+  SUBGHZ: SUBGHZSPI
+  USB_DRD_FS: USB
+  SBS: SYSCFG
+  SPDIFRX: SPDIFRX1
+  RIF: RIFSC
+
+# Peripherals that are never emitted into the generated chip data, even though
+# CubeDB lists them. Most of these are software libraries rather than hardware;
+# the rest are real peripherals that get special handling elsewhere:
+#   IRTIM is just TIM16+TIM17
+#   NVIC/GPIO/DMA are handled separately
+#   SYS is added as a ghost peripheral
+#   the ADCx_COMMON blocks are ghost peripherals
+fake:
+  - NVIC
+  - GPIO
+  - DMA
+  - IRTIM
+  - SYS
+  - ADC_COMMON
+  - ADC1_COMMON
+  - ADC12_COMMON
+  - ADC123_COMMON
+  - ADC3_COMMON
+  - ADC4_COMMON
+  - ADC34_COMMON
+  - ADC345_COMMON
+  - FREERTOS
+  - PDM2PCM
+  - FATFS
+  - LIBJPEG
+  - MBEDTLS
+  - LWIP
+  - USB_HOST
+  - USB_DEVICE
+  - GUI_INTERFACE
+  - TRACER_EMB
+  - TOUCHSENSING
+
+# Peripherals that are emitted even when CubeDB does not list them, as long as
+# the C header defines a base address for them.
+ghost:
+  - GPIOA
+  - GPIOB
+  - GPIOC
+  - GPIOD
+  - GPIOE
+  - GPIOF
+  - GPIOG
+  - GPIOH
+  - GPIOI
+  - GPIOJ
+  - GPIOK
+  - GPIOL
+  - GPIOM
+  - GPION
+  - GPIOO
+  - GPIOP
+  - GPIOQ
+  - GPIOR
+  - GPIOS
+  - GPIOT
+  - GPIOZ
+  - DMA1
+  - DMA2
+  - BDMA
+  - DMAMUX
+  - DMAMUX1
+  - DMAMUX2
+  - SBS
+  - SYSCFG
+  - EXTI
+  - FLASH
+  - DBGMCU
+  - CRS
+  - PWR
+  - AFIO
+  - BKP
+  - USBRAM
+  - RAMCFG
+  - VREFINTCAL
+  - TSCAL
+  - UID
+  - DESIG
+  - HSEM
+  - ADC1_COMMON
+  - ADC12_COMMON
+  - ADC123_COMMON
+  - ADC3_COMMON
+  - ADC4_COMMON
+  - ADC34_COMMON
+  - ADC345_COMMON
+  - VREFBUF
+  - GTZC
+  - GTZC_TZSC
+  - GTZC_TZIC
+  - GTZC_MPCBB1
+  - GTZC_MPCBB2
+  - GTZC_MPCBB3
+  - GTZC_MPCBB4
+  - GTZC_MPCBB5
+  - GTZC_MPCBB6
+
+# Caps on the number of DMA channels, keyed by `chip:DMA-name`. Chips that do
+# not match any entry keep every channel the IP definition provides.
+dma_channel_counts:
+  'STM32F0[37]0.*:DMA1': 5
+  'STM32G4[34]1.*:DMA1': 6
+  'STM32G4[34]1.*:DMA2': 6

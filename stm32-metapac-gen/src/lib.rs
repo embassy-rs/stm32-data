@@ -4,6 +4,7 @@ use std::fs;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
+use std::sync::LazyLock;
 
 use chiptool::generate::CommonModule;
 use chiptool::{generate, ir, transform};
@@ -11,6 +12,8 @@ use regex::Regex;
 
 mod data;
 use data::*;
+
+static INNER_ATTR_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new("# *! *\\[.*\\]").unwrap());
 
 pub struct Options {
     pub chips: Vec<String>,
@@ -55,13 +58,13 @@ impl Gen {
             };
 
             if let Some(bi) = &p.registers {
-                if let Some(old_version) = peripheral_versions.insert(bi.kind.clone(), bi.version.clone()) {
-                    if old_version != bi.version {
-                        panic!(
-                            "Peripheral {} has multiple versions: {} and {}",
-                            bi.kind, old_version, bi.version
-                        );
-                    }
+                if let Some(old_version) = peripheral_versions.insert(bi.kind.clone(), bi.version.clone())
+                    && old_version != bi.version
+                {
+                    panic!(
+                        "Peripheral {} has multiple versions: {} and {}",
+                        bi.kind, old_version, bi.version
+                    );
                 }
                 ir_peri.block = Some(format!("{}::{}", bi.kind, bi.block));
             }
@@ -167,12 +170,7 @@ impl Gen {
             file
         });
 
-        let memories = chip
-            .memory
-            .iter()
-            .map(|memory| stringify(memory))
-            .collect::<Vec<_>>()
-            .join(",");
+        let memories = chip.memory.iter().map(stringify).collect::<Vec<_>>().join(",");
 
         // Only import the prescaled variant for chips that use it, so the metadata of all
         // other chips stays byte-identical.
@@ -200,7 +198,7 @@ impl Gen {
                 dma_channels: DMA_CHANNELS,
                 pins: PINS,
             }};",
-            deduped_file, kernel_clock_import, &chip.name, &chip.family, &chip.line, memories, &core.nvic_priority_bits,
+            deduped_file, kernel_clock_import, chip.name, chip.family, chip.line, memories, core.nvic_priority_bits,
         );
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();
@@ -266,7 +264,7 @@ impl Gen {
 
             let regs_path = Path::new(&self.opts.data_dir)
                 .join("registers")
-                .join(&format!("{}_{}.json", module, version));
+                .join(format!("{}_{}.json", module, version));
 
             let mut ir: ir::IR = serde_json::from_slice(&fs::read(regs_path).unwrap()).unwrap();
 
@@ -305,8 +303,7 @@ impl Gen {
             let data = items.to_string().replace("] ", "]\n");
 
             // Remove inner attributes like #![no_std]
-            let re = Regex::new("# *! *\\[.*\\]").unwrap();
-            let data = re.replace_all(&data, "");
+            let data = INNER_ATTR_RE.replace_all(&data, "");
             file.write_all(data.as_bytes()).unwrap();
 
             let ir = crate::data::ir::IR::from_chiptool(ir);

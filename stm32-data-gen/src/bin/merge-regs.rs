@@ -84,32 +84,29 @@ fn merge_fields(origin: &mut Vec<Value>, new: Vec<Value>) {
 
 /// Recursively merges new dictionary into origin
 fn merge_dicts(origin: &mut Value, new: Value) {
-    match (origin, new) {
-        (Value::Mapping(origin_map), Value::Mapping(new_map)) => {
-            for (k, v) in new_map.iter() {
-                if origin_map.contains_key(k) {
-                    match (origin_map.get_mut(k).unwrap(), v) {
-                        (Value::Mapping(_), Value::Mapping(_)) => {
-                            merge_dicts(origin_map.get_mut(k).unwrap(), v.clone());
-                        }
-                        (Value::Sequence(origin_seq), Value::Sequence(new_seq)) => {
-                            let key_str = k.as_str().unwrap_or("");
-                            if key_str == "items" {
-                                merge_block(origin_seq, new_seq.clone());
-                            } else if key_str == "fields" {
-                                merge_fields(origin_seq, new_seq.clone());
-                            }
-                        }
-                        (origin_val, new_val) => {
-                            *origin_val = new_val.clone();
+    if let (Value::Mapping(origin_map), Value::Mapping(new_map)) = (origin, new) {
+        for (k, v) in new_map.iter() {
+            if origin_map.contains_key(k) {
+                match (origin_map.get_mut(k).unwrap(), v) {
+                    (Value::Mapping(_), Value::Mapping(_)) => {
+                        merge_dicts(origin_map.get_mut(k).unwrap(), v.clone());
+                    }
+                    (Value::Sequence(origin_seq), Value::Sequence(new_seq)) => {
+                        let key_str = k.as_str().unwrap_or("");
+                        if key_str == "items" {
+                            merge_block(origin_seq, new_seq.clone());
+                        } else if key_str == "fields" {
+                            merge_fields(origin_seq, new_seq.clone());
                         }
                     }
-                } else {
-                    origin_map.insert(k.clone(), v.clone());
+                    (origin_val, new_val) => {
+                        *origin_val = new_val.clone();
+                    }
                 }
+            } else {
+                origin_map.insert(k.clone(), v.clone());
             }
         }
-        _ => {}
     }
 }
 

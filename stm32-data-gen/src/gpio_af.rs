@@ -142,7 +142,9 @@ pub fn pin_matches(pin: &str) -> Option<Captures<'_>> {
 }
 
 pub fn pin_sort_key(pin: &str) -> (char, u8) {
-    let captures = pin_matches(pin).expect(&format!("Could not match regex on pin: {}", pin));
+    let Some(captures) = pin_matches(pin) else {
+        panic!("Could not match regex on pin: {pin}")
+    };
     let port = captures
         .get(1)
         .expect("Could not extract port")

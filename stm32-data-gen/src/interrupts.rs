@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
-use std::thread;
+use std::{fmt, thread};
 
 use anyhow::anyhow;
 use lazy_regex::regex;
@@ -40,9 +40,165 @@ mod xml {
     }
 }
 
+/// One NVIC interrupt entry in the five-field IRQ grammar shared by both
+/// producers of these strings:
+///
+/// ```text
+/// {name}_IRQn:{flags}:{f2}:{f3}:{f4}
+/// ```
+///
+/// Exactly five `:`-separated fields; no field may contain `:`.
+///
+/// * `{name}_IRQn` is the CMSIS interrupt name.
+/// * `{flags}` is comma-joined tokens from CubeDB's flag vocabulary:
+///   `N`, `W1`, `W2`, `Y`, `H3`, `nHS`, `2V`, `3V`, `nV`, `2V1`, `IF_HAL`,
+///   `RTO`, `DMA`, `DMAL0`, `DMAF0`, `DMAL0_DMAMUX`, `DMAF0_DMAMUX`,
+///   `DFSDM`, `EXTI` and `DMAMUX`, plus tokens CubeDB adds per chip
+///   (`NO_ARG`, `RTOS`, `2H`, `3H` are all observed in real NVIC XMLs).
+///   Membership is deliberately not validated here: the vocabulary belongs
+///   to CubeDB, and each consumer only tests for the flags it understands.
+/// * `f2`..`f4` are flag-dependent:
+///   * DMA special format (flags `DMA`, `DMAL0`, `DMAF0`, `DMAL0_DMAMUX`,
+///     `DMAF0_DMAMUX`): `f3` is a comma-separated list of DMA instances and
+///     `f4` a `;`-separated list of channel ranges (`from` or `from,to`,
+///     comma-separated), positionally paired with the `f3` entries. The
+///     consumer reads `f3` and `f4`; `f2` is ignored (CubeDB writes `DMA`).
+///   * `EXTI` flag: `f2` is a comma-separated list of EXTI line names
+///     (e.g. `EXTI0,EXTI1`), consumed as `(EXTI, line)` signals; `f3`
+///     carries the HAL handler name and `f4` the line numbers — both are
+///     informational for this tool.
+///   * general case (e.g. `Y`): `f2` is a comma-separated list of
+///     peripheral instance names (an empty `f2` makes the consumer skip the
+///     entry), `f3` the HAL handler name(s), `f4` handler argument tags
+///     (e.g. `CSSEnabled`); only `f2` is consumed.
+///   * system exceptions (`N`, `W1`, ... — `HardFault`, `NonMaskableInt`,
+///     ...): the consumer ignores `f2`..`f4` entirely, though CubeDB may
+///     still fill them (the NMI entry carries its handler and `CSSEnabled`).
+///
+/// The two producers of this grammar are: (a) raw CubeDB strings from
+/// `<PossibleValue Value=...>` in `sources/cubedb/mcu/IP/NVIC-<chip>_Modes.xml`,
+/// loaded by [`ChipInterrupts::parse`]; and (b) `package.rs::build_interrupts`
+/// for chips that have no NVIC XML, which emits the degenerate subset
+/// `{name}_IRQn:Y|EXTI:{peripherals}::` (single flag, empty `f3`/`f4`) under
+/// the same map key — so (b) only ever serves chips where (a) is absent.
+///
+/// [`Display`] reproduces its input byte-for-byte:
+/// `IrqSpec::parse(s)?.to_string() == s` for every well-formed string.
+#[derive(Debug, PartialEq, Eq)]
+pub struct IrqSpec {
+    pub name: String,
+    pub flags: Vec<String>,
+    pub f2: String,
+    pub f3: String,
+    pub f4: String,
+}
+
+impl IrqSpec {
+    /// Parses one raw IRQ string per the grammar documented on [`IrqSpec`].
+    /// Returns an error — never panics — on a wrong field count, so one
+    /// malformed entry fails its own processing instead of taking down loads.
+    pub fn parse(input: &str) -> anyhow::Result<Self> {
+        let fields: Vec<&str> = input.split(':').collect();
+        if fields.len() != 5 {
+            anyhow::bail!(
+                "expected 5 colon-separated fields in IRQ string {input:?}, found {}",
+                fields.len()
+            );
+        }
+        Ok(Self {
+            name: fields[0].to_string(),
+            flags: fields[1].split(',').map(str::to_string).collect(),
+            f2: fields[2].to_string(),
+            f3: fields[3].to_string(),
+            f4: fields[4].to_string(),
+        })
+    }
+}
+
+impl fmt::Display for IrqSpec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}:{}:{}:{}:{}",
+            self.name,
+            self.flags.join(","),
+            self.f2,
+            self.f3,
+            self.f4
+        )
+    }
+}
+
+// STM32U3 and STM32C5 changed the advanced timer IRQ BRK/TRG names
+// to include multiple signal names. This change maps
+// them back to the common names.
+const REPLACEMENT_IRQS: &[(&str, &str)] = &[
+    ("TIM1_BRK_TERR_IERR", "TIM1_BRK"),
+    ("TIM8_BRK_TERR_IERR", "TIM8_BRK"),
+    ("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM"),
+    ("TIM1_TRGI_COM_DIR_IDX", "TIM1_TRG_COM"),
+    ("TIM8_TRGI_COM_DIR_IDX", "TIM8_TRG_COM"),
+    ("TIM1_UPD", "TIM1_UP"),
+    ("TIM8_UPD", "TIM8_UP"),
+];
+
+/// Cortex-M system exceptions. They have no peripheral behind them, so the
+/// dispatch below deliberately assigns them no signals.
+const SYSTEM_EXCEPTIONS: &[&str] = &[
+    "NonMaskableInt",
+    "HardFault",
+    "MemoryManagement",
+    "BusFault",
+    "UsageFault",
+    "SVCall",
+    "DebugMonitor",
+    "PendSV",
+    "SysTick",
+];
+
+/// IRQ name -> `(peripheral, signal)` pairs, consulted in place of the generic
+/// token-based resolution. First match wins; an empty list means the IRQ is
+/// intentionally ignored.
+///
+/// These sit at one point in the ordered dispatch in [`ChipInterrupts::parse_and_resolve_irqs`],
+/// so an entry must not be moved across the flag-driven arms without checking
+/// which rule should win.
+const IRQ_SIGNAL_OVERRIDES: &[(&str, &[(&str, &str)])] = &[
+    // STM32U0 names its FLASH global interrupt FLASH_ECC.
+    ("FLASH", &[("FLASH", "GLOBAL")]),
+    ("FLASH_ECC", &[("FLASH", "GLOBAL")]),
+    // STM32WL CM0+: RCC, FLASH and the CPU1 SEV event share one line.
+    ("RCC_FLASH_C1SEV", &[("RCC", "GLOBAL"), ("FLASH", "GLOBAL")]),
+    ("CRS", &[("RCC", "CRS")]),
+    ("RCC", &[("RCC", "GLOBAL")]),
+    ("RNG_CRYP", &[("RNG", "GLOBAL"), ("CRYP", "GLOBAL")]),
+    ("WWDG_IWDG", &[("WWDG", "GLOBAL"), ("IWDG", "GLOBAL")]),
+    // Intentionally ignored.
+    ("RCC_AUDIOSYNC", &[]),
+    ("HSEM", &[("HSEM", "GLOBAL")]),
+    ("HSEM1", &[("HSEM", "GLOBAL")]),
+    ("HSEM2", &[("HSEM", "GLOBAL")]),
+    ("HSEM_S", &[("HSEM", "HSEM_S")]),
+];
+
+/// `(chip name prefix, IRQ name)` pairs that must never reach the generated
+/// interrupt tables.
+///
+/// F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names to
+/// the same IRQ number; `DMA2_Channel4_5` is the one we drop.
+const SUPPRESSED_IRQS: &[(&str, &str)] = &[("STM32F100", "DMA2_Channel4_5")];
+
+/// Whether `irq` is suppressed for `chip_name`; see [`SUPPRESSED_IRQS`].
+fn is_suppressed_irq(chip_name: &str, irq: &str) -> bool {
+    SUPPRESSED_IRQS
+        .iter()
+        .any(|(chip, name)| chip_name.starts_with(chip) && irq == *name)
+}
+
 #[derive(Debug)]
 pub struct ChipInterrupts {
-    // (nvic name, nvic version) => [cursed unparsed interrupt string]
+    // (nvic name, nvic version) => [raw IRQ strings, parsed lazily by
+    // IrqSpec::parse so a single malformed entry cannot break loading]
     pub irqs: HashMap<(String, String), Vec<String>>,
     signals: InterruptSignals,
 }
@@ -96,30 +252,33 @@ impl ChipInterrupts {
         );
 
         // =================== Populate nvic_priority_bits
+        Self::populate_priority_bits(core, h);
+
+        // =================== Populate core interrupts
+        Self::populate_core_irqs(core, chip_name, h);
+
+        // =================== Populate peripheral interrupts
+        let nvic_strings = self.resolve_nvic_strings(chip_name, core, group)?;
+        let chip_signals = self.parse_and_resolve_irqs(chip_name, core, nvic_strings, thread_id)?;
+        Self::attach_to_core(core, chip_name, &chip_signals)?;
+
+        Ok(())
+    }
+
+    /// Set `core.nvic_priority_bits` from the header's `__NVIC_PRIO_BITS` define.
+    fn populate_priority_bits(core: &mut stm32_data_serde::chip::Core, h: &crate::header::ParsedHeader) {
         // With the current data sources, this value is always either 2 or 4, and never resolves to None
         let header_defines = h.get_defines(&core.name);
         core.nvic_priority_bits = header_defines.0.get("__NVIC_PRIO_BITS").map(|bits| *bits as u8);
+    }
 
-        // =================== Populate core interrupts
+    /// Populate `core.interrupts` from the CMSIS header IRQs, applying the F100xE MISC_REMAP
+    /// removal, the REPLACEMENT_IRQS renames and the U375 PKA patch; sorted by IRQ number.
+    fn populate_core_irqs(core: &mut stm32_data_serde::chip::Core, chip_name: &str, h: &crate::header::ParsedHeader) {
         let mut header_irqs = h.get_interrupts(&core.name).clone();
         // F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
-        // to the same IRQ number.
-        if chip_name.starts_with("STM32F100") {
-            header_irqs.remove("DMA2_Channel4_5");
-        }
-
-        // STM32U3 and STM32C5 changed the advanced timer IRQ BRK/TRG names
-        // to include multiple signal names. This change maps
-        // them back to the common names.
-        const REPLACEMENT_IRQS: &[(&str, &str)] = &[
-            ("TIM1_BRK_TERR_IERR", "TIM1_BRK"),
-            ("TIM8_BRK_TERR_IERR", "TIM8_BRK"),
-            ("TIM1_TRG_COM_DIR_IDX", "TIM1_TRG_COM"),
-            ("TIM1_TRGI_COM_DIR_IDX", "TIM1_TRG_COM"),
-            ("TIM8_TRGI_COM_DIR_IDX", "TIM8_TRG_COM"),
-            ("TIM1_UPD", "TIM1_UP"),
-            ("TIM8_UPD", "TIM8_UP"),
-        ];
+        // to the same IRQ number; see SUPPRESSED_IRQS.
+        header_irqs.retain(|irq, _| !is_suppressed_irq(chip_name, irq));
 
         for (bad, good) in REPLACEMENT_IRQS {
             if let Some(num) = header_irqs.remove(*bad) {
@@ -142,8 +301,16 @@ impl ChipInterrupts {
             })
             .collect();
         core.interrupts.sort_unstable_by_key(|x| x.number);
+    }
 
-        // =================== Populate peripheral interrupts
+    /// Pick the NVIC for this chip/core, merge NVIC1's secure IRQs into a TrustZone NVIC2
+    /// selection (single-core chips only), then sort and dedup the raw IRQ strings.
+    fn resolve_nvic_strings(
+        &self,
+        chip_name: &str,
+        core: &stm32_data_serde::chip::Core,
+        group: &ChipGroup,
+    ) -> anyhow::Result<Vec<String>> {
         let core_name = &core.name;
         let want_nvic_name = pick_nvic(chip_name, core_name);
 
@@ -170,17 +337,27 @@ impl ChipInterrupts {
                 || chip_name.starts_with("STM32H7R")
                 || chip_name.starts_with("STM32H7S"))
             && !chip_name.starts_with("STM32WL5")
+            && let Some(nvic1) = group.ips.values().find(|x| x.name == "NVIC1")
+            && let Some(strings) = self.irqs.get(&(nvic1.name.clone(), nvic1.version.clone()))
         {
-            if let Some(nvic1) = group.ips.values().find(|x| x.name == "NVIC1") {
-                if let Some(strings) = self.irqs.get(&(nvic1.name.clone(), nvic1.version.clone())) {
-                    nvic_strings.extend(strings.iter().cloned());
-                }
-            }
+            nvic_strings.extend(strings.iter().cloned());
         }
 
         nvic_strings.sort();
         nvic_strings.dedup();
 
+        Ok(nvic_strings)
+    }
+
+    /// Parse every raw NVIC IRQ string (see [`IrqSpec`]), fix known name typos, dispatch on
+    /// the IRQ flags, and collect peripheral -> signal -> IRQ-name maps.
+    fn parse_and_resolve_irqs(
+        &self,
+        chip_name: &str,
+        core: &stm32_data_serde::chip::Core,
+        nvic_strings: Vec<String>,
+        thread_id: thread::ThreadId,
+    ) -> anyhow::Result<HashMap<String, HashMap<String, HashSet<String>>>> {
         // peripheral -> signal -> interrupts
         let mut chip_signals = HashMap::<String, HashMap<String, HashSet<String>>>::new();
 
@@ -193,17 +370,21 @@ impl ChipInterrupts {
         trace!("  {thread_id:?} chip={chip_name}");
         for nvic_string in nvic_strings {
             trace!("  {thread_id:?} irq={nvic_string:?}");
-            let parts = {
-                let mut iter = nvic_string.split(':');
-                let parts = [(); 5].map(|_| iter.next().unwrap());
-                assert!(iter.next().is_none());
-                parts
-            };
+            let spec = IrqSpec::parse(&nvic_string)?;
 
-            let mut name = parts[0].strip_suffix("_IRQn").unwrap().to_string();
+            let mut name = spec
+                .name
+                .strip_suffix("_IRQn")
+                .ok_or_else(|| anyhow!("IRQ name {:?} lacks the _IRQn suffix (chip {chip_name})", spec.name))?
+                .to_string();
 
             // Fix typo in STM32Lxx and L083 devices
-            let contains_rng = || parts[2..].iter().flat_map(|x| x.split(',')).any(|x| x == "RNG");
+            let contains_rng = || {
+                [&spec.f2, &spec.f3, &spec.f4]
+                    .iter()
+                    .flat_map(|x| x.split(','))
+                    .any(|x| x == "RNG")
+            };
             if name == "AES_RNG_LPUART1" && !contains_rng() {
                 name = "AES_LPUART1".to_string()
             }
@@ -264,11 +445,11 @@ impl ChipInterrupts {
             //   special format for DFSDM
             // EXTI
             //   special format for EXTI
-            let flags: Vec<_> = parts[1].split(',').collect();
+            let flags: Vec<_> = spec.flags.iter().map(String::as_str).collect();
 
             // F100xE MISC_REMAP remaps some DMA IRQs, so ST decided to give two names
-            // to the same IRQ number.
-            if chip_name.starts_with("STM32F100") && name == "DMA2_Channel4_5" {
+            // to the same IRQ number; see SUPPRESSED_IRQS.
+            if is_suppressed_irq(chip_name, &name) {
                 continue;
             }
             //not supported
@@ -277,43 +458,37 @@ impl ChipInterrupts {
             }
 
             let mut interrupt_signals = HashSet::<(String, String)>::new();
-            if [
-                "NonMaskableInt",
-                "HardFault",
-                "MemoryManagement",
-                "BusFault",
-                "UsageFault",
-                "SVCall",
-                "DebugMonitor",
-                "PendSV",
-                "SysTick",
-            ]
-            .contains(&name.as_str())
-            {
+            if SYSTEM_EXCEPTIONS.contains(&name.as_str()) {
                 // pass
             } else if flags
                 .iter()
                 .any(|flag| ["DMA", "DMAL0", "DMAF0", "DMAL0_DMAMUX", "DMAF0_DMAMUX"].contains(flag))
             {
-                let mut dmas_iter = parts[3].split(',');
-                let mut chans_iter = parts[4].split(';');
+                let mut dmas_iter = spec.f3.split(',');
+                let mut chans_iter = spec.f4.split(';');
                 for (dma, chan) in std::iter::zip(&mut dmas_iter, &mut chans_iter) {
                     let range = {
                         let mut ch = chan.split(',');
-                        let ch_from: usize = ch.next().unwrap().parse().unwrap();
+                        let ch_from: usize = ch
+                            .next()
+                            .ok_or_else(|| anyhow!("missing DMA channel bound in IRQ {nvic_string:?}"))?
+                            .parse()?;
                         let ch_to = match ch.next() {
-                            Some(ch_to) => ch_to.parse().unwrap(),
+                            Some(ch_to) => ch_to.parse()?,
                             None => ch_from,
                         };
-                        assert!(ch.next().is_none());
+                        if ch.next().is_some() {
+                            anyhow::bail!("too many bounds in DMA channel range of IRQ {nvic_string:?}");
+                        }
                         ch_from..=ch_to
                     };
                     for ch in range {
                         interrupt_signals.insert((dma.to_string(), format!("CH{ch}")));
                     }
                 }
-                assert!(dmas_iter.next().is_none());
-                assert!(chans_iter.next().is_none());
+                if dmas_iter.next().is_some() || chans_iter.next().is_some() {
+                    anyhow::bail!("DMA instance and channel-range counts differ in IRQ {nvic_string:?}");
+                }
             } else if name == "DMAMUX1" || name == "DMAMUX1_S" || name == "DMAMUX_OVR" || name == "DMAMUX1_OVR" {
                 interrupt_signals.insert(("DMAMUX1".to_string(), "OVR".to_string()));
             } else if name == "DMAMUX2_OVR" {
@@ -321,46 +496,28 @@ impl ChipInterrupts {
             } else if flags.contains(&"DMAMUX") {
                 panic!("should've been handled above");
             } else if flags.contains(&"EXTI") {
-                for signal in parts[2].split(',') {
+                for signal in spec.f2.split(',') {
                     interrupt_signals.insert(("EXTI".to_string(), signal.to_string()));
                 }
-            } else if name == "FLASH" || name == "FLASH_ECC" {
-                // STM32U0 names its FLASH global interrupt FLASH_ECC.
-                interrupt_signals.insert(("FLASH".to_string(), "GLOBAL".to_string()));
-            } else if name == "RCC_FLASH_C1SEV" {
-                // STM32WL CM0+: RCC, FLASH and the CPU1 SEV event share one line.
-                interrupt_signals.insert(("RCC".to_string(), "GLOBAL".to_string()));
-                interrupt_signals.insert(("FLASH".to_string(), "GLOBAL".to_string()));
-            } else if name == "CRS" {
-                interrupt_signals.insert(("RCC".to_string(), "CRS".to_string()));
-            } else if name == "RCC" {
-                interrupt_signals.insert(("RCC".to_string(), "GLOBAL".to_string()));
-            } else if name == "RNG_CRYP" {
-                interrupt_signals.insert(("RNG".to_string(), "GLOBAL".to_string()));
-                interrupt_signals.insert(("CRYP".to_string(), "GLOBAL".to_string()));
-            } else if name == "WWDG_IWDG" {
-                interrupt_signals.insert(("WWDG".to_string(), "GLOBAL".to_string()));
-                interrupt_signals.insert(("IWDG".to_string(), "GLOBAL".to_string()));
-            } else if name == "RCC_AUDIOSYNC" {
-                // ignore
-            } else if name == "HSEM" {
-                interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
-            } else if name == "HSEM1" {
-                interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
-            } else if name == "HSEM2" {
-                interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
-            } else if name == "HSEM_S" {
-                interrupt_signals.insert(("HSEM".to_string(), "HSEM_S".to_string()));
+            } else if let Some(overrides) = IRQ_SIGNAL_OVERRIDES
+                .iter()
+                .find(|(irq, _)| name.as_str() == *irq)
+                .map(|(_, signals)| *signals)
+            {
+                for (peri, signal) in overrides {
+                    interrupt_signals.insert((peri.to_string(), signal.to_string()));
+                }
             } else if name.starts_with("HSEM") {
                 // Fallback for unexpected Cube NVIC names that still target HSEM.
                 interrupt_signals.insert(("HSEM".to_string(), "GLOBAL".to_string()));
             } else {
-                if parts[2].is_empty() {
-                    trace!("    {thread_id:?} skipping because parts[2].is_empty()");
+                if spec.f2.is_empty() {
+                    trace!("    {thread_id:?} skipping because spec.f2.is_empty()");
                     continue;
                 }
 
-                let peri_names: Vec<_> = parts[2]
+                let peri_names: Vec<_> = spec
+                    .f2
                     .split(',')
                     // On STM32N6 the cube NVIC XML attributes the CSI IRQ to the
                     // DCMIPP peripheral (`CSI_IRQn:Y:DCMIPP:HAL_DCMIPP_CSI_IRQHandler:`)
@@ -444,10 +601,11 @@ impl ChipInterrupts {
                         if !pp.is_empty() {
                             curr_peris = pp;
                         } else {
-                            assert!(
-                                !curr_peris.is_empty(),
-                                "token {part:?} of irq {name:?} matched no peripheral (chip {chip_name}, peri_names={peri_names:?})"
-                            );
+                            if curr_peris.is_empty() {
+                                anyhow::bail!(
+                                    "token {part:?} of irq {name:?} matched no peripheral (chip {chip_name}, peri_names={peri_names:?})"
+                                );
+                            }
                             for p in &curr_peris {
                                 peri_signals.entry(p.clone()).or_default().push(part.clone());
                             }
@@ -464,7 +622,7 @@ impl ChipInterrupts {
                         if p.starts_with("COMP") {
                             ss = vec!["WKUP"];
                         } else {
-                            ss = known.keys().map(|k| *k).collect();
+                            ss = known.keys().copied().collect();
                         }
                     }
 
@@ -479,9 +637,7 @@ impl ChipInterrupts {
                                 interrupt_signals.insert((p.clone(), global.to_string()));
                                 continue;
                             }
-                            panic!(
-                                "Unknown signal {s} for peri {p} chip {chip_name}, known={known:?}, parts={parts:?}"
-                            );
+                            panic!("Unknown signal {s} for peri {p} chip {chip_name}, known={known:?}, spec={spec:?}");
                         };
                         trace!("    {thread_id:?} signal: {} {}", p, sig);
                         interrupt_signals.insert((p.clone(), sig.to_string()));
@@ -497,6 +653,17 @@ impl ChipInterrupts {
             }
         }
 
+        Ok(chip_signals)
+    }
+
+    /// Deduplicate each peripheral's signal -> IRQ mapping and write the result into
+    /// `core.peripherals`, applying the LTDC, RADIO and HSEM dual-core special cases.
+    fn attach_to_core(
+        core: &mut stm32_data_serde::chip::Core,
+        chip_name: &str,
+        chip_signals: &HashMap<String, HashMap<String, HashSet<String>>>,
+    ) -> anyhow::Result<()> {
+        let core_name = &core.name;
         for p in &mut core.peripherals {
             if let Some(signals) = chip_signals.get(&p.name) {
                 let mut all_irqs: Vec<stm32_data_serde::chip::core::peripheral::Interrupt> = Vec::new();
@@ -546,25 +713,26 @@ impl ChipInterrupts {
                     }
 
                     // Special case for HSEM on dual-core chips
-                    if irqs.len() != 1 && p.name == "HSEM" {
-                        if core_name == "cm7" || core_name == "cm4" || core_name == "cm0p" {
-                            let core_idx = match core_name.as_str() {
-                                "cm7" => "1",
-                                "cm4" => {
-                                    if chip_name.starts_with("STM32H7") {
-                                        "2"
-                                    } else {
-                                        "1"
-                                    }
+                    if irqs.len() != 1
+                        && p.name == "HSEM"
+                        && (core_name == "cm7" || core_name == "cm4" || core_name == "cm0p")
+                    {
+                        let core_idx = match core_name.as_str() {
+                            "cm7" => "1",
+                            "cm4" => {
+                                if chip_name.starts_with("STM32H7") {
+                                    "2"
+                                } else {
+                                    "1"
                                 }
-                                "cm0p" => "2",
-                                _ => unreachable!(),
-                            };
-                            let preferred_irq = format!("HSEM{}", core_idx);
-                            if irqs.contains(&preferred_irq) {
-                                irqs.clear();
-                                irqs.insert(preferred_irq);
                             }
+                            "cm0p" => "2",
+                            _ => unreachable!(),
+                        };
+                        let preferred_irq = format!("HSEM{}", core_idx);
+                        if irqs.contains(&preferred_irq) {
+                            irqs.clear();
+                            irqs.insert(preferred_irq);
                         }
                     }
 
@@ -731,10 +899,18 @@ fn match_peris(peris: &[String], name: &str) -> Vec<String> {
     res
 }
 
+/// Signal name -> canonical signal name, for a single peripheral.
+type SignalMap<'a> = HashMap<&'a str, &'a str>;
+/// Peripheral name -> its [`SignalMap`].
+type PeriSignals<'a> = HashMap<&'a str, SignalMap<'a>>;
+/// Peripheral name -> `(chip, signal map)` overrides that apply to one chip.
+type ChipSignals<'a> = HashMap<&'a str, Vec<(&'a str, SignalMap<'a>)>>;
+
 #[derive(Debug)]
 struct InterruptSignals {
-    chip_signals: HashMap<&'static str, Vec<(&'static str, HashMap<&'static str, &'static str>)>>,
-    signals: HashMap<&'static str, HashMap<&'static str, &'static str>>,
+    /// Peripheral -> `(chip, signal map)` overrides that apply to one chip only.
+    chip_signals: ChipSignals<'static>,
+    signals: PeriSignals<'static>,
     global: HashMap<&'static str, &'static str>,
 }
 
@@ -843,7 +1019,7 @@ impl InterruptSignals {
             ("LPDMA", &["CH0", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7"]),
         ];
 
-        let eq_signals: HashMap<&'static str, &'static [&'static str]> = EQ_SIGNALS.into_iter().cloned().collect();
+        let eq_signals: HashMap<&'static str, &'static [&'static str]> = EQ_SIGNALS.iter().cloned().collect();
 
         let collect_signals = |signals: &[&'static str]| -> HashMap<&'static str, &'static str> {
             signals
@@ -853,13 +1029,12 @@ impl InterruptSignals {
                     signals
                         .iter()
                         .filter_map(|s| Some((*eq_signals.get(*s)?, *s)))
-                        .map(|(k, v)| k.iter().map(move |k| (*k, v)))
-                        .flatten(),
+                        .flat_map(|(k, v)| k.iter().map(move |k| (*k, v))),
                 )
                 .collect()
         };
 
-        let mut chip_signals: HashMap<&str, Vec<(&str, HashMap<&str, &str>)>> = HashMap::new();
+        let mut chip_signals: ChipSignals<'_> = HashMap::new();
 
         for (peri, (chip, signals)) in CHIP_SPECIFIC_SIGNALS
             .iter()
@@ -941,4 +1116,60 @@ fn pick_nvic(chip_name: &str, core_name: &str) -> String {
         .next()
         .unwrap()
         .to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::IrqSpec;
+
+    // Verbatim `<PossibleValue Value=...>` samples from
+    // sources/cubedb/mcu/IP/NVIC-STM32C031_Modes.xml.
+    const C031_IRQ_SAMPLES: &[&str] = &[
+        // Empty fields (system exception).
+        "HardFault_IRQn:N,W1:::",
+        // NMI carrying handler name (f3) and attribute (f4).
+        "NonMaskableInt_IRQn:N,IF_HAL::HAL_RCC_NMI_IRQHandler:CSSEnabled",
+        // EXTI kind: f2 = EXTI lines, f4 = line numbers.
+        "EXTI0_1_IRQn:Y,EXTI:EXTI0,EXTI1:HAL_GPIO_EXTI_IRQHandler:0,1",
+        // Multi-peripheral f2.
+        "SPI1_IRQn:Y:SPI1,I2S1::",
+        // DMA flag: f3 = DMA instances, f4 = channel ranges.
+        "DMA1_Channel2_3_IRQn:Y,DMAL0:DMA:DMA1:2,3",
+        // Handler list in f3, argument tags in f4.
+        "RTC_IRQn:Y,3H:RTC:HAL_RTC_AlarmIRQHandler,HAL_RTCEx_WakeUpTimerIRQHandler,HAL_RTCEx_TimeStampIRQHandler,HAL_RTCEx_TamperIRQHandler:Alarm,WakeUp,Timestamp,Tamper",
+    ];
+
+    #[test]
+    fn irq_spec_parse_display_round_trips_c031_samples() {
+        for sample in C031_IRQ_SAMPLES {
+            let spec = IrqSpec::parse(sample).unwrap_or_else(|e| panic!("{sample:?}: {e}"));
+            assert_eq!(spec.to_string(), *sample);
+        }
+    }
+
+    #[test]
+    fn irq_spec_splits_name_flags_and_three_fields() {
+        let spec = IrqSpec::parse("DMA1_Channel2_3_IRQn:Y,DMAL0:DMA:DMA1:2,3").unwrap();
+        assert_eq!(
+            spec,
+            IrqSpec {
+                name: "DMA1_Channel2_3_IRQn".to_string(),
+                flags: vec!["Y".to_string(), "DMAL0".to_string()],
+                f2: "DMA".to_string(),
+                f3: "DMA1".to_string(),
+                f4: "2,3".to_string(),
+            }
+        );
+
+        let spec = IrqSpec::parse("EXTI0_1_IRQn:Y,EXTI:EXTI0,EXTI1:HAL_GPIO_EXTI_IRQHandler:0,1").unwrap();
+        assert_eq!(spec.flags, ["Y", "EXTI"]);
+        assert_eq!(spec.f2, "EXTI0,EXTI1");
+    }
+
+    #[test]
+    fn irq_spec_parse_rejects_wrong_field_counts() {
+        assert!(IrqSpec::parse("").is_err());
+        assert!(IrqSpec::parse("TIM1_IRQn:Y:TIM1").is_err());
+        assert!(IrqSpec::parse("TIM1_IRQn:Y:TIM1:::extra").is_err());
+    }
 }

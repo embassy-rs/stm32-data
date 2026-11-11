@@ -351,8 +351,8 @@ impl DmaChannels {
                     &f3_remap
                 } else {
                     // apply only to F0 devices having bdma_v1
-                    if let Some((kind, version, _)) = perimap.get(format!("{}:DMA", &ff[..9]).as_str()) {
-                        if ff.starts_with("STM32F0") && *kind == "bdma" && *version == "v1" {
+                    if let Some(block) = perimap.get(format!("{}:DMA", &ff[..9]).as_str()) {
+                        if ff.starts_with("STM32F0") && block.kind == "bdma" && block.version == "v1" {
                             &f0_bdma_v1_remap
                         } else {
                             &HashMap::new()

@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 use anyhow::Ok;
 use itertools::Itertools;
@@ -13,7 +14,7 @@ use crate::chips::xml::PinSignal;
 use crate::chips::{Chip, ChipGroup, merge_pins, xml};
 use crate::dma::{ChipDma, load_dma_mux};
 use crate::gpio_af::{self, Af, clean_pin, pin_matches};
-use crate::interrupts::ChipInterrupts;
+use crate::interrupts::{ChipInterrupts, IrqSpec};
 use crate::package::schema::pinout::Characteristics;
 use crate::package::schema::{dma, exti, interrupts, peripherals, pinout};
 use crate::util::{EntryFns, HashMapFns, new_regex_map};
@@ -766,14 +767,32 @@ mod schema {
     }
 }
 
-type BuildPins = (
-    HashMap<String, xml::Pin>,
-    Vec<PackagePin>,
-    HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
-    Characteristics,
-);
+pub struct BuiltPins {
+    pub pins_by_die_pad: HashMap<String, xml::Pin>,
+    pub package_pins: Vec<PackagePin>,
+    pub gpio_af: HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>,
+    pub characteristics: Characteristics,
+}
 
-fn build_pins(f: &pinout::File) -> BuildPins {
+/// The parsed artifacts of one package directory, handed back to
+/// [`parse_package`].
+///
+/// `Arc`ed because several chip variants share a directory: each file is
+/// parsed once and every caller gets a cheap handle. Callers clone only the
+/// fields they need to own — the accumulators take ownership and the data
+/// ends up in the generated output.
+///
+/// Note this deliberately excludes the EXTI map: that is an input to
+/// [`build_interrupts`], not an output.
+#[derive(Clone)]
+struct Loaded {
+    pins: Arc<BuiltPins>,
+    peripherals: Arc<BuildPeripherals>,
+    dma: Arc<ChipDma>,
+    interrupts: Arc<Vec<IrqSpec>>,
+}
+
+fn build_pins(f: &pinout::File) -> BuiltPins {
     let package_pins: Vec<PackagePin> = f
         .bonds
         .iter()
@@ -828,11 +847,16 @@ fn build_pins(f: &pinout::File) -> BuildPins {
             .push(stm32_data_serde::chip::core::peripheral::Pin {
                 pin: signal.die_pad.clone(),
                 signal: short_signal_name.to_string(),
-                af: af,
+                af,
             });
     }
 
-    (pins, package_pins, gpio_af, f.characteristics.clone())
+    BuiltPins {
+        pins_by_die_pad: pins,
+        package_pins,
+        gpio_af,
+        characteristics: f.characteristics.clone(),
+    }
 }
 
 type BuildPeripherals = HashMap<String, xml::Ip>;
@@ -904,11 +928,11 @@ fn build_dma(f: &dma::File, dma_map: &DmaMap, chip_name: &str) -> ChipDma {
     }
 
     ChipDma {
-        peripherals: peripherals,
+        peripherals,
         channels: f
             .instances
             .iter()
-            .map(|instance| {
+            .flat_map(|instance| {
                 instance.channels.iter().enumerate().map(|(i, c)| DmaChannels {
                     name: c.name.clone(),
                     dma: instance.name.clone(),
@@ -918,7 +942,6 @@ fn build_dma(f: &dma::File, dma_map: &DmaMap, chip_name: &str) -> ChipDma {
                     supports_2d: None,
                 })
             })
-            .flatten()
             .collect(),
     }
 }
@@ -926,16 +949,15 @@ fn build_dma(f: &dma::File, dma_map: &DmaMap, chip_name: &str) -> ChipDma {
 fn build_exti(f: &exti::File) -> HashMap<String, String> {
     f.lines
         .iter()
-        .filter_map(|l| Some((l.line_id.clone(), l.interconnect.iter().next()?.instance.clone())))
+        .filter_map(|l| Some((l.line_id.clone(), l.interconnect.first()?.instance.clone())))
         .filter(|(_, peri)| !peri.starts_with("GPIO"))
         .collect()
 }
 
-fn build_interrupts(f: &interrupts::File, exti_map: &HashMap<String, String>) -> Vec<String> {
+fn build_interrupts(f: &interrupts::File, exti_map: &HashMap<String, String>) -> Vec<IrqSpec> {
     f.instances
         .iter()
-        .map(|i| i.interrupts.iter())
-        .flatten()
+        .flat_map(|i| i.interrupts.iter())
         .map(|irq| {
             // TODO: handle DMA channels
             let mut peripherals = irq
@@ -943,19 +965,34 @@ fn build_interrupts(f: &interrupts::File, exti_map: &HashMap<String, String>) ->
                 .iter()
                 .map(|p| exti_map.get(&p.name).unwrap_or(&p.name).clone());
 
-            let t = if irq.name.starts_with("EXTI") { ":EXTI:" } else { ":Y:" };
-            irq.name.clone() + "_IRQn" + t + &peripherals.join(",") + "::"
+            let flag = if irq.name.starts_with("EXTI") { "EXTI" } else { "Y" };
+            IrqSpec {
+                name: irq.name.clone() + "_IRQn",
+                flags: vec![flag.to_string()],
+                f2: peripherals.join(","),
+                f3: String::new(),
+                f4: String::new(),
+            }
         })
         .collect()
 }
 
 struct PackageDirectory {
     root: PathBuf,
-    pinouts: HashMap<PathBuf, BuildPins>,
-    peripherals: HashMap<PathBuf, BuildPeripherals>,
-    dma: HashMap<PathBuf, ChipDma>,
-    exti: HashMap<PathBuf, HashMap<String, String>>,
-    interrupts: HashMap<PathBuf, Vec<String>>,
+    pinouts: HashMap<PathBuf, Arc<BuiltPins>>,
+    peripherals: HashMap<PathBuf, Arc<BuildPeripherals>>,
+    dma: HashMap<PathBuf, Arc<ChipDma>>,
+    exti: HashMap<PathBuf, Arc<HashMap<String, String>>>,
+    interrupts: HashMap<PathBuf, Arc<Vec<IrqSpec>>>,
+}
+
+/// The five per-package JSON files of a package directory.
+pub struct PackageFiles<'a> {
+    pub pinouts: &'a Path,
+    pub peripherals: &'a Path,
+    pub dma: &'a Path,
+    pub exti: &'a Path,
+    pub interrupts: &'a Path,
 }
 
 impl PackageDirectory {
@@ -970,45 +1007,68 @@ impl PackageDirectory {
         }
     }
 
-    pub fn load(
-        &mut self,
-        pinouts: &Path,
-        peripherals: &Path,
-        dma: &Path,
-        exti: &Path,
-        interrupts: &Path,
-        dma_map: &DmaMap,
-        chip_name: &str,
-    ) -> anyhow::Result<(
-        &BuildPins,
-        &BuildPeripherals,
-        &ChipDma,
-        &HashMap<String, String>,
-        &Vec<String>,
-    )> {
+    pub fn load(&mut self, files: PackageFiles<'_>, dma_map: &DmaMap, chip_name: &str) -> anyhow::Result<Loaded> {
+        let PackageFiles {
+            pinouts,
+            peripherals,
+            dma,
+            exti,
+            interrupts,
+        } = files;
         let load_file = |path: &Path| fs::read_to_string(self.root.join(path));
 
-        let pinouts = self.pinouts.get_or_try_insert_with(pinouts.to_path_buf(), || {
-            Ok(build_pins(&serde_json::from_str(&load_file(pinouts)?)?))
-        })?;
+        // Each file is cached under its own path, so a file shared by several
+        // variants is still parsed exactly once. Note `dma` is keyed by path
+        // alone even though `build_dma` takes `chip_name`; that is how it has
+        // always behaved, so do not widen the key without re-checking output.
+        let pins = self
+            .pinouts
+            .get_or_try_insert_with(pinouts.to_path_buf(), || {
+                Ok(Arc::new(build_pins(&serde_json::from_str(&load_file(pinouts)?)?)))
+            })?
+            .clone();
 
-        let peripherals = self.peripherals.get_or_try_insert_with(peripherals.to_path_buf(), || {
-            Ok(build_peripherals(&serde_json::from_str(&load_file(peripherals)?)?))
-        })?;
+        let peripherals = self
+            .peripherals
+            .get_or_try_insert_with(peripherals.to_path_buf(), || {
+                Ok(Arc::new(build_peripherals(&serde_json::from_str(&load_file(
+                    peripherals,
+                )?)?)))
+            })?
+            .clone();
 
-        let dma = self.dma.get_or_try_insert_with(dma.to_path_buf(), || {
-            Ok(build_dma(&serde_json::from_str(&load_file(dma)?)?, dma_map, chip_name))
-        })?;
+        let dma = self
+            .dma
+            .get_or_try_insert_with(dma.to_path_buf(), || {
+                Ok(Arc::new(build_dma(
+                    &serde_json::from_str(&load_file(dma)?)?,
+                    dma_map,
+                    chip_name,
+                )))
+            })?
+            .clone();
 
+        // Only an input to `build_interrupts`, so not part of `Loaded`.
         let exti = self.exti.get_or_try_insert_with(exti.to_path_buf(), || {
-            Ok(build_exti(&serde_json::from_str(&load_file(exti)?)?))
+            Ok(Arc::new(build_exti(&serde_json::from_str(&load_file(exti)?)?)))
         })?;
 
-        let interrupts = self.interrupts.get_or_try_insert_with(interrupts.to_path_buf(), || {
-            Ok(build_interrupts(&serde_json::from_str(&load_file(interrupts)?)?, exti))
-        })?;
+        let interrupts = self
+            .interrupts
+            .get_or_try_insert_with(interrupts.to_path_buf(), || {
+                Ok(Arc::new(build_interrupts(
+                    &serde_json::from_str(&load_file(interrupts)?)?,
+                    exti,
+                )))
+            })?
+            .clone();
 
-        Ok((pinouts, peripherals, dma, exti, interrupts))
+        Ok(Loaded {
+            pins,
+            peripherals,
+            dma,
+            interrupts,
+        })
     }
 }
 
@@ -1021,7 +1081,7 @@ impl DmaMap {
         Ok(Self {
             map: new_regex_map(
                 map.iter()
-                    .map(|(k, v)| (k, load_dma_mux(v).expect(&format!("failed to load: {v}")))),
+                    .map(|(k, v)| (k, load_dma_mux(v).unwrap_or_else(|_| panic!("failed to load: {v}")))),
             ),
         })
     }
@@ -1059,8 +1119,198 @@ pub fn parse_packages(
 
         let mut d = PackageDirectory::new(f.parent().unwrap().to_path_buf());
 
-        parse_package(f, &mut d, chips, chip_groups, af, dmas, irqs, &dma_map)?;
+        parse_package(
+            f,
+            &mut d,
+            PackageSink {
+                chips,
+                chip_groups,
+                af,
+                dmas,
+                irqs,
+            },
+            &dma_map,
+        )?;
     }
+
+    Ok(())
+}
+
+/// Everything [`parse_package`] merges one package into.
+///
+/// Bundling the accumulators keeps the parameter list from growing every time
+/// another cross-chip table is added.
+struct PackageSink<'a> {
+    chips: &'a mut HashMap<String, Chip>,
+    chip_groups: &'a mut Vec<ChipGroup>,
+    af: &'a mut Af,
+    dmas: &'a mut crate::dma::DmaChannels,
+    irqs: &'a mut ChipInterrupts,
+}
+
+/// One variant environment's answer to "does this describe a package, and
+/// where are its parts": the PPN attribute, the five required descriptors and
+/// the package-shape feature, all borrowed from the parsed `.pdsc` data.
+struct Resolved<'a> {
+    ppn: &'a Attribute,
+    peripherals_descriptor: &'a Descriptor,
+    pinout_descriptor: &'a Descriptor,
+    dma_descriptor: &'a Descriptor,
+    interrupt_descriptor: &'a Descriptor,
+    exti_descriptor: &'a Descriptor,
+    package_feature: &'a Feature,
+}
+
+/// Picks the PPN attribute, the five descriptors (`peripherals`, `pinout`,
+/// `DMA`, `NVIC`, `EXTI`) and the package feature out of one variant's
+/// environment. Returns `None` when any of them is missing, which the caller
+/// treats as "this variant does not describe a package" and skips.
+fn resolve_descriptors<'a>(
+    attributes: &HashMap<&str, &'a Attribute>,
+    descriptors: &HashMap<&str, &'a Descriptor>,
+    features: &[&'a Feature],
+    package_features: &HashSet<&str>,
+) -> Option<Resolved<'a>> {
+    Some(Resolved {
+        ppn: *attributes.get("PPN")?,
+        peripherals_descriptor: *descriptors.get("peripherals")?,
+        pinout_descriptor: *descriptors.get("pinout")?,
+        dma_descriptor: *descriptors.get("DMA")?,
+        interrupt_descriptor: *descriptors.get("NVIC")?,
+        exti_descriptor: *descriptors.get("EXTI")?,
+        package_feature: *features.iter().find(|f| package_features.contains(&*f.feature_type))?,
+    })
+}
+
+fn parse_package(f: PathBuf, d: &mut PackageDirectory, sink: PackageSink<'_>, dma_map: &DmaMap) -> anyhow::Result<()> {
+    let PackageSink {
+        chips,
+        chip_groups,
+        af,
+        dmas,
+        irqs,
+    } = sink;
+
+    let mut groups: HashMap<String, ChipGroup> = HashMap::new();
+
+    let parsed: Package = quick_xml::de::from_str(&std::fs::read_to_string(f)?)?;
+    let package_features = HashSet::from(["SOP", "QFN", "QFP"]);
+
+    for family in parsed.devices.families {
+        for subfamily in family.sub_families {
+            for device in subfamily.devices {
+                let chip_name = &device.name;
+                let mut group = groups.entry(chip_name.clone());
+                let mut chip = chips.entry(chip_name.clone());
+                let mut chip_dma = dmas.0.entry(chip_name.clone());
+                let mut af = af.0.entry(chip_name.clone());
+
+                for (_variant, environments, features) in device.variants.iter().map(|variant| {
+                    (
+                        variant,
+                        family
+                            .environments
+                            .iter()
+                            .chain(subfamily.environments.iter())
+                            .chain(device.environments.iter())
+                            .chain(variant.environments.iter()),
+                        family
+                            .features
+                            .iter()
+                            .chain(subfamily.features.iter())
+                            .chain(device.features.iter())
+                            .chain(variant.features.iter()),
+                    )
+                }) {
+                    let features: Vec<_> = features.collect();
+                    let (descriptors, attributes): (Vec<_>, Vec<_>) = environments
+                        .map(|e| (&e.device.descriptors.descriptors, &e.device.attributes.attributes))
+                        .unzip();
+
+                    let descriptors: HashMap<_, _> = descriptors
+                        .iter()
+                        .flat_map(|d| d.iter())
+                        .map(|d| (&*d.schema_type, d))
+                        .collect();
+
+                    let attributes: HashMap<_, _> = attributes
+                        .iter()
+                        .flat_map(|a| a.iter())
+                        .map(|a| (&*a.name, a))
+                        .collect();
+
+                    let Some(Resolved {
+                        ppn,
+                        peripherals_descriptor,
+                        pinout_descriptor,
+                        dma_descriptor,
+                        interrupt_descriptor,
+                        exti_descriptor,
+                        package_feature,
+                    }) = resolve_descriptors(&attributes, &descriptors, &features, &package_features)
+                    else {
+                        continue;
+                    };
+
+                    let loaded = d.load(
+                        PackageFiles {
+                            pinouts: pinout_descriptor.as_path(),
+                            peripherals: peripherals_descriptor.as_path(),
+                            dma: dma_descriptor.as_path(),
+                            exti: exti_descriptor.as_path(),
+                            interrupts: interrupt_descriptor.as_path(),
+                        },
+                        dma_map,
+                        chip_name.as_str(),
+                    )?;
+                    let BuiltPins {
+                        pins_by_die_pad,
+                        package_pins,
+                        gpio_af,
+                        characteristics,
+                    } = &*loaded.pins;
+
+                    let group = group.or_insert_with_mut(|| ChipGroup {
+                        chip_names: vec![chip_name.clone()],
+                        headers: device.compiles.iter().map(|c| c.define.to_ascii_lowercase()).collect(),
+                        cores: family.processors.iter().map(|p| p.core.clone()).collect(),
+                        ips: loaded.peripherals.as_ref().clone(),
+                        pins: HashMap::new(),
+                        family: family.family.trim_end_matches("Series").trim().to_string(),
+                        line: subfamily.sub_family.clone(),
+                        die: format!("DIE{}", characteristics.die_name),
+                        gpio_af: Some(device.name.clone()),
+                    });
+
+                    group.ips.entry("NVIC".to_string()).or_insert_with(|| xml::Ip {
+                        instance_name: "NVIC".to_string(),
+                        name: "NVIC".to_string(),
+                        version: chip_name.clone(),
+                    });
+
+                    merge_pins(&mut group.pins, pins_by_die_pad.values().cloned());
+
+                    chip.or_insert_with_mut(|| Chip { packages: Vec::new() }).packages.push(
+                        stm32_data_serde::chip::Package {
+                            name: ppn.value.clone(),
+                            package: package_feature.name.clone(),
+                            pins: package_pins.clone(),
+                        },
+                    );
+
+                    chip_dma.or_insert_with_mut(|| loaded.dma.as_ref().clone());
+
+                    af.or_insert_with_mut(HashMap::new).extend(gpio_af.clone());
+
+                    irqs.irqs
+                        .entry(("NVIC".to_string(), chip_name.clone()))
+                        .or_insert_with(|| loaded.interrupts.iter().map(ToString::to_string).collect());
+                }
+            }
+        }
+    }
+
+    chip_groups.extend(groups.into_values());
 
     Ok(())
 }
@@ -1138,143 +1388,33 @@ mod tests {
             assert_eq!(requests[0].request, Some(request));
         }
     }
-}
 
-fn parse_package(
-    f: PathBuf,
-    d: &mut PackageDirectory,
-    chips: &mut HashMap<String, Chip>,
-    chip_groups: &mut Vec<ChipGroup>,
-    af: &mut Af,
-    dmas: &mut crate::dma::DmaChannels,
-    irqs: &mut ChipInterrupts,
-    dma_map: &DmaMap,
-) -> anyhow::Result<()> {
-    let mut groups: HashMap<String, ChipGroup> = HashMap::new();
+    #[test]
+    fn synthesized_interrupt_strings_keep_the_raw_grammar_format() {
+        let file: interrupts::File = serde_json::from_value(serde_json::json!({
+            "instances": [{
+                "interrupts": [
+                    { "name": "TIM1", "instances": [{ "name": "TIM1" }] },
+                    { "name": "EXTI0", "instances": [{ "name": "GPIOA" }] },
+                    { "name": "SPI1", "instances": [{ "name": "SPI1" }, { "name": "I2S1" }] }
+                ]
+            }]
+        }))
+        .unwrap();
 
-    let parsed: Package = quick_xml::de::from_str(&std::fs::read_to_string(f)?)?;
-    let package_features = HashSet::from(["SOP", "QFN", "QFP"]);
-
-    for family in parsed.devices.families {
-        for subfamily in family.sub_families {
-            for device in subfamily.devices {
-                let chip_name = &device.name;
-                let mut group = groups.entry(chip_name.clone());
-                let mut chip = chips.entry(chip_name.clone());
-                let mut chip_dma = dmas.0.entry(chip_name.clone());
-                let mut af = af.0.entry(chip_name.clone());
-
-                for (_variant, environments, features) in device.variants.iter().map(|variant| {
-                    (
-                        variant,
-                        family
-                            .environments
-                            .iter()
-                            .chain(subfamily.environments.iter())
-                            .chain(device.environments.iter())
-                            .chain(variant.environments.iter()),
-                        family
-                            .features
-                            .iter()
-                            .chain(subfamily.features.iter())
-                            .chain(device.features.iter())
-                            .chain(variant.features.iter()),
-                    )
-                }) {
-                    let features: Vec<_> = features.collect();
-                    let (descriptors, attributes): (Vec<_>, Vec<_>) = environments
-                        .map(|e| (&e.device.descriptors.descriptors, &e.device.attributes.attributes))
-                        .unzip();
-
-                    let descriptors: HashMap<_, _> = descriptors
-                        .iter()
-                        .map(|d| d.iter())
-                        .flatten()
-                        .map(|d| (&*d.schema_type, d))
-                        .collect();
-
-                    let attributes: HashMap<_, _> = attributes
-                        .iter()
-                        .map(|a| a.iter())
-                        .flatten()
-                        .map(|a| (&*a.name, a))
-                        .collect();
-
-                    let Some((
-                        ppn,
-                        peripherals_descriptor,
-                        pinout_descriptor,
-                        dma_descriptor,
-                        interrupt_descriptor,
-                        exti_descriptor,
-                        package_feature,
-                    )) = (|| {
-                        Some((
-                            attributes.get("PPN")?,
-                            descriptors.get("peripherals")?,
-                            descriptors.get("pinout")?,
-                            descriptors.get("DMA")?,
-                            descriptors.get("NVIC")?,
-                            descriptors.get("EXTI")?,
-                            features.iter().find(|f| package_features.contains(&*f.feature_type))?,
-                        ))
-                    })()
-                    else {
-                        continue;
-                    };
-
-                    let ((pins, package_pins, gpio_af, characteristics), peripherals, dma, _exti, interrupts) = d
-                        .load(
-                            pinout_descriptor.as_path(),
-                            peripherals_descriptor.as_path(),
-                            dma_descriptor.as_path(),
-                            exti_descriptor.as_path(),
-                            interrupt_descriptor.as_path(),
-                            dma_map,
-                            chip_name.as_str(),
-                        )?;
-
-                    let group = group.or_insert_with_mut(|| ChipGroup {
-                        chip_names: vec![chip_name.clone()],
-                        headers: device.compiles.iter().map(|c| c.define.to_ascii_lowercase()).collect(),
-                        cores: family.processors.iter().map(|p| p.core.clone()).collect(),
-                        ips: peripherals.clone(),
-                        pins: HashMap::new(),
-                        family: family.family.trim_end_matches("Series").trim().to_string(),
-                        line: subfamily.sub_family.clone(),
-                        die: format!("DIE{}", characteristics.die_name),
-                        gpio_af: Some(device.name.clone()),
-                    });
-
-                    group.ips.entry("NVIC".to_string()).or_insert_with(|| xml::Ip {
-                        instance_name: "NVIC".to_string(),
-                        name: "NVIC".to_string(),
-                        version: chip_name.clone(),
-                    });
-
-                    merge_pins(&mut group.pins, pins.clone().into_values());
-
-                    chip.or_insert_with_mut(|| Chip { packages: Vec::new() }).packages.push(
-                        stm32_data_serde::chip::Package {
-                            name: ppn.value.clone(),
-                            package: package_feature.name.clone(),
-                            pins: package_pins.clone(),
-                        },
-                    );
-
-                    chip_dma.or_insert_with_mut(|| dma.clone());
-
-                    af.or_insert_with_mut(|| HashMap::new()).extend(gpio_af.clone());
-
-                    irqs.irqs
-                        .entry(("NVIC".to_string(), chip_name.clone()))
-                        .or_insert_with(|| interrupts.clone());
-                }
-            }
-        }
+        // These are the exact bytes the old `name + "_IRQn" + t + peris + "::"`
+        // concatenation produced, and what `irqs` stores after Display conversion.
+        let rendered: Vec<String> = build_interrupts(&file, &HashMap::new())
+            .iter()
+            .map(ToString::to_string)
+            .collect();
+        assert_eq!(
+            rendered,
+            [
+                "TIM1_IRQn:Y:TIM1::",
+                "EXTI0_IRQn:EXTI:GPIOA::",
+                "SPI1_IRQn:Y:SPI1,I2S1::"
+            ]
+        );
     }
-
-    chip_groups.extend(groups.into_values());
-
-    Ok(())
 }

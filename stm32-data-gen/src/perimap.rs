@@ -1,1017 +1,435 @@
-use crate::util::new_regex_map;
+//! Maps `chip:peripheral:ip-version` keys to the register block that describes
+//! the peripheral.
+//!
+//! The mapping itself lives in `data/perimap.yaml`; see that file for the
+//! matching and ordering rules.
+//!
+//! This lookup is the single hottest operation in chip generation (there is one
+//! per peripheral per core), so [`Perimap`] does not simply hand every key to a
+//! `RegexSet` over all ~830 patterns. Instead each pattern is indexed by the
+//! first bytes of its longest literal run: a pattern can only match a key that
+//! contains all of its literals, which narrows the table down to the handful of
+//! patterns that can possibly match, and only those regexes are evaluated.
 
-const PERIMAP: &[(&str, (&str, &str, &str))] = &[
-    // GTZC - TrustZone Security Controller
-    ("STM32H503.*:GTZC:.*", ("gtzc", "h503", "GTZC1")),
-    (".*:GTZC:tzsc1_v2_2_rc1_Mustang4M", ("gtzc", "v1_h5_ef", "GTZC1_TZSC")),
-    ("STM32H5[EF].*:GTZC_TZIC:.*", ("gtzc", "v1_h5_ef", "TZIC")),
-    ("STM32H5[EF].*:GTZC_MPCBB.*:.*", ("gtzc", "v1_h5_ef", "MPCBB")),
-    ("STM32H5[EF].*:GTZC_TZSC:.*", ("gtzc", "v1_h5_ef", "GTZC1_TZSC")),
-    ("STM32H5[2367].*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
-    ("STM32H5[2367].*:GTZC_TZIC:.*", ("gtzc", "v1", "TZIC")),
-    ("STM32H5[2367].*:GTZC_MPCBB.*:.*", ("gtzc", "v1", "MPCBB")),
-    ("STM32H5[2367].*:GTZC_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
-    ("STM32U5.*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
-    ("STM32U5.*:GTZC_TZIC:.*", ("gtzc", "v1", "TZIC")),
-    ("STM32U5.*:GTZC_MPCBB.*:.*", ("gtzc", "v1", "MPCBB")),
-    ("STM32U5.*:GTZC_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
-    ("STM32U3.*:GTZC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
-    ("STM32U3.*:GTZC_TZIC:.*", ("gtzc", "v1", "TZIC")),
-    ("STM32U3.*:GTZC_MPCBB.*:.*", ("gtzc", "v1", "MPCBB")),
-    ("STM32U3.*:GTZC_TZSC:.*", ("gtzc", "v1", "GTZC1_TZSC")),
-    ("STM32WBA.*:GTZC:.*", ("gtzc", "wba", "GTZC_TZSC")),
-    ("STM32WBA.*:GTZC_TZSC:.*", ("gtzc", "wba", "GTZC_TZSC")),
-    ("STM32WBA.*:GTZC_TZIC:.*", ("gtzc", "wba", "TZIC")),
-    ("STM32WBA.*:GTZC_MPCBB.*:.*", ("gtzc", "wba", "MPCBB")),
-    ("STM32L5.*:GTZC:.*", ("gtzc", "l5", "GTZC_TZSC")),
-    ("STM32L5.*:GTZC_TZSC:.*", ("gtzc", "l5", "GTZC_TZSC")),
-    ("STM32L5.*:GTZC_TZIC:.*", ("gtzc", "l5", "TZIC")),
-    ("STM32L5.*:GTZC_MPCBB.*:.*", ("gtzc", "l5", "MPCBB")),
-    // BSEC - Boot Security Engine Controller
-    (".*:BSEC:.*:bsec2.*", ("bsec", "v2", "BSEC")),
-    // RIFSC - Resource Isolation Framework Security Controller
-    ("STM32N6.*:RIFSC:.*:STM32N6_rif.*", ("rifsc", "n6", "RIFSC")),
-    // RISAF - Resource Isolation Slave unit for Address space protection
-    ("STM32N6.*:RISAF1:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF2:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF3:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF4:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF5:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF6:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF7:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF8:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF9:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF11:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF12:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF13:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF14:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF15:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF21:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF22:.*", ("risaf", "n6", "RISAF")),
-    ("STM32N6.*:RISAF23:.*", ("risaf", "n6", "RISAF")),
-    // RAMCFG - RAM Configuration
-    ("STM32H5[EF].*:RAMCFG:.*", ("ramcfg", "h5_ef", "RAMCFG")),
-    ("STM32H5.*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
-    ("STM32H7[RS].*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
-    ("STM32N6.*:RAMCFG:.*", ("ramcfg", "h5", "RAMCFG")),
-    ("STM32U5.*:RAMCFG:.*", ("ramcfg", "u5", "RAMCFG")),
-    // C5: superset of all lines. The SRAM2 write protection registers (WPR1..4) scale with the
-    // SRAM2 size (32/64/128 KB), so smaller parts only implement the first 1 or 2.
-    ("STM32C5.*:RAMCFG:.*", ("ramcfg", "c5", "RAMCFG")),
-    ("STM32U3.*:RAMCFG:.*", ("ramcfg", "u5", "RAMCFG")),
-    ("STM32WBA.*:RAMCFG:.*", ("ramcfg", "wba", "RAMCFG")),
-    (".*:USART:sci2_v1_1", ("usart", "v1", "USART")),
-    (".*:USART:sci2_v1_2_F1", ("usart", "v1", "USART")),
-    (".*:USART:sci2_v1_2", ("usart", "v2", "USART")),
-    (".*:USART:sci2_v2_0", ("usart", "v3", "USART")),
-    (".*:USART:sci2_v2_1", ("usart", "v3", "USART")),
-    (".*:USART:sci2_v2_2", ("usart", "v3", "USART")),
-    (".*:USART:sci3_v1_0", ("usart", "v3", "USART")),
-    (".*:USART:sci3_v1_1", ("usart", "v3", "USART")),
-    (".*:USART:sci3_v1_2", ("usart", "v4", "USART")),
-    (".*:USART:sci3_v2_0", ("usart", "v4", "USART")),
-    (".*:USART:sci3_v2_1", ("usart", "v4", "USART")),
-    (".*:USART:sci3_v3_0", ("usart", "v4", "USART")),
-    ("STM32C5.*:USART:.*", ("usart", "v4", "USART")),
-    ("STM32G5.*:USART:.*", ("usart", "v4", "USART")),
-    (".*:UART:sci2_v1_1", ("usart", "v1", "USART")),
-    (".*:UART:sci2_v1_2_F4", ("usart", "v2", "USART")),
-    (".*:UART:sci2_v2_1", ("usart", "v3", "USART")),
-    (".*:UART:sci2_v3_0", ("usart", "v4", "USART")),
-    (".*:UART:sci2_v3_1", ("usart", "v4", "USART")),
-    (".*:UART:sci2_v3_3", ("usart", "v4", "USART")),
-    ("STM32C5.*:UART:.*", ("usart", "v4", "USART")),
-    ("STM32G5.*:UART:.*", ("usart", "v4", "USART")),
-    (".*:LPUART:sci3_v1_1", ("usart", "v3", "LPUART")),
-    (".*:LPUART:sci3_v1_2", ("usart", "v4", "LPUART")),
-    (".*:LPUART:sci3_v1_3", ("usart", "v4", "LPUART")),
-    (".*:LPUART:sci3_v1_4", ("usart", "v4", "LPUART")),
-    (".*:LPUART:sci3_v3_3", ("usart", "v4", "LPUART")),
-    ("STM32C5.*:LPUART:.*", ("usart", "v4", "LPUART")),
-    ("STM32G5.*:LPUART:.*", ("usart", "v4", "LPUART")),
-    ("STM32G5.*:PLAY1:.*", ("play", "v1", "PLAY")),
-    ("STM32C5.*:RNG:.*", ("rng", "v4", "RNG")), // TODO: STM32H543/553xx also use v4, I think
-    ("STM32H5[EF].*:RNG:.*", ("rng", "v3_h5_ef", "RNG")),
-    ("STM32[HU]5.*:RNG:.*", ("rng", "v3", "RNG")),
-    ("STM32U3.*:RNG:.*", ("rng", "v3", "RNG")),
-    ("STM32WBA5.*:RNG:.*", ("rng", "v3", "RNG")),
-    ("STM32WBA6.*:RNG:.*", ("rng", "wba6", "RNG")),
-    ("STM32U0.*:RNG:.*", ("rng", "v3", "RNG")),
-    ("STM32L5.*:RNG:.*", ("rng", "v2", "RNG")),
-    ("STM32L4[PQ]5.*:RNG:.*", ("rng", "v2", "RNG")),
-    ("STM32WL.*:RNG:.*", ("rng", "v2", "RNG")),
-    ("STM32F2.*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32F4.*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32F7.*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32L0.*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32L4.*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32H7[RS].*:RNG:.*", ("rng", "v3", "RNG")),
-    ("STM32H7[23AB].*:RNG:.*", ("rng", "v2", "RNG")),
-    ("STM32H7[45].*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32G0.*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32G4.*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32WB0[567].*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32WB09.*:RNG:.*", ("trng", "v1", "TRNG")),
-    ("STM32WB.*:RNG:.*", ("rng", "v1", "RNG")),
-    ("STM32N6.*:RNG:.*", ("rng", "v3", "RNG")),
-    ("STM32F7.*:AES:.*", ("aes", "f7", "AES")),
-    ("STM32F4.*:AES:.*", ("aes", "v1", "AES")),
-    ("STM32G0.*:AES:.*", ("aes", "v2", "AES")),
-    ("STM32U0.*:AES:.*", ("aes", "v2", "AES")),
-    ("STM32G4.*:AES:.*", ("aes", "v2", "AES")),
-    ("STM32L0.*:AES:.*", ("aes", "v1", "AES")),
-    ("STM32L1.*:AES:.*", ("aes", "v1", "AES")),
-    ("STM32L4.*:AES:.*", ("aes", "v1", "AES")),
-    ("STM32L5.*:AES:.*", ("aes", "v2", "AES")),
-    ("STM32WB1.*:AES:.*", ("aes", "v2", "AES")),
-    ("STM32WL5.*:AES:.*", ("aes", "v2", "AES")),
-    ("STM32WLE.*:AES:.*", ("aes", "v2", "AES")),
-    ("STM32U5.*:AES:.*", ("aes", "v3a", "AES")),
-    ("STM32U3.*:AES:.*", ("aes", "v3a", "AES")),
-    ("STM32(C5|H5|WBA).*:AES:.*", ("aes", "v3b", "AES")),
-    ("STM32(C5|H5|WBA).*:SAES:.*", ("saes", "v1a", "SAES")),
-    ("STM32U5.*:SAES:.*", ("saes", "v1b", "SAES")),
-    ("STM32U3.*:SAES:.*", ("saes", "v1b", "SAES")),
-    ("STM32N6.*:SAES:.*", ("saes", "n6", "SAES")),
-    ("STM32F10[57].*:SPI:.*", ("spi", "v1_i2s", "SPI")),
-    ("STM32F10[13].[CDEFG].*:SPI:.*", ("spi", "v1_i2s", "SPI")),
-    ("STM32F1.*:SPI:.*", ("spi", "v1", "SPI")),
-    ("STM32F2.*:SPI:.*", ("spi", "v2_i2s", "SPI")),
-    ("STM32F4.*:SPI:.*", ("spi", "v2_i2s", "SPI")),
-    ("STM32L0.[1-3].*:SPI:.*", ("spi", "v2_i2s", "SPI")),
-    ("STM32L0.0.*:SPI:.*", ("spi", "v2", "SPI")),
-    ("STM32L1...[CDE].*:SPI:.*", ("spi", "v2_i2s", "SPI")),
-    ("STM32L1.*:SPI:.*", ("spi", "v2", "SPI")),
-    ("STM32C0.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32F0.0.*:SPI:.*", ("spi", "v3", "SPI")),
-    ("STM32F0.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32F303.*:SPI:.*", ("spi", "v3", "SPI")),
-    ("STM32F3[259]8.*:SPI:.*", ("spi", "v3", "SPI")),
-    ("STM32F3.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32F7.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32G0.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32G4.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32G414*:SPI:.*", ("spi", "v3", "SPI")),
-    ("STM32L4.*:SPI:.*", ("spi", "v3", "SPI")),
-    ("STM32L5.*:SPI:.*", ("spi", "v3", "SPI")),
-    ("STM32U0.*:SPI:.*", ("spi", "v3", "SPI")),
-    ("STM32WB\\d.*:SPI:.*", ("spi", "v3", "SPI")),
-    ("STM32WL.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32WL.*:SUBGHZSPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32H7[RS].*:SPI:.*", ("spi", "v5_i2s", "SPI")),
-    ("STM32H7.*:SPI:.*", ("spi", "v4_i2s", "SPI")),
-    ("STM32H5[EF].*:SPI:.*", ("spi", "v5_i2s_h5", "SPI")),
-    ("STM32H5.*:SPI:.*", ("spi", "v5_i2s", "SPI")),
-    ("STM32C5.*:SPI:.*", ("spi", "v5_i2s", "SPI")),
-    ("STM32G5.*:SPI:.*", ("spi", "v5_i2s", "SPI")),
-    ("STM32N6.*:SPI:.*", ("spi", "v5", "SPI")),
-    ("STM32U3.*:SPI:.*", ("spi", "v6", "SPI")),
-    ("STM32U5.*:SPI:.*", ("spi", "v6", "SPI")),
-    ("STM32WB0.*:SPI:.*", ("spi", "v3_i2s", "SPI")),
-    ("STM32WBA.*:SPI:.*", ("spi", "v6", "SPI")),
-    (".*:FMAC:matrix1_v1_0", ("fmac", "v1", "FMAC")),
-    (".*:I2C:c7amba_i2c2", ("i2c", "v3", "I2C")),
-    (".*:I2C:i2c1_v1_0", ("i2c", "v1", "I2C")),
-    (".*:I2C:i2c1_v1_5", ("i2c", "v1", "I2C")),
-    (".*:I2C:i2c2_v1_1", ("i2c", "v2", "I2C")),
-    (".*:I2C:F0-i2c2_v1_1", ("i2c", "v2", "I2C")),
-    (".*:I2C:i2c2_v1_1F7", ("i2c", "v2", "I2C")),
-    (".*:I2C:i2c2_v1_1U5", ("i2c", "v2", "I2C")),
-    (".*:I2C:i2c2_v1_1U3", ("i2c", "v2", "I2C")),
-    (".*:I2C:i2c1_v1_0H7RS", ("i2c", "v3", "I2C")),
-    (".*:I2C:i2c1_v1_0N6", ("i2c", "v3", "I2C")),
-    (".*:FMPI2C:i2c2_v1_1", ("fmpi2c", "v2", "FMPI2C")),
-    ("STM32C5(31|32|42).*:DAC:.*", ("dac", "v8", "DAC")),
-    ("STM32C5(51|52|62|91|93|A3).*:DAC:.*", ("dac", "v9", "DAC")),
-    ("STM32F10[1357].*:DAC:dacif_v1_1F1", ("dac", "v1", "DAC")), // Original F1 are v1
-    (".*:DAC:dacif_v1_1F1", ("dac", "v2", "DAC")),
-    (".*:DAC:F0dacif_v1_1", ("dac", "v2", "DAC")),
-    (".*:DAC:F3_dacif_v1_1", ("dac", "v2", "DAC")),
-    (".*:DAC:dacif_v1_1", ("dac", "v2", "DAC")),
-    (".*:DAC:dacif_v1_2", ("dac", "v2", "DAC")),
-    ("STM32L4[1-9A].*:DAC:dacif_v2_0", ("dac", "v3", "DAC")), // L4 non-plus are v3
-    (".*:DAC:dacif_v2_0", ("dac", "v5", "DAC")),
-    (".*:DAC:dacif_v2_0_U5", ("dac", "v6", "DAC")),
-    (".*:DAC:dacif_v2_0_U3", ("dac", "v6", "DAC")),
-    (".*:DAC:dacif_v2_0_U0", ("dac", "v4", "DAC")),
-    (".*:DAC:dacif_v3_0", ("dac", "v4", "DAC")),
-    (".*:DAC:WL_dacif_v3_0", ("dac", "v4", "DAC")),
-    (".*:DAC:G4_dacif_v4_0", ("dac", "v7", "DAC")),
-    (".*:DAC:dacif_v5_0.*", ("dac", "v6", "DAC")),
-    (".*:ADC:aditf_v2_5F1", ("adc", "v1_f1", "ADC")),
-    (".*:ADC:aditf5_v1_1", ("adc", "v3_f3", "ADC")),
-    (".*:ADC:aditf_v2_5", ("adc", "v1_f1", "ADC")),
-    (".*:ADC:aditf3_v1_1", ("adc", "v1_l1", "ADC")),
-    (".*:ADC:aditf4_v1_1", ("adc", "v2_f0", "ADC")),
-    (".*:ADC:aditf4_v2_0", ("adc", "v2_l0", "ADC")),
-    (".*:ADC:aditf2_v1_1", ("adc", "v1_f4", "ADC")),
-    (".*:ADC:aditf5_v2_0", ("adc", "v3_l4", "ADC")),
-    (".*:ADC:aditf5_v2_2", ("adc", "v3_l4", "ADC")),
-    // RM0468: ADC3 of the H72x/H73x is a different, 12-bit, ADC. The ST data gives it the same IP version.
-    ("STM32H7(23|25|30|33|35).*:ADC3:.*", ("adc", "v3_h7", "ADC3")),
-    (".*:ADC:aditf5_v3_0", ("adc", "v3_h7", "ADC")),
-    (".*:ADC:aditf5_v3_0_H5", ("adc", "v3_g4", "ADC")),
-    (".*:ADC:aditf512_v3_0_H5", ("adc", "v3_g4", "ADC")),
-    (".*:ADC:aditf5_v3_1", ("adc", "v3_h7", "ADC")),
-    (".*:ADC:aditf5_40v2_U3", ("adc", "v3_u3", "ADC")),
-    (".*:ADC:aditf5_40v2_U5", ("adc", "v3_u5", "ADC")),
-    (".*:ADC:aditf5_40v1_U5", ("adc", "v3_u5", "ADC")),
-    (".*:ADC:aditf4_v4_U5", ("adc", "v3_u5", "ADC4")),
-    (".*:ADC:aditf5_v1_0_WB0.*", ("adc", "wb0", "ADC")),
-    (".*:ADC4:ADC:aditf4_v4_WBA", ("adc", "v2_wba", "ADC")),
-    (".*:ADC:aditf5_v3_0_H7RS", ("adc", "v3_g4", "ADC")),
-    ("STM32WB1.*:ADC:.*", ("adc", "v2_wb1", "ADC")),
-    ("STM32WL5.*:ADC:.*", ("adc", "v2_g0", "ADC")),
-    ("STM32WLE.*:ADC:.*", ("adc", "v2_g0", "ADC")),
-    ("STM32C0.*:ADC:.*", ("adc", "v2_g0", "ADC")),
-    ("STM32C5.*:ADC:.*", ("adc", "v3_c5", "ADC")),
-    ("STM32G0.*:ADC:.*", ("adc", "v2_g0", "ADC")),
-    ("STM32U0.*:ADC:.*", ("adc", "v2_g0", "ADC")),
-    ("STM32G4.*:ADC:.*", ("adc", "v3_g4", "ADC")),
-    ("STM32N6.*:ADC:.*", ("adc", "v3_n6", "ADC")),
-    // The ADC_COMMON registers of the aditf4 ADCs (F0, L0, G0, C0, U0, WL, WB1x, WBA, U5 ADC4) live
-    // in the ADC block itself (CCR at 0x308), so those ADCx_COMMON peripherals have no registers.
-    ("STM32C5.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-    ("STM32G4.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
-    ("STM32U5.*:ADC12_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-    ("STM32U3.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-    (
-        "STM32(L[45]|WB[35]).*:ADC\\d*_COMMON:.*",
-        ("adccommon", "v3", "ADC_COMMON"),
-    ),
-    ("STM32F3[^7].*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
-    ("STM32F[247].*:ADC\\d*_COMMON:.*", ("adccommon", "v2", "ADC_COMMON")),
-    ("STM32H5.*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
-    ("STM32H7[RS].*:ADC\\d*_COMMON:.*", ("adccommon", "v3", "ADC_COMMON")),
-    ("STM32H7.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-    ("STM32N6.*:ADC\\d*_COMMON:.*", ("adccommon", "v4", "ADC_COMMON")),
-    ("STM32F373.*:SDADC:.*", ("sdadc", "v1", "SDADC")),
-    ("STM32F301.*:SDADC:.*", ("sdadc", "v1", "SDADC")),
-    ("STM32G4.*:OPAMP:.*", ("opamp", "v5", "OPAMP")),
-    // Only STM32C531/C532/C542 expose OPAMP1
-    // The OPAMP1 entries in the STM32C551/C552/C562 SVDs are stale: CubeProg
-    // metadata, CMSIS headers, and pinout data do not expose a corresponding IP.
-    ("STM32C5(31|32|42).*:OPAMP1:.*", ("opamp", "c5", "OPAMP")),
-    ("STM32F3.*:OPAMP:.*", ("opamp", "v2", "OPAMP")),
-    ("STM32H[57].*:OPAMP:.*", ("opamp", "v4", "OPAMP")),
-    ("STM32L[45].*:OPAMP:.*", ("opamp", "v3", "OPAMP")),
-    ("STM32U[035].*:OPAMP:.*", ("opamp", "v3", "OPAMP")),
-    (".*:DCMI:.*", ("dcmi", "v1", "DCMI")),
-    ("STM32WB0.*:RADIO:.*", ("radio", "v1", "RADIO")),
-    ("STM32C0.*:SYSCFG:.*", ("syscfg", "c0", "SYSCFG")),
-    ("STM32C5.*:SYSCFG:.*", ("syscfg", "c5", "SYSCFG")),
-    ("STM32F0.*:SYSCFG:.*", ("syscfg", "f0", "SYSCFG")),
-    ("STM32F2.*:SYSCFG:.*", ("syscfg", "f2", "SYSCFG")),
-    ("STM32F3.*:SYSCFG:.*", ("syscfg", "f3", "SYSCFG")),
-    ("STM32F4.*:SYSCFG:.*", ("syscfg", "f4", "SYSCFG")),
-    ("STM32F7.*:SYSCFG:.*", ("syscfg", "f7", "SYSCFG")),
-    ("STM32L0.*:SYSCFG:.*", ("syscfg", "l0", "SYSCFG")),
-    ("STM32L1.*:SYSCFG:.*", ("syscfg", "l1", "SYSCFG")),
-    ("STM32L4.*:SYSCFG:.*", ("syscfg", "l4", "SYSCFG")),
-    ("STM32L5.*:SYSCFG:.*", ("syscfg", "l5", "SYSCFG")),
-    ("STM32G0.*:SYSCFG:.*", ("syscfg", "g0", "SYSCFG")),
-    ("STM32G4.*:SYSCFG:.*", ("syscfg", "g4", "SYSCFG")),
-    ("STM32H7[RS].*:SYSCFG:.*", ("syscfg", "h7rs", "SYSCFG")),
-    (
-        "STM32H7(45|47|55|57|42|43|53|50).*:SYSCFG:.*",
-        ("syscfg", "h7od", "SYSCFG"),
-    ),
-    ("STM32H7.*:SYSCFG:.*", ("syscfg", "h7", "SYSCFG")),
-    ("STM32U0.*:SYSCFG:.*", ("syscfg", "u0", "SYSCFG")),
-    ("STM32U3.*:SYSCFG:.*", ("syscfg", "u3", "SYSCFG")),
-    ("STM32U5.*:SYSCFG:.*", ("syscfg", "u5", "SYSCFG")),
-    ("STM32WBA.*:SYSCFG:.*", ("syscfg", "wba", "SYSCFG")),
-    ("STM32WB[^0].*:SYSCFG:.*", ("syscfg", "wb", "SYSCFG")),
-    ("STM32WL5.*:SYSCFG:.*", ("syscfg", "wl5", "SYSCFG")),
-    ("STM32WLE.*:SYSCFG:.*", ("syscfg", "wle", "SYSCFG")),
-    ("STM32H5[EF].*:SYSCFG:.*", ("syscfg", "h5_ef", "SYSCFG")),
-    ("STM32H50.*:SYSCFG:.*", ("syscfg", "h50", "SYSCFG")),
-    ("STM32H5.*:SYSCFG:.*", ("syscfg", "h5", "SYSCFG")),
-    ("STM32N6.*:SYSCFG:.*", ("syscfg", "n6", "SYSCFG")),
-    ("STM32C5.*:IWDG:.*", ("iwdg", "c5", "IWDG")),
-    (".*:IWDG:iwdg1_v1_1", ("iwdg", "v1", "IWDG")),
-    (".*:IWDG:iwdg1_v2_0", ("iwdg", "v2", "IWDG")),
-    (".*:IWDG:iwdg1_v3_0", ("iwdg", "v3", "IWDG")),
-    ("STM32C5.*:WWDG:.*", ("wwdg", "v2", "WWDG")),
-    (".*:WWDG:wwdg1_v1_0", ("wwdg", "v1", "WWDG")),
-    (".*:WWDG:wwdg1_v2_0", ("wwdg", "v2", "WWDG")),
-    (".*:JPEG:jpeg1_v1_0", ("jpeg", "v1", "JPEG")),
-    (".*:LTDC:lcdtft1_v1_0", ("ltdc", "v1", "LTDC")),
-    (".*:LTDC:lcdtft1_v1_1", ("ltdc", "v1", "LTDC")),
-    (".*:LTDC:lcdtft1_v1_3", ("ltdc", "v1_3", "LTDC")),
-    (".*:LTDC:lcdtft2_v1_0", ("ltdc", "v1", "LTDC")),
-    // New CubeMX IP versions (were lcdtft2_v1_0 before the sources update); map to the
-    // existing LTDC block, same as every other LTDC version.
-    (".*:LTDC:lcdtft5_v1_0", ("ltdc", "v1", "LTDC")),
-    (".*:LTDC:lcdtft3_v1_0", ("ltdc", "v1", "LTDC")),
-    (".*:LTDC:lcdtft4_v1_0", ("ltdc", "v1", "LTDC")),
-    (".*:LTDC:lcdtft6_v1_0", ("ltdc", "v1", "LTDC")),
-    (".*:DSIHOST:dsihost1_v1_0", ("dsihost", "v1", "DSIHOST")),
-    (".*:DSIHOST:dsihost1_v1_0_SHARK", ("dsihost", "v1", "DSIHOST")),
-    (".*:DSIHOST:dsihost1_v2_0", ("dsihost", "v2", "DSIHOST")),
-    (".*:DSIHOST:dsihost_U5", ("dsihost", "u5", "DSIHOST")),
-    (".*:MDIOS:mdios1_v1_0", ("mdios", "v1", "MDIOS")),
-    (".*:QUADSPI:.*", ("quadspi", "v1", "QUADSPI")),
-    ("STM32F1.*:BKP.*", ("bkp", "v1", "BKP")),
-    (".*:RTC:rtc1_v1_1", ("rtc", "v1", "RTC")),
-    ("STM32C5.*:RTC:.*", ("rtc", "v3_c5", "RTC")),
-    ("STM32C0.*:RTC:rtc3_.*", ("rtc", "v3_c0", "RTC")),
-    ("STM32F0.*:RTC:rtc2_.*", ("rtc", "v2_f0", "RTC")),
-    ("STM32F2.*:RTC:rtc2_.*", ("rtc", "v2_f2", "RTC")),
-    ("STM32F3.*:RTC:rtc2_.*", ("rtc", "v2_f3", "RTC")),
-    ("STM32F4.*:RTC:rtc2_.*", ("rtc", "v2_f4", "RTC")),
-    ("STM32F7.*:RTC:rtc2_.*", ("rtc", "v2_f7", "RTC")),
-    ("STM32H7[RS].*:RTC:rtc2_.*", ("rtc", "v3_h7rs", "RTC")),
-    ("STM32H7.*:RTC:rtc2_.*", ("rtc", "v2_h7", "RTC")),
-    ("STM32L0.*:RTC:rtc2_.*", ("rtc", "v2_l0", "RTC")),
-    ("STM32L1.*:RTC:rtc2_.*", ("rtc", "v2_l1", "RTC")),
-    ("STM32L4.*:RTC:rtc2_v2_9.*", ("rtc", "v3_base", "RTC")),
-    ("STM32L4.*:RTC:rtc2_.*", ("rtc", "v2_l4", "RTC")),
-    ("STM32L5.*:RTC:rtc2_.*", ("rtc", "v3_l5", "RTC")),
-    ("STM32WBA.*:RTC:rtc2_.*", ("rtc", "v3_u5", "RTC")),
-    ("STM32WB.*:RTC:rtc2_.*", ("rtc", "v2_wb", "RTC")),
-    ("STM32H5.*:RTC:rtc2_.*", ("rtc", "v3_u5", "RTC")),
-    ("STM32U3.*:RTC:rtc2_.*", ("rtc", "v3_u3", "RTC")), // Cube says v2, but it's v3 with security stuff
-    ("STM32U5.*:RTC:rtc2_.*", ("rtc", "v3_u5", "RTC")), // Cube says v2, but it's v3 with security stuff
-    ("STM32N6.*:RTC:rtc2_.*", ("rtc", "v3_u5", "RTC")), // Cube says v2, but it's v3 with security stuff
-    (".*:RTC:rtc3_v1_0", ("rtc", "v3_base", "RTC")),
-    (".*:RTC:rtc3_v1_1", ("rtc", "v3_base", "RTC")),
-    ("STM32L4.*:RTC:rtc3_v2_0.*", ("rtc", "v3_l4", "RTC")), // A slightly cut down v3 RTC
-    (".*:RTC:rtc3_v2_0", ("rtc", "v3_base", "RTC")),
-    (".*:RTC:rtc3_v3_0", ("rtc", "v3_base", "RTC")),
-    (".*:RTC:rtc3_v3_5", ("rtc", "v3_base", "RTC")),
-    (".*:RTC:rtc3_v4_0", ("rtc", "v3_base", "RTC")),
-    (".*:RTC:rtc3_v4_1", ("rtc", "v3_base", "RTC")),
-    (".*:SAI:sai1_v1_0", ("sai", "v1", "SAI")),
-    (".*:SAI:sai1_v1_1", ("sai", "v2", "SAI")),
-    (".*:SAI:sai1_v1_2", ("sai", "v2", "SAI")),
-    (r"STM32WB[35]5.*:SAI\d?:.*", ("sai", "v1_4pdm", "SAI")),
-    (".*:SAI:sai1_v2_0", ("sai", "v1", "SAI")),
-    (".*:SAI:sai1_H7", ("sai", "v3_4pdm", "SAI")),
-    (".*:SAI:sai1_v2_1", ("sai", "v4_4pdm", "SAI")),
-    (r"STM32([HU]5|WBA).*:SAI\d?:.*", ("sai", "v4_2pdm", "SAI")),
-    (r"STM32U3.*:SAI\d?:.*", ("sai", "v3_2pdm", "SAI")),
-    (r"STM32L5.*:SAI\d?:.*", ("sai", "v3_2pdm", "SAI")),
-    (r"STM32N6.*:SAI\d?:.*", ("sai", "n6", "SAI")),
-    (".*:SDMMC:sdmmc2_v3_N6.*", ("sdmmc", "v3", "SDMMC")),
-    (".*:SDIO:sdmmc_v1_2", ("sdmmc", "v1", "SDMMC")),
-    (".*:SDMMC:sdmmc_v1_3", ("sdmmc", "v1", "SDMMC")),
-    (".*:SPDIFRX:spdifrx1_v1_0", ("spdifrx", "v1", "SPDIFRX")),
-    ("STM32N6.*:SPDIFRX.*:.*", ("spdifrx", "n6", "SPDIFRX")),
-    (".*:SPDIFRX:spdifrx1_H7", ("spdifrx", "h7", "SPDIFRX")),
-    // # USB
-    ("STM32(F1|L1).*:USB:.*", ("usb", "v1", "USB")),
-    ("STM32(F1|L1).*:USBRAM:.*", ("usbram", "16x1_512", "USBRAM")),
-    ("STM32F30[23].[BC].*:USB:.*", ("usb", "v1", "USB")),
-    ("STM32F30[23].[BC].*:USBRAM:.*", ("usbram", "16x1_512", "USBRAM")),
-    ("STM32F30[23].[68DE].*:USB:.*", ("usb", "v2", "USB")),
-    ("STM32F30[23].[68DE].*:USBRAM:.*", ("usbram", "16x2_1024", "USBRAM")),
-    ("STM32F373.*:USB:.*", ("usb", "v1", "USB")),
-    ("STM32F373.*:USBRAM:.*", ("usbram", "16x1_512", "USBRAM")),
-    ("STM32(F0|L[045]|G4|WB).*:USB:.*", ("usb", "v3", "USB")),
-    ("STM32(F0|L[045]|G4|WB).*:USBRAM:.*", ("usbram", "16x2_1024", "USBRAM")),
-    ("STM32(C07|C5|G0|H5|U[035]).*:USB:.*", ("usb", "v4", "USB")),
-    ("STM32(C07|C5|G0|H5|U[53]).*:USBRAM:.*", ("usbram", "32_2048", "USBRAM")),
-    ("STM32U0.*:USBRAM:.*", ("usbram", "32_1024", "USBRAM")),
-    // # USB OTG
-    (".*:USB_OTG_FS:otgfs1_.*", ("otg", "v1", "OTG")),
-    (".*:USB_OTG_HS:otghs.*", ("otg", "v1", "OTG")),
-    (".*:USB_OTG_HS:otghs1_.*", ("otg", "v1", "OTG")),
-    ("STM32N6.*:OTG[12]PHYCTL:.*", ("usbphyc", "n6", "USBPHYC")),
-    ("STM32C0[579].*:RCC:.*", ("rcc", "c0v2", "RCC")),
-    ("STM32C0.*:RCC:.*", ("rcc", "c0", "RCC")),
-    ("STM32C5.*:RCC:.*", ("rcc", "c5", "RCC")),
-    ("STM32F030.[46].*:RCC:.*", ("rcc", "f0v1", "RCC")),
-    ("STM32F05[128].*:RCC:.*", ("rcc", "f0v1", "RCC")),
-    ("STM32F030.8.*:RCC:.*", ("rcc", "f0v2", "RCC")),
-    ("STM32F03[128].*:RCC:.*", ("rcc", "f0v2", "RCC")),
-    ("STM32F030.C.*:RCC:.*", ("rcc", "f0v3", "RCC")),
-    ("STM32F070.[6B].*:RCC:.*", ("rcc", "f0v3", "RCC")),
-    ("STM32F0[479][128].*:RCC:.*", ("rcc", "f0v4", "RCC")),
-    ("STM32F100.*:RCC:.*", ("rcc", "f100", "RCC")),
-    ("STM32F10[123].*:RCC:.*", ("rcc", "f1", "RCC")),
-    ("STM32F10[57].*:RCC:.*", ("rcc", "f1cl", "RCC")),
-    ("STM32F2.*:RCC:.*", ("rcc", "f2", "RCC")),
-    ("STM32F37.*:RCC:.*", ("rcc", "f37", "RCC")),
-    ("STM32F30[23].[BC].*:RCC:.*", ("rcc", "f3v1", "RCC")),
-    ("STM32F358.C.*:RCC:.*", ("rcc", "f3v1", "RCC")),
-    ("STM32F30[23].[DE].*:RCC:.*", ("rcc", "f3v3", "RCC")),
-    ("STM32F398.E.*:RCC:.*", ("rcc", "f3v3", "RCC")),
-    ("STM32F3.*:RCC:.*", ("rcc", "f3v2", "RCC")),
-    ("STM32F410.*:RCC:.*", ("rcc", "f410", "RCC")),
-    ("STM32F4.*:RCC:.*", ("rcc", "f4", "RCC")),
-    ("STM32F7.*:RCC:.*", ("rcc", "f7", "RCC")),
-    ("STM32G0.0.*:RCC:.*", ("rcc", "g0x0", "RCC")),
-    ("STM32G0.1.*:RCC:.*", ("rcc", "g0x1", "RCC")),
-    ("STM32G4.*:RCC:.*", ("rcc", "g4", "RCC")),
-    ("STM32G5.*:RCC:.*", ("rcc", "g5", "RCC")),
-    ("STM32H7[RS].*:RCC:.*", ("rcc", "h7rs", "RCC")),
-    ("STM32H7[AB].*:RCC:.*", ("rcc", "h7ab", "RCC")),
-    ("STM32H7(42|43|53|50).*:RCC:.*", ("rcc", "h7rm0433", "RCC")),
-    ("STM32H7(23|25|30|33|35).*:RCC:.*", ("rcc", "h7rm0468", "RCC")),
-    ("STM32H7P.*:RCC:.*", ("rcc", "h7p", "RCC")),
-    ("STM32H7.*:RCC:.*", ("rcc", "h7", "RCC")),
-    ("STM32L0.[23].*:RCC:.*", ("rcc", "l0_v2", "RCC")),
-    ("STM32L0.*:RCC:.*", ("rcc", "l0", "RCC")),
-    ("STM32L1.*:RCC:.*", ("rcc", "l1", "RCC")),
-    ("STM32L4[PQRS].*:RCC:.*", ("rcc", "l4plus", "RCC")),
-    ("STM32L4.*:RCC:.*", ("rcc", "l4", "RCC")),
-    ("STM32L5.*:RCC:.*", ("rcc", "l5", "RCC")),
-    ("STM32U0.*:RCC:.*", ("rcc", "u0", "RCC")),
-    ("STM32U3.*:RCC:.*", ("rcc", "u3", "RCC")),
-    ("STM32U5.*:RCC:.*", ("rcc", "u5", "RCC")),
-    (".*:RCC:STM32H5_rcc_v1_1", ("rcc", "h5_ef", "RCC")),
-    ("STM32H50.*:RCC:.*", ("rcc", "h50", "RCC")),
-    ("STM32H5.*:RCC:.*", ("rcc", "h5", "RCC")),
-    ("STM32WB0.*:RCC:.*", ("rcc", "wb0", "RCC")),
-    ("STM32WBA.*:RCC:.*", ("rcc", "wba", "RCC")),
-    ("STM32WB.*:RCC:.*", ("rcc", "wb", "RCC")),
-    ("STM32WL5.*:RCC:.*", ("rcc", "wl5", "RCC")),
-    // STM32WL4x chips are in NOPELIST (no CMSIS header in sources/headers yet), so
-    // they are filtered out before parsing; this entry just keeps the lookup total.
-    // Map the RCC to the closest existing block so the lookup does not panic.
-    ("STM32WL4.*:RCC:.*", ("rcc", "wl5", "RCC")),
-    ("STM32WLE.*:RCC:.*", ("rcc", "wle", "RCC")),
-    ("STM32N6.*:RCC:.*", ("rcc", "n6", "RCC")),
-    ("STM32MP.*:RCC:.*", ("rcc", "mp1", "RCC")),
-    ("STM32F1.*:AFIO:.*", ("afio", "f1", "AFIO")),
-    ("STM32WBA.*:EXTI:.*", ("exti", "l5", "EXTI")),
-    ("STM32L5.*:EXTI:.*", ("exti", "l5", "EXTI")),
-    ("STM32C0.*:EXTI:.*", ("exti", "c0", "EXTI")),
-    ("STM32C5.*:EXTI:.*", ("exti", "u5", "EXTI")),
-    ("STM32G5.*:EXTI:.*", ("exti", "u5", "EXTI")),
-    ("STM32G0.*:EXTI:.*", ("exti", "g0", "EXTI")),
-    ("STM32H7(45|47|55|57).*:EXTI:.*", ("exti", "h7rm0399", "EXTI")),
-    ("STM32H7.*:EXTI:.*", ("exti", "h7", "EXTI")),
-    ("STM32U0.*:EXTI:.*", ("exti", "u0", "EXTI")),
-    ("STM32U3.*:EXTI:.*", ("exti", "u3", "EXTI")),
-    ("STM32U5.*:EXTI:.*", ("exti", "u5", "EXTI")),
-    ("STM32WB.*:EXTI:.*", ("exti", "w", "EXTI")),
-    ("STM32WL5.*:EXTI:.*", ("exti", "w", "EXTI")),
-    ("STM32WLE.*:EXTI:.*", ("exti", "wle", "EXTI")),
-    ("STM32H5[EF].*:EXTI:.*", ("exti", "h5_ef", "EXTI")),
-    ("STM32H50.*:EXTI:.*", ("exti", "h50", "EXTI")),
-    ("STM32H5.*:EXTI:.*", ("exti", "h5", "EXTI")),
-    ("STM32N6.*:EXTI:.*", ("exti", "n6", "EXTI")),
-    (".*:EXTI:.*", ("exti", "v1", "EXTI")),
-    ("STM32C07.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32F0.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32L0.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32L4.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32L5.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32G0.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32G4.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32U5.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32U3.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32U0.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32H5.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32H7.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32WB.*:CRS:.*", ("crs", "v1", "CRS")),
-    ("STM32C5.*:CRS:.*", ("crs", "v1", "CRS")),
-    (".*SDMMC:sdmmc2_v1_0.*", ("sdmmc", "v2", "SDMMC")),
-    (".*SDMMC:sdmmc2_v1_1.*", ("sdmmc", "v2", "SDMMC")),
-    (".*SDMMC:sdmmc2_v2_1.*", ("sdmmc", "v2", "SDMMC")),
-    (".*SDMMC:sdmmc2_v3_0.*", ("sdmmc", "v3", "SDMMC")),
-    ("STM32C0.*:PWR:.*", ("pwr", "c0", "PWR")),
-    ("STM32C5.*:PWR:.*", ("pwr", "c5", "PWR")),
-    ("STM32G0.*:PWR:.*", ("pwr", "g0", "PWR")),
-    ("STM32G4.*:PWR:.*", ("pwr", "g4", "PWR")),
-    ("STM32H7[RS].*:PWR:.*", ("pwr", "h7rs", "PWR")),
-    ("STM32H7(45|47|55|57).*:PWR:.*", ("pwr", "h7rm0399", "PWR")),
-    ("STM32H7(42|43|53|50).*:PWR:.*", ("pwr", "h7rm0433", "PWR")),
-    ("STM32H7(23|25|33|35|30).*:PWR:.*", ("pwr", "h7rm0468", "PWR")),
-    ("STM32H7(A3|B0|B3).*:PWR:.*", ("pwr", "h7rm0455", "PWR")),
-    ("STM32H7P.*:PWR:.*", ("pwr", "h7p", "PWR")),
-    ("STM32F0.0.*:PWR:.*", ("pwr", "f0x0", "PWR")),
-    ("STM32F0.*:PWR:.*", ("pwr", "f0", "PWR")),
-    ("STM32F1.*:PWR:.*", ("pwr", "f1", "PWR")),
-    ("STM32F2.*:PWR:.*", ("pwr", "f2", "PWR")),
-    ("STM32F3.*:PWR:.*", ("pwr", "f3", "PWR")),
-    ("STM32F4.*:PWR:.*", ("pwr", "f4", "PWR")),
-    ("STM32F7.*:PWR:.*", ("pwr", "f7", "PWR")),
-    ("STM32L0.*:PWR:.*", ("pwr", "l0", "PWR")),
-    ("STM32L1.*:PWR:.*", ("pwr", "l1", "PWR")),
-    ("STM32L4.*:PWR:.*", ("pwr", "l4", "PWR")),
-    ("STM32L5.*:PWR:.*", ("pwr", "l5", "PWR")),
-    ("STM32N6.*:PWR:.*", ("pwr", "n6", "PWR")),
-    ("STM32U0.*:PWR:.*", ("pwr", "u0", "PWR")),
-    ("STM32U3.*:PWR:.*", ("pwr", "u3", "PWR")),
-    ("STM32U5.*:PWR:.*", ("pwr", "u5", "PWR")),
-    ("STM32WL.*:PWR:.*", ("pwr", "wl5", "PWR")),
-    ("STM32WB0.*:PWR:.*", ("pwr", "wb0", "PWR")), // PWRC in the SVD
-    ("STM32WBA.*:PWR:.*", ("pwr", "wba", "PWR")),
-    ("STM32WB[35]5.*:PWR:.*", ("pwr", "wb55", "PWR")),
-    ("STM32WB[^0].*:PWR:.*", ("pwr", "wb", "PWR")),
-    ("STM32H5[EF].*:PWR:.*", ("pwr", "h5_ef", "PWR")),
-    ("STM32H50.*:PWR:.*", ("pwr", "h50", "PWR")),
-    ("STM32H5.*:PWR:.*", ("pwr", "h5", "PWR")),
-    ("STM32H7[RS].*:FLASH:.*", ("flash", "v5_h7rs", "FLASH")),
-    ("STM32H7(A3|B3|B0).*:FLASH:.*", ("flash", "v5_h7ab", "FLASH")),
-    ("STM32H7.*:FLASH:.*", ("flash", "v5_h7", "FLASH")),
-    ("STM32F0.*:FLASH:.*", ("flash", "v1_f0", "FLASH")),
-    ("STM32F10[13].[FG].*:FLASH:.*", ("flash", "v1_f1xl", "FLASH")),
-    ("STM32F1.*:FLASH:.*", ("flash", "v1_f1", "FLASH")),
-    ("STM32F2.*:FLASH:.*", ("flash", "v2_f2", "FLASH")),
-    ("STM32F3.*:FLASH:.*", ("flash", "v1_f3", "FLASH")),
-    ("STM32F4.*:FLASH:.*", ("flash", "v2_f4", "FLASH")),
-    ("STM32F7.*:FLASH:.*", ("flash", "v2_f7", "FLASH")),
-    ("STM32L0.*:FLASH:.*", ("flash", "v3_l0", "FLASH")),
-    ("STM32L1.*:FLASH:.*", ("flash", "v3_l1", "FLASH")),
-    ("STM32L4[PQRS].*:FLASH:.*", ("flash", "v4_l4p", "FLASH")),
-    ("STM32L4.*:FLASH:.*", ("flash", "v4_l4", "FLASH")),
-    ("STM32L5.*:FLASH:.*", ("flash", "v4_l5", "FLASH")),
-    ("STM32U0.*:FLASH:.*", ("flash", "v4_u0", "FLASH")),
-    ("STM32U3.*:FLASH:.*", ("flash", "v4_u3", "FLASH")),
-    ("STM32U5.*:FLASH:.*", ("flash", "v4_u5", "FLASH")),
-    ("STM32WBA.*:FLASH:.*", ("flash", "v4_wba", "FLASH")),
-    ("STM32WB.*:FLASH:.*", ("flash", "v4_wb", "FLASH")),
-    ("STM32WL.*:FLASH:.*", ("flash", "v4_wl", "FLASH")),
-    ("STM32C0.*:FLASH:.*", ("flash", "v4_c0", "FLASH")),
-    ("STM32C5.*:FLASH:.*", ("flash", "v5_c5", "FLASH")),
-    ("STM32G0.0.*:FLASH:.*", ("flash", "v4_g0x0", "FLASH")),
-    ("STM32G0.1.*:FLASH:.*", ("flash", "v4_g0x1", "FLASH")),
-    ("STM32G4(3|4).*:FLASH:.*", ("flash", "v4_g4c2", "FLASH")),
-    ("STM32G4(7|8).*:FLASH:.*", ("flash", "v4_g4c3", "FLASH")),
-    ("STM32G4(9|A).*:FLASH:.*", ("flash", "v4_g4c4", "FLASH")),
-    ("STM32H5[EF].*:FLASH:.*", ("flash", "v5_h5_ef", "FLASH")),
-    ("STM32H50.*:FLASH:.*", ("flash", "v5_h50", "FLASH")),
-    ("STM32H5.*:FLASH:.*", ("flash", "v5_h5", "FLASH")),
-    ("STM32F107.*:ETH:.*", ("eth", "v1a", "ETH")),
-    ("STM32F[24].*:ETH:.*", ("eth", "v1b", "ETH")),
-    ("STM32F7.*:ETH:.*", ("eth", "v1c", "ETH")),
-    ("STM32H.*:ETH:.*", ("eth", "v2", "ETH")),
-    ("STM32N6.*:ETH:.*", ("eth", "v2a", "ETH")),
-    ("STM32C5.*:ETH:.*", ("eth", "v2b", "ETH")),
-    ("STM32F4[23][79].*:FMC:.*", ("fmc", "v1x3", "FMC")),
-    ("STM32F446.*:FMC:.*", ("fmc", "v2x1", "FMC")),
-    ("STM32F469.*:FMC:.*", ("fmc", "v2x1", "FMC")),
-    ("STM32F7.*:FMC:.*", ("fmc", "v2x1", "FMC")),
-    ("STM32H7.*:FMC:.*", ("fmc", "v3x1", "FMC")),
-    ("STM32H5.*:FMC:.*", ("fmc", "v4", "FMC")),
-    ("STM32N6.*:FMC:.*", ("fmc", "n6", "FMC")),
-    ("STM32F100.*:FSMC:.*", ("fsmc", "v1x0", "FSMC")),
-    ("STM32F10[12357].*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
-    ("STM32F2.*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
-    ("STM32F3.*:FSMC:.*", ("fsmc", "v2x3", "FSMC")),
-    ("STM32F412.*:FSMC:.*", ("fsmc", "v1x0", "FSMC")),
-    ("STM32F4[12]3.*:FSMC:.*", ("fsmc", "v1x0", "FSMC")),
-    ("STM32F4[01]5.*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
-    ("STM32F4[01]7.*:FSMC:.*", ("fsmc", "v1x3", "FSMC")),
-    ("STM32L1.*:FSMC:.*", ("fsmc", "v1x0", "FSMC")),
-    ("STM32L4.*:FSMC:.*", ("fsmc", "v3x1", "FSMC")),
-    ("STM32G4.*:FSMC:.*", ("fsmc", "v4x1", "FSMC")),
-    ("STM32L5.*:FSMC:.*", ("fsmc", "v4x1", "FSMC")),
-    ("STM32U5.*:FSMC:.*", ("fsmc", "v5x1", "FSMC")),
-    ("STM32U5.*:FMC:.*", ("fsmc", "v5x1", "FSMC")),
-    //// TIM mapping starts here ////
-    //
-    // Note:
-    // AN4013 for the full tables of TIMs
-    // AN4013 Rev: 10, Date: 12-Jan-2023
-    //
-    //
-    // AN4013 Table 2: STM32Fx serials
-    // Override for STM32Fx serials
-    ("STM32F1.*:TIM(2|5):.*", ("timer", "v1", "TIM_GP16")),
-    // Normal "original series" STM32Fx serials
-    ("STM32F.*:TIM(1|8|20):.*", ("timer", "v1", "TIM_ADV")),
-    ("STM32F.*:TIM(2|5):.*", ("timer", "v1", "TIM_GP32")),
-    ("STM32F.*:TIM(3|4|19):.*", ("timer", "v1", "TIM_GP16")),
-    ("STM32F.*:TIM(6|7|18):.*", ("timer", "v1", "TIM_BASIC")),
-    ("STM32F.*:TIM(10|11|13|14):.*", ("timer", "v1", "TIM_1CH")),
-    ("STM32F.*:TIM(9|12):.*", ("timer", "v1", "TIM_2CH")),
-    ("STM32F.*:TIM15:.*", ("timer", "v1", "TIM_2CH_CMP")),
-    ("STM32F.*:TIM(16|17):.*", ("timer", "v1", "TIM_1CH_CMP")),
-    ("STM32F.*:HRTIM:.*", ("hrtim", "v1", "HRTIM")),
-    // LPTIM for STM32Fx serials
-    ("STM32(F4|F7).*:LPTIM.*:.*", ("lptim", "v1a", "LPTIM")),
-    // AN4013 Table 3: STM32Lx serials
-    // Override for STM32L0 serial
-    ("STM32L0.*:TIM(2|3):.*", ("timer", "l0", "TIM_GP16")),
-    ("STM32L0.*:TIM(6|7):.*", ("timer", "l0", "TIM_BASIC")),
-    ("STM32L0.*:TIM(21|22):.*", ("timer", "l0", "TIM_2CH")),
-    // Override for STM32L1 serials
-    ("STM32L1.*:TIM2:.*", ("timer", "v1", "TIM_GP16")),
-    // Normal STM32Lx serials
-    ("STM32L.*:TIM(1|8):.*", ("timer", "v1", "TIM_ADV")),
-    ("STM32L.*:TIM(2|5):.*", ("timer", "v1", "TIM_GP32")),
-    ("STM32L.*:TIM(3|4):.*", ("timer", "v1", "TIM_GP16")),
-    ("STM32L.*:TIM(6|7):.*", ("timer", "v1", "TIM_BASIC")),
-    ("STM32L.*:TIM(10|11):.*", ("timer", "v1", "TIM_1CH")),
-    ("STM32L.*:TIM(9|21|22):.*", ("timer", "v1", "TIM_2CH")),
-    ("STM32L.*:TIM15:.*", ("timer", "v1", "TIM_2CH_CMP")),
-    ("STM32L.*:TIM(16|17):.*", ("timer", "v1", "TIM_1CH_CMP")),
-    // LPTIM for STM32Lx
-    ("STM32L5.*:LPTIM.*:.*", ("lptim", "v1c", "LPTIM")),
-    // These L4 parts include the repetition counter and update-event flags.
-    ("STM32L4(P5|Q5|12|22).*:LPTIM.*:.*", ("lptim", "v1c", "LPTIM")),
-    ("STM32L4[PQRS].*:LPTIM.*:.*", ("lptim", "v1b", "LPTIM")),
-    ("STM32L4[^PQRS].*:LPTIM.*:.*", ("lptim", "v1a", "LPTIM")),
-    ("STM32L0.*:LPTIM.*:.*", ("lptim", "v1", "LPTIM")),
-    // AN4013 Table 4: STM32Gx/Hx/Ux/Wx (and Cx) serials
-    // timer_v2 for STM32Gx/Hx/Ux/Wx (and Cx) serials
-    ("STM32(U5|U3).*:TIM(3|4):.*", ("timer", "v2", "TIM_GP32")),
-    ("STM32N6.*:TIM4:.*", ("timer", "v2", "TIM_GP32")),
-    (
-        "STM32(G4|H5|N6|U0|U3|U5|WBA).*:TIM(1|8|20):.*",
-        ("timer", "v2", "TIM_ADV"),
-    ),
-    (
-        "STM32(G4|H5|N6|U0|U3|U5|WBA).*:TIM(2|5|23|24):.*",
-        ("timer", "v2", "TIM_GP32"),
-    ),
-    ("STM32(G4|H5|U0|U3|U5|WBA).*:TIM(3|4):.*", ("timer", "v2", "TIM_GP16")),
-    ("STM32N6.*:TIM3:.*", ("timer", "v2", "TIM_GP16")),
-    (
-        "STM32(G4|H5|N6|U0|U3|U5|WBA).*:TIM(6|7|18):.*",
-        ("timer", "v2", "TIM_BASIC"),
-    ),
-    (
-        "STM32(G4|H5|N6|U0|U3|U5|WBA).*:TIM(10|11|13|14):.*",
-        ("timer", "v2", "TIM_1CH"),
-    ),
-    (
-        "STM32(G4|H5|N6|U0|U3|U5|WBA).*:TIM(9|12):.*",
-        ("timer", "v2", "TIM_2CH"),
-    ),
-    (
-        "STM32(G4|H5|N6|U0|U3|U5|WBA).*:TIM15:.*",
-        ("timer", "v2", "TIM_2CH_CMP"),
-    ),
-    (
-        "STM32(G4|H5|N6|U0|U3|U5|WBA).*:TIM(16|17):.*",
-        ("timer", "v2", "TIM_1CH_CMP"),
-    ),
-    ("STM32G4.*:HRTIM1:.*", ("hrtim", "v2", "HRTIM")),
-    // RM0514's HRTIM differs from v1/v2: common registers at 0x700+, 6 timers on a
-    // 0x100 stride, 8 fault inputs, 5-bit event filters, crossbar override regs.
-    ("STM32G5.*:HRTIM1:.*", ("hrtim", "g5", "HRTIM")),
-    // timer_v3 for STM32F7/G0/H7/WB0/WL (and Cx) serials (not "original series" AN4013 Rev 13, but not v2)
-    (
-        "STM32(F7|C|G0|H7|WB|WB06|WB07|WL).*:TIM(1|8|20):.*",
-        ("timer", "v3", "TIM_ADV"),
-    ),
-    (
-        "STM32(F7|C|G0|H7|WB|WB05|WB09|WL).*:TIM(2|5|23|24):.*",
-        ("timer", "v3", "TIM_GP32"),
-    ),
-    (
-        "STM32(F7|C|G0|H7[2345AB]|WB|WL).*:TIM(3|4|19):.*",
-        ("timer", "v3", "TIM_GP16"),
-    ),
-    ("STM32(H7[RS]).*:TIM(3|4):.*", ("timer", "v3", "TIM_GP32")),
-    ("STM32(F7|C|G0|H7|WB|WL).*:TIM(9|12):.*", ("timer", "v3", "TIM_2CH")),
-    ("STM32(F7|C|G0|H7|WB|WL).*:TIM15:.*", ("timer", "v3", "TIM_2CH_CMP")),
-    ("STM32(F7|C|G0|H7|WB|WL).*:TIM(6|7):.*", ("timer", "v3", "TIM_BASIC")),
-    ("STM32(F7|C|G0|H7|WB|WL).*:TIM(13|14):.*", ("timer", "v3", "TIM_1CH")),
-    (
-        "STM32(C|G0|H7|WB|WB05|WB09|WL).*:TIM(16|17):.*",
-        ("timer", "v3", "TIM_1CH_CMP"),
-    ),
-    ("STM32WB0[59].*:TIM2:.*", ("timer", "v3", "TIM_GP32")),
-    ("STM32WB0[67].*:TIM1:.*", ("timer", "v3", "TIM_GP32")),
-    ("STM32[CGHUW].*:HRTIM1?:.*", ("hrtim", "v1", "HRTIM")),
-    // LPTIM for STM32Gx/Hx/Ux/Wx (and Cx) serials
-    ("STM32C5.*:LPTIM1:.*", ("lptim", "v2a", "LPTIM")),
-    ("STM32U0.*:LPTIM.*:.*", ("lptim", "v2b", "LPTIM")),
-    ("STM32(H5|U3|U5|WBA).*:LPTIM[12356]:.*", ("lptim", "v2a", "LPTIM")),
-    ("STM32N6.*:LPTIM.*:.*", ("lptim", "n6", "LPTIM")),
-    ("STM32(H5|U3|U5).*:LPTIM4:.*", ("lptim", "v2a", "LPTIM_BASIC")),
-    ("STM32WL.*:LPTIM.*:.*", ("lptim", "v1c", "LPTIM")),
-    ("STM32H7.*:LPTIM.*:.*", ("lptim", "v1b_h7", "LPTIM")),
-    ("STM32G4.*:LPTIM.*:.*", ("lptim", "v1b_g4", "LPTIM")),
-    ("STM32(G0|WB).*:LPTIM.*:.*", ("lptim", "v1b", "LPTIM")),
-    //
-    //// TIM mapping ends here ////
-    ("STM32F0.*:DBGMCU:.*", ("dbgmcu", "f0", "DBGMCU")),
-    ("STM32F1.*:DBGMCU:.*", ("dbgmcu", "f1", "DBGMCU")),
-    ("STM32F2.*:DBGMCU:.*", ("dbgmcu", "f2", "DBGMCU")),
-    ("STM32F3.*:DBGMCU:.*", ("dbgmcu", "f3", "DBGMCU")),
-    ("STM32F4.*:DBGMCU:.*", ("dbgmcu", "f4", "DBGMCU")),
-    ("STM32F7.*:DBGMCU:.*", ("dbgmcu", "f7", "DBGMCU")),
-    ("STM32C0.*:DBGMCU:.*", ("dbgmcu", "c0", "DBGMCU")),
-    ("STM32C5.*:DBGMCU:.*", ("dbgmcu", "c5", "DBGMCU")),
-    ("STM32G0.*:DBGMCU:.*", ("dbgmcu", "g0", "DBGMCU")),
-    ("STM32G4.*:DBGMCU:.*", ("dbgmcu", "g4", "DBGMCU")),
-    ("STM32H5[EF].*:DBGMCU:.*", ("dbgmcu", "h5_ef", "DBGMCU")),
-    ("STM32H5.*:DBGMCU:.*", ("dbgmcu", "h5", "DBGMCU")),
-    ("STM32H7(45|47|55|57).*:DBGMCU:.*", ("dbgmcu", "h7rm0399", "DBGMCU")),
-    ("STM32H7.*:DBGMCU:.*", ("dbgmcu", "h7", "DBGMCU")),
-    ("STM32L0.*:DBGMCU:.*", ("dbgmcu", "l0", "DBGMCU")),
-    ("STM32L1.*:DBGMCU:.*", ("dbgmcu", "l1", "DBGMCU")),
-    ("STM32L4.*:DBGMCU:.*", ("dbgmcu", "l4", "DBGMCU")),
-    ("STM32L5.*:DBGMCU:.*", ("dbgmcu", "l5", "DBGMCU")),
-    ("STM32N6.*:DBGMCU:.*", ("dbgmcu", "n6", "DBGMCU")),
-    ("STM32U5.*:DBGMCU:.*", ("dbgmcu", "u5", "DBGMCU")),
-    ("STM32U0.*:DBGMCU:.*", ("dbgmcu", "u0", "DBGMCU")),
-    ("STM32U3.*:DBGMCU:.*", ("dbgmcu", "u3", "DBGMCU")),
-    ("STM32WBA.*:DBGMCU:.*", ("dbgmcu", "wba", "DBGMCU")),
-    ("STM32WB.*:DBGMCU:.*", ("dbgmcu", "wb", "DBGMCU")),
-    ("STM32WL.*:DBGMCU:.*", ("dbgmcu", "wl", "DBGMCU")),
-    ("STM32F1.*:GPIO.*", ("gpio", "v1", "GPIO")),
-    ("STM32L4(7|8).*:GPIO.*", ("gpio", "v2_l478", "GPIO")),
-    (".*:GPIO.*", ("gpio", "v2", "GPIO")),
-    (".*:IPCC:v1_0", ("ipcc", "v1", "IPCC")),
-    ("STM32H7(4|5)(5|7).*:HSEM:.*", ("hsem", "v1", "HSEM")),
-    // Every dual-core STM32WB (WB1x/WB3x/WB5x, not WB0x/WBA) has the same HSEM (32 semaphores)
-    ("STM32WB[135].*:HSEM:.*", ("hsem", "v1", "HSEM")),
-    ("STM32H735.*:HSEM:.*", ("hsem", "v2", "HSEM")),
-    ("STM32H7B3.*:HSEM:.*", ("hsem", "v2", "HSEM")),
-    ("STM32H753.*:HSEM:.*", ("hsem", "v2", "HSEM")),
-    ("STM32H743.*:HSEM:.*", ("hsem", "v2", "HSEM")),
-    ("STM32WL5.*:HSEM:.*", ("hsem", "v3", "HSEM")),
-    ("STM32WLE.*:HSEM:.*", ("hsem", "v4", "HSEM")),
-    ("STM32WBA.*:HSEM:.*", ("hsem", "wba", "HSEM")),
-    (".*:DMAMUX.*", ("dmamux", "v1", "DMAMUX")),
-    (r".*:GPDMA:(Instance2_)?STM32H5_v2_dma3", ("gpdma", "v1_h5_ef", "GPDMA")),
-    (r".*:GPDMA\d?:.*", ("gpdma", "v1", "GPDMA")),
-    (r".*:HPDMA\d?:.*", ("gpdma", "v1", "GPDMA")), // TODO it has a few more bits like DWX
-    (r".*:LPDMA\d?:.*", ("lpdma", "v1", "LPDMA")),
-    (r".*:BDMA\d?:.*", ("bdma", "v1", "DMA")),
-    ("STM32H7.*:DMA2D:DMA2D:dma2d1_v1_0", ("dma2d", "v2", "DMA2D")),
-    ("STM32U5.*:DMA2D:DMA2D:dma2d1_v1_0", ("dma2d", "v2", "DMA2D")),
-    (".*:DMA2D:dma2d1_v1_0", ("dma2d", "v1", "DMA2D")),
-    ("STM32L4[PQRS].*:DMA.*", ("bdma", "v1", "DMA")), // L4+
-    ("STM32L[04].*:DMA.*", ("bdma", "v2", "DMA")),    // L0, L4 non-plus (since plus is handled above)
-    ("STM32F030.C.*:DMA.*", ("bdma", "v2", "DMA")),   // Weird F0
-    ("STM32F09.*:DMA.*", ("bdma", "v2", "DMA")),      // Weird F0
-    ("STM32F[247].*:DMA.*", ("dma", "v2", "DMA")),
-    ("STM32H7.*:DMA.*", ("dma", "v1", "DMA")),
-    (".*:DMA.*", ("bdma", "v1", "DMA")),
-    (".*:CAN:bxcan1_v1_1.*", ("can", "bxcan", "CAN")),
-    ("STM32C5.*:FDCAN:.*", ("can", "fdcan_v1", "FDCAN")),
-    ("STM32H7[RS].*FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
-    ("STM32H7.*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v2", "FDCAN")),
-    (".*:FDCAN:fdcan1_v1_[01].*", ("can", "fdcan_v1", "FDCAN")),
-    (".*:FDCAN:.*fdcan1_v1_2", ("can", "fdcan_v2", "FDCAN")),
-    ("STM32H7[RS].*:FDCANRAM.*", ("fdcanram", "v1", "FDCANRAM")),
-    ("STM32H7.*:FDCANRAM.*", ("fdcanram", "v2", "FDCANRAM")),
-    ("STM32N6.*:FDCANRAM.*", ("fdcanram", "v2", "FDCANRAM")),
-    (".*:FDCANRAM.*", ("fdcanram", "v1", "FDCANRAM")),
-    ("STM32F[124].*:CRC:.*", ("crc", "v1", "CRC")),
-    ("STM32L1.*:CRC:.*", ("crc", "v1", "CRC")),
-    ("STM32F0[^79].*:CRC:.*", ("crc", "v2", "CRC")),
-    ("STM32F0[79].*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32F[37].*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32G[04].*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32H5[EF].*:CRC:.*", ("crc", "v3_h5_ef", "CRC")),
-    ("STM32H[57].*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32L[045].*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32N6.*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32WB0.*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32W[BL].*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32C[05].*:CRC:.*", ("crc", "v3", "CRC")),
-    ("STM32U[035].*:CRC:.*", ("crc", "v3", "CRC")),
-    (".*:LCD:lcdc1_v1.0.*", ("lcd", "v1", "LCD")),
-    (".*:LCD:lcdc1_v1.2.*", ("lcd", "v2", "LCD")),
-    (".*:LCD:lcdc1_v1.3.*", ("lcd", "v2", "LCD")),
-    (".*:LCD:lcdc1_v1.4.*", ("lcd", "v2", "LCD")),
-    // New CubeMX IP version (lcdc1_v1_5_Cube, was v1_2 before the sources update).
-    (".*:LCD:lcdc1_v1.5.*", ("lcd", "v2", "LCD")),
-    ("STM32L[01].*:UID:.*", ("uid", "l0", "UID")),
-    (".*:UID:.*", ("uid", "v1", "UID")),
-    ("STM32WBA.*:DESIG:.*", ("desig", "wba", "DESIG")),
-    ("STM32H5.*:UCPD:.*", ("ucpd", "h5", "UCPD")),
-    (".*:UCPD:.*", ("ucpd", "v1", "UCPD")),
-    ("STM32C5.*:TAMP:.*", ("tamp", "c5", "TAMP")),
-    ("STM32G0.*:TAMP:.*", ("tamp", "g0", "TAMP")),
-    ("STM32G4.*:TAMP:.*", ("tamp", "g4", "TAMP")),
-    ("STM32H5[EF].*:TAMP:.*", ("tamp", "h5_ef", "TAMP")),
-    ("STM32H5.*:TAMP:.*", ("tamp", "h5", "TAMP")),
-    ("STM32L5.*:TAMP:.*", ("tamp", "l5", "TAMP")),
-    ("STM32U3.*:TAMP:.*", ("tamp", "l5", "TAMP")),
-    ("STM32U5.*:TAMP:.*", ("tamp", "u5", "TAMP")),
-    ("STM32N6.*:TAMP:.*", ("tamp", "n6", "TAMP")),
-    ("STM32WL.*:TAMP:.*", ("tamp", "wl", "TAMP")),
-    ("STM32WBA[56].*:TAMP:.*", ("tamp", "wba", "TAMP")),
-    (".*:OCTOSPIM:OCTOSPIM:.*", ("octospim", "v1", "OCTOSPIM")),
-    // it's actually STM32L4+, not STM32L4
-    (
-        "STM32L4.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0.*",
-        ("octospi", "v1", "OCTOSPI"),
-    ),
-    (
-        "STM32H7.*:OCTOSPI[12]:OCTOSPI:octospi_v2_1H7AB.*",
-        ("octospi", "v1", "OCTOSPI"),
-    ),
-    (
-        "STM32U5[34].*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*",
-        ("octospi", "v1", "OCTOSPI"),
-    ),
-    (
-        "STM32U5[AFG789].*:OCTOSPI[12]:OCTOSPI:octospi1_v3_0.*",
-        ("octospi", "v1", "OCTOSPI"),
-    ),
-    (
-        "STM32L5.*:OCTOSPI[12]:OCTOSPI:octospi_v1_0L5.*",
-        ("octospi", "v2", "OCTOSPI"),
-    ),
-    (
-        "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
-        ("octospi", "v2", "OCTOSPI"),
-    ),
-    // H543/H553 (octospi1_v6_3) and H5E/H5F (octospi_v6_2) use the same
-    // register layout as the v5_1 parts; the yaml is just missing the
-    // v6-only fields (ADOFF, BERR*, CSSEL, NOPREF, MSEL, EXTENDMEM, ...).
-    (
-        "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi1_v6_3.*",
-        ("octospi", "v2", "OCTOSPI"),
-    ),
-    (
-        "STM32H5.*:OCTOSPI[12]:OCTOSPI:octospi_v6_2.*",
-        ("octospi", "v2", "OCTOSPI"),
-    ),
-    // G5 (DIE44A) and C5 (DIE45A) expose the same octospi IP as XSPI1;
-    // their pdsc digital_name is c7amba_octospi1.
-    (
-        "STM32(G5|C5).*:XSPI1:OSPI:c7amba_octospi1.*",
-        ("octospi", "v2", "OCTOSPI"),
-    ),
-    // WBA25 implements a reduced13-register subset of the same IP.
-    // Mapping to octospi_v2 covers those13 at identical offsets; the
-    // remaining block registers land in reserved gaps of the WBA25 XSPI.
-    ("STM32WBA.*:XSPI1:XSPI:xspi_v2_5.*", ("octospi", "v2", "OCTOSPI")),
-    (
-        "STM32U3.*:OCTOSPI[12]:OCTOSPI:octospi1_v5_1.*",
-        ("octospi", "v2", "OCTOSPI"),
-    ),
-    ("STM32U5[AFG9]9.*:HSPI1:HSPI:hspi1_v1_0.*", ("hspi", "v1", "HSPI")),
-    ("STM32L4.*:GFXMMU:.*", ("gfxmmu", "v1", "GFXMMU")),
-    ("STM32U5.*:GFXMMU:.*", ("gfxmmu", "v2", "GFXMMU")),
-    ("STM32N6.*:GFXMMU:.*", ("gfxmmu", "n6", "GFXMMU")),
-    (
-        "STM32C5(31|32|42|51|52|62).*:ICACHE:.*",
-        ("icache", "v1_4crr_nomstsel", "ICACHE"),
-    ),
-    ("STM32C5(91|93|A3).*:ICACHE:.*", ("icache", "v1_4crr", "ICACHE")),
-    ("STM32U5.*:ICACHE:.*", ("icache", "v1_3crr", "ICACHE")),
-    ("STM32U3.*:ICACHE:.*", ("icache", "v1_3crr", "ICACHE")),
-    ("STM32H50.*:ICACHE:.*", ("icache", "v1_0crr", "ICACHE")),
-    ("STM32N6.*:ICACHE:.*", ("icache", "v1_0crr", "ICACHE")),
-    ("STM32N6.*:CACHEAXI:.*", ("cacheaxi", "n6", "CACHEAXI")),
-    ("STM32(L5|H5[67EF]|WBA).*:ICACHE:.*", ("icache", "v1_4crr", "ICACHE")),
-    (".*:CORDIC:.*", ("cordic", "v1", "CORDIC")),
-    ("STM32F0.[128].*:TSC:.*", ("tsc", "v1", "TSC")),
-    ("STM32F3[07][123].*:TSC:.*", ("tsc", "v1", "TSC")),
-    ("STM32WB1.*:TSC:.*", ("tsc", "v2", "TSC")),
-    ("STM32WB55.*:TSC:.*", ("tsc", "v2", "TSC")),
-    ("STM32WBA.*:TSC:.*", ("tsc", "v1", "TSC")),
-    ("STM32L[045].*:TSC:.*", ("tsc", "v3", "TSC")),
-    ("STM32U5.*:TSC:.*", ("tsc", "v3", "TSC")),
-    ("STM32U3.*:TSC:.*", ("tsc", "v1", "TSC")),
-    ("STM32U0.*:TSC:.*", ("tsc", "v2", "TSC")),
-    ("STM32WBA.*:VREFINTCAL:.*", ("vrefintcal", "v2", "VREFINTCAL")),
-    ("*:VREFINTCAL:.*", ("vrefintcal", "v1", "VREFINTCAL")),
-    ("STM32U0.*:TSCAL:.*", ("tscal", "v1", "TSCAL")),
-    ("STM32U5.*:ADF[12]:.*", ("adf", "v1", "ADF")),
-    ("STM32U3.*:ADF[12]:.*", ("adf", "v1", "ADF")),
-    ("STM32N6.*:ADF1:.*", ("adf", "v1", "ADF")),
-    ("STM32N6.*:MDF1:.*", ("mdf", "n6", "MDF")),
-    ("STM32N6.*:MCE.*:.*", ("mce", "n6", "MCE")),
-    (".*:MDF1:MDF:v1_0_Cube", ("mdf", "u5", "MDF")),
-    ("STM32U5.*:MDF1:.*", ("mdf", "u5", "MDF")),
-    (".*:GFXTIM:GFXTIM:v1_0_Cube", ("gfxtim", "v1", "GFXTIM")),
-    ("STM32U5.*:GFXTIM:.*", ("gfxtim", "v1", "GFXTIM")),
-    ("STM32N6.*:GFXTIM:.*", ("gfxtim", "v1", "GFXTIM")),
-    (".*:GPU2D:GPU2D:gpu2d_v1_0", ("gpu2d", "v1", "GPU2D")),
-    ("STM32U5.*:GPU2D:.*", ("gpu2d", "v1", "GPU2D")),
-    (".*:LPGPIO1:LPGPIO:lpgpio_v1_0_Cube", ("lpgpio", "v1", "LPGPIO")),
-    ("STM32U5.*:LPGPIO1:.*", ("lpgpio", "v1", "LPGPIO")),
-    (".*:HASH:hash1_v1_0", ("hash", "v1", "HASH")),
-    (".*:HASH:hash1_v2_0", ("hash", "v2", "HASH")),
-    ("STM32U5.*:HASH:.*", ("hash", "v4", "HASH")),
-    ("STM32WBA.*:HASH:.*", ("hash", "v4", "HASH")),
-    ("STM32C5.*:HASH:.*", ("hash", "c5", "HASH")),
-    (".*:HASH:hash1_v2_2", ("hash", "v2", "HASH")),
-    (".*:HASH:hash1_v4_0", ("hash", "v3", "HASH")),
-    (".*:HASH:hash1_v4_0_N6", ("hash", "v3", "HASH")),
-    (".*:CRYP:cryp1_v1_0.*", ("cryp", "v1", "CRYP")),
-    (".*:CRYP:cryp1_v2_0_H7.*", ("cryp", "v3", "CRYP")),
-    (".*:CRYP:cryp1-v2_5", ("cryp", "v4", "CRYP")),
-    (".*:CRYP:cryp1_v2_0.*", ("cryp", "v2", "CRYP")),
-    ("STM32F41.*:CRYP:cryp1_v2_2.*", ("cryp", "v1", "CRYP")),
-    (".*:CRYP:cryp1_v2_2.*", ("cryp", "v2", "CRYP")),
-    ("STM32G0.1.*:.*:COMP:.*", ("comp", "v1", "COMP")),
-    ("STM32G4.*:.*:COMP:.*", ("comp", "v2", "COMP")),
-    ("STM32U0.*:.*:COMP:.*", ("comp", "u0", "COMP")),
-    ("STM32U3.*:.*:COMP:.*", ("comp", "u3", "COMP")),
-    ("STM32C5(31|32|42).*:COMP12:.*", ("comp", "c5", "COMP_COMMON")),
-    ("STM32C5(31|32|42).*:COMP[12]:.*", ("comp", "c5", "COMP_CHANNEL")),
-    ("STM32C5(51|52|62|91|93|A3).*:COMP1:.*", ("comp", "c5", "COMP")),
-    ("STM32WB1.*:COMP:.*", ("comp", "v3", "COMP")),
-    ("STM32(L4|L5|WL).*:.*:COMP:.*", ("comp", "v3", "COMP")),
-    ("STM32H7[4523].*:COMP:.*", ("comp", "h7_b", "COMP")),
-    ("STM32H7[AB].*:COMP:.*", ("comp", "h7_a", "COMP")),
-    ("STM32H5.*:COMP:.*", ("comp", "h5", "COMP")),
-    ("STM32U5[34].*:COMP1:.*", ("comp", "u5", "COMP")),
-    ("STM32U5[AFG789].*:COMP[12]:.*", ("comp", "u5", "COMP")),
-    ("STM32WBA.*:COMP[12]:.*", ("comp", "u5", "COMP")),
-    ("STM32F373.*:COMP[12]:.*", ("comp", "f3_v1", "COMP")),
-    (r".*:.*:DCACHE:.*", ("dcache", "v1", "DCACHE")),
-    ("STM32(L4|U5|H5|H7[23AB]|N6).*:PSSI:.*", ("pssi", "v1", "PSSI")),
-    ("STM32H7[RS].*:PSSI:.*", ("pssi", "v1_h7rs", "PSSI")),
-    (".*:CSI:v1_0.*", ("csi", "v1", "CSI")),
-    (".*:DCMIPP:cci_v2_0.*", ("dcmipp", "v2", "DCMIPP")),
-    (".*:VENC:venc1_v1_0.*", ("venc", "v1", "VENC")),
-    (".*:.*:DTS:.*", ("dts", "v1", "DTS")),
-    // HDMI_CEC for F1
-    (".*:HDMI_CEC:hdmi_cec_v1_1", ("cec", "v1", "CEC")),
-    // HDMI_CEC for others
-    (".*:HDMI_CEC:hdmi_cec_v2_0", ("cec", "v2", "CEC")),
-    ("STM32(H7|U5|U3|WBA).*:VREFBUF:.*", ("vrefbuf", "v2a1", "VREFBUF")),
-    ("STM32(L5|L4|G0|WB|WL).*:VREFBUF:.*", ("vrefbuf", "v1", "VREFBUF")),
-    ("STM32N6.*:VREFBUF:.*", ("vrefbuf", "v1", "VREFBUF")),
-    ("STM32H5.*:VREFBUF:.*", ("vrefbuf", "v2a2", "VREFBUF")),
-    ("STM32G4.*:VREFBUF:.*", ("vrefbuf", "v2b", "VREFBUF")),
-    ("STM32H5.*:I3C:.*", ("i3c", "v1", "I3C")),
-    ("STM32U3.*:I3C:.*", ("i3c", "v1", "I3C")),
-    ("STM32N6.*:I3C.*:.*", ("i3c", "v1", "I3C")),
-    ("STM32C5.*:I3C1:.*", ("i3c", "v1", "I3C")),
-    ("STM32H7[RS].*:I3C1:.*", ("i3c", "v1", "I3C")),
-    ("STM32C5.*:PKA:.*", ("pka", "c5", "PKA")),
-    ("STM32(H5|H7[RS]|WBA).*:PKA:.*", ("pka", "v1a", "PKA")),
-    ("STM32N6.*:PKA:.*", ("pka", "n6", "PKA")),
-    ("STM32U3.*:PKA:.*", ("pka", "v1b", "PKA")),
-    ("STM32U5.*:PKA:.*", ("pka", "v1b", "PKA")),
-    ("STM32(L5|WL|WB|WB0).*:PKA:.*", ("pka", "v1c", "PKA")),
-    ("STM32(L4Q|L5|WL|WB).*:PKA:.*", ("pka", "v1c", "PKA")),
-    ("STM32U3.*:CCB:.*", ("ccb", "v1", "CCB")),
-    ("STM32C5A3.*:CCB:.*", ("ccb", "v2", "CCB")),
-    ("STM32U3.*:HSP1:.*", ("hsp", "v1", "HSP")),
-    (".*:OTFDEC:.*", ("otfdec", "v1", "OTFDEC")),
-    // N6 XSPI support
-    (".*:XSPI[123]:XSPI:xspi_v2_1.*", ("xspi", "v1", "XSPI")),
-    (".*:XSPIM:XSPIM:xspi_v2_1.*", ("xspim", "v1", "XSPIM")),
-    // H7RS XSPI support
-    (".*:XSPI[12]:XSPI:xspi_v2_1H7RS*", ("xspi", "v1", "XSPI")),
-    (".*:XSPIM:XSPIM:xspi_v2_1H7RS*", ("xspim", "v1", "XSPIM")),
-    ("STM32H7.*:MDMA:.*", ("mdma", "v1", "MDMA")),
-    (
-        r"STM32L4(1|2|3|4|5|6).*:dfsdm1_v1_0_4ch.*",
-        ("dfsdm", "v1", "DFSDM_4CH_2FLT_TRG3"),
-    ),
-    (r"STM32L4(7|8).*:dfsdm1_v1_0.*", ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG3")),
-    (
-        r"STM32L4(9|A).*:dfsdm1_v1_0_L49.*",
-        ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG3_ADC"),
-    ),
-    (
-        r"STM32L4(P|Q).*:dfsdm1_v1_0_4ch_L4PQx.*",
-        ("dfsdm", "v1", "DFSDM_4CH_2FLT_DLY_TRG5_ADC"),
-    ),
-    (
-        r"STM32L4(R|S).*:dfsdm1_v1_0_L4R.*",
-        ("dfsdm", "v1", "DFSDM_8CH_4FLT_DLY_TRG5_ADC"),
-    ),
-    (r"STM32F412.*:dfsdm1_v1_0_4ch.*", ("dfsdm", "v1", "DFSDM_4CH_2FLT_TRG3")),
-    (r"STM32F4(13|23).*:DFSDM1.*", ("dfsdm", "v1", "DFSDM_4CH_2FLT_DLY_TRG3")),
-    (r"STM32F4(13|23).*:DFSDM2.*", ("dfsdm", "v1", "DFSDM_8CH_4FLT_DLY_TRG3")),
-    (
-        r"STM32L5.*:dfsdm1_v2_1_L5.*",
-        ("dfsdm", "v1", "DFSDM_4CH_4FLT_DLY_TRG5_ADC"),
-    ),
-    (
-        r"STM32MP13.*:dfsdm1_v1_0_4ch_MP13.*",
-        ("dfsdm", "v1", "DFSDM_4CH_2FLT_DLY_TRG5_ADC_HWID"),
-    ),
-    (
-        r"STM32MP15.*:STM32MP_dfsdm1_v2_1.*",
-        ("dfsdm", "v1", "DFSDM_8CH_6FLT_DLY_TRG5_ADC_HWID"),
-    ),
-    (
-        r"STM32F7(6|7).*:dfsdm1_F7_v1_0.*",
-        ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG5"),
-    ),
-    (
-        r"STM32H7(42|43|45|50|53|55|47|57).*:dfsdm1_v1_0_H7.*",
-        ("dfsdm", "v1", "DFSDM_8CH_4FLT_TRG5_ADC"),
-    ),
-    (
-        r"STM32H7(23|25|30|33|35).*:dfsdm1_v1_0_H7.*",
-        ("dfsdm", "v1", "DFSDM_8CH_4FLT_DLY_TRG5_ADC"),
-    ),
-    (
-        r"STM32H7(A3|B3|B0).*:dfsdm1_v1_0_H7A_8ch8f.*",
-        ("dfsdm", "v1", "DFSDM_8CH_8FLT_DLY_TRG5_ADC"),
-    ),
-    (
-        r"STM32H7(A3|B3|B0).*:dfsdm1_v1_0_H7A_2ch.*",
-        ("dfsdm", "v1", "DFSDM_2CH_1FLT_TRG5"),
-    ),
-];
+use std::collections::HashMap;
 
+use regex::Regex;
+
+use crate::config::{self, PerimapEntry};
+
+/// How many bytes of a pattern's longest literal form the index key.
+const PREFIX: usize = 4;
+
+/// The register block that backs a peripheral.
+#[derive(Debug, Clone)]
+pub struct PerimapBlock {
+    /// Register file kind, e.g. `usart`. Selects `data/registers/<kind>_<version>.yaml`.
+    pub kind: String,
+    /// Register file version, e.g. `v1`.
+    pub version: String,
+    /// Block name within that register file, e.g. `USART`.
+    pub block: String,
+}
+
+/// First-match-wins lookup from `{chip}:{peripheral}:{ip_version}` to a block.
 pub struct Perimap {
-    map: regex_map::RegexMap<(&'static str, &'static str, &'static str)>,
+    /// Patterns in `data/perimap.yaml` order.
+    patterns: Vec<Regex>,
+    /// Literal substrings every match of the corresponding pattern contains.
+    literals: Vec<Vec<Vec<u8>>>,
+    /// Pattern indices bucketed by the first [`PREFIX`] bytes of their longest
+    /// literal. A pattern appears in at most one bucket.
+    by_prefix: HashMap<[u8; PREFIX], Vec<usize>>,
+    /// Patterns whose longest literal is too short to bucket; always checked.
+    unindexed: Vec<usize>,
+    blocks: Vec<PerimapBlock>,
 }
 
 impl Perimap {
     pub fn new() -> Self {
+        let entries: &[PerimapEntry] = &config::PERIMAP;
+
+        let mut patterns = Vec::with_capacity(entries.len());
+        let mut literals = Vec::with_capacity(entries.len());
+        let mut blocks = Vec::with_capacity(entries.len());
+        let mut by_prefix: HashMap<[u8; PREFIX], Vec<usize>> = HashMap::new();
+        let mut unindexed = Vec::new();
+
+        for (i, entry) in entries.iter().enumerate() {
+            // Anchored exactly like the `regex_map`-based lookup this replaces,
+            // so `|` at the top level of a pattern keeps its old meaning.
+            let pattern = format!("^{}$", entry.pattern);
+            let re = Regex::new(&pattern)
+                .unwrap_or_else(|e| panic!("bad pattern {:?} in data/perimap.yaml: {e}", entry.pattern));
+
+            let lits = literal_runs(&entry.pattern);
+            // Bucket by the longest literal that contains a `:`. Keys are
+            // colon-separated, so those are far more selective than a bare
+            // `STM32...` chip prefix.
+            let bucket = lits
+                .iter()
+                .filter(|l| l.contains(&b':'))
+                .max_by_key(|l| l.len())
+                .or_else(|| lits.iter().max_by_key(|l| l.len()));
+            match bucket {
+                Some(longest) if longest.len() >= PREFIX => {
+                    let mut key = [0u8; PREFIX];
+                    key.copy_from_slice(&longest[..PREFIX]);
+                    by_prefix.entry(key).or_default().push(i);
+                }
+                _ => unindexed.push(i),
+            }
+
+            patterns.push(re);
+            literals.push(lits);
+            blocks.push(PerimapBlock {
+                kind: entry.kind.clone(),
+                version: entry.version.clone(),
+                block: entry.block.clone(),
+            });
+        }
+
         Self {
-            map: new_regex_map(PERIMAP.iter().map(|(k, v)| (*k, *v))),
+            patterns,
+            literals,
+            by_prefix,
+            unindexed,
+            blocks,
         }
     }
 
-    pub fn get(&self, pattern: &str) -> Option<&(&'static str, &'static str, &'static str)> {
-        self.map.get(pattern).next()
+    /// Find the register block for `{chip}:{peripheral}:{ip_version}`.
+    ///
+    /// Entries are tried in `data/perimap.yaml` order and the first match wins.
+    pub fn get(&self, key: &str) -> Option<&PerimapBlock> {
+        let bytes = key.as_bytes();
+
+        // A pattern can only match if all of its literals occur in the key, so
+        // scanning the key for indexed literals leaves very few candidates.
+        let mut candidates = self.unindexed.clone();
+        if bytes.len() >= PREFIX {
+            for at in 0..=bytes.len() - PREFIX {
+                let Ok(prefix) = <[u8; PREFIX]>::try_from(&bytes[at..at + PREFIX]) else {
+                    continue;
+                };
+                let Some(indexed) = self.by_prefix.get(&prefix) else {
+                    continue;
+                };
+                for &i in indexed {
+                    if self.literals[i].iter().all(|lit| memmem(bytes, lit)) && !candidates.contains(&i) {
+                        candidates.push(i);
+                    }
+                }
+            }
+        }
+
+        candidates.sort_unstable();
+        candidates
+            .into_iter()
+            .find(|&i| self.patterns[i].is_match(key))
+            .map(|i| &self.blocks[i])
+    }
+}
+
+fn memmem(haystack: &[u8], needle: &[u8]) -> bool {
+    if needle.len() > haystack.len() {
+        return false;
+    }
+    haystack.windows(needle.len()).any(|w| w == needle)
+}
+
+/// Extract the literal substrings that every match of `pattern` contains.
+///
+/// Only runs outside of parentheses are returned: a group may be an alternation
+/// such as `([HU]5|WBA)`, where each side contributes a different literal and
+/// neither is guaranteed. Likewise a pattern with a top-level `|` yields no
+/// runs at all. That keeps the result conservative: a pattern whose runs are
+/// not all present in a key can never match that key.
+fn literal_runs(pattern: &str) -> Vec<Vec<u8>> {
+    let b = pattern.as_bytes();
+    let mut runs: Vec<Vec<u8>> = Vec::new();
+    let mut run = 0usize;
+    let mut i = 0usize;
+    let mut depth = 0usize;
+    let mut top_level_alternative = false;
+
+    // Keep the literal `b[start..end]`, if there is one.
+    macro_rules! push_run {
+        ($start:expr, $end:expr) => {
+            if depth == 0 && $end > $start {
+                runs.push(b[$start..$end].to_vec());
+            }
+        };
+    }
+
+    macro_rules! end_run {
+        ($end:expr) => {
+            push_run!(run, $end)
+        };
+    }
+
+    // A quantifier (`*`, `+`, `?`, `{n,m}`) applies to the one literal
+    // character in front of it, so that character may be absent from a
+    // matching string. Everything before it is still guaranteed.
+    macro_rules! end_run_before_quantifier {
+        ($end:expr) => {
+            push_run!(run, $end.saturating_sub(1))
+        };
+    }
+
+    while i < b.len() {
+        match b[i] {
+            // Escapes contribute nothing: `\d` is a class, and even for a
+            // punctuation escape like `\.` we do not bother tracking it.
+            b'\\' => {
+                end_run!(i);
+                i = (i + 2).min(b.len());
+                run = i;
+            }
+            // Character class `[...]` (with a leading `^`, and a `]` in first
+            // position being a literal).
+            b'[' => {
+                end_run!(i);
+                i += 1;
+                if i < b.len() && b[i] == b'^' {
+                    i += 1;
+                }
+                if i < b.len() && b[i] == b']' {
+                    i += 1;
+                }
+                while i < b.len() && b[i] != b']' {
+                    if b[i] == b'\\' {
+                        i += 1;
+                    }
+                    i += 1;
+                }
+                i = (i + 1).min(b.len());
+                run = i;
+            }
+            // Quantifier `{n,m}`.
+            b'{' => {
+                end_run_before_quantifier!(i);
+                while i < b.len() && b[i] != b'}' {
+                    i += 1;
+                }
+                i = (i + 1).min(b.len());
+                run = i;
+            }
+            // Group opening, possibly `(?P<name>`, `(?<name>`, `(?:`, `(?=`, ...
+            b'(' => {
+                end_run!(i);
+                depth += 1;
+                i += 1;
+                if i < b.len() && b[i] == b'?' {
+                    i += 1;
+                    if i < b.len() && (b[i] == b'P' || b[i] == b'<') {
+                        while i < b.len() && b[i] != b'>' {
+                            i += 1;
+                        }
+                        i = (i + 1).min(b.len());
+                    } else {
+                        while i < b.len() && matches!(b[i], b'=' | b'!' | b':' | b'<') {
+                            i += 1;
+                        }
+                    }
+                }
+                run = i;
+            }
+            b')' => {
+                end_run!(i);
+                depth = depth.saturating_sub(1);
+                i += 1;
+                run = i;
+            }
+            b'|' => {
+                end_run!(i);
+                if depth == 0 {
+                    top_level_alternative = true;
+                }
+                i += 1;
+                run = i;
+            }
+            // Quantifiers: the atom before them is optional.
+            b'*' | b'+' | b'?' => {
+                end_run_before_quantifier!(i);
+                i += 1;
+                run = i;
+            }
+            // Zero-width anchors and the any-character wildcard break a run
+            // without making anything optional.
+            b'^' | b'$' | b'.' => {
+                end_run!(i);
+                i += 1;
+                run = i;
+            }
+            _ => i += 1,
+        }
+    }
+    end_run!(i);
+
+    if top_level_alternative {
+        // Alternation at the top level: each side contributes a different
+        // literal, so nothing is guaranteed.
+        runs.clear();
+    }
+    runs
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn extracts_conservative_literal_runs() {
+        assert_eq!(
+            literal_runs("STM32H503.*:GTZC:.*"),
+            [b"STM32H503".to_vec(), b":GTZC:".to_vec()]
+        );
+        assert_eq!(
+            literal_runs(".*:ADC\\d*_COMMON:.*"),
+            [b":ADC".to_vec(), b"_COMMON:".to_vec()]
+        );
+        // `([HU]5|WBA)` is an alternation, so neither `5` nor `WBA` is guaranteed.
+        assert_eq!(
+            literal_runs("STM32([HU]5|WBA).*:SAI\\d?:.*"),
+            [b"STM32".to_vec(), b":SAI".to_vec(), b":".to_vec()]
+        );
+        // A top-level alternation guarantees nothing.
+        assert_eq!(literal_runs("STM32A|STM32B"), Vec::<Vec<u8>>::new());
+        assert_eq!(literal_runs(".*"), Vec::<Vec<u8>>::new());
+
+        // A quantifier makes the character in front of it optional.
+        assert_eq!(
+            literal_runs("STM32[CGHUW].*:HRTIM1?:.*"),
+            [b"STM32".to_vec(), b":HRTIM".to_vec(), b":".to_vec()]
+        );
+        assert_eq!(literal_runs("a*bc?d"), [b"b".to_vec(), b"d".to_vec()]);
+        assert_eq!(literal_runs("x\\d?y"), [b"x".to_vec(), b"y".to_vec()]);
+        // `e{2,3}` may be absent, but the characters before it are not.
+        assert_eq!(literal_runs("pre{2,3}post"), [b"pr".to_vec(), b"post".to_vec()]);
+    }
+
+    /// The generator resolves `data/`, `sources/` and `build/` relative to the
+    /// repository root, so tests need to run from there too.
+    fn chdir_repo_root() {
+        static ONCE: std::sync::Once = std::sync::Once::new();
+        ONCE.call_once(|| {
+            let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+            std::env::set_current_dir(root).unwrap();
+        });
+    }
+
+    /// The index must agree with scanning every pattern in order.
+    #[test]
+    fn indexed_lookup_matches_naive_scan() {
+        chdir_repo_root();
+        let entries: &[PerimapEntry] = &config::PERIMAP;
+        let naive: Vec<Regex> = entries
+            .iter()
+            .map(|e| Regex::new(&format!("^{}$", e.pattern)).unwrap())
+            .collect();
+        let perimap = Perimap::new();
+
+        let mut keys = Vec::new();
+        for family in [
+            "STM32H503",
+            "STM32H523",
+            "STM32F407",
+            "STM32L476",
+            "STM32G431",
+            "STM32C011",
+            "STM32N657",
+            "STM32U575",
+            "STM32WBA52",
+            "STM32F103",
+            "STM32H743",
+            "STM32H7A3",
+            "STM32WL55",
+            "STM32WB55",
+            "STM32U031",
+            "STM32G071",
+            "STM32L072",
+            "STM32F030",
+            "STM32L152",
+            "STM32F207",
+            "STM32F767",
+            "STM32MP157",
+            "STM32H7RS",
+            "STM32U375",
+        ] {
+            for peri in [
+                "TIM1",
+                "TIM2",
+                "USART1",
+                "UART4",
+                "LPUART1",
+                "GTZC",
+                "GTZC_TZSC",
+                "GTZC_MPCBB1",
+                "ADC1_COMMON",
+                "ADC12_COMMON",
+                "DFSDM1",
+                "DMA1",
+                "DMA2",
+                "BDMA",
+                "GPDMA1",
+                "RCC",
+                "FDCAN1",
+                "FDCANRAM1",
+                "SAI1",
+                "SAI2",
+                "SPI2",
+                "RNG",
+                "AES",
+                "USB",
+                "COMP1",
+                "OPAMP1",
+                "DAC1",
+                "RTC",
+                "I2C1",
+                "SYSCFG",
+            ] {
+                for version in [
+                    "usart:sci2_v1_1",
+                    "usart:sci3_v3_0",
+                    "TIM1:tim1_v1_0",
+                    "gtzc:tzsc1_v2_2_rc1_Mustang4M",
+                    "gtzc:v1",
+                    "dfsdm1:v1_0_4ch",
+                    "STM32G4_dma_v1_0",
+                    "adc1_v1_0",
+                    "bsec2_v1",
+                    "STM32N6_rif_v1",
+                    "dac:dac1_v1_0",
+                    "spi:spi1_v1_0",
+                ] {
+                    keys.push(format!("{family}:{peri}:{version}"));
+                }
+            }
+        }
+
+        let mut mismatches = Vec::new();
+        for key in &keys {
+            let expected = naive.iter().position(|r| r.is_match(key)).map(|i| {
+                (
+                    entries[i].kind.as_str(),
+                    entries[i].version.as_str(),
+                    entries[i].block.as_str(),
+                )
+            });
+            let got = perimap
+                .get(key)
+                .map(|b| (b.kind.as_str(), b.version.as_str(), b.block.as_str()));
+            if got != expected {
+                mismatches.push(format!("{key}: expected {expected:?}, got {got:?}"));
+            }
+        }
+        assert!(
+            mismatches.is_empty(),
+            "{} of {} keys disagree with the naive scan:\n{}",
+            mismatches.len(),
+            keys.len(),
+            mismatches.iter().take(20).cloned().collect::<Vec<_>>().join("\n")
+        );
     }
 }
