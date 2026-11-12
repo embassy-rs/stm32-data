@@ -2,9 +2,10 @@ use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fmt::{Debug, Write as _};
 use std::fs;
 use std::fs::File;
-use std::io::{BufWriter, Write};
+use std::io::{BufWriter, IsTerminal, Write};
 use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
+use std::time::Instant;
 
 use chiptool::generate::CommonModule;
 use chiptool::{generate, ir, transform};
@@ -224,10 +225,16 @@ impl Gen {
         fs::create_dir_all(self.opts.out_dir.join("src/registers")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/chips")).unwrap();
 
+        let start = Instant::now();
         let mut chip_core_names: Vec<String> = Vec::new();
 
+        let n_chips = self.opts.chips.len();
+        println!("generating {}...", plural(n_chips, "chip"));
+        let mut progress = Progress::new("chips", n_chips);
+        let section = Instant::now();
+
         for chip_name in &self.opts.chips.clone() {
-            println!("Generating {}...", chip_name);
+            progress.step(chip_name);
 
             let mut chip = self.load_chip(chip_name);
 
@@ -259,8 +266,16 @@ impl Gen {
             }
         }
 
+        progress.finish();
+        println!("chips: {n_chips} in {:.2}s", section.elapsed().as_secs_f64());
+
+        let n_regs = self.all_peripheral_versions.len();
+        println!("generating {}...", plural(n_regs, "peripheral register set"));
+        let mut progress = Progress::new("registers", n_regs);
+        let section = Instant::now();
+
         for (module, version) in &self.all_peripheral_versions {
-            println!("loading {} {}", module, version);
+            progress.step(&format!("{} {}", module, version));
 
             let regs_path = Path::new(&self.opts.data_dir)
                 .join("registers")
@@ -366,6 +381,64 @@ impl Gen {
             include_bytes!("../res/src/metadata.rs"),
         )
         .unwrap();
+
+        progress.finish();
+        println!("registers: {n_regs} in {:.2}s", section.elapsed().as_secs_f64());
+        println!("total: {:.2}s", start.elapsed().as_secs_f64());
+    }
+}
+
+fn plural(n: usize, noun: &str) -> String {
+    format!("{} {}{}", n, noun, if n == 1 { "" } else { "s" })
+}
+
+/// Prints a single self-overwriting progress line while stdout is a terminal.
+/// When stdout is redirected (CI logs, `| tee`) nothing is printed, so the
+/// output stays down to the summary lines.
+struct Progress {
+    label: &'static str,
+    total: usize,
+    done: usize,
+    width: usize,
+    interactive: bool,
+}
+
+impl Progress {
+    fn new(label: &'static str, total: usize) -> Self {
+        Self {
+            label,
+            total,
+            done: 0,
+            width: 0,
+            interactive: std::io::stdout().is_terminal(),
+        }
+    }
+
+    fn step(&mut self, name: &str) {
+        self.done += 1;
+        if !self.interactive {
+            return;
+        }
+        let line = format!("{} {}/{} {}", self.label, self.done, self.total, name);
+        self.width = self.width.max(line.len());
+        print!("\r{line}");
+        let _ = std::io::stdout().flush();
+    }
+
+    fn finish(&mut self) {
+        if !self.interactive || self.width == 0 {
+            return;
+        }
+        // pad over the progress line, then go back to the start of it
+        print!("\r{:width$}\r", "", width = self.width);
+        let _ = std::io::stdout().flush();
+        self.width = 0;
+    }
+}
+
+impl Drop for Progress {
+    fn drop(&mut self) {
+        self.finish();
     }
 }
 
