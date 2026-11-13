@@ -1,0 +1,565 @@
+block/PWR:
+  description: register block.
+  items:
+  - name: LPMCR
+    description: PWR low power mode control register.
+    byte_offset: 0
+    fieldset: LPMCR
+  - name: PMSR
+    description: PWR status register.
+    byte_offset: 4
+    access: Read
+    fieldset: PMSR
+  - name: VOSCR
+    description: PWR voltage scaling control register.
+    byte_offset: 16
+    fieldset: VOSCR
+  - name: VOSSR
+    description: PWR voltage scaling status register.
+    byte_offset: 20
+    access: Read
+    fieldset: VOSSR
+  - name: TMCR
+    description: PWR tamper monitoring control register.
+    byte_offset: 32
+    fieldset: TMCR
+  - name: RTCCR
+    description: PWR RTC domain control register.
+    byte_offset: 36
+    fieldset: RTCCR
+  - name: TMSR
+    description: PWR tamper monitoring status register.
+    byte_offset: 40
+    access: Read
+    fieldset: TMSR
+  - name: UCPDR
+    description: PWR USB Type-C power delivery register.
+    byte_offset: 44
+    fieldset: UCPDR
+  - name: SCCR
+    description: PWR supply configuration control register.
+    byte_offset: 48
+    fieldset: SCCR
+  - name: VMCR
+    description: PWR voltage monitor control register.
+    byte_offset: 52
+    fieldset: VMCR
+  - name: USBSCR
+    description: PWR USB supply control register.
+    byte_offset: 56
+    fieldset: USBSCR
+  - name: VMSR
+    description: PWR voltage monitor status register.
+    byte_offset: 60
+    access: Read
+    fieldset: VMSR
+  - name: WUSCR
+    description: PWR wake-up status clear register.
+    byte_offset: 64
+    access: Write
+    fieldset: WUSCR
+  - name: WUSR
+    description: PWR wake-up status register.
+    byte_offset: 68
+    access: Read
+    fieldset: WUSR
+  - name: WUCR
+    description: PWR wake-up configuration register.
+    byte_offset: 72
+    fieldset: WUCR
+  - name: IORETR
+    description: PWR I/O retention register.
+    byte_offset: 80
+    fieldset: IORETR
+  - name: SECCFGR
+    description: PWR security configuration register.
+    byte_offset: 256
+    fieldset: SECCFGR
+  - name: PRIVCFGR
+    description: PWR privilege configuration register.
+    byte_offset: 260
+    fieldset: PRIVCFGR
+fieldset/IORETR:
+  description: PWR I/O retention register.
+  fields:
+  - name: IORETEN
+    description: IO retention enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: JTAGIORETEN
+    description: JTAG IOs retention enable.
+    bit_offset: 16
+    bit_size: 1
+fieldset/LPMCR:
+  description: PWR low power mode control register.
+  fields:
+  - name: LPMS
+    description: low-power mode selection.
+    bit_offset: 0
+    bit_size: 1
+    enum: LPMS
+  - name: CSSF
+    description: clear Standby and Stop flags (always read as 0).
+    bit_offset: 7
+    bit_size: 1
+  - name: FLPS
+    description: flash memory low-power mode in Stop mode.
+    bit_offset: 9
+    bit_size: 1
+    enum: FLPS
+  - name: SRAM3PDS
+    description: AHB SRAM3 power-down in Stop mode.
+    bit_offset: 23
+    bit_size: 1
+    enum: SRAMPDS
+  - name: SRAM2PDS1
+    description: AHB SRAM2 page 1 power-down in Stop mode.
+    bit_offset: 24
+    bit_size: 1
+    enum: SRAMPDS
+  - name: SRAM2PDS2
+    description: AHB SRAM2 page 2 power-down in Stop mode.
+    bit_offset: 25
+    bit_size: 1
+    enum: SRAMPDS
+  - name: SRAM1PDS
+    description: AHB SRAM1 power-down in Stop mode.
+    bit_offset: 26
+    bit_size: 1
+    enum: SRAMPDS
+fieldset/PMSR:
+  description: PWR status register.
+  fields:
+  - name: STOPF
+    description: Stop flag.
+    bit_offset: 5
+    bit_size: 1
+  - name: SBF
+    description: System standby flag.
+    bit_offset: 6
+    bit_size: 1
+fieldset/PRIVCFGR:
+  description: PWR privilege configuration register.
+  fields:
+  - name: SPRIV
+    description: PWR secure functions privilege configuration.
+    bit_offset: 0
+    bit_size: 1
+  - name: NSPRIV
+    description: PWR nonsecure functions privilege configuration.
+    bit_offset: 1
+    bit_size: 1
+fieldset/RTCCR:
+  description: PWR RTC domain control register.
+  fields:
+  - name: DRTCP
+    description: Disable RTC domain write protection.
+    bit_offset: 0
+    bit_size: 1
+fieldset/SCCR:
+  description: PWR supply configuration control register.
+  fields:
+  - name: BYPASS
+    description: power management unit bypass.
+    bit_offset: 0
+    bit_size: 1
+  - name: LDOEN
+    description: LDO enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: SMPSEN
+    description: SMPS enable.
+    bit_offset: 9
+    bit_size: 1
+fieldset/SECCFGR:
+  description: PWR security configuration register.
+  fields:
+  - name: WUP1SEC
+    description: WUPx secure protection (x=8 to 4, 2 to 1).
+    bit_offset: 0
+    bit_size: 1
+  - name: WUP2SEC
+    description: WUPx secure protection (x=8 to 4, 2 to 1).
+    bit_offset: 1
+    bit_size: 1
+  - name: WUP4SEC
+    description: WUPx secure protection (x=8 to 4, 2 to 1).
+    bit_offset: 3
+    bit_size: 1
+  - name: WUP5SEC
+    description: WUPx secure protection (x=8 to 4, 2 to 1).
+    bit_offset: 4
+    bit_size: 1
+  - name: WUP6SEC
+    description: WUPx secure protection (x=8 to 4, 2 to 1).
+    bit_offset: 5
+    bit_size: 1
+  - name: WUP7SEC
+    description: WUPx secure protection (x=8 to 4, 2 to 1).
+    bit_offset: 6
+    bit_size: 1
+  - name: WUP8SEC
+    description: WUPx secure protection (x=8 to 4, 2 to 1).
+    bit_offset: 7
+    bit_size: 1
+  - name: RETSEC
+    description: retention secure protection.
+    bit_offset: 11
+    bit_size: 1
+  - name: LPMSEC
+    description: low-power modes secure protection.
+    bit_offset: 12
+    bit_size: 1
+  - name: SCMSEC
+    description: supply configuration and monitoring secure protection.
+    bit_offset: 13
+    bit_size: 1
+  - name: RTMSEC
+    description: RTC domain and tamper monitoring secure protection.
+    bit_offset: 14
+    bit_size: 1
+  - name: VUSBSEC
+    description: voltage USB secure protection.
+    bit_offset: 15
+    bit_size: 1
+fieldset/TMCR:
+  description: PWR tamper monitoring control register.
+  fields:
+  - name: MONEN
+    description: VDD voltage and temperature monitoring enable.
+    bit_offset: 1
+    bit_size: 1
+fieldset/TMSR:
+  description: PWR tamper monitoring status register.
+  fields:
+  - name: VDDH
+    description: VDD voltage level monitoring versus high threshold.
+    bit_offset: 21
+    bit_size: 1
+  - name: TEMPL
+    description: temperature level monitoring versus low threshold.
+    bit_offset: 22
+    bit_size: 1
+  - name: TEMPH
+    description: temperature level monitoring versus high threshold.
+    bit_offset: 23
+    bit_size: 1
+fieldset/UCPDR:
+  description: PWR USB Type-C power delivery register.
+  fields:
+  - name: UCPD_DBDIS
+    description: USB Type-C and power delivery dead battery disable.
+    bit_offset: 0
+    bit_size: 1
+  - name: UCPD_STBY
+    description: USB Type-c and Power delivery Standby mode.
+    bit_offset: 1
+    bit_size: 1
+fieldset/USBSCR:
+  description: PWR USB supply control register.
+  fields:
+  - name: USB33SV
+    description: USB supply valid.
+    bit_offset: 25
+    bit_size: 1
+fieldset/VMCR:
+  description: PWR voltage monitor control register.
+  fields:
+  - name: PVDE
+    description: PVD enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: PLS
+    description: programmable voltage detector (PVD) level selection.
+    bit_offset: 1
+    bit_size: 2
+    enum: PLS
+  - name: AVDEN
+    description: peripheral voltage monitor on VDD voltage enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: ALS
+    description: analog voltage detector (AVD) level selection.
+    bit_offset: 9
+    bit_size: 1
+fieldset/VMSR:
+  description: PWR voltage monitor status register.
+  fields:
+  - name: AVDO
+    description: analog voltage detector output on VDD voltage.
+    bit_offset: 19
+    bit_size: 1
+  - name: PVDO
+    description: programmable voltage detector output.
+    bit_offset: 22
+    bit_size: 1
+fieldset/VOSCR:
+  description: PWR voltage scaling control register.
+  fields:
+  - name: VOS
+    description: voltage scaling selection according to performance.
+    bit_offset: 4
+    bit_size: 2
+    enum: VOS
+fieldset/VOSSR:
+  description: PWR voltage scaling status register.
+  fields:
+  - name: SRAMLS
+    description: SRAM memories operation at low speed.
+    bit_offset: 0
+    bit_size: 1
+    enum: SRAMLS
+  - name: VOSRDY
+    description: Ready bit for VCORE voltage scaling output selection.
+    bit_offset: 3
+    bit_size: 1
+  - name: ACTVOSRDY
+    description: Current VOS voltage level ready.
+    bit_offset: 13
+    bit_size: 1
+  - name: ACTVOS
+    description: Current voltage scaling range.
+    bit_offset: 14
+    bit_size: 2
+    enum: VOS
+fieldset/WUCR:
+  description: PWR wake-up configuration register.
+  fields:
+  - name: WUPEN1
+    description: enable wake-up pin WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 0
+    bit_size: 1
+  - name: WUPEN2
+    description: enable wake-up pin WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 1
+    bit_size: 1
+  - name: WUPEN4
+    description: enable wake-up pin WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 3
+    bit_size: 1
+  - name: WUPEN5
+    description: enable wake-up pin WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 4
+    bit_size: 1
+  - name: WUPEN6
+    description: enable wake-up pin WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 5
+    bit_size: 1
+  - name: WUPEN7
+    description: enable wake-up pin WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 6
+    bit_size: 1
+  - name: WUPEN8
+    description: enable wake-up pin WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 7
+    bit_size: 1
+  - name: WUPP1
+    description: wake-up pin polarity bit for WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 8
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP2
+    description: wake-up pin polarity bit for WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 9
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP4
+    description: wake-up pin polarity bit for WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 11
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP5
+    description: wake-up pin polarity bit for WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 12
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP6
+    description: wake-up pin polarity bit for WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 13
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP7
+    description: wake-up pin polarity bit for WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 14
+    bit_size: 1
+    enum: WUPP
+  - name: WUPP8
+    description: wake-up pin polarity bit for WUPx (x=8 to 4, 2 to 1).
+    bit_offset: 15
+    bit_size: 1
+    enum: WUPP
+  - name: WUPPUPD1
+    description: wake-up pin pull configuration for WKUPx (x=8 to 4, 2 to 1).
+    bit_offset: 16
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD2
+    description: wake-up pin pull configuration for WKUPx (x=8 to 4, 2 to 1).
+    bit_offset: 18
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD4
+    description: wake-up pin pull configuration for WKUPx (x=8 to 4, 2 to 1).
+    bit_offset: 22
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD5
+    description: wake-up pin pull configuration for WKUPx (x=8 to 4, 2 to 1).
+    bit_offset: 24
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD6
+    description: wake-up pin pull configuration for WKUPx (x=8 to 4, 2 to 1).
+    bit_offset: 26
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD7
+    description: wake-up pin pull configuration for WKUPx (x=8 to 4, 2 to 1).
+    bit_offset: 28
+    bit_size: 2
+    enum: WUPPUPD
+  - name: WUPPUPD8
+    description: wake-up pin pull configuration for WKUPx (x=8 to 4, 2 to 1).
+    bit_offset: 30
+    bit_size: 2
+    enum: WUPPUPD
+fieldset/WUSCR:
+  description: PWR wake-up status clear register.
+  fields:
+  - name: CWUF1
+    description: clear wake-up pin flag for WUFx (x=8 to4, 2 to 1).
+    bit_offset: 0
+    bit_size: 1
+  - name: CWUF2
+    description: clear wake-up pin flag for WUFx (x=8 to4, 2 to 1).
+    bit_offset: 1
+    bit_size: 1
+  - name: CWUF4
+    description: clear wake-up pin flag for WUFx (x=8 to4, 2 to 1).
+    bit_offset: 3
+    bit_size: 1
+  - name: CWUF5
+    description: clear wake-up pin flag for WUFx (x=8 to4, 2 to 1).
+    bit_offset: 4
+    bit_size: 1
+  - name: CWUF6
+    description: clear wake-up pin flag for WUFx (x=8 to4, 2 to 1).
+    bit_offset: 5
+    bit_size: 1
+  - name: CWUF7
+    description: clear wake-up pin flag for WUFx (x=8 to4, 2 to 1).
+    bit_offset: 6
+    bit_size: 1
+  - name: CWUF8
+    description: clear wake-up pin flag for WUFx (x=8 to4, 2 to 1).
+    bit_offset: 7
+    bit_size: 1
+fieldset/WUSR:
+  description: PWR wake-up status register.
+  fields:
+  - name: WUF1
+    description: wake-up pin WUFx flag (x = 8 to 4, 2 to 1).
+    bit_offset: 0
+    bit_size: 1
+  - name: WUF2
+    description: wake-up pin WUFx flag (x = 8 to 4, 2 to 1).
+    bit_offset: 1
+    bit_size: 1
+  - name: WUF4
+    description: wake-up pin WUFx flag (x = 8 to 4, 2 to 1).
+    bit_offset: 3
+    bit_size: 1
+  - name: WUF5
+    description: wake-up pin WUFx flag (x = 8 to 4, 2 to 1).
+    bit_offset: 4
+    bit_size: 1
+  - name: WUF6
+    description: wake-up pin WUFx flag (x = 8 to 4, 2 to 1).
+    bit_offset: 5
+    bit_size: 1
+  - name: WUF7
+    description: wake-up pin WUFx flag (x = 8 to 4, 2 to 1).
+    bit_offset: 6
+    bit_size: 1
+  - name: WUF8
+    description: wake-up pin WUFx flag (x = 8 to 4, 2 to 1).
+    bit_offset: 7
+    bit_size: 1
+enum/FLPS:
+  bit_size: 1
+  variants:
+  - name: Normal
+    description: flash memory remains in normal mode when the system enters Stop mode (quickrestart time).
+    value: 0
+  - name: LowPower
+    description: flash memory enters low-power mode when the system enters Stop mode(low-power consumption).
+    value: 1
+enum/LPMS:
+  bit_size: 1
+  variants:
+  - name: Stop
+    description: keeps Stop mode when entering DeepSleep.
+    value: 0
+  - name: Standby
+    description: allows Standby mode when entering DeepSleep.
+    value: 1
+enum/PLS:
+  bit_size: 2
+  variants:
+  - name: Level0
+    description: PVD level0.
+    value: 0
+  - name: Level1
+    description: PVD level1.
+    value: 1
+  - name: PVDInPin
+    description: PVD_IN pin.
+    value: 3
+enum/SRAMPDS:
+  bit_size: 1
+  variants:
+  - name: Preserved
+    description: AHB RAM1 content is kept in Stop mode.
+    value: 0
+  - name: Lost
+    description: AHB RAM1 content is lost in Stop mode.
+    value: 1
+enum/SRAMLS:
+  bit_size: 1
+  variants:
+  - name: HighSpeed
+    description: SRAMs operating at high speed (VOS1 or VOS0 voltage scaling).
+    value: 0
+  - name: LowSpeed
+    description: SRAMs operating at low speed (VOS2 voltage scaling).
+    value: 1
+enum/VOS:
+  bit_size: 2
+  variants:
+  - name: Scale2
+    description: 'range 2 (VOS2, default): Low-power range.'
+    value: 1
+  - name: Scale1
+    description: 'range 1: Medium-performance range.'
+    value: 2
+  - name: Scale0
+    description: 'range 0: High-performance range.'
+    value: 3
+enum/WUPP:
+  bit_size: 1
+  variants:
+  - name: RisingEdge
+    description: detection on high level (rising edge).
+    value: 0
+  - name: FallingEdge
+    description: detection on low level (falling edge).
+    value: 1
+enum/WUPPUPD:
+  bit_size: 2
+  variants:
+  - name: NoPullUp
+    value: 0
+  - name: PullUp
+    value: 1
+  - name: PullDown
+    value: 2
