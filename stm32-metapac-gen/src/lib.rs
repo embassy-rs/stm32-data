@@ -1,7 +1,6 @@
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fmt::{Debug, Write as _};
 use std::fs;
-use std::fs::File;
 use std::io::{IsTerminal, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
@@ -24,28 +23,35 @@ pub struct Options {
     pub data_dir: PathBuf,
 }
 
-struct Dedup {
-    peripherals: HashSet<blake3::Hash>,
-    interrupts: HashSet<blake3::Hash>,
-    dma_channels: HashSet<blake3::Hash>,
-    pins: HashSet<blake3::Hash>,
-}
-
 pub struct Gen {
     opts: Options,
-    dedup: Mutex<Dedup>,
+    /// Content hashes of shared files already written this run (write-once guard
+    /// for parallel chips that map to the same content-addressed file).
+    seen: Mutex<HashSet<blake3::Hash>>,
+    /// Per-path hash of the bytes this generator last wrote (loaded from
+    /// `.state` at startup). Lets re-runs skip unchanged files even though a
+    /// later rustfmt pass rewrites their on-disk formatting.
+    prev_state: HashMap<String, String>,
+    /// State for this run: every emitted path (written or verified current).
+    state: Mutex<HashMap<String, String>>,
+    /// Output paths written this run, relative to `out_dir` (forward slashes);
+    /// persisted as `.changed` so downstream tooling (rustfmt in `./d gen-all`)
+    /// can process only what actually changed.
+    changed: Mutex<Vec<String>>,
 }
 
 impl Gen {
     pub fn new(opts: Options) -> Self {
+        let prev_state = fs::read_to_string(opts.out_dir.join(".state"))
+            .map(|s| parse_state(&s))
+            .unwrap_or_default();
+
         Self {
             opts,
-            dedup: Mutex::new(Dedup {
-                peripherals: HashSet::new(),
-                interrupts: HashSet::new(),
-                dma_channels: HashSet::new(),
-                pins: HashSet::new(),
-            }),
+            seen: Mutex::new(HashSet::new()),
+            prev_state,
+            state: Mutex::new(HashMap::new()),
+            changed: Mutex::new(Vec::new()),
         }
     }
 
@@ -113,25 +119,29 @@ impl Gen {
         // ==============================
         // Setup chip dir
 
-        let chip_dir = self
-            .opts
-            .out_dir
-            .join("src/chips")
-            .join(chip_core_name.to_ascii_lowercase());
+        let chip_root = self.opts.out_dir.join("src").join("chips");
+        let chip_dir = chip_root.join(chip_core_name.to_ascii_lowercase());
         fs::create_dir_all(&chip_dir).unwrap();
 
         // ==============================
         // generate pac.rs
+        //
+        // The rendered PAC body is byte-identical for every chip that shares a
+        // core, so it is written once to a shared content-addressed file; the
+        // chip dir keeps a small include plus its peripheral module declarations.
 
-        let data = generate::render(&ir, &gen_opts()).unwrap().to_string();
-        let data = data.replace("] ", "]\n");
+        let pac_body = generate::render(&ir, &gen_opts()).unwrap().to_string();
+        let pac_body = pac_body.replace("] ", "]\n");
 
         // Remove inner attributes like #![no_std]
-        let data = Regex::new("# *! *\\[.*\\]").unwrap().replace_all(&data, "");
+        let pac_body = Regex::new("# *! *\\[.*\\]").unwrap().replace_all(&pac_body, "");
 
-        let mut file = File::create(chip_dir.join("pac.rs")).unwrap();
-        file.write_all(data.as_bytes()).unwrap();
-        file.write_all(extra.as_bytes()).unwrap();
+        let pac_module = Module::new(pac_body.into_owned(), "pac", &chip_root);
+        self.write_shared(&pac_module);
+
+        let mut chip_pac = format!("include!(\"../{}\");\n", pac_module.file_name);
+        chip_pac.push_str(&extra);
+        self.write_if_changed(&chip_dir.join("pac.rs"), &chip_pac);
 
         let mut device_x = String::new();
 
@@ -142,78 +152,60 @@ impl Gen {
         // ==============================
         // generate metadata.rs
 
-        let out_dir = self.opts.out_dir.clone();
-        let meta_dir = out_dir.join("src").join("chips").join("metadata");
+        let meta_dir = self.opts.out_dir.join("src").join("chips").join("metadata");
 
         // (peripherals, interrupts, dma_channels) are often equal across multiple chips.
-        // To reduce bloat, deduplicate them.
-        let mod_peripherals = stringify_module(&core.peripherals, "peripherals", &meta_dir);
-        let mod_interrupts = stringify_module(&core.interrupts, "interrupts", &meta_dir);
-        let mod_dma_channels = stringify_module(&core.dma_channels, "dma_channels", &meta_dir);
-        let mod_pins = stringify_module(&core.pins, "pins", &meta_dir);
+        // To reduce bloat, deduplicate them into content-addressed shared modules.
+        // The hash covers the *final* rendered file contents (including the
+        // :ir_for: rewrite and the appended module declarations), so a shared
+        // name can never disagree with what is written for it.
+        let peripherals_raw = format!(
+            "use super::*;\npub(crate) static PERIPHERALS: &[Peripheral] = {};",
+            stringify(&core.peripherals)
+        );
+        let mut peripherals_contents = regex!("\":ir_for:([a-z0-9]+):\"")
+            .replace_all(&peripherals_raw, "&$1::REGISTERS")
+            .to_string();
 
-        let (write_peripherals, write_interrupts, write_dma_channels, write_pins) = {
-            let mut dedup = self.dedup.lock().unwrap();
-
-            (
-                dedup.peripherals.insert(mod_peripherals.hash.clone()),
-                dedup.interrupts.insert(mod_interrupts.hash.clone()),
-                dedup.dma_channels.insert(mod_dma_channels.hash.clone()),
-                dedup.pins.insert(mod_pins.hash.clone()),
-            )
-        };
-
-        if write_peripherals {
-            let rendered_peripherals = format!(
-                "pub(crate) static PERIPHERALS: &[Peripheral] = {};",
-                mod_peripherals.contents
-            );
-
-            let mut rendered_peripherals = regex!("\":ir_for:([a-z0-9]+):\"")
-                .replace_all(&rendered_peripherals, "&$1::REGISTERS")
-                .to_string();
-
-            for (module, version) in &peripheral_versions {
-                writeln!(
-                    &mut rendered_peripherals,
-                    "#[path=\"../../registers/{}_{}.rs\"] pub mod {};",
-                    module, version, module
-                )
-                .unwrap();
-            }
-
-            fs::write(&mod_peripherals.path, &rendered_peripherals).unwrap();
-        }
-
-        if write_interrupts {
-            fs::write(
-                &mod_interrupts.path,
-                format!(
-                    "pub(crate) static INTERRUPTS: &[Interrupt] = {};",
-                    mod_interrupts.contents
-                ),
+        for (module, version) in &peripheral_versions {
+            writeln!(
+                &mut peripherals_contents,
+                "#[path=\"../../registers/{}_{}.rs\"] pub mod {};",
+                module, version, module
             )
             .unwrap();
         }
 
-        if write_dma_channels {
-            fs::write(
-                &mod_dma_channels.path,
-                format!(
-                    "pub(crate) static DMA_CHANNELS: &[DmaChannel] = {};",
-                    mod_dma_channels.contents
-                ),
-            )
-            .unwrap();
-        }
+        let mod_peripherals = Module::new(peripherals_contents, "peripherals", &meta_dir);
+        let mod_interrupts = Module::new(
+            format!(
+                "use super::*;\npub(crate) static INTERRUPTS: &[Interrupt] = {};",
+                stringify(&core.interrupts)
+            ),
+            "interrupts",
+            &meta_dir,
+        );
+        let mod_dma_channels = Module::new(
+            format!(
+                "use super::*;\npub(crate) static DMA_CHANNELS: &[DmaChannel] = {};",
+                stringify(&core.dma_channels)
+            ),
+            "dma_channels",
+            &meta_dir,
+        );
+        let mod_pins = Module::new(
+            format!(
+                "use super::*;\npub(crate) static PINS: &[Pin] = {};",
+                stringify(&core.pins)
+            ),
+            "pins",
+            &meta_dir,
+        );
 
-        if write_pins {
-            fs::write(
-                &mod_pins.path,
-                format!("pub(crate) static PINS: &[Pin] = {};", mod_pins.contents),
-            )
-            .unwrap();
-        }
+        self.write_shared(&mod_peripherals);
+        self.write_shared(&mod_interrupts);
+        self.write_shared(&mod_dma_channels);
+        self.write_shared(&mod_pins);
 
         let memories = chip.memory.iter().map(stringify).collect::<Vec<_>>().join(",");
 
@@ -230,21 +222,21 @@ impl Gen {
         };
 
         let data = format!(
-            "include!(\"../metadata/{}\");
-            include!(\"../metadata/{}\");
-            include!(\"../metadata/{}\");
-            include!(\"../metadata/{}\");
+            "#[path=\"../metadata/{}\"] mod interrupts;
+            #[path=\"../metadata/{}\"] mod dma_channels;
+            #[path=\"../metadata/{}\"] mod pins;
+            #[path=\"../metadata/{}\"] mod peripherals;
             {}
             pub static METADATA: Metadata = Metadata {{
                 name: {:?},
                 family: {:?},
                 line: {:?},
                 memory: &[{}],
-                peripherals: PERIPHERALS,
+                peripherals: peripherals::PERIPHERALS,
                 nvic_priority_bits: {:?},
-                interrupts: INTERRUPTS,
-                dma_channels: DMA_CHANNELS,
-                pins: PINS,
+                interrupts: interrupts::INTERRUPTS,
+                dma_channels: dma_channels::DMA_CHANNELS,
+                pins: pins::PINS,
             }};",
             &mod_interrupts.file_name,
             &mod_dma_channels.file_name,
@@ -258,14 +250,101 @@ impl Gen {
             &core.nvic_priority_bits,
         );
 
-        fs::write(chip_dir.join("metadata.rs"), &data).unwrap();
+        self.write_if_changed(&chip_dir.join("metadata.rs"), &data);
 
         // ==============================
         // generate device.x
 
-        fs::write(chip_dir.join("device.x"), &device_x).unwrap();
+        self.write_if_changed(&chip_dir.join("device.x"), &device_x);
 
         peripheral_versions
+    }
+
+    /// Write `contents` to `path` only when the bytes differ from what this
+    /// generator last wrote there (see `.state`), and record the path in the
+    /// changed set. Unchanged files are left untouched so they keep their
+    /// formatted on-disk state and skip downstream formatting.
+    fn write_if_changed(&self, path: &Path, contents: impl AsRef<[u8]>) {
+        let contents = contents.as_ref();
+        let digest = hash(contents).to_hex().to_string();
+        let rel = path
+            .strip_prefix(&self.opts.out_dir)
+            .unwrap_or(path)
+            .to_string_lossy()
+            .replace('\\', "/")
+            .to_string();
+
+        if self.prev_state.get(&rel) == Some(&digest) {
+            self.state.lock().unwrap().insert(rel, digest);
+            return;
+        }
+
+        fs::write(path, contents).unwrap();
+        self.changed.lock().unwrap().push(rel.clone());
+        self.state.lock().unwrap().insert(rel, digest);
+    }
+
+    /// Write a shared content-addressed module at most once per run.
+    fn write_shared(&self, module: &Module) {
+        if self.seen.lock().unwrap().insert(module.hash) {
+            self.write_if_changed(&module.path, &module.contents);
+        }
+    }
+
+    /// Remove generated files that this run did not emit: entries from previous
+    /// runs (tracked in `.state`) and untracked leftovers from older layouts.
+    /// Failures are reported but never fatal: a leftover file is a nuisance,
+    /// whereas aborting over it produces a half-written tree. Non-generated
+    /// content (`target/`, `Cargo.lock`, …) is left alone.
+    fn gc_stale(&self) {
+        let state = self.state.lock().unwrap();
+        let mut orphans = Vec::new();
+        Self::collect_orphans(&self.opts.out_dir, &self.opts.out_dir, &state, &mut orphans);
+        for rel in orphans {
+            let full = self.opts.out_dir.join(&rel);
+            match fs::remove_file(&full) {
+                Ok(()) => println!("removed stale {}", full.display()),
+                Err(e) => println!("warning: could not remove stale {}: {e}", full.display()),
+            }
+        }
+    }
+
+    fn collect_orphans(dir: &Path, root: &Path, state: &HashMap<String, String>, out: &mut Vec<String>) {
+        let Ok(entries) = fs::read_dir(dir) else {
+            return;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let name = entry.file_name().to_string_lossy().to_string();
+            if path.is_dir() {
+                if name != "target" {
+                    Self::collect_orphans(&path, root, state, out);
+                }
+                continue;
+            }
+            if name == ".state" || name == ".changed" || name == "Cargo.lock" {
+                continue;
+            }
+            if !(name.ends_with(".rs") || name.ends_with(".x")) {
+                continue;
+            }
+            let rel = path.strip_prefix(root).unwrap().to_string_lossy().replace('\\', "/");
+            if !state.contains_key(&rel) {
+                out.push(rel);
+            }
+        }
+    }
+
+    fn write_state(&self) {
+        let state_guard = self.state.lock().unwrap();
+        let mut state = state_guard.iter().collect::<Vec<_>>();
+        state.sort();
+        let mut out = String::new();
+        for (path, digest) in state {
+            writeln!(&mut out, "{digest} {path}").unwrap();
+        }
+        drop(state_guard);
+        fs::write(self.opts.out_dir.join(".state"), out).unwrap();
     }
 
     fn load_chip(&self, name: &str) -> Chip {
@@ -352,98 +431,107 @@ impl Gen {
         #[cfg(not(feature = "rayon"))]
         let peripheral_iter = peripheral_versions.iter();
 
-        peripheral_iter
-            .map(|(module, version)| {
-                progress.lock().unwrap().step(&format!("{} {}", module, version));
+        peripheral_iter.for_each(|(module, version)| {
+            progress.lock().unwrap().step(&format!("{} {}", module, version));
 
-                let regs_path = Path::new(&self.opts.data_dir)
-                    .join("registers")
-                    .join(&format!("{}_{}.json", module, version));
+            let regs_path = Path::new(&self.opts.data_dir)
+                .join("registers")
+                .join(&format!("{}_{}.json", module, version));
 
-                let mut ir: ir::IR = serde_json::from_slice(&fs::read(regs_path).unwrap()).unwrap();
+            let mut ir: ir::IR = serde_json::from_slice(&fs::read(regs_path).unwrap()).unwrap();
 
-                transform::expand_extends::ExpandExtends {}.run(&mut ir).unwrap();
+            transform::expand_extends::ExpandExtends {}.run(&mut ir).unwrap();
 
-                transform::map_names(&mut ir, |k, s| match k {
-                    transform::NameKind::Block => *s = s.to_string(),
-                    transform::NameKind::Fieldset => *s = format!("regs::{}", s),
-                    transform::NameKind::Enum => *s = format!("vals::{}", s),
-                    _ => {}
-                });
+            transform::map_names(&mut ir, |k, s| match k {
+                transform::NameKind::Block => *s = s.to_string(),
+                transform::NameKind::Fieldset => *s = format!("regs::{}", s),
+                transform::NameKind::Enum => *s = format!("vals::{}", s),
+                _ => {}
+            });
 
-                transform::sort::Sort {}.run(&mut ir).unwrap();
-                transform::sanitize::Sanitize::default().run(&mut ir).unwrap();
+            transform::sort::Sort {}.run(&mut ir).unwrap();
+            transform::sanitize::Sanitize::default().run(&mut ir).unwrap();
 
-                fs::write(
-                    self.opts
-                        .out_dir
-                        .join("src/peripherals")
-                        .join(format!("{}_{}.rs", module, version)),
-                    generate::render(&ir, &gen_opts()).unwrap().to_string(),
-                )
-                .unwrap();
+            let data = generate::render(&ir, &gen_opts()).unwrap().to_string();
+            let data = data.replace("] ", "]\n");
 
-                {
-                    let ir = crate::data::ir::IR::from_chiptool(ir);
-                    let mut file = String::new();
+            self.write_if_changed(
+                &self
+                    .opts
+                    .out_dir
+                    .join("src/peripherals")
+                    .join(format!("{}_{}.rs", module, version)),
+                &data,
+            );
 
-                    write!(
-                        &mut file,
-                        "
+            {
+                let ir = crate::data::ir::IR::from_chiptool(ir);
+                let mut file = String::new();
+
+                write!(
+                    &mut file,
+                    "
                             use crate::metadata::ir::*;
                             pub(crate) static REGISTERS: IR = {};
                         ",
-                        stringify(&ir),
-                    )
-                    .unwrap();
+                    stringify(&ir),
+                )
+                .unwrap();
 
-                    fs::write(
-                        self.opts
-                            .out_dir
-                            .join("src/registers")
-                            .join(format!("{}_{}.rs", module, version)),
-                        &file,
-                    )
-                    .unwrap();
-                }
-
-                ()
-            })
-            .collect::<Vec<_>>();
+                self.write_if_changed(
+                    &self
+                        .opts
+                        .out_dir
+                        .join("src/registers")
+                        .join(format!("{}_{}.rs", module, version)),
+                    &file,
+                );
+            }
+        });
 
         // Generate Cargo.toml
         let mut contents = include_bytes!("../res/Cargo.toml").to_vec();
         for name in &chip_core_names {
             writeln!(&mut contents, "{} = []", name.to_ascii_lowercase()).unwrap();
         }
-        fs::write(self.opts.out_dir.join("Cargo.toml"), contents).unwrap();
+        self.write_if_changed(&self.opts.out_dir.join("Cargo.toml"), &contents);
 
         // Generate src/all_chips.rs
         {
             let contents = gen_all_chips(&self.opts.chips);
-            fs::write(self.opts.out_dir.join("src/all_chips.rs"), &contents).unwrap();
+            self.write_if_changed(&self.opts.out_dir.join("src/all_chips.rs"), &contents);
         }
 
         // Generate src/all_peripheral_versions.rs
         {
             let contents = gen_all_peripheral_versions(&peripheral_versions);
-            fs::write(self.opts.out_dir.join("src/all_peripheral_versions.rs"), &contents).unwrap();
+            self.write_if_changed(&self.opts.out_dir.join("src/all_peripheral_versions.rs"), &contents);
         }
 
         // copy misc files
-        fs::write(self.opts.out_dir.join("README.md"), include_bytes!("../res/README.md")).unwrap();
-        fs::write(self.opts.out_dir.join("build.rs"), include_str!("../res/build.rs")).unwrap();
-        fs::write(self.opts.out_dir.join("src/lib.rs"), include_str!("../res/src/lib.rs")).unwrap();
-        fs::write(
-            self.opts.out_dir.join("src/common.rs"),
+        self.write_if_changed(&self.opts.out_dir.join("README.md"), include_bytes!("../res/README.md"));
+        self.write_if_changed(&self.opts.out_dir.join("build.rs"), include_str!("../res/build.rs"));
+        self.write_if_changed(&self.opts.out_dir.join("src/lib.rs"), include_str!("../res/src/lib.rs"));
+        self.write_if_changed(
+            &self.opts.out_dir.join("src/common.rs"),
             chiptool::generate::COMMON_MODULE,
-        )
-        .unwrap();
-        fs::write(
-            self.opts.out_dir.join("src/metadata.rs"),
+        );
+        self.write_if_changed(
+            &self.opts.out_dir.join("src/metadata.rs"),
             include_str!("../res/src/metadata.rs"),
-        )
-        .unwrap();
+        );
+
+        // Remove outputs of previous runs that are no longer emitted, then
+        // record the run's state and the changed-file list for downstream
+        // tooling (`.changed` is consumed and removed by `./d gen-all`).
+        self.gc_stale();
+        self.write_state();
+        {
+            let mut changed = self.changed.lock().unwrap();
+            changed.sort();
+            changed.dedup();
+            fs::write(self.opts.out_dir.join(".changed"), changed.join("\n")).unwrap();
+        }
 
         progress.lock().unwrap().finish();
         println!("registers: {n_regs} in {:.2}s", section.elapsed().as_secs_f64());
@@ -514,6 +602,9 @@ fn stringify<T: Debug>(metadata: T) -> String {
     metadata.replace(": [", ": &[")
 }
 
+/// A shared, content-addressed output file. The hash covers the exact bytes
+/// that are written, so the file name can never disagree with its contents and
+/// identical inputs across chips map to the same file.
 struct Module {
     contents: String,
     hash: blake3::Hash,
@@ -521,18 +612,26 @@ struct Module {
     path: PathBuf,
 }
 
-fn stringify_module<T: Debug>(metadata: T, r#type: &str, root: &Path) -> Module {
-    let contents = stringify(metadata);
-    let hash = hash(&contents.as_bytes());
-    let file_name = format!("{}_{}.rs", r#type, hash.to_hex());
-    let path = root.join(&file_name);
+impl Module {
+    fn new(contents: String, kind: &str, root: &Path) -> Self {
+        let hash = hash(contents.as_bytes());
+        let file_name = format!("{}_{}.rs", kind, hash.to_hex());
+        let path = root.join(&file_name);
 
-    Module {
-        contents,
-        hash,
-        file_name,
-        path,
+        Self {
+            contents,
+            hash,
+            file_name,
+            path,
+        }
     }
+}
+
+fn parse_state(s: &str) -> HashMap<String, String> {
+    s.lines()
+        .filter_map(|line| line.split_once(' '))
+        .map(|(digest, path)| (path.to_string(), digest.to_string()))
+        .collect()
 }
 
 fn gen_opts() -> generate::Options {
