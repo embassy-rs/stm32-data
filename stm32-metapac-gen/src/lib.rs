@@ -305,11 +305,11 @@ impl Gen {
             let full = self.opts.out_dir.join(&rel);
             match fs::remove_file(&full) {
                 Ok(()) => removed += 1,
-                Err(e) => println!("warning: could not remove stale {}: {e}", full.display()),
+                Err(e) => eprintln!("warning: could not remove stale {}: {e}", full.display()),
             }
         }
         if removed > 0 {
-            println!("removed {removed} stale files");
+            eprintln!("    removed {}", plural(removed, "stale file"));
         }
     }
 
@@ -363,14 +363,13 @@ impl Gen {
         fs::create_dir_all(self.opts.out_dir.join("src/chips")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/chips/metadata")).unwrap();
 
-        let start = Instant::now();
+        let mut stopwatch = Stopwatch::new();
 
         let chips = self.opts.chips.clone();
 
         let n_chips = chips.len();
-        println!("generating {}...", plural(n_chips, "chip"));
         let progress = Mutex::new(Progress::new("chips", n_chips));
-        let section = Instant::now();
+        stopwatch.section(&format!("Generating {}", plural(n_chips, "chip")));
 
         #[cfg(feature = "rayon")]
         let chips = chips.par_iter();
@@ -422,12 +421,10 @@ impl Gen {
         let chip_core_names: Vec<String> = chip_core_names.into_iter().flatten().collect();
 
         progress.lock().unwrap().finish();
-        println!("chips: {n_chips} in {:.2}s", section.elapsed().as_secs_f64());
 
         let n_regs = peripheral_versions.len();
-        println!("generating {}...", plural(n_regs, "peripheral register set"));
         let progress = Mutex::new(Progress::new("registers", n_regs));
-        let section = Instant::now();
+        stopwatch.section(&format!("Generating {}", plural(n_regs, "peripheral register set")));
 
         #[cfg(feature = "rayon")]
         let peripheral_iter = peripheral_versions.par_iter();
@@ -493,6 +490,8 @@ impl Gen {
             }
         });
 
+        stopwatch.section("Finalizing");
+
         // Generate Cargo.toml
         let mut contents = include_bytes!("../res/Cargo.toml").to_vec();
         for name in &chip_core_names {
@@ -538,8 +537,44 @@ impl Gen {
         }
 
         progress.lock().unwrap().finish();
-        println!("registers: {n_regs} in {:.2}s", section.elapsed().as_secs_f64());
-        println!("total: {:.2}s", start.elapsed().as_secs_f64());
+        stopwatch.stop();
+    }
+}
+
+/// Prints progress in the same shape as `stm32-data-gen`: `Starting timer`,
+/// indented section lines with `done in` timings, and a `Total time` footer,
+/// all on stderr.
+struct Stopwatch {
+    start: Instant,
+    section_start: Option<Instant>,
+}
+
+impl Stopwatch {
+    fn new() -> Self {
+        eprintln!("Starting timer");
+        Self {
+            start: Instant::now(),
+            section_start: None,
+        }
+    }
+
+    fn section(&mut self, status: &str) {
+        let now = Instant::now();
+        self.print_done(now);
+        eprintln!("  {status}");
+        self.section_start = Some(now);
+    }
+
+    fn stop(self) {
+        let now = Instant::now();
+        self.print_done(now);
+        eprintln!("Total time: {:.2} seconds", (now - self.start).as_secs_f32());
+    }
+
+    fn print_done(&self, now: Instant) {
+        if let Some(section_start) = self.section_start {
+            eprintln!("    done in {:.2} seconds", (now - section_start).as_secs_f32());
+        }
     }
 }
 
