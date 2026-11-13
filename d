@@ -69,7 +69,9 @@ case "$CMD" in
         cargo run --release --bin stm32-metapac-gen
         cd build/stm32-metapac
         if [ -f .changed ]; then
-            xargs -r rustfmt --skip-children --unstable-features --edition 2024 < .changed
+            # .changed lists every written output (including device.x); only
+            # Rust sources are formattable.
+            grep '\.rs$' .changed | xargs -r rustfmt --skip-children --unstable-features --edition 2024
             rm -f .changed
         else
             find . -name '*.rs' -not -path '*target*' | xargs -r rustfmt --skip-children --unstable-features --edition 2024
