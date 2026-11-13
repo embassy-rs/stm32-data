@@ -300,12 +300,16 @@ impl Gen {
         let state = self.state.lock().unwrap();
         let mut orphans = Vec::new();
         Self::collect_orphans(&self.opts.out_dir, &self.opts.out_dir, &state, &mut orphans);
+        let mut removed = 0usize;
         for rel in orphans {
             let full = self.opts.out_dir.join(&rel);
             match fs::remove_file(&full) {
-                Ok(()) => println!("removed stale {}", full.display()),
+                Ok(()) => removed += 1,
                 Err(e) => println!("warning: could not remove stale {}: {e}", full.display()),
             }
+        }
+        if removed > 0 {
+            println!("removed {removed} stale files");
         }
     }
 
