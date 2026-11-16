@@ -1121,7 +1121,7 @@ fieldset/MCR:
   description: Master Timer Control Register
   fields:
   - name: CKPSC
-    description: HRTIM Master Clock prescaler
+    description: Master Clock prescaler
     bit_offset: 0
     bit_size: 3
   - name: CONT
@@ -1136,6 +1136,10 @@ fieldset/MCR:
     description: Half mode enable
     bit_offset: 5
     bit_size: 1
+  - name: INTLVD
+    description: Interleaved mode.
+    bit_offset: 6
+    bit_size: 2
   - name: SYNCIN
     description: Synchronization input
     bit_offset: 8
@@ -1160,7 +1164,7 @@ fieldset/MCR:
     bit_size: 2
     enum: SYNCSRC
   - name: MCEN
-    description: Master Counter enable
+    description: Master Timer Counter enable
     bit_offset: 16
     bit_size: 1
   - name: TCEN
@@ -1171,7 +1175,7 @@ fieldset/MCR:
       len: 6
       stride: 1
   - name: DACSYNC
-    description: AC Synchronization
+    description: DAC Synchronization
     bit_offset: 25
     bit_size: 2
     enum: DACSYNC
@@ -1785,7 +1789,7 @@ fieldset/TIMXOUTR:
   description: Timerx Output Register
   fields:
   - name: POL
-    description: Output 1 polarity
+    description: Output X polarity
     bit_offset: 1
     bit_size: 1
     array:
@@ -1847,18 +1851,22 @@ fieldset/TIMXOUTR:
     bit_offset: 10
     bit_size: 3
     enum: DLYPRT
+  - name: BIAR
+    description: Balanced Idle Automatic Resume.
+    bit_offset: 14
+    bit_size: 1
 fieldset/TIMXPER:
   description: Timerx Period Register
   fields:
   - name: PER
-    description: Timerx Period value
+    description: Timer X Period value
     bit_offset: 0
     bit_size: 16
 fieldset/TIMXREP:
-  description: Timerx Repetition Register
+  description: Timer X Repetition Register
   fields:
   - name: REP
-    description: Timerx Repetition counter value
+    description: Timer X Repetition counter value
     bit_offset: 0
     bit_size: 8
 fieldset/TIMXRST:
@@ -1927,14 +1935,14 @@ fieldset/TIMXRST:
       - 9
 
 fieldset/TIMXSETR:
-  description: Timerx OutputX Set Register
+  description: Timerx OutputX Set/Reset Register
   fields:
-  - name: SST
-    description: Software Set trigger
+  - name: ST
+    description: Software trigger
     bit_offset: 0
     bit_size: 1
   - name: RESYNC
-    description: Timer X resynchronizaton
+    description: Timer X resynchronization
     bit_offset: 1
     bit_size: 1
   - name: PER
