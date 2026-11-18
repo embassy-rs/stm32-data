@@ -321,6 +321,12 @@
 - { match: '.*:RTC:rtc1_v1_1', kind: rtc, version: v1, block: RTC }
 - { match: 'STM32C5.*:RTC:.*', kind: rtc, version: v3_c5, block: RTC }
 - { match: 'STM32C0.*:RTC:rtc3_.*', kind: rtc, version: v3_c0, block: RTC }
+# RM0360 Table 61: F030xC/F070xB have the wakeup timer, F030x4/6/8 and F070x6 don't. No F0x0 has backup registers.
+- { match: 'STM32F030.C.*:RTC:rtc2_.*', kind: rtc, version: v2_f0_x0, block: RTC }
+- { match: 'STM32F070.B.*:RTC:rtc2_.*', kind: rtc, version: v2_f0_x0, block: RTC }
+- { match: 'STM32F0[37]0.*:RTC:rtc2_.*', kind: rtc, version: v2_f0_x0_nowut, block: RTC }
+# RM0091 Table 79: only F07x/F09x have the wakeup timer and RTC_TAMP3.
+- { match: 'STM32F0[345].*:RTC:rtc2_.*', kind: rtc, version: v2_f0_nowut, block: RTC }
 - { match: 'STM32F0.*:RTC:rtc2_.*', kind: rtc, version: v2_f0, block: RTC }
 - { match: 'STM32F2.*:RTC:rtc2_.*', kind: rtc, version: v2_f2, block: RTC }
 - { match: 'STM32F3.*:RTC:rtc2_.*', kind: rtc, version: v2_f3, block: RTC }
@@ -330,28 +336,31 @@
 - { match: 'STM32H7[AB].*:RTC:rtc2_.*', kind: rtc, version: v3_h7ab, block: RTC }
 - { match: 'STM32H7.*:RTC:rtc2_.*', kind: rtc, version: v2_h7, block: RTC }
 - { match: 'STM32L0.*:RTC:rtc2_.*', kind: rtc, version: v2_l0, block: RTC }
+# RM0038: Cat.1 parts have no subseconds, shift, smooth calibration or tamper 2/3.
+- { match: 'STM32L1(00|5[12])[CRV][68B]:RTC:RTC:rtc2_.*', kind: rtc, version: v2_l1_cat1, block: RTC }
 - { match: 'STM32L1.*:RTC:rtc2_.*', kind: rtc, version: v2_l1, block: RTC }
 - { match: 'STM32L4.*:RTC:rtc2_v2_9.*', kind: rtc, version: v3_base, block: RTC }
 - { match: 'STM32L4.*:RTC:rtc2_.*', kind: rtc, version: v2_l4, block: RTC }
 - { match: 'STM32L5.*:RTC:rtc2_.*', kind: rtc, version: v3_l5, block: RTC }
-- { match: 'STM32WBA.*:RTC:rtc2_.*', kind: rtc, version: v3_u5, block: RTC }
+- { match: 'STM32WBA.*:RTC:rtc2_.*', kind: rtc, version: v3_wba, block: RTC }
 - { match: 'STM32WB.*:RTC:rtc2_.*', kind: rtc, version: v2_wb, block: RTC }
-- { match: 'STM32H5.*:RTC:rtc2_.*', kind: rtc, version: v3_u5, block: RTC }
+- { match: 'STM32H503.*:RTC:rtc2_.*', kind: rtc, version: v3_h503, block: RTC }
+- { match: 'STM32H5.*:RTC:rtc2_.*', kind: rtc, version: v3_h5, block: RTC }
 - { match: 'STM32U3.*:RTC:rtc2_.*', kind: rtc, version: v3_u3, block: RTC }
 # Cube says v2, but it's v3 with security stuff
 - { match: 'STM32U5.*:RTC:rtc2_.*', kind: rtc, version: v3_u5, block: RTC }
 # Cube says v2, but it's v3 with security stuff
 - { match: 'STM32N6.*:RTC:rtc2_.*', kind: rtc, version: v3_u5, block: RTC }
 # Cube says v2, but it's v3 with security stuff
-- { match: '.*:RTC:rtc3_v1_0', kind: rtc, version: v3_base, block: RTC }
-- { match: '.*:RTC:rtc3_v1_1', kind: rtc, version: v3_base, block: RTC }
+- { match: '.*:RTC:rtc3_v1_0', kind: rtc, version: v3_g0, block: RTC }
+- { match: '.*:RTC:rtc3_v1_1', kind: rtc, version: v3_g0, block: RTC }
 - { match: 'STM32L4.*:RTC:rtc3_v2_0.*', kind: rtc, version: v3_l4, block: RTC }
 # A slightly cut down v3 RTC
 - { match: '.*:RTC:rtc3_v2_0', kind: rtc, version: v3_base, block: RTC }
 - { match: '.*:RTC:rtc3_v3_0', kind: rtc, version: v3_base, block: RTC }
-- { match: '.*:RTC:rtc3_v3_5', kind: rtc, version: v3_base, block: RTC }
+- { match: '.*:RTC:rtc3_v3_5', kind: rtc, version: v3_u0, block: RTC }
 - { match: '.*:RTC:rtc3_v4_0', kind: rtc, version: v3_base, block: RTC }
-- { match: '.*:RTC:rtc3_v4_1', kind: rtc, version: v3_base, block: RTC }
+- { match: '.*:RTC:rtc3_v4_1', kind: rtc, version: v2_wb0, block: RTC }
 - { match: '.*:SAI:sai1_v1_0', kind: sai, version: v1, block: SAI }
 - { match: '.*:SAI:sai1_v1_1', kind: sai, version: v2, block: SAI }
 - { match: '.*:SAI:sai1_v1_2', kind: sai, version: v2, block: SAI }
