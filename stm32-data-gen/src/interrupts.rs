@@ -516,7 +516,7 @@ impl ChipInterrupts {
                     continue;
                 }
 
-                let peri_names: Vec<_> = spec
+                let mut peri_names: Vec<_> = spec
                     .f2
                     .split(',')
                     // On STM32N6 the cube NVIC XML attributes the CSI IRQ to the
@@ -546,6 +546,13 @@ impl ChipInterrupts {
                     })
                     .map(ToString::to_string)
                     .collect();
+
+                // STM32G0/U0: RTC_TAMP is the global interrupt of both RTC and TAMP, but the cube
+                // NVIC XML only names RTC. Without TAMP here, the TAMP token of the IRQ name would
+                // be taken as an RTC signal.
+                if name == "RTC_TAMP" && !peri_names.iter().any(|p| p == "TAMP") {
+                    peri_names.push("TAMP".to_string());
+                }
 
                 trace!("    {thread_id:?} peri_names: {peri_names:?}");
 

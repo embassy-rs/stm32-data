@@ -286,16 +286,25 @@ impl ParsedRccs {
                 };
 
                 for field in &body.fields {
-                    if let Some(peri) = field.name.strip_suffix("EN") {
-                        let peri = if peri == "RTCAPB" { "RTC" } else { peri };
+                    if let Some(bit_name) = field.name.strip_suffix("EN") {
+                        let peri = match bit_name {
+                            "RTCAPB" => "RTC",
+                            // C0, G0 and L0 call the DBGMCU clock DBGEN/DBGRST.
+                            "DBG" => "DBGMCU",
+                            peri => peri,
+                        };
+                        let reset_name = if bit_name == "DBG" { bit_name } else { peri };
 
                         let mut reset = None;
                         if let Some(rstr) = ir.fieldsets.get(&reg.replace("ENR", "RSTR"))
-                            && let Some(_field) = rstr.fields.iter().find(|field| field.name == format!("{peri}RST"))
+                            && let Some(_field) = rstr
+                                .fields
+                                .iter()
+                                .find(|field| field.name == format!("{reset_name}RST"))
                         {
                             reset = Some(rcc::Field {
                                 register: reg.replace("ENR", "RSTR"),
-                                field: format!("{peri}RST"),
+                                field: format!("{reset_name}RST"),
                             });
                         }
 
