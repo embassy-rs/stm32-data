@@ -435,17 +435,47 @@ pub struct PeripheralRcc {
 #[serde(untagged)]
 pub enum PeripheralRccKernelClock {
     Clock(String),
-    // Must come before `Mux`, otherwise a prescaled clock also matches `Mux` and the divider
-    // is silently dropped.
-    PrescaledMux(PeripheralRccMux),
-    Mux(PeripheralRccRegister),
+    Mux(PeripheralRccMux),
 }
 
+/// Mirrors `stm32_data_serde::chip::core::peripheral::rcc::Mux`: one all-optional
+/// struct covers a plain mux, a mux + prescaler, and a prescaler over a parent clock.
+/// All fields optional so untagged deserialization reads every historical shape;
+/// `validate` rejects what serde cannot (an all-`None` mux from a typo'd key).
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
 pub struct PeripheralRccMux {
-    pub register: String,
-    pub field: String,
-    pub prescaler: PeripheralRccRegister,
+    #[serde(default)]
+    pub clock: Option<String>,
+    #[serde(default)]
+    pub register: Option<String>,
+    #[serde(default)]
+    pub field: Option<String>,
+    #[serde(default)]
+    pub prescaler: Option<PeripheralRccRegister>,
+}
+
+impl PeripheralRccKernelClock {
+    /// Reject combinations serde's untagged, all-optional `Mux` shape cannot: a
+    /// typo'd key deserializes to an all-`None` mux, and a half-set
+    /// `register`/`field` pair is meaningless.
+    pub fn validate(&self) -> Result<(), String> {
+        let Self::Mux(mux) = self else {
+            return Ok(());
+        };
+        let has_parent = mux.clock.is_some();
+        let has_mux = mux.register.is_some() || mux.field.is_some();
+        if mux.register.is_some() != mux.field.is_some() {
+            return Err("mux register and field must be set together".into());
+        }
+        if has_parent == has_mux {
+            return Err(if has_parent {
+                "clock and mux are mutually exclusive".into()
+            } else {
+                "neither clock nor mux set".into()
+            });
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
