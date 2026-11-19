@@ -227,15 +227,18 @@ pub struct PeripheralRccRegister {
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub enum PeripheralRccKernelClock {
     Clock(&'static str),
-    Mux(PeripheralRccRegister),
-    PrescaledMux(PeripheralRccMux),
+    Mux(PeripheralRccMux),
 }
 
+/// One struct covers a plain mux, a mux with a prescaler, and a prescaler over a
+/// parent clock (no mux). Invariant: exactly one of `clock` / (`register` + `field`)
+/// is set; `prescaler` is optional on top.
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct PeripheralRccMux {
-    pub register: &'static str,
-    pub field: &'static str,
-    pub prescaler: PeripheralRccRegister,
+    pub clock: Option<&'static str>,
+    pub register: Option<&'static str>,
+    pub field: Option<&'static str>,
+    pub prescaler: Option<PeripheralRccRegister>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Default)]

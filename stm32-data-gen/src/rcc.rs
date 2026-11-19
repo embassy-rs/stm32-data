@@ -20,6 +20,9 @@ struct ParsedRcc {
     en_rst: HashMap<String, EnRst>,
     /// name -> mux info
     mux: HashMap<String, MuxInfo>,
+    /// name -> prescaler info for peripherals clocked through a bare divider field
+    /// (no mux in front of it, e.g. F1 `CFGR/ADCPRE`)
+    prescaler: HashMap<String, Field>,
 }
 
 #[derive(Debug)]
@@ -274,6 +277,56 @@ impl ParsedRccs {
             }
         }
 
+        // Some peripherals are clocked through a bare divider field with no mux in
+        // front of it (F1: `CFGR/ADCPRE` divides `PCLK2` for the ADCs). Model those as
+        // a prescaler over the bus clock. Only combinations that embassy-stm32
+        // actually programs are listed: `f013.rs` writes `ADCPRE` only under
+        // `#[cfg(stm32f1)]`, while on F0/F3/F37 the same-named field does not gate the
+        // kernel clock those ports use (ADC CKMODE/ADC12PRES), so modeling it there
+        // would report a wrong frequency.
+        const PRESCALER_ONLY: &[(&str, &str)] = &[("f1", "ADC"), ("f1cl", "ADC"), ("f100", "ADC")];
+
+        let mut prescaler = HashMap::new();
+        if PRESCALER_ONLY.iter().any(|(v, _)| *v == rcc_version) {
+            for (reg, body) in &ir.fieldsets {
+                for field in &body.fields {
+                    let Some(peri) = field
+                        .name
+                        .strip_suffix("PRESC")
+                        .or_else(|| field.name.strip_suffix("PRE"))
+                        .filter(|peri| !peri.is_empty())
+                    else {
+                        continue;
+                    };
+                    if !PRESCALER_ONLY.contains(&(rcc_version, peri)) {
+                        continue;
+                    }
+                    // Only accept divider enums so unrelated `*PRE` fields are not
+                    // picked up.
+                    if !field
+                        .enumm
+                        .as_deref()
+                        .and_then(|e| ir.enums.get(e))
+                        .is_some_and(|e| e.variants.iter().all(|v| regex!(r"^(Div|Mul)").is_match(&v.name)))
+                    {
+                        continue;
+                    }
+                    if prescaler
+                        .insert(
+                            peri.to_string(),
+                            Field {
+                                register: reg.clone(),
+                                field: field.name.clone(),
+                            },
+                        )
+                        .is_some()
+                    {
+                        bail!("rcc: duplicate prescaler {} for rcc_{}", peri, rcc_version);
+                    }
+                }
+            }
+        }
+
         // Parse xxEN/xxRST bits.
         let mut en_rst = HashMap::new();
         for (reg, body) in &ir.fieldsets {
@@ -329,7 +382,7 @@ impl ParsedRccs {
             }
         }
 
-        Ok(ParsedRcc { en_rst, mux })
+        Ok(ParsedRcc { en_rst, mux, prescaler })
     }
 
     pub fn match_peri_clock(
@@ -401,6 +454,7 @@ impl ParsedRccs {
 
         let en_rst = get_with_fallback(peri_name, &rcc.en_rst, FALLBACKS)?;
         let mux = get_with_fallback(peri_name, &rcc.mux, FALLBACKS);
+        let prescaler = get_with_fallback(peri_name, &rcc.prescaler, FALLBACKS);
 
         let phclk = regex!("^[PH]CLK");
 
@@ -443,14 +497,12 @@ impl ParsedRccs {
                         }
                     }
                 }
-                match &mux.prescaler {
-                    Some(prescaler) => rcc::KernelClock::PrescaledMux(rcc::PrescaledMux {
-                        register: mux.mux.register.clone(),
-                        field: mux.mux.field.clone(),
-                        prescaler: prescaler.clone(),
-                    }),
-                    None => rcc::KernelClock::Mux(mux.mux.clone()),
-                }
+                rcc::KernelClock::Mux(rcc::Mux {
+                    clock: None,
+                    register: Some(mux.mux.register.clone()),
+                    field: Some(mux.mux.field.clone()),
+                    prescaler: mux.prescaler.clone(),
+                })
             }
             None => {
                 if peri_name.starts_with("USB") {
@@ -469,7 +521,15 @@ impl ParsedRccs {
                 if rcc_version.starts_with("h7") && peri_name.starts_with("LTDC") {
                     maybe_kernel_clock = "PLL3_R".to_string();
                 }
-                rcc::KernelClock::Clock(maybe_kernel_clock)
+                match prescaler {
+                    Some(prescaler) => rcc::KernelClock::Mux(rcc::Mux {
+                        clock: Some(maybe_kernel_clock),
+                        register: None,
+                        field: None,
+                        prescaler: Some(prescaler.clone()),
+                    }),
+                    None => rcc::KernelClock::Clock(maybe_kernel_clock),
+                }
             }
         };
 

@@ -173,17 +173,10 @@ impl Gen {
 
         let memories = chip.memory.iter().map(stringify).collect::<Vec<_>>().join(",");
 
-        // Only import the prescaled variant for chips that use it, so the metadata of all
-        // other chips stays byte-identical.
-        let kernel_clock_import = if core.peripherals.iter().any(|p| {
-            p.rcc
-                .as_ref()
-                .is_some_and(|rcc| matches!(&rcc.kernel_clock, PeripheralRccKernelClock::PrescaledMux(_)))
-        }) {
-            "use crate::metadata::PeripheralRccKernelClock::{Clock, Mux, PrescaledMux};"
-        } else {
-            "use crate::metadata::PeripheralRccKernelClock::{Clock, Mux};"
-        };
+        // Both variants are imported unconditionally: with the consolidated
+        // `PeripheralRccMux` there are no variant-specific shapes left to special-case,
+        // and unused imports are allowed crate-wide.
+        let kernel_clock_import = "use crate::metadata::PeripheralRccKernelClock::{Clock, Mux};";
 
         let data = format!(
             "include!(\"../{}\");
@@ -217,7 +210,19 @@ impl Gen {
     fn load_chip(&mut self, name: &str) -> Chip {
         let chip_path = self.opts.data_dir.join("chips").join(format!("{}.json", name));
         let chip = fs::read(chip_path).unwrap_or_else(|_| panic!("Could not load chip {}", name));
-        serde_json::from_slice(&chip).unwrap()
+        let chip: Chip = serde_json::from_slice(&chip).unwrap();
+        // The untagged `Mux` shape is all-optional, so serde cannot reject nonsense
+        // input (e.g. a typo'd key deserializes to an all-`None` mux).
+        for core in &chip.cores {
+            for p in &core.peripherals {
+                if let Some(rcc) = &p.rcc {
+                    if let Err(err) = rcc.kernel_clock.validate() {
+                        panic!("chip {}: peripheral {}: invalid kernel clock: {}", name, p.name, err);
+                    }
+                }
+            }
+        }
+        chip
     }
 
     pub fn run_gen(&mut self) {

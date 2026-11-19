@@ -159,19 +159,59 @@ pub mod chip {
                 #[serde(untagged)]
                 pub enum KernelClock {
                     Clock(String),
-                    // Must come before `Mux`: serde's untagged enums ignore unknown fields, so
-                    // `Mux` would also match a prescaled clock and silently drop the divider.
-                    PrescaledMux(PrescaledMux),
-                    Mux(Field),
+                    Mux(Mux),
                 }
 
+                /// A peripheral kernel clock.
+                ///
+                /// One struct covers every historical shape: a plain mux
+                /// (`{"register","field"}`), a mux with a divider applied to its output
+                /// (`{"register","field","prescaler"}`, e.g. C5 `CCIPR2/ADCDACSEL` plus
+                /// `ADCDACPRE`), and - when there is no mux - a parent clock behind a
+                /// divider (`{"clock","prescaler"}`, e.g. F1 `PCLK2` behind
+                /// `CFGR/ADCPRE`).
+                ///
+                /// Invariant: exactly one of `clock` / (`register` + `field`) is set;
+                /// `prescaler` is optional on top. Every field being optional is safe for
+                /// serde's untagged deserialization because there is only one struct
+                /// variant - the fields present determine the meaning, so the old
+                /// "PrescaledMux must come before Mux" ordering hazard cannot occur - and
+                /// `skip_serializing_if` keeps the output byte-identical to the
+                /// historical shapes.
                 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
-                pub struct PrescaledMux {
-                    pub register: String,
-                    pub field: String,
-                    /// Divider applied to the mux output, stored in the same register as the
-                    /// mux (e.g. the C5 `CCIPR2/ADCDACPRE` divider after `CCIPR2/ADCDACSEL`).
-                    pub prescaler: Field,
+                pub struct Mux {
+                    /// Parent clock when the peripheral has no mux field.
+                    #[serde(default, skip_serializing_if = "Option::is_none")]
+                    pub clock: Option<String>,
+                    #[serde(default, skip_serializing_if = "Option::is_none")]
+                    pub register: Option<String>,
+                    #[serde(default, skip_serializing_if = "Option::is_none")]
+                    pub field: Option<String>,
+                    /// Divider applied to `clock` or to the mux output (e.g. the C5
+                    /// `CCIPR2/ADCDACPRE` divider after `CCIPR2/ADCDACSEL`).
+                    #[serde(default, skip_serializing_if = "Option::is_none")]
+                    pub prescaler: Option<Field>,
+                }
+
+                impl Mux {
+                    /// Reject combinations serde's untagged, all-optional shape cannot:
+                    /// a typo'd key deserializes to an all-`None` mux, and a half-set
+                    /// `register`/`field` pair is meaningless.
+                    pub fn validate(&self) -> Result<(), String> {
+                        let has_parent = self.clock.is_some();
+                        let has_mux = self.register.is_some() || self.field.is_some();
+                        if self.register.is_some() != self.field.is_some() {
+                            return Err("mux register and field must be set together".into());
+                        }
+                        if has_parent == has_mux {
+                            return Err(if has_parent {
+                                "clock and mux are mutually exclusive".into()
+                            } else {
+                                "neither clock nor mux set".into()
+                            });
+                        }
+                        Ok(())
+                    }
                 }
 
                 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize, Default)]
@@ -322,5 +362,51 @@ mod tests {
         Path::new(CHIPS_DIR).read_dir().unwrap().par_bridge().for_each(|chip| {
             check_file(chip.unwrap().path());
         });
+    }
+
+    /// Pin down the individual `KernelClock` shapes: historical JSON must round-trip
+    /// byte-identically, and invalid combinations must be rejected by `validate` (serde
+    /// itself accepts them, since the `Mux` struct is all-optional).
+    #[test]
+    fn kernel_clock_shapes() {
+        use crate::chip::core::peripheral::rcc::KernelClock;
+
+        let shapes: &[(&str, bool)] = &[
+            // plain mux
+            (r#"{"register":"CCIPR1","field":"I2C1SEL"}"#, true),
+            // mux + prescaler (C5 ADC/DAC)
+            (
+                r#"{"register":"CCIPR2","field":"ADCDACSEL","prescaler":{"register":"CCIPR2","field":"ADCDACPRE"}}"#,
+                true,
+            ),
+            // prescaler over a parent clock (F1 ADC)
+            (
+                r#"{"clock":"PCLK2","prescaler":{"register":"CFGR","field":"ADCPRE"}}"#,
+                true,
+            ),
+            // invalid: neither clock nor mux
+            (r#"{}"#, false),
+            // invalid: half a mux
+            (r#"{"register":"CFGR"}"#, false),
+            // invalid: clock and mux at once
+            (r#"{"clock":"PCLK2","register":"CFGR","field":"SW"}"#, false),
+        ];
+
+        for (json, valid) in shapes {
+            let parsed: KernelClock = serde_json::from_str(json).unwrap();
+            match &parsed {
+                KernelClock::Clock(_) => panic!("unexpected clock string in {}", json),
+                KernelClock::Mux(mux) => assert_eq!(mux.validate().is_ok(), *valid, "{}", json),
+            }
+            if *valid {
+                // byte-identical round-trip (field order = declaration order)
+                assert_eq!(serde_json::to_string(&parsed).unwrap(), *json, "{}", json);
+            }
+        }
+
+        // plain clock string
+        let parsed: KernelClock = serde_json::from_str(r#""PCLK2""#).unwrap();
+        assert!(matches!(parsed, KernelClock::Clock(_)));
+        assert_eq!(serde_json::to_string(&parsed).unwrap(), r#""PCLK2""#);
     }
 }
