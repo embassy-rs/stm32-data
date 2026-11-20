@@ -271,10 +271,13 @@ fn create_peripherals_for_chip(
             };
         }
 
-        // The comparators for the g0/g4 families use the same enable and reset bits as SYSCFG
+        // The comparators for the f0/f3/g0/g4/l0/u0 families use the same clock enable bit as SYSCFG
         let syscfg_for_comp = || {
-            if (chip_name.starts_with("STM32G0")
+            if (chip_name.starts_with("STM32F0")
+                || chip_name.starts_with("STM32F3")
+                || chip_name.starts_with("STM32G0")
                 || chip_name.starts_with("STM32G4")
+                || chip_name.starts_with("STM32L0")
                 || chip_name.starts_with("STM32U0"))
                 && pname.starts_with("COMP")
             {
@@ -606,6 +609,12 @@ fn merge_periph_pins_info(
 }
 
 fn resolve_peri_addr(chip_name: &str, pname: &str, defines: &header::Defines) -> Option<u32> {
+    if pname == "COMP2" && chip_name.starts_with("STM32L1") {
+        // The STM32L1 headers define COMP2 as `(COMP_BASE + 1)` solely as a software
+        // handle sentinel; COMP1 and COMP2 share a single 32-bit COMP_CSR register at COMP_BASE.
+        return defines.get_peri_addr("COMP");
+    }
+
     if pname == "VREFINTCAL"
         && chip_name.starts_with("STM32WBA")
         && let Some(package_base) = defines.get_peri_addr("DESIG")
