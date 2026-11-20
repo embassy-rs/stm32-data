@@ -1,5 +1,4 @@
 use std::env::args;
-use std::fs;
 use std::path::PathBuf;
 
 use stm32_metapac_gen::*;
@@ -8,7 +7,10 @@ fn main() {
     let out_dir = PathBuf::from("build/stm32-metapac");
     let data_dir = PathBuf::from("build/data");
 
-    let _ = fs::remove_dir_all(&out_dir);
+    // The generator tracks its outputs in `out_dir/.state` and removes stale
+    // ones itself (see Gen::gc_stale); wiping the tree here would defeat
+    // incremental generation, and silently continuing after a partial delete
+    // used to mix stale files into the output.
 
     let args: Vec<String> = args().collect();
 
