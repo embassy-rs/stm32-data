@@ -1,0 +1,513 @@
+block/POSENC:
+  description: Position encoder interface.
+  items:
+  - name: CR1
+    description: POSENC control register 1.
+    byte_offset: 0
+    fieldset: CR1
+  - name: CR2
+    description: POSENC control register 2.
+    byte_offset: 4
+    fieldset: CR2
+  - name: IER
+    description: POSENC interrupt enable register.
+    byte_offset: 16
+    fieldset: IER
+  - name: ICR
+    description: POSENC interrupt clear register.
+    byte_offset: 20
+    access: Write
+    fieldset: ICR
+  - name: MISR
+    description: POSENC masked interrupt status register.
+    byte_offset: 24
+    access: Read
+    fieldset: MISR
+  - name: ISR
+    description: POSENC interrupt status register.
+    byte_offset: 28
+    access: Read
+    fieldset: ISR
+  - name: SR1
+    description: POSENC status register 1.
+    byte_offset: 32
+    access: Read
+    fieldset: SR1
+  - name: SR2
+    description: POSENC status register 2.
+    byte_offset: 36
+    access: Read
+    fieldset: SR2
+  - name: SR3
+    description: POSENC status register 3.
+    byte_offset: 40
+    access: Read
+    fieldset: SR3
+  - name: D0AR
+    description: POSENC data 0 address register.
+    byte_offset: 516
+    fieldset: D0AR
+  - name: D1AR
+    description: POSENC data 1 address register.
+    byte_offset: 520
+    fieldset: D1AR
+  - name: D0R
+    description: POSENC data 0 register.
+    byte_offset: 772
+    access: Read
+    fieldset: D0R
+  - name: D1R
+    description: POSENC data 1 register.
+    byte_offset: 776
+    access: Read
+    fieldset: D1R
+  - name: HD_VPOSCRCR
+    description: POSENC Hiperface-DSL safe position 1 CRC register.
+    byte_offset: 780
+    access: Read
+    fieldset: HD_VPOSCRCR
+  - name: HD_VPOS4R
+    description: POSENC Hiperface-DSL safe position 1 VPOS4 register.
+    byte_offset: 784
+    access: Read
+    fieldset: HD_VPOS4R
+  - name: HD_VPOS30R
+    description: POSENC Hiperface-DSL safe position 1 VPOS3_0 register.
+    byte_offset: 788
+    access: Read
+    fieldset: HD_VPOS30R
+  - name: HD_VEL20R
+    description: POSENC Hiperface-DSL safe position 1 VEL2_0 register.
+    byte_offset: 792
+    access: Read
+    fieldset: HD_VEL20R
+  - name: HD_POS4R
+    description: POSENC Hiperface-DSL fast position POS4 register.
+    byte_offset: 796
+    access: Read
+    fieldset: HD_POS4R
+  - name: HD_POS30R
+    description: POSENC Hiperface-DSL fast position POS3_0 register.
+    byte_offset: 800
+    access: Read
+    fieldset: HD_POS30R
+fieldset/CR1:
+  description: POSENC control register 1.
+  fields:
+  - name: ENCSEL
+    description: Encoder selection.
+    bit_offset: 0
+    bit_size: 4
+    enum: ENCSEL
+  - name: NSTRBRSYNC
+    description: Strobe re-synchronization disable.
+    bit_offset: 4
+    bit_size: 1
+  - name: STRBSEL
+    description: Strobe selection.
+    bit_offset: 8
+    bit_size: 5
+fieldset/CR2:
+  description: POSENC control register 2.
+  fields:
+  - name: BCPRTCKCR
+    description: Biss-C specific.
+    bit_offset: 0
+    bit_size: 4
+  - name: HDPOS
+    description: Hiperface-DSL fast position event-driven accesses.
+    bit_offset: 8
+    bit_size: 2
+    enum: HDPOS
+  - name: HDVEL
+    description: Hiperface-DSL velocity event-driven accesses.
+    bit_offset: 10
+    bit_size: 1
+  - name: HDVPOS
+    description: Hiperface-DSL safe position 1 event-driven accesses.
+    bit_offset: 11
+    bit_size: 2
+    enum: HDPOS
+  - name: HDVPOSCRC
+    description: Hiperface-DSL safe position 1 CRC event-driven accesses.
+    bit_offset: 13
+    bit_size: 1
+  - name: HDFRZ
+    description: Hiperface-DSL freeze.
+    bit_offset: 16
+    bit_size: 1
+fieldset/D0AR:
+  description: POSENC data 0 address register.
+  fields:
+  - name: D0ADD
+    description: Data 0 address.
+    bit_offset: 0
+    bit_size: 8
+fieldset/D0R:
+  description: POSENC data 0 register.
+  fields:
+  - name: D0
+    description: Data 0 value.
+    bit_offset: 0
+    bit_size: 32
+fieldset/D1AR:
+  description: POSENC data 1 address register.
+  fields:
+  - name: D1ADD
+    description: Data 1 address.
+    bit_offset: 0
+    bit_size: 8
+fieldset/D1R:
+  description: POSENC data 1 register.
+  fields:
+  - name: D1
+    description: Data 1 value.
+    bit_offset: 0
+    bit_size: 32
+fieldset/HD_POS30R:
+  description: POSENC Hiperface-DSL fast position POS3_0 register.
+  fields:
+  - name: POS
+    description: Hiperface-DSL fast position value.
+    bit_offset: 0
+    bit_size: 8
+    array:
+      len: 4
+      stride: 8
+fieldset/HD_POS4R:
+  description: POSENC Hiperface-DSL fast position POS4 register.
+  fields:
+  - name: POS4
+    description: Hiperface-DSL fast position POS4 value.
+    bit_offset: 0
+    bit_size: 8
+fieldset/HD_VEL20R:
+  description: POSENC Hiperface-DSL safe position 1 VEL2_0 register.
+  fields:
+  - name: VEL
+    description: Hiperface-DSL velocity value.
+    bit_offset: 0
+    bit_size: 8
+    array:
+      len: 3
+      stride: 8
+fieldset/HD_VPOS30R:
+  description: POSENC Hiperface-DSL safe position 1 VPOS3_0 register.
+  fields:
+  - name: VPOS
+    description: Hiperface-DSL safe position 1 value.
+    bit_offset: 0
+    bit_size: 8
+    array:
+      len: 4
+      stride: 8
+fieldset/HD_VPOS4R:
+  description: POSENC Hiperface-DSL safe position 1 VPOS4 register.
+  fields:
+  - name: VPOS4
+    description: Hiperface-DSL safe position 1 VPOS4 value.
+    bit_offset: 0
+    bit_size: 8
+fieldset/HD_VPOSCRCR:
+  description: POSENC Hiperface-DSL safe position 1 CRC register.
+  fields:
+  - name: VPOSCRCL
+    description: Hiperface-DSL safe position 1 CRC low byte.
+    bit_offset: 0
+    bit_size: 8
+  - name: VPOSCRCH
+    description: Hiperface-DSL safe position 1 CRC high byte.
+    bit_offset: 8
+    bit_size: 8
+fieldset/ICR:
+  description: POSENC interrupt clear register.
+  fields:
+  - name: CGTCF
+    description: Clear transfer complete interrupt flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: CWRTCF
+    description: Clear write transfer complete interrupt flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: CD0RTCF
+    description: Clear data 0 read transfer complete interrupt flag.
+    bit_offset: 8
+    bit_size: 1
+  - name: CD1RTCF
+    description: Clear data 1 read transfer complete interrupt flag.
+    bit_offset: 9
+    bit_size: 1
+  - name: HDCVPOSCRCTCF
+    description: Clear Hiperface-DSL safe position 1 CRC transfer complete interrupt flag.
+    bit_offset: 10
+    bit_size: 1
+  - name: HDCVPOSTCF
+    description: Clear Hiperface-DSL safe position 1 transfer complete interrupt flag.
+    bit_offset: 12
+    bit_size: 1
+  - name: HDCVELTCF
+    description: Clear Hiperface-DSL velocity transfer complete interrupt flag.
+    bit_offset: 13
+    bit_size: 1
+  - name: HDCFPOSTCF
+    description: Clear Hiperface-DSL fast position transfer complete interrupt flag.
+    bit_offset: 15
+    bit_size: 1
+  - name: HDCFPOSF
+    description: Clear Hiperface-DSL fast position interrupt flag.
+    bit_offset: 16
+    bit_size: 1
+  - name: HDCVPOS1F
+    description: Clear Hiperface-DSL safe position 1 interrupt flag.
+    bit_offset: 17
+    bit_size: 1
+  - name: HDCVPOS2F
+    description: Clear Hiperface-DSL safe position 2 interrupt flag.
+    bit_offset: 18
+    bit_size: 1
+  - name: HDCFRELF
+    description: Clear Hiperface-DSL long message interrupt flag.
+    bit_offset: 19
+    bit_size: 1
+  - name: HDCFRESF
+    description: Clear Hiperface-DSL short message interrupt flag.
+    bit_offset: 20
+    bit_size: 1
+fieldset/IER:
+  description: POSENC interrupt enable register.
+  fields:
+  - name: GTCIE
+    description: Global transfer complete interrupt enable.
+    bit_offset: 0
+    bit_size: 1
+  - name: WRTCIE
+    description: Write transfer complete interrupt enable.
+    bit_offset: 1
+    bit_size: 1
+  - name: D0RTCIE
+    description: Read data 0 transfer complete interrupt enable.
+    bit_offset: 8
+    bit_size: 1
+  - name: D1RTCIE
+    description: Read data 1 transfer complete interrupt enable.
+    bit_offset: 9
+    bit_size: 1
+  - name: HDVPOSCRCTCIE
+    description: Hiperface-DSL safe position 1 CRC transfer complete interrupt enable.
+    bit_offset: 10
+    bit_size: 1
+  - name: HDVPOSTCIE
+    description: Hiperface-DSL safe position 1 transfer complete interrupt enable.
+    bit_offset: 12
+    bit_size: 1
+  - name: HDVELTCIE
+    description: Hiperface-DSL velocity transfer complete interrupt enable.
+    bit_offset: 13
+    bit_size: 1
+  - name: HDFPOSTCIE
+    description: Hiperface-DSL fast position transfer complete interrupt enable.
+    bit_offset: 15
+    bit_size: 1
+  - name: HDFPOSIE
+    description: Hiperface-DSL fast position interrupt enable.
+    bit_offset: 16
+    bit_size: 1
+  - name: HDVPOS1IE
+    description: Hiperface-DSL safe position 1 interrupt enable.
+    bit_offset: 17
+    bit_size: 1
+  - name: HDVPOS2IE
+    description: Hiperface-DSL safe position 2 interrupt enable.
+    bit_offset: 18
+    bit_size: 1
+  - name: HDFRELIE
+    description: Hiperface-DSL long message interrupt enable.
+    bit_offset: 19
+    bit_size: 1
+  - name: HDFRESIE
+    description: Hiperface-DSL short message interrupt enable.
+    bit_offset: 20
+    bit_size: 1
+fieldset/ISR:
+  description: POSENC interrupt status register.
+  fields:
+  - name: GTCF
+    description: Global transfer complete flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: WRTCF
+    description: Write transfer complete flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: D0RTCF
+    description: Data 0 read transfer complete flag.
+    bit_offset: 8
+    bit_size: 1
+  - name: D1RTCF
+    description: Data 1 read transfer complete flag.
+    bit_offset: 9
+    bit_size: 1
+  - name: HDVPOSCRCTCF
+    description: Hiperface-DSL safe position 1 CRC transfer complete interrupt flag.
+    bit_offset: 10
+    bit_size: 1
+  - name: HDVPOSRTCF
+    description: Hiperface-DSL safe position 1 transfer complete interrupt flag.
+    bit_offset: 12
+    bit_size: 1
+  - name: HDVELRTCF
+    description: Hiperface-DSL velocity transfer complete interrupt flag.
+    bit_offset: 13
+    bit_size: 1
+  - name: HDFPOSRTCF
+    description: Hiperface-DSL fast position transfer complete interrupt flag.
+    bit_offset: 15
+    bit_size: 1
+  - name: HDFPOSF
+    description: Hiperface-DSL fast position interrupt flag.
+    bit_offset: 16
+    bit_size: 1
+  - name: HDVPOS1F
+    description: Hiperface-DSL safe position 1 interrupt flag.
+    bit_offset: 17
+    bit_size: 1
+  - name: HDVPOS2F
+    description: Hiperface-DSL safe position 2 interrupt flag.
+    bit_offset: 18
+    bit_size: 1
+  - name: HDFRELF
+    description: Hiperface-DSL long message interrupt flag.
+    bit_offset: 19
+    bit_size: 1
+  - name: HDFRESF
+    description: Hiperface-DSL short message interrupt flag.
+    bit_offset: 20
+    bit_size: 1
+fieldset/MISR:
+  description: POSENC masked interrupt status register.
+  fields:
+  - name: GTCMF
+    description: Global transfer complete masked flag.
+    bit_offset: 0
+    bit_size: 1
+  - name: WRTCMF
+    description: Write transfer complete masked flag.
+    bit_offset: 1
+    bit_size: 1
+  - name: D0RTCMF
+    description: Data 0 read transfer complete masked flag.
+    bit_offset: 8
+    bit_size: 1
+  - name: D1RTCMF
+    description: Data 1 read transfer complete masked flag.
+    bit_offset: 9
+    bit_size: 1
+  - name: HDVPOSCRCTCMF
+    description: Hiperface-DSL safe position 1 CRC transfer complete interrupt masked flag.
+    bit_offset: 10
+    bit_size: 1
+  - name: HDVPOSRTCMF
+    description: Hiperface-DSL safe position 1 transfer complete interrupt masked flag.
+    bit_offset: 12
+    bit_size: 1
+  - name: HDVELRTCMF
+    description: Hiperface-DSL velocity ready interrupt masked flag.
+    bit_offset: 13
+    bit_size: 1
+  - name: HDFPOSRTCMF
+    description: Hiperface-DSL fast position 1 ready interrupt masked flag.
+    bit_offset: 15
+    bit_size: 1
+  - name: HDFPOSMF
+    description: Hiperface-DSL fast position interrupt masked flag.
+    bit_offset: 16
+    bit_size: 1
+  - name: HDVPOS1MF
+    description: Hiperface-DSL safe position 1 interrupt masked flag.
+    bit_offset: 17
+    bit_size: 1
+  - name: HDVPOS2MF
+    description: Hiperface-DSL safe position 2 interrupt masked flag.
+    bit_offset: 18
+    bit_size: 1
+  - name: HDFRELMF
+    description: Hiperface-DSL long message interrupt masked flag.
+    bit_offset: 19
+    bit_size: 1
+  - name: HDFRESMF
+    description: Hiperface-DSL short message interrupt masked flag.
+    bit_offset: 20
+    bit_size: 1
+fieldset/SR1:
+  description: POSENC status register 1.
+  fields:
+  - name: GBSY
+    description: Global busy.
+    bit_offset: 0
+    bit_size: 1
+  - name: WRBSY
+    description: Write busy.
+    bit_offset: 1
+    bit_size: 1
+  - name: D0RDBSY
+    description: Data 0 read busy.
+    bit_offset: 8
+    bit_size: 1
+  - name: D1RDBSY
+    description: Data 1 read busy.
+    bit_offset: 9
+    bit_size: 1
+  - name: HDINT
+    description: Hiperface-DSL interrupt line status.
+    bit_offset: 20
+    bit_size: 1
+  - name: HDINTS
+    description: Hiperface-DSL interrupt_s line status.
+    bit_offset: 21
+    bit_size: 1
+fieldset/SR2:
+  description: POSENC status register 2.
+  fields:
+  - name: ONLINESTATUSD
+    description: Online status D interface.
+    bit_offset: 0
+    bit_size: 16
+  - name: ONLINESTATUS1
+    description: Online status safe 1 interface.
+    bit_offset: 16
+    bit_size: 16
+fieldset/SR3:
+  description: POSENC status register 3.
+  fields:
+  - name: ONLINESTATUS2
+    description: Online status safe 2 interface.
+    bit_offset: 0
+    bit_size: 16
+enum/ENCSEL:
+  bit_size: 4
+  variants:
+  - name: EnDat3
+    description: EnDat3.
+    value: 0
+  - name: HiperfaceDsl
+    description: Hiperface-DSL.
+    value: 4
+  - name: None
+    description: No protocol selected.
+    value: 15
+enum/HDPOS:
+  bit_size: 2
+  variants:
+  - name: Disabled
+    description: No reading.
+    value: 0
+  - name: Bits17
+    description: Single-turn 17-bit reading.
+    value: 1
+  - name: Bits17Multi12
+    description: Single-turn 17-bit / multi-turn 12-bit reading.
+    value: 2
+  - name: Bits23Multi12
+    description: Single-turn 23-bit / multi-turn 12-bit reading.
+    value: 3

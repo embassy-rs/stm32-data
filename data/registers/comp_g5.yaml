@@ -1,0 +1,179 @@
+block/COMP:
+  description: Comparator.
+  items:
+  - name: CSR
+    description: Comparator control and status register.
+    byte_offset: 0
+    fieldset: CSR
+  - name: FLTR
+    description: Comparator filter configuration register.
+    byte_offset: 4
+    fieldset: FLTR
+fieldset/CSR:
+  description: Comparator control and status register.
+  fields:
+  - name: EN
+    description: COMP enable bit.
+    bit_offset: 0
+    bit_size: 1
+  - name: INMSEL
+    description: Comparator signal selector for inverting input INM.
+    bit_offset: 4
+    bit_size: 4
+  - name: INPSEL
+    description: Comparator signal selector for non-inverting input INP.
+    bit_offset: 8
+    bit_size: 2
+  - name: WINOUT
+    description: Comparator output selector.
+    bit_offset: 14
+    bit_size: 1
+  - name: POLARITY
+    description: Comparator polarity selector.
+    bit_offset: 15
+    bit_size: 1
+    enum: Polarity
+  - name: HYST
+    description: Comparator hysteresis selector.
+    bit_offset: 16
+    bit_size: 3
+    enum: Hysteresis
+  - name: BLANKSEL
+    description: Comparator blanking source selector.
+    bit_offset: 19
+    bit_size: 4
+  - name: BRGEN
+    description: Vrefint resistor bridge enable.
+    bit_offset: 23
+    bit_size: 1
+  - name: SCALEN
+    description: Vrefint scaled input enable.
+    bit_offset: 24
+    bit_size: 1
+  - name: DGLT
+    description: Deglitcher enable.
+    bit_offset: 25
+    bit_size: 1
+  - name: VALUE
+    description: Comparator output status.
+    bit_offset: 30
+    bit_size: 1
+  - name: LOCK
+    description: CSR and FLTR register lock.
+    bit_offset: 31
+    bit_size: 1
+fieldset/FLTR:
+  description: Comparator filter configuration register.
+  fields:
+  - name: FPSC
+    description: Digital filter clock prescaler selection.
+    bit_offset: 0
+    bit_size: 2
+    enum: Fpsc
+  - name: FSEL
+    description: Digital filter sampling and sample count selection.
+    bit_offset: 8
+    bit_size: 4
+    enum: Fsel
+enum/Fpsc:
+  bit_size: 2
+  variants:
+  - name: Div1
+    description: filter_clk = comp_pclk.
+    value: 0
+  - name: Div2
+    description: filter_clk = comp_pclk / 2.
+    value: 1
+  - name: Div4
+    description: filter_clk = comp_pclk / 4.
+    value: 2
+  - name: Div8
+    description: filter_clk = comp_pclk / 8.
+    value: 3
+enum/Fsel:
+  bit_size: 4
+  variants:
+  - name: Disabled
+    description: Filter disabled.
+    value: 0
+  - name: PclkN2
+    description: filter_sampling = comp_pclk, N = 2.
+    value: 1
+  - name: PclkN4
+    description: filter_sampling = comp_pclk, N = 4.
+    value: 2
+  - name: PclkN8
+    description: filter_sampling = comp_pclk, N = 8.
+    value: 3
+  - name: Div2N6
+    description: filter_sampling = filter_clk / 2, N = 6.
+    value: 4
+  - name: Div2N8
+    description: filter_sampling = filter_clk / 2, N = 8.
+    value: 5
+  - name: Div4N6
+    description: filter_sampling = filter_clk / 4, N = 6.
+    value: 6
+  - name: Div4N8
+    description: filter_sampling = filter_clk / 4, N = 8.
+    value: 7
+  - name: Div8N6
+    description: filter_sampling = filter_clk / 8, N = 6.
+    value: 8
+  - name: Div8N8
+    description: filter_sampling = filter_clk / 8, N = 8.
+    value: 9
+  - name: Div16N5
+    description: filter_sampling = filter_clk / 16, N = 5.
+    value: 10
+  - name: Div16N6
+    description: filter_sampling = filter_clk / 16, N = 6.
+    value: 11
+  - name: Div16N8
+    description: filter_sampling = filter_clk / 16, N = 8.
+    value: 12
+  - name: Div32N5
+    description: filter_sampling = filter_clk / 32, N = 5.
+    value: 13
+  - name: Div32N6
+    description: filter_sampling = filter_clk / 32, N = 6.
+    value: 14
+  - name: Div32N8
+    description: filter_sampling = filter_clk / 32, N = 8.
+    value: 15
+enum/Hysteresis:
+  bit_size: 3
+  variants:
+  - name: None
+    description: No hysteresis.
+    value: 0
+  - name: Hyst10m
+    description: 10 mV hysteresis.
+    value: 1
+  - name: Hyst20m
+    description: 20 mV hysteresis.
+    value: 2
+  - name: Hyst30m
+    description: 30 mV hysteresis.
+    value: 3
+  - name: Hyst40m
+    description: 40 mV hysteresis.
+    value: 4
+  - name: Hyst50m
+    description: 50 mV hysteresis.
+    value: 5
+  - name: Hyst60m
+    description: 60 mV hysteresis.
+    value: 6
+  - name: Hyst70m
+    description: 70 mV hysteresis.
+    value: 7
+enum/Polarity:
+  bit_size: 1
+  variants:
+  - name: NotInverted
+    description: Output is not inverted.
+    value: 0
+  - name: Inverted
+    description: Output is inverted.
+    value: 1
