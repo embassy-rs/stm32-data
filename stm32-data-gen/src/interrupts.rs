@@ -943,7 +943,7 @@ impl InterruptSignals {
                 "STM32WB0",
                 &["RADIO", "TIMER", "CPU", "WKUP", "ERROR", "TXRX"],
             ),
-            ("RADIO", "STM32WB0", &["TXRX", "SEQ"]),
+            ("RADIO", "STM32WB0", &["TXRX", "SEQ", "RRM"]),
             // STM32G5 GPDMA has per-channel IRQs (GPDMA1_CH0..) but no global one.
             (
                 "GPDMA",
