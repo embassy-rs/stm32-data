@@ -155,10 +155,9 @@
 - { match: 'STM32F0.0.*:SPI:.*', kind: spi, version: v3, block: SPI }
 - { match: 'STM32F0.*:SPI:.*', kind: spi, version: v3_i2s, block: SPI }
 # STM32F303xB/C/D/E models with I2S
-# Only SPI2 and SPI3 have I2S. SPI1 and SPI4 fall through to the v3 rule below.
-- { match: 'STM32F303[A-Z][BCDE].*:SPI[23]:.*', kind: spi, version: v3_i2s, block: SPI }
-# Fallback for all other STM32F303 and F3[259]8 models
-# This catches SPI1/SPI4 on the I2S-capable chips, and all SPIs on the x6/x8 chips.
+# Map ALL SPI instances to v3_i2s to satisfy the generator's single-version constraint.
+- { match: 'STM32F303[A-Z][BCDE].*:SPI:.*', kind: spi, version: v3_i2s, block: SPI }
+# Fallback for non-I2S STM32F303 models (x6/x8) and other F3 chips.
 - { match: 'STM32F303.*:SPI:.*', kind: spi, version: v3, block: SPI }
 - { match: 'STM32F3[259]8.*:SPI:.*', kind: spi, version: v3, block: SPI }
 - { match: 'STM32F7.*:SPI:.*', kind: spi, version: v3_i2s, block: SPI }
