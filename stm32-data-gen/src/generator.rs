@@ -119,7 +119,7 @@ fn process_group(ctx: &GenCtx<'_>, group: ChipGroup) -> Result<(), anyhow::Error
     let cores = cores?;
 
     for chip_name in &group.chip_names {
-        process_chip(ctx, chip_name, h, &group, &cores)?;
+        process_chip(ctx, chip_name, h, &group, &cores, &rcc_block.version)?;
     }
 
     Ok(())
@@ -135,7 +135,7 @@ fn process_core(
     chip_af: Option<&HashMap<String, Vec<stm32_data_serde::chip::core::peripheral::Pin>>>,
 ) -> anyhow::Result<stm32_data_serde::chip::Core> {
     let GenCtx {
-        stop_modes,
+        low_power,
         chip_interrupts,
         peripheral_to_clock,
         dma_channels,
@@ -160,9 +160,7 @@ fn process_core(
 
     for p in peripherals.values_mut().filter(|p| p.rcc.is_none()) {
         if let Some(mut rcc_info) = peripheral_to_clock.match_peri_clock(&rcc_block.version, &p.name) {
-            if let Some(stop_mode_info) = stop_modes.peripheral_stop_mode_info(chip_name, &p.name) {
-                rcc_info.stop_mode = stop_mode_info;
-            }
+            rcc_info.low_power = low_power.peripheral_low_power(chip_name, &group.die, &p.name);
             p.rcc = Some(rcc_info);
         }
     }
@@ -231,7 +229,7 @@ fn create_peripherals_for_chip(
 ) -> HashMap<String, stm32_data_serde::chip::core::Peripheral> {
     let GenCtx {
         perimap,
-        stop_modes,
+        low_power,
         triggers,
         blocks,
         peripheral_to_clock,
@@ -296,9 +294,7 @@ fn create_peripherals_for_chip(
             .match_peri_clock(&rcc_block.version, &pname)
             .or_else(syscfg_for_comp)
         {
-            if let Some(stop_mode_info) = stop_modes.peripheral_stop_mode_info(chip_name, &pname) {
-                rcc_info.stop_mode = stop_mode_info;
-            }
+            rcc_info.low_power = low_power.peripheral_low_power(chip_name, &group.die, &pname);
             Some(rcc_info)
         } else {
             None
@@ -908,16 +904,43 @@ fn process_chip(
     _h: &header::ParsedHeader,
     group: &ChipGroup,
     cores: &[stm32_data_serde::chip::Core],
+    rcc_version: &str,
 ) -> Result<(), anyhow::Error> {
     let GenCtx {
         chips,
         chip_memories,
         docs,
+        low_power,
+        peripheral_to_clock,
         ..
     } = ctx;
 
     let chip = chips.get(chip_name).unwrap();
     let docs = docs.documents_for(chip_name);
+    let stopwuck = peripheral_to_clock.has_stopwuck(rcc_version);
+    let power = low_power.chip_power(chip_name, stopwuck);
+    let mut cores = cores.to_vec();
+    if let Some(power) = &power {
+        let mut supported = stm32_data_serde::chip::core::peripheral::rcc::StopModes::default();
+        for mode in &power.modes {
+            match mode.kind {
+                stm32_data_serde::chip::power::ModeKind::Stop0 => supported.stop0 = true,
+                stm32_data_serde::chip::power::ModeKind::Stop1 => supported.stop1 = true,
+                stm32_data_serde::chip::power::ModeKind::Stop2 => supported.stop2 = true,
+                stm32_data_serde::chip::power::ModeKind::Stop3 => supported.stop3 = true,
+            }
+        }
+        for core in &mut cores {
+            for p in &mut core.peripherals {
+                if let Some(rcc) = &mut p.rcc {
+                    rcc.low_power.modes.stop0 &= supported.stop0;
+                    rcc.low_power.modes.stop1 &= supported.stop1;
+                    rcc.low_power.modes.stop2 &= supported.stop2;
+                    rcc.low_power.modes.stop3 &= supported.stop3;
+                }
+            }
+        }
+    }
     let chip = stm32_data_serde::Chip {
         name: chip_name.to_string(),
         family: group.family.clone(),
@@ -927,7 +950,8 @@ fn process_chip(
         packages: chip.packages.clone(),
         memory: chip_memories.get(chip_name),
         docs,
-        cores: cores.to_vec(),
+        cores,
+        power,
     };
 
     crate::check::check(&chip);

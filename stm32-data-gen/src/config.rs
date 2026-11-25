@@ -15,7 +15,8 @@ use std::sync::LazyLock;
 
 use regex::{Regex, RegexSet};
 use serde::Deserialize;
-use stm32_data_serde::chip::core::peripheral::rcc::StopMode;
+use stm32_data_serde::chip::core::peripheral::rcc::{LowPower, StopModes};
+use stm32_data_serde::chip::power::{Dialect, ModeKind};
 
 use crate::util::{new_regex_map, new_regex_set};
 
@@ -137,15 +138,74 @@ pub struct PerimapEntry {
 /// `data/perimap.yaml`, in priority order (first match wins).
 pub static PERIMAP: LazyLock<Vec<PerimapEntry>> = LazyLock::new(|| load_yaml("data/perimap.yaml"));
 
-/// One stop-mode limit rule from `data/low_power.yaml`.
+/// One chip-level power mode descriptor from `data/low_power.yaml`.
 #[derive(Debug, Clone, Deserialize)]
-pub struct StopModeRule {
+pub struct ChipPowerSpec {
+    pub dialect: Dialect,
+    #[serde(default)]
+    pub modes: Vec<ChipPowerModeSpec>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ChipPowerModeSpec {
+    pub kind: ModeKind,
+    pub selector: u8,
+    #[serde(default)]
+    pub min_svos: Option<u8>,
+    #[serde(default)]
+    pub surviving_clocks: Vec<String>,
+}
+
+/// One chip power rule from `data/low_power.yaml`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct ChipPowerRule {
+    /// Full-string regex matched against the chip name.
+    #[serde(rename = "match")]
+    pub pattern: String,
+    pub power: Option<ChipPowerSpec>,
+}
+
+/// One peripheral low-power capability rule from `data/low_power.yaml`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct PeripheralLowPowerRule {
     /// Full-string regex matched against `{mcu}:{peripheral}`.
     #[serde(rename = "match")]
     pub pattern: String,
-    /// The stop mode the peripheral limits the chip to.
-    pub stop_mode: StopMode,
+    #[serde(default)]
+    pub modes: Vec<ModeKind>,
+    #[serde(default)]
+    pub autonomous: bool,
+    #[serde(default)]
+    pub wake_capable: bool,
+    #[serde(default)]
+    pub wake_exti: Option<u8>,
 }
 
-/// `data/low_power.yaml`, in priority order (first match wins).
-pub static STOP_MODE_RULES: LazyLock<Vec<StopModeRule>> = LazyLock::new(|| load_yaml("data/low_power.yaml"));
+impl PeripheralLowPowerRule {
+    pub fn to_low_power(&self) -> LowPower {
+        let mut modes = StopModes::default();
+        for kind in &self.modes {
+            match kind {
+                ModeKind::Stop0 => modes.stop0 = true,
+                ModeKind::Stop1 => modes.stop1 = true,
+                ModeKind::Stop2 => modes.stop2 = true,
+                ModeKind::Stop3 => modes.stop3 = true,
+            }
+        }
+        LowPower {
+            modes,
+            autonomous: self.autonomous,
+            wake_capable: self.wake_capable,
+            wake_exti: self.wake_exti,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct LowPowerFile {
+    pub chips: Vec<ChipPowerRule>,
+    pub peripherals: Vec<PeripheralLowPowerRule>,
+}
+
+/// `data/low_power.yaml`, in priority order (first match wins per section).
+pub static LOW_POWER: LazyLock<LowPowerFile> = LazyLock::new(|| load_yaml("data/low_power.yaml"));

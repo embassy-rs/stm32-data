@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 use anyhow::{Ok, anyhow, bail};
 use chiptool::ir::IR;
 use lazy_regex::regex;
-use stm32_data_serde::chip::core::peripheral::rcc::{Field, StopMode};
+use stm32_data_serde::chip::core::peripheral::rcc::{Field, LowPower};
 use stm32_data_serde::chip::core::peripheral::{self, rcc};
 
 use crate::registers::Registers;
@@ -18,11 +18,17 @@ pub struct ParsedRccs {
 struct ParsedRcc {
     /// name -> en/rst bit info
     en_rst: HashMap<String, EnRst>,
+    /// name -> sleep/stop clock enable bit (*SMENR, *LPENR, *SLPENR)
+    stop_enable: HashMap<String, Field>,
+    /// name -> autonomous stop clock enable bit (SRDAMR/*AMEN, *STPENR)
+    autonomous_enable: HashMap<String, Field>,
     /// name -> mux info
     mux: HashMap<String, MuxInfo>,
     /// name -> prescaler info for peripherals clocked through a bare divider field
     /// (no mux in front of it, e.g. F1 `CFGR/ADCPRE`)
     prescaler: HashMap<String, Field>,
+    /// Whether this RCC block has a `STOPWUCK` wake-up clock selector field.
+    stopwuck: bool,
 }
 
 #[derive(Debug)]
@@ -38,7 +44,6 @@ struct EnRst {
     enable: rcc::Field,
     reset: Option<rcc::Field>,
     bus_clock: String,
-    stop_mode: StopMode,
 }
 
 impl ParsedRccs {
@@ -370,8 +375,6 @@ impl ParsedRccs {
                             },
                             reset,
                             bus_clock: clock,
-                            // The stop mode info comes from `data/low_power.yaml`
-                            stop_mode: StopMode::default(),
                         };
 
                         if en_rst.insert(peri.to_string(), val).is_some() {
@@ -382,7 +385,92 @@ impl ParsedRccs {
             }
         }
 
-        Ok(ParsedRcc { en_rst, mux, prescaler })
+        fn normalize_lp_peri(bit_name: &str) -> &str {
+            match bit_name {
+                "RTCAPB" => "RTC",
+                "DBG" => "DBGMCU",
+                "SP3" => "SPI3",
+                "SPDIF" => "SPDIFRX",
+                "CRSS" => "CRS",
+                "ADCFS" => "ADC",
+                "HASH1" => "HASH",
+                other => other,
+            }
+        }
+
+        // Parse xxSMEN / xxLPEN / xxSLPEN bits.
+        let mut stop_enable = HashMap::new();
+        for (reg, body) in &ir.fieldsets {
+            let Some(m) = regex!(r"^((?:A[PH]B\d?|GPIO)[LH]?(SMEN|SLPEN|LPEN)R\d?|GPIOSMEN)$").captures(reg) else {
+                continue;
+            };
+            let suffix = m.get(2).map_or("SMEN", |g| g.as_str());
+            for field in &body.fields {
+                let bit_name = if suffix == "SMEN" {
+                    field
+                        .name
+                        .strip_suffix("SMEN")
+                        .or_else(|| field.name.strip_suffix("MEN"))
+                        .or_else(|| (rcc_version == "g4" && field.name == "RNGEN").then_some("RNG"))
+                } else {
+                    field.name.strip_suffix(suffix)
+                };
+                let Some(bit_name) = bit_name else {
+                    continue;
+                };
+                let peri = normalize_lp_peri(bit_name);
+                stop_enable.insert(
+                    peri.to_string(),
+                    Field {
+                        register: reg.clone(),
+                        field: field.name.clone(),
+                    },
+                );
+            }
+        }
+
+        // Parse autonomous Stop-mode clock enable bits (`SRDAMR/*AMEN`, `*STPENR/*STPEN`).
+        let mut autonomous_enable = HashMap::new();
+        for (reg, body) in &ir.fieldsets {
+            let suffix = if reg == "SRDAMR" {
+                "AMEN"
+            } else if regex!(r"^(?:A[PH]B\d?|GPIO)[LH]?STPENR\d?$").is_match(reg) {
+                "STPEN"
+            } else {
+                continue;
+            };
+            for field in &body.fields {
+                let Some(bit_name) = field.name.strip_suffix(suffix) else {
+                    continue;
+                };
+                let peri = normalize_lp_peri(bit_name);
+                autonomous_enable.insert(
+                    peri.to_string(),
+                    Field {
+                        register: reg.clone(),
+                        field: field.name.clone(),
+                    },
+                );
+            }
+        }
+
+        let stopwuck = ir
+            .fieldsets
+            .values()
+            .any(|body| body.fields.iter().any(|f| f.name == "STOPWUCK"));
+
+        Ok(ParsedRcc {
+            en_rst,
+            stop_enable,
+            autonomous_enable,
+            mux,
+            prescaler,
+            stopwuck,
+        })
+    }
+
+    pub fn has_stopwuck(&self, rcc_version: &str) -> bool {
+        self.rccs.get(rcc_version).is_some_and(|rcc| rcc.stopwuck)
     }
 
     pub fn match_peri_clock(
@@ -453,6 +541,8 @@ impl ParsedRccs {
         let rcc = self.rccs.get(rcc_version)?;
 
         let en_rst = get_with_fallback(peri_name, &rcc.en_rst, FALLBACKS)?;
+        let stop_enable = get_with_fallback(peri_name, &rcc.stop_enable, FALLBACKS).cloned();
+        let autonomous_enable = get_with_fallback(peri_name, &rcc.autonomous_enable, FALLBACKS).cloned();
         let mux = get_with_fallback(peri_name, &rcc.mux, FALLBACKS);
         let prescaler = get_with_fallback(peri_name, &rcc.prescaler, FALLBACKS);
 
@@ -538,7 +628,9 @@ impl ParsedRccs {
             kernel_clock,
             enable: en_rst.enable.clone(),
             reset: en_rst.reset.clone(),
-            stop_mode: en_rst.stop_mode.clone(),
+            stop_enable,
+            autonomous_enable,
+            low_power: LowPower::default(),
         })
     }
 }

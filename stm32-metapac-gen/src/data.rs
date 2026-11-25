@@ -289,6 +289,46 @@ pub struct Chip {
     pub cores: Vec<Core>,
     pub memory: Vec<Vec<MemoryRegion>>,
     pub packages: Vec<Package>,
+    #[serde(default)]
+    pub power: Option<Power>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct Power {
+    pub dialect: PowerDialect,
+    #[serde(default)]
+    pub stopwuck: bool,
+    #[serde(default)]
+    pub modes: Vec<PowerMode>,
+}
+
+#[derive(EnumDebug, Eq, PartialEq, Clone, Copy, Deserialize)]
+pub enum PowerDialect {
+    Classic,
+    LpmsScr,
+    LpmsSrWuscr,
+    PmcrSvos,
+    Extscr,
+    DomainPdds,
+    Wb0Deepstop,
+}
+
+#[derive(EnumDebug, Eq, PartialEq, Clone, Copy, Deserialize)]
+pub enum PowerModeKind {
+    Stop0,
+    Stop1,
+    Stop2,
+    Stop3,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+pub struct PowerMode {
+    pub kind: PowerModeKind,
+    pub selector: u8,
+    #[serde(default)]
+    pub min_svos: Option<u8>,
+    #[serde(default)]
+    pub surviving_clocks: Vec<String>,
 }
 
 // Notice:
@@ -428,7 +468,11 @@ pub struct PeripheralRcc {
     #[serde(default)]
     pub reset: Option<PeripheralRccRegister>,
     #[serde(default)]
-    pub stop_mode: StopMode,
+    pub stop_enable: Option<PeripheralRccRegister>,
+    #[serde(default)]
+    pub autonomous_enable: Option<PeripheralRccRegister>,
+    #[serde(default)]
+    pub low_power: PeripheralLowPower,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
@@ -484,12 +528,28 @@ pub struct PeripheralRccRegister {
     pub field: String,
 }
 
-#[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize, Default)]
-pub enum StopMode {
-    #[default]
-    Stop1, // Peripheral prevents chip from entering Stop1
-    Stop2,   // Peripheral prevents chip from entering Stop2
-    Standby, // Peripheral does not prevent chip from entering Stop
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Default)]
+pub struct PeripheralLowPower {
+    #[serde(default)]
+    pub modes: StopModes,
+    #[serde(default)]
+    pub autonomous: bool,
+    #[serde(default)]
+    pub wake_capable: bool,
+    #[serde(default)]
+    pub wake_exti: Option<u8>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Deserialize, Default)]
+pub struct StopModes {
+    #[serde(default)]
+    pub stop0: bool,
+    #[serde(default)]
+    pub stop1: bool,
+    #[serde(default)]
+    pub stop2: bool,
+    #[serde(default)]
+    pub stop3: bool,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]

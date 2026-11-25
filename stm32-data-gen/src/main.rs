@@ -131,7 +131,7 @@ fn main() -> anyhow::Result<()> {
     let mut stopwatch = Stopwatch::new();
 
     let perimap = perimap::Perimap::new();
-    let stop_modes = low_power::ChipStopModes::new();
+    let low_power = low_power::ChipLowPower::new();
     let triggers = trigger::Triggers::new();
     let chip_memories = memory::ChipMemories::new();
 
@@ -187,7 +187,7 @@ fn main() -> anyhow::Result<()> {
             headers: &headers,
             af: &af,
             perimap: &perimap,
-            stop_modes: &stop_modes,
+            low_power: &low_power,
             triggers: &triggers,
             chip_memories: &chip_memories,
             blocks: &registers.blocks,
