@@ -289,6 +289,53 @@ pub struct Chip {
     pub cores: Vec<Core>,
     pub memory: Vec<Vec<MemoryRegion>>,
     pub packages: Vec<Package>,
+    #[serde(default)]
+    pub adc_calibration: Option<AdcCalibration>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Deserialize)]
+pub struct AdcCalibration {
+    #[serde(default)]
+    pub vrefint: Option<VrefCalibration>,
+    #[serde(default)]
+    pub temp: Option<TempCalibration>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Deserialize)]
+pub struct VrefCalibration {
+    pub vref_mv: u16,
+    pub cal_bits: u8,
+}
+
+#[derive(EnumDebug, Eq, PartialEq, Clone, Copy, Deserialize)]
+#[serde(tag = "equation", rename_all = "snake_case")]
+pub enum TempCalibration {
+    TwoPoint(TwoPointTempCal),
+    OnePoint(OnePointTempCal),
+    Nominal(NominalTempCal),
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Deserialize)]
+pub struct TwoPointTempCal {
+    pub vref_mv: u16,
+    pub cal_bits: u8,
+    pub cal1_temp_c: i16,
+    pub cal2_temp_c: i16,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Deserialize)]
+pub struct OnePointTempCal {
+    pub vref_mv: u16,
+    pub cal_bits: u8,
+    pub cal1_temp_c: i16,
+    pub avg_slope_uv_per_c: i32,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Deserialize)]
+pub struct NominalTempCal {
+    pub ref_temp_c: i16,
+    pub v_ref_mv: u16,
+    pub avg_slope_uv_per_c: i32,
 }
 
 // Notice:

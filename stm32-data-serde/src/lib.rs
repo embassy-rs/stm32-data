@@ -24,11 +24,58 @@ pub struct Chip {
     pub packages: Vec<chip::Package>,
     pub memory: Vec<Vec<chip::Memory>>,
     pub docs: Vec<chip::Doc>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub adc_calibration: Option<chip::AdcCalibration>,
     pub cores: Vec<chip::Core>,
 }
 
 pub mod chip {
     use serde::{Deserialize, Serialize};
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    pub struct AdcCalibration {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub vrefint: Option<VrefCalibration>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub temp: Option<TempCalibration>,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    pub struct VrefCalibration {
+        pub vref_mv: u16,
+        pub cal_bits: u8,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    #[serde(tag = "equation", rename_all = "snake_case")]
+    pub enum TempCalibration {
+        TwoPoint(TwoPointTempCal),
+        OnePoint(OnePointTempCal),
+        Nominal(NominalTempCal),
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    pub struct TwoPointTempCal {
+        pub vref_mv: u16,
+        pub cal_bits: u8,
+        pub cal1_temp_c: i16,
+        pub cal2_temp_c: i16,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    pub struct OnePointTempCal {
+        pub vref_mv: u16,
+        pub cal_bits: u8,
+        pub cal1_temp_c: i16,
+        pub avg_slope_uv_per_c: i32,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    pub struct NominalTempCal {
+        pub ref_temp_c: i16,
+        pub v_ref_mv: u16,
+        pub avg_slope_uv_per_c: i32,
+    }
 
     #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
     pub struct Package {
