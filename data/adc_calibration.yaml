@@ -1,0 +1,167 @@
+# ADC factory calibration parameters and temperature-sensor equations.
+#
+# Rules are evaluated in order; the FIRST matching chip regex wins.
+# Every chip in stm32-data must match an entry (use `calibration: null` for
+# out-of-scope families without HAL ADC support).
+
+- match: 'STM32(MP1|H7P|WB0).*'
+  calibration: null
+
+# F1 / F2 have no factory VREFINT_CAL or TS_CAL* registers; only datasheet
+# nominal V25 and Avg_Slope values exist (RM0008/RM0041 for F1, RM0033 for F2).
+- match: 'STM32F1.*'
+  calibration:
+    vrefint: null
+    temp:
+      equation: nominal
+      ref_temp_c: 25
+      v_ref_mv: 1430
+      avg_slope_uv_per_c: -4300
+
+- match: 'STM32F2.*'
+  calibration:
+    vrefint: null
+    temp:
+      equation: nominal
+      ref_temp_c: 25
+      v_ref_mv: 760
+      avg_slope_uv_per_c: 2500
+
+# C0: VDDA calibration = 3.0 V, single-point TS_CAL1 at 30 C (RM0490 §16.10).
+- match: 'STM32C0.*'
+  calibration:
+    vrefint: { vref_mv: 3000, cal_bits: 12 }
+    temp:
+      equation: one_point
+      vref_mv: 3000
+      cal_bits: 12
+      cal1_temp_c: 30
+      avg_slope_uv_per_c: 2530
+
+# F030/F070 value line: VDDA calibration = 3.3 V, single-point TS_CAL1 at 30 C (RM0360).
+- match: 'STM32F0(30|70).*'
+  calibration:
+    vrefint: { vref_mv: 3300, cal_bits: 12 }
+    temp:
+      equation: one_point
+      vref_mv: 3300
+      cal_bits: 12
+      cal1_temp_c: 30
+      avg_slope_uv_per_c: -4300
+
+# F0 mainstream, F3, F4, F7: VDDA calibration = 3.3 V, two-point at 30 C / 110 C.
+- match: 'STM32F[0347].*'
+  calibration:
+    vrefint: { vref_mv: 3300, cal_bits: 12 }
+    temp:
+      equation: two_point
+      vref_mv: 3300
+      cal_bits: 12
+      cal1_temp_c: 30
+      cal2_temp_c: 110
+
+# G030/G070/G0B0 value line: VDDA calibration = 3.0 V, single-point TS_CAL1 at 30 C.
+- match: 'STM32G0(30|70|B0).*'
+  calibration:
+    vrefint: { vref_mv: 3000, cal_bits: 12 }
+    temp:
+      equation: one_point
+      vref_mv: 3000
+      cal_bits: 12
+      cal1_temp_c: 30
+      avg_slope_uv_per_c: 2500
+
+# G0 mainstream + G050: VDDA calibration = 3.0 V, two-point at 30 C / 130 C.
+- match: 'STM32G0.*'
+  calibration:
+    vrefint: { vref_mv: 3000, cal_bits: 12 }
+    temp:
+      equation: two_point
+      vref_mv: 3000
+      cal_bits: 12
+      cal1_temp_c: 30
+      cal2_temp_c: 130
+
+# L010 value line: no internal temperature sensor (RM0451).
+- match: 'STM32L010.*'
+  calibration:
+    vrefint: { vref_mv: 3000, cal_bits: 12 }
+    temp: null
+
+# L1: VDDA calibration = 3.0 V, two-point at 30 C / 110 C (RM0038 §12.12).
+- match: 'STM32L1.*'
+  calibration:
+    vrefint: { vref_mv: 3000, cal_bits: 12 }
+    temp:
+      equation: two_point
+      vref_mv: 3000
+      cal_bits: 12
+      cal1_temp_c: 30
+      cal2_temp_c: 110
+
+# G4, L0 (non-L010), L4, L4+, L5, U0, WB, WBA, WL: VDDA = 3.0 V, 12-bit, 30 C / 130 C.
+- match: 'STM32(G4|L0|L4|L5|U0|WB|WL).*'
+  calibration:
+    vrefint: { vref_mv: 3000, cal_bits: 12 }
+    temp:
+      equation: two_point
+      vref_mv: 3000
+      cal_bits: 12
+      cal1_temp_c: 30
+      cal2_temp_c: 130
+
+# U5: factory calibration acquired at 14-bit resolution by ADC1 (RM0456 §33.3).
+- match: 'STM32U5.*'
+  calibration:
+    vrefint: { vref_mv: 3000, cal_bits: 14 }
+    temp:
+      equation: two_point
+      vref_mv: 3000
+      cal_bits: 14
+      cal1_temp_c: 30
+      cal2_temp_c: 130
+
+# U3: VREFINTCAL verified (3.0 V, 12-bit); TS_CAL1/TS_CAL2 pending datasheet addresses.
+- match: 'STM32U3.*'
+  calibration:
+    vrefint: { vref_mv: 3000, cal_bits: 12 }
+    temp: null
+
+# H7RS: 12-bit, VDDA = 3.3 V, 30 C / 130 C (RM0477 §27.3).
+- match: 'STM32H7[RS].*'
+  calibration:
+    vrefint: { vref_mv: 3300, cal_bits: 12 }
+    temp:
+      equation: two_point
+      vref_mv: 3300
+      cal_bits: 12
+      cal1_temp_c: 30
+      cal2_temp_c: 130
+
+# H72x/3x/4x/5x/Ax/Bx: 16-bit, VDDA = 3.3 V, 30 C / 110 C.
+- match: 'STM32H7.*'
+  calibration:
+    vrefint: { vref_mv: 3300, cal_bits: 16 }
+    temp:
+      equation: two_point
+      vref_mv: 3300
+      cal_bits: 16
+      cal1_temp_c: 30
+      cal2_temp_c: 110
+
+# C5, H5: 12-bit, VDDA = 3.3 V, 30 C / 130 C.
+- match: 'STM32(C5|H5).*'
+  calibration:
+    vrefint: { vref_mv: 3300, cal_bits: 12 }
+    temp:
+      equation: two_point
+      vref_mv: 3300
+      cal_bits: 12
+      cal1_temp_c: 30
+      cal2_temp_c: 130
+
+# G5, N6: VREFINTCAL verified (3.3 V, 12-bit); N6 uses DTS, G5 TS_CAL pending verification.
+- match: 'STM32(G5|N6).*'
+  calibration:
+    vrefint: { vref_mv: 3300, cal_bits: 12 }
+    temp: null

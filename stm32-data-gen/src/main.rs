@@ -6,6 +6,7 @@ use log::{LevelFilter, info};
 
 use crate::ctx::GenCtx;
 
+mod adc_calibration;
 mod check;
 mod chips;
 mod config;
@@ -134,6 +135,7 @@ fn main() -> anyhow::Result<()> {
     let stop_modes = low_power::ChipStopModes::new();
     let triggers = trigger::Triggers::new();
     let chip_memories = memory::ChipMemories::new();
+    let adc_calibrations = adc_calibration::ChipAdcCalibration::new();
 
     stopwatch.section("Removing build directory");
 
@@ -190,6 +192,7 @@ fn main() -> anyhow::Result<()> {
             stop_modes: &stop_modes,
             triggers: &triggers,
             chip_memories: &chip_memories,
+            adc_calibrations: &adc_calibrations,
             blocks: &registers.blocks,
             chip_interrupts: &chip_interrupts,
             peripheral_to_clock: &peripheral_to_clock,
