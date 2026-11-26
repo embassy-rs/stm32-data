@@ -121,11 +121,16 @@
       cal1_temp_c: 30
       cal2_temp_c: 130
 
-# U3: VREFINTCAL verified (3.0 V, 12-bit); TS_CAL1/TS_CAL2 pending datasheet addresses.
+# U3: 12-bit, VDDA = 3.0 V, two-point at 30 C / 110 C (datasheet §3.21.2).
 - match: 'STM32U3.*'
   calibration:
     vrefint: { vref_mv: 3000, cal_bits: 12 }
-    temp: null
+    temp:
+      equation: two_point
+      vref_mv: 3000
+      cal_bits: 12
+      cal1_temp_c: 30
+      cal2_temp_c: 110
 
 # H7RS: 12-bit, VDDA = 3.3 V, 30 C / 130 C (RM0477 §27.3).
 - match: 'STM32H7[RS].*'
@@ -160,8 +165,19 @@
       cal1_temp_c: 30
       cal2_temp_c: 130
 
-# G5, N6: VREFINTCAL verified (3.3 V, 12-bit); N6 uses DTS, G5 TS_CAL pending verification.
-- match: 'STM32(G5|N6).*'
+# G5: 12-bit, VDDA = 3.3 V, two-point at 30 C / 140 C (datasheet §5.3.7).
+- match: 'STM32G5.*'
+  calibration:
+    vrefint: { vref_mv: 3300, cal_bits: 12 }
+    temp:
+      equation: two_point
+      vref_mv: 3300
+      cal_bits: 12
+      cal1_temp_c: 30
+      cal2_temp_c: 140
+
+# N6: VREFINTCAL verified (3.3 V, 12-bit); temperature uses DTS rather than TS_CAL*.
+- match: 'STM32N6.*'
   calibration:
     vrefint: { vref_mv: 3300, cal_bits: 12 }
     temp: null
