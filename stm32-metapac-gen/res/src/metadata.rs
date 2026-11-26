@@ -133,6 +133,7 @@ pub struct Metadata {
     pub dma_channels: &'static [DmaChannel],
     pub pins: &'static [Pin],
     pub power: Option<Power>,
+    pub adc_calibration: Option<AdcCalibration>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -169,6 +170,48 @@ pub struct PowerMode {
     pub surviving_clocks: &'static [&'static str],
     pub min_residency_us: u32,
     pub exit_latency_us: u32,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub struct AdcCalibration {
+    pub vrefint: Option<VrefCalibration>,
+    pub temp: Option<TempCalibration>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub struct VrefCalibration {
+    pub vref_mv: u16,
+    pub cal_bits: u8,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum TempCalibration {
+    TwoPoint(TwoPointTempCal),
+    OnePoint(OnePointTempCal),
+    Nominal(NominalTempCal),
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub struct TwoPointTempCal {
+    pub vref_mv: u16,
+    pub cal_bits: u8,
+    pub cal1_temp_c: i16,
+    pub cal2_temp_c: i16,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub struct OnePointTempCal {
+    pub vref_mv: u16,
+    pub cal_bits: u8,
+    pub cal1_temp_c: i16,
+    pub avg_slope_uv_per_c: i32,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub struct NominalTempCal {
+    pub ref_temp_c: i16,
+    pub v_ref_mv: u16,
+    pub avg_slope_uv_per_c: i32,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]

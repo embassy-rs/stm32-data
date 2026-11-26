@@ -200,9 +200,13 @@ impl ParsedRccs {
             regex!(r"^.+PERCKSELR/(.+)SEL$"),
             regex!(r"^CSR/(.+)SEL$"),
         ];
+        // These fields are not clock-source muxes: USBREFCKSEL/OTGPHYREFCKSEL only
+        // report the reference frequency to the USB PHY. Exempt them by field name so
+        // that register renames (e.g. H7RS *PERCKSELR -> CCIPR*) do not re-enable the
+        // allowed-variants check for them.
         let mux_nopelist = &[
-            regex!(r"^.+PERCKSELR/USBREFCKSEL$"),
-            regex!(r"^CCIPR\d*/OTGPHYREFCKSEL$"),
+            regex!(r"^.+/USBREFCKSEL$"),
+            regex!(r"^.+/OTGPHYREFCKSEL$"),
             regex!(r"^.+/TIMICSEL$"),
         ];
 

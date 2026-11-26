@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 
 use stm32_data_serde::Chip;
+use stm32_data_serde::chip::TempCalibration;
 
 pub fn check(chip: &Chip) {
     match &chip.power {
@@ -51,6 +52,51 @@ pub fn check(chip: &Chip) {
                 );
             } else {
                 by_enable.insert(key, (&p.name, rcc.low_power.modes));
+            }
+        }
+
+        let has_vrefintcal = peris.contains_key(&"VREFINTCAL".to_string());
+        let has_tscal1 = peris.contains_key(&"TS_CAL1".to_string());
+        let has_tscal2 = peris.contains_key(&"TS_CAL2".to_string());
+
+        match &chip.adc_calibration {
+            None => {
+                assert!(
+                    !has_vrefintcal && !has_tscal1 && !has_tscal2,
+                    "{}: has calibration peripherals but adc_calibration is None",
+                    chip.name
+                );
+            }
+            Some(cal) => {
+                assert_eq!(
+                    cal.vrefint.is_some(),
+                    has_vrefintcal,
+                    "{}: adc_calibration.vrefint mismatch with VREFINTCAL peripheral",
+                    chip.name
+                );
+                match &cal.temp {
+                    Some(TempCalibration::TwoPoint(_)) => {
+                        assert!(
+                            has_tscal1 && has_tscal2,
+                            "{}: TwoPoint temp calibration requires TS_CAL1 and TS_CAL2",
+                            chip.name
+                        );
+                    }
+                    Some(TempCalibration::OnePoint(_)) => {
+                        assert!(
+                            has_tscal1 && !has_tscal2,
+                            "{}: OnePoint temp calibration requires TS_CAL1 without TS_CAL2",
+                            chip.name
+                        );
+                    }
+                    Some(TempCalibration::Nominal(_)) | None => {
+                        assert!(
+                            !has_tscal1 && !has_tscal2,
+                            "{}: Nominal/None temp calibration must not have TS_CAL1/TS_CAL2",
+                            chip.name
+                        );
+                    }
+                }
             }
         }
     }

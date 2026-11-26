@@ -9,7 +9,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::chips::Chip;
 use crate::generator::Extra;
-use crate::{dma, docs, gpio_af, header, interrupts, low_power, memory, perimap, rcc, trigger};
+use crate::{adc_calibration, dma, docs, gpio_af, header, interrupts, low_power, memory, perimap, rcc, trigger};
 
 pub struct GenCtx<'a> {
     /// CMSIS headers, keyed by header file stem.
@@ -24,6 +24,8 @@ pub struct GenCtx<'a> {
     pub triggers: &'a trigger::Triggers,
     /// Chip -> flash/SRAM layout.
     pub chip_memories: &'a memory::ChipMemories,
+    /// Chip -> ADC factory calibration metadata.
+    pub adc_calibrations: &'a adc_calibration::ChipAdcCalibration,
     /// `kind_version` -> the register blocks defined by that YAML file.
     pub blocks: &'a HashMap<String, HashSet<String>>,
     /// Interrupt tables from the CubeDB NVIC files.

@@ -173,6 +173,7 @@ impl Gen {
 
         let memories = chip.memory.iter().map(stringify).collect::<Vec<_>>().join(",");
         let power = stringify(&chip.power);
+        let adc_calibration = stringify(&chip.adc_calibration);
 
         // Both variants are imported unconditionally: with the consolidated
         // `PeripheralRccMux` there are no variant-specific shapes left to special-case,
@@ -193,6 +194,7 @@ impl Gen {
                 dma_channels: DMA_CHANNELS,
                 pins: PINS,
                 power: {},
+                adc_calibration: {},
             }};",
             deduped_file,
             kernel_clock_import,
@@ -202,6 +204,7 @@ impl Gen {
             memories,
             core.nvic_priority_bits,
             power,
+            adc_calibration,
         );
 
         let mut file = File::create(chip_dir.join("metadata.rs")).unwrap();

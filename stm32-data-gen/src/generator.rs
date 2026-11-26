@@ -909,6 +909,7 @@ fn process_chip(
     let GenCtx {
         chips,
         chip_memories,
+        adc_calibrations,
         docs,
         low_power,
         peripheral_to_clock,
@@ -950,6 +951,7 @@ fn process_chip(
         packages: chip.packages.clone(),
         memory: chip_memories.get(chip_name),
         docs,
+        adc_calibration: adc_calibrations.get(chip_name),
         cores,
         power,
     };
