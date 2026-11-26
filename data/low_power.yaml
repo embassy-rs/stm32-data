@@ -169,10 +169,13 @@ peripherals:
   - { match: 'STM32WBA.*:SPI\d+', modes: [Stop0, Stop1], wake_capable: true }
   - { match: 'STM32WBA.*:ADC4', modes: [Stop0, Stop1] }
   - { match: 'STM32WBA.*:COMP\d+', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WBA.*:USB_OTG_HS', modes: [Stop0], wake_capable: true }
 
   # STM32U3 / STM32U5 (SmartRun/LPBAM Stop 2 capable + autonomous vs CPU-domain Stop 0/1)
   - { match: 'STM32U[35].*:(LPUART1|I2C3|SPI3|LPTIM1|LPTIM3|LPTIM4|ADC4|DAC1|ADF1|COMP\d+|OPAMP\d+|LPGPIO1|VREFBUF|LPDMA.*)', modes: [Stop0, Stop1, Stop2], autonomous: true, wake_capable: true }
   - { match: 'STM32U[35].*:(USART\d+|UART\d+|I2C\d+|SPI\d+|LPTIM2|GPDMA.*)', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32U5.*:USB_OTG_FS', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32U5.*:USB_OTG_HS', modes: [Stop0], wake_capable: true }
 
   # STM32U0 series - from RM0503 Table 22: LPTIMs, LPUART, I2C3, COMP functional in Stop 2
   - { match: 'STM32U0.*:(LPTIM\d+|LPUART\d+|I2C3|COMP\d+)', modes: [Stop0, Stop1, Stop2], wake_capable: true }
@@ -181,6 +184,7 @@ peripherals:
   # STM32L4 / STM32L4+ / STM32L5 - RM0394 §5.3.7, RM0438
   - { match: 'STM32L[45].*:(LPUART\d+|LPTIM1|I2C3|LCD|COMP\d+|OPAMP\d+)', modes: [Stop0, Stop1, Stop2], wake_capable: true }
   - { match: 'STM32L[45].*:(USART\d+|UART\d+|I2C\d+|LPTIM2)', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32L4.*:USB_OTG_FS', modes: [Stop0, Stop1], wake_capable: true, wake_exti: 17 }
 
   # STM32G0 / STM32G4 / STM32C0 / STM32L0 / STM32F0 / STM32F3
   - { match: 'STM32(G[04]|C0|L0).*:(LPUART\d+|LPTIM\d+|I2C\d+|USART\d+|COMP\d+)', modes: [Stop0, Stop1], wake_capable: true }
@@ -190,8 +194,13 @@ peripherals:
   - { match: 'STM32C5.*:(LPUART1|LPTIM1|COMP\d+)', modes: [Stop0, Stop1], wake_capable: true }
   - { match: 'STM32C5.*:(USART\d+|UART\d+|I2C\d+|SPI\d+|I3C\d+|DTS)', modes: [Stop0], wake_capable: true }
 
-  # STM32F4 / STM32F7 LPTIM1 wakes over EXTI line 23
+  # STM32H5 (RM0517: Stop 0 only)
+  - { match: 'STM32H5.*:(USB_OTG_FS|USB_OTG_HS)', modes: [Stop0], wake_capable: true }
+
+  # STM32F4 / STM32F7 LPTIM1 and USB OTG wakeup over EXTI
   - { match: 'STM32F[47].*:LPTIM1', modes: [Stop0, Stop1], wake_capable: true, wake_exti: 23 }
+  - { match: 'STM32F[47].*:USB_OTG_FS', modes: [Stop0, Stop1], wake_capable: true, wake_exti: 18 }
+  - { match: 'STM32F[47].*:USB_OTG_HS', modes: [Stop0, Stop1], wake_capable: true, wake_exti: 20 }
 
   # __ATTENTION__: Keep these generic rules at the bottom so specific chip rules win.
   - { match: '.*:LP.*', modes: [Stop0, Stop1], wake_capable: true }

@@ -182,6 +182,22 @@ mod tests {
         let u5_gpdma = lp.peripheral_low_power("STM32U585AI", "DIE482", "GPDMA1");
         assert!(u5_gpdma.modes.stop1 && !u5_gpdma.modes.stop2 && !u5_gpdma.autonomous);
 
+        // USB OTG Stop capabilities and EXTI lines across families
+        let wba_otg = lp.peripheral_low_power("STM32WBA65RI", "DIE494", "USB_OTG_HS");
+        assert!(wba_otg.modes.stop0 && !wba_otg.modes.stop1 && !wba_otg.modes.stop2 && wba_otg.wake_capable);
+        let u5_otg_hs = lp.peripheral_low_power("STM32U5A5ZJ", "DIE481", "USB_OTG_HS");
+        assert!(u5_otg_hs.modes.stop0 && !u5_otg_hs.modes.stop1 && u5_otg_hs.wake_capable);
+        let u5_otg_fs = lp.peripheral_low_power("STM32U585AI", "DIE482", "USB_OTG_FS");
+        assert!(u5_otg_fs.modes.stop0 && u5_otg_fs.modes.stop1 && !u5_otg_fs.modes.stop2 && u5_otg_fs.wake_capable);
+        let l4_otg_fs = lp.peripheral_low_power("STM32L476RG", "DIE415", "USB_OTG_FS");
+        assert!(l4_otg_fs.modes.stop1 && !l4_otg_fs.modes.stop2 && l4_otg_fs.wake_exti == Some(17));
+        let f4_otg_fs = lp.peripheral_low_power("STM32F407VG", "DIE413", "USB_OTG_FS");
+        assert!(f4_otg_fs.modes.stop1 && f4_otg_fs.wake_exti == Some(18));
+        let f4_otg_hs = lp.peripheral_low_power("STM32F407VG", "DIE413", "USB_OTG_HS");
+        assert!(f4_otg_hs.modes.stop1 && f4_otg_hs.wake_exti == Some(20));
+        let h5_otg_hs = lp.peripheral_low_power("STM32H5E5AI", "DIE478", "USB_OTG_HS");
+        assert!(h5_otg_hs.modes.stop0 && !h5_otg_hs.modes.stop1 && h5_otg_hs.wake_capable);
+
         // Chip power descriptors
         let g4 = lp.chip_power("STM32G474RE", false).unwrap();
         assert_eq!(g4.dialect, Dialect::LpmsScr);
