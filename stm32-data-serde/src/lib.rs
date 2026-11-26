@@ -86,6 +86,12 @@ pub mod chip {
             /// Oscillator / clock names (matching `KernelClock` sources) that remain usable in this mode.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub surviving_clocks: Vec<String>,
+            /// Minimum idle residency in microseconds before this mode is worthwhile.
+            #[serde(default)]
+            pub min_residency_us: u32,
+            /// Hardware wake-up latency from this mode in microseconds (before RCC clock restoration).
+            #[serde(default)]
+            pub exit_latency_us: u32,
         }
     }
 

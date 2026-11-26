@@ -167,6 +167,8 @@ pub struct PowerMode {
     pub selector: u8,
     pub min_svos: Option<u8>,
     pub surviving_clocks: &'static [&'static str],
+    pub min_residency_us: u32,
+    pub exit_latency_us: u32,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]

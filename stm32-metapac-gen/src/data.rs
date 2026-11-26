@@ -329,6 +329,10 @@ pub struct PowerMode {
     pub min_svos: Option<u8>,
     #[serde(default)]
     pub surviving_clocks: Vec<String>,
+    #[serde(default)]
+    pub min_residency_us: u32,
+    #[serde(default)]
+    pub exit_latency_us: u32,
 }
 
 // Notice:

@@ -15,119 +15,119 @@ chips:
     power:
       dialect: Classic
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 200, exit_latency_us: 50, surviving_clocks: [LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 600, exit_latency_us: 300, surviving_clocks: [LSE, LSI] }
 
   # Archetype B — L0 (LPTIM/LPUART survive Stop on LSE/LSI/HSI16)
   - match: 'STM32L0.*'
     power:
       dialect: Classic
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 300, exit_latency_us: 100, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 2000, exit_latency_us: 750, surviving_clocks: [HSI, LSE, LSI] }
 
   # Archetype C — C0 (Stop 0 only, LPMS=000)
   - match: 'STM32C0.*'
     power:
       dialect: LpmsScr
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 400, exit_latency_us: 300, surviving_clocks: [LSE, LSI] }
 
   # Archetype C — G0 / G4 (Stop 0 / Stop 1, no Stop 2)
   - match: 'STM32G[04].*'
     power:
       dialect: LpmsScr
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 20, exit_latency_us: 10, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 100, exit_latency_us: 35, surviving_clocks: [HSI, LSE, LSI] }
 
   # Archetype C — L4 / L4+ / L5 / U0 (Stop 0 / Stop 1 / Stop 2)
   - match: 'STM32(L[45]|U0).*'
     power:
       dialect: LpmsScr
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, MSI, LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [HSI, MSI, LSE, LSI] }
-        - { kind: Stop2, selector: 2, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 20, surviving_clocks: [HSI, MSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 40, surviving_clocks: [HSI, MSI, LSE, LSI] }
+        - { kind: Stop2, selector: 2, min_residency_us: 900, exit_latency_us: 60, surviving_clocks: [HSI, LSE, LSI] }
 
   # Archetype D — U5 / U3 (Stop 0 / Stop 1 / Stop 2 / Stop 3 + SRD)
   - match: 'STM32U[35].*'
     power:
       dialect: LpmsSrWuscr
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, MSIK, LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [HSI, MSIK, LSE, LSI] }
-        - { kind: Stop2, selector: 2, surviving_clocks: [HSI, MSIK, LSE, LSI] }
-        - { kind: Stop3, selector: 3, surviving_clocks: [LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 23, surviving_clocks: [HSI, MSIK, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 37, surviving_clocks: [HSI, MSIK, LSE, LSI] }
+        - { kind: Stop2, selector: 2, min_residency_us: 900, exit_latency_us: 58, surviving_clocks: [HSI, MSIK, LSE, LSI] }
+        - { kind: Stop3, selector: 3, min_residency_us: 200000, exit_latency_us: 130, surviving_clocks: [LSE, LSI] }
 
   # Archetype D/F — WBA6 / WBA2 (Stop 0 / Stop 1 / Stop 2)
   - match: 'STM32WBA[26].*'
     power:
       dialect: LpmsSrWuscr
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [HSI, LSE, LSI] }
-        - { kind: Stop2, selector: 2, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 20, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 40, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop2, selector: 2, min_residency_us: 900, exit_latency_us: 70, surviving_clocks: [HSI, LSE, LSI] }
 
   # Archetype D/F — WBA5 (Stop 0 / Stop 1 only)
   - match: 'STM32WBA.*'
     power:
       dialect: LpmsSrWuscr
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 20, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 40, surviving_clocks: [HSI, LSE, LSI] }
 
   # Archetype F — WB0 (PWRC DeepStop, LPMS=0)
   - match: 'STM32WB0.*'
     power:
       dialect: Wb0Deepstop
       modes:
-        - { kind: Stop1, selector: 0, surviving_clocks: [LSE, LSI] }
+        - { kind: Stop1, selector: 0, min_residency_us: 1500, exit_latency_us: 200, surviving_clocks: [LSE, LSI] }
 
   # Archetype F — WB / WL5 / WLE (EXTSCR dual-core/radio Stop 0/1/2)
   - match: 'STM32W(B|L).*'
     power:
       dialect: Extscr
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [HSI, LSE, LSI] }
-        - { kind: Stop2, selector: 2, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 20, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 40, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop2, selector: 2, min_residency_us: 900, exit_latency_us: 60, surviving_clocks: [HSI, LSE, LSI] }
 
   # Archetype D — H5 (LPMS=0 Stop, SVOS3 needed for peripheral wakeups)
   - match: 'STM32H5.*'
     power:
       dialect: PmcrSvos
       modes:
-        - { kind: Stop0, selector: 0, min_svos: 3, surviving_clocks: [HSI, CSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_svos: 3, min_residency_us: 20, exit_latency_us: 15, surviving_clocks: [HSI, CSI, LSE, LSI] }
 
   # Archetype D — C5 (RM0522: Stop 0 LPMS=00, Stop 1 LPMS=01)
   - match: 'STM32C5.*'
     power:
       dialect: PmcrSvos
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, LSE, LSI] }
-        - { kind: Stop1, selector: 1, surviving_clocks: [LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 10, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 43, surviving_clocks: [LSE, LSI] }
 
   # Archetype D — G5 (LPMCR.LPMS=0 Stop)
   - match: 'STM32G5.*'
     power:
       dialect: PmcrSvos
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 50, exit_latency_us: 15, surviving_clocks: [HSI, LSE, LSI] }
 
   # Archetype E — H7 / H7RS / H7P
   - match: 'STM32H7.*'
     power:
       dialect: DomainPdds
       modes:
-        - { kind: Stop0, selector: 0, min_svos: 3, surviving_clocks: [HSI, CSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_svos: 3, min_residency_us: 100, exit_latency_us: 30, surviving_clocks: [HSI, CSI, LSE, LSI] }
 
   # Archetype D/E — N6
   - match: 'STM32N6.*'
     power:
       dialect: DomainPdds
       modes:
-        - { kind: Stop0, selector: 0, surviving_clocks: [HSI, MSI, LSE, LSI] }
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 30, surviving_clocks: [HSI, MSI, LSE, LSI] }
 
 # 2) Peripheral-level Stop capabilities.
 #    Matched as a full-string regex against `{mcu}:{peripheral}` (e.g. `STM32WB55RG:USART1`).

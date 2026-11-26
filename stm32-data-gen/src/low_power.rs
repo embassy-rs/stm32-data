@@ -122,6 +122,8 @@ impl ChipLowPower {
                     selector: m.selector,
                     min_svos: m.min_svos,
                     surviving_clocks: m.surviving_clocks.clone(),
+                    min_residency_us: m.min_residency_us,
+                    exit_latency_us: m.exit_latency_us,
                 })
                 .collect(),
         })
