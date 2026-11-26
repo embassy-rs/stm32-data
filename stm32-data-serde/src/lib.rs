@@ -14,6 +14,10 @@ fn is_default<T: Default + PartialEq>(variant: &T) -> bool {
     *variant == T::default()
 }
 
+fn is_false(b: &bool) -> bool {
+    !*b
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct Chip {
     pub name: String,
@@ -27,6 +31,8 @@ pub struct Chip {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub adc_calibration: Option<chip::AdcCalibration>,
     pub cores: Vec<chip::Core>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub power: Option<chip::Power>,
 }
 
 pub mod chip {
@@ -75,6 +81,65 @@ pub mod chip {
         pub ref_temp_c: i16,
         pub v_ref_mv: u16,
         pub avg_slope_uv_per_c: i32,
+    }
+
+    #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+    pub struct Power {
+        pub dialect: power::Dialect,
+        #[serde(default, skip_serializing_if = "crate::is_false")]
+        pub stopwuck: bool,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        pub modes: Vec<power::Mode>,
+    }
+
+    pub mod power {
+        use serde::{Deserialize, Serialize};
+
+        /// PWR register layout / Stop entry-exit dialect for a chip family.
+        #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+        pub enum Dialect {
+            /// `PWR.CR`: `PDDS` + `LPDS`/`LPSDSR` (F0, F1, F2, F3, F4, F7, L0, L1).
+            Classic,
+            /// `PWR.CR1.LPMS` + `PWR.SCR.CWUF` (G0, G4, L4, L5, U0).
+            LpmsScr,
+            /// `PWR.CR1.LPMS` + `PWR.SR.STOPF/CSSF` + `PWR.WUSCR` (U3, U5, WBA).
+            LpmsSrWuscr,
+            /// `PWR.PMCR/LPMCR.LPMS` + `SVOS` + `PWR.PMSR.STOPF` (C5, G5, H5).
+            PmcrSvos,
+            /// `PWR.EXTSCR.C1/C2STOPF/CSSF` + `CR1.LPMS` (WB, WL5, WLE).
+            Extscr,
+            /// Per-domain `CPUCR/CSR3` `PDDS` + `STOPF` (H7, H7RS, H7P, N6).
+            DomainPdds,
+            /// `PWR.CR1.LPMS` + `EXTSRR.DEEPSTOPF` (WB0).
+            Wb0Deepstop,
+        }
+
+        #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+        pub enum ModeKind {
+            Stop0,
+            Stop1,
+            Stop2,
+            Stop3,
+        }
+
+        #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+        pub struct Mode {
+            pub kind: ModeKind,
+            /// Raw selector value written to `LPMS` (or `PDDS`/`LPDS` encoding for `Classic`).
+            pub selector: u8,
+            /// Minimum `SVOS` scale (3..=5) required for peripherals/wakeups in this mode.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub min_svos: Option<u8>,
+            /// Oscillator / clock names (matching `KernelClock` sources) that remain usable in this mode.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub surviving_clocks: Vec<String>,
+            /// Minimum idle residency in microseconds before this mode is worthwhile.
+            #[serde(default)]
+            pub min_residency_us: u32,
+            /// Hardware wake-up latency from this mode in microseconds (before RCC clock restoration).
+            #[serde(default)]
+            pub exit_latency_us: u32,
+        }
     }
 
     #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
@@ -189,8 +254,12 @@ pub mod chip {
                 pub enable: rcc::Field,
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub reset: Option<rcc::Field>,
+                #[serde(default, skip_serializing_if = "Option::is_none")]
+                pub stop_enable: Option<rcc::Field>,
+                #[serde(default, skip_serializing_if = "Option::is_none")]
+                pub autonomous_enable: Option<rcc::Field>,
                 #[serde(default, skip_serializing_if = "crate::is_default")]
-                pub stop_mode: rcc::StopMode,
+                pub low_power: rcc::LowPower,
             }
 
             pub mod rcc {
@@ -261,17 +330,48 @@ pub mod chip {
                     }
                 }
 
+                /// Per-peripheral Stop-mode capabilities and wake-up routing.
                 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize, Default)]
-                /// Specifies a limit for the stop mode of the peripheral.
-                /// E.g. if `StopMode::Stop1` is selected, the peripheral prevents the chip from entering Stop1 mode.
-                pub enum StopMode {
-                    #[default]
-                    /// Peripheral prevents chip from entering Stop1
-                    Stop1,
-                    /// Peripheral prevents chip from entering Stop2
-                    Stop2,
-                    /// Peripheral does not prevent chip from entering Stop
-                    Standby,
+                pub struct LowPower {
+                    /// Stop modes in which this peripheral remains functional (assuming its clock survives).
+                    #[serde(default, skip_serializing_if = "crate::is_default")]
+                    pub modes: StopModes,
+                    /// Can autonomously request its clock / operate in Stop without CPU intervention.
+                    #[serde(default, skip_serializing_if = "crate::is_false")]
+                    pub autonomous: bool,
+                    /// Can raise a wake-up IRQ/event from a Stop mode listed in `modes`.
+                    #[serde(default, skip_serializing_if = "crate::is_false")]
+                    pub wake_capable: bool,
+                    /// EXTI line associated with this peripheral's Stop wake-up when routed via EXTI.
+                    #[serde(default, skip_serializing_if = "Option::is_none")]
+                    pub wake_exti: Option<u8>,
+                }
+
+                #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize, Deserialize, Default)]
+                pub struct StopModes {
+                    #[serde(default, skip_serializing_if = "crate::is_false")]
+                    pub stop0: bool,
+                    #[serde(default, skip_serializing_if = "crate::is_false")]
+                    pub stop1: bool,
+                    #[serde(default, skip_serializing_if = "crate::is_false")]
+                    pub stop2: bool,
+                    #[serde(default, skip_serializing_if = "crate::is_false")]
+                    pub stop3: bool,
+                }
+
+                impl StopModes {
+                    pub const fn any(&self) -> bool {
+                        self.stop0 || self.stop1 || self.stop2 || self.stop3
+                    }
+
+                    pub const fn contains(&self, kind: crate::chip::power::ModeKind) -> bool {
+                        match kind {
+                            crate::chip::power::ModeKind::Stop0 => self.stop0,
+                            crate::chip::power::ModeKind::Stop1 => self.stop1,
+                            crate::chip::power::ModeKind::Stop2 => self.stop2,
+                            crate::chip::power::ModeKind::Stop3 => self.stop3,
+                        }
+                    }
                 }
             }
 

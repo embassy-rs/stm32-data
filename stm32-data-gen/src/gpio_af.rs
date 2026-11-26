@@ -121,6 +121,9 @@ pub fn parse_signal_name(signal_name: &str) -> Option<(&str, &str)> {
     if signal_name.starts_with("EXTI") {
         return None;
     }
+    if peri_name == "SYS" && signal_name.starts_with("WKUP") {
+        return Some(("PWR", signal_name));
+    }
     if peri_name.starts_with("DEBUG") && signal_name.starts_with("SUBGHZSPI") {
         let (peri_name, signal_name) = signal_name.split_once('-').unwrap();
 

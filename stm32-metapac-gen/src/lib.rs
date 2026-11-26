@@ -172,6 +172,7 @@ impl Gen {
         });
 
         let memories = chip.memory.iter().map(stringify).collect::<Vec<_>>().join(",");
+        let power = stringify(&chip.power);
         let adc_calibration = stringify(&chip.adc_calibration);
 
         // Both variants are imported unconditionally: with the consolidated
@@ -192,6 +193,7 @@ impl Gen {
                 interrupts: INTERRUPTS,
                 dma_channels: DMA_CHANNELS,
                 pins: PINS,
+                power: {},
                 adc_calibration: {},
             }};",
             deduped_file,
@@ -201,6 +203,7 @@ impl Gen {
             chip.line,
             memories,
             core.nvic_priority_bits,
+            power,
             adc_calibration,
         );
 

@@ -132,7 +132,44 @@ pub struct Metadata {
     pub interrupts: &'static [Interrupt],
     pub dma_channels: &'static [DmaChannel],
     pub pins: &'static [Pin],
+    pub power: Option<Power>,
     pub adc_calibration: Option<AdcCalibration>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct Power {
+    pub dialect: PowerDialect,
+    pub stopwuck: bool,
+    pub modes: &'static [PowerMode],
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum PowerDialect {
+    Classic,
+    LpmsScr,
+    LpmsSrWuscr,
+    PmcrSvos,
+    Extscr,
+    DomainPdds,
+    Wb0Deepstop,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum PowerModeKind {
+    Stop0,
+    Stop1,
+    Stop2,
+    Stop3,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PowerMode {
+    pub kind: PowerModeKind,
+    pub selector: u8,
+    pub min_svos: Option<u8>,
+    pub surviving_clocks: &'static [&'static str],
+    pub min_residency_us: u32,
+    pub exit_latency_us: u32,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
@@ -258,7 +295,9 @@ pub struct PeripheralRcc {
     pub kernel_clock: PeripheralRccKernelClock,
     pub enable: Option<PeripheralRccRegister>,
     pub reset: Option<PeripheralRccRegister>,
-    pub stop_mode: StopMode,
+    pub stop_enable: Option<PeripheralRccRegister>,
+    pub autonomous_enable: Option<PeripheralRccRegister>,
+    pub low_power: PeripheralLowPower,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -285,11 +324,19 @@ pub struct PeripheralRccMux {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
-pub enum StopMode {
-    #[default]
-    Stop1, // Peripheral prevents chip from entering Stop1
-    Stop2,   // Peripheral prevents chip from entering Stop2
-    Standby, // Peripheral does not prevent chip from entering Stop
+pub struct PeripheralLowPower {
+    pub modes: StopModes,
+    pub autonomous: bool,
+    pub wake_capable: bool,
+    pub wake_exti: Option<u8>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
+pub struct StopModes {
+    pub stop0: bool,
+    pub stop1: bool,
+    pub stop2: bool,
+    pub stop3: bool,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]

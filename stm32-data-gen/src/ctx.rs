@@ -18,8 +18,8 @@ pub struct GenCtx<'a> {
     pub af: &'a gpio_af::Af,
     /// `chip:peripheral:ip-version` -> register block.
     pub perimap: &'a perimap::Perimap,
-    /// Peripheral -> lowest power mode it keeps working in.
-    pub stop_modes: &'a low_power::ChipStopModes,
+    /// Chip power dialects/modes and per-peripheral Stop capabilities.
+    pub low_power: &'a low_power::ChipLowPower,
     /// Peripheral -> trigger signals it emits and consumes.
     pub triggers: &'a trigger::Triggers,
     /// Chip -> flash/SRAM layout.

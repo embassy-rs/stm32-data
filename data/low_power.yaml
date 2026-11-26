@@ -1,68 +1,208 @@
-# Peripheral stop-mode limits, used by `low_power::ChipStopModes`.
+# Low-power hardware capability tables used by `low_power::ChipLowPower`.
 #
-#     - { match: <regex>, stop_mode: <Stop1|Stop2|Standby> }
-#
-# `match` is matched as a full-string regex against `{mcu}:{peripheral}`
-# (e.g. `STM32WB55RG:USART1`), and `stop_mode` is the limit the peripheral
-# puts on the chip while it is enabled (see `StopMode` in stm32-data-serde:
-# `Stop1` prevents entering Stop 1, `Stop2` prevents entering Stop 2,
-# `Standby` prevents nothing).
-#
-# The FIRST matching entry wins, so the order of this file is significant:
-# keep more specific entries above more general ones.
+# Both `chips` and `peripherals` are evaluated in priority order (FIRST match wins),
+# so more specific patterns MUST stay above more general ones.
 
-# STM32WB55
-- { match: 'STM32WB55.*:LPTIM1', stop_mode: Standby }
-- { match: 'STM32WB55.*:USART1', stop_mode: Stop2 }
-- { match: 'STM32WB55.*:LPUART1', stop_mode: Standby }
-- { match: 'STM32WB55.*:I2C1', stop_mode: Stop2 }
-- { match: 'STM32WB55.*:I2C3', stop_mode: Standby }
+# 1) Chip-level power modes & PWR register dialect.
+#    Matched as a full-string regex against the chip name (e.g. `STM32U585AI`).
+#    `power: null` explicitly marks out-of-scope chips (e.g. Cortex-A MPUs).
+chips:
+  # Cortex-A MPUs (out of scope for embassy-stm32 low-power)
+  - { match: 'STM32MP1.*', power: null }
 
-# STM32WLE5
-- { match: 'STM32WLE5.*:LPUART1', stop_mode: Standby }
-- { match: 'STM32WLE5.*:I2C1', stop_mode: Stop2 }
-- { match: 'STM32WLE5.*:I2C2', stop_mode: Stop2 }
-- { match: 'STM32WLE5.*:I2C3', stop_mode: Standby }
-- { match: 'STM32WLE5.*:LPTIM1', stop_mode: Standby }
-- { match: 'STM32WLE5.*:SUBGHZSPI', stop_mode: Stop2 }
-- { match: 'STM32WLE5.*:ADC1', stop_mode: Stop2 }
+  # Archetype A — Classic (F0, F1, F2, F3, F4, F7, L1)
+  - match: 'STM32(F[012347]|L1).*'
+    power:
+      dialect: Classic
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 200, exit_latency_us: 50, surviving_clocks: [LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 600, exit_latency_us: 300, surviving_clocks: [LSE, LSI] }
 
-# STM32WL55
-- { match: 'STM32WL55.*:LPUART1', stop_mode: Standby }
-- { match: 'STM32WL55.*:I2C1', stop_mode: Stop2 }
-- { match: 'STM32WL55.*:I2C2', stop_mode: Stop2 }
-- { match: 'STM32WL55.*:I2C3', stop_mode: Standby }
-- { match: 'STM32WL55.*:LPTIM1', stop_mode: Standby }
-- { match: 'STM32WL55.*:SUBGHZSPI', stop_mode: Stop2 }
-- { match: 'STM32WL55.*:ADC1', stop_mode: Stop2 }
-- { match: 'STM32WL55.*:IPCC', stop_mode: Standby }
-- { match: 'STM32WL55.*:HSEM', stop_mode: Stop2 }
+  # Archetype B — L0 (LPTIM/LPUART survive Stop on LSE/LSI/HSI16)
+  - match: 'STM32L0.*'
+    power:
+      dialect: Classic
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 300, exit_latency_us: 100, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 2000, exit_latency_us: 750, surviving_clocks: [HSI, LSE, LSI] }
 
-# STM32WBA series - from RM0515 Table 90
-# Stop2-capable (Standby in StopMode terms): overrides the generic .*:LP.* rule for LPUART1/LPTIM1
-- { match: 'STM32WBA.*:LPUART1', stop_mode: Standby }
-- { match: 'STM32WBA.*:LPTIM1', stop_mode: Standby }
-- { match: 'STM32WBA.*:I2C3', stop_mode: Standby }
-- { match: 'STM32WBA.*:SPI3', stop_mode: Standby }
-# Stop1-capable only: USART1/2/3, I2C1, SPI1, ADC4, COMP1/2
-- { match: 'STM32WBA.*:USART\d', stop_mode: Stop2 }
-- { match: 'STM32WBA.*:I2C\d', stop_mode: Stop2 }
-- { match: 'STM32WBA.*:SPI\d', stop_mode: Stop2 }
-- { match: 'STM32WBA.*:ADC4', stop_mode: Stop2 }
-- { match: 'STM32WBA.*:COMP\d', stop_mode: Stop2 }
-# GPDMA1 is Stop0-only (BAM wakeup) — default Stop1 is correct, no entry needed
+  # Archetype C — C0 (Stop 0 only, LPMS=000)
+  - match: 'STM32C0.*'
+    power:
+      dialect: LpmsScr
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 400, exit_latency_us: 300, surviving_clocks: [LSE, LSI] }
 
-# STM32U3 / STM32U5 DMA
-- { match: 'STM32U3.*:GPDMA.*', stop_mode: Stop2 }
-- { match: 'STM32U3.*:LPDMA.*', stop_mode: Standby }
-- { match: 'STM32U5.*:GPDMA.*', stop_mode: Stop2 }
-- { match: 'STM32U5.*:LPDMA.*', stop_mode: Standby }
+  # Archetype C — G0 / G4 (Stop 0 / Stop 1, no Stop 2)
+  - match: 'STM32G[04].*'
+    power:
+      dialect: LpmsScr
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 20, exit_latency_us: 10, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 100, exit_latency_us: 35, surviving_clocks: [HSI, LSE, LSI] }
 
-# STM32U0 series - from RM0503 Table 22: all LPTIMs functional in Stop 2
-- { match: 'STM32U0.*:LPTIM\d', stop_mode: Standby }
+  # Archetype C — L4 / L4+ / L5 / U0 (Stop 0 / Stop 1 / Stop 2)
+  - match: 'STM32(L[45]|U0).*'
+    power:
+      dialect: LpmsScr
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 20, surviving_clocks: [HSI, MSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 40, surviving_clocks: [HSI, MSI, LSE, LSI] }
+        - { kind: Stop2, selector: 2, min_residency_us: 900, exit_latency_us: 60, surviving_clocks: [HSI, LSE, LSI] }
 
-# __ATTENTION__: Keep these rules at the bottom to grant precedence to the more specific rules above
-# Every peripheral with LP prefix is assumed to be able enter up to Stop1 mode
-- { match: '.*:LP.*', stop_mode: Stop2 }
-# The RTC peripheral is assumed to be able to enter up to Stop2 mode
-- { match: '.*:RTC', stop_mode: Standby }
+  # Archetype D — U5 / U3 (Stop 0 / Stop 1 / Stop 2 / Stop 3 + SRD)
+  - match: 'STM32U[35].*'
+    power:
+      dialect: LpmsSrWuscr
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 23, surviving_clocks: [HSI, MSIK, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 37, surviving_clocks: [HSI, MSIK, LSE, LSI] }
+        - { kind: Stop2, selector: 2, min_residency_us: 900, exit_latency_us: 58, surviving_clocks: [HSI, MSIK, LSE, LSI] }
+        - { kind: Stop3, selector: 3, min_residency_us: 200000, exit_latency_us: 130, surviving_clocks: [LSE, LSI] }
+
+  # Archetype D/F — WBA6 / WBA2 (Stop 0 / Stop 1 / Stop 2)
+  - match: 'STM32WBA[26].*'
+    power:
+      dialect: LpmsSrWuscr
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 20, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 40, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop2, selector: 2, min_residency_us: 900, exit_latency_us: 70, surviving_clocks: [HSI, LSE, LSI] }
+
+  # Archetype D/F — WBA5 (Stop 0 / Stop 1 only)
+  - match: 'STM32WBA.*'
+    power:
+      dialect: LpmsSrWuscr
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 20, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 40, surviving_clocks: [HSI, LSE, LSI] }
+
+  # Archetype F — WB0 (PWRC DeepStop, LPMS=0)
+  - match: 'STM32WB0.*'
+    power:
+      dialect: Wb0Deepstop
+      modes:
+        - { kind: Stop1, selector: 0, min_residency_us: 1500, exit_latency_us: 200, surviving_clocks: [LSE, LSI] }
+
+  # Archetype F — WB / WL5 / WLE (EXTSCR dual-core/radio Stop 0/1/2)
+  - match: 'STM32W(B|L).*'
+    power:
+      dialect: Extscr
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 20, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 40, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop2, selector: 2, min_residency_us: 900, exit_latency_us: 60, surviving_clocks: [HSI, LSE, LSI] }
+
+  # Archetype D — H5 (LPMS=0 Stop, SVOS3 needed for peripheral wakeups)
+  - match: 'STM32H5.*'
+    power:
+      dialect: PmcrSvos
+      modes:
+        - { kind: Stop0, selector: 0, min_svos: 3, min_residency_us: 20, exit_latency_us: 15, surviving_clocks: [HSI, CSI, LSE, LSI] }
+
+  # Archetype D — C5 (RM0522: Stop 0 LPMS=00, Stop 1 LPMS=01)
+  - match: 'STM32C5.*'
+    power:
+      dialect: PmcrSvos
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 10, surviving_clocks: [HSI, LSE, LSI] }
+        - { kind: Stop1, selector: 1, min_residency_us: 500, exit_latency_us: 43, surviving_clocks: [LSE, LSI] }
+
+  # Archetype D — G5 (LPMCR.LPMS=0 Stop)
+  - match: 'STM32G5.*'
+    power:
+      dialect: PmcrSvos
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 50, exit_latency_us: 15, surviving_clocks: [HSI, LSE, LSI] }
+
+  # Archetype E — H7 / H7RS / H7P
+  - match: 'STM32H7.*'
+    power:
+      dialect: DomainPdds
+      modes:
+        - { kind: Stop0, selector: 0, min_svos: 3, min_residency_us: 100, exit_latency_us: 30, surviving_clocks: [HSI, CSI, LSE, LSI] }
+
+  # Archetype D/E — N6
+  - match: 'STM32N6.*'
+    power:
+      dialect: DomainPdds
+      modes:
+        - { kind: Stop0, selector: 0, min_residency_us: 100, exit_latency_us: 30, surviving_clocks: [HSI, MSI, LSE, LSI] }
+
+# 2) Peripheral-level Stop capabilities.
+#    Matched as a full-string regex against `{mcu}:{peripheral}` (e.g. `STM32WB55RG:USART1`).
+peripherals:
+  # STM32WB55
+  - { match: 'STM32WB55.*:LPTIM1', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WB55.*:USART1', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WB55.*:LPUART1', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WB55.*:I2C1', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WB55.*:I2C3', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+
+  # STM32WLE5
+  - { match: 'STM32WLE5.*:LPUART1', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WLE5.*:I2C1', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WLE5.*:I2C2', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WLE5.*:I2C3', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WLE5.*:LPTIM1', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WLE5.*:SUBGHZSPI', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WLE5.*:ADC1', modes: [Stop0, Stop1] }
+
+  # STM32WL55
+  - { match: 'STM32WL55.*:LPUART1', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WL55.*:I2C1', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WL55.*:I2C2', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WL55.*:I2C3', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WL55.*:LPTIM1', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WL55.*:SUBGHZSPI', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WL55.*:ADC1', modes: [Stop0, Stop1] }
+  - { match: 'STM32WL55.*:IPCC', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WL55.*:HSEM', modes: [Stop0, Stop1], wake_capable: true }
+
+  # STM32WBA series - from RM0515 Table 90
+  - { match: 'STM32WBA.*:LPUART1', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WBA.*:LPTIM1', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WBA.*:I2C3', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WBA.*:SPI3', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32WBA.*:USART\d+', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WBA.*:I2C\d+', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WBA.*:SPI\d+', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WBA.*:ADC4', modes: [Stop0, Stop1] }
+  - { match: 'STM32WBA.*:COMP\d+', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32WBA.*:USB_OTG_HS', modes: [Stop0], wake_capable: true }
+
+  # STM32U3 / STM32U5 (SmartRun/LPBAM Stop 2 capable + autonomous vs CPU-domain Stop 0/1)
+  - { match: 'STM32U[35].*:(LPUART1|I2C3|SPI3|LPTIM1|LPTIM3|LPTIM4|ADC4|DAC1|ADF1|COMP\d+|OPAMP\d+|LPGPIO1|VREFBUF|LPDMA.*)', modes: [Stop0, Stop1, Stop2], autonomous: true, wake_capable: true }
+  - { match: 'STM32U[35].*:(USART\d+|UART\d+|I2C\d+|SPI\d+|LPTIM2|GPDMA.*)', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32U5.*:USB_OTG_FS', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32U5.*:USB_OTG_HS', modes: [Stop0], wake_capable: true }
+
+  # STM32U0 series - from RM0503 Table 22: LPTIMs, LPUART, I2C3, COMP functional in Stop 2
+  - { match: 'STM32U0.*:(LPTIM\d+|LPUART\d+|I2C3|COMP\d+)', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32U0.*:(USART\d+|I2C\d+)', modes: [Stop0, Stop1], wake_capable: true }
+
+  # STM32L4 / STM32L4+ / STM32L5 - RM0394 §5.3.7, RM0438
+  - { match: 'STM32L[45].*:(LPUART\d+|LPTIM1|I2C3|LCD|COMP\d+|OPAMP\d+)', modes: [Stop0, Stop1, Stop2], wake_capable: true }
+  - { match: 'STM32L[45].*:(USART\d+|UART\d+|I2C\d+|LPTIM2)', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32L4.*:USB_OTG_FS', modes: [Stop0, Stop1], wake_capable: true, wake_exti: 17 }
+
+  # STM32G0 / STM32G4 / STM32C0 / STM32L0 / STM32F0 / STM32F3
+  - { match: 'STM32(G[04]|C0|L0).*:(LPUART\d+|LPTIM\d+|I2C\d+|USART\d+|COMP\d+)', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32F[03].*:COMP\d+', modes: [Stop0, Stop1], wake_capable: true }
+
+  # STM32C5 (RM0522 Table 54/58/59)
+  - { match: 'STM32C5.*:(LPUART1|LPTIM1|COMP\d+)', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: 'STM32C5.*:(USART\d+|UART\d+|I2C\d+|SPI\d+|I3C\d+|DTS)', modes: [Stop0], wake_capable: true }
+
+  # STM32H5 (RM0517: Stop 0 only)
+  - { match: 'STM32H5.*:(USB_OTG_FS|USB_OTG_HS)', modes: [Stop0], wake_capable: true }
+
+  # STM32F4 / STM32F7 LPTIM1 and USB OTG wakeup over EXTI
+  - { match: 'STM32F[47].*:LPTIM1', modes: [Stop0, Stop1], wake_capable: true, wake_exti: 23 }
+  - { match: 'STM32F[47].*:USB_OTG_FS', modes: [Stop0, Stop1], wake_capable: true, wake_exti: 18 }
+  - { match: 'STM32F[47].*:USB_OTG_HS', modes: [Stop0, Stop1], wake_capable: true, wake_exti: 20 }
+
+  # __ATTENTION__: Keep these generic rules at the bottom so specific chip rules win.
+  - { match: '.*:LP.*', modes: [Stop0, Stop1], wake_capable: true }
+  - { match: '.*:RTC', modes: [Stop0, Stop1, Stop2, Stop3], autonomous: true, wake_capable: true }
+  - { match: '.*:(GPIO.*|EXTI|PWR|SYSCFG)', modes: [Stop0, Stop1, Stop2, Stop3], wake_capable: true }
