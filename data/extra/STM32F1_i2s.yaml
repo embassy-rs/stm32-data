@@ -1,0 +1,35 @@
+matches:
+  family: STM32F1
+  # Only the connectivity-line parts (RM0008) have I2S and the CFGR2
+  # I2S2SRC/I2S3SRC clock selection.
+  chip: 'STM32F10[57].*'
+peripherals:
+  # The F105/F107 I2S blocks have no extension registers; these entries only
+  # carry the I2S clock - the CFGR2 I2SxSRC mux (SYSCLK or the PLL3 VCO) -
+  # while SPI2/SPI3 keep their static PCLK1 kernel clock for SPI mode.
+  - name: I2S2
+    address: 0
+    rcc:
+      bus_clock: PCLK1
+      kernel_clock:
+        register: CFGR2
+        field: I2S2SRC
+      enable:
+        register: APB1ENR
+        field: SPI2EN
+      reset:
+        register: APB1RSTR
+        field: SPI2RST
+  - name: I2S3
+    address: 0
+    rcc:
+      bus_clock: PCLK1
+      kernel_clock:
+        register: CFGR2
+        field: I2S3SRC
+      enable:
+        register: APB1ENR
+        field: SPI3EN
+      reset:
+        register: APB1RSTR
+        field: SPI3RST

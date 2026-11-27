@@ -715,11 +715,12 @@ fn apply_extras(
             for extra_periph in extras {
                 let mut extra_periph = extra_periph.clone();
                 let Some(generated_periph) = peripherals.get_mut(&extra_periph.name) else {
-                    if extra_periph.address != 0 {
+                    if extra_periph.address != 0 || extra_periph.rcc.is_some() {
                         // filter out pins that may not exist in this package.
                         extra_periph.pins.retain(|p| group.pins.contains_key(&p.pin));
 
-                        // Only insert the peripheral if the address is not the default
+                        // Insert real peripherals by address. Zero-address entries are
+                        // allowed when they only carry rcc metadata (I2S clock carriers).
                         peripherals.insert(extra_periph.name.clone(), extra_periph);
                     }
                     continue;
