@@ -1,0 +1,43 @@
+matches:
+  family: STM32F4
+  # Every F4 except F410: F410 has no PLLI2S, and embassy's rcc/f247.rs only
+  # supplies the plli2s1_* clocks on stm32f2, stm32f4-without-f410 and stm32f7.
+  chip: 'STM32F4(?:0[1-9]|1[1-9]|[2-9][0-9]).*'
+peripherals:
+  # I2S extension blocks (I2S2EXT/I2S3EXT). The register layout is identical to
+  # SPI (stm32f4xx.h casts them to SPI_TypeDef), so they reuse the spi/v2_i2s
+  # block. Addresses are I2S2ext_BASE/I2S3ext_BASE from the ST headers.
+  #
+  # The I2S clock is the dedicated PLLI2S, whose R output is tracked as the
+  # PLli2s1_R clock; the main SPI2/SPI3 instances keep their static PCLK1
+  # kernel clock for SPI mode.
+  - name: I2S2
+    address: 0x40003400
+    registers:
+      kind: spi
+      version: v2_i2s
+      block: SPI
+    rcc:
+      bus_clock: PCLK1
+      kernel_clock: PLli2s1_R
+      enable:
+        register: APB1ENR
+        field: SPI2EN
+      reset:
+        register: APB1RSTR
+        field: SPI2RST
+  - name: I2S3
+    address: 0x40004000
+    registers:
+      kind: spi
+      version: v2_i2s
+      block: SPI
+    rcc:
+      bus_clock: PCLK1
+      kernel_clock: PLli2s1_R
+      enable:
+        register: APB1ENR
+        field: SPI3EN
+      reset:
+        register: APB1RSTR
+        field: SPI3RST
